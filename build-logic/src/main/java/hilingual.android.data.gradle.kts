@@ -22,6 +22,7 @@ dependencies {
 
     // modules
     implementation(project(":core:network"))
+    implementation(project(":core:common"))
     implementation(project(":core:localstorage"))
 
     // timber
