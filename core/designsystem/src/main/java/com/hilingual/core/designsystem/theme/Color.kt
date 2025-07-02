@@ -1,10 +1,16 @@
 package com.hilingual.core.designsystem.theme
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 
 val hilingualBlack = Color(0xFF212121)
 val hilingualOrange = Color(0xFFFF6937)
@@ -141,3 +147,101 @@ fun HilingualLightColors(
     White,
     isLight = true
 )
+
+@Preview(showBackground = true)
+@Composable
+fun HilingualMainColorsPreview(){
+    HilingualTheme {
+        Column {
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.hilingualBlack
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.hilingualOrange,
+                modifier = Modifier.background(
+                    color = HilingualTheme.colors.hilingualBlack
+                )
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.hilingualBlue,
+                modifier = Modifier.background(
+                    color = HilingualTheme.colors.hilingualBlack
+                )
+            )
+
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HilingualGrayColorsPreview(){
+    HilingualTheme{
+        Column {
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.gray900
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.gray850
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.gray800
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.gray700
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.gray600
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.gray500
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.gray400
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.gray300
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.gray200
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.gray100
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.white,
+                modifier = Modifier.background(
+                    color = HilingualTheme.colors.hilingualBlack
+                )
+            )
+        }
+    }
+}
