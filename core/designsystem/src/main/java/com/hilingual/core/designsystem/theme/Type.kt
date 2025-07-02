@@ -11,7 +11,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.hilingual.core.designsystem.R
 
@@ -172,12 +174,20 @@ fun HilingualTypography(): HilingualTypography{
         bodyM16 = TextStyle(
             fontFamily = SuitMedium,
             fontSize = 16.sp,
-            lineHeight = 22.4.sp
+            lineHeight = 1.4.em,
+            lineHeightStyle = LineHeightStyle(
+                alignment = LineHeightStyle.Alignment.Center,
+                trim = LineHeightStyle.Trim.None
+            )
         ),
         bodyR16 = TextStyle(
             fontFamily = SuitRegular,
             fontSize = 16.sp,
-            lineHeight = 22.4.sp
+            lineHeight = 1.4.em,
+            lineHeightStyle = LineHeightStyle(
+                alignment = LineHeightStyle.Alignment.Center,
+                trim = LineHeightStyle.Trim.None
+            )
         ),
         bodyB14 = TextStyle(
             fontFamily = SuitBold,

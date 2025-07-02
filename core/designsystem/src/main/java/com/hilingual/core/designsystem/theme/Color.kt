@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 
-val hilingualBlack = Color(0xFF212121)
 val hilingualOrange = Color(0xFFFF6937)
 val hilingualBlue = Color(0xFF487AFF)
 
@@ -116,7 +115,7 @@ class HilingualColors(
 }
 
 fun HilingualLightColors(
-    HilingualBlack: Color = hilingualBlack,
+    HilingualBlack: Color = gray850,
     HilingualOrange: Color = hilingualOrange,
     HilingualBlue: Color = hilingualBlue,
     Gray900: Color = gray900,
