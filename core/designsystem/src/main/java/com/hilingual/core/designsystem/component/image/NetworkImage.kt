@@ -1,18 +1,18 @@
 package com.hilingual.core.designsystem.component.image
 
-
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -30,7 +30,7 @@ fun NetworkImage(
 ) {
     if (LocalInspectionMode.current) {
         Image(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_default_image),
+            painter = painterResource(R.drawable.ic_default_image),
             contentDescription = contentDescription,
             contentScale = contentScale,
             modifier = modifier.clip(shape)
@@ -53,9 +53,17 @@ fun NetworkImage(
 @Composable
 private fun NetworkImagePreview() {
     HilingualTheme {
-        NetworkImage(
-            imageUrl = "",
-            modifier = Modifier.size(50.dp),
-        )
+        Row {
+            NetworkImage(
+                imageUrl = "",
+                modifier = Modifier.size(50.dp),
+            )
+            NetworkImage(
+                imageUrl = "",
+                shape = RectangleShape,
+                contentScale = ContentScale.None,
+                modifier = Modifier.size(50.dp),
+            )
+        }
     }
 }
