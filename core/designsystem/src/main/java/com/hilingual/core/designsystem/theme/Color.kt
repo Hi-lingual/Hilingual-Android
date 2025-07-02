@@ -42,8 +42,7 @@ class HilingualColors(
     gray300: Color,
     gray200: Color,
     gray100: Color,
-    white: Color,
-    isLight: Boolean
+    white: Color
 
 ) {
     var hilingualBlack by mutableStateOf(hilingualBlack)
@@ -74,7 +73,6 @@ class HilingualColors(
         private set
     var white by mutableStateOf(white)
         private set
-    var isLight by mutableStateOf(isLight)
 
     fun copy(): HilingualColors = HilingualColors(
         hilingualBlack,
@@ -90,8 +88,7 @@ class HilingualColors(
         gray300,
         gray200,
         gray100,
-        white,
-        isLight
+        white
     )
 
     fun update(other: HilingualColors) {
@@ -109,12 +106,10 @@ class HilingualColors(
         gray200 = other.gray200
         gray100 = other.gray100
         white = other.white
-        isLight = other.isLight
-
     }
 }
 
-fun HilingualLightColors(
+fun DefaultHilingualColors(
     HilingualBlack: Color = gray850,
     HilingualOrange: Color = hilingualOrange,
     HilingualBlue: Color = hilingualBlue,
@@ -143,8 +138,7 @@ fun HilingualLightColors(
     Gray300,
     Gray200,
     Gray100,
-    White,
-    isLight = true
+    White
 )
 
 @Preview(showBackground = true)

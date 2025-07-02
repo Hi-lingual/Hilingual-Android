@@ -46,7 +46,7 @@ fun ProvideHilingualColorsAndTypography(
 
 @Composable
 fun HilingualTheme(darkTheme: Boolean = false, content: @Composable () -> Unit) {
-    val colors = HilingualLightColors()
+    val colors = DefaultHilingualColors()
     val typography = HilingualTypography()
     ProvideHilingualColorsAndTypography(colors, typography) {
         MaterialTheme(content = content)
