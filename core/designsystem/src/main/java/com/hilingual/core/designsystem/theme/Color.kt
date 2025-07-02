@@ -1,4 +1,4 @@
-package com.hilingual.ui.theme
+package com.hilingual.core.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -1,4 +1,4 @@
-package com.hilingual.ui.theme
+package com.hilingual.core.designsystem.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
