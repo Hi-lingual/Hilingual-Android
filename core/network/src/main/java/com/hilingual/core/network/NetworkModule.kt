@@ -1,8 +1,6 @@
 package com.hilingual.core.network
 
 import com.hilingual.core.network.BuildConfig.BASE_URL
-import com.hilingual.core.network.di.AuthClient
-import com.hilingual.core.network.di.LoginClient
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -79,7 +77,6 @@ object RetrofitModule {
 
     @Provides
     @Singleton
-    @AuthClient
     fun provideAuthClientOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
         authInterceptor: AuthInterceptor,
@@ -101,9 +98,8 @@ object RetrofitModule {
 
     @Provides
     @Singleton
-    @AuthClient
     fun provideAuthClientRetrofit(
-        @AuthClient client: OkHttpClient,
+        client: OkHttpClient,
         factory: Converter.Factory
     ): Retrofit =
         Retrofit.Builder()

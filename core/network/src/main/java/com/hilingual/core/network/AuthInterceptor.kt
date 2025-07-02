@@ -1,10 +1,10 @@
 package com.hilingual.core.network
 
-import javax.inject.Inject
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import timber.log.Timber
+import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor() : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -21,9 +21,4 @@ class AuthInterceptor @Inject constructor() : Interceptor {
 
     private fun Request.Builder.newAuthBuilder() =
         this.addHeader(AUTHORIZATION, "$BEARER ${BuildConfig.TEST_TOKEN}")
-
-    companion object {
-        private const val AUTHORIZATION = "Authorization"
-        private const val BEARER = "Bearer"
-    }
 }
