@@ -1,2 +1,2 @@
-# Hi-lingual-Android
-하이링 안드로이드임3
+# Hilingual-Android
+하이링궐 안드로이드임. 어쩔거임
