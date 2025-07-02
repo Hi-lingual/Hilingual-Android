@@ -9,7 +9,5 @@ sealed interface UiState<out T> {
         val data: T
     ) : UiState<T>
 
-    data class Failure(
-        val msg: String
-    ) : UiState<Nothing>
+    data object Failure : UiState<Nothing>
 }
