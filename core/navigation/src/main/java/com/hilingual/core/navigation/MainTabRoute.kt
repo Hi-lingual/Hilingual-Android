@@ -1,3 +1,17 @@
 package com.hilingual.core.navigation
 
-interface MainTabRoute : Route
+import kotlinx.serialization.Serializable
+
+sealed interface MainTabRoute : Route {
+    @Serializable
+    data object Home : MainTabRoute
+
+    @Serializable
+    data object Voca: MainTabRoute
+
+    @Serializable
+    data object Community : MainTabRoute
+
+    @Serializable
+    data object My : MainTabRoute
+}
