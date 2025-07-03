@@ -23,7 +23,7 @@
 <br>
 
 ## CONTRIBUTORS
-| 한민재<br/>([@angryPodo](https://github.com/angryPodo)) | 김나현<br/>([@nahy-512](https://github.com/nahy-512)) | 김나현<br/>([@nhyeonii](https://github.com/nhyeonii)) | 문지영<br/>([@Daljyeong](https://github.com/Daljyeong)) | 박효빈<br/>([@Hyobeen-Park](https://github.com/Hyobeen-Park)) |
+| 🤴한민재<br/>([@angryPodo](https://github.com/angryPodo)) | 🦔김나현<br/>([@nahy-512](https://github.com/nahy-512)) | 😻김나현<br/>([@nhyeonii](https://github.com/nhyeonii)) | 🐻문지영<br/>([@Daljyeong](https://github.com/Daljyeong)) | 🎓박효빈<br/>([@Hyobeen-Park](https://github.com/Hyobeen-Park)) |
 |:---:|:---:|:---:|:---:|:---:|
 | <img width="270px" src="https://github.com/angryPodo.png"/> | <img width="270px" src="https://github.com/nahy-512.png"/> | <img width="270px" src="https://github.com/nhyeonii.png"/> | <img width="270px" src="https://github.com/Daljyeong.png"/> | <img width="270px" src="https://github.com/Hyobeen-Park.png"/> |
 | `로그인`<br/>`홈` | `일기 상세` | `단어장` | `일기 작성` | `멘토` |
