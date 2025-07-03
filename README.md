@@ -34,7 +34,7 @@ Hilingual은 Google의 권장 아키텍처 가이드를 따르며, **MVVM (Model
 
 **Presentation Layer ↔ Data Layer**
 
-- **Presentation Layer**: UI와 관련된 로직을 처리합니다. (Activity, Fragment, ViewModel)
+- **Presentation Layer**: UI와 관련된 로직을 처리합니다.
 - **Data Layer**: 데이터 소스(네트워크, 로컬 DB)를 관리하고, 비즈니스 로직을 처리합니다. (Repository, DataSource)
 
 <br>
@@ -77,7 +77,7 @@ Hi-lingual
 | **Asynchronous** | Coroutine, Flow |
 | **Navigation** | Jetpack Navigation Compose (Type-safe) |
 | **Network** | Retrofit2, OkHttp3 |
-| **Local DB** | Room |
+| **Local DB** | Room, DataStore |
 | **Image Loading**| Coil |
 
 <br>
