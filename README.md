@@ -1,7 +1,7 @@
 # Hilingual
 
 <p align="center">
-  <img src="https://github.com/Hi-lingual/Hilingual-Android/assets/107945283/75555424-21b2-4423-a5d9-a705331487e9" width="200">
+  <img src="https://github.com/user-attachments/assets/c2f22712-77b4-477c-8fa6-50dcd72fe98b">
 </p>
 
 <h2 align="center">AI 피드백으로 완성하는 나만의 영어 일기</h2>
