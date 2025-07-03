@@ -23,6 +23,10 @@
 <br>
 
 ## CONTRIBUTORS
+| 한민재<br/>([@angryPodo](https://github.com/angryPodo)) | 김나현<br/>([@nahy-512](https://github.com/nahy-512)) | 김나현<br/>([@nhyeonii](https://github.com/nhyeonii)) | 문지영<br/>([@Daljyeong](https://github.com/Daljyeong)) | 박효빈<br/>([@Hyobeen-Park](https://github.com/Hyobeen-Park)) |
+|:---:|:---:|:---:|:---:|:---:|
+| <img width="270px" src="https://github.com/angryPodo.png"/> | <img width="270px" src="https://github.com/nahy-512.png"/> | <img width="270px" src="https://github.com/nhyeonii.png"/> | <img width="270px" src="https://github.com/Daljyeong.png"/> | <img width="270px" src="https://github.com/Hyobeen-Park.png"/> |
+| `로그인`<br/>`홈` | `일기 상세` | `단어장` | `일기 작성` | `멘토` |
 
 
 ## ARCHITECTURE
@@ -83,5 +87,7 @@ Hi-lingual
 
 | 카테고리 | 문서 링크 |
 |:---|:---|
-| **Git Convention** | *(링크 준비중)* |
-| **Coding Convention** | *(링크 준비중)* |
+| **기술 스택 컨벤션** | [Notion](https://seemly-cupcake-7b7.notion.site/216a178ee9bd8009b50ac5b8e8b285d7?source=copy_link) |
+| **깃/브랜치 컨벤션** | [Notion](https://seemly-cupcake-7b7.notion.site/216a178ee9bd8009b50ac5b8e8b285d7?source=copy_link) |
+| **코드 컨벤션** | [Notion](https://seemly-cupcake-7b7.notion.site/216a178ee9bd80e4a706ce34866666f3?source=copy_link) |
+| **패키지 컨벤션** | [Notion](https://seemly-cupcake-7b7.notion.site/216a178ee9bd80289994e9b31dae8274?source=copy_link) |
