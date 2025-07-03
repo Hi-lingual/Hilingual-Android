@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,22 +44,30 @@ fun MainBottomBar(
         enter = fadeIn() + slideIn { IntOffset(0, it.height) },
         exit = fadeOut() + slideOut { IntOffset(0, it.height) }
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(24.dp),
+        Column(
             modifier = Modifier
                 .background(HilingualTheme.colors.white)
-                .padding(vertical = 8.dp)
-                .navigationBarsPadding()
-                .fillMaxWidth()
         ) {
-            tabs.forEach { tab ->
-                key(tab.route) {
-                    MainBottomBarItem(
-                        tab = tab,
-                        selected = (tab == currentTab),
-                        onClick = { onTabSelected(tab) }
-                    )
+            HorizontalDivider(
+                color = HilingualTheme.colors.gray100,
+                thickness = 1.dp
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .navigationBarsPadding()
+                    .fillMaxWidth()
+            ) {
+                tabs.forEach { tab ->
+                    key(tab.route) {
+                        MainBottomBarItem(
+                            tab = tab,
+                            selected = (tab == currentTab),
+                            onClick = { onTabSelected(tab) }
+                        )
+                    }
                 }
             }
         }
