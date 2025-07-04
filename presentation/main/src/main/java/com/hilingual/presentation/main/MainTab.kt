@@ -3,31 +3,35 @@ package com.hilingual.presentation.main
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import com.hilingual.core.navigation.MainTabRoute
+import com.hilingual.core.navigation.MainTabRoute.Community
+import com.hilingual.core.navigation.MainTabRoute.My
 import com.hilingual.core.navigation.Route
+import com.hilingual.presentation.home.navigation.Home
+import com.hilingual.presentation.voca.navigation.Voca
 
-enum class MainTab(
+internal enum class MainTab(
     @DrawableRes val iconRes: Int,
     val route: MainTabRoute,
     val label: String
 ) {
     HOME(
         iconRes = R.drawable.ic_home_24,
-        route = MainTabRoute.Home,
+        route = Home,
         label = "홈"
     ),
     VOCA(
         iconRes = R.drawable.ic_book_24,
-        route = MainTabRoute.Voca,
+        route = Voca,
         label = "단어장"
     ),
     COMMUNITY(
         iconRes = R.drawable.ic_community_24,
-        route = MainTabRoute.Community,
+        route = Community,
         label = "커뮤니티"
     ),
     MY(
         iconRes = R.drawable.ic_my_24,
-        route = MainTabRoute.My,
+        route = My,
         label = "마이"
     );
 
