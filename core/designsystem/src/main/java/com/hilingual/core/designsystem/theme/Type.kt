@@ -227,7 +227,7 @@ fun HilingualTypography(): HilingualTypography{
 
 @Preview(showBackground = true)
 @Composable
-fun HilingualTypographyPreview() {
+private fun HilingualTypographyPreview() {
     HilingualTheme {
         Column {
             Text(

@@ -43,7 +43,6 @@ val infoBlue = Color(0xFF007AFF)
 
 @Stable
 class HilingualColors(
-    hilingualBlack: Color,
     hilingualOrange: Color,
     hilingualBlue: Color,
     nounBg: Color,
@@ -70,8 +69,6 @@ class HilingualColors(
     infoBlue: Color
 
 ) {
-    var hilingualBlack by mutableStateOf(hilingualBlack)
-        private set
     var hilingualOrange by mutableStateOf(hilingualOrange)
         private set
     var hilingualBlue by mutableStateOf(hilingualBlue)
@@ -122,7 +119,6 @@ class HilingualColors(
         private set
 
     fun copy(): HilingualColors = HilingualColors(
-        hilingualBlack,
         hilingualOrange,
         hilingualBlue,
         nounBg,
@@ -150,7 +146,6 @@ class HilingualColors(
     )
 
     fun update(other: HilingualColors) {
-        hilingualBlack = other.hilingualBlack
         hilingualOrange = other.hilingualOrange
         hilingualBlue = other.hilingualBlue
         nounBg = other.nounBg
@@ -179,7 +174,6 @@ class HilingualColors(
 }
 
 fun DefaultHilingualColors(
-    HilingualBlack: Color = gray850,
     HilingualOrange: Color = hilingualOrange,
     HilingualBlue: Color = hilingualBlue,
     NounBg: Color = nounBg,
@@ -205,7 +199,6 @@ fun DefaultHilingualColors(
     AlertRed: Color = alertRed,
     InfoBlue: Color = infoBlue
 ) = HilingualColors(
-    HilingualBlack,
     HilingualOrange,
     HilingualBlue,
     NounBg,
@@ -240,14 +233,9 @@ fun HilingualMainColorsPreview(){
             Text(
                 text = "HilingualTheme",
                 style = HilingualTheme.typography.bodyM20,
-                color = HilingualTheme.colors.hilingualBlack
-            )
-            Text(
-                text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
                 color = HilingualTheme.colors.hilingualOrange,
                 modifier = Modifier.background(
-                    color = HilingualTheme.colors.hilingualBlack
+                    color = HilingualTheme.colors.black
                 )
             )
             Text(
@@ -255,7 +243,7 @@ fun HilingualMainColorsPreview(){
                 style = HilingualTheme.typography.bodyM20,
                 color = HilingualTheme.colors.hilingualBlue,
                 modifier = Modifier.background(
-                    color = HilingualTheme.colors.hilingualBlack
+                    color = HilingualTheme.colors.black
                 )
             )
 
@@ -265,7 +253,7 @@ fun HilingualMainColorsPreview(){
 
 @Preview(showBackground = true)
 @Composable
-fun HilingualWordChipColorsPreview(){
+private fun HilingualWordChipColorsPreview(){
     HilingualTheme{
         Column {
             Text(
@@ -325,7 +313,7 @@ fun HilingualWordChipColorsPreview(){
 
 @Preview(showBackground = true)
 @Composable
-fun HilingualGrayColorsPreview(){
+private fun HilingualGrayColorsPreview(){
     HilingualTheme{
         Column {
             Text(
@@ -373,7 +361,7 @@ fun HilingualGrayColorsPreview(){
                 style = HilingualTheme.typography.bodyM20,
                 color = HilingualTheme.colors.white,
                 modifier = Modifier.background(
-                    color = HilingualTheme.colors.hilingualBlack
+                    color = HilingualTheme.colors.black
                 )
 
             )
@@ -387,7 +375,7 @@ fun HilingualGrayColorsPreview(){
     }
 }
 
-@Preview(showBackground = true)
+private @Preview(showBackground = true)
 @Composable
 fun HilingualSymenticColorsPreview(){
     HilingualTheme {
