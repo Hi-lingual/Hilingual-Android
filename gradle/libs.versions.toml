@@ -1,6 +1,7 @@
 [versions]
 # Build Configuration
 compileSdk = "35"
+calendar = "2.7.0"
 minSdk = "30"
 targetSdk = "35"
 jvmTarget = "17"
@@ -63,6 +64,7 @@ balloonCompose = "1.6.12"
 [libraries]
 # Build Tools
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
+compose-calendar = { module = "com.kizitonwose.calendar:compose", version.ref = "calendar" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 compose-compiler-gradle-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "composeCompilerGradlePlugin" }
 desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugarJdkLibs" }
