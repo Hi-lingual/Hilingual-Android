@@ -15,34 +15,59 @@ import androidx.compose.ui.tooling.preview.Preview
 val hilingualOrange = Color(0xFFFF6937)
 val hilingualBlue = Color(0xFF487AFF)
 
-val gray900 = Color(0xFF121212)
+val nounBg = Color(0xFFCAD8FF)
+val pronounBg = Color(0xFF5642EB)
+val adjBg = Color(0xFFFFBAD3)
+val adverbBg = Color(0xFFC5FF87)
+val prepositionBg = Color(0xFFFFEC8E)
+val interjectionBg = Color(0xFFCD33D3)
+val pronounText = Color(0xFFDCD7FF)
+val adjText = Color(0xFFE81879)
+val adverbText = Color(0xFF089900)
+val prepositionText = Color(0xFFFF7125)
+
+val black = Color(0xFF121212)
 val gray850 = Color(0xFF212121)
-val gray800 = Color(0xFF333333)
 val gray700 = Color(0xFF424242)
-val gray600 = Color(0xFF616161)
 val gray500 = Color(0xFF757575)
 val gray400 = Color(0xFF9E9E9E)
 val gray300 = Color(0xFFBDBDBD)
 val gray200 = Color(0xFFE0E0E0)
-val gray100 = Color(0xFFEEEEEE)
+val gray100 = Color(0xFFF5F5F5)
 val white = Color(0xFFFFFFFF)
+val dim = Color(0xFF000000).copy(alpha = 0.7f)
+
+val alertRed = Color(0xFFFF3B30)
+val infoBlue = Color(0xFF007AFF)
+
 
 @Stable
 class HilingualColors(
     hilingualBlack: Color,
     hilingualOrange: Color,
     hilingualBlue: Color,
-    gray900: Color,
+    nounBg: Color,
+    pronounBg: Color,
+    adjBg: Color,
+    adverbBg: Color,
+    prepositionBg: Color,
+    interjectionBg: Color,
+    pronounText: Color,
+    adjText: Color,
+    adverbText: Color,
+    prepositionText: Color,
+    black: Color,
     gray850: Color,
-    gray800: Color,
     gray700: Color,
-    gray600: Color,
     gray500: Color,
     gray400: Color,
     gray300: Color,
     gray200: Color,
     gray100: Color,
-    white: Color
+    white: Color,
+    dim: Color,
+    alertRed: Color,
+    infoBlue: Color
 
 ) {
     var hilingualBlack by mutableStateOf(hilingualBlack)
@@ -51,15 +76,31 @@ class HilingualColors(
         private set
     var hilingualBlue by mutableStateOf(hilingualBlue)
         private set
-    var gray900 by mutableStateOf(gray900)
+    var nounBg by mutableStateOf(nounBg)
+        private set
+    var pronounBg by mutableStateOf(pronounBg)
+        private set
+    var adjBg by mutableStateOf(adjBg)
+        private set
+    var adverbBg by mutableStateOf(adverbBg)
+        private set
+    var prepositionBg by mutableStateOf(prepositionBg)
+        private set
+    var interjectionBg by mutableStateOf(interjectionBg)
+        private set
+    var pronounText by mutableStateOf(pronounText)
+        private set
+    var adjText by mutableStateOf(adjText)
+        private set
+    var adverbText by mutableStateOf(adverbText)
+        private set
+    var prepositionText by mutableStateOf(prepositionText)
+        private set
+    var black by mutableStateOf(black)
         private set
     var gray850 by mutableStateOf(gray850)
         private set
-    var gray800 by mutableStateOf(gray800)
-        private set
     var gray700 by mutableStateOf(gray700)
-        private set
-    var gray600 by mutableStateOf(gray600)
         private set
     var gray500 by mutableStateOf(gray500)
         private set
@@ -73,39 +114,67 @@ class HilingualColors(
         private set
     var white by mutableStateOf(white)
         private set
+    var dim by mutableStateOf(dim)
+        private set
+    var alertRed by mutableStateOf(alertRed)
+        private set
+    var infoBlue by mutableStateOf(infoBlue)
+        private set
 
     fun copy(): HilingualColors = HilingualColors(
         hilingualBlack,
         hilingualOrange,
         hilingualBlue,
-        gray900,
+        nounBg,
+        pronounBg,
+        adjBg,
+        adverbBg,
+        prepositionBg,
+        interjectionBg,
+        pronounText,
+        adjText,
+        adverbText,
+        prepositionText,
+        black,
         gray850,
-        gray800,
         gray700,
-        gray600,
         gray500,
         gray400,
         gray300,
         gray200,
         gray100,
-        white
+        white,
+        dim,
+        alertRed,
+        infoBlue
     )
 
     fun update(other: HilingualColors) {
         hilingualBlack = other.hilingualBlack
         hilingualOrange = other.hilingualOrange
         hilingualBlue = other.hilingualBlue
-        gray900 = other.gray900
+        nounBg = other.nounBg
+        pronounBg = other.pronounBg
+        adjBg = other.adjBg
+        adverbBg = other.adverbBg
+        prepositionBg = other.prepositionBg
+        interjectionBg = other.interjectionBg
+        pronounText = other.pronounText
+        adjText = other.adjText
+        adverbText = other.adverbText
+        prepositionText = other.prepositionText
+        black = other.black
         gray850 = other.gray850
-        gray800 = other.gray800
         gray700 = other.gray700
-        gray600 = other.gray600
         gray500 = other.gray500
         gray400 = other.gray400
         gray300 = other.gray300
         gray200 = other.gray200
         gray100 = other.gray100
         white = other.white
+        dim = other.dim
+        alertRed = other.alertRed
+        infoBlue = other.infoBlue
     }
 }
 
@@ -113,32 +182,54 @@ fun DefaultHilingualColors(
     HilingualBlack: Color = gray850,
     HilingualOrange: Color = hilingualOrange,
     HilingualBlue: Color = hilingualBlue,
-    Gray900: Color = gray900,
+    NounBg: Color = nounBg,
+    PronounBg: Color = pronounBg,
+    AdjBg: Color = adjBg,
+    AdverbBg: Color = adverbBg,
+    PrepositionBg: Color = prepositionBg,
+    InterjectionBg: Color = interjectionBg,
+    PronounText: Color = pronounText,
+    AdjText: Color = adjText,
+    AdverbText: Color = adverbText,
+    PrepositonText: Color = prepositionText,
+    Black: Color = black,
     Gray850: Color = gray850,
-    Gray800: Color = gray800,
     Gray700: Color = gray700,
-    Gray600: Color = gray600,
     Gray500: Color = gray500,
     Gray400: Color = gray400,
     Gray300: Color = gray300,
     Gray200: Color = gray200,
     Gray100: Color = gray100,
-    White: Color = white
+    White: Color = white,
+    Dim: Color = dim,
+    AlertRed: Color = alertRed,
+    InfoBlue: Color = infoBlue
 ) = HilingualColors(
     HilingualBlack,
     HilingualOrange,
     HilingualBlue,
-    Gray900,
+    NounBg,
+    PronounBg,
+    AdjBg,
+    AdverbBg,
+    PrepositionBg,
+    InterjectionBg,
+    PronounText,
+    AdjText,
+    AdverbText,
+    PrepositonText,
+    Black,
     Gray850,
-    Gray800,
     Gray700,
-    Gray600,
     Gray500,
     Gray400,
     Gray300,
     Gray200,
     Gray100,
-    White
+    White,
+    Dim,
+    AlertRed,
+    InfoBlue
 )
 
 @Preview(showBackground = true)
@@ -174,13 +265,73 @@ fun HilingualMainColorsPreview(){
 
 @Preview(showBackground = true)
 @Composable
+fun HilingualWordChipColorsPreview(){
+    HilingualTheme{
+        Column {
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.nounBg
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.pronounBg
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.adjBg
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.adverbBg
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.prepositionBg
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.interjectionBg
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.pronounText
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.adjText
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.adverbText
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.prepositionText
+            )
+        }
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
 fun HilingualGrayColorsPreview(){
     HilingualTheme{
         Column {
             Text(
                 "HilingualTheme",
                 style = HilingualTheme.typography.bodyM20,
-                color = HilingualTheme.colors.gray900
+                color = HilingualTheme.colors.black
             )
             Text(
                 "HilingualTheme",
@@ -190,17 +341,7 @@ fun HilingualGrayColorsPreview(){
             Text(
                 "HilingualTheme",
                 style = HilingualTheme.typography.bodyM20,
-                color = HilingualTheme.colors.gray800
-            )
-            Text(
-                "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
                 color = HilingualTheme.colors.gray700
-            )
-            Text(
-                "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
-                color = HilingualTheme.colors.gray600
             )
             Text(
                 "HilingualTheme",
@@ -234,6 +375,32 @@ fun HilingualGrayColorsPreview(){
                 modifier = Modifier.background(
                     color = HilingualTheme.colors.hilingualBlack
                 )
+
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.dim
+
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HilingualSymenticColorsPreview(){
+    HilingualTheme {
+        Column {
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.alertRed
+            )
+            Text(
+                "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.infoBlue
             )
         }
     }
