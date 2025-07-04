@@ -20,7 +20,7 @@ import java.time.LocalDate
 @Composable
 internal fun DayItem(
     day: CalendarDay,
-    onClick: (CalendarDay) -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
     isWritten: Boolean = false,
@@ -35,7 +35,7 @@ internal fun DayItem(
     Box(
         modifier = modifier
             .aspectRatio(1f)
-            .noRippleClickable { onClick(day) },
+            .noRippleClickable(onClick),
         contentAlignment = Alignment.Center
     ) {
         when {

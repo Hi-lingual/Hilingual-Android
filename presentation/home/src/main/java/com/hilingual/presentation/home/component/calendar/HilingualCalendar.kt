@@ -24,7 +24,7 @@ import java.time.LocalDate
 import java.time.YearMonth
 
 @Composable
-fun HilingualCalendar(
+internal fun HilingualCalendar(
     modifier: Modifier = Modifier,
     selectedDate: LocalDate?,
     writtenDates: Set<LocalDate>,

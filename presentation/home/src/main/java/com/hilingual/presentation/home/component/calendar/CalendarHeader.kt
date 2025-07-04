@@ -20,19 +20,20 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-fun CalendarHeader(
+internal fun CalendarHeader(
     onDownArrowClick: () -> Unit,
     onLeftArrowClick: () -> Unit,
     onRightArrowClick: () -> Unit,
     modifier: Modifier = Modifier,
     yearMonth: () -> YearMonth,
 ) {
+    val currentYearMonth = yearMonth()
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.background(HilingualTheme.colors.white)
-    ){
+    ) {
         Text(
-            text = "${yearMonth.invoke().year}년 ${yearMonth.invoke().month.getDisplayName(TextStyle.SHORT, Locale.getDefault())}",
+            text = "${currentYearMonth.year}년 ${currentYearMonth.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())}",
             style = HilingualTheme.typography.headB18,
             color = HilingualTheme.colors.black
         )
@@ -62,7 +63,7 @@ fun CalendarHeader(
 @Preview
 @Composable
 private fun CalendarHeaderPreview() {
-    HilingualTheme{
+    HilingualTheme {
         CalendarHeader(
             onDownArrowClick = {},
             onLeftArrowClick = {},
