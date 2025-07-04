@@ -169,7 +169,12 @@ fun HilingualTypography(): HilingualTypography{
         ),
         bodySB16 = TextStyle(
             fontFamily = SuitSemiBold,
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            lineHeight = 1.4.em,
+            lineHeightStyle = LineHeightStyle(
+                alignment = LineHeightStyle.Alignment.Center,
+                trim = LineHeightStyle.Trim.None
+            )
         ),
         bodyM16 = TextStyle(
             fontFamily = SuitMedium,
@@ -222,75 +227,75 @@ fun HilingualTypography(): HilingualTypography{
 
 @Preview(showBackground = true)
 @Composable
-fun HilingualTypographyPreview() {
+private fun HilingualTypographyPreview() {
     HilingualTheme {
         Column {
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.headB20
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.headSB20
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.headB18
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.headM18
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.headB16
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.bodyM20
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.bodyR18
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.bodySB16
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.bodyM16
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.bodyR16
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.bodyB14
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.bodySB14
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.bodyM14
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.bodySB12
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.captionR14
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.captionM12
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.captionR12
             )
         }
