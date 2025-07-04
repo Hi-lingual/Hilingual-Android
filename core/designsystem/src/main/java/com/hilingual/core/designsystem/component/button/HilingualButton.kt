@@ -1,14 +1,13 @@
 package com.hilingual.core.designsystem.component.button
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,7 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import kotlinx.coroutines.delay
 
 @Composable
 fun HilingualButton(
@@ -28,31 +26,29 @@ fun HilingualButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true
 ) {
-    val backgroundColor = if (!enabled) {
-        HilingualTheme.colors.gray300
-    } else {
-        HilingualTheme.colors.black
-    }
-    val textColor = HilingualTheme.colors.white
-    Box(
+
+    Surface(
         modifier = modifier
-            .width(328.dp)
-            .height(58.dp)
-            .background(
-                color = backgroundColor,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .noRippleClickable {
-                if (enabled) onClick()
-            }
-            .padding(vertical = 18.dp, horizontal = 10.dp),
-        contentAlignment = Alignment.Center
+            .fillMaxWidth()
+            .noRippleClickable(
+                enabled = enabled,
+                onClick = onClick
+            ),
+        shape = RoundedCornerShape(8.dp),
+        color = if (enabled) HilingualTheme.colors.black else  HilingualTheme.colors.gray300,
     ) {
-        Text(
-            text = text,
-            color = textColor,
-            style = HilingualTheme.typography.bodySB16
-        )
+        Row (
+            modifier = Modifier
+                .padding(vertical = 18.dp, horizontal = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = text,
+                color = HilingualTheme.colors.white,
+                style = HilingualTheme.typography.bodySB16
+            )
+        }
     }
 }
 
@@ -83,17 +79,13 @@ private fun DisabledButtonPreview() {
 @Composable
 private fun ButtonTogglePreview() {
     HilingualTheme {
-        var isEnabled by remember { mutableStateOf(false) }
-
-        LaunchedEffect(Unit) {
-            delay(2000)
-            isEnabled = true
-        }
+        var isEnabled by remember { mutableStateOf(true) }
 
         HilingualButton(
             text = if (isEnabled) "활성화됨" else "비활성화됨",
             enabled = isEnabled,
-            onClick = {}
+            onClick = { isEnabled = !isEnabled }
         )
     }
 }
+

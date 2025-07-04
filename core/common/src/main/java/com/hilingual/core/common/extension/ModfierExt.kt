@@ -32,12 +32,14 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 inline fun Modifier.noRippleClickable(
+    enabled: Boolean = true,
     crossinline onClick: () -> Unit
 ): Modifier = composed {
     this.clickable(
         indication = null,
         interactionSource = remember { MutableInteractionSource() },
-        onClick = { onClick() }
+        onClick = { onClick() },
+        enabled = enabled
     )
 }
 
