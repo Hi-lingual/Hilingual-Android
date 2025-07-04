@@ -21,7 +21,7 @@ import kotlinx.collections.immutable.toPersistentList
 private const val EXIT_MILLIS = 3000L
 
 @Composable
-fun MainScreen(
+internal fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator()
 ) {
     val context = LocalContext.current

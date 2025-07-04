@@ -22,7 +22,7 @@ internal fun HomeRoute(
 }
 
 @Composable
-fun HomeScreen(
+private fun HomeScreen(
     paddingValues: PaddingValues
 ) {
     Column(

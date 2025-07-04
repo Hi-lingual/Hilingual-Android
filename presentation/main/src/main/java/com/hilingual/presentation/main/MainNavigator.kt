@@ -12,7 +12,7 @@ import com.hilingual.core.navigation.MainTabRoute.Home
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.voca.navigation.navigateToVoca
 
-class MainNavigator(
+internal class MainNavigator(
     val navController: NavHostController,
 ) {
     private val currentDestination: NavDestination?
@@ -51,7 +51,7 @@ class MainNavigator(
         }
     }
 
-    private fun navigateUp() {
+    fun navigateUp() {
         navController.navigateUp()
     }
 

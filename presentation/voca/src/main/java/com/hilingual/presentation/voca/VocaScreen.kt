@@ -22,7 +22,7 @@ internal fun VocaRoute(
 }
 
 @Composable
-fun VocaScreen(
+private fun VocaScreen(
     paddingValues: PaddingValues
 ) {
     Column(
