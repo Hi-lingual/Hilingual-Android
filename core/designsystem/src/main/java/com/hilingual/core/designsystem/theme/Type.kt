@@ -169,7 +169,12 @@ fun HilingualTypography(): HilingualTypography{
         ),
         bodySB16 = TextStyle(
             fontFamily = SuitSemiBold,
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            lineHeight = 1.4.em,
+            lineHeightStyle = LineHeightStyle(
+                alignment = LineHeightStyle.Alignment.Center,
+                trim = LineHeightStyle.Trim.None
+            )
         ),
         bodyM16 = TextStyle(
             fontFamily = SuitMedium,
