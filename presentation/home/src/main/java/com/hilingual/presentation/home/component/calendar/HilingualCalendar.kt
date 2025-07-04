@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,9 +25,12 @@ import java.time.YearMonth
 
 @Composable
 fun HilingualCalendar(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    selectedDate: LocalDate?,
+    writtenDates: Set<LocalDate>,
+    onDateClick: (date: LocalDate) -> Unit,
+    onMonthChanged: (yearMonth: YearMonth) -> Unit
 ) {
-    var selectedDate by remember { mutableStateOf<LocalDate?>(LocalDate.now()) }
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(100) }
     val endMonth = remember { currentMonth.plusMonths(100) }
@@ -40,6 +44,10 @@ fun HilingualCalendar(
         firstDayOfWeek = daysOfWeek.first(),
         outDateStyle = OutDateStyle.EndOfRow
     )
+
+    LaunchedEffect(state.firstVisibleMonth) {
+        onMonthChanged(state.firstVisibleMonth.yearMonth)
+    }
 
     Column(
         modifier = modifier.background(HilingualTheme.colors.white)
@@ -65,23 +73,31 @@ fun HilingualCalendar(
         HorizontalCalendar(
             state = state,
             modifier = Modifier.background(HilingualTheme.colors.white),
-            dayContent = {
+            dayContent = { day ->
                 DayItem(
-                    day = it,
-                    onClick = { day -> selectedDate = day.date },
-                    isSelected = selectedDate == it.date,
-                    isWritten = false // 서버에서 받을 예정
+                    day = day,
+                    onClick = { onDateClick(day.date) },
+                    isSelected = selectedDate == day.date,
+                    isWritten = day.date in writtenDates
                 )
             }
         )
     }
-
 }
 
 @Preview
 @Composable
 private fun HilingualCalendarPreview() {
     HilingualTheme {
-        HilingualCalendar()
+        var selectedDate by remember { mutableStateOf<LocalDate?>(LocalDate.now()) }
+        val writtenDates = remember {
+            setOf(LocalDate.now().minusDays(2), LocalDate.now().plusDays(3))
+        }
+        HilingualCalendar(
+            selectedDate = selectedDate,
+            writtenDates = writtenDates,
+            onDateClick = { selectedDate = it },
+            onMonthChanged = { }
+        )
     }
 }
