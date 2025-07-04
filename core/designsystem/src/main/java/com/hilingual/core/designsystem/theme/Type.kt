@@ -231,71 +231,71 @@ fun HilingualTypographyPreview() {
     HilingualTheme {
         Column {
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.headB20
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.headSB20
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.headB18
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.headM18
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.headB16
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.bodyM20
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.bodyR18
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.bodySB16
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.bodyM16
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.bodyR16
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.bodyB14
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.bodySB14
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.bodyM14
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.bodySB12
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.captionR14
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.captionM12
             )
             Text(
-                "HilingualTheme",
+                text = "HilingualTheme",
                 style = HilingualTheme.typography.captionR12
             )
         }
