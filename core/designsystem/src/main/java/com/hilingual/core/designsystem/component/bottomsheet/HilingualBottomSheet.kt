@@ -17,7 +17,7 @@ fun HilingualBottomSheet(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(),
-    isBackgroundDimmed: Boolean = true,
+    isDimEnabled: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     ModalBottomSheet(
@@ -25,9 +25,9 @@ fun HilingualBottomSheet(
         modifier = modifier,
         sheetState = sheetState,
         containerColor = HilingualTheme.colors.white,
-        scrimColor = if (isBackgroundDimmed) HilingualTheme.colors.dim else Color.Transparent,
+        scrimColor = if (isDimEnabled) HilingualTheme.colors.dim else Color.Transparent,
         shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
-        dragHandle = {}
+        dragHandle = null
     ) {
         content()
     }
