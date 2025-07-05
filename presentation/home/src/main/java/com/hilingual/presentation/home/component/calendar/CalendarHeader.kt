@@ -24,8 +24,8 @@ internal fun CalendarHeader(
     onDownArrowClick: () -> Unit,
     onLeftArrowClick: () -> Unit,
     onRightArrowClick: () -> Unit,
-    modifier: Modifier = Modifier,
     yearMonth: () -> YearMonth,
+    modifier: Modifier = Modifier,
 ) {
     val currentYearMonth = yearMonth()
     Row(

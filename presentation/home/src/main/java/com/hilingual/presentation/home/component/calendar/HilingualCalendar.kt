@@ -25,11 +25,11 @@ import java.time.YearMonth
 
 @Composable
 internal fun HilingualCalendar(
-    modifier: Modifier = Modifier,
     selectedDate: LocalDate?,
     writtenDates: Set<LocalDate>,
     onDateClick: (date: LocalDate) -> Unit,
-    onMonthChanged: (yearMonth: YearMonth) -> Unit
+    onMonthChanged: (yearMonth: YearMonth) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(100) }
@@ -68,11 +68,12 @@ internal fun HilingualCalendar(
             modifier = Modifier.padding(bottom = 12.dp)
         )
 
-        DaysOfWeekTitle(daysOfWeek = daysOfWeek)
-
         HorizontalCalendar(
             state = state,
             modifier = Modifier.background(HilingualTheme.colors.white),
+            monthHeader = {
+                DaysOfWeekTitle(daysOfWeek = daysOfWeek)
+            },
             dayContent = { day ->
                 DayItem(
                     day = day,
