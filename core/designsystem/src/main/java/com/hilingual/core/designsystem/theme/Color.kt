@@ -11,7 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-
+val hilingualBlack = Color(0xFF212121)
 val hilingualOrange = Color(0xFFFF6937)
 val hilingualBlue = Color(0xFF487AFF)
 
@@ -43,6 +43,7 @@ val infoBlue = Color(0xFF007AFF)
 
 @Stable
 class HilingualColors(
+    hilingualBlack: Color,
     hilingualOrange: Color,
     hilingualBlue: Color,
     nounBg: Color,
@@ -69,6 +70,8 @@ class HilingualColors(
     infoBlue: Color
 
 ) {
+    var hilingualBlack by mutableStateOf(hilingualBlack)
+        private set
     var hilingualOrange by mutableStateOf(hilingualOrange)
         private set
     var hilingualBlue by mutableStateOf(hilingualBlue)
@@ -119,6 +122,7 @@ class HilingualColors(
         private set
 
     fun copy(): HilingualColors = HilingualColors(
+        hilingualBlack,
         hilingualOrange,
         hilingualBlue,
         nounBg,
@@ -146,6 +150,7 @@ class HilingualColors(
     )
 
     fun update(other: HilingualColors) {
+        hilingualBlack = other.hilingualBlack
         hilingualOrange = other.hilingualOrange
         hilingualBlue = other.hilingualBlue
         nounBg = other.nounBg
@@ -174,6 +179,7 @@ class HilingualColors(
 }
 
 fun DefaultHilingualColors(
+    HilingualBlack: Color = hilingualBlack,
     HilingualOrange: Color = hilingualOrange,
     HilingualBlue: Color = hilingualBlue,
     NounBg: Color = nounBg,
@@ -199,6 +205,7 @@ fun DefaultHilingualColors(
     AlertRed: Color = alertRed,
     InfoBlue: Color = infoBlue
 ) = HilingualColors(
+    HilingualBlack,
     HilingualOrange,
     HilingualBlue,
     NounBg,
