@@ -58,7 +58,7 @@ internal fun DayItem(
 
         Text(
             text = day.date.dayOfMonth.toString(),
-            style = HilingualTheme.typography.bodySB12,
+            style = HilingualTheme.typography.bodySB14,
             color = textColor
         )
 
