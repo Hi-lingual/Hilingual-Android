@@ -2,7 +2,6 @@ package com.hilingual.presentation.home.component.footer
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -21,7 +20,7 @@ private val DATE_FORMATTER: DateTimeFormatter =
     DateTimeFormatter.ofPattern("M월 d일 EEEE", Locale.KOREAN)
 
 @Composable
-internal fun DateDiaryInfo(
+internal fun DiaryDateInfo(
     selectedDateProvider: () -> LocalDate,
     isWrittenProvider: () -> Boolean,
     modifier: Modifier = Modifier
@@ -49,7 +48,7 @@ internal fun DateDiaryInfo(
     }
 
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
@@ -92,7 +91,7 @@ private fun DateDiaryInfoPreview(
     @PreviewParameter(DateDiaryInfoPreviewProvider::class) state: DateDiaryInfoPreviewState
 ) {
     HilingualTheme {
-        DateDiaryInfo(
+        DiaryDateInfo(
             selectedDateProvider = { state.date },
             isWrittenProvider = { state.isWritten }
         )
