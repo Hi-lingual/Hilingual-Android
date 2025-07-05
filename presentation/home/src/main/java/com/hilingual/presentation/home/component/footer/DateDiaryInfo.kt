@@ -17,9 +17,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-private val DATE_FORMATTER: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("M월 d일 EEEE", Locale.KOREAN)
-
 @Composable
 internal fun DateDiaryInfo(
     selectedDateProvider: () -> LocalDate,
@@ -37,7 +34,7 @@ internal fun DateDiaryInfo(
         if (isWritten) HilingualTheme.colors.hilingualBlue else HilingualTheme.colors.gray300
 
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
@@ -60,6 +57,9 @@ internal fun DateDiaryInfo(
         )
     }
 }
+
+private val DATE_FORMATTER: DateTimeFormatter =
+    DateTimeFormatter.ofPattern("M월 d일 EEEE", Locale.KOREAN)
 
 private class IsWrittenPreviewParameterProvider : PreviewParameterProvider<Boolean> {
     override val values: Sequence<Boolean>
