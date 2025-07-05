@@ -17,6 +17,9 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+private val DATE_FORMATTER: DateTimeFormatter =
+    DateTimeFormatter.ofPattern("M월 d일 EEEE", Locale.KOREAN)
+
 @Composable
 internal fun DateDiaryInfo(
     selectedDateProvider: () -> LocalDate,
@@ -29,12 +32,24 @@ internal fun DateDiaryInfo(
     val formattedDate = remember(selectedDate) {
         selectedDate.format(DATE_FORMATTER)
     }
-    val diaryStatusText = if (isWritten) "작성 완료" else "미작성"
-    val diaryStatusColor =
-        if (isWritten) HilingualTheme.colors.hilingualBlue else HilingualTheme.colors.gray300
+
+    val isFutureDate = remember(selectedDate) {
+        LocalDate.now().isBefore(selectedDate)
+    }
+
+    val diaryStatusText = when {
+        isFutureDate -> "작성 불가"
+        isWritten -> "작성 완료"
+        else -> "미작성"
+    }
+    val diaryStatusColor = when {
+        isFutureDate -> HilingualTheme.colors.gray300
+        isWritten -> HilingualTheme.colors.hilingualBlue
+        else -> HilingualTheme.colors.gray300
+    }
 
     Row(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
@@ -58,23 +73,28 @@ internal fun DateDiaryInfo(
     }
 }
 
-private val DATE_FORMATTER: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("M월 d일 EEEE", Locale.KOREAN)
+private data class DateDiaryInfoPreviewState(
+    val date: LocalDate,
+    val isWritten: Boolean
+)
 
-private class IsWrittenPreviewParameterProvider : PreviewParameterProvider<Boolean> {
-    override val values: Sequence<Boolean>
-        get() = sequenceOf(true, false)
+private class DateDiaryInfoPreviewProvider : PreviewParameterProvider<DateDiaryInfoPreviewState> {
+    override val values = sequenceOf(
+        DateDiaryInfoPreviewState(LocalDate.now(), true), // 작성 완료
+        DateDiaryInfoPreviewState(LocalDate.now(), false), // 미작성
+        DateDiaryInfoPreviewState(LocalDate.now().plusDays(1), false) // 작성 불가 (미래)
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun DateDiaryInfoPreview(
-    @PreviewParameter(IsWrittenPreviewParameterProvider::class) isWritten: Boolean
+    @PreviewParameter(DateDiaryInfoPreviewProvider::class) state: DateDiaryInfoPreviewState
 ) {
     HilingualTheme {
         DateDiaryInfo(
-            selectedDateProvider = { LocalDate.now() },
-            isWrittenProvider = { isWritten }
+            selectedDateProvider = { state.date },
+            isWrittenProvider = { state.isWritten }
         )
     }
 }
