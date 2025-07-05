@@ -29,7 +29,7 @@ internal fun DayItem(
         isSelected -> HilingualTheme.colors.hilingualBlue
         isWritten -> HilingualTheme.colors.white
         day.position == DayPosition.MonthDate -> HilingualTheme.colors.black
-        else -> HilingualTheme.colors.gray400
+        else -> HilingualTheme.colors.gray200
     }
 
     Box(
