@@ -35,7 +35,7 @@ internal fun DayItem(
     Box(
         modifier = modifier
             .aspectRatio(1f)
-            .noRippleClickable(onClick),
+            .noRippleClickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         when {

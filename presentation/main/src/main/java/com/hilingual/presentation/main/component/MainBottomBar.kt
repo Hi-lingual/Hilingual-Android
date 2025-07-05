@@ -92,7 +92,7 @@ private fun RowScope.MainBottomBarItem(
             modifier = Modifier.size(24.dp),
             contentDescription = tab.label,
             tint = if (selected) {
-                HilingualTheme.colors.black
+                HilingualTheme.colors.hilingualBlack
             } else {
                 HilingualTheme.colors.gray200
             }
@@ -100,7 +100,7 @@ private fun RowScope.MainBottomBarItem(
         Text(
             text = tab.label,
             color = if (selected) {
-                HilingualTheme.colors.black
+                HilingualTheme.colors.hilingualBlack
             } else {
                 HilingualTheme.colors.gray200
             },
