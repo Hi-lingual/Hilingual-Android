@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextOverflow
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.home.R
@@ -61,9 +62,13 @@ fun TodayTopic(
         }
 
         Text(
-            text = if (isKo) koTopic else enTopic,
+            text = (if (isKo) koTopic else enTopic).let {
+                if (it.length > 70) it.take(70) else it
+            },
             style = HilingualTheme.typography.bodySB16,
-            color = HilingualTheme.colors.gray700
+            color = HilingualTheme.colors.gray700,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
