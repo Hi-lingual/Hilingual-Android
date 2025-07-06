@@ -18,6 +18,7 @@ fun HilingualBasicBottomSheet(
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(),
     isDimEnabled: Boolean = true,
+    dragHandle: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     ModalBottomSheet(
@@ -27,7 +28,7 @@ fun HilingualBasicBottomSheet(
         containerColor = HilingualTheme.colors.white,
         scrimColor = if (isDimEnabled) HilingualTheme.colors.dim else Color.Transparent,
         shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
-        dragHandle = null
+        dragHandle = dragHandle
     ) {
         content()
     }
