@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.datapicker.HilingualYearMonthPicker
-import com.hilingual.core.designsystem.component.datapicker.rememberPickerState
 import java.time.YearMonth
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,8 +24,8 @@ fun HilingualYearMonthPickerBottomSheet(
     initialYearMonth: YearMonth = YearMonth.now(),
     onDateSelected: (YearMonth) -> Unit,
 ) {
-    val yearState = rememberPickerState(initialItem = initialYearMonth.year)
-    val monthState = rememberPickerState(initialItem = initialYearMonth.monthValue)
+    var selectedYear by remember { mutableIntStateOf(initialYearMonth.year) }
+    var selectedMonth by remember { mutableIntStateOf(initialYearMonth.monthValue) }
 
     HilingualBasicBottomSheet(
         onDismiss = onDismiss,
@@ -32,15 +35,18 @@ fun HilingualYearMonthPickerBottomSheet(
             modifier = Modifier.padding(16.dp)
         ) {
             HilingualYearMonthPicker(
-                startLocalDate = initialYearMonth,
-                yearPickerState = yearState,
-                monthPickerState = monthState
+                selectedYear = selectedYear,
+                selectedMonth = selectedMonth,
+                onYearSelected = { selectedYear = it },
+                onMonthSelected = { selectedMonth = it },
             )
+
             Spacer(Modifier.height(19.dp))
+
             HilingualButton(
                 text = "적용하기",
                 onClick = {
-                    onDateSelected(YearMonth.of(yearState.selectedItem, monthState.selectedItem))
+                    onDateSelected(YearMonth.of(selectedYear, selectedMonth))
                     onDismiss()
                 }
             )

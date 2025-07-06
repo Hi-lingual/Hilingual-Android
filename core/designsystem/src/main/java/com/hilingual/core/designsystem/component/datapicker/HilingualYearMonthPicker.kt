@@ -9,27 +9,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import java.time.YearMonth
 
-private val CURRENT_YEAR_MONTH = YearMonth.now()
 private val YEAR_RANGE = (1000..9999).map { "${it}년" }.toImmutableList()
 private val MONTH_RANGE = (1..12).map { "${it}월" }.toImmutableList()
 
 @Composable
 fun HilingualYearMonthPicker(
+    selectedYear: Int,
+    selectedMonth: Int,
+    onYearSelected: (Int) -> Unit,
+    onMonthSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    yearPickerState: PickerState<Int> = rememberPickerState(CURRENT_YEAR_MONTH.year),
-    monthPickerState: PickerState<Int> = rememberPickerState(CURRENT_YEAR_MONTH.monthValue),
-    startLocalDate: YearMonth = CURRENT_YEAR_MONTH,
     yearItems: ImmutableList<String> = YEAR_RANGE,
     monthItems: ImmutableList<String> = MONTH_RANGE,
     visibleItemsCount: Int = 3,
@@ -42,19 +39,8 @@ fun HilingualYearMonthPicker(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-
-            val yearStartIndex = remember {
-                val matchYear = yearItems.find {
-                    it.contains(startLocalDate.year.toString())
-                }
-                yearItems.indexOf(matchYear)
-            }
-            val monthStartIndex = remember {
-                val matchMonth = yearItems.find {
-                    it.contains(startLocalDate.monthValue.toString())
-                }
-                monthItems.indexOf(matchMonth)
-            }
+            val yearStartIndex = yearItems.indexOf("${selectedYear}년")
+            val monthStartIndex = monthItems.indexOf("${selectedMonth}월")
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -64,19 +50,24 @@ fun HilingualYearMonthPicker(
                 ),
             ) {
                 HilingualBasicPicker(
-                    state = yearPickerState,
-                    modifier = Modifier.width(89.dp),
                     items = yearItems,
                     startIndex = yearStartIndex,
+                    onSelectedItemChanged = { selected ->
+                        onYearSelected(selected.filter { it.isDigit() }.toInt())
+                    },
+                    modifier = Modifier.width(89.dp),
                     itemPadding = itemPadding,
                 )
+
                 HilingualBasicPicker(
-                    state = monthPickerState,
                     items = monthItems,
                     startIndex = monthStartIndex,
-                    visibleItemsCount = visibleItemsCount,
+                    onSelectedItemChanged = { selected ->
+                        onMonthSelected(selected.filter { it.isDigit() }.toInt())
+                    },
                     modifier = Modifier.width(54.dp),
                     itemPadding = itemPadding,
+                    visibleItemsCount = visibleItemsCount
                 )
             }
         }

@@ -13,10 +13,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,20 +27,19 @@ import com.hilingual.core.designsystem.theme.black
 import com.hilingual.core.designsystem.theme.gray200
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.mapNotNull
 
 @Composable
-fun <T> HilingualBasicPicker(
+fun HilingualBasicPicker(
     items: ImmutableList<String>,
+    startIndex: Int,
+    onSelectedItemChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
-    state: PickerState<T>,
-    startIndex: Int = 0,
     visibleItemsCount: Int = 3,
     itemPadding: PaddingValues = PaddingValues(8.dp),
     isInfinity: Boolean = true
 ) {
     val density = LocalDensity.current
-    val visibleItemsMiddle = remember { visibleItemsCount / 2 }
+    val visibleItemsMiddle = visibleItemsCount / 2
 
     val adjustedItems = if (!isInfinity) {
         listOf(null) + items + listOf(null)
@@ -51,19 +47,12 @@ fun <T> HilingualBasicPicker(
         items
     }
 
-    val listScrollCount = if (isInfinity) {
-        Int.MAX_VALUE
+    val listScrollCount = if (isInfinity) Int.MAX_VALUE else adjustedItems.size
+    val listScrollMiddle = listScrollCount / 2
+    val listStartIndex = if (isInfinity) {
+        listScrollMiddle - listScrollMiddle % adjustedItems.size - visibleItemsMiddle + startIndex
     } else {
-        adjustedItems.size
-    }
-
-    val listScrollMiddle = remember { listScrollCount / 2 }
-    val listStartIndex = remember {
-        if (isInfinity) {
-            listScrollMiddle - listScrollMiddle % adjustedItems.size - visibleItemsMiddle + startIndex
-        } else {
-            startIndex + 1
-        }
+        startIndex + 1
     }
 
     fun getItem(index: Int) = adjustedItems[index % adjustedItems.size]
@@ -85,12 +74,16 @@ fun <T> HilingualBasicPicker(
         )
     }
 
+    // 스크롤 멈췄을 때 현재 아이템 계산
     LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemIndex }
-            .mapNotNull { index -> getItem(index + visibleItemsMiddle) }
             .distinctUntilChanged()
-            .collect {
-                state.selectedItem = it as T
+            .collect { index ->
+                val centerIndex = index + visibleItemsMiddle
+                val selectedItem = getItem(centerIndex)
+                if (selectedItem != null) {
+                    onSelectedItemChanged(selectedItem)
+                }
             }
     }
 
@@ -107,11 +100,9 @@ fun <T> HilingualBasicPicker(
         ) {
             items(
                 listScrollCount,
-                key = { it },
+                key = { it }
             ) { index ->
-                val currentItemText by remember {
-                    mutableStateOf(if (getItem(index) == null) "" else getItem(index).toString())
-                }
+                val currentItemText = getItem(index)?.toString().orEmpty()
 
                 Text(
                     text = currentItemText,
@@ -138,7 +129,7 @@ fun <T> HilingualBasicPicker(
                 thickness = 1.dp,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
+                    .align(Alignment.TopCenter)
             )
 
             HorizontalDivider(
@@ -150,16 +141,4 @@ fun <T> HilingualBasicPicker(
             )
         }
     }
-}
-
-@Composable
-fun <T> rememberPickerState(initialItem: T) = remember { PickerState(initialItem) }
-
-class PickerState<String>(
-    initialItem: String
-) {
-    /**
-     * The currently selected item.
-     */
-    var selectedItem by mutableStateOf(initialItem)
 }
