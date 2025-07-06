@@ -41,9 +41,9 @@ internal fun DiaryPreviewCard(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         VerticalDivider(
-            modifier = Modifier.fillMaxHeight(),
+            modifier = Modifier.fillMaxHeight().heightIn(min = 74.dp),
             thickness = 3.dp,
-            color = HilingualTheme.colors.black
+            color = HilingualTheme.colors.hilingualBlack
         )
 
         Text(
@@ -58,11 +58,10 @@ internal fun DiaryPreviewCard(
         if (imageUrl != null) {
             NetworkImage(
                 imageUrl = imageUrl,
-                shape = RectangleShape,
+                shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
                     .heightIn(max = 74.dp)
                     .aspectRatio(1f)
-                    .clip(RoundedCornerShape(8.dp))
             )
         }
     }
@@ -72,9 +71,7 @@ internal fun DiaryPreviewCard(
 @Composable
 private fun DiaryPreviewCardPreview() {
     HilingualTheme {
-        val text ="This is a sample diary text that will be displayed" +
-                " in the preview card. It can be quite long and should be truncated" +
-                " if it exceeds the maximum number of lines."
+        val text ="This is a sample diary text that will be displayed"
         Column(
             modifier = Modifier.padding(4.dp),
         ) {
@@ -90,6 +87,5 @@ private fun DiaryPreviewCardPreview() {
                 onClick = {}
             )
         }
-
     }
 }

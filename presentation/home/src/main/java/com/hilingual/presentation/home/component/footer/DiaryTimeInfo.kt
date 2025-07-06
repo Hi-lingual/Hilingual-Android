@@ -32,7 +32,7 @@ internal fun DateTimeInfo(
         Text(
             text = writtenTime ?: "",
             style = HilingualTheme.typography.bodyM14,
-            color = HilingualTheme.colors.gray400,
+            color = HilingualTheme.colors.gray300,
             modifier = modifier
         )
     } else if (remainingTime != null) {
@@ -41,18 +41,14 @@ internal fun DateTimeInfo(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_fire_16),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_time_16),
                 contentDescription = "남은 시간",
                 tint = Color.Unspecified
             )
             Spacer(Modifier.width(4.dp))
 
             val annotatedString = buildAnnotatedString {
-                val (timeValue, timeUnit) = when {
-                    remainingTime >= 60 -> (remainingTime / 60) to "시간"
-                    remainingTime >= 1 -> remainingTime to "분"
-                    else -> 1 to "분"
-                }
+                val (timeValue, timeUnit) = calculateRemainingTime(remainingTime)
 
                 withStyle(style = SpanStyle(color = HilingualTheme.colors.hilingualOrange)) {
                     append(timeValue.toString())
@@ -68,6 +64,13 @@ internal fun DateTimeInfo(
         }
     }
 }
+
+private fun calculateRemainingTime(remainingTime: Int): Pair<Int, String> =
+    when {
+        remainingTime >= 60 -> (remainingTime / 60) to "시간"
+        remainingTime >= 1 -> remainingTime to "분"
+        else -> 1 to "분"
+    }
 
 private data class DateTimeInfoPreviewState(
     val isWritten: Boolean,

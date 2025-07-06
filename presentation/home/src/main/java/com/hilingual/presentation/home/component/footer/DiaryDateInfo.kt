@@ -38,7 +38,7 @@ internal fun DiaryDateInfo(
 
     val diaryStatusText = when {
         isFutureDate -> "작성 불가"
-        isWritten -> "작성 완료"
+        isWritten -> "작성완료"
         else -> "미작성"
     }
     val diaryStatusColor = when {
