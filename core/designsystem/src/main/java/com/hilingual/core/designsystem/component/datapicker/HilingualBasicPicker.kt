@@ -14,7 +14,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,6 +61,8 @@ fun HilingualBasicPicker(
         startIndex + 1
     }
 
+    var currentCenterIndex by remember(visibleItemsMiddle) { mutableIntStateOf(listStartIndex + visibleItemsMiddle) }
+
     fun getItem(index: Int) = adjustedItems[index % adjustedItems.size]
 
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = listStartIndex)
@@ -86,13 +91,13 @@ fun HilingualBasicPicker(
         }
             .distinctUntilChanged()
             .collect { (index, offset) ->
-                val centerIndex = calculateCenterIndex(
+                currentCenterIndex = calculateCenterIndex(
                     firstVisibleItemIndex = index,
                     firstVisibleItemScrollOffset = offset,
                     itemHeightPx = itemHeightPx,
                     visibleItemsMiddle = visibleItemsMiddle
                 )
-                val selectedItem = getItem(centerIndex)
+                val selectedItem = getItem(currentCenterIndex)
                 if (selectedItem != null) {
                     onSelectedItemChanged(selectedItem)
                 }
@@ -116,11 +121,17 @@ fun HilingualBasicPicker(
                 key = { it }
             ) { index ->
                 val currentItemText = getItem(index)?.toString().orEmpty()
+                val isSelected = index == currentCenterIndex
+
+                val textColor = remember (isSelected) {
+                    if (isSelected) black
+                    else gray200
+                }
 
                 Text(
                     text = currentItemText,
                     maxLines = 1,
-                    color = HilingualTheme.colors.black,
+                    color = textColor,
                     style = HilingualTheme.typography.headSB20,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
