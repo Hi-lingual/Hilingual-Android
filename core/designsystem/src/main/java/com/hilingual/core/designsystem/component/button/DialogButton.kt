@@ -1,4 +1,4 @@
-package com.hilingual.core.designsystem.component.dialog
+package com.hilingual.core.designsystem.component.button
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,8 +17,8 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
 fun DialogButton(
     text: String,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     isFilled: Boolean = true,
 ) {
     Row(
