@@ -1,6 +1,7 @@
 package com.hilingual.core.designsystem.component.datapicker
 
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.fadingEdge
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -34,8 +36,9 @@ fun HilingualBasicPicker(
     startIndex: Int,
     onSelectedItemChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
+    itemContentPadding: PaddingValues,
+    itemSpacing: Dp,
     visibleItemsCount: Int = 3,
-    itemPadding: PaddingValues = PaddingValues(8.dp),
     isInfinity: Boolean = true
 ) {
     val density = LocalDensity.current
@@ -62,8 +65,8 @@ fun HilingualBasicPicker(
 
     val itemHeightDp = with(density) {
         HilingualTheme.typography.bodySB14.fontSize.toDp() +
-                itemPadding.calculateTopPadding() +
-                itemPadding.calculateBottomPadding()
+                itemContentPadding.calculateTopPadding() +
+                itemContentPadding.calculateBottomPadding()
     }
 
     val itemHeightPx = with(density) { itemHeightDp.roundToPx() }
@@ -101,10 +104,11 @@ fun HilingualBasicPicker(
             state = listState,
             flingBehavior = flingBehavior,
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(itemSpacing),
             modifier = Modifier
                 .align(Alignment.Center)
                 .wrapContentSize()
-                .height(itemHeightDp * visibleItemsCount)
+                .height(itemHeightDp * visibleItemsCount + itemSpacing * (visibleItemsCount - 1))
                 .fadingEdge(fadingEdgeGradient)
         ) {
             items(

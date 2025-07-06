@@ -30,7 +30,8 @@ fun HilingualYearMonthPicker(
     yearItems: ImmutableList<String> = YEAR_RANGE,
     monthItems: ImmutableList<String> = MONTH_RANGE,
     visibleItemsCount: Int = 3,
-    itemPadding: PaddingValues = PaddingValues(10.dp),
+    itemSpacing: Dp = 10.dp,
+    itemContentPadding: PaddingValues = PaddingValues(vertical = 16.dp, horizontal = 12.dp),
     spacingBetweenPickers: Dp = 44.dp,
 ) {
     Surface(modifier = modifier.background(HilingualTheme.colors.white)) {
@@ -56,7 +57,9 @@ fun HilingualYearMonthPicker(
                         onYearSelected(selected.filter { it.isDigit() }.toInt())
                     },
                     modifier = Modifier.width(89.dp),
-                    itemPadding = itemPadding,
+                    itemContentPadding = itemContentPadding,
+                    itemSpacing = itemSpacing,
+                    visibleItemsCount = visibleItemsCount
                 )
 
                 HilingualBasicPicker(
@@ -66,7 +69,8 @@ fun HilingualYearMonthPicker(
                         onMonthSelected(selected.filter { it.isDigit() }.toInt())
                     },
                     modifier = Modifier.width(54.dp),
-                    itemPadding = itemPadding,
+                    itemContentPadding = itemContentPadding,
+                    itemSpacing = itemSpacing,
                     visibleItemsCount = visibleItemsCount
                 )
             }
