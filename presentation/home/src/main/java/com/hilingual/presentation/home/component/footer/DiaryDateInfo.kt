@@ -79,10 +79,10 @@ private data class DateDiaryInfoPreviewState(
 
 private class DateDiaryInfoPreviewProvider : PreviewParameterProvider<DateDiaryInfoPreviewState> {
     override val values = sequenceOf(
-        DateDiaryInfoPreviewState(LocalDate.now(), true), // 작성 완료
-        DateDiaryInfoPreviewState(LocalDate.now(), false), // 미작성
-        DateDiaryInfoPreviewState(LocalDate.now().plusDays(1), false), // 작성 불가 (미래)
-        DateDiaryInfoPreviewState(LocalDate.now().minusDays(1), false) // 작성 불가 (미래)
+        DateDiaryInfoPreviewState(LocalDate.now(), true),
+        DateDiaryInfoPreviewState(LocalDate.now(), false),
+        DateDiaryInfoPreviewState(LocalDate.now().plusDays(1), false),
+        DateDiaryInfoPreviewState(LocalDate.now().minusDays(1), false)
     )
 }
 
