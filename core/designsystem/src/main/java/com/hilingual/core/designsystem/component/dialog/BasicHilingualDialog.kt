@@ -16,11 +16,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-fun HilingualDialog(
+fun BasicHilingualDialog(
     title: String,
     description: String,
     onDismiss: () -> Unit,
@@ -58,111 +57,11 @@ fun HilingualDialog(
     }
 }
 
-@Composable
-fun OneButtonDialog(
-    title: String,
-    description: String,
-    confirmText: String,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
-    properties: DialogProperties = DialogProperties()
-) {
-    HilingualDialog(
-        title = title,
-        description = description,
-        onDismiss = onDismiss,
-        modifier = modifier,
-        properties = properties
-    ) {
-        DialogButton(
-            text = confirmText,
-            onClick = onConfirm,
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
-}
-
-@Composable
-fun TwoButtonDialog(
-    title: String,
-    description: String,
-    cancelText: String,
-    confirmText: String,
-    onCancel: () -> Unit,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
-    properties: DialogProperties = DialogProperties()
-) {
-    HilingualDialog(
-        title = title,
-        description = description,
-        onDismiss = onDismiss,
-        modifier = modifier,
-        properties = properties
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(13.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 15.dp)
-        ) {
-            DialogButton(
-                text = cancelText,
-                onClick = onCancel,
-                isFilled = false,
-                modifier = Modifier.weight(1f)
-            )
-            DialogButton(
-                text = confirmText,
-                onClick = onConfirm,
-                isFilled = true,
-                modifier = Modifier.weight(1f)
-            )
-        }
-    }
-
-}
-
-@Composable
-private fun DialogButton(
-    text: String,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-    isFilled: Boolean = true,
-) {
-    Row(
-        modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
-            .background(
-                color = if (isFilled)
-                    HilingualTheme.colors.hilingualOrange
-                else
-                    HilingualTheme.colors.gray100
-            )
-            .padding(vertical = 14.dp)
-            .noRippleClickable(onClick = onClick),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = text,
-            style = HilingualTheme.typography.bodySB16,
-            color = if (isFilled)
-                HilingualTheme.colors.white
-            else
-                HilingualTheme.colors.gray400
-        )
-    }
-}
-
-
 @Preview
 @Composable
 private fun HilingualDialogPreview() {
     HilingualTheme {
-        HilingualDialog(
+        BasicHilingualDialog(
             title = "AI 피드백을 신고하시겠어요?",
             description = "신고된 AI 피드백은 확인 후 서비스의 운영원칙...",
             onDismiss = {}
@@ -206,35 +105,5 @@ private fun HilingualDialogPreview() {
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun OneButtonDialogPreview() {
-    HilingualTheme {
-        OneButtonDialog(
-            title = "회원 탈퇴하시겠어요?",
-            description = "탈퇴 시 모든 정보가 삭제되며 복구되지 않아요.",
-            confirmText = "확인",
-            onConfirm = {},
-            onDismiss = {}
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun TwoButtonDialogPreview() {
-    HilingualTheme {
-        TwoButtonDialog(
-            title = "AI 피드백을 신고하시겠어요?",
-            description = "신고된 AI 피드백은 확인 후 서비스 운영원칙...",
-            cancelText = "취소",
-            confirmText = "확인",
-            onCancel = {},
-            onConfirm = {},
-            onDismiss = {}
-        )
     }
 }
