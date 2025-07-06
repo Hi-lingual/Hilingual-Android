@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,46 +33,46 @@ fun HilingualYearMonthPicker(
     itemContentPadding: PaddingValues = PaddingValues(vertical = 16.dp, horizontal = 12.dp),
     spacingBetweenPickers: Dp = 44.dp,
 ) {
-    Surface(modifier = modifier.background(HilingualTheme.colors.white)) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+            .fillMaxWidth()
+            .background(HilingualTheme.colors.white)
+    ) {
+        val yearStartIndex = yearItems.indexOf("${selectedYear}년")
+        val monthStartIndex = monthItems.indexOf("${selectedMonth}월")
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(
+                spacingBetweenPickers,
+                Alignment.CenterHorizontally
+            ),
         ) {
-            val yearStartIndex = yearItems.indexOf("${selectedYear}년")
-            val monthStartIndex = monthItems.indexOf("${selectedMonth}월")
+            HilingualBasicPicker(
+                items = yearItems,
+                startIndex = yearStartIndex,
+                onSelectedItemChanged = { selected ->
+                    onYearSelected(selected.filter { it.isDigit() }.toInt())
+                },
+                modifier = Modifier.width(89.dp),
+                itemContentPadding = itemContentPadding,
+                itemSpacing = itemSpacing,
+                visibleItemsCount = visibleItemsCount
+            )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(
-                    spacingBetweenPickers,
-                    Alignment.CenterHorizontally
-                ),
-            ) {
-                HilingualBasicPicker(
-                    items = yearItems,
-                    startIndex = yearStartIndex,
-                    onSelectedItemChanged = { selected ->
-                        onYearSelected(selected.filter { it.isDigit() }.toInt())
-                    },
-                    modifier = Modifier.width(89.dp),
-                    itemContentPadding = itemContentPadding,
-                    itemSpacing = itemSpacing,
-                    visibleItemsCount = visibleItemsCount
-                )
-
-                HilingualBasicPicker(
-                    items = monthItems,
-                    startIndex = monthStartIndex,
-                    onSelectedItemChanged = { selected ->
-                        onMonthSelected(selected.filter { it.isDigit() }.toInt())
-                    },
-                    modifier = Modifier.width(54.dp),
-                    itemContentPadding = itemContentPadding,
-                    itemSpacing = itemSpacing,
-                    visibleItemsCount = visibleItemsCount
-                )
-            }
+            HilingualBasicPicker(
+                items = monthItems,
+                startIndex = monthStartIndex,
+                onSelectedItemChanged = { selected ->
+                    onMonthSelected(selected.filter { it.isDigit() }.toInt())
+                },
+                modifier = Modifier.width(54.dp),
+                itemContentPadding = itemContentPadding,
+                itemSpacing = itemSpacing,
+                visibleItemsCount = visibleItemsCount
+            )
         }
     }
 }
