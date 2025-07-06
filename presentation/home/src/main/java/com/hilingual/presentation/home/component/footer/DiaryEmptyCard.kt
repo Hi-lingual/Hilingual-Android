@@ -33,7 +33,7 @@ enum class DiaryEmptyCardType(
 }
 
 @Composable
-fun DiaryEmptyCard(
+internal fun DiaryEmptyCard(
     type: DiaryEmptyCardType,
     modifier: Modifier = Modifier
 ) {

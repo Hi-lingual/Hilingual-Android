@@ -26,7 +26,7 @@ import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-fun DiaryPreviewCard(
+internal fun DiaryPreviewCard(
     diaryText: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,

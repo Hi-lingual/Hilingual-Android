@@ -22,7 +22,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.home.R
 
 @Composable
-fun DateTimeInfo(
+internal fun DateTimeInfo(
     isWritten: Boolean,
     writtenTime: String?,
     remainingTime: Int?,

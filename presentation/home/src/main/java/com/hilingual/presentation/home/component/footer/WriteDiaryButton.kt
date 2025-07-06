@@ -26,7 +26,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.home.R
 
 @Composable
-fun WriteDiaryButton(
+internal fun WriteDiaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
