@@ -60,11 +60,13 @@ fun HilingualBasicPicker(
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = listStartIndex)
     val flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
 
-    val itemHeight = with(density) {
+    val itemHeightDp = with(density) {
         HilingualTheme.typography.bodySB14.fontSize.toDp() +
                 itemPadding.calculateTopPadding() +
                 itemPadding.calculateBottomPadding()
     }
+
+    val itemHeightPx = with(density) { itemHeightDp.roundToPx() }
 
     val fadingEdgeGradient = remember {
         Brush.verticalGradient(
@@ -74,12 +76,19 @@ fun HilingualBasicPicker(
         )
     }
 
-    // 스크롤 멈췄을 때 현재 아이템 계산
+    // 중앙 아이템 변경 감지
     LaunchedEffect(listState) {
-        snapshotFlow { listState.firstVisibleItemIndex }
+        snapshotFlow {
+            listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
+        }
             .distinctUntilChanged()
-            .collect { index ->
-                val centerIndex = index + visibleItemsMiddle
+            .collect { (index, offset) ->
+                val centerIndex = calculateCenterIndex(
+                    firstVisibleItemIndex = index,
+                    firstVisibleItemScrollOffset = offset,
+                    itemHeightPx = itemHeightPx,
+                    visibleItemsMiddle = visibleItemsMiddle
+                )
                 val selectedItem = getItem(centerIndex)
                 if (selectedItem != null) {
                     onSelectedItemChanged(selectedItem)
@@ -95,7 +104,7 @@ fun HilingualBasicPicker(
             modifier = Modifier
                 .align(Alignment.Center)
                 .wrapContentSize()
-                .height(itemHeight * visibleItemsCount)
+                .height(itemHeightDp * visibleItemsCount)
                 .fadingEdge(fadingEdgeGradient)
         ) {
             items(
@@ -111,18 +120,19 @@ fun HilingualBasicPicker(
                     style = HilingualTheme.typography.headSB20,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .height(itemHeight)
+                        .height(itemHeightDp)
                         .wrapContentHeight(align = Alignment.CenterVertically)
                         .fillMaxWidth()
                 )
             }
         }
 
+        // 중앙 가이드 라인
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
                 .fillMaxWidth()
-                .height(itemHeight)
+                .height(itemHeightDp)
         ) {
             HorizontalDivider(
                 color = HilingualTheme.colors.black,
@@ -141,4 +151,14 @@ fun HilingualBasicPicker(
             )
         }
     }
+}
+
+fun calculateCenterIndex(
+    firstVisibleItemIndex: Int,
+    firstVisibleItemScrollOffset: Int,
+    itemHeightPx: Int,
+    visibleItemsMiddle: Int
+): Int {
+    val correction = if (firstVisibleItemScrollOffset > itemHeightPx / 2) 1 else 0
+    return firstVisibleItemIndex + visibleItemsMiddle + correction
 }
