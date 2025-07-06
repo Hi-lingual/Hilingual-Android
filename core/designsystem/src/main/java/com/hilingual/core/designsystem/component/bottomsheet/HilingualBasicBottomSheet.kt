@@ -13,7 +13,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HilingualBottomSheet(
+fun HilingualBasicBottomSheet(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(),
