@@ -15,14 +15,14 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import java.time.YearMonth
 
 private val YEAR_RANGE = (1000..9999).map { "${it}년" }.toImmutableList()
 private val MONTH_RANGE = (1..12).map { "${it}월" }.toImmutableList()
 
 @Composable
 fun HilingualYearMonthPicker(
-    selectedYear: Int,
-    selectedMonth: Int,
+    initialYearMonth: YearMonth,
     onYearSelected: (Int) -> Unit,
     onMonthSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -40,8 +40,8 @@ fun HilingualYearMonthPicker(
             .fillMaxWidth()
             .background(HilingualTheme.colors.white)
     ) {
-        val yearStartIndex = yearItems.indexOf("${selectedYear}년")
-        val monthStartIndex = monthItems.indexOf("${selectedMonth}월")
+        val yearStartIndex = yearItems.indexOf("${initialYearMonth.year}년")
+        val monthStartIndex = monthItems.indexOf("${initialYearMonth.monthValue}월")
 
         Row(
             modifier = Modifier.fillMaxWidth(),

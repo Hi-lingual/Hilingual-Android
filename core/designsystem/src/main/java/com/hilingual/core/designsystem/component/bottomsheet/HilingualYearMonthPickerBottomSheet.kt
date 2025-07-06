@@ -35,8 +35,7 @@ fun HilingualYearMonthPickerBottomSheet(
             modifier = Modifier.padding(16.dp)
         ) {
             HilingualYearMonthPicker(
-                selectedYear = selectedYear,
-                selectedMonth = selectedMonth,
+                initialYearMonth = initialYearMonth,
                 onYearSelected = { selectedYear = it },
                 onMonthSelected = { selectedMonth = it },
             )
