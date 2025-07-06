@@ -88,6 +88,6 @@ Hi-lingual
 | 카테고리 | 문서 링크 |
 |:---|:---|
 | **기술 스택 컨벤션** | [Notion](https://seemly-cupcake-7b7.notion.site/216a178ee9bd8009b50ac5b8e8b285d7?source=copy_link) |
-| **깃/브랜치 컨벤션** | [Notion](https://seemly-cupcake-7b7.notion.site/216a178ee9bd8009b50ac5b8e8b285d7?source=copy_link) |
+| **깃/브랜치 컨벤션** | [Notion](https://seemly-cupcake-7b7.notion.site/216a178ee9bd80f7a68defad28a7e071?source=copy_link) |
 | **코드 컨벤션** | [Notion](https://seemly-cupcake-7b7.notion.site/216a178ee9bd80e4a706ce34866666f3?source=copy_link) |
 | **패키지 컨벤션** | [Notion](https://seemly-cupcake-7b7.notion.site/216a178ee9bd80289994e9b31dae8274?source=copy_link) |
