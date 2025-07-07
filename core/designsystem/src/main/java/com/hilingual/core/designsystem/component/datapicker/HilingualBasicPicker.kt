@@ -85,7 +85,7 @@ fun HilingualBasicPicker(
     }
 
     // 중앙 아이템 변경 감지
-    LaunchedEffect(listState) {
+    LaunchedEffect(Unit) {
         snapshotFlow {
             listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
         }
@@ -168,7 +168,7 @@ fun HilingualBasicPicker(
     }
 }
 
-fun calculateCenterIndex(
+private fun calculateCenterIndex(
     firstVisibleItemIndex: Int,
     firstVisibleItemScrollOffset: Int,
     itemHeightPx: Int,
