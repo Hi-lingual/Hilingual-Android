@@ -103,7 +103,7 @@ private fun HomeScreen(
     val today = remember { LocalDate.now() }
     val isWritten = remember(uiState.writtenDates, date) { uiState.writtenDates.contains(date) }
     val isFuture = remember(date, today) { date.isAfter(today) }
-    val isWritable = remember(isFuture, date, today) { !isFuture && date.isAfter(today.minusDays(3)) }
+    val isWritable = remember(isFuture, date, today) { !isFuture && date.isAfter(today.minusDays(2)) }
     val verticalScrollState = rememberScrollState()
 
     Column(
