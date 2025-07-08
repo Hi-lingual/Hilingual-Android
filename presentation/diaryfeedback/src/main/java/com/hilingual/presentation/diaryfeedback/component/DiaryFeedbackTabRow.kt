@@ -13,7 +13,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
-fun DiaryFeedbackTabRow(
+internal fun DiaryFeedbackTabRow(
     tabIndex: Int,
     onTabSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
