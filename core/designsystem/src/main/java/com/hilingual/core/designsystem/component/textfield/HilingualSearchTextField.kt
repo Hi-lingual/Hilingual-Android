@@ -50,11 +50,6 @@ fun HilingualSearchTextField(
                 modifier = Modifier
                     .padding(end = 4.dp)
                     .size(20.dp)
-                    .noRippleClickable(
-                        onClick = {
-                            onValueChanged("")
-                        }
-                    )
             )
         },
         trailingIcon = {
