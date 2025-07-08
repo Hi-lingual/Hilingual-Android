@@ -28,7 +28,7 @@ import com.hilingual.core.designsystem.theme.pronounText
 import com.hilingual.core.designsystem.theme.white
 
 @Composable
-fun WordPartsTag(
+fun WordPhraseTypeTag(
     phraseType: String,
     modifier: Modifier = Modifier
 ) {
@@ -106,18 +106,18 @@ private fun WordPartsPreview() {
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             // 8품사
-            WordPartsTag("동사")
-            WordPartsTag("명사")
-            WordPartsTag("대명사")
-            WordPartsTag("형용사")
-            WordPartsTag("부사")
-            WordPartsTag("전치사")
-            WordPartsTag("접속사")
-            WordPartsTag("감탄사")
+            WordPhraseTypeTag("동사")
+            WordPhraseTypeTag("명사")
+            WordPhraseTypeTag("대명사")
+            WordPhraseTypeTag("형용사")
+            WordPhraseTypeTag("부사")
+            WordPhraseTypeTag("전치사")
+            WordPhraseTypeTag("접속사")
+            WordPhraseTypeTag("감탄사")
             // 추가 설명
-            WordPartsTag("숙어")
-            WordPartsTag("속어")
-            WordPartsTag("구")
+            WordPhraseTypeTag("숙어")
+            WordPhraseTypeTag("속어")
+            WordPhraseTypeTag("구")
         }
     }
 }
