@@ -22,7 +22,6 @@ import com.hilingual.core.designsystem.theme.hilingualOrange
 import com.hilingual.core.designsystem.theme.interjectionBg
 import com.hilingual.core.designsystem.theme.nounBg
 import com.hilingual.core.designsystem.theme.prepositionBg
-import com.hilingual.core.designsystem.theme.prepositionText
 import com.hilingual.core.designsystem.theme.pronounBg
 import com.hilingual.core.designsystem.theme.pronounText
 import com.hilingual.core.designsystem.theme.white
@@ -78,7 +77,7 @@ private enum class PartOfSpeechType(
     PREPOSITION(
         displayName = "전치사",
         bgColor = prepositionBg,
-        textColor = prepositionText
+        textColor = hilingualOrange
     ),
     CONJUNCTION(
         displayName = "접속사",
