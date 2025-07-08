@@ -79,7 +79,7 @@ internal fun VocaCard(
 
 @Preview
 @Composable
-fun VocaCardPreview() {
+private fun VocaCardPreview() {
     HilingualTheme {
         var isBookmarked by remember { mutableStateOf(true) }
         VocaCard(
