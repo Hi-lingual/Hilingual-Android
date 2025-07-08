@@ -45,7 +45,7 @@ fun WordPartsTag(
     )
 }
 
-enum class PartOfSpeechType(
+private enum class PartOfSpeechType(
     val displayName: String,
     val bgColor: Color,
     val textColor: Color
