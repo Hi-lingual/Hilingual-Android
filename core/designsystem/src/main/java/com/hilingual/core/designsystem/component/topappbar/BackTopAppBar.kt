@@ -1,6 +1,5 @@
 package com.hilingual.core.designsystem.component.topappbar
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -13,21 +12,20 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun BackTopAppBar(
+    modifier: Modifier = Modifier,
     title: String?,
     onBackClicked: () -> Unit
 ) {
     HilingualBasicTopAppBar(
+        modifier = modifier,
         title = title,
         navigationIcon = {
-            Box(
-                modifier = Modifier.noRippleClickable(onBackClicked)
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_24),
-                    contentDescription = null,
-                    tint = HilingualTheme.colors.black
-                )
-            }
+            Icon(
+                modifier = Modifier.noRippleClickable(onClick = onBackClicked),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_24),
+                contentDescription = null,
+                tint = HilingualTheme.colors.black
+            )
         }
     )
 }

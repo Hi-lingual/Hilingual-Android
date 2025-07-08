@@ -1,6 +1,5 @@
 package com.hilingual.core.designsystem.component.topappbar
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,19 +13,18 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun CloseOnlyTopAppBar(
+    modifier: Modifier = Modifier,
     onCloseClicked: () -> Unit
 ) {
     HilingualBasicTopAppBar(
+        modifier = modifier,
         navigationIcon = {
-            Box(
-                modifier = Modifier.noRippleClickable(onCloseClicked)
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_close_24),
-                    contentDescription = null,
-                    tint = HilingualTheme.colors.white
-                )
-            }
+            Icon(
+                modifier = Modifier.noRippleClickable(onClick = onCloseClicked),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_close_24),
+                contentDescription = null,
+                tint = HilingualTheme.colors.white
+            )
         },
         backgroundColor = Color.Transparent
     )
