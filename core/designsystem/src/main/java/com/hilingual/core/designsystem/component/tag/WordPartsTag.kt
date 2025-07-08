@@ -29,17 +29,17 @@ import com.hilingual.core.designsystem.theme.white
 
 @Composable
 fun WordPartsTag(
-    title: String,
+    phraseType: String,
     modifier: Modifier = Modifier
 ) {
     Text(
-        text = title,
+        text = phraseType,
         style = HilingualTheme.typography.captionM12,
-        color = PartOfSpeechType.getTypeByText(title)?.textColor ?: HilingualTheme.colors.gray400,
+        color = PartOfSpeechType.getTypeByText(phraseType)?.textColor ?: HilingualTheme.colors.gray400,
         modifier = modifier
             .clip(RoundedCornerShape(10.dp))
             .background(
-                PartOfSpeechType.getTypeByText(title)?.bgColor ?: HilingualTheme.colors.gray100
+                PartOfSpeechType.getTypeByText(phraseType)?.bgColor ?: HilingualTheme.colors.gray100
             )
             .padding(vertical = 2.dp, horizontal = 6.dp)
     )
