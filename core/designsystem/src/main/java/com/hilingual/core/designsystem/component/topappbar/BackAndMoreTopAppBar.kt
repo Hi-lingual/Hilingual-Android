@@ -13,10 +13,10 @@ import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-fun CloseAndMoreTopAppBar(
+fun BackAndMoreTopAppBar(
     modifier: Modifier = Modifier,
     title: String?,
-    onCloseClicked: () -> Unit,
+    onBackClicked: () -> Unit,
     onMoreClicked: () -> Unit
 ) {
     HilingualBasicTopAppBar(
@@ -26,8 +26,8 @@ fun CloseAndMoreTopAppBar(
             Icon(
                 modifier = Modifier
                     .size(24.dp)
-                    .noRippleClickable(onClick = onCloseClicked),
-                imageVector = ImageVector.vectorResource(R.drawable.ic_close_24),
+                    .noRippleClickable(onClick = onBackClicked),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_24),
                 contentDescription = null,
                 tint = HilingualTheme.colors.black
             )
@@ -47,11 +47,11 @@ fun CloseAndMoreTopAppBar(
 
 @Preview
 @Composable
-private fun CloseAndMoreTopAppBarPreview() {
+private fun BackAndMoreTopAppBarPreview() {
     HilingualTheme {
-        CloseAndMoreTopAppBar(
+        BackAndMoreTopAppBar(
             title = "일기장",
-            onCloseClicked = {},
+            onBackClicked = {},
             onMoreClicked = {}
         )
     }
