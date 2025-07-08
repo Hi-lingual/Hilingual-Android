@@ -24,7 +24,6 @@ val interjectionBg = Color(0xFFCD33D3)
 val pronounText = Color(0xFFDCD7FF)
 val adjText = Color(0xFFE81879)
 val adverbText = Color(0xFF089900)
-val prepositionText = Color(0xFFFF7125)
 
 val black = Color(0xFF121212)
 val gray850 = Color(0xFF212121)
@@ -55,7 +54,6 @@ class HilingualColors(
     pronounText: Color,
     adjText: Color,
     adverbText: Color,
-    prepositionText: Color,
     black: Color,
     gray850: Color,
     gray700: Color,
@@ -93,8 +91,6 @@ class HilingualColors(
     var adjText by mutableStateOf(adjText)
         private set
     var adverbText by mutableStateOf(adverbText)
-        private set
-    var prepositionText by mutableStateOf(prepositionText)
         private set
     var black by mutableStateOf(black)
         private set
@@ -134,7 +130,6 @@ class HilingualColors(
         pronounText,
         adjText,
         adverbText,
-        prepositionText,
         black,
         gray850,
         gray700,
@@ -162,7 +157,6 @@ class HilingualColors(
         pronounText = other.pronounText
         adjText = other.adjText
         adverbText = other.adverbText
-        prepositionText = other.prepositionText
         black = other.black
         gray850 = other.gray850
         gray700 = other.gray700
@@ -191,7 +185,6 @@ fun DefaultHilingualColors(
     PronounText: Color = pronounText,
     AdjText: Color = adjText,
     AdverbText: Color = adverbText,
-    PrepositonText: Color = prepositionText,
     Black: Color = black,
     Gray850: Color = gray850,
     Gray700: Color = gray700,
@@ -217,7 +210,6 @@ fun DefaultHilingualColors(
     PronounText,
     AdjText,
     AdverbText,
-    PrepositonText,
     Black,
     Gray850,
     Gray700,
@@ -307,11 +299,6 @@ private fun HilingualWordChipColorsPreview(){
                 text = "HilingualTheme",
                 style = HilingualTheme.typography.bodyM20,
                 color = HilingualTheme.colors.adverbText
-            )
-            Text(
-                text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
-                color = HilingualTheme.colors.prepositionText
             )
         }
     }
