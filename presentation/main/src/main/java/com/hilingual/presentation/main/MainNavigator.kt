@@ -5,10 +5,11 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.hilingual.presentation.home.navigation.Home
+import com.hilingual.presentation.auth.navigation.Auth
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.voca.navigation.navigateToVoca
 
@@ -19,7 +20,7 @@ internal class MainNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val startDestination = Home
+    val startDestination = Auth
 
     val currentTab: MainTab?
         @Composable get() = MainTab.find { tab ->
@@ -49,6 +50,17 @@ internal class MainNavigator(
             MainTab.COMMUNITY -> {}
             MainTab.MY -> {}
         }
+    }
+
+    fun navigateToHome(
+        navOptions: NavOptions? = navOptions {
+            popUpTo(0) {
+                inclusive = true
+            }
+            launchSingleTop = true
+        }
+    ) {
+        navController.navigateToHome(navOptions)
     }
 
     fun navigateUp() {
