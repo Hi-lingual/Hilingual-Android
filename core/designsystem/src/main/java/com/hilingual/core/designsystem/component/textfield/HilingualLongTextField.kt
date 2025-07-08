@@ -16,16 +16,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun HilingualLongTextField(
     value: String,
-    placeholder: String = "What's been going on today?",
     onValueChanged: (String) -> Unit,
+    maxLength: Int,
+    modifier: Modifier = Modifier,
+    height: Dp = 292.dp,
+    placeholder: String = "What's been going on today?",
     onDoneAction: () -> Unit = {},
-    maxLength: Int
 ) {
     var isFocused by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -38,9 +41,9 @@ fun HilingualLongTextField(
             if (it.length <= maxLength) onValueChanged(it)
         },
         onFocusChanged = { isFocused = it },
-        modifier = Modifier
+        modifier = modifier
             .verticalScroll(rememberScrollState())
-            .height(292.dp),
+            .height(height),
         borderModifier = if (isFocused) {
             Modifier.border(
                 1.dp,

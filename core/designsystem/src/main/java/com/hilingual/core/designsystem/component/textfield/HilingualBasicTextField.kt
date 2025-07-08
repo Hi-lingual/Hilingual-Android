@@ -31,8 +31,8 @@ fun HilingualBasicTextField(
     placeholder: String,
     textStyle: TextStyle,
     onValueChanged: (String) -> Unit,
-    onFocusChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    onFocusChanged: (Boolean) -> Unit = {},
     borderModifier: Modifier = Modifier,
     backgroundColor: Color = HilingualTheme.colors.gray100,
     focusRequester: FocusRequester = FocusRequester(),
@@ -120,11 +120,10 @@ fun HilingualBasicTextField(
 
                 // 하단 영역 (존재하는 경우에만)
                 bottomRightContent?.let {
-                    Row(
+                    Box(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
-                            .padding(vertical = 12.dp),
-                        horizontalArrangement = Arrangement.End
+                            .padding(vertical = 12.dp)
                     ) {
                         it()
                     }

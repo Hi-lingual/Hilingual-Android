@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
@@ -27,13 +28,14 @@ fun HilingualShortTextField(
     value: String,
     placeholder: String,
     onValueChanged: (String) -> Unit,
-    onDoneAction: () -> Unit = {},
     maxLength: Int,
     isValid: () -> Boolean,  // 유효성 검사 함수
     errorMessage: String,
-    successMessage: String
+    successMessage: String,
+    modifier: Modifier = Modifier,
+    height: Dp = 54.dp,
+    onDoneAction: () -> Unit = {},
 ) {
-    var isFocused by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     // 입력값(value)에 따른 케이스 분기 처리
@@ -50,8 +52,7 @@ fun HilingualShortTextField(
             onValueChanged = {
                 if (it.length <= maxLength) onValueChanged(it)
             },
-            onFocusChanged = { isFocused = it },
-            modifier = Modifier.height(54.dp),
+            modifier = modifier.height(height),
             borderModifier = Modifier.border(
                 width = 1.dp,
                 color = if (isError) HilingualTheme.colors.alertRed else Color.Transparent,

@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.R
@@ -26,11 +27,12 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
 fun HilingualSearchTextField(
     value: String,
-    placeholder: String = "단어나 표현을 검색해 주세요",
     onValueChanged: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    height: Dp = 46.dp,
+    placeholder: String = "단어나 표현을 검색해 주세요",
     onSearchAction: () -> Unit = {}
 ) {
-    var isFocused by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     HilingualBasicTextField(
@@ -38,8 +40,7 @@ fun HilingualSearchTextField(
         placeholder = placeholder,
         textStyle = HilingualTheme.typography.bodyM16,
         onValueChanged = onValueChanged,
-        onFocusChanged = { isFocused = it },
-        modifier = Modifier.height(46.dp),
+        modifier = modifier.height(height),
         backgroundColor = HilingualTheme.colors.white,
         leadingIcon = {
             Icon(
