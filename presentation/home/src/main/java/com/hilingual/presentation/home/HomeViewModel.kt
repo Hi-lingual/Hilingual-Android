@@ -27,9 +27,9 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     private fun loadInitialData() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            delay(500) // Simulating network latency
+            delay(500)
 
-            val userProfile = UserProfile(nickname = "슌", profileImg = "https://avatars.githubusercontent.com/u/160750136?v=4", totalDiaries = 12, streak = 4)
+            val userProfile = UserProfile(nickname = "하이링", profileImg = "https://avatars.githubusercontent.com/u/160750136?v=4", totalDiaries = 12, streak = 4)
             val writtenDates = setOf(LocalDate.now().minusDays(2), LocalDate.now().minusDays(4))
             val selectedDate = LocalDate.now()
 
@@ -62,7 +62,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             _uiState.update {
                 if (it is UiState.Success) it.copy(data = it.data.copy(isLoading = true)) else it
             }
-            delay(150) // Simulating network latency
+            delay(150)
 
             _uiState.update { currentState ->
                 if (currentState !is UiState.Success || currentState.data.selectedDate != date) {
@@ -93,7 +93,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             _uiState.update {
                 if (it is UiState.Success) it.copy(data = it.data.copy(isLoading = true)) else it
             }
-            delay(300) // Simulating network latency
+            delay(300)
 
             _uiState.update { currentState ->
                 if (currentState !is UiState.Success) return@update currentState

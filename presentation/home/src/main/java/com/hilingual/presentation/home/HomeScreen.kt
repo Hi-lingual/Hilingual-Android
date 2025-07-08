@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -24,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
@@ -49,7 +51,15 @@ internal fun HomeRoute(
     onWriteDiaryClick: () -> Unit,
     onDiaryPreviewClick: (diaryId: Long) -> Unit
 ) {
+    val systemUiController = rememberSystemUiController()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = hilingualBlack,
+            darkIcons = false
+        )
+    }
 
     when (val state = uiState) {
         is UiState.Loading -> {
