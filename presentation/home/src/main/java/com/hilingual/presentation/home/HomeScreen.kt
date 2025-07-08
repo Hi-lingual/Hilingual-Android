@@ -17,6 +17,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,20 +59,24 @@ internal fun HomeRoute(
         }
 
         is UiState.Success -> {
+            val onDiaryPreviewClickHandler = remember(state.data.diaryPreview) {
+                {
+                    if (state.data.diaryPreview != null) {
+                        onDiaryPreviewClick(state.data.diaryPreview!!.diaryId)
+                    }
+                }
+            }
             HomeScreen(
                 paddingValues = paddingValues,
                 uiState = state.data,
                 onDateSelected = viewModel::onDateSelected,
                 onMonthChanged = viewModel::onMonthChanged,
                 onWriteDiaryClick = onWriteDiaryClick,
-                onDiaryPreviewClick = {
-                    state.data.diaryPreview?.let { onDiaryPreviewClick(it.diaryId) }
-                }
+                onDiaryPreviewClick = onDiaryPreviewClickHandler
             )
         }
 
-        else -> { /* Handle Empty and Failure states if necessary */
-        }
+        else -> {}
     }
 }
 
@@ -85,15 +90,16 @@ private fun HomeScreen(
     onDiaryPreviewClick: () -> Unit
 ) {
     val date = uiState.selectedDate
-    val today = LocalDate.now()
-    val isWritten = uiState.writtenDates.contains(date)
-    val isFuture = date.isAfter(today)
-    val isWritable = !isFuture && date.isAfter(today.minusDays(3))
+    val today = remember { LocalDate.now() }
+    val isWritten = remember(uiState.writtenDates, date) { uiState.writtenDates.contains(date) }
+    val isFuture = remember(date, today) { date.isAfter(today) }
+    val isWritable = remember(isFuture, date, today) { !isFuture && date.isAfter(today.minusDays(3)) }
     val verticalScrollState = rememberScrollState()
 
     Column(
         modifier = Modifier
             .background(HilingualTheme.colors.white)
+            .fillMaxSize()
             .padding(paddingValues)
             .verticalScroll(verticalScrollState)
     ) {
@@ -144,8 +150,13 @@ private fun HomeScreen(
                 )
 
                 if (isWritable) {
-                    val writtenTime = uiState.diaryPreview?.createdAt?.let {
-                        LocalDateTime.parse(it).format(DateTimeFormatter.ofPattern("HH:mm"))
+                    val writtenTime = remember(uiState.diaryPreview) {
+                        if (uiState.diaryPreview?.createdAt != null) {
+                            LocalDateTime.parse(uiState.diaryPreview.createdAt)
+                                .format(DateTimeFormatter.ofPattern("HH:mm"))
+                        } else {
+                            null
+                        }
                     }
                     DateTimeInfo(
                         isWritten = isWritten,
@@ -155,12 +166,21 @@ private fun HomeScreen(
                 }
             }
 
-            if (isWritten) {
-                uiState.diaryPreview?.let { preview ->
+            if (uiState.isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else if (isWritten) {
+                if (uiState.diaryPreview != null) {
                     DiaryPreviewCard(
-                        diaryText = preview.originalText,
+                        diaryText = uiState.diaryPreview.originalText,
                         onClick = onDiaryPreviewClick,
-                        imageUrl = preview.imageUrl,
+                        imageUrl = uiState.diaryPreview.imageUrl,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -168,10 +188,10 @@ private fun HomeScreen(
                 when {
                     isFuture -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
                     isWritable -> {
-                        uiState.todayTopic?.let { topic ->
+                        if (uiState.todayTopic != null) {
                             TodayTopic(
-                                koTopic = topic.topicKor,
-                                enTopic = topic.topicEn,
+                                koTopic = uiState.todayTopic.topicKor,
+                                enTopic = uiState.todayTopic.topicEn,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .animateContentSize()
