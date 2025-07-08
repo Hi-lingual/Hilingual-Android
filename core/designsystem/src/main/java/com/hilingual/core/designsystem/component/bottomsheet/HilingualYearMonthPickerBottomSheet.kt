@@ -2,9 +2,7 @@ package com.hilingual.core.designsystem.component.bottomsheet
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -28,9 +26,9 @@ import java.time.YearMonth
 @Composable
 fun HilingualYearMonthPickerBottomSheet(
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
-    initialYearMonth: YearMonth = YearMonth.now(),
     onDateSelected: (YearMonth) -> Unit,
+    modifier: Modifier = Modifier,
+    initialYearMonth: YearMonth = YearMonth.now()
 ) {
     var selectedYear by remember { mutableIntStateOf(initialYearMonth.year) }
     var selectedMonth by remember { mutableIntStateOf(initialYearMonth.monthValue) }
@@ -40,6 +38,7 @@ fun HilingualYearMonthPickerBottomSheet(
         modifier = modifier
     ) {
         Column(
+            verticalArrangement = Arrangement.spacedBy(19.dp),
             modifier = Modifier.padding(16.dp)
         ) {
             HilingualYearMonthPicker(
@@ -47,8 +46,6 @@ fun HilingualYearMonthPickerBottomSheet(
                 onYearSelected = { selectedYear = it },
                 onMonthSelected = { selectedMonth = it },
             )
-
-            Spacer(Modifier.height(19.dp))
 
             HilingualButton(
                 text = "적용하기",

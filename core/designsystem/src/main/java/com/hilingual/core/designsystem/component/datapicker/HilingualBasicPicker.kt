@@ -38,9 +38,9 @@ fun HilingualBasicPicker(
     items: ImmutableList<String>,
     startIndex: Int,
     onSelectedItemChanged: (String) -> Unit,
-    modifier: Modifier = Modifier,
     itemContentPadding: PaddingValues,
     itemSpacing: Dp,
+    modifier: Modifier = Modifier,
     visibleItemsCount: Int = 3,
     isInfinity: Boolean = true
 ) {
