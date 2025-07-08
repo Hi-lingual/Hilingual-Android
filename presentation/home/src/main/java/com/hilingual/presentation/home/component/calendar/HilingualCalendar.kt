@@ -50,7 +50,7 @@ internal fun HilingualCalendar(
     }
 
     Column(
-        modifier = modifier.background(HilingualTheme.colors.white)
+        modifier = modifier
     ) {
         CalendarHeader(
             onDownArrowClick = { /* TODO: 데이트 피커 바텀시트 여는 로직*/ },

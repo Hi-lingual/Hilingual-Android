@@ -10,8 +10,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
@@ -24,6 +25,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.designsystem.theme.hilingualBlack
+import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.home.component.HomeHeader
 import com.hilingual.presentation.home.component.calendar.HilingualCalendar
 import com.hilingual.presentation.home.component.footer.DateTimeInfo
@@ -86,104 +89,101 @@ private fun HomeScreen(
     val isWritten = uiState.writtenDates.contains(date)
     val isFuture = date.isAfter(today)
     val isWritable = !isFuture && date.isAfter(today.minusDays(3))
+    val verticalScrollState = rememberScrollState()
 
-    LazyColumn(
+    Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(HilingualTheme.colors.hilingualBlack)
+            .background(HilingualTheme.colors.white)
             .padding(paddingValues)
+            .verticalScroll(verticalScrollState)
     ) {
-        item {
-            HomeHeader(
-                imageUrl = uiState.userProfile.profileImg,
-                nickName = uiState.userProfile.nickname,
-                totalDiaries = uiState.userProfile.totalDiaries,
-                streak = uiState.userProfile.streak,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 8.dp, bottom = 12.dp)
-            )
+        HomeHeader(
+            imageUrl = uiState.userProfile.profileImg,
+            nickName = uiState.userProfile.nickname,
+            totalDiaries = uiState.userProfile.totalDiaries,
+            streak = uiState.userProfile.streak,
+            modifier = Modifier
+                .background(hilingualBlack)
+                .padding(horizontal = 16.dp)
+                .padding(top = 8.dp, bottom = 12.dp)
+        )
 
-            HilingualCalendar(
-                selectedDate = uiState.selectedDate,
-                writtenDates = uiState.writtenDates,
-                onDateClick = onDateSelected,
-                onMonthChanged = onMonthChanged,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
-                    .background(HilingualTheme.colors.white)
-                    .padding(16.dp)
-                    .animateContentSize()
-            )
+        HilingualCalendar(
+            selectedDate = uiState.selectedDate,
+            writtenDates = uiState.writtenDates,
+            onDateClick = onDateSelected,
+            onMonthChanged = onMonthChanged,
+            modifier = Modifier
+                .background(HilingualTheme.colors.hilingualBlack)
+                .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
+                .background(white)
+                .padding(16.dp)
+                .animateContentSize()
+        )
 
-            HorizontalDivider(
-                thickness = 4.dp,
-                color = HilingualTheme.colors.gray100
-            )
-        }
+        HorizontalDivider(
+            thickness = 4.dp,
+            color = HilingualTheme.colors.gray100
+        )
 
-
-
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(HilingualTheme.colors.white)
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+        Column(
+            modifier = Modifier
+                .background(HilingualTheme.colors.white)
+                .fillMaxSize()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    DiaryDateInfo(
-                        selectedDateProvider = { date },
-                        isWrittenProvider = { isWritten },
-                    )
+                DiaryDateInfo(
+                    selectedDateProvider = { date },
+                    isWrittenProvider = { isWritten },
+                )
 
-                    if (isWritable) {
-                        val writtenTime = uiState.diaryPreview?.createdAt?.let {
-                            LocalDateTime.parse(it).format(DateTimeFormatter.ofPattern("HH:mm"))
-                        }
-                        DateTimeInfo(
-                            isWritten = isWritten,
-                            writtenTime = writtenTime,
-                            remainingTime = uiState.todayTopic?.remainingTime
-                        )
+                if (isWritable) {
+                    val writtenTime = uiState.diaryPreview?.createdAt?.let {
+                        LocalDateTime.parse(it).format(DateTimeFormatter.ofPattern("HH:mm"))
                     }
+                    DateTimeInfo(
+                        isWritten = isWritten,
+                        writtenTime = writtenTime,
+                        remainingTime = uiState.todayTopic?.remainingTime
+                    )
                 }
+            }
 
-                if (isWritten) {
-                    uiState.diaryPreview?.let { preview ->
-                        DiaryPreviewCard(
-                            diaryText = preview.originalText,
-                            onClick = onDiaryPreviewClick,
-                            imageUrl = preview.imageUrl,
+            if (isWritten) {
+                uiState.diaryPreview?.let { preview ->
+                    DiaryPreviewCard(
+                        diaryText = preview.originalText,
+                        onClick = onDiaryPreviewClick,
+                        imageUrl = preview.imageUrl,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            } else {
+                when {
+                    isFuture -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
+                    isWritable -> {
+                        uiState.todayTopic?.let { topic ->
+                            TodayTopic(
+                                koTopic = topic.topicKor,
+                                enTopic = topic.topicEn,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .animateContentSize()
+                            )
+                        }
+                        WriteDiaryButton(
+                            onClick = onWriteDiaryClick,
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
-                } else {
-                    when {
-                        isFuture -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
-                        isWritable -> {
-                            uiState.todayTopic?.let { topic ->
-                                TodayTopic(
-                                    koTopic = topic.topicKor,
-                                    enTopic = topic.topicEn,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .animateContentSize()
-                                )
-                            }
-                            WriteDiaryButton(
-                                onClick = onWriteDiaryClick,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
 
-                        else -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
-                    }
+                    else -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
                 }
             }
         }
