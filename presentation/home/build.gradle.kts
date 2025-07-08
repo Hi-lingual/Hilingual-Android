@@ -10,5 +10,4 @@ android {
 
 dependencies {
     implementation(libs.compose.calendar)
-    implementation(libs.accompanist.systemuicontroller)
 }
