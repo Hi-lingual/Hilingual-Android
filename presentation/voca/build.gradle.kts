@@ -7,7 +7,3 @@ plugins {
 android {
     setNamespace("presentation.voca")
 }
-
-dependencies {
-    implementation(libs.kotlinx.immutable)
-}
