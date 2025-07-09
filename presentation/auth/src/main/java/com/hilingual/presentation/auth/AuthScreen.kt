@@ -40,7 +40,7 @@ internal fun AuthRoute(
     // TODO: SideEffect로 navigateToHome, navigateToOnboarding 처리 by.민재
     AuthScreen(
         paddingValues = paddingValues,
-        onGoogleSignClick = navigateToHome, // 임시
+        onGoogleSignClick = navigateToOnboarding, // 임시
         onPrivacyPolicyClick = { }
     )
 }
