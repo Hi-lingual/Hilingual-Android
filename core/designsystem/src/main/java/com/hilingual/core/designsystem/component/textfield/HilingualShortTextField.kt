@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.chattymin.pebble.graphemeLength
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
@@ -29,7 +30,7 @@ fun HilingualShortTextField(
     placeholder: String,
     onValueChanged: (String) -> Unit,
     maxLength: Int,
-    isValid: () -> Boolean,  // 유효성 검사 함수
+    isValid: () -> Boolean,
     errorMessage: String,
     successMessage: String,
     modifier: Modifier = Modifier,
@@ -38,7 +39,6 @@ fun HilingualShortTextField(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    // 입력값(value)에 따른 케이스 분기 처리
     val isError = value.isNotEmpty() && !isValid()
     val isSuccess = value.isNotEmpty() && isValid()
 
@@ -50,7 +50,7 @@ fun HilingualShortTextField(
             placeholder = placeholder,
             textStyle = HilingualTheme.typography.bodyM16,
             onValueChanged = {
-                if (it.length <= maxLength) onValueChanged(it)
+                if (it.graphemeLength <= maxLength) onValueChanged(it)
             },
             modifier = modifier.height(height),
             borderModifier = Modifier.border(
@@ -64,7 +64,6 @@ fun HilingualShortTextField(
             },
         )
         Row {
-            // 오류 또는 성공 메시지
             Text(
                 text = when {
                     isError -> errorMessage
@@ -81,9 +80,8 @@ fun HilingualShortTextField(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // 글자 수 표시
             Text(
-                text = "${value.length} / $maxLength",
+                text = "${value.graphemeLength} / $maxLength",
                 style = HilingualTheme.typography.captionR12,
                 color = HilingualTheme.colors.gray300
             )

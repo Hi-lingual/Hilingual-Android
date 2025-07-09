@@ -76,6 +76,7 @@ private fun AuthScreen(
         Image(
             painter = painterResource(R.drawable.img_logo),
             contentDescription = null,
+//            modifier = Modifier.sharedElement() 이렇게 쓸거야 효빈씨
         )
 
         Spacer(Modifier.weight(0.53f))
