@@ -59,7 +59,7 @@ internal fun FeedbackEmptyCard(
 
 @Preview(showBackground = true, backgroundColor = 0x000000)
 @Composable
-private fun FeedbackCardPreview() {
+private fun FeedbackEmptyCardPreview() {
     HilingualTheme {
         FeedbackEmptyCard()
     }

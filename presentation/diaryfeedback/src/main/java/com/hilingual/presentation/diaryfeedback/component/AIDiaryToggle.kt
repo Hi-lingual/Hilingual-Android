@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-internal fun AIFeedbackSwitch(
+internal fun AIDiaryToggle(
     isAIDiary: Boolean,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier
@@ -94,11 +94,11 @@ private fun BasicSwitch(
 
 @Preview(showBackground = true)
 @Composable
-private fun SwitchPreview() {
+private fun AIDiaryTogglePreview() {
     HilingualTheme {
         var isAI by remember { mutableStateOf(true) }
 
-        AIFeedbackSwitch(
+        AIDiaryToggle(
             isAIDiary = isAI,
             onToggle = { isAI = !isAI }
         )

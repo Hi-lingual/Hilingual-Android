@@ -121,7 +121,7 @@ private fun ExpressionTag(
 
 @Preview(showBackground = true, backgroundColor = 0x000000)
 @Composable
-private fun RecommendExpressionPreview() {
+private fun RecommendExpressionCardPreview() {
     HilingualTheme {
         var isBookmarked by remember { mutableStateOf(false) }
 

@@ -95,7 +95,7 @@ private fun getAnnotatedString(
     }
 }
 
-private data class DiaryContentPreviewState(
+private data class DiaryCardPreviewState(
     val isAIDiary: Boolean,
     val imageUrl: String?,
     val content: String,
@@ -103,21 +103,21 @@ private data class DiaryContentPreviewState(
 )
 
 private class DiaryContentCardPreviewProvider :
-    PreviewParameterProvider<DiaryContentPreviewState> {
+    PreviewParameterProvider<DiaryCardPreviewState> {
     override val values = sequenceOf(
-        DiaryContentPreviewState(
+        DiaryCardPreviewState(
             isAIDiary = false,
             imageUrl = "",
             content = "이미지 & 텍스트",
             diffRanges = persistentListOf()
         ),
-        DiaryContentPreviewState(
+        DiaryCardPreviewState(
             isAIDiary = false,
             imageUrl = null,
             content = "I want to become a teacher future. Because I like child.",
             diffRanges = persistentListOf()
         ),
-        DiaryContentPreviewState(
+        DiaryCardPreviewState(
             isAIDiary = true,
             imageUrl = null,
             content = "Today I went to the cafe Conhas in Yeonnam to meet my teammates.\n I was planning to arrive around 1:30 p.m., but I got there at 2:20 because I overslept, as always.\n I wore rain boots and brought my favorite umbrella because the weather forecast said it would rain all day, but it wasn’t really raining much outside.\n I got kind of disappointed. But yes, no rain is better than rain, I guess.\n" +
@@ -134,8 +134,8 @@ private class DiaryContentCardPreviewProvider :
 
 @Preview(showBackground = true, backgroundColor = 0x000000)
 @Composable
-private fun FeedbackContentPreview(
-    @PreviewParameter(DiaryContentCardPreviewProvider::class) state: DiaryContentPreviewState
+private fun DiaryCardPreview(
+    @PreviewParameter(DiaryContentCardPreviewProvider::class) state: DiaryCardPreviewState
 ) {
     HilingualTheme {
         DiaryCard(
