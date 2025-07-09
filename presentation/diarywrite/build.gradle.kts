@@ -7,3 +7,8 @@ plugins {
 android {
     setNamespace("presentation.diarywrite")
 }
+
+dependencies {
+    // coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
+}
