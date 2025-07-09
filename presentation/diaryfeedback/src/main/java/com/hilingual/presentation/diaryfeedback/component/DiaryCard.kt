@@ -27,18 +27,18 @@ import kotlinx.collections.immutable.persistentListOf
 @Composable
 internal fun DiaryCard(
     content: String,
-    isFeedback: Boolean,
+    isAIDiary: Boolean,
     modifier: Modifier = Modifier,
     diffRanges: PersistentList<Pair<Int, Int>> = persistentListOf(),
     imageUrl: String? = null
 ) {
-    val maxContentLength = if (isFeedback) 1000 else 1500
+    val maxContentLength = if (isAIDiary) 1000 else 1500
 
     val clipContent = content.run {
         if (length > maxContentLength) this.take(maxContentLength) else this
     }
 
-    val displayText: AnnotatedString = if (isFeedback) {
+    val displayText: AnnotatedString = if (isAIDiary) {
         getAnnotatedString(clipContent, diffRanges)
     } else {
         AnnotatedString(clipContent)
@@ -96,7 +96,7 @@ private fun getAnnotatedString(
 }
 
 private data class DiaryContentPreviewState(
-    val isFeedback: Boolean,
+    val isAIDiary: Boolean,
     val imageUrl: String?,
     val content: String,
     val diffRanges: PersistentList<Pair<Int, Int>>
@@ -106,19 +106,19 @@ private class DiaryContentCardPreviewProvider :
     PreviewParameterProvider<DiaryContentPreviewState> {
     override val values = sequenceOf(
         DiaryContentPreviewState(
-            isFeedback = false,
+            isAIDiary = false,
             imageUrl = "",
             content = "이미지 & 텍스트",
             diffRanges = persistentListOf()
         ),
         DiaryContentPreviewState(
-            isFeedback = false,
+            isAIDiary = false,
             imageUrl = null,
             content = "I want to become a teacher future. Because I like child.",
             diffRanges = persistentListOf()
         ),
         DiaryContentPreviewState(
-            isFeedback = true,
+            isAIDiary = true,
             imageUrl = null,
             content = "Today I went to the cafe Conhas in Yeonnam to meet my teammates.\n I was planning to arrive around 1:30 p.m., but I got there at 2:20 because I overslept, as always.\n I wore rain boots and brought my favorite umbrella because the weather forecast said it would rain all day, but it wasn’t really raining much outside.\n I got kind of disappointed. But yes, no rain is better than rain, I guess.\n" +
                     "After arriving, I had a jambon arugula sandwich with a vanilla latte.\n Honestly, I should be more careful when I'm drinking milk because I get stomachaches easily, but I always order lattes.\nMy life feels like a disaster, a mess that I call myself.\n But they tasted really good, so I felt more motivated to work.\n I really liked this café because it's spacious, chill, and has a great atmosphere for focusing.\n I’ll definitely come back again soon!",
@@ -139,7 +139,7 @@ private fun FeedbackContentPreview(
 ) {
     HilingualTheme {
         DiaryCard(
-            isFeedback = state.isFeedback,
+            isAIDiary = state.isAIDiary,
             content = state.content,
             imageUrl = state.imageUrl,
             diffRanges = state.diffRanges
