@@ -21,9 +21,12 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
 fun DiaryContentCard(
     content: String,
+    isFeedback: Boolean,
     modifier: Modifier = Modifier,
     imageUrl: String? = null
 ) {
+    val maxContentLength = if (isFeedback) 1000 else 1500
+
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
@@ -41,13 +44,17 @@ fun DiaryContentCard(
             )
         }
         Text(
-            text = content,
+            text = content.let {
+                if (it.length > maxContentLength) it.take(maxContentLength) else it
+            },
             style = HilingualTheme.typography.bodyR16,
             color = HilingualTheme.colors.black,
-            modifier = Modifier.heightIn(min = 45.dp)
+            modifier = Modifier
+                .heightIn(min = 45.dp)
+                .fillMaxWidth()
         )
         Text(
-            text = "${content.length}/1000",
+            text = "${content.length}/${maxContentLength}",
             style = HilingualTheme.typography.captionR12,
             color = HilingualTheme.colors.gray400,
             textAlign = TextAlign.End,
@@ -64,10 +71,12 @@ private fun FeedbackContentPreview() {
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             DiaryContentCard(
+                isFeedback = true,
                 imageUrl = "",
                 content = "텍스트",
             )
             DiaryContentCard(
+                isFeedback = false,
                 content = "I want to become a teacher future. Because I like child."
             )
         }
