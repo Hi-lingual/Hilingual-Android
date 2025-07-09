@@ -5,27 +5,43 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-fun DiaryContentCard(
+internal fun DiaryContentCard(
     content: String,
     isFeedback: Boolean,
     modifier: Modifier = Modifier,
+    diffRanges: PersistentList<Pair<Int, Int>> = persistentListOf(),
     imageUrl: String? = null
 ) {
     val maxContentLength = if (isFeedback) 1000 else 1500
+
+    val clipContent = content.run {
+        if (length > maxContentLength) this.take(maxContentLength) else this
+    }
+
+    val displayText: AnnotatedString = if (isFeedback) {
+        getAnnotatedString(clipContent, diffRanges)
+    } else {
+        AnnotatedString(clipContent)
+    }
 
     Column(
         modifier = modifier
@@ -43,18 +59,16 @@ fun DiaryContentCard(
                     .aspectRatio(1f / 0.6f)
             )
         }
+
         Text(
-            text = content.let {
-                if (it.length > maxContentLength) it.take(maxContentLength) else it
-            },
+            text = displayText,
             style = HilingualTheme.typography.bodyR16,
             color = HilingualTheme.colors.black,
-            modifier = Modifier
-                .heightIn(min = 45.dp)
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         )
+
         Text(
-            text = "${content.length}/${maxContentLength}",
+            text = "${clipContent.length}/${maxContentLength}",
             style = HilingualTheme.typography.captionR12,
             color = HilingualTheme.colors.gray400,
             textAlign = TextAlign.End,
@@ -63,12 +77,29 @@ fun DiaryContentCard(
     }
 }
 
+@Composable
+private fun getAnnotatedString(
+    content: String,
+    diffRanges: ImmutableList<Pair<Int, Int>>,
+): AnnotatedString {
+    return buildAnnotatedString {
+        append(content)
+        diffRanges.forEach {
+            addStyle(
+                style = SpanStyle(color = HilingualTheme.colors.hilingualOrange),
+                start = it.first,
+                end = it.second
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, backgroundColor = 0x000000)
 @Composable
 private fun FeedbackContentPreview() {
     HilingualTheme {
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             DiaryContentCard(
                 isFeedback = true,
@@ -78,6 +109,17 @@ private fun FeedbackContentPreview() {
             DiaryContentCard(
                 isFeedback = false,
                 content = "I want to become a teacher future. Because I like child."
+            )
+            DiaryContentCard(
+                isFeedback = true,
+                diffRanges = persistentListOf(
+                    Pair(84, 164),
+                    Pair(278, 316),
+                    Pair(508, 583),
+                    Pair(740, 802),
+                ),
+                content = "Today I went to the cafe Conhas in Yeonnam to meet my teammates.\n I was planning to arrive around 1:30 p.m., but I got there at 2:20 because I overslept, as always.\n I wore rain boots and brought my favorite umbrella because the weather forecast said it would rain all day, but it wasn’t really raining much outside.\n I got kind of disappointed. But yes, no rain is better than rain, I guess.\n" +
+                        "After arriving, I had a jambon arugula sandwich with a vanilla latte.\n Honestly, I should be more careful when I'm drinking milk because I get stomachaches easily, but I always order lattes.\nMy life feels like a disaster, a mess that I call myself.\n But they tasted really good, so I felt more motivated to work.\n I really liked this café because it's spacious, chill, and has a great atmosphere for focusing.\n I’ll definitely come back again soon!"
             )
         }
     }
