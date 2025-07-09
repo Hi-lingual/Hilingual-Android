@@ -20,7 +20,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 internal fun VocaHeader(
-    searchText: String,
+    searchText: () -> String,
     onSearchTextChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -35,7 +35,7 @@ internal fun VocaHeader(
             title = "나의 단어장"
         )
         HilingualSearchTextField(
-            value = searchText,
+            value = searchText(),
             onValueChanged = onSearchTextChanged,
             modifier = Modifier.fillMaxWidth()
                 .padding(horizontal = 16.dp)
@@ -51,7 +51,7 @@ private fun VocaHeaderPreview() {
         var searchText by remember { mutableStateOf("") }
 
         VocaHeader(
-            searchText = searchText,
+            searchText = { searchText },
             onSearchTextChanged = { searchText = it }
         )
     }
