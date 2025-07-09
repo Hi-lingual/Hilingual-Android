@@ -119,7 +119,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     )
 
     private fun createFakeTodayTopic() = TodayTopic(
-        topicKor = "오늘 가장 기억에 남는 일은?",
+        topicKo = "오늘 가장 기억에 남는 일은?",
         topicEn = "What was the most memorable moment today?",
         remainingTime = 1440
     )

@@ -47,9 +47,9 @@ import java.time.format.DateTimeFormatter
 @Composable
 internal fun HomeRoute(
     paddingValues: PaddingValues,
-    viewModel: HomeViewModel = hiltViewModel(),
     onWriteDiaryClick: () -> Unit,
-    onDiaryPreviewClick: (diaryId: Long) -> Unit
+    onDiaryPreviewClick: (diaryId: Long) -> Unit,
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val systemUiController = rememberSystemUiController()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -63,7 +63,10 @@ internal fun HomeRoute(
 
     when (val state = uiState) {
         is UiState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
                 CircularProgressIndicator()
             }
         }
@@ -103,7 +106,8 @@ private fun HomeScreen(
     val today = remember { LocalDate.now() }
     val isWritten = remember(uiState.writtenDates, date) { uiState.writtenDates.contains(date) }
     val isFuture = remember(date, today) { date.isAfter(today) }
-    val isWritable = remember(isFuture, date, today) { !isFuture && date.isAfter(today.minusDays(2)) }
+    val isWritable =
+        remember(isFuture, date, today) { !isFuture && date.isAfter(today.minusDays(2)) }
     val verticalScrollState = rememberScrollState()
 
     Column(
@@ -115,7 +119,7 @@ private fun HomeScreen(
     ) {
         HomeHeader(
             imageUrl = uiState.userProfile.profileImg,
-            nickName = uiState.userProfile.nickname,
+            nickname = uiState.userProfile.nickname,
             totalDiaries = uiState.userProfile.totalDiaries,
             streak = uiState.userProfile.streak,
             modifier = Modifier
@@ -176,45 +180,44 @@ private fun HomeScreen(
                 }
             }
 
-            if (uiState.isLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 24.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+            when {
+                uiState.isLoading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
-            } else if (isWritten) {
-                if (uiState.diaryPreview != null) {
-                    DiaryPreviewCard(
-                        diaryText = uiState.diaryPreview.originalText,
-                        onClick = onDiaryPreviewClick,
-                        imageUrl = uiState.diaryPreview.imageUrl,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            } else {
-                when {
-                    isFuture -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
-                    isWritable -> {
-                        if (uiState.todayTopic != null) {
-                            TodayTopic(
-                                koTopic = uiState.todayTopic.topicKor,
-                                enTopic = uiState.todayTopic.topicEn,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .animateContentSize()
-                            )
-                        }
-                        WriteDiaryButton(
-                            onClick = onWriteDiaryClick,
+                isWritten -> {
+                    if (uiState.diaryPreview != null) {
+                        DiaryPreviewCard(
+                            diaryText = uiState.diaryPreview.originalText,
+                            onClick = onDiaryPreviewClick,
+                            imageUrl = uiState.diaryPreview.imageUrl,
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
-
-                    else -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
                 }
+                isFuture -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
+                isWritable -> {
+                    if (uiState.todayTopic != null) {
+                        TodayTopic(
+                            koTopic = uiState.todayTopic.topicKo,
+                            enTopic = uiState.todayTopic.topicEn,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .animateContentSize()
+                        )
+                    }
+                    WriteDiaryButton(
+                        onClick = onWriteDiaryClick,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                else -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
             }
         }
     }

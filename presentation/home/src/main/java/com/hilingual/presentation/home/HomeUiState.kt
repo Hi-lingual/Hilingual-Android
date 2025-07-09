@@ -31,7 +31,7 @@ data class DiaryPreview(
 
 @Immutable
 data class TodayTopic(
-    val topicKor: String,
+    val topicKo: String,
     val topicEn: String,
     val remainingTime: Int
 )
