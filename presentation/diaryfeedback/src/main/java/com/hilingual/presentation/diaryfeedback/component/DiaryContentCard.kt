@@ -1,7 +1,6 @@
 package com.hilingual.presentation.diaryfeedback.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +15,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -94,33 +95,54 @@ private fun getAnnotatedString(
     }
 }
 
+private data class DiaryContentPreviewState(
+    val isFeedback: Boolean,
+    val imageUrl: String?,
+    val content: String,
+    val diffRanges: PersistentList<Pair<Int, Int>>
+)
+
+private class DiaryContentCardPreviewProvider :
+    PreviewParameterProvider<DiaryContentPreviewState> {
+    override val values = sequenceOf(
+        DiaryContentPreviewState(
+            isFeedback = false,
+            imageUrl = "",
+            content = "이미지 & 텍스트",
+            diffRanges = persistentListOf()
+        ),
+        DiaryContentPreviewState(
+            isFeedback = false,
+            imageUrl = null,
+            content = "I want to become a teacher future. Because I like child.",
+            diffRanges = persistentListOf()
+        ),
+        DiaryContentPreviewState(
+            isFeedback = true,
+            imageUrl = null,
+            content = "Today I went to the cafe Conhas in Yeonnam to meet my teammates.\n I was planning to arrive around 1:30 p.m., but I got there at 2:20 because I overslept, as always.\n I wore rain boots and brought my favorite umbrella because the weather forecast said it would rain all day, but it wasn’t really raining much outside.\n I got kind of disappointed. But yes, no rain is better than rain, I guess.\n" +
+                    "After arriving, I had a jambon arugula sandwich with a vanilla latte.\n Honestly, I should be more careful when I'm drinking milk because I get stomachaches easily, but I always order lattes.\nMy life feels like a disaster, a mess that I call myself.\n But they tasted really good, so I felt more motivated to work.\n I really liked this café because it's spacious, chill, and has a great atmosphere for focusing.\n I’ll definitely come back again soon!",
+            diffRanges = persistentListOf(
+                Pair(84, 164),
+                Pair(278, 316),
+                Pair(508, 583),
+                Pair(740, 802),
+            ),
+        )
+    )
+}
+
 @Preview(showBackground = true, backgroundColor = 0x000000)
 @Composable
-private fun FeedbackContentPreview() {
+private fun FeedbackContentPreview(
+    @PreviewParameter(DiaryContentCardPreviewProvider::class) state: DiaryContentPreviewState
+) {
     HilingualTheme {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            DiaryContentCard(
-                isFeedback = true,
-                imageUrl = "",
-                content = "텍스트",
-            )
-            DiaryContentCard(
-                isFeedback = false,
-                content = "I want to become a teacher future. Because I like child."
-            )
-            DiaryContentCard(
-                isFeedback = true,
-                diffRanges = persistentListOf(
-                    Pair(84, 164),
-                    Pair(278, 316),
-                    Pair(508, 583),
-                    Pair(740, 802),
-                ),
-                content = "Today I went to the cafe Conhas in Yeonnam to meet my teammates.\n I was planning to arrive around 1:30 p.m., but I got there at 2:20 because I overslept, as always.\n I wore rain boots and brought my favorite umbrella because the weather forecast said it would rain all day, but it wasn’t really raining much outside.\n I got kind of disappointed. But yes, no rain is better than rain, I guess.\n" +
-                        "After arriving, I had a jambon arugula sandwich with a vanilla latte.\n Honestly, I should be more careful when I'm drinking milk because I get stomachaches easily, but I always order lattes.\nMy life feels like a disaster, a mess that I call myself.\n But they tasted really good, so I felt more motivated to work.\n I really liked this café because it's spacious, chill, and has a great atmosphere for focusing.\n I’ll definitely come back again soon!"
-            )
-        }
+        DiaryContentCard(
+            isFeedback = state.isFeedback,
+            content = state.content,
+            imageUrl = state.imageUrl,
+            diffRanges = state.diffRanges
+        )
     }
 }
