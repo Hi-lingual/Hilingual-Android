@@ -2,11 +2,10 @@ package com.hilingual.presentation.voca.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -19,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -41,9 +41,9 @@ internal fun VocaModal(
     onBookmarkClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-    Column(
+    Box(
         modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
             .fillMaxWidth()
             .background(
                 color = HilingualTheme.colors.white,
@@ -51,55 +51,56 @@ internal fun VocaModal(
             )
             .padding(vertical = 28.dp, horizontal = 24.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth()
+        Column(
+            modifier = Modifier.align(Alignment.TopStart)
+                .padding(bottom = 80.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+
         ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    phraseType.forEach { type ->
-                        key(type) {
-                            WordPhraseTypeTag(phraseType = type)
-                        }
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                phraseType.forEach { type ->
+                    key(type) {
+                        WordPhraseTypeTag(phraseType = type)
                     }
                 }
-                Text(
-                    text = phrase,
-                    style = HilingualTheme.typography.bodyM20,
-                    color = HilingualTheme.colors.black
-                )
-                Text(
-                    text = explanation,
-                    style = HilingualTheme.typography.bodyM14,
-                    color = HilingualTheme.colors.black
-                )
             }
-            Icon(
-                imageVector = ImageVector.vectorResource(
-                    id = if (isBookmarked) {
-                        R.drawable.ic_save_36_filled
-                    } else {
-                        R.drawable.ic_save_36_empty
-                    }
-                ),
-                contentDescription = null,
-                modifier = modifier.noRippleClickable(onClick = onBookmarkClick),
-                tint = Color.Unspecified
+
+            Text(
+                text = phrase,
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.black
+            )
+
+            Text(
+                text = explanation,
+                style = HilingualTheme.typography.bodyM14,
+                color = HilingualTheme.colors.black
             )
         }
-        Spacer(modifier = modifier.height(80.dp))
+
+        Icon(
+            imageVector = ImageVector.vectorResource(
+                id = if (isBookmarked) {
+                    R.drawable.ic_save_36_filled
+                } else {
+                    R.drawable.ic_save_36_empty
+                }
+            ),
+            contentDescription = null,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .noRippleClickable(onClick = onBookmarkClick),
+            tint = Color.Unspecified
+        )
         Text(
             text = "$createdAt 일기에서 저장됨",
             style = HilingualTheme.typography.captionM12,
             color = HilingualTheme.colors.gray400,
-            modifier = Modifier.align(Alignment.End)
+            modifier = Modifier.align(Alignment.BottomEnd)
         )
     }
 }
+
 
 @Preview
 @Composable
