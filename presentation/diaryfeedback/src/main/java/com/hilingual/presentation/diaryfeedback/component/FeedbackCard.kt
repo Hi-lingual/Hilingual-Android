@@ -81,22 +81,34 @@ private fun FeedbackSentence(
     isFeedback: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val (iconRes, color, style) = if (isFeedback) {
+        Triple(
+            R.drawable.ic_feedback_ai,
+            HilingualTheme.colors.hilingualOrange,
+            HilingualTheme.typography.bodyM16
+        )
+    } else {
+        Triple(
+            R.drawable.ic_feedback_my,
+            HilingualTheme.colors.gray700,
+            HilingualTheme.typography.bodyR16
+        )
+    }
+
     Row(
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier.fillMaxWidth()
     ) {
         Icon(
-            imageVector = ImageVector.vectorResource(
-                if (isFeedback) R.drawable.ic_feedback_ai else R.drawable.ic_feedback_my
-            ),
+            imageVector = ImageVector.vectorResource(iconRes),
             contentDescription = null,
             tint = Color.Unspecified
         )
         Text(
             text = text,
-            style = if (isFeedback) HilingualTheme.typography.bodyM16 else HilingualTheme.typography.bodyR16,
-            color = if (isFeedback) HilingualTheme.colors.hilingualOrange else HilingualTheme.colors.gray700
+            style = style,
+            color = color
         )
     }
 }
