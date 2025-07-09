@@ -24,7 +24,7 @@ internal enum class WordSortType(val text: String) {
 
 @Composable
 internal fun VocaInfo(
-    wordCount: Int?,
+    wordCount: Int,
     sortType: WordSortType,
     onSortClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -35,7 +35,7 @@ internal fun VocaInfo(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "총 ${wordCount ?: 0}개",
+            text = "총 ${wordCount}개",
             style = HilingualTheme.typography.bodyM14,
             color = HilingualTheme.colors.gray500
         )
