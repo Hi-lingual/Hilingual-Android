@@ -17,13 +17,13 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.voca.R
 
-enum class WordSortType(val text: String) {
+internal enum class WordSortType(val text: String) {
     Latest(text = "최신순"),
     AtoZ(text = "A-Z 순")
 }
 
 @Composable
-fun VocaInfo(
+internal fun VocaInfo(
     wordCount: Int?,
     sortType: WordSortType,
     onSortClick: () -> Unit,

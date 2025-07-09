@@ -49,7 +49,7 @@ internal fun VocaModal(
                 color = HilingualTheme.colors.white,
                 shape = RoundedCornerShape(12.dp)
             )
-            .padding(vertical = 28.dp, horizontal = 24.dp)
+            .padding(start = 24.dp, top = 28.dp, end = 24.dp, bottom = 40.dp)
     ) {
         Column(
             modifier = Modifier.align(Alignment.TopStart)

@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.voca.R
 
-enum class VocaEmptyCardType(
+internal enum class VocaEmptyCardType(
     val text: String,
     @DrawableRes val imageRes: Int
 ) {
