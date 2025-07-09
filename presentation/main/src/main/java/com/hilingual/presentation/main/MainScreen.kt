@@ -45,7 +45,7 @@ internal fun MainScreen(
                 authNavGraph(
                     paddingValues = innerPadding,
                     navigateToHome = navigator::navigateToHome,
-                    navigateToOnboarding = {},
+                    navigateToOnboarding = navigator::navigateToOnboarding,
                 )
                 onboardingGraph(
                     paddingValues = innerPadding,
