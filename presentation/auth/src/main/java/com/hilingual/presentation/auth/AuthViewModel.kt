@@ -7,8 +7,9 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.auth.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -19,15 +20,19 @@ class AuthViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    private val _navigationEvent = Channel<AuthSideEffect>(Channel.BUFFERED)
-    val navigationEvent = _navigationEvent.receiveAsFlow()
+    private val _navigationEvent = MutableSharedFlow<AuthSideEffect>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val navigationEvent = _navigationEvent.asSharedFlow()
 
     fun onGoogleSignClick() {
         viewModelScope.launch {
             authRepository.signInWithGoogle(context)
                 .onSuccess { credential ->
-                    Timber.d(credential.idToken)
-                    _navigationEvent.send(AuthSideEffect.NavigateToHome)
+                    Timber.d("Google ID Token: ${credential.idToken}")
+                    _navigationEvent.tryEmit(AuthSideEffect.NavigateToHome)
                 }
                 .onLogFailure { }
         }
