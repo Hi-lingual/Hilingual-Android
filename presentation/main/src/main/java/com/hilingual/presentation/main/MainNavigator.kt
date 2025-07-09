@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.hilingual.presentation.auth.navigation.Auth
 import com.hilingual.presentation.home.navigation.navigateToHome
+import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.voca.navigation.navigateToVoca
 
 internal class MainNavigator(
@@ -61,6 +62,17 @@ internal class MainNavigator(
         }
     ) {
         navController.navigateToHome(navOptions)
+    }
+
+    fun navigateToOnboarding(
+        navOptions: NavOptions? = navOptions {
+            popUpTo(0) {
+                inclusive = true
+            }
+            launchSingleTop = true
+        }
+    ) {
+        navController.navigateToOnboarding(navOptions)
     }
 
     fun navigateUp() {

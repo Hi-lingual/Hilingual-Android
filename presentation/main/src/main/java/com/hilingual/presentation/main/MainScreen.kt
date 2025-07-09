@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import com.hilingual.presentation.auth.navigation.authNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
+import com.hilingual.presentation.onboarding.navigation.onboardingGraph
 import com.hilingual.presentation.voca.navigation.vocaNavGraph
 import kotlinx.collections.immutable.toPersistentList
 
@@ -26,7 +27,6 @@ internal fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator()
 ) {
     HandleBackPressToExit()
-
     SharedTransitionLayout {
         Scaffold(
             bottomBar = {
@@ -45,7 +45,11 @@ internal fun MainScreen(
                 authNavGraph(
                     paddingValues = innerPadding,
                     navigateToHome = navigator::navigateToHome,
-                    navigateToOnboarding = {},
+                    navigateToOnboarding = navigator::navigateToOnboarding,
+                )
+                onboardingGraph(
+                    paddingValues = innerPadding,
+                    navigateToHome = navigator::navigateToHome
                 )
                 homeNavGraph(
                     paddingValues = innerPadding

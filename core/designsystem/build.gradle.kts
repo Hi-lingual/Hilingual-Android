@@ -20,4 +20,5 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.kotlinx.immutable)
     implementation(libs.lottie)
+    implementation(libs.pebble)
 }
