@@ -1,47 +1,69 @@
 package com.hilingual.presentation.diaryfeedback.component
 
-import androidx.compose.foundation.interaction.Interaction
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
 internal fun AIFeedbackSwitch(
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    isChecked: Boolean,
+    onCheckedChange: () -> Unit,
+    width: Dp = 44.dp,
+    height: Dp = 22.dp,
+    checkedTrackColor: Color = HilingualTheme.colors.hilingualOrange,
+    uncheckedTrackColor: Color = HilingualTheme.colors.gray300,
+    gapBetweenThumbAndTrackEdge: Dp = 2.dp
 ) {
-    Switch(
-        checked = checked,
-        onCheckedChange = onCheckedChange,
-        colors = SwitchDefaults.colors(
-            checkedThumbColor = HilingualTheme.colors.white,
-            checkedTrackColor = HilingualTheme.colors.hilingualOrange,
-            uncheckedThumbColor = HilingualTheme.colors.white,
-            uncheckedTrackColor = HilingualTheme.colors.gray300,
-            uncheckedBorderColor = Color.Transparent,
-        ),
-        thumbContent = {
-            Box(
-                modifier = Modifier.size(18.dp)
-            )
-        },
-        interactionSource = NoRippleInteractionSource(),
-        modifier = modifier
+    val halfHeight = height / 2
+    val thumbRadius = halfHeight - gapBetweenThumbAndTrackEdge
+
+    val animatePosition = animateFloatAsState(
+        targetValue = if (isChecked)
+            with(LocalDensity.current) { (width - thumbRadius - gapBetweenThumbAndTrackEdge).toPx() }
+        else
+            with(LocalDensity.current) { (thumbRadius + gapBetweenThumbAndTrackEdge).toPx() }
     )
+
+    Canvas(
+        modifier = Modifier
+            .size(width = width, height = height)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = { onCheckedChange() }
+                )
+            }
+    ) {
+        drawRoundRect(
+            // Track
+            color = if (isChecked) checkedTrackColor else uncheckedTrackColor,
+            cornerRadius = CornerRadius(x = halfHeight.toPx(), y = halfHeight.toPx()),
+        )
+
+        drawCircle(  // Thumb
+            color = Color.White,
+            radius = thumbRadius.toPx(),
+            center = Offset(
+                x = animatePosition.value,
+                y = size.height / 2
+            )
+        )
+    }
 }
 
 @Preview(showBackground = true)
@@ -51,16 +73,8 @@ private fun SwitchPreview() {
         var checked by remember { mutableStateOf(true) }
 
         AIFeedbackSwitch(
-            checked = checked,
-            onCheckedChange = { checked = it }
+            isChecked = checked,
+            onCheckedChange = { checked = !checked }
         )
     }
-}
-
-private class NoRippleInteractionSource : MutableInteractionSource {
-    override val interactions = emptyFlow<Interaction>()
-
-    override suspend fun emit(interaction: Interaction) { }
-
-    override fun tryEmit(interaction: Interaction): Boolean = true
 }
