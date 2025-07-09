@@ -47,8 +47,8 @@ import java.time.format.DateTimeFormatter
 @Composable
 internal fun HomeRoute(
     paddingValues: PaddingValues,
-    onWriteDiaryClick: () -> Unit,
-    onDiaryPreviewClick: (diaryId: Long) -> Unit,
+    navigateToDiaryWrite: () -> Unit,
+    navigateToDiaryFeedback: (diaryId: Long) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val systemUiController = rememberSystemUiController()
@@ -75,7 +75,7 @@ internal fun HomeRoute(
             val onDiaryPreviewClickHandler = remember(state.data.diaryPreview) {
                 {
                     if (state.data.diaryPreview != null) {
-                        onDiaryPreviewClick(state.data.diaryPreview!!.diaryId)
+                        navigateToDiaryFeedback(state.data.diaryPreview!!.diaryId)
                     }
                 }
             }
@@ -84,7 +84,7 @@ internal fun HomeRoute(
                 uiState = state.data,
                 onDateSelected = viewModel::onDateSelected,
                 onMonthChanged = viewModel::onMonthChanged,
-                onWriteDiaryClick = onWriteDiaryClick,
+                onWriteDiaryClick = navigateToDiaryWrite,
                 onDiaryPreviewClick = onDiaryPreviewClickHandler
             )
         }
