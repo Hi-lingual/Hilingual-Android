@@ -11,10 +11,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -24,11 +26,13 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.tag.WordPhraseTypeTag
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.voca.R
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun VocaCard(
     phrase: String,
-    phraseType: List<String>,
+    phraseType: ImmutableList<String>,
     onCardClick: () -> Unit,
     isBookmarked: Boolean,
     onBookmarkClick: () -> Unit,
@@ -38,6 +42,7 @@ internal fun VocaCard(
         modifier = modifier
             .noRippleClickable(onClick = onCardClick)
             .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
             .background(
                 color = HilingualTheme.colors.white,
                 shape = RoundedCornerShape(8.dp)
@@ -53,7 +58,9 @@ internal fun VocaCard(
 
             ) {
                 phraseType.forEach { type ->
-                    WordPhraseTypeTag(phraseType = type)
+                    key(type) {
+                        WordPhraseTypeTag(phraseType = type)
+                    }
                 }
             }
             Text(
@@ -65,13 +72,13 @@ internal fun VocaCard(
         Icon(
             imageVector = ImageVector.vectorResource(
                 id = if (isBookmarked) {
-                    R.drawable.ic_save_28_and_filled
+                    R.drawable.ic_save_28_filled
                 } else {
-                    R.drawable.ic_save_28_and_empty
+                    R.drawable.ic_save_28_empty
                 }
             ),
             contentDescription = null,
-            modifier = modifier.noRippleClickable(onClick = onBookmarkClick),
+            modifier = Modifier.noRippleClickable(onClick = onBookmarkClick),
             tint = Color.Unspecified
         )
     }
@@ -84,7 +91,7 @@ private fun VocaCardPreview() {
         var isBookmarked by remember { mutableStateOf(true) }
         VocaCard(
             phrase = "run late",
-            phraseType = listOf("동사", "숙어"),
+            phraseType = persistentListOf("동사", "숙어"),
             onCardClick = {},
             isBookmarked = isBookmarked,
             onBookmarkClick = { isBookmarked = !isBookmarked }

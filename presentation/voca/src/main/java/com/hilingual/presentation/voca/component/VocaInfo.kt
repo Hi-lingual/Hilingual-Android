@@ -19,7 +19,7 @@ import com.hilingual.presentation.voca.R
 
 enum class WordSortType(val text: String) {
     Latest(text = "최신순"),
-    AtoZ(text = "AtoZ 순")
+    AtoZ(text = "A-Z 순")
 }
 
 @Composable
@@ -45,7 +45,7 @@ fun VocaInfo(
             horizontalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_list_24_and),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_list_24),
                 contentDescription = null,
                 tint = Color.Unspecified
             )

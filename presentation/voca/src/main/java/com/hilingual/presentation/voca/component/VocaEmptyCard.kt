@@ -23,13 +23,13 @@ enum class VocaEmptyCardType(
     val text: String,
     @DrawableRes val imageRes: Int
 ) {
-    NOTADD(
+    NOT_ADD(
         text = "아직 단어가 추가되지 않았어요",
-        imageRes = R.drawable.img_word_and
+        imageRes = R.drawable.img_word
     ),
-    NOTSEARCH(
+    NOT_SEARCH(
         text = "검색 결과가 없습니다",
-        imageRes = R.drawable.img_search_and
+        imageRes = R.drawable.img_search
     )
 }
 
@@ -45,7 +45,7 @@ internal fun VocaEmptyCard(
 
     ) {
         Image(
-            modifier = modifier
+            modifier = Modifier
                 .size(width = 200.dp, height = 140.dp),
             painter = painterResource(id = type.imageRes),
             contentDescription = null
