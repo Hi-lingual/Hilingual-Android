@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.util.UiState
-import com.hilingual.core.designsystem.component.system.StatusBarColor
+import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
@@ -51,6 +52,21 @@ internal fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val localSystemBarsColor = LocalSystemBarsColor.current
+
+    DisposableEffect(Unit) {
+        localSystemBarsColor.setSystemBarColor(
+            systemBarsColor = hilingualBlack,
+            isDarkIcon = false
+        )
+
+        onDispose {
+            localSystemBarsColor.setSystemBarColor(
+                systemBarsColor = white,
+                isDarkIcon = true
+            )
+        }
+    }
 
     when (val state = uiState) {
         is UiState.Loading -> {
@@ -82,12 +98,6 @@ internal fun HomeRoute(
 
         else -> {}
     }
-
-    StatusBarColor(
-        paddingValues = paddingValues,
-        statusBarColor = HilingualTheme.colors.hilingualBlack,
-        darkIcons = false
-    )
 }
 
 @Composable

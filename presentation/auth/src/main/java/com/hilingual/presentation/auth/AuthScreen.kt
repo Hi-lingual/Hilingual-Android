@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -17,8 +18,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
-import com.hilingual.core.designsystem.component.system.StatusBarColor
+import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.designsystem.theme.hilingualOrange
 import com.hilingual.presentation.auth.component.GoogleSignButton
 
 @Composable
@@ -27,16 +29,19 @@ internal fun AuthRoute(
     navigateToHome: () -> Unit,
     navigateToOnboarding: () -> Unit,
 ) {
+    val localSystemBarsColor = LocalSystemBarsColor.current
+
+    LaunchedEffect(Unit) {
+        localSystemBarsColor.setSystemBarColor(
+            systemBarsColor = hilingualOrange
+        )
+    }
+
     // TODO: SideEffect로 navigateToHome, navigateToOnboarding 처리 by.민재
     AuthScreen(
         paddingValues = paddingValues,
         onGoogleSignClick = navigateToHome, // 임시
         onPrivacyPolicyClick = { }
-    )
-
-    StatusBarColor(
-        paddingValues = paddingValues,
-        statusBarColor = HilingualTheme.colors.hilingualOrange
     )
 }
 
