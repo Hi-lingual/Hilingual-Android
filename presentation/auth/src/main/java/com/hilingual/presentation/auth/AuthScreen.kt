@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +24,7 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualOrange
 import com.hilingual.presentation.auth.component.GoogleSignButton
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 internal fun AuthRoute(
@@ -37,10 +39,18 @@ internal fun AuthRoute(
         systemUiController.setStatusBarColor(color = hilingualOrange, darkIcons = false)
     }
 
-    // TODO: SideEffect로 navigateToHome, navigateToOnboarding 처리 by.민재
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collectLatest { event ->
+            when (event) {
+                is AuthSideEffect.NavigateToHome -> navigateToHome()
+                is AuthSideEffect.NavigateToOnboarding -> navigateToOnboarding()
+            }
+        }
+    }
+
     AuthScreen(
         paddingValues = paddingValues,
-        onGoogleSignClick = navigateToHome, // 임시
+        onGoogleSignClick = viewModel::onGoogleSignClick,
         onPrivacyPolicyClick = { }
     )
 }
@@ -66,7 +76,6 @@ private fun AuthScreen(
         Image(
             painter = painterResource(R.drawable.img_logo),
             contentDescription = null,
-//            modifier = Modifier.sharedElement() 이렇게 쓸거야 효빈씨
         )
 
         Spacer(Modifier.weight(0.53f))
