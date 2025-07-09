@@ -64,7 +64,7 @@ internal fun RecommendExpressionCard(
                 color = HilingualTheme.colors.gray700
             )
         }
-        Icon( // 북마크
+        Icon(
             imageVector = ImageVector.vectorResource(
                 if (isMarked) R.drawable.ic_save_saved_28 else R.drawable.ic_save_unsaved_28
             ),

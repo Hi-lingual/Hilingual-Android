@@ -89,13 +89,13 @@ private fun FeedbackSentence(
         Icon(
             imageVector = ImageVector.vectorResource(
                 if (isFeedback) R.drawable.ic_feedback_ai else R.drawable.ic_feedback_my
-        ),
+            ),
             contentDescription = null,
             tint = Color.Unspecified
         )
         Text(
             text = text,
-            style = HilingualTheme.typography.bodyR16,
+            style = if (isFeedback) HilingualTheme.typography.bodyM16 else HilingualTheme.typography.bodyR16,
             color = if (isFeedback) HilingualTheme.colors.hilingualOrange else HilingualTheme.colors.gray700
         )
     }
