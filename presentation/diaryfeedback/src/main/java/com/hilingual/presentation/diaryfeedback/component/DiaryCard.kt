@@ -25,7 +25,7 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-internal fun DiaryContentCard(
+internal fun DiaryCard(
     content: String,
     isFeedback: Boolean,
     modifier: Modifier = Modifier,
@@ -138,7 +138,7 @@ private fun FeedbackContentPreview(
     @PreviewParameter(DiaryContentCardPreviewProvider::class) state: DiaryContentPreviewState
 ) {
     HilingualTheme {
-        DiaryContentCard(
+        DiaryCard(
             isFeedback = state.isFeedback,
             content = state.content,
             imageUrl = state.imageUrl,
