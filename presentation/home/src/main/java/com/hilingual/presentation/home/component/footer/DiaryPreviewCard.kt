@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -60,8 +61,7 @@ internal fun DiaryPreviewCard(
                 imageUrl = imageUrl,
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
-                    .heightIn(max = 74.dp)
-                    .aspectRatio(1f)
+                    .size(74.dp)
             )
         }
     }

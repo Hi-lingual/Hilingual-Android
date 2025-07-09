@@ -26,7 +26,9 @@ fun NavGraphBuilder.homeNavGraph(
 ) {
     composable<Home> {
         HomeRoute(
-            paddingValues = paddingValues
+            paddingValues = paddingValues,
+            navigateToDiaryWrite = {},
+            navigateToDiaryFeedback = {}
         )
     }
 }

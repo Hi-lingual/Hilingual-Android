@@ -52,7 +52,6 @@ internal fun CalendarHeader(
             tint = Color.Unspecified,
             modifier = Modifier
                 .noRippleClickable(onClick = onDownArrowClick)
-                .align(Alignment.Bottom)
         )
         Spacer(Modifier.weight(1f))
 
