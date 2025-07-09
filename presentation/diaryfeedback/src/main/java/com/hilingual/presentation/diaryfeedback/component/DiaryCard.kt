@@ -26,15 +26,15 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun DiaryCard(
-    content: String,
     isAIDiary: Boolean,
+    diaryContent: String,
     modifier: Modifier = Modifier,
     diffRanges: PersistentList<Pair<Int, Int>> = persistentListOf(),
     imageUrl: String? = null
 ) {
     val maxContentLength = if (isAIDiary) 1000 else 1500
 
-    val clipContent = content.run {
+    val clipContent = diaryContent.run {
         if (length > maxContentLength) this.take(maxContentLength) else this
     }
 
@@ -140,7 +140,7 @@ private fun FeedbackContentPreview(
     HilingualTheme {
         DiaryCard(
             isAIDiary = state.isAIDiary,
-            content = state.content,
+            diaryContent = state.content,
             imageUrl = state.imageUrl,
             diffRanges = state.diffRanges
         )
