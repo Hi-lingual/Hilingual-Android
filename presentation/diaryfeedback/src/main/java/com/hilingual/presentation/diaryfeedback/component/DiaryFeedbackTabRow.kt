@@ -10,6 +10,7 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -40,18 +41,20 @@ internal fun DiaryFeedbackTabRow(
         ) {
             titles.forEachIndexed { index, title ->
                 val selected = (tabIndex == index)
-                Tab(
-                    text = {
-                        Text(
-                            text = title,
-                            style = if (selected) HilingualTheme.typography.headB18 else HilingualTheme.typography.headM18
-                        )
-                    },
-                    selected = selected,
-                    onClick = { onTabSelected(index) },
-                    selectedContentColor = HilingualTheme.colors.black,
-                    unselectedContentColor = HilingualTheme.colors.gray500,
-                )
+                key(index, title) {
+                    Tab(
+                        text = {
+                            Text(
+                                text = title,
+                                style = if (selected) HilingualTheme.typography.headB18 else HilingualTheme.typography.headM18
+                            )
+                        },
+                        selected = selected,
+                        onClick = { onTabSelected(index) },
+                        selectedContentColor = HilingualTheme.colors.black,
+                        unselectedContentColor = HilingualTheme.colors.gray500,
+                    )
+                }
             }
         }
     }
