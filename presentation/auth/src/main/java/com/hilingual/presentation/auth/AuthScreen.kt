@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -21,6 +21,7 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualOrange
+import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.auth.component.GoogleSignButton
 
 @Composable
@@ -31,10 +32,16 @@ internal fun AuthRoute(
 ) {
     val localSystemBarsColor = LocalSystemBarsColor.current
 
-    LaunchedEffect(Unit) {
+    DisposableEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
             systemBarsColor = hilingualOrange
         )
+
+        onDispose {
+            localSystemBarsColor.setSystemBarColor(
+                systemBarsColor = white
+            )
+        }
     }
 
     // TODO: SideEffect로 navigateToHome, navigateToOnboarding 처리 by.민재
