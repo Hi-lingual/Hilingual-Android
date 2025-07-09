@@ -10,7 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import kotlinx.collections.immutable.immutableListOf
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 internal fun DiaryFeedbackTabRow(
@@ -30,6 +33,7 @@ internal fun DiaryFeedbackTabRow(
                 color = HilingualTheme.colors.black
             )
         },
+        divider = { },
         modifier = modifier.padding(horizontal = 16.dp)
     ) {
         titles.forEachIndexed { index, title ->
