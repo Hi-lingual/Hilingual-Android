@@ -3,12 +3,16 @@ package com.hilingual.presentation.diaryfeedback.component
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -22,6 +26,29 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 internal fun AIFeedbackSwitch(
+    isAIDiary: Boolean,
+    onToggle: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = modifier
+    ) {
+        Text(
+            text = "AI가 쓴 일기",
+            style = HilingualTheme.typography.captionM12,
+            color = HilingualTheme.colors.gray700
+        )
+        BasicSwitch(
+            isChecked = isAIDiary,
+            onCheckedChange = onToggle
+        )
+    }
+}
+
+@Composable
+private fun BasicSwitch(
     isChecked: Boolean,
     onCheckedChange: () -> Unit,
     width: Dp = 44.dp,
@@ -49,8 +76,7 @@ internal fun AIFeedbackSwitch(
                 )
             }
     ) {
-        drawRoundRect(
-            // Track
+        drawRoundRect( // Track
             color = if (isChecked) checkedTrackColor else uncheckedTrackColor,
             cornerRadius = CornerRadius(x = halfHeight.toPx(), y = halfHeight.toPx()),
         )
@@ -70,11 +96,11 @@ internal fun AIFeedbackSwitch(
 @Composable
 private fun SwitchPreview() {
     HilingualTheme {
-        var checked by remember { mutableStateOf(true) }
+        var isAI by remember { mutableStateOf(true) }
 
         AIFeedbackSwitch(
-            isChecked = checked,
-            onCheckedChange = { checked = !checked }
+            isAIDiary = isAI,
+            onToggle = { isAI = !isAI }
         )
     }
 }
