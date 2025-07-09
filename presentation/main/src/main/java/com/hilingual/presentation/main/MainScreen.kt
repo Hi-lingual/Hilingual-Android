@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
+import com.hilingual.presentation.onboarding.navigation.onboardingGraph
 import com.hilingual.presentation.voca.navigation.vocaNavGraph
 import kotlinx.collections.immutable.toPersistentList
 
@@ -37,6 +38,10 @@ internal fun MainScreen(
             navController = navigator.navController,
             startDestination = navigator.startDestination,
         ) {
+            onboardingGraph(
+                paddingValues = innerPadding,
+                navigateToHome = navigator::navigateToHome
+            )
             homeNavGraph(
                 paddingValues = innerPadding
             )
