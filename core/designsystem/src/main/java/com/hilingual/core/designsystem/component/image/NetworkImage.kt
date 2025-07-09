@@ -30,7 +30,7 @@ fun NetworkImage(
 ) {
     if (LocalInspectionMode.current) {
         Image(
-            painter = painterResource(R.drawable.ic_default_image),
+            painter = painterResource(R.drawable.img_default_image),
             contentDescription = contentDescription,
             contentScale = contentScale,
             modifier = modifier.clip(shape)
@@ -61,7 +61,6 @@ private fun NetworkImagePreview() {
             NetworkImage(
                 imageUrl = "",
                 shape = RectangleShape,
-                contentScale = ContentScale.None,
                 modifier = Modifier.size(50.dp),
             )
         }
