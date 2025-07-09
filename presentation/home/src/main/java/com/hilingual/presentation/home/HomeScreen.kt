@@ -114,7 +114,7 @@ private fun HomeScreen(
         modifier = Modifier
             .background(HilingualTheme.colors.white)
             .fillMaxSize()
-            .padding(paddingValues)
+            .padding(bottom = paddingValues.calculateBottomPadding())
             .verticalScroll(verticalScrollState)
     ) {
         HomeHeader(
@@ -124,6 +124,7 @@ private fun HomeScreen(
             streak = uiState.userProfile.streak,
             modifier = Modifier
                 .background(hilingualBlack)
+                .padding(top = paddingValues.calculateTopPadding())
                 .padding(horizontal = 16.dp)
                 .padding(top = 8.dp, bottom = 12.dp)
         )
