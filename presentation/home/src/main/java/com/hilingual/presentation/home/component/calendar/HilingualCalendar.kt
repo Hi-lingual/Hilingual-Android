@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.designsystem.component.bottomsheet.HilingualYearMonthPickerBottomSheet
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
@@ -36,6 +37,7 @@ internal fun HilingualCalendar(
     val endMonth = remember { currentMonth.plusMonths(100) }
     val daysOfWeek = remember { daysOfWeek().toImmutableList() }
     val coroutineScope = rememberCoroutineScope()
+    var isBottomSheetVisible by remember { mutableStateOf(false) }
 
     val state = rememberCalendarState(
         startMonth = startMonth,
@@ -45,15 +47,28 @@ internal fun HilingualCalendar(
         outDateStyle = OutDateStyle.EndOfRow
     )
 
+    if (isBottomSheetVisible) {
+        HilingualYearMonthPickerBottomSheet(
+            initialYearMonth = state.firstVisibleMonth.yearMonth,
+            onDismiss = { isBottomSheetVisible = false },
+            onDateSelected = { newYearMonth ->
+                coroutineScope.launch {
+                    state.scrollToMonth(newYearMonth)
+                }
+                isBottomSheetVisible = false
+            }
+        )
+    }
+
     LaunchedEffect(state.firstVisibleMonth) {
         onMonthChanged(state.firstVisibleMonth.yearMonth)
     }
 
     Column(
-        modifier = modifier.background(HilingualTheme.colors.white)
+        modifier = modifier
     ) {
         CalendarHeader(
-            onDownArrowClick = { /* TODO: 데이트 피커 바텀시트 여는 로직*/ },
+            onDownArrowClick = { isBottomSheetVisible = true },
             onLeftArrowClick = {
                 coroutineScope.launch {
                     state.animateScrollToMonth(state.firstVisibleMonth.yearMonth.minusMonths(1))

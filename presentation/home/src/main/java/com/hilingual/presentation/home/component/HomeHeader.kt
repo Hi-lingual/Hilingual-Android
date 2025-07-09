@@ -24,7 +24,7 @@ import com.hilingual.presentation.home.R
 @Composable
 internal fun HomeHeader(
     imageUrl: String,
-    nickName: String,
+    nickname: String,
     totalDiaries: Int,
     streak: Int,
     modifier: Modifier = Modifier
@@ -37,7 +37,7 @@ internal fun HomeHeader(
         ProfileImage(imageUrl)
 
         Column(modifier = Modifier.weight(1f)) {
-            ProfileName(nickName)
+            ProfileName(nickname)
             UserStatsRow(totalDiaries, streak)
         }
     }
@@ -127,13 +127,13 @@ private fun HomeHeaderPreview() {
         ) {
             HomeHeader(
                 imageUrl = "",
-                nickName = "닉네임1",
+                nickname = "닉네임1",
                 totalDiaries = 10,
                 streak = 5
             )
             HomeHeader(
                 imageUrl = "",
-                nickName = "닉네임2",
+                nickname = "닉네임2",
                 totalDiaries = 0,
                 streak = 0
             )
