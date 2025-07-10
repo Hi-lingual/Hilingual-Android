@@ -42,7 +42,7 @@ private fun SplashScreen() {
             .background(HilingualTheme.colors.hilingualOrange)
     ) {
         Spacer(
-            modifier = Modifier.weight(252f)
+            modifier = Modifier.weight(18f)
         )
 
         Image(
@@ -51,7 +51,7 @@ private fun SplashScreen() {
         )
 
         Spacer(
-            modifier = Modifier.weight(406f)
+            modifier = Modifier.weight(29f)
         )
     }
 }
