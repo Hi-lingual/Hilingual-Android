@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,11 +53,12 @@ internal fun VocaRoute(
     val selectedVocaItem by viewModel.selectedVocaItem.collectAsStateWithLifecycle()
     val systemUiController = rememberSystemUiController()
 
+    var searchText by remember { mutableStateOf("") }
+    var isSearch by remember { mutableStateOf(false) }
+    var searchResultList by remember { mutableStateOf(emptyList<VocaItem>()) }
+
     SideEffect {
-        systemUiController.setStatusBarColor(
-            color = hilingualBlack,
-            darkIcons = false
-        )
+        systemUiController.setStatusBarColor(hilingualBlack, darkIcons = false)
     }
 
     when (val state = uiState) {
@@ -66,10 +69,32 @@ internal fun VocaRoute(
                 uiState = state.data,
                 vocaDetail = vocaDetail,
                 selectedVocaItem = selectedVocaItem,
+                isSearch = isSearch,
+                searchResultList = searchResultList.toImmutableList(),
+                searchText = searchText,
                 onSortTypeChanged = viewModel::fetchWords,
                 onCardClick = viewModel::fetchVocaDetail,
                 onBookmarkClick = viewModel::toggleBookmark,
-                onDismissModal = viewModel::clearSelectedItem
+                onDismissModal = viewModel::clearSelectedItem,
+                onSearchTextChanged = {
+                    searchText = it
+                    if (it.isBlank()) {
+                        isSearch = false
+                        searchResultList = emptyList()
+                    }
+                },
+                onSearchConfirmed = {
+                    if (searchText.isNotBlank()) {
+                        isSearch = true
+                        searchResultList = state.data.vocaGroupList
+                            .flatMap { it.words }
+                            .filter { it.phrase.startsWith(searchText, ignoreCase = true) }
+                            .sortedBy { it.phrase }
+                    } else {
+                        isSearch = false
+                        searchResultList = emptyList()
+                    }
+                }
             )
         }
 
@@ -83,13 +108,17 @@ private fun VocaScreen(
     uiState: VocaUiState,
     vocaDetail: VocaItemDetail?,
     selectedVocaItem: VocaItem?,
+    isSearch: Boolean,
+    searchResultList: ImmutableList<VocaItem>,
+    searchText: String,
     onSortTypeChanged: (WordSortType) -> Unit,
     onCardClick: (VocaItem) -> Unit,
     onBookmarkClick: (VocaItem) -> Unit,
-    onDismissModal: () -> Unit
+    onDismissModal: () -> Unit,
+    onSearchTextChanged: (String) -> Unit,
+    onSearchConfirmed: () -> Unit
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
-    var searchText by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -99,20 +128,29 @@ private fun VocaScreen(
     ) {
         VocaHeader(
             searchText = { searchText },
-            onSearchTextChanged = { searchText = it },
+            onSearchTextChanged = onSearchTextChanged,
+            onSearchConfirmed = onSearchConfirmed,
             modifier = Modifier
                 .background(hilingualBlack)
                 .fillMaxWidth()
         )
 
-        VocaListWithInfoSection(
-            vocaGroupList = uiState.vocaGroupList.toImmutableList(),
-            sortType = uiState.sortType,
-            wordCount = uiState.vocaGroupList.sumOf { it.words.size },
-            onSortClick = { showBottomSheet = true },
-            onCardClick = onCardClick,
-            onBookmarkClick = onBookmarkClick
-        )
+        if (isSearch) {
+            SearchResultSection(
+                searchResultList = searchResultList,
+                onCardClick = onCardClick,
+                onBookmarkClick = onBookmarkClick
+            )
+        } else {
+            VocaListWithInfoSection(
+                vocaGroupList = uiState.vocaGroupList.toImmutableList(),
+                sortType = uiState.sortType,
+                wordCount = uiState.vocaGroupList.sumOf { it.words.size },
+                onSortClick = { showBottomSheet = true },
+                onCardClick = onCardClick,
+                onBookmarkClick = onBookmarkClick
+            )
+        }
     }
 
     if (selectedVocaItem != null && vocaDetail != null) {
@@ -130,9 +168,7 @@ private fun VocaScreen(
                 explanation = vocaDetail.explanation,
                 createdAt = vocaDetail.createdAt,
                 isBookmarked = selectedVocaItem.isBookmarked,
-                onBookmarkClick = {
-                    onBookmarkClick(selectedVocaItem)
-                },
+                onBookmarkClick = { onBookmarkClick(selectedVocaItem) },
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .navigationBarsPadding()
@@ -151,8 +187,6 @@ private fun VocaScreen(
         )
     }
 }
-
-
 
 
 @Composable
@@ -232,5 +266,101 @@ internal fun VocaListWithInfoSection(
                 }
             }
         }
+    }
+}
+
+@Composable
+internal fun SearchResultSection(
+    searchResultList: List<VocaItem>,
+    onCardClick: (VocaItem) -> Unit,
+    onBookmarkClick: (VocaItem) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize()
+    ) {
+        if (searchResultList.isEmpty()) {
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillParentMaxSize()
+                        .padding(horizontal = 80.dp)
+                        .padding(top = 80.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    VocaEmptyCard(type = VocaEmptyCardType.NOT_SEARCH)
+                }
+            }
+        } else {
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            items(searchResultList) { voca ->
+                VocaCard(
+                    phrase = voca.phrase,
+                    phraseType = voca.phraseType.toImmutableList(),
+                    onCardClick = { onCardClick(voca) },
+                    isBookmarked = voca.isBookmarked,
+                    onBookmarkClick = { onBookmarkClick(voca) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 16.dp)
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchResultSectionPreview() {
+    val sampleVocaItems = remember {
+        listOf(
+            VocaItem(
+                1,
+                phrase = "apple",
+                phraseType = listOf("명사"),
+                isBookmarked = true
+            ),
+            VocaItem(
+                2,
+                phrase = "application",
+                phraseType = listOf("명사"),
+                isBookmarked = true
+            ),
+            VocaItem(
+                3,
+                phrase = "appreciate",
+                phraseType = listOf("동사"),
+                isBookmarked = true
+            ),
+            VocaItem(
+                4,
+                phrase = "anana",
+                phraseType = listOf("명사"),
+                isBookmarked = true
+            )
+        )
+    }
+
+    HilingualTheme {
+        SearchResultSection(
+            searchResultList = sampleVocaItems,
+            onCardClick = {},
+            onBookmarkClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchResultSectionEmptyPreview() {
+    HilingualTheme {
+        SearchResultSection(
+            searchResultList = emptyList(),
+            onCardClick = {},
+            onBookmarkClick = {}
+        )
     }
 }
