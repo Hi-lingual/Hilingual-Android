@@ -34,7 +34,7 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private const val EXIT_MILLIS = 2000L //TODO: 추후 정책에 맞게 변경 필요
+private const val EXIT_MILLIS = 3000L //TODO: 추후 정책에 맞게 변경 필요
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
