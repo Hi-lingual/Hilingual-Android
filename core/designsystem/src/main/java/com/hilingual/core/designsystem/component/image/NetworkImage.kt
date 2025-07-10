@@ -22,7 +22,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun NetworkImage(
-    imageUrl: String,
+    imageUrl: Any,
     modifier: Modifier = Modifier,
     shape: Shape = CircleShape,
     contentScale: ContentScale = ContentScale.Crop,
