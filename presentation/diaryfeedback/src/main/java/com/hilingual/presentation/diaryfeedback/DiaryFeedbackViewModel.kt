@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DiaryFeedbackViewModel @Inject constructor() : ViewModel() {
+internal class DiaryFeedbackViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<DiaryFeedbackUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<DiaryFeedbackUiState>> = _uiState.asStateFlow()
     
@@ -43,7 +43,7 @@ class DiaryFeedbackViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    private fun toggleDiaryShowOption(isAI: Boolean) {
+    fun toggleDiaryShowOption(isAI: Boolean) {
         _uiState.update {
             (it as UiState.Success).copy(
                 data = it.data.copy(isAI = isAI)
@@ -54,9 +54,11 @@ class DiaryFeedbackViewModel @Inject constructor() : ViewModel() {
     companion object {
         //TODO: 서버 붙인 이후 삭제
         val dummyDiaryContent = DiaryContent(
-            writtenDate = "8월 21일 목요일",
-            originalText = "",
-            aiText = "",
+            writtenDate = "7월 11일 금요일",
+            originalText = "Today I went to the cafe Conhas in Yeonnam to meet my teammates.\u2028 I was planning to arrive around 1:30 p.m., but I got there at 2:20 because I overslept, as always.\u2028 I wore rain boots and brought my favorite umbrella because the weather forecast said it would rain all day, but it wasn’t really raining much outside.\u2028 I got kind of disappointed. But yes, no rain is better than rain, I guess.\n" +
+                    "After arriving, I had a jambon arugula sandwich with a vanilla latte.\u2028 Honestly, I should be more careful when I'm drinking milk because I get stomachaches easily, but I always order lattes.\u2028My life feels like a disaster, a mess that I call myself.\u2028 But they tasted really good, so I felt more motivated to work.\u2028 I really liked this café because it's spacious, chill, and has a great atmosphere for focusing.\u2028 I’ll definitely come back again soon!",
+            aiText = "Today I went to the cafe Conhas in Yeonnam to meet my teammates.\n I was planning to arrive around 1:30 p.m., but I got there at 2:20 because I overslept, as always.\n I wore rain boots and brought my favorite umbrella because the weather forecast said it would rain all day, but it wasn’t really raining much outside.\n I got kind of disappointed. But yes, no rain is better than rain, I guess.\n" +
+                    "After arriving, I had a jambon arugula sandwich with a vanilla latte.\n Honestly, I should be more careful when I'm drinking milk because I get stomachaches easily, but I always order lattes.\nMy life feels like a disaster, a mess that I call myself.\n But they tasted really good, so I felt more motivated to work.\n I really liked this café because it's spacious, chill, and has a great atmosphere for focusing.\n I’ll definitely come back again soon!",
             diffRanges = persistentListOf(
                 Pair(84, 164),
                 Pair(278, 316),
