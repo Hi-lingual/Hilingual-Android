@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
@@ -29,7 +28,7 @@ internal fun DiaryCard(
     isAIDiary: Boolean,
     diaryContent: String,
     modifier: Modifier = Modifier,
-    diffRanges: PersistentList<Pair<Int, Int>> = persistentListOf(),
+    diffRanges: ImmutableList<Pair<Int, Int>> = persistentListOf(),
     imageUrl: String? = null
 ) {
     val maxContentLength = if (isAIDiary) 1000 else 1500
@@ -99,7 +98,7 @@ private data class DiaryCardPreviewState(
     val isAIDiary: Boolean,
     val imageUrl: String?,
     val content: String,
-    val diffRanges: PersistentList<Pair<Int, Int>>
+    val diffRanges: ImmutableList<Pair<Int, Int>>
 )
 
 private class DiaryContentCardPreviewProvider :
