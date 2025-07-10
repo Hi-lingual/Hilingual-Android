@@ -33,6 +33,13 @@ class TokenManagerImpl @Inject constructor(
         }
     }
 
+    override suspend fun saveTokens(accessToken: String, refreshToken: String) {
+        context.dataStore.edit {
+            it[PreferencesKeys.ACCESS_TOKEN] = accessToken
+            it[PreferencesKeys.REFRESH_TOKEN] = refreshToken
+        }
+    }
+
     override suspend fun getAccessToken(): String? {
         return context.dataStore.data.first()[PreferencesKeys.ACCESS_TOKEN]
     }

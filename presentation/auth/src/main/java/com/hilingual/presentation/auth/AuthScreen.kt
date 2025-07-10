@@ -14,6 +14,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,6 +35,7 @@ internal fun AuthRoute(
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val systemUiController = rememberSystemUiController()
+    val context = LocalContext.current
 
     SideEffect {
         systemUiController.setStatusBarColor(color = hilingualOrange, darkIcons = false)
@@ -50,7 +52,7 @@ internal fun AuthRoute(
 
     AuthScreen(
         paddingValues = paddingValues,
-        onGoogleSignClick = viewModel::onGoogleSignClick,
+        onGoogleSignClick = { viewModel.onGoogleSignClick(context) },
         onPrivacyPolicyClick = { }
     )
 }

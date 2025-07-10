@@ -11,15 +11,27 @@ import javax.inject.Inject
 class AuthInterceptor @Inject constructor(
     private val tokenManager: TokenManager
 ) : Interceptor {
+
+    @Volatile
+    private var accessToken: String? = null
+
     override fun intercept(chain: Interceptor.Chain): Response {
-        val accessToken = runBlocking { tokenManager.getAccessToken() }
-        Timber.d("ACCESS_TOKEN: $accessToken")
+        val token = accessToken ?: runBlocking {
+            tokenManager.getAccessToken()
+        }.also {
+            accessToken = it
+        }
+        Timber.d("ACCESS_TOKEN: $token")
 
         val originalRequest = chain.request()
 
-        val authRequest = originalRequest.newBuilder().newAuthBuilder(accessToken).build()
+        val authRequest = originalRequest.newBuilder().newAuthBuilder(token).build()
 
         val response = chain.proceed(authRequest)
+
+        if (response.code == 401) {
+            accessToken = null
+        }
 
         return response
     }

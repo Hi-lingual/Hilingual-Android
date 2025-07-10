@@ -50,8 +50,7 @@ class TokenAuthenticator @Inject constructor(
             }
 
             val (newAccessToken, _) = result.getOrThrow()
-            tokenManager.saveAccessToken(newAccessToken)
-            tokenManager.saveRefreshToken(refreshToken)
+            tokenManager.saveTokens(newAccessToken, refreshToken)
             return buildRequestWithToken(response.request, newAccessToken)
         }
     }
