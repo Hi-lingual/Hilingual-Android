@@ -1,5 +1,9 @@
 package com.hilingual.presentation.auth
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -26,12 +30,15 @@ import com.hilingual.core.designsystem.theme.hilingualOrange
 import com.hilingual.presentation.auth.component.GoogleSignButton
 import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun AuthRoute(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
     navigateToOnboarding: () -> Unit,
-    viewModel: AuthViewModel = hiltViewModel()
+    viewModel: AuthViewModel = hiltViewModel(),
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     val systemUiController = rememberSystemUiController()
 
@@ -51,16 +58,21 @@ internal fun AuthRoute(
     AuthScreen(
         paddingValues = paddingValues,
         onGoogleSignClick = viewModel::onGoogleSignClick,
-        onPrivacyPolicyClick = { }
+        onPrivacyPolicyClick = { },
+        sharedTransitionScope = sharedTransitionScope,
+        animatedVisibilityScope = animatedVisibilityScope
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun AuthScreen(
     paddingValues: PaddingValues,
     onGoogleSignClick: () -> Unit,
     onPrivacyPolicyClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     Column(
         modifier = modifier
@@ -73,11 +85,19 @@ private fun AuthScreen(
     ) {
         Spacer(Modifier.weight(0.47f))
 
-        Image(
-            painter = painterResource(R.drawable.img_logo),
-            contentDescription = null,
-//            modifier = Modifier.sharedElement() 이렇게 쓸거야 효빈씨
-        )
+        with(sharedTransitionScope) {
+            Image(
+                painter = painterResource(R.drawable.img_logo),
+                contentDescription = null,
+                modifier = Modifier.sharedElement(
+                    sharedContentState = rememberSharedContentState(key = "logo"),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    boundsTransform = { _, _ ->
+                        tween(durationMillis = 500)
+                    }
+                )
+            )
+        }
 
         Spacer(Modifier.weight(0.53f))
 
@@ -103,10 +123,10 @@ private fun AuthScreen(
 @Composable
 private fun AuthScreenPreview() {
     HilingualTheme {
-        AuthScreen(
-            paddingValues = PaddingValues(0.dp),
-            onGoogleSignClick = {},
-            onPrivacyPolicyClick = {}
-        )
+//        AuthScreen(
+//            paddingValues = PaddingValues(0.dp),
+//            onGoogleSignClick = {},
+//            onPrivacyPolicyClick = {}
+//        )
     }
 }

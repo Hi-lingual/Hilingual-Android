@@ -1,5 +1,9 @@
 package com.hilingual.presentation.splash
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -16,10 +20,13 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun SplashRoute(
     navigateToAuth: () -> Unit,
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -30,11 +37,18 @@ internal fun SplashRoute(
         }
     }
 
-    SplashScreen()
+    SplashScreen(
+        sharedTransitionScope = sharedTransitionScope,
+        animatedVisibilityScope = animatedVisibilityScope
+    )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun SplashScreen() {
+private fun SplashScreen(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -45,10 +59,19 @@ private fun SplashScreen() {
             modifier = Modifier.weight(18f)
         )
 
-        Image(
-            painter = painterResource(R.drawable.img_logo),
-            contentDescription = null
-        )
+        with(sharedTransitionScope) {
+            Image(
+                painter = painterResource(R.drawable.img_logo),
+                contentDescription = null,
+                modifier = Modifier.sharedElement(
+                    sharedContentState = rememberSharedContentState(key = "logo"),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    boundsTransform = { _, _ ->
+                        tween(durationMillis = 500)
+                    }
+                )
+            )
+        }
 
         Spacer(
             modifier = Modifier.weight(29f)

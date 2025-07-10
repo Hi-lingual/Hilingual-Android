@@ -2,6 +2,7 @@ package com.hilingual.presentation.main
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.material3.Scaffold
@@ -42,15 +43,18 @@ internal fun MainScreen(
             NavHost(
                 navController = navigator.navController,
                 startDestination = navigator.startDestination,
+
             ) {
                 splashNavGraph(
                     navigateToAuth = navigator::navigateToAuth,
-                    navigateToHome = navigator::navigateToHome
+                    navigateToHome = navigator::navigateToHome,
+                    sharedTransitionScope = this@SharedTransitionLayout
                 )
                 authNavGraph(
                     paddingValues = innerPadding,
                     navigateToHome = navigator::navigateToHome,
                     navigateToOnboarding = navigator::navigateToOnboarding,
+                    sharedTransitionScope = this@SharedTransitionLayout
                 )
                 onboardingGraph(
                     paddingValues = innerPadding,
