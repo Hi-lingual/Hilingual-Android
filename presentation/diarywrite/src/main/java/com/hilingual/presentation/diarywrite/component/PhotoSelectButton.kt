@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,7 +22,7 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.diarywrite.R
 import androidx.core.net.toUri
-import coil.compose.AsyncImage
+import com.hilingual.core.designsystem.component.image.NetworkImage
 
 @Composable
 internal fun PhotoSelectButton(
@@ -29,15 +30,13 @@ internal fun PhotoSelectButton(
     onDeleteClick: () -> Unit,
     selectedImgUri: Uri? = null,  // 선택된 이미지 파일
 ) {
-    val isImageSelected = selectedImgUri != null  // 이미지 존재 여부
-
     Box(
         modifier = Modifier.size(width = 88.dp, height = 89.dp)
     ) {
-        if (isImageSelected) {  // 이미지가 존재하는 경우의 UI
-            AsyncImage(
-                model = selectedImgUri,
-                contentDescription = null,
+        if (selectedImgUri != null) {  // 이미지가 존재하는 경우의 UI
+            NetworkImage(
+                imageUrl = selectedImgUri,
+                shape = RectangleShape,
                 modifier = Modifier
                     .size(80.dp)
                     .align(Alignment.BottomStart)
