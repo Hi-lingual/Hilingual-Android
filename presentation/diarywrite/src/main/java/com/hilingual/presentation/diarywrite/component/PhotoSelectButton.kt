@@ -46,7 +46,7 @@ internal fun PhotoSelectButton(
                 modifier = Modifier
                     .size(22.dp)
                     .align(Alignment.TopEnd)
-                    .noRippleClickable { onDeleteClick() },
+                    .noRippleClickable(onClick = onDeleteClick),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_delete_circle_22),
                 contentDescription = null,
                 tint = Color.Unspecified

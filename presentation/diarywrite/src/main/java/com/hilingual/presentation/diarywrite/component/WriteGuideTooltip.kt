@@ -19,13 +19,14 @@ import com.hilingual.presentation.diarywrite.R
 
 @Composable
 internal fun WriteGuideTooltip(
-    text: String
+    text: String,
+    modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            modifier = Modifier
+            modifier = modifier
                 .clip(shape = RoundedCornerShape(8.dp))
                 .background(HilingualTheme.colors.hilingualBlack)
                 .padding(horizontal = 14.dp, vertical = 8.dp),

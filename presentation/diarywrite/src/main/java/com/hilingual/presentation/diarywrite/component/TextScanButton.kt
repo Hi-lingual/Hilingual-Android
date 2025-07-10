@@ -25,10 +25,11 @@ import com.hilingual.presentation.diarywrite.R
 
 @Composable
 internal fun TextScanButton(
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .clip(shape = RoundedCornerShape(8.dp))
             .background(HilingualTheme.colors.white)
             .border(

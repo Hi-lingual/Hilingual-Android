@@ -80,11 +80,7 @@ internal fun RecommendedTopicDropdown(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = if (isKo) {
-                        koTopic
-                    } else {
-                        enTopic
-                    },
+                    text = if (isKo) koTopic else enTopic,
                     style = HilingualTheme.typography.bodySB16,
                     color = HilingualTheme.colors.gray700
                 )
