@@ -35,6 +35,7 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun GrammarSpellingScreen(
+    writtenDate: String,
     diaryContent: DiaryContent,
     feedbackList: ImmutableList<FeedbackContent>,
     onToggle: (Boolean) -> Unit,
@@ -54,7 +55,7 @@ internal fun GrammarSpellingScreen(
                 modifier = Modifier.fillMaxWidth()
             ){
                 Text(
-                    text = diaryContent.writtenDate,
+                    text = writtenDate,
                     style = HilingualTheme.typography.bodySB14,
                     color = HilingualTheme.colors.gray700
                 )
@@ -124,6 +125,7 @@ private fun GrammarSpellingScreenPreview() {
         val dummyDiary = DiaryFeedbackViewModel.dummyDiaryContent
 
         GrammarSpellingScreen(
+            writtenDate = "7월 11일 금요일",
             isAI = isAI,
             onToggle = { isAI = !isAI },
             diaryContent = dummyDiary,

@@ -55,7 +55,8 @@ internal fun DiaryFeedbackRoute(
         is UiState.Success -> {
             DiaryFeedbackScreen(
                 uiState = state.data,
-                onToggle = viewModel::toggleDiaryShowOption
+                onToggle = viewModel::toggleDiaryShowOption,
+                onToggleBookmark = viewModel::toggleBookmark
             )
         }
 
@@ -67,6 +68,7 @@ internal fun DiaryFeedbackRoute(
 private fun DiaryFeedbackScreen(
     uiState: DiaryFeedbackUiState,
     onToggle: (Boolean) -> Unit,
+    onToggleBookmark: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var tabIndex by remember { mutableIntStateOf(0) }
@@ -92,16 +94,25 @@ private fun DiaryFeedbackScreen(
             onTabSelected = { tabIndex = it }
         )
 
-        when (tabIndex) {
-            0 -> uiState.apply {
-                GrammarSpellingScreen(
-                    diaryContent = diaryContent,
-                    feedbackList = feedbackList,
-                    onToggle = onToggle,
-                    isAI = isAI
+        uiState.apply {
+            when (tabIndex) {
+                0 -> uiState.apply {
+                    GrammarSpellingScreen(
+                        writtenDate = "7월 11일 금요일",
+                        diaryContent = diaryContent,
+                        feedbackList = feedbackList,
+                        onToggle = onToggle,
+                        isAI = isAI
+                    )
+                }
+                1 -> RecommendExpressionScreen(
+                    writtenDate = "7월 11일 금요일",
+                    recommendExpressionList = recommendExpressionList,
+                    isBookmarkClick = {
+                        //TODO: 수정 필요
+                    },
                 )
             }
-            1 -> RecommendExpressionScreen()
         }
     }
 }

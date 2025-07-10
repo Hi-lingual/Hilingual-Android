@@ -10,13 +10,12 @@ data class DiaryFeedbackUiState(
     val isAI: Boolean = true,
     val diaryContent: DiaryContent = DiaryContent(),
     val feedbackList: ImmutableList<FeedbackContent>,
-    val recommendExpression: ImmutableList<RecommendExpression>,
+    val recommendExpressionList: ImmutableList<RecommendExpression>,
     val isLoading: Boolean = true
 )
 
 @Immutable
 data class DiaryContent(
-    val writtenDate: String = "",
     val originalText: String = "",
     val aiText: String = "",
     val diffRanges: ImmutableList<Pair<Int, Int>> = persistentListOf(),

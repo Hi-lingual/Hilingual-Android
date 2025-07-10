@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.util.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,7 +37,7 @@ internal class DiaryFeedbackViewModel @Inject constructor() : ViewModel() {
                     diaryId = 0L, //TODO: 홈이나 일기 작성에서 id 받아오기
                     diaryContent = diaryContent,
                     feedbackList = feedbacks,
-                    recommendExpression = recommendExpression,
+                    recommendExpressionList = recommendExpression,
                     isLoading = false
                 )
             )
@@ -51,10 +52,28 @@ internal class DiaryFeedbackViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    fun toggleBookmark(phraseId: Long, isMarked: Boolean) {
+        _uiState.update { currentState ->
+            val successState = currentState as UiState.Success
+            val oldList = successState.data.recommendExpressionList
+
+            val updatedList = oldList.map { item ->
+                if (item.phraseId == phraseId) {
+                    item.copy(isMarked = isMarked)
+                } else {
+                    item
+                }
+            }.toImmutableList()
+
+            successState.copy(
+                data = successState.data.copy(recommendExpressionList = updatedList)
+            )
+        }
+    }
+
     companion object {
         //TODO: 서버 붙인 이후 삭제
         val dummyDiaryContent = DiaryContent(
-            writtenDate = "7월 11일 금요일",
             originalText = "Today I went to the cafe Conhas in Yeonnam to meet my teammates.\u2028 I was planning to arrive around 1:30 p.m., but I got there at 2:20 because I overslept, as always.\u2028 I wore rain boots and brought my favorite umbrella because the weather forecast said it would rain all day, but it wasn’t really raining much outside.\u2028 I got kind of disappointed. But yes, no rain is better than rain, I guess.\n" +
                     "After arriving, I had a jambon arugula sandwich with a vanilla latte.\u2028 Honestly, I should be more careful when I'm drinking milk because I get stomachaches easily, but I always order lattes.\u2028My life feels like a disaster, a mess that I call myself.\u2028 But they tasted really good, so I felt more motivated to work.\u2028 I really liked this café because it's spacious, chill, and has a great atmosphere for focusing.\u2028 I’ll definitely come back again soon!",
             aiText = "Today I went to the cafe Conhas in Yeonnam to meet my teammates.\n I was planning to arrive around 1:30 p.m., but I got there at 2:20 because I overslept, as always.\n I wore rain boots and brought my favorite umbrella because the weather forecast said it would rain all day, but it wasn’t really raining much outside.\n I got kind of disappointed. But yes, no rain is better than rain, I guess.\n" +
@@ -89,8 +108,22 @@ internal class DiaryFeedbackViewModel @Inject constructor() : ViewModel() {
                 phrase = "come across as",
                 explanation = "~처럼 보이다, ~한 인상을 주다",
                 reason = "“My life comes across as a disaster.”처럼 자신이나 상황의 ‘이미지’를 묘사할 때 자연스러워요.",
-                isMarked = true,
-            )
+                isMarked = false,
+            ),
+            RecommendExpression(
+                phraseId = 1L,
+                phraseType = persistentListOf("형용사"),
+                phrase = "underwhelming",
+                explanation = "기대에 못 미치는, 실망스러운",
+                reason = "“The weather was kind of underwhelming.”처럼 예상보다 실망스러운 상황을 부드럽게 말할 수 있어요.",
+            ),
+            RecommendExpression(
+                phraseId = 2L,
+                phraseType = persistentListOf("명사"),
+                phrase = "underwhelming",
+                explanation = "기대에 못 미치는, 실망스러운",
+                reason = "“The weather was kind of underwhelming.”처럼 예상보다 실망스러운 상황을 부드럽게 말할 수 있어요.",
+            ),
         )
     }
 }
