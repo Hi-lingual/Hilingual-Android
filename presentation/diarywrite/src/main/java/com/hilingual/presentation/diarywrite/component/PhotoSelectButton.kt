@@ -26,7 +26,7 @@ import com.hilingual.core.designsystem.component.image.NetworkImage
 
 @Composable
 internal fun PhotoSelectButton(
-    onClick: () -> Unit,  // 사진 선택 버튼 눌렀을 때
+    onPhotoSelectClick: () -> Unit,  // 사진 선택 버튼 눌렀을 때
     onDeleteClick: () -> Unit,
     selectedImgUri: Uri? = null,  // 선택된 이미지 파일
 ) {
@@ -58,7 +58,7 @@ internal fun PhotoSelectButton(
                     .align(Alignment.BottomStart)
                     .clip(RoundedCornerShape(8.dp))
                     .background(HilingualTheme.colors.gray100)
-                    .noRippleClickable(onClick = onClick),
+                    .noRippleClickable(onClick = onPhotoSelectClick),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -80,7 +80,7 @@ private fun PhotoSelectButtonPreview() {
 
     HilingualTheme {
         PhotoSelectButton(
-            onClick = {
+            onPhotoSelectClick = {
                 // Preview에서는 초기 상태의 버튼을 클릭했을 때 이미지가 자동으로 삽입된다고 가정해 테스트 진행함 (실제 UI에서는 바텀시트로 연결됨)
                 imgUriState.value = "".toUri()
             },

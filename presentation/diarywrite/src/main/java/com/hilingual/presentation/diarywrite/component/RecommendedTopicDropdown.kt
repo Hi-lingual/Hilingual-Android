@@ -1,5 +1,6 @@
 package com.hilingual.presentation.diarywrite.component
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,7 @@ internal fun RecommendedTopicDropdown(
 
     Column(
         modifier = modifier
+            .animateContentSize()
             .clip(RoundedCornerShape(8.dp))
             .background(HilingualTheme.colors.gray100)
             .fillMaxWidth()
