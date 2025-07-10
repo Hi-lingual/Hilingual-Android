@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,17 +18,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualOrange
 import com.hilingual.presentation.auth.component.GoogleSignButton
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 internal fun AuthRoute(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
     navigateToOnboarding: () -> Unit,
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
     val systemUiController = rememberSystemUiController()
 
@@ -35,10 +39,18 @@ internal fun AuthRoute(
         systemUiController.setStatusBarColor(color = hilingualOrange, darkIcons = false)
     }
 
-    // TODO: SideEffect로 navigateToHome, navigateToOnboarding 처리 by.민재
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collectLatest { event ->
+            when (event) {
+                is AuthSideEffect.NavigateToHome -> navigateToHome()
+                is AuthSideEffect.NavigateToOnboarding -> navigateToOnboarding()
+            }
+        }
+    }
+
     AuthScreen(
         paddingValues = paddingValues,
-        onGoogleSignClick = navigateToOnboarding, // 임시
+        onGoogleSignClick = viewModel::onGoogleSignClick,
         onPrivacyPolicyClick = { }
     )
 }
