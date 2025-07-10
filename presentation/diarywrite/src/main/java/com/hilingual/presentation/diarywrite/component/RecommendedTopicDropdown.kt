@@ -35,7 +35,7 @@ internal fun RecommendedTopicDropdown(
     modifier: Modifier = Modifier
 ) {
     var isKo by remember { mutableStateOf(false) }
-    var isExpanded by remember { mutableStateOf(false) }  // 확장 여부
+    var isExpanded by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -46,7 +46,6 @@ internal fun RecommendedTopicDropdown(
             .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // '오늘의 추천 주제 참고하기' 영역
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -70,7 +69,6 @@ internal fun RecommendedTopicDropdown(
             )
         }
 
-        // 드롭다운 활성화되었을 때 보이는 추천 주제 영역
         if (isExpanded) {
             Row(
                 modifier = Modifier

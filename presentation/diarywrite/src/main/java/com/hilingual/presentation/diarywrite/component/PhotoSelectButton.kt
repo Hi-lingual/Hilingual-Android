@@ -26,14 +26,14 @@ import com.hilingual.core.designsystem.component.image.NetworkImage
 
 @Composable
 internal fun PhotoSelectButton(
-    onPhotoSelectClick: () -> Unit,  // 사진 선택 버튼 눌렀을 때
+    onPhotoSelectClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    selectedImgUri: Uri? = null,  // 선택된 이미지 파일
+    selectedImgUri: Uri? = null,
 ) {
     Box(
         modifier = Modifier.size(width = 88.dp, height = 89.dp)
     ) {
-        if (selectedImgUri != null) {  // 이미지가 존재하는 경우의 UI
+        if (selectedImgUri != null) {
             NetworkImage(
                 imageUrl = selectedImgUri,
                 shape = RectangleShape,
@@ -51,7 +51,7 @@ internal fun PhotoSelectButton(
                 contentDescription = null,
                 tint = Color.Unspecified
             )
-        } else {  // 이미지가 존재하지 않는 경우의 UI
+        } else {
             Box(
                 modifier = Modifier
                     .size(80.dp)
