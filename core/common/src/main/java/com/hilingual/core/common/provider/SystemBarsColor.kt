@@ -1,6 +1,7 @@
 package com.hilingual.core.common.provider
 
 import android.app.Activity
+import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -15,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.view.WindowCompat
 import javax.inject.Inject
 
@@ -41,14 +43,18 @@ class SystemBarsColorController @Inject constructor() {
         val controller = WindowCompat.getInsetsController(window, window.decorView)
         controller.isAppearanceLightStatusBars = localSystemBarsColor.isDarkIcon
 
+        window.statusBarColor = localSystemBarsColor.statusBarColor.toArgb()
+
         val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(statusBarHeight)
-                .background(color = localSystemBarsColor.statusBarColor)
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(statusBarHeight)
+                    .background(color = localSystemBarsColor.statusBarColor)
+            )
+        }
     }
 }
 
