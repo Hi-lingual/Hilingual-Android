@@ -29,12 +29,12 @@ import com.hilingual.presentation.diarywrite.R
 
 @Composable
 internal fun RecommendedTopicDropdown(
-    engTopic: String,
-    korTopic: String,
+    enTopic: String,
+    koTopic: String,
     modifier: Modifier = Modifier
 ) {
-    var isKor by remember { mutableStateOf(false) }
-    var expanded by remember { mutableStateOf(false) }  // 확장 여부
+    var isKo by remember { mutableStateOf(false) }
+    var isExpanded by remember { mutableStateOf(false) }  // 확장 여부
 
     Column(
         modifier = modifier
@@ -59,9 +59,9 @@ internal fun RecommendedTopicDropdown(
                 modifier = Modifier
                     .size(24.dp)
                     .graphicsLayer {
-                        scaleY = if (expanded) -1f else 1f
+                        scaleY = if (isExpanded) -1f else 1f
                     }
-                    .noRippleClickable { expanded = !expanded },
+                    .noRippleClickable { isExpanded = !isExpanded },
                 imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_down_20),
                 contentDescription = null,
                 tint = HilingualTheme.colors.gray400
@@ -69,7 +69,7 @@ internal fun RecommendedTopicDropdown(
         }
 
         // 드롭다운 활성화되었을 때 보이는 추천 주제 영역
-        if (expanded) {
+        if (isExpanded) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -80,10 +80,10 @@ internal fun RecommendedTopicDropdown(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = if (isKor) {
-                        korTopic
+                    text = if (isKo) {
+                        koTopic
                     } else {
-                        engTopic
+                        enTopic
                     },
                     style = HilingualTheme.typography.bodySB16,
                     color = HilingualTheme.colors.gray700
@@ -91,7 +91,7 @@ internal fun RecommendedTopicDropdown(
                 Icon(
                     modifier = Modifier
                         .size(24.dp)
-                        .noRippleClickable { isKor = !isKor },
+                        .noRippleClickable { isKo = !isKo },
                     imageVector = ImageVector.vectorResource(R.drawable.ic_change_20),
                     contentDescription = null,
                     tint = HilingualTheme.colors.gray300
@@ -106,8 +106,8 @@ internal fun RecommendedTopicDropdown(
 private fun RecommendedTopicDropdownPreview() {
     HilingualTheme {
         RecommendedTopicDropdown(
-            engTopic = "What surprised you today?",
-            korTopic = "오늘 무엇이 당신을 놀라게 했나요?"
+            enTopic = "What surprised you today?",
+            koTopic = "오늘 무엇이 당신을 놀라게 했나요?"
         )
     }
 }

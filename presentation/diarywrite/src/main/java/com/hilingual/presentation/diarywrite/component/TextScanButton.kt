@@ -36,7 +36,7 @@ internal fun TextScanButton(
                 color = HilingualTheme.colors.gray200,
                 shape = RoundedCornerShape(8.dp)
             )
-            .noRippleClickable { onClick() }
+            .noRippleClickable(onClick = onClick)
             .padding(8.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically

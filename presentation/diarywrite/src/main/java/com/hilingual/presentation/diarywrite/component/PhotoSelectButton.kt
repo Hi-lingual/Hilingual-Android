@@ -59,7 +59,7 @@ internal fun PhotoSelectButton(
                     .align(Alignment.BottomStart)
                     .clip(RoundedCornerShape(8.dp))
                     .background(HilingualTheme.colors.gray100)
-                    .noRippleClickable { onClick() },
+                    .noRippleClickable(onClick = onClick),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
