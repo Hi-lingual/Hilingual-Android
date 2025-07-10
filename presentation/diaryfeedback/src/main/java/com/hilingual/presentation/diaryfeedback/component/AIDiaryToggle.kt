@@ -60,17 +60,24 @@ private fun BasicSwitch(
     val halfHeight = height / 2
     val thumbRadius = halfHeight - gapBetweenThumbAndTrackEdge
 
-    val animatePosition = animateFloatAsState(
-        targetValue = if (isChecked)
-            with(LocalDensity.current) { (width - thumbRadius - gapBetweenThumbAndTrackEdge).toPx() }
-        else
-            with(LocalDensity.current) { (thumbRadius + gapBetweenThumbAndTrackEdge).toPx() }
+    val density = LocalDensity.current
+    val targetPosition = remember(isChecked) {
+        with(density) {
+            if (isChecked)
+                (width - thumbRadius - gapBetweenThumbAndTrackEdge).toPx()
+            else
+                (thumbRadius + gapBetweenThumbAndTrackEdge).toPx()
+        }
+    }
+
+    val animatePosition by animateFloatAsState(
+        targetValue = targetPosition
     )
 
     Canvas(
         modifier = Modifier
             .size(width = width, height = height)
-            .pointerInput(Unit) {
+            .pointerInput(onCheckedChange) {
                 detectTapGestures(
                     onTap = { onCheckedChange() }
                 )
@@ -85,7 +92,7 @@ private fun BasicSwitch(
             color = Color.White,
             radius = thumbRadius.toPx(),
             center = Offset(
-                x = animatePosition.value,
+                x = animatePosition,
                 y = size.height / 2
             )
         )
