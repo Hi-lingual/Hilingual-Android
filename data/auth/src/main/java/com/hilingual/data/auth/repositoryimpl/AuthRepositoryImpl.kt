@@ -20,8 +20,7 @@ internal class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun login(providerToken: String, provider: String): Result<LoginModel> = suspendRunCatching {
         val loginResponse = authRemoteDataSource.login(providerToken, provider).data!!
-        tokenManager.saveAccessToken(loginResponse.accessToken)
-        tokenManager.saveRefreshToken(loginResponse.refreshToken)
+        tokenManager.saveTokens(loginResponse.accessToken, loginResponse.refreshToken)
         LoginModel(loginResponse.isProfileCompleted)
     }
 }
