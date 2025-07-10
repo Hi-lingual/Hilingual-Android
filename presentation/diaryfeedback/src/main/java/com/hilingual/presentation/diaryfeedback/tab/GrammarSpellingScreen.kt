@@ -30,6 +30,7 @@ import com.hilingual.presentation.diaryfeedback.FeedbackContent
 import com.hilingual.presentation.diaryfeedback.component.AIDiaryToggle
 import com.hilingual.presentation.diaryfeedback.component.DiaryCard
 import com.hilingual.presentation.diaryfeedback.component.FeedbackCard
+import com.hilingual.presentation.diaryfeedback.component.FeedbackEmptyCard
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -80,6 +81,8 @@ internal fun GrammarSpellingScreen(
                 color = HilingualTheme.colors.black
             )
             Spacer(Modifier.height(12.dp))
+
+            if (feedbackList.isEmpty()) FeedbackEmptyCard()
         }
         itemsIndexed(
             feedbackList
@@ -101,6 +104,8 @@ internal fun GrammarSpellingScreen(
 private fun getFeedbackTitleAnnotatedString(
     feedbackSize: Int,
 ): AnnotatedString {
+    if (feedbackSize == 0)
+        return AnnotatedString("일기에서 발견된 피드백 알려드릴게요!")
     return buildAnnotatedString {
         append("주요 피드백 ")
         withStyle(style = SpanStyle(color = HilingualTheme.colors.hilingualOrange)) {

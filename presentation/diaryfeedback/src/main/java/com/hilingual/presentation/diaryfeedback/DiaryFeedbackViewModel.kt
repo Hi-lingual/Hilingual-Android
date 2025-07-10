@@ -80,6 +80,7 @@ internal class DiaryFeedbackViewModel @Inject constructor() : ViewModel() {
                 explain = "arrive는 자동사이기 때문에 직접 목적어 ‘it’을 쓸 수 없어요. ‘arrive at the station’, ‘arrive here’처럼 써야 맞는 표현이에요!"
             ),
         )
+        val dummyEmptyFeedback = persistentListOf<FeedbackContent>()
         
         val dummyRecommendExpressions = persistentListOf(
             RecommendExpression(
