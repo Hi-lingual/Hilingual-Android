@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.diaryfeedback.R
@@ -42,8 +43,7 @@ internal fun FeedbackCard(
         )
 
         HorizontalDivider(
-            thickness = (0.5).dp,
-            modifier = Modifier.fillMaxWidth()
+            thickness = Dp.Hairline
         )
 
         Text(
