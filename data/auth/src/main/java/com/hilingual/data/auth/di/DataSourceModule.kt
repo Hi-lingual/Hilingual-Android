@@ -1,6 +1,8 @@
 package com.hilingual.data.auth.di
 
+import com.hilingual.data.auth.datasource.AuthRemoteDataSource
 import com.hilingual.data.auth.datasource.GoogleAuthDataSource
+import com.hilingual.data.auth.datasourceimpl.AuthRemoteDataSourceImpl
 import com.hilingual.data.auth.datasourceimpl.GoogleAuthDataSourceImpl
 import dagger.Binds
 import dagger.Module
@@ -16,4 +18,10 @@ internal abstract class DataSourceModule {
     abstract fun bindGoogleAuthDataSource(
         googleAuthDataSourceImpl: GoogleAuthDataSourceImpl
     ): GoogleAuthDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthRemoteDataSource(
+        authRemoteDataSourceImpl: AuthRemoteDataSourceImpl
+    ): AuthRemoteDataSource
 }

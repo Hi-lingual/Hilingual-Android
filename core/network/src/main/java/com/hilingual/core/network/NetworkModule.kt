@@ -1,5 +1,7 @@
 package com.hilingual.core.network
 
+import com.hilingual.core.localstorage.TokenManager
+import com.hilingual.core.network.service.TokenRefreshService
 import com.hilingual.core.network.BuildConfig.BASE_URL
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -69,11 +71,11 @@ object RetrofitModule {
 
     @Provides
     @Singleton
-    fun provideAuthInterceptor(): AuthInterceptor = AuthInterceptor()
+    fun provideAuthInterceptor(tokenManager: TokenManager): AuthInterceptor = AuthInterceptor(tokenManager)
 
     @Provides
     @Singleton
-    fun provideTokenAuthenticator(): TokenAuthenticator = TokenAuthenticator()
+    fun provideTokenAuthenticator(tokenManager: TokenManager, tokenRefreshService: TokenRefreshService): TokenAuthenticator = TokenAuthenticator(tokenManager, tokenRefreshService)
 
     @Provides
     @Singleton
@@ -98,6 +100,15 @@ object RetrofitModule {
 
     @Provides
     @Singleton
+    @RefreshClient
+    fun provideRefreshClientOkHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor
+    ) = OkHttpClient.Builder()
+        .addInterceptor(loggingInterceptor)
+        .build()
+
+    @Provides
+    @Singleton
     fun provideAuthClientRetrofit(
         client: OkHttpClient,
         factory: Converter.Factory
@@ -113,6 +124,19 @@ object RetrofitModule {
     @LoginClient
     fun provideLoginClientRetrofit(
         @LoginClient client: OkHttpClient,
+        factory: Converter.Factory
+    ): Retrofit =
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(client)
+            .addConverterFactory(factory)
+            .build()
+
+    @Provides
+    @Singleton
+    @RefreshClient
+    fun provideRefreshClientRetrofit(
+        @RefreshClient client: OkHttpClient,
         factory: Converter.Factory
     ): Retrofit =
         Retrofit.Builder()

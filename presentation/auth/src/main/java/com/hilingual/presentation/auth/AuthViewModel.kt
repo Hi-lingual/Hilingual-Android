@@ -32,7 +32,17 @@ class AuthViewModel @Inject constructor(
             authRepository.signInWithGoogle(context)
                 .onSuccess { credential ->
                     Timber.d("Google ID Token: ${credential.idToken}")
-                    _navigationEvent.tryEmit(AuthSideEffect.NavigateToHome)
+                    credential.idToken.let { idToken ->
+                        authRepository.login(idToken, "GOOGLE")
+                            .onSuccess { authResult ->
+                                if (authResult.isProfileCompleted) {
+                                    _navigationEvent.tryEmit(AuthSideEffect.NavigateToHome)
+                                } else {
+                                    _navigationEvent.tryEmit(AuthSideEffect.NavigateToOnboarding)
+                                }
+                            }
+                            .onLogFailure { }
+                    }
                 }
                 .onLogFailure { }
         }
