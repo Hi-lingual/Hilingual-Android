@@ -1,12 +1,15 @@
 package com.hilingual.presentation.voca
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -32,6 +35,7 @@ import com.hilingual.presentation.voca.component.VocaEmptyCard
 import com.hilingual.presentation.voca.component.VocaEmptyCardType
 import com.hilingual.presentation.voca.component.VocaHeader
 import com.hilingual.presentation.voca.component.VocaInfo
+import com.hilingual.presentation.voca.component.VocaModal
 import com.hilingual.presentation.voca.component.WordSortBottomSheet
 import com.hilingual.presentation.voca.component.WordSortType
 import kotlinx.collections.immutable.ImmutableList
@@ -43,6 +47,8 @@ internal fun VocaRoute(
     viewModel: VocaViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val vocaDetail by viewModel.selectedVocaDetail.collectAsStateWithLifecycle()
+    val selectedVocaItem by viewModel.selectedVocaItem.collectAsStateWithLifecycle()
     val systemUiController = rememberSystemUiController()
 
     SideEffect {
@@ -53,16 +59,17 @@ internal fun VocaRoute(
     }
 
     when (val state = uiState) {
-        is UiState.Loading -> {
-        }
-
+        is UiState.Loading -> {}
         is UiState.Success -> {
             VocaScreen(
                 paddingValues = paddingValues,
                 uiState = state.data,
+                vocaDetail = vocaDetail,
+                selectedVocaItem = selectedVocaItem,
                 onSortTypeChanged = viewModel::fetchWords,
-                onCardClick = { /* TODO 카드 클릭 구현해용 */ },
-                onBookmarkClick = { viewModel.toggleBookmark(it) }
+                onCardClick = viewModel::fetchVocaDetail,
+                onBookmarkClick = viewModel::toggleBookmark,
+                onDismissModal = viewModel::clearSelectedItem
             )
         }
 
@@ -74,23 +81,15 @@ internal fun VocaRoute(
 private fun VocaScreen(
     paddingValues: PaddingValues,
     uiState: VocaUiState,
+    vocaDetail: VocaItemDetail?,
+    selectedVocaItem: VocaItem?,
     onSortTypeChanged: (WordSortType) -> Unit,
     onCardClick: (VocaItem) -> Unit,
-    onBookmarkClick: (VocaItem) -> Unit
+    onBookmarkClick: (VocaItem) -> Unit,
+    onDismissModal: () -> Unit
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
-
-    if (showBottomSheet) {
-        WordSortBottomSheet(
-            selectedType = uiState.sortType,
-            onDismiss = { showBottomSheet = false },
-            onTypeSelected = {
-                onSortTypeChanged(it)
-                showBottomSheet = false
-            }
-        )
-    }
 
     Column(
         modifier = Modifier
@@ -115,7 +114,46 @@ private fun VocaScreen(
             onBookmarkClick = onBookmarkClick
         )
     }
+
+    if (selectedVocaItem != null && vocaDetail != null) {
+        Box(
+            modifier = Modifier
+                .background(HilingualTheme.colors.dim)
+                .clickable { onDismissModal() }
+                .padding(paddingValues)
+                .fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            VocaModal(
+                phrase = vocaDetail.phrase,
+                phraseType = vocaDetail.phraseType.toImmutableList(),
+                explanation = vocaDetail.explanation,
+                createdAt = vocaDetail.createdAt,
+                isBookmarked = selectedVocaItem.isBookmarked,
+                onBookmarkClick = {
+                    onBookmarkClick(selectedVocaItem)
+                },
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .navigationBarsPadding()
+            )
+        }
+    }
+
+    if (showBottomSheet) {
+        WordSortBottomSheet(
+            selectedType = uiState.sortType,
+            onDismiss = { showBottomSheet = false },
+            onTypeSelected = {
+                onSortTypeChanged(it)
+                showBottomSheet = false
+            }
+        )
+    }
 }
+
+
+
 
 @Composable
 internal fun VocaListWithInfoSection(

@@ -14,23 +14,27 @@ internal class VocaViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<VocaUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<VocaUiState>> = _uiState.asStateFlow()
 
+    private val vocaDetailList = listOf(
+        VocaItemDetail(0, "run late", listOf("동사", "숙어"), "늦다", "2025.06.12"),
+        VocaItemDetail(1, "hilingual", listOf("동사", "숙어"), "화이팅", "2025.07.11"),
+        VocaItemDetail(3, "ghost", listOf("명사"), "유령", "2025.06.13")
+    )
+
+    private val _selectedVocaDetail = MutableStateFlow<VocaItemDetail?>(null)
+    val selectedVocaDetail: StateFlow<VocaItemDetail?> = _selectedVocaDetail.asStateFlow()
+
+    private val _selectedVocaItem = MutableStateFlow<VocaItem?>(null)
+    val selectedVocaItem: StateFlow<VocaItem?> = _selectedVocaItem.asStateFlow()
+
     private var originalAtoZGroupList = listOf(
         VocaGroup(
-            "A", listOf(
-                VocaItem(1, "amazing", listOf("형용사")),
-                VocaItem(2, "apple", listOf("명사"))
-            )
+            "A",
+            listOf(VocaItem(1, "amazing", listOf("형용사")), VocaItem(2, "apple", listOf("명사")))
         ),
+        VocaGroup("B", listOf(VocaItem(3, "banana", listOf("동사")))),
         VocaGroup(
-            "B", listOf(
-                VocaItem(3, "banana", listOf("동사"))
-            )
-        ),
-        VocaGroup(
-            "E", listOf(
-                VocaItem(4, "epiphany", listOf("명사")),
-                VocaItem(5, "example", listOf("명사"))
-            )
+            "E",
+            listOf(VocaItem(4, "epiphany", listOf("명사")), VocaItem(5, "example", listOf("명사")))
         )
     )
 
@@ -63,7 +67,6 @@ internal class VocaViewModel : ViewModel() {
     fun fetchWords(sort: WordSortType) {
         _uiState.value = UiState.Loading
         viewModelScope.launch {
-
             val source = when (sort) {
                 WordSortType.AtoZ -> originalAtoZGroupList
                 WordSortType.Latest -> originalLatestGroupList
@@ -74,13 +77,14 @@ internal class VocaViewModel : ViewModel() {
             }.filter { it.words.isNotEmpty() }
 
             _uiState.value = UiState.Success(
-                VocaUiState(
-                    sortType = sort,
-                    vocaGroupList = filtered,
-                    isLoading = false
-                )
+                VocaUiState(sortType = sort, vocaGroupList = filtered, isLoading = false)
             )
         }
+    }
+
+    fun fetchVocaDetail(item: VocaItem) {
+        _selectedVocaItem.value = item
+        _selectedVocaDetail.value = vocaDetailList.find { it.phraseId == item.phraseId }
     }
 
     fun toggleBookmark(item: VocaItem) {
@@ -102,6 +106,14 @@ internal class VocaViewModel : ViewModel() {
                 if (it.phraseId == item.phraseId) it.copy(isBookmarked = !it.isBookmarked) else it
             })
         }
+
+        _selectedVocaItem.value = item.copy(isBookmarked = !item.isBookmarked)
+
         _uiState.value = UiState.Success(currentState.data.copy(vocaGroupList = updatedGroups))
+    }
+
+    fun clearSelectedItem() {
+        _selectedVocaItem.value = null
+        _selectedVocaDetail.value = null
     }
 }

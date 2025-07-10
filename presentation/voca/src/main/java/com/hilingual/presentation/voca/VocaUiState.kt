@@ -23,3 +23,12 @@ internal data class VocaUiState(
     val vocaGroupList: List<VocaGroup> = emptyList(),
     val isLoading: Boolean = true
 )
+
+@Immutable
+internal data class VocaItemDetail(
+    val phraseId: Int,
+    val phrase: String,
+    val phraseType: List<String>,
+    val explanation: String,
+    val createdAt: String
+)
