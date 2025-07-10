@@ -16,7 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,7 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
@@ -51,14 +51,21 @@ internal fun HomeRoute(
     navigateToDiaryFeedback: (diaryId: Long) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
-    val systemUiController = rememberSystemUiController()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val localSystemBarsColor = LocalSystemBarsColor.current
 
-    SideEffect {
-        systemUiController.setStatusBarColor(
-            color = hilingualBlack,
-            darkIcons = false
+    DisposableEffect(Unit) {
+        localSystemBarsColor.setSystemBarColor(
+            systemBarsColor = hilingualBlack,
+            isDarkIcon = false
         )
+
+        onDispose {
+            localSystemBarsColor.setSystemBarColor(
+                systemBarsColor = white,
+                isDarkIcon = true
+            )
+        }
     }
 
     when (val state = uiState) {
@@ -114,7 +121,7 @@ private fun HomeScreen(
         modifier = Modifier
             .background(HilingualTheme.colors.white)
             .fillMaxSize()
-            .padding(bottom = paddingValues.calculateBottomPadding())
+            .padding(paddingValues)
             .verticalScroll(verticalScrollState)
     ) {
         HomeHeader(
@@ -124,7 +131,6 @@ private fun HomeScreen(
             streak = uiState.userProfile.streak,
             modifier = Modifier
                 .background(hilingualBlack)
-                .padding(top = paddingValues.calculateTopPadding())
                 .padding(horizontal = 16.dp)
                 .padding(top = 8.dp, bottom = 12.dp)
         )
@@ -192,6 +198,7 @@ private fun HomeScreen(
                         CircularProgressIndicator()
                     }
                 }
+
                 isWritten -> {
                     if (uiState.diaryPreview != null) {
                         DiaryPreviewCard(
@@ -202,6 +209,7 @@ private fun HomeScreen(
                         )
                     }
                 }
+
                 isFuture -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
                 isWritable -> {
                     if (uiState.todayTopic != null) {
@@ -218,6 +226,7 @@ private fun HomeScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
+
                 else -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
             }
         }
