@@ -16,6 +16,7 @@ import com.hilingual.presentation.auth.navigation.authNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.onboarding.navigation.onboardingGraph
+import com.hilingual.presentation.splash.navigation.splashNavGraph
 import com.hilingual.presentation.voca.navigation.vocaNavGraph
 import kotlinx.collections.immutable.toPersistentList
 
@@ -42,6 +43,10 @@ internal fun MainScreen(
                 navController = navigator.navController,
                 startDestination = navigator.startDestination,
             ) {
+                splashNavGraph(
+                    navigateToAuth = navigator::navigateToAuth,
+                    navigateToHome = navigator::navigateToHome
+                )
                 authNavGraph(
                     paddingValues = innerPadding,
                     navigateToHome = navigator::navigateToHome,
