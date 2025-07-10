@@ -16,7 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.designsystem.theme.hilingualOrange
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -29,10 +31,17 @@ internal fun SplashRoute(
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
+    val localSystemBarsColor = LocalSystemBarsColor.current
+
+    LaunchedEffect(Unit) {
+        localSystemBarsColor.setSystemBarColor(
+            systemBarsColor = hilingualOrange
+        )
+    }
 
     LaunchedEffect(Unit) {
         lifecycleOwner.lifecycleScope.launch {
-            delay(1000)
+            delay(1400)
             navigateToAuth()
         }
     }
@@ -67,7 +76,7 @@ private fun SplashScreen(
                     sharedContentState = rememberSharedContentState(key = "logo"),
                     animatedVisibilityScope = animatedVisibilityScope,
                     boundsTransform = { _, _ ->
-                        tween(durationMillis = 500)
+                        tween(durationMillis = 400)
                     }
                 )
             )

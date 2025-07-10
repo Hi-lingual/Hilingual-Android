@@ -3,6 +3,7 @@ package com.hilingual.presentation.auth
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,8 +17,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +35,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualOrange
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.auth.component.GoogleSignButton
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -83,6 +90,19 @@ private fun AuthScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
+    var visible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        delay(500)
+        visible = true
+    }
+
+    val alpha by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(durationMillis = 400),
+        label = "auth_alpha"
+    )
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -102,7 +122,7 @@ private fun AuthScreen(
                     sharedContentState = rememberSharedContentState(key = "logo"),
                     animatedVisibilityScope = animatedVisibilityScope,
                     boundsTransform = { _, _ ->
-                        tween(durationMillis = 500)
+                        tween(durationMillis = 400)
                     }
                 )
             )
@@ -110,21 +130,26 @@ private fun AuthScreen(
 
         Spacer(Modifier.weight(0.53f))
 
-        Image(
-            painter = painterResource(R.drawable.img_login),
-            contentDescription = null
-        )
-        GoogleSignButton(onClick = onGoogleSignClick)
+        Column(
+            modifier = Modifier.graphicsLayer { this.alpha = alpha },
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(R.drawable.img_login),
+                contentDescription = null,
+            )
+            GoogleSignButton(onClick = onGoogleSignClick)
 
-        Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(16.dp))
 
-        Text(
-            text = "개인정보처리방침",
-            color = HilingualTheme.colors.gray100,
-            style = HilingualTheme.typography.bodyM14,
-            textDecoration = TextDecoration.Underline,
-            modifier = Modifier.noRippleClickable(onClick = onPrivacyPolicyClick)
-        )
+            Text(
+                text = "개인정보처리방침",
+                color = HilingualTheme.colors.gray100,
+                style = HilingualTheme.typography.bodyM14,
+                textDecoration = TextDecoration.Underline,
+                modifier = Modifier.noRippleClickable(onClick = onPrivacyPolicyClick),
+            )
+        }
     }
 }
 
