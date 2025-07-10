@@ -7,3 +7,9 @@ plugins {
 android {
     setNamespace("presentation.auth")
 }
+
+dependencies {
+    implementation(project(":core:common"))
+    implementation(project(":core:designsystem"))
+    implementation(project(":data:auth"))
+}
