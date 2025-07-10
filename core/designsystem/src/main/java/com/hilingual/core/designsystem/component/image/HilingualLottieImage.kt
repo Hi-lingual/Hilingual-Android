@@ -1,5 +1,6 @@
-package com.hilingual.core.designsystem.component
+package com.hilingual.core.designsystem.component.image
 
+import androidx.annotation.RawRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -13,14 +14,14 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 
 @Composable
 fun HilingualLottieAnimation(
-    jsonFile: Int,
+    @RawRes rawResFile: Int,
     modifier: Modifier = Modifier,
     shape: Shape = RectangleShape,
     contentScale: ContentScale = ContentScale.Fit,
     speed: Float = 1f,
     iterations: Int = 1,
 ) {
-    val lottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(jsonFile))
+    val lottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(rawResFile))
     LottieAnimation(
         modifier = modifier.clip(shape),
         speed = speed,
