@@ -31,7 +31,7 @@ private fun VocaScreen(
             .padding(paddingValues)
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "VOCA",

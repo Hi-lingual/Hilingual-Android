@@ -101,7 +101,6 @@ internal fun VocaModal(
     }
 }
 
-
 @Preview
 @Composable
 private fun VocaModalPreview() {

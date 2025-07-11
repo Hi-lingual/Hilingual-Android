@@ -137,7 +137,7 @@ class HilingualTypography(
 }
 
 @Composable
-fun HilingualTypography(): HilingualTypography{
+fun HilingualTypography(): HilingualTypography {
     return HilingualTypography(
         headB20 = TextStyle(
             fontFamily = SuitBold,

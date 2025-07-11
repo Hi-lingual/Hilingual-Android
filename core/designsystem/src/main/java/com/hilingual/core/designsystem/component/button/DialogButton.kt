@@ -19,16 +19,17 @@ fun DialogButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isFilled: Boolean = true,
+    isFilled: Boolean = true
 ) {
     Row(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .background(
-                color = if (isFilled)
+                color = if (isFilled) {
                     HilingualTheme.colors.hilingualOrange
-                else
+                } else {
                     HilingualTheme.colors.gray100
+                }
             )
             .padding(vertical = 14.dp)
             .noRippleClickable(onClick = onClick),
@@ -38,10 +39,11 @@ fun DialogButton(
         Text(
             text = text,
             style = HilingualTheme.typography.bodySB16,
-            color = if (isFilled)
+            color = if (isFilled) {
                 HilingualTheme.colors.white
-            else
+            } else {
                 HilingualTheme.colors.gray400
+            }
         )
     }
 }

@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,8 +16,6 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,7 +28,7 @@ internal fun DiaryPreviewCard(
     diaryText: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    imageUrl: String? = null,
+    imageUrl: String? = null
 ) {
     Row(
         modifier = modifier
@@ -71,9 +68,9 @@ internal fun DiaryPreviewCard(
 @Composable
 private fun DiaryPreviewCardPreview() {
     HilingualTheme {
-        val text ="This is a sample diary text that will be displayed"
+        val text = "This is a sample diary text that will be displayed"
         Column(
-            modifier = Modifier.padding(4.dp),
+            modifier = Modifier.padding(4.dp)
         ) {
             DiaryPreviewCard(
                 imageUrl = "",

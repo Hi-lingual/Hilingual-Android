@@ -12,6 +12,7 @@ internal fun Project.configureKotlinAndroid() {
     val libs = extensions.libs
 
     pluginManager.apply("org.jetbrains.kotlin.android")
+    pluginManager.apply("org.jlleitschuh.gradle.ktlint")
 
     androidExtension.apply {
         compileSdk = libs.findVersion("compileSdk").get().requiredVersion.toInt()

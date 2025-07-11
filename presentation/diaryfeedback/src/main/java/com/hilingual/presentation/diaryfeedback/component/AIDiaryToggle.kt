@@ -63,10 +63,11 @@ private fun BasicSwitch(
     val density = LocalDensity.current
     val targetPosition = remember(isChecked) {
         with(density) {
-            if (isChecked)
+            if (isChecked) {
                 (width - thumbRadius - gapBetweenThumbAndTrackEdge).toPx()
-            else
+            } else {
                 (thumbRadius + gapBetweenThumbAndTrackEdge).toPx()
+            }
         }
     }
 
@@ -85,10 +86,10 @@ private fun BasicSwitch(
     ) {
         drawRoundRect( // Track
             color = if (isChecked) checkedTrackColor else uncheckedTrackColor,
-            cornerRadius = CornerRadius(x = halfHeight.toPx(), y = halfHeight.toPx()),
+            cornerRadius = CornerRadius(x = halfHeight.toPx(), y = halfHeight.toPx())
         )
 
-        drawCircle(  // Thumb
+        drawCircle( // Thumb
             color = Color.White,
             radius = thumbRadius.toPx(),
             center = Offset(

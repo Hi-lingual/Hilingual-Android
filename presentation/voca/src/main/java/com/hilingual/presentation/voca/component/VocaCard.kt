@@ -37,7 +37,7 @@ internal fun VocaCard(
     isBookmarked: Boolean,
     onBookmarkClick: () -> Unit,
     modifier: Modifier = Modifier
-){
+) {
     Row(
         modifier = modifier
             .noRippleClickable(onClick = onCardClick)
@@ -54,7 +54,7 @@ internal fun VocaCard(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
 
             ) {
                 phraseType.forEach { type ->
@@ -98,4 +98,3 @@ private fun VocaCardPreview() {
         )
     }
 }
-

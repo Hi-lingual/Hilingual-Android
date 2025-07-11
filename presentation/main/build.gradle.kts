@@ -23,6 +23,7 @@ dependencies {
     implementation(projects.presentation.diarywrite)
     implementation(projects.presentation.voca)
     implementation(projects.presentation.onboarding)
+    implementation(projects.presentation.splash)
 
     // others
     implementation(libs.accompanist.systemuicontroller)

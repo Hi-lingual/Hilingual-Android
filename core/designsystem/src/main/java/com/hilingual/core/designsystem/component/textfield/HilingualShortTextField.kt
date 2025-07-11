@@ -35,7 +35,7 @@ fun HilingualShortTextField(
     successMessage: String,
     modifier: Modifier = Modifier,
     height: Dp = 54.dp,
-    onDoneAction: () -> Unit = {},
+    onDoneAction: () -> Unit = {}
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -61,7 +61,7 @@ fun HilingualShortTextField(
             onDoneAction = {
                 onDoneAction()
                 keyboardController?.hide()
-            },
+            }
         )
         Row {
             Text(

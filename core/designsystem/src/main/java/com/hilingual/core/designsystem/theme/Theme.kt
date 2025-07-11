@@ -24,7 +24,6 @@ object HilingualTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalHilingualTypography.current
-
 }
 
 @Composable
@@ -41,7 +40,6 @@ fun ProvideHilingualColorsAndTypography(
         LocalHilingualTypography provides provideTypography,
         content = content
     )
-
 }
 
 @Composable

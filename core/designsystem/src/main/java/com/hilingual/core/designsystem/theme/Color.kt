@@ -39,7 +39,6 @@ val dim = Color(0xFF000000).copy(alpha = 0.7f)
 val alertRed = Color(0xFFFF3B30)
 val infoBlue = Color(0xFF007AFF)
 
-
 @Stable
 class HilingualColors(
     hilingualBlack: Color,
@@ -226,7 +225,7 @@ fun DefaultHilingualColors(
 
 @Preview(showBackground = true)
 @Composable
-fun HilingualMainColorsPreview(){
+fun HilingualMainColorsPreview() {
     HilingualTheme {
         Column {
             Text(
@@ -245,15 +244,14 @@ fun HilingualMainColorsPreview(){
                     color = HilingualTheme.colors.black
                 )
             )
-
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun HilingualWordChipColorsPreview(){
-    HilingualTheme{
+private fun HilingualWordChipColorsPreview() {
+    HilingualTheme {
         Column {
             Text(
                 text = "HilingualTheme",
@@ -304,11 +302,10 @@ private fun HilingualWordChipColorsPreview(){
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
-private fun HilingualGrayColorsPreview(){
-    HilingualTheme{
+private fun HilingualGrayColorsPreview() {
+    HilingualTheme {
         Column {
             Text(
                 text = "HilingualTheme",
@@ -369,9 +366,10 @@ private fun HilingualGrayColorsPreview(){
     }
 }
 
-private @Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
-fun HilingualSymenticColorsPreview(){
+private
+fun HilingualSymenticColorsPreview() {
     HilingualTheme {
         Column {
             Text(

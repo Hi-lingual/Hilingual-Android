@@ -102,7 +102,7 @@ private enum class PartOfSpeechType(
 private fun WordPartsPreview() {
     HilingualTheme {
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             // 8품사
             WordPhraseTypeTag("동사")

@@ -20,7 +20,7 @@ fun HilingualBasicTopAppBar(
     title: String? = null,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable () -> Unit = {},
-    backgroundColor: Color = HilingualTheme.colors.white,
+    backgroundColor: Color = HilingualTheme.colors.white
 ) {
     Box(
         modifier = modifier
@@ -42,7 +42,7 @@ fun HilingualBasicTopAppBar(
                 modifier = Modifier.align(Alignment.Center),
                 text = title,
                 color = HilingualTheme.colors.black,
-                style = HilingualTheme.typography.headB18,
+                style = HilingualTheme.typography.headB18
             )
         }
 

@@ -2,8 +2,8 @@ package com.hilingual.core.common.util
 
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.TimeoutCancellationException
-import kotlin.coroutines.coroutineContext
 import kotlinx.coroutines.ensureActive
+import kotlin.coroutines.coroutineContext
 
 suspend fun <R> suspendRunCatching(block: suspend () -> R): Result<R> {
     return try {

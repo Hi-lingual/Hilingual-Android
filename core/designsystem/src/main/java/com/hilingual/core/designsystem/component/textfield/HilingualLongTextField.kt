@@ -28,7 +28,7 @@ fun HilingualLongTextField(
     modifier: Modifier = Modifier,
     height: Dp = 292.dp,
     placeholder: String = "What's been going on today?",
-    onDoneAction: () -> Unit = {},
+    onDoneAction: () -> Unit = {}
 ) {
     var isFocused by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current

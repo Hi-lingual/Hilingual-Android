@@ -31,7 +31,7 @@ fun HilingualYearMonthPicker(
     visibleItemsCount: Int = 3,
     itemSpacing: Dp = 10.dp,
     itemContentPadding: PaddingValues = PaddingValues(vertical = 16.dp, horizontal = 12.dp),
-    spacingBetweenPickers: Dp = 44.dp,
+    spacingBetweenPickers: Dp = 44.dp
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -48,7 +48,7 @@ fun HilingualYearMonthPicker(
             horizontalArrangement = Arrangement.spacedBy(
                 spacingBetweenPickers,
                 Alignment.CenterHorizontally
-            ),
+            )
         ) {
             HilingualBasicPicker(
                 items = yearItems,

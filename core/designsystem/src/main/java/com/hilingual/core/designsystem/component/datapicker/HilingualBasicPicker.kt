@@ -70,8 +70,8 @@ fun HilingualBasicPicker(
 
     val itemHeightDp = with(density) {
         HilingualTheme.typography.bodySB14.fontSize.toDp() +
-                itemContentPadding.calculateTopPadding() +
-                itemContentPadding.calculateBottomPadding()
+            itemContentPadding.calculateTopPadding() +
+            itemContentPadding.calculateBottomPadding()
     }
 
     val itemHeightPx = with(density) { itemHeightDp.roundToPx() }
@@ -123,9 +123,12 @@ fun HilingualBasicPicker(
                 val currentItemText = getItem(index)?.toString().orEmpty()
                 val isSelected = index == currentCenterIndex
 
-                val textColor = remember (isSelected) {
-                    if (isSelected) black
-                    else gray200
+                val textColor = remember(isSelected) {
+                    if (isSelected) {
+                        black
+                    } else {
+                        gray200
+                    }
                 }
 
                 Text(

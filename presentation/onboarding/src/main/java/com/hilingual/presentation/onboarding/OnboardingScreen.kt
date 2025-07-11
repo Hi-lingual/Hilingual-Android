@@ -40,7 +40,7 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 @Composable
 internal fun OnboardingRoute(
     paddingValues: PaddingValues,
-    navigateToHome: () -> Unit,
+    navigateToHome: () -> Unit
 ) {
     val systemUiController = rememberSystemUiController()
     var value by remember { mutableStateOf("") }
@@ -148,7 +148,7 @@ private fun OnboardingScreenPreview() {
             isValid = { true },
             errorMessage = "",
             onDoneAction = {},
-            onButtonClick = {},
+            onButtonClick = {}
         )
     }
 }

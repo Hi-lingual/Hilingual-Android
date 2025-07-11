@@ -38,7 +38,7 @@ internal fun RecommendExpressionCard(
     reason: String,
     onBookmarkClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isMarked: Boolean = false,
+    isMarked: Boolean = false
 ) {
     Row(
         verticalAlignment = Alignment.Top,

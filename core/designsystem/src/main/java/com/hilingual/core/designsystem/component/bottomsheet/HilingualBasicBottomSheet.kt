@@ -19,7 +19,7 @@ fun HilingualBasicBottomSheet(
     sheetState: SheetState = rememberModalBottomSheetState(),
     isDimEnabled: Boolean = true,
     dragHandle: (@Composable () -> Unit)? = null,
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,

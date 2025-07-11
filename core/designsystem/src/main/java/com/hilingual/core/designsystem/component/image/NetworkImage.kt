@@ -56,12 +56,12 @@ private fun NetworkImagePreview() {
         Row {
             NetworkImage(
                 imageUrl = "",
-                modifier = Modifier.size(50.dp),
+                modifier = Modifier.size(50.dp)
             )
             NetworkImage(
                 imageUrl = "",
                 shape = RectangleShape,
-                modifier = Modifier.size(50.dp),
+                modifier = Modifier.size(50.dp)
             )
         }
     }
