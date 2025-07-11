@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
@@ -36,7 +35,7 @@ import com.hilingual.presentation.diaryfeedback.tab.RecommendExpressionScreen
 @Composable
 internal fun DiaryFeedbackRoute(
     paddingValues: PaddingValues,
-    onNavigateUp: () -> Unit,
+    navigateUp: () -> Unit,
     viewModel: DiaryFeedbackViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -60,8 +59,9 @@ internal fun DiaryFeedbackRoute(
 
         is UiState.Success -> {
             DiaryFeedbackScreen(
+                paddingValues = paddingValues,
                 uiState = state.data,
-                onBackClick = onNavigateUp,
+                onBackClick = navigateUp,
                 onToggleDiaryViewMode = viewModel::toggleDiaryShowOption,
                 onToggleBookmark = viewModel::toggleBookmark
             )
@@ -73,6 +73,7 @@ internal fun DiaryFeedbackRoute(
 
 @Composable
 private fun DiaryFeedbackScreen(
+    paddingValues: PaddingValues,
     uiState: DiaryFeedbackUiState,
     onBackClick: () -> Unit,
     onToggleDiaryViewMode: (Boolean) -> Unit,
@@ -88,6 +89,7 @@ private fun DiaryFeedbackScreen(
             onDismiss = { isShowReportBottomSheet = false },
             onReportClick = {
                 isShowReportDialog = true
+                isShowReportBottomSheet = false
             }
         )
     }
@@ -106,6 +108,7 @@ private fun DiaryFeedbackScreen(
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
+            .padding(paddingValues)
     ) {
         BackAndMoreTopAppBar(
             title = "일기장",
@@ -145,6 +148,7 @@ private fun DiaryFeedbackScreenPreview() {
         var isAI by remember { mutableStateOf(true) }
 
         DiaryFeedbackScreen(
+            paddingValues = PaddingValues(),
             uiState = DiaryFeedbackUiState(
                 isAI = isAI,
                 writtenDate = "7월 11일 금요일",

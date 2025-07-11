@@ -48,15 +48,15 @@ internal fun RecommendExpressionScreen(
         items(
             recommendExpressionList,
             key = { it.phraseId }
-        ) { item ->
+        ) {
             RecommendExpressionCard(
-                phraseId = item.phraseId,
-                phraseType = item.phraseType,
-                phrase = item.phrase,
-                explanation = item.explanation,
-                reason = item.reason,
-                isMarked = item.isMarked,
-                onBookmarkClick = { isBookmarkClick(item.phraseId, item.isMarked) }
+                phraseId = it.phraseId,
+                phraseType = it.phraseType,
+                phrase = it.phrase,
+                explanation = it.explanation,
+                reason = it.reason,
+                isMarked = it.isMarked,
+                onBookmarkClick = { isBookmarkClick(it.phraseId, it.isMarked) }
             )
         }
     }
