@@ -26,6 +26,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.diaryfeedback.component.DiaryFeedbackTabRow
 import com.hilingual.presentation.diaryfeedback.component.FeedbackReportBottomSheet
+import com.hilingual.presentation.diaryfeedback.component.FeedbackReportDialog
 import com.hilingual.presentation.diaryfeedback.tab.GrammarSpellingScreen
 import com.hilingual.presentation.diaryfeedback.tab.RecommendExpressionScreen
 
@@ -78,13 +79,23 @@ private fun DiaryFeedbackScreen(
     modifier: Modifier = Modifier
 ) {
     var tabIndex by remember { mutableIntStateOf(0) }
-    var bottomSheetVisibility by remember { mutableStateOf(false) }
+    var isShowReportBottomSheet by remember { mutableStateOf(false) }
+    var isShowReportDialog by remember { mutableStateOf(false) }
 
-    if (bottomSheetVisibility) {
+    if (isShowReportBottomSheet) {
         FeedbackReportBottomSheet(
-            onDismiss = { bottomSheetVisibility = false },
+            onDismiss = { isShowReportBottomSheet = false },
             onReportClick = {
-                //TODO: 신고 확인 팝업
+                isShowReportDialog = true
+            }
+        )
+    }
+
+    if (isShowReportDialog) {
+        FeedbackReportDialog(
+            onDismiss = { isShowReportDialog = false },
+            onReportClick = {
+                //TODO: 구글폼으로 이동
             }
         )
     }
@@ -98,7 +109,7 @@ private fun DiaryFeedbackScreen(
         BackAndMoreTopAppBar(
             title = "일기장",
             onBackClicked = onBackClick,
-            onMoreClicked = { bottomSheetVisibility = true }
+            onMoreClicked = { isShowReportBottomSheet = true }
         )
 
         DiaryFeedbackTabRow(

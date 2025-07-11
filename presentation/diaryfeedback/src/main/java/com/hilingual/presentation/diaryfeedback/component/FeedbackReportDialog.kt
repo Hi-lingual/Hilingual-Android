@@ -8,7 +8,6 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
 internal fun FeedbackReportDialog(
     onDismiss: () -> Unit,
-    onCancelClick: () -> Unit,
     onReportClick: () -> Unit,
 ) {
     TwoButtonDialog(
@@ -16,7 +15,7 @@ internal fun FeedbackReportDialog(
         description = "신고된 AI 피드백은 확인 후 \n서비스의 운영원칙에 따라 처리됩니다.",
         cancelText = "아니요",
         confirmText = "네, 신고할게요",
-        onNegative = onCancelClick,
+        onNegative = onDismiss,
         onPositive = onReportClick,
         onDismiss = onDismiss
     )
@@ -24,11 +23,10 @@ internal fun FeedbackReportDialog(
 
 @Preview(showBackground = true)
 @Composable
-private fun FeedbackReportDialog() {
+private fun FeedbackReportDialogPreview() {
     HilingualTheme {
         FeedbackReportDialog(
             onDismiss = {},
-            onCancelClick = {},
             onReportClick = {}
        )
     }
