@@ -97,7 +97,7 @@ internal class VocaViewModel : ViewModel() {
         }
     }
 
-    fun fetchVocaDetail(phraseId: Int) {
+    fun fetchVocaDetail(phraseId: Long) {
         _uiState.update {
             it.copy(
                 vocaItemDetail = UiState.Success(vocaDetailItem)
@@ -114,7 +114,7 @@ internal class VocaViewModel : ViewModel() {
         }
     }
 
-    fun toggleBookmark(phraseId: Int) {
+    fun toggleBookmark(phraseId: Long) {
 
     }
 
@@ -138,6 +138,5 @@ internal class VocaViewModel : ViewModel() {
             )
         }
     }
-
 
 }

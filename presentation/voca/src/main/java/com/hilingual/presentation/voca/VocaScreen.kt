@@ -16,9 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,13 +27,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
-import com.hilingual.core.designsystem.theme.hilingualOrange
-import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.voca.component.AddVocaButton
 import com.hilingual.presentation.voca.component.VocaCard
 import com.hilingual.presentation.voca.component.VocaEmptyCard
@@ -101,8 +96,8 @@ private fun VocaScreen(
     searchText: String,
     onWriteDiaryClick: () -> Unit,
     onSortTypeChanged: (WordSortType) -> Unit,
-    onCardClick: (Int) -> Unit,
-    onBookmarkClick: (Int) -> Unit,
+    onCardClick: (Long) -> Unit,
+    onBookmarkClick: (Long) -> Unit,
     onDismissModal: () -> Unit,
     onSearchTextChanged: (String) -> Unit,
     onCloseButtonClick: () -> Unit
@@ -189,8 +184,8 @@ internal fun VocaListWithInfoSection(
     wordCount: Int,
     onWriteDiaryClick: () -> Unit,
     onSortClick: () -> Unit,
-    onCardClick: (Int) -> Unit,
-    onBookmarkClick: (Int) -> Unit
+    onCardClick: (Long) -> Unit,
+    onBookmarkClick: (Long) -> Unit
 ) {
     val isEmpty = vocaGroupList.all { it.words.isEmpty() }
 
@@ -269,8 +264,8 @@ internal fun VocaListWithInfoSection(
 @Composable
 internal fun SearchResultSection(
     searchResultList: ImmutableList<VocaItem>,
-    onCardClick: (Int) -> Unit,
-    onBookmarkClick: (Int) -> Unit,
+    onCardClick: (Long) -> Unit,
+    onBookmarkClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (searchResultList.isEmpty()) {
@@ -306,6 +301,7 @@ internal fun SearchResultSection(
         }
     }
 }
+
 
 
 @Preview(showBackground = true)
