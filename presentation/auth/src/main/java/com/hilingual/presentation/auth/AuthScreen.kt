@@ -152,15 +152,3 @@ private fun AuthScreen(
         }
     }
 }
-
-@Preview
-@Composable
-private fun AuthScreenPreview() {
-    HilingualTheme {
-//        AuthScreen(
-//            paddingValues = PaddingValues(0.dp),
-//            onGoogleSignClick = {},
-//            onPrivacyPolicyClick = {}
-//        )
-    }
-}
