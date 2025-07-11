@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 
 @Composable
@@ -20,13 +21,14 @@ fun HilingualLottieAnimation(
     contentScale: ContentScale = ContentScale.Fit,
     speed: Float = 1f,
     iterations: Int = 1,
+    isInfinite: Boolean = false
 ) {
     val lottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(rawResFile))
     LottieAnimation(
         modifier = modifier.clip(shape),
         speed = speed,
         composition = lottieComposition,
-        iterations = iterations,
+        iterations = if (isInfinite) LottieConstants.IterateForever else iterations,
         contentScale = contentScale,
         clipToCompositionBounds = false
     )
