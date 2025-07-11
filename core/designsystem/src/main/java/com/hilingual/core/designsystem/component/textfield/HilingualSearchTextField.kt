@@ -31,7 +31,8 @@ fun HilingualSearchTextField(
     modifier: Modifier = Modifier,
     height: Dp = 46.dp,
     placeholder: String = "단어나 표현을 검색해 주세요",
-    onSearchAction: () -> Unit = {}
+    onSearchAction: () -> Unit = {},
+    onTrailingIconClick: () -> Unit = {}
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -62,9 +63,7 @@ fun HilingualSearchTextField(
                         .padding(start = 4.dp)
                         .size(20.dp)
                         .noRippleClickable(
-                            onClick = {
-                                onValueChanged("")
-                            }
+                            onClick = onTrailingIconClick
                         )
                 )
             }

@@ -22,6 +22,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 internal fun VocaHeader(
     searchText: () -> String,
     onSearchTextChanged: (String) -> Unit,
+    onCloseButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -38,7 +39,8 @@ internal fun VocaHeader(
             value = searchText(),
             onValueChanged = onSearchTextChanged,
             modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp),
+            onTrailingIconClick = onCloseButtonClick
         )
         Spacer(modifier = Modifier.height(20.dp))
     }
@@ -52,7 +54,8 @@ private fun VocaHeaderPreview() {
 
         VocaHeader(
             searchText = { searchText },
-            onSearchTextChanged = { searchText = it }
+            onSearchTextChanged = { searchText = it },
+            onCloseButtonClick = { }
         )
     }
 }
