@@ -32,6 +32,7 @@ import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.diarywrite.component.DateText
+import com.hilingual.presentation.diarywrite.component.DiaryWriteCancelDialog
 import com.hilingual.presentation.diarywrite.component.ImageSelectBottomSheet
 import com.hilingual.presentation.diarywrite.component.PhotoSelectButton
 import com.hilingual.presentation.diarywrite.component.RecommendedTopicDropdown
@@ -82,7 +83,16 @@ private fun DiaryWriteScreen(
     onDiaryFeedbackRequestButtonClick: () -> Unit
 ) {
     val verticalScrollState = rememberScrollState()
+    var isDialogVisible by remember { mutableStateOf(false) }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
+
+    if (isDialogVisible) {
+        DiaryWriteCancelDialog(
+            onDismiss = { isDialogVisible = false },
+            onNoClick = { isDialogVisible = false },
+            onCancelClick = onBackClicked
+        )
+    }
 
     if (isBottomSheetVisible) {
         ImageSelectBottomSheet(
@@ -100,7 +110,7 @@ private fun DiaryWriteScreen(
     ) {
         BackTopAppBar(
             title = "일기 작성하기",
-            onBackClicked = onBackClicked
+            onBackClicked = { isDialogVisible = true }
         )
 
         Row(
