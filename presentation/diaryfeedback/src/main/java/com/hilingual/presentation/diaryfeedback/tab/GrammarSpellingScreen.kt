@@ -38,9 +38,9 @@ internal fun GrammarSpellingScreen(
     writtenDate: String,
     diaryContent: DiaryContent,
     feedbackList: ImmutableList<FeedbackContent>,
-    onToggle: (Boolean) -> Unit,
+    onToggleDiaryViewMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    isAI: Boolean = true
+    isAIDiary: Boolean = true
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.Top,
@@ -60,15 +60,15 @@ internal fun GrammarSpellingScreen(
                     color = HilingualTheme.colors.gray700
                 )
                 AIDiaryToggle(
-                    isAIDiary = isAI,
-                    onToggle = { onToggle(!isAI) }
+                    isAIDiary = isAIDiary,
+                    onToggle = { onToggleDiaryViewMode(!isAIDiary) }
                 )
             }
             Spacer(Modifier.height(12.dp))
-            diaryContent.apply {
+            with(diaryContent) {
                 DiaryCard(
-                    isAIDiary = isAI,
-                    diaryContent = if (isAI) aiText else originalText,
+                    isAIDiary = isAIDiary,
+                    diaryContent = if (isAIDiary) aiText else originalText,
                     diffRanges = diffRanges,
                     imageUrl = imageUrl
                 )
@@ -76,19 +76,12 @@ internal fun GrammarSpellingScreen(
             Spacer(Modifier.height(24.dp))
         }
         item {
-            Text(
-                text = getFeedbackTitleAnnotatedString(feedbackList.size),
-                style = HilingualTheme.typography.bodySB16,
-                color = HilingualTheme.colors.black
-            )
-            Spacer(Modifier.height(12.dp))
-
-            if (feedbackList.isEmpty()) FeedbackEmptyCard()
+           FeedbackTitle(feedbackList.size)
         }
         itemsIndexed(
             feedbackList
         ) { index, content ->
-            content.apply {
+            with(content) {
                 FeedbackCard(
                     originalText = originalText,
                     feedbackText = feedbackText,
@@ -102,18 +95,28 @@ internal fun GrammarSpellingScreen(
 }
 
 @Composable
+private fun FeedbackTitle(feedbackSize: Int) {
+    val isEmptyFeedback = (feedbackSize == 0)
+
+    Text(
+        text = if (isEmptyFeedback) AnnotatedString("일기에서 발견된 피드백 알려드릴게요!") else getFeedbackTitleAnnotatedString(feedbackSize),
+        style = HilingualTheme.typography.bodySB16,
+        color = HilingualTheme.colors.black
+    )
+    Spacer(Modifier.height(12.dp))
+
+    if (isEmptyFeedback) FeedbackEmptyCard()
+}
+
+@Composable
 private fun getFeedbackTitleAnnotatedString(
     feedbackSize: Int,
-): AnnotatedString {
-    if (feedbackSize == 0)
-        return AnnotatedString("일기에서 발견된 피드백 알려드릴게요!")
-    return buildAnnotatedString {
-        append("주요 피드백 ")
-        withStyle(style = SpanStyle(color = HilingualTheme.colors.hilingualOrange)) {
-            append(feedbackSize.toString())
-        }
-        append("개 알려드릴게요!")
+) = buildAnnotatedString {
+    append("주요 피드백 ")
+    withStyle(style = SpanStyle(color = HilingualTheme.colors.hilingualOrange)) {
+        append(feedbackSize.toString())
     }
+    append("개 알려드릴게요!")
 }
 
 @Preview(showBackground = true)
@@ -126,10 +129,10 @@ private fun GrammarSpellingScreenPreview() {
 
         GrammarSpellingScreen(
             writtenDate = "7월 11일 금요일",
-            isAI = isAI,
-            onToggle = { isAI = !isAI },
+            isAIDiary = isAI,
+            onToggleDiaryViewMode = { isAI = !isAI },
             diaryContent = dummyDiary,
-            feedbackList = DiaryFeedbackViewModel.dummyFeedbacks
+            feedbackList = DiaryFeedbackViewModel.dummyEmptyFeedback
         )
     }
 }

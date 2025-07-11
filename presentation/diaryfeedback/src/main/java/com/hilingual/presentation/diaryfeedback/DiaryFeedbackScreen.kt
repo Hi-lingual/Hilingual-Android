@@ -11,10 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -55,7 +57,7 @@ internal fun DiaryFeedbackRoute(
         is UiState.Success -> {
             DiaryFeedbackScreen(
                 uiState = state.data,
-                onToggle = viewModel::toggleDiaryShowOption,
+                onToggleDiaryViewMode = viewModel::toggleDiaryShowOption,
                 onToggleBookmark = viewModel::toggleBookmark
             )
         }
@@ -67,7 +69,7 @@ internal fun DiaryFeedbackRoute(
 @Composable
 private fun DiaryFeedbackScreen(
     uiState: DiaryFeedbackUiState,
-    onToggle: (Boolean) -> Unit,
+    onToggleDiaryViewMode: (Boolean) -> Unit,
     onToggleBookmark: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -94,25 +96,41 @@ private fun DiaryFeedbackScreen(
             onTabSelected = { tabIndex = it }
         )
 
-        uiState.apply {
+        with(uiState) {
             when (tabIndex) {
-                0 -> uiState.apply {
-                    GrammarSpellingScreen(
-                        writtenDate = "7월 11일 금요일",
-                        diaryContent = diaryContent,
-                        feedbackList = feedbackList,
-                        onToggle = onToggle,
-                        isAI = isAI
-                    )
-                }
+                0 -> GrammarSpellingScreen(
+                    writtenDate = writtenDate,
+                    diaryContent = diaryContent,
+                    feedbackList = feedbackList,
+                    onToggleDiaryViewMode = onToggleDiaryViewMode,
+                    isAIDiary = isAI
+                )
                 1 -> RecommendExpressionScreen(
-                    writtenDate = "7월 11일 금요일",
+                    writtenDate = writtenDate,
                     recommendExpressionList = recommendExpressionList,
-                    isBookmarkClick = {
-                        //TODO: 수정 필요
-                    },
+                    isBookmarkClick = onToggleBookmark,
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DiaryFeedbackScreenPreview() {
+    HilingualTheme {
+        val vm = DiaryFeedbackViewModel
+        var isAI by remember { mutableStateOf(true) }
+
+        DiaryFeedbackScreen(
+            uiState = DiaryFeedbackUiState(
+                isAI = isAI,
+                diaryContent = vm.dummyDiaryContent,
+                feedbackList = vm.dummyFeedbacks,
+                recommendExpressionList = vm.dummyRecommendExpressions
+            ),
+            onToggleDiaryViewMode = { isAI = !isAI },
+            onToggleBookmark = { _, _ -> {} }
+        )
     }
 }
