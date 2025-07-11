@@ -47,8 +47,6 @@ internal fun SortBottomSheetContent(
                 val isSelected = type == selectedType
                 val contentColor =
                     if (isSelected) HilingualTheme.colors.hilingualBlack else HilingualTheme.colors.gray400
-                val iconTint =
-                    if (isSelected) HilingualTheme.colors.hilingualBlack else HilingualTheme.colors.gray400
 
                 Row(
                     modifier = Modifier
@@ -60,7 +58,7 @@ internal fun SortBottomSheetContent(
                     Icon(
                         imageVector = ImageVector.vectorResource(id = type.iconRes),
                         contentDescription = null,
-                        tint = iconTint
+                        tint = contentColor
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(

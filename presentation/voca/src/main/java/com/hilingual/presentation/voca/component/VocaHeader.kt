@@ -23,6 +23,7 @@ internal fun VocaHeader(
     searchText: () -> String,
     onSearchTextChanged: (String) -> Unit,
     onSearchConfirmed: () -> Unit,
+    onCloseButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -40,7 +41,8 @@ internal fun VocaHeader(
             onValueChanged = onSearchTextChanged,
             modifier = Modifier.fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            onSearchAction = { onSearchConfirmed() }
+            onSearchAction = onSearchConfirmed,
+            onTrailingIconClick = onCloseButtonClick
         )
         Spacer(modifier = Modifier.height(20.dp))
     }
@@ -54,8 +56,9 @@ private fun VocaHeaderPreview() {
 
         VocaHeader(
             searchText = { searchText },
-            onSearchConfirmed = {},
-            onSearchTextChanged = { searchText = it }
+            onSearchConfirmed = { },
+            onSearchTextChanged = { searchText = it },
+            onCloseButtonClick = { }
         )
     }
 }

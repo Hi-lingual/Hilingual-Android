@@ -40,7 +40,11 @@ import com.hilingual.presentation.voca.component.VocaInfo
 import com.hilingual.presentation.voca.component.VocaModal
 import com.hilingual.presentation.voca.component.WordSortBottomSheet
 import com.hilingual.presentation.voca.component.WordSortType
+import com.hilingual.presentation.voca.model.VocaGroup
+import com.hilingual.presentation.voca.model.VocaItem
+import com.hilingual.presentation.voca.model.VocaItemDetail
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -49,74 +53,55 @@ internal fun VocaRoute(
     viewModel: VocaViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val vocaDetail by viewModel.selectedVocaDetail.collectAsStateWithLifecycle()
-    val selectedVocaItem by viewModel.selectedVocaItem.collectAsStateWithLifecycle()
     val systemUiController = rememberSystemUiController()
-
-    var searchText by remember { mutableStateOf("") }
-    var isSearch by remember { mutableStateOf(false) }
-    var searchResultList by remember { mutableStateOf(emptyList<VocaItem>()) }
 
     SideEffect {
         systemUiController.setStatusBarColor(hilingualBlack, darkIcons = false)
     }
 
-    when (val state = uiState) {
-        is UiState.Loading -> {}
-        is UiState.Success -> {
-            VocaScreen(
-                paddingValues = paddingValues,
-                uiState = state.data,
-                vocaDetail = vocaDetail,
-                selectedVocaItem = selectedVocaItem,
-                isSearch = isSearch,
-                searchResultList = searchResultList.toImmutableList(),
-                searchText = searchText,
-                onSortTypeChanged = viewModel::fetchWords,
-                onCardClick = viewModel::fetchVocaDetail,
-                onBookmarkClick = viewModel::toggleBookmark,
-                onDismissModal = viewModel::clearSelectedItem,
-                onSearchTextChanged = {
-                    searchText = it
-                    if (it.isBlank()) {
-                        isSearch = false
-                        searchResultList = emptyList()
-                    }
-                },
-                onSearchConfirmed = {
-                    if (searchText.isNotBlank()) {
-                        isSearch = true
-                        searchResultList = state.data.vocaGroupList
-                            .flatMap { it.words }
-                            .filter { it.phrase.startsWith(searchText, ignoreCase = true) }
-                            .sortedBy { it.phrase }
-                    } else {
-                        isSearch = false
-                        searchResultList = emptyList()
-                    }
-                }
-            )
-        }
+    VocaScreen(
+        paddingValues = paddingValues,
+        viewType = uiState.viewType,
+        sortType = uiState.sortType,
+        vocaCount = uiState.vocaCount,
+        vocaDetail = (uiState.vocaItemDetail as? UiState.Success)?.data,
+        vocaGroupList = (uiState.vocaGroupList as? UiState.Success)?.data ?: persistentListOf(),
+        searchResultList = (uiState.searchResultList as? UiState.Success)?.data
+            ?: persistentListOf(),
+        searchText = uiState.searchKeyword,
+        onSortTypeChanged = viewModel::fetchWords,
+        onCardClick = viewModel::fetchVocaDetail,
+        onBookmarkClick = viewModel::toggleBookmark,
+        onDismissModal = viewModel::clearSelectedVocaDetail,
+        onSearchTextChanged = {
+            viewModel.updateSearchKeyword(searchKeyword = it)
+        },
+        onSearchConfirmed = viewModel::fetchSearch,
+        onWriteDiaryClick = { /*TODO:네비게이션 연결해야해용*/ },
+        onCloseButtonClick = viewModel::clearSearchKeyword
+    )
 
-        else -> {}
-    }
+
 }
 
 @Composable
 private fun VocaScreen(
     paddingValues: PaddingValues,
-    uiState: VocaUiState,
+    viewType: ScreenType,
+    sortType: WordSortType,
     vocaDetail: VocaItemDetail?,
-    selectedVocaItem: VocaItem?,
-    isSearch: Boolean,
+    vocaCount: Int,
+    vocaGroupList: ImmutableList<VocaGroup>,
     searchResultList: ImmutableList<VocaItem>,
     searchText: String,
+    onWriteDiaryClick: () -> Unit,
     onSortTypeChanged: (WordSortType) -> Unit,
-    onCardClick: (VocaItem) -> Unit,
-    onBookmarkClick: (VocaItem) -> Unit,
+    onCardClick: (Int) -> Unit,
+    onBookmarkClick: (Int) -> Unit,
     onDismissModal: () -> Unit,
     onSearchTextChanged: (String) -> Unit,
-    onSearchConfirmed: () -> Unit
+    onSearchConfirmed: () -> Unit,
+    onCloseButtonClick: () -> Unit
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -130,30 +115,36 @@ private fun VocaScreen(
             searchText = { searchText },
             onSearchTextChanged = onSearchTextChanged,
             onSearchConfirmed = onSearchConfirmed,
+            onCloseButtonClick = onCloseButtonClick,
             modifier = Modifier
                 .background(hilingualBlack)
                 .fillMaxWidth()
         )
 
-        if (isSearch) {
-            SearchResultSection(
-                searchResultList = searchResultList,
-                onCardClick = onCardClick,
-                onBookmarkClick = onBookmarkClick
-            )
-        } else {
-            VocaListWithInfoSection(
-                vocaGroupList = uiState.vocaGroupList.toImmutableList(),
-                sortType = uiState.sortType,
-                wordCount = uiState.vocaGroupList.sumOf { it.words.size },
-                onSortClick = { showBottomSheet = true },
-                onCardClick = onCardClick,
-                onBookmarkClick = onBookmarkClick
-            )
+        when (viewType) {
+            ScreenType.DEFAULT -> {
+                VocaListWithInfoSection(
+                    vocaGroupList = vocaGroupList,
+                    sortType = sortType,
+                    wordCount = vocaCount,
+                    onSortClick = { showBottomSheet = true },
+                    onCardClick = onCardClick,
+                    onBookmarkClick = onBookmarkClick,
+                    onWriteDiaryClick = onWriteDiaryClick
+                )
+            }
+
+            ScreenType.SEARCH -> {
+                SearchResultSection(
+                    searchResultList = searchResultList,
+                    onCardClick = onCardClick,
+                    onBookmarkClick = onBookmarkClick
+                )
+            }
         }
     }
 
-    if (selectedVocaItem != null && vocaDetail != null) {
+    if (vocaDetail != null) {
         Box(
             modifier = Modifier
                 .background(HilingualTheme.colors.dim)
@@ -167,8 +158,8 @@ private fun VocaScreen(
                 phraseType = vocaDetail.phraseType.toImmutableList(),
                 explanation = vocaDetail.explanation,
                 createdAt = vocaDetail.createdAt,
-                isBookmarked = selectedVocaItem.isBookmarked,
-                onBookmarkClick = { onBookmarkClick(selectedVocaItem) },
+                isBookmarked = vocaDetail.isBookmarked,
+                onBookmarkClick = { onBookmarkClick(vocaDetail.phraseId) },
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .navigationBarsPadding()
@@ -178,11 +169,10 @@ private fun VocaScreen(
 
     if (showBottomSheet) {
         WordSortBottomSheet(
-            selectedType = uiState.sortType,
+            selectedType = sortType,
             onDismiss = { showBottomSheet = false },
             onTypeSelected = {
                 onSortTypeChanged(it)
-                showBottomSheet = false
             }
         )
     }
@@ -194,9 +184,10 @@ internal fun VocaListWithInfoSection(
     vocaGroupList: ImmutableList<VocaGroup>,
     sortType: WordSortType,
     wordCount: Int,
+    onWriteDiaryClick: () -> Unit,
     onSortClick: () -> Unit,
-    onCardClick: (VocaItem) -> Unit,
-    onBookmarkClick: (VocaItem) -> Unit
+    onCardClick: (Int) -> Unit,
+    onBookmarkClick: (Int) -> Unit
 ) {
     val isEmpty = vocaGroupList.all { it.words.isEmpty() }
 
@@ -224,7 +215,7 @@ internal fun VocaListWithInfoSection(
                 ) {
                     VocaEmptyCard(type = VocaEmptyCardType.NOT_ADD)
                     Spacer(modifier = Modifier.height(16.dp))
-                    AddVocaButton(onClick = { /* TODO: 단어 추가해용 */ })
+                    AddVocaButton(onClick = onWriteDiaryClick)
                 }
             }
         } else {
@@ -250,14 +241,17 @@ internal fun VocaListWithInfoSection(
                         )
                     }
 
-                    itemsIndexed(group.words) { index, voca ->
+                    itemsIndexed(
+                        group.words,
+                        key = { _, voca -> voca.phraseId }
+                    ) { index, voca ->
                         val isLastItem = index == group.words.lastIndex
                         VocaCard(
                             phrase = voca.phrase,
                             phraseType = voca.phraseType.toImmutableList(),
-                            onCardClick = { onCardClick(voca) },
+                            onCardClick = { onCardClick(voca.phraseId) },
                             isBookmarked = voca.isBookmarked,
-                            onBookmarkClick = { onBookmarkClick(voca) },
+                            onBookmarkClick = { onBookmarkClick(voca.phraseId) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(bottom = if (isLastItem) 20.dp else 16.dp)
@@ -271,37 +265,35 @@ internal fun VocaListWithInfoSection(
 
 @Composable
 internal fun SearchResultSection(
-    searchResultList: List<VocaItem>,
-    onCardClick: (VocaItem) -> Unit,
-    onBookmarkClick: (VocaItem) -> Unit,
+    searchResultList: ImmutableList<VocaItem>,
+    onCardClick: (Int) -> Unit,
+    onBookmarkClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
-        modifier = modifier.fillMaxSize()
-    ) {
-        if (searchResultList.isEmpty()) {
-            item {
-                Column(
-                    modifier = Modifier
-                        .fillParentMaxSize()
-                        .padding(horizontal = 80.dp)
-                        .padding(top = 80.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    VocaEmptyCard(type = VocaEmptyCardType.NOT_SEARCH)
-                }
-            }
-        } else {
+    if (searchResultList.isEmpty()) {
+        VocaEmptyCard(
+            type = VocaEmptyCardType.NOT_SEARCH,
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = 80.dp, vertical = 80.dp)
+        )
+    } else {
+        LazyColumn(
+            modifier = modifier.fillMaxSize()
+        ) {
             item {
                 Spacer(modifier = Modifier.height(16.dp))
             }
-            items(searchResultList) { voca ->
+            items(
+                searchResultList,
+                key = { voca -> voca.phraseId }
+            ) { voca ->
                 VocaCard(
                     phrase = voca.phrase,
                     phraseType = voca.phraseType.toImmutableList(),
-                    onCardClick = { onCardClick(voca) },
+                    onCardClick = { onCardClick(voca.phraseId) },
                     isBookmarked = voca.isBookmarked,
-                    onBookmarkClick = { onBookmarkClick(voca) },
+                    onBookmarkClick = { onBookmarkClick(voca.phraseId) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
@@ -312,41 +304,18 @@ internal fun SearchResultSection(
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
-fun SearchResultSectionPreview() {
-    val sampleVocaItems = remember {
-        listOf(
-            VocaItem(
-                1,
-                phrase = "apple",
-                phraseType = listOf("명사"),
-                isBookmarked = true
-            ),
-            VocaItem(
-                2,
-                phrase = "application",
-                phraseType = listOf("명사"),
-                isBookmarked = true
-            ),
-            VocaItem(
-                3,
-                phrase = "appreciate",
-                phraseType = listOf("동사"),
-                isBookmarked = true
-            ),
-            VocaItem(
-                4,
-                phrase = "anana",
-                phraseType = listOf("명사"),
-                isBookmarked = true
-            )
-        )
-    }
-
+private fun VocaListWithInfoSectionEmptyPreview() {
     HilingualTheme {
-        SearchResultSection(
-            searchResultList = sampleVocaItems,
+        VocaListWithInfoSection(
+            vocaGroupList = persistentListOf(
+            ),
+            sortType = WordSortType.Latest,
+            wordCount = 0,
+            onWriteDiaryClick = {},
+            onSortClick = {},
             onCardClick = {},
             onBookmarkClick = {}
         )
@@ -355,12 +324,38 @@ fun SearchResultSectionPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun SearchResultSectionEmptyPreview() {
+private fun SearchResultSectionEmptyPreview() {
     HilingualTheme {
         SearchResultSection(
-            searchResultList = emptyList(),
+            searchResultList = persistentListOf(),
             onCardClick = {},
             onBookmarkClick = {}
         )
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+private fun SearchResultSectionListPreview() {
+    HilingualTheme {
+        SearchResultSection(
+            searchResultList = persistentListOf(
+                VocaItem(
+                    phraseId = 1,
+                    phrase = "healing",
+                    phraseType = persistentListOf("명사"),
+                    isBookmarked = true
+                ),
+                VocaItem(
+                    phraseId = 2,
+                    phrase = "relax",
+                    phraseType = persistentListOf("동사"),
+                    isBookmarked = true
+                )
+            ).toImmutableList(),
+            onCardClick = {},
+            onBookmarkClick = {}
+        )
+    }
+}
+

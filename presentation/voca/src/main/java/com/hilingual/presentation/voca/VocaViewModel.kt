@@ -1,61 +1,79 @@
 package com.hilingual.presentation.voca
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.util.UiState
 import com.hilingual.presentation.voca.component.WordSortType
+import com.hilingual.presentation.voca.model.VocaGroup
+import com.hilingual.presentation.voca.model.VocaItem
+import com.hilingual.presentation.voca.model.VocaItemDetail
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.update
 
 internal class VocaViewModel : ViewModel() {
 
-    private val _uiState = MutableStateFlow<UiState<VocaUiState>>(UiState.Loading)
-    val uiState: StateFlow<UiState<VocaUiState>> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<VocaUiState>(VocaUiState())
+    val uiState: StateFlow<VocaUiState> = _uiState.asStateFlow()
 
-    private val vocaDetailList = listOf(
-        VocaItemDetail(0, "run late", listOf("동사", "숙어"), "늦다", "2025.06.12"),
-        VocaItemDetail(1, "hilingual", listOf("동사", "숙어"), "화이팅", "2025.07.11"),
-        VocaItemDetail(3, "ghost", listOf("명사"), "유령", "2025.06.13")
-    )
+    private val vocaDetailItem =
+        VocaItemDetail(0, "run late", persistentListOf("동사", "숙어"), "늦다", "2025.06.12")
 
-    private val _selectedVocaDetail = MutableStateFlow<VocaItemDetail?>(null)
-    val selectedVocaDetail: StateFlow<VocaItemDetail?> = _selectedVocaDetail.asStateFlow()
-
-    private val _selectedVocaItem = MutableStateFlow<VocaItem?>(null)
-    val selectedVocaItem: StateFlow<VocaItem?> = _selectedVocaItem.asStateFlow()
-
-    private var originalAtoZGroupList = listOf(
+    private var originalAtoZGroupList = persistentListOf(
         VocaGroup(
             "A",
-            listOf(VocaItem(1, "amazing", listOf("형용사")), VocaItem(2, "apple", listOf("명사")))
-        ),
-        VocaGroup("B", listOf(VocaItem(3, "banana", listOf("동사")))),
-        VocaGroup(
-            "E",
-            listOf(VocaItem(4, "epiphany", listOf("명사")), VocaItem(5, "example", listOf("명사")))
-        )
-    )
-
-    private var originalLatestGroupList = listOf(
-        VocaGroup(
-            "today", listOf(
-                VocaItem(10, "come across as", listOf("동사", "숙어")),
-                VocaItem(9, "underwhelming", listOf("형용사")),
-                VocaItem(8, "spacious", listOf("형용사")),
-                VocaItem(7, "oversleep", listOf("동사"))
+            persistentListOf(
+                VocaItem(1, "amazing", persistentListOf("형용사")),
+                VocaItem(2, "apple", persistentListOf("명사"))
             )
         ),
         VocaGroup(
-            "7days", listOf(
-                VocaItem(6, "resonate with", listOf("동사", "구")),
-                VocaItem(5, "rekindle my interest", listOf("동사", "구")),
-                VocaItem(4, "emotional vulnerability", listOf("명사", "구")),
-                VocaItem(3, "out of the blue", listOf("부사")),
-                VocaItem(2, "short-lived but impactful", listOf("형용사", "구")),
-                VocaItem(1, "ghost", listOf("명사")),
-                VocaItem(0, "run late", listOf("동사", "숙어"))
+            "B", persistentListOf(
+                VocaItem(3, "banana", persistentListOf("동사"))
+            )
+        ),
+        VocaGroup(
+            "E",
+            persistentListOf(
+                VocaItem(4, "epiphany", persistentListOf("명사")),
+                VocaItem(5, "example", persistentListOf("명사"))
+            )
+        )
+    )
+
+
+    private
+    var originalLatestGroupList = persistentListOf(
+        VocaGroup(
+            "today", persistentListOf(
+                VocaItem(10, "come across as", persistentListOf("동사", "숙어")),
+                VocaItem(9, "underwhelming", persistentListOf("형용사")),
+                VocaItem(8, "spacious", persistentListOf("형용사")),
+                VocaItem(7, "oversleep", persistentListOf("동사"))
+            )
+        ),
+        VocaGroup(
+            "7days", persistentListOf(
+                VocaItem(6, "resonate with", persistentListOf("동사", "구")),
+                VocaItem(
+                    5,
+                    "rekindle my interest",
+                    persistentListOf("동사", "구")
+                ),
+                VocaItem(
+                    4,
+                    "emotional vulnerability",
+                    persistentListOf("명사", "구")
+                ),
+                VocaItem(3, "out of the blue", persistentListOf("부사")),
+                VocaItem(
+                    2,
+                    "short-lived but impactful",
+                    persistentListOf("형용사", "구")
+                ),
+                VocaItem(1, "ghost", persistentListOf("명사")),
+                VocaItem(0, "run late", persistentListOf("동사", "숙어"))
             )
         )
     )
@@ -65,55 +83,73 @@ internal class VocaViewModel : ViewModel() {
     }
 
     fun fetchWords(sort: WordSortType) {
-        _uiState.value = UiState.Loading
-        viewModelScope.launch {
-            val source = when (sort) {
-                WordSortType.AtoZ -> originalAtoZGroupList
-                WordSortType.Latest -> originalLatestGroupList
-            }
 
-            val filtered = source.map { group ->
-                group.copy(words = group.words.filter { it.isBookmarked })
-            }.filter { it.words.isNotEmpty() }
+        val source = when (sort) {
+            WordSortType.AtoZ -> originalAtoZGroupList
+            WordSortType.Latest -> originalLatestGroupList
+        }
 
-            _uiState.value = UiState.Success(
-                VocaUiState(sortType = sort, vocaGroupList = filtered, isLoading = false)
+        _uiState.update {
+            it.copy(
+                vocaGroupList = UiState.Success(source),
+                sortType = sort
             )
         }
     }
 
-    fun fetchVocaDetail(item: VocaItem) {
-        _selectedVocaItem.value = item
-        _selectedVocaDetail.value = vocaDetailList.find { it.phraseId == item.phraseId }
+    fun fetchVocaDetail(phraseId: Int) {
+        _uiState.update {
+            it.copy(
+                vocaItemDetail = UiState.Success(vocaDetailItem)
+            )
+        }
     }
 
-    fun toggleBookmark(item: VocaItem) {
-        fun updateBookmark(source: List<VocaGroup>) = source.map { group ->
-            group.copy(words = group.words.map {
-                if (it.phraseId == item.phraseId) it.copy(isBookmarked = !it.isBookmarked) else it
-            })
+    fun fetchSearch() {
+
+        if (_uiState.value.searchKeyword.isBlank()) {
+            _uiState.update {
+                it.copy(
+                    viewType = ScreenType.DEFAULT
+                )
+            }
+        } else {
+            _uiState.update {
+                it.copy(
+                    viewType = ScreenType.SEARCH,
+                    //서버 통신 불러오기
+                )
+            }
         }
-
-        when ((uiState.value as? UiState.Success)?.data?.sortType) {
-            WordSortType.Latest -> originalLatestGroupList = updateBookmark(originalLatestGroupList)
-            WordSortType.AtoZ -> originalAtoZGroupList = updateBookmark(originalAtoZGroupList)
-            else -> return
-        }
-
-        val currentState = uiState.value as? UiState.Success ?: return
-        val updatedGroups = currentState.data.vocaGroupList.map { group ->
-            group.copy(words = group.words.map {
-                if (it.phraseId == item.phraseId) it.copy(isBookmarked = !it.isBookmarked) else it
-            })
-        }
-
-        _selectedVocaItem.value = item.copy(isBookmarked = !item.isBookmarked)
-
-        _uiState.value = UiState.Success(currentState.data.copy(vocaGroupList = updatedGroups))
     }
 
-    fun clearSelectedItem() {
-        _selectedVocaItem.value = null
-        _selectedVocaDetail.value = null
+    fun clearSearchKeyword() {
+        _uiState.update {
+            it.copy(
+                searchKeyword = "",
+                viewType = ScreenType.DEFAULT
+            )
+        }
+    }
+
+    fun toggleBookmark(phraseId: Int) {
+
+    }
+
+    fun clearSelectedVocaDetail() {
+        _uiState.update {
+            it.copy(
+                vocaItemDetail = UiState.Loading
+            )
+        }
+    }
+
+    fun updateSearchKeyword(searchKeyword: String) {
+
+        _uiState.update {
+            it.copy(
+                searchKeyword = searchKeyword
+            )
+        }
     }
 }
