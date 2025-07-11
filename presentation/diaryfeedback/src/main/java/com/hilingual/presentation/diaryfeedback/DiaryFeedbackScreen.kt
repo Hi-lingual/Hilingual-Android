@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -20,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -37,13 +39,12 @@ internal fun DiaryFeedbackRoute(
     onNavigateUp: () -> Unit,
     viewModel: DiaryFeedbackViewModel = hiltViewModel()
 ) {
-    val systemUiController = rememberSystemUiController()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val localSystemBarsColor = LocalSystemBarsColor.current
 
-    SideEffect {
-        systemUiController.setStatusBarColor(
-            color = white,
-            darkIcons = false
+    LaunchedEffect(Unit) {
+        localSystemBarsColor.setSystemBarColor(
+            systemBarsColor = white
         )
     }
 
