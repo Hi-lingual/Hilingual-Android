@@ -74,7 +74,16 @@ private fun DiaryWriteScreen(
     onDiaryFeedbackRequestButtonClick: () -> Unit
 ) {
     val verticalScrollState = rememberScrollState()
+    var isBottomSheetVisible by remember { mutableStateOf(false) }
     var isRequestButtonEnabled by remember { mutableStateOf(false) }
+
+    if (isBottomSheetVisible) {
+        ImageSelectBottomSheet(
+            onDismiss = { isBottomSheetVisible = false },
+            onCameraSelected = { /* TODO: 카메라로 사진 찍기 클릭 시 처리 */ },
+            onGallerySelected = { /* TODO: 갤러리에서 선택하기 클릭 시 처리 */ }
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -99,7 +108,7 @@ private fun DiaryWriteScreen(
             )
 
             TextScanButton(
-                onClick = { /* TODO: 카메라/갤러리 선택 바텀시트 노출 */ }
+                onClick = { isBottomSheetVisible = true }
             )
         }
 
