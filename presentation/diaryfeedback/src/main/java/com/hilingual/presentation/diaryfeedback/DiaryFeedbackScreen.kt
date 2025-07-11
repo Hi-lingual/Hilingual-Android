@@ -25,6 +25,7 @@ import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.diaryfeedback.component.DiaryFeedbackTabRow
+import com.hilingual.presentation.diaryfeedback.component.FeedbackReportBottomSheet
 import com.hilingual.presentation.diaryfeedback.tab.GrammarSpellingScreen
 import com.hilingual.presentation.diaryfeedback.tab.RecommendExpressionScreen
 
@@ -32,6 +33,7 @@ import com.hilingual.presentation.diaryfeedback.tab.RecommendExpressionScreen
 @Composable
 internal fun DiaryFeedbackRoute(
     paddingValues: PaddingValues,
+    onNavigateUp: () -> Unit,
     viewModel: DiaryFeedbackViewModel = hiltViewModel()
 ) {
     val systemUiController = rememberSystemUiController()
@@ -57,6 +59,7 @@ internal fun DiaryFeedbackRoute(
         is UiState.Success -> {
             DiaryFeedbackScreen(
                 uiState = state.data,
+                onBackClick = onNavigateUp,
                 onToggleDiaryViewMode = viewModel::toggleDiaryShowOption,
                 onToggleBookmark = viewModel::toggleBookmark
             )
@@ -69,11 +72,22 @@ internal fun DiaryFeedbackRoute(
 @Composable
 private fun DiaryFeedbackScreen(
     uiState: DiaryFeedbackUiState,
+    onBackClick: () -> Unit,
     onToggleDiaryViewMode: (Boolean) -> Unit,
     onToggleBookmark: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var tabIndex by remember { mutableIntStateOf(0) }
+    var bottomSheetVisibility by remember { mutableStateOf(false) }
+
+    if (bottomSheetVisibility) {
+        FeedbackReportBottomSheet(
+            onDismiss = { bottomSheetVisibility = false },
+            onReportClick = {
+                //TODO: 신고 확인 팝업
+            }
+        )
+    }
 
     Column(
         verticalArrangement = Arrangement.Top,
@@ -83,12 +97,8 @@ private fun DiaryFeedbackScreen(
     ) {
         BackAndMoreTopAppBar(
             title = "일기장",
-            onBackClicked = {
-                //TODO: 뒤로가기 동작 추가
-            },
-            onMoreClicked = {
-                //TODO: AI 신고하기 바텀시트 노출
-            }
+            onBackClicked = onBackClick,
+            onMoreClicked = { bottomSheetVisibility = true }
         )
 
         DiaryFeedbackTabRow(
@@ -125,10 +135,12 @@ private fun DiaryFeedbackScreenPreview() {
         DiaryFeedbackScreen(
             uiState = DiaryFeedbackUiState(
                 isAI = isAI,
+                writtenDate = "7월 11일 금요일",
                 diaryContent = vm.dummyDiaryContent,
                 feedbackList = vm.dummyFeedbacks,
                 recommendExpressionList = vm.dummyRecommendExpressions
             ),
+            onBackClick = {},
             onToggleDiaryViewMode = { isAI = !isAI },
             onToggleBookmark = { _, _ -> {} }
         )
