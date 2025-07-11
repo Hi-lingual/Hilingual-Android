@@ -74,14 +74,11 @@ internal fun VocaRoute(
         onBookmarkClick = viewModel::toggleBookmark,
         onDismissModal = viewModel::clearSelectedVocaDetail,
         onSearchTextChanged = {
-            viewModel.updateSearchKeyword(searchKeyword = it)
+            viewModel.updateSearchKeywordAndSearch(searchKeyword = it)
         },
-        onSearchConfirmed = viewModel::fetchSearch,
         onWriteDiaryClick = { /*TODO:네비게이션 연결해야해용*/ },
         onCloseButtonClick = viewModel::clearSearchKeyword
     )
-
-
 }
 
 @Composable
@@ -100,7 +97,6 @@ private fun VocaScreen(
     onBookmarkClick: (Int) -> Unit,
     onDismissModal: () -> Unit,
     onSearchTextChanged: (String) -> Unit,
-    onSearchConfirmed: () -> Unit,
     onCloseButtonClick: () -> Unit
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -114,7 +110,6 @@ private fun VocaScreen(
         VocaHeader(
             searchText = { searchText },
             onSearchTextChanged = onSearchTextChanged,
-            onSearchConfirmed = onSearchConfirmed,
             onCloseButtonClick = onCloseButtonClick,
             modifier = Modifier
                 .background(hilingualBlack)

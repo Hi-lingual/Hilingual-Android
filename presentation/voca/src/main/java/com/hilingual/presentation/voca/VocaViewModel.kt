@@ -105,24 +105,6 @@ internal class VocaViewModel : ViewModel() {
         }
     }
 
-    fun fetchSearch() {
-
-        if (_uiState.value.searchKeyword.isBlank()) {
-            _uiState.update {
-                it.copy(
-                    viewType = ScreenType.DEFAULT
-                )
-            }
-        } else {
-            _uiState.update {
-                it.copy(
-                    viewType = ScreenType.SEARCH,
-                    //서버 통신 불러오기
-                )
-            }
-        }
-    }
-
     fun clearSearchKeyword() {
         _uiState.update {
             it.copy(
@@ -144,12 +126,18 @@ internal class VocaViewModel : ViewModel() {
         }
     }
 
-    fun updateSearchKeyword(searchKeyword: String) {
-
+    fun updateSearchKeywordAndSearch(searchKeyword: String) {
         _uiState.update {
             it.copy(
-                searchKeyword = searchKeyword
+                searchKeyword = searchKeyword,
+                viewType = if (searchKeyword.isBlank()) {
+                    ScreenType.DEFAULT
+                } else {
+                    ScreenType.SEARCH
+                }
             )
         }
     }
+
+
 }
