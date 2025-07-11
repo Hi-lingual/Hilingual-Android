@@ -46,7 +46,6 @@ fun TwoButtonDialog(
             style = HilingualTheme.typography.captionM12,
             color = HilingualTheme.colors.gray400,
             maxLines = 2,
-            minLines = 2,
             textAlign = TextAlign.Center
         )
 
