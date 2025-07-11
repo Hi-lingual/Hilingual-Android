@@ -42,8 +42,8 @@ fun HilingualLongTextField(
         },
         onFocusChanged = { isFocused = it },
         modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .height(height),
+            .height(height)
+            .verticalScroll(rememberScrollState()),
         borderModifier = if (isFocused) {
             Modifier.border(
                 1.dp,
