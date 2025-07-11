@@ -136,7 +136,7 @@ private fun AuthScreen(
         ) {
             Image(
                 painter = painterResource(R.drawable.img_login),
-                contentDescription = null,
+                contentDescription = null
             )
             GoogleSignButton(onClick = onGoogleSignClick)
 
@@ -147,7 +147,7 @@ private fun AuthScreen(
                 color = HilingualTheme.colors.gray100,
                 style = HilingualTheme.typography.bodyM14,
                 textDecoration = TextDecoration.Underline,
-                modifier = Modifier.noRippleClickable(onClick = onPrivacyPolicyClick),
+                modifier = Modifier.noRippleClickable(onClick = onPrivacyPolicyClick)
             )
         }
     }

@@ -16,7 +16,7 @@ import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.voca.navigation.navigateToVoca
 
 internal class MainNavigator(
-    val navController: NavHostController,
+    val navController: NavHostController
 ) {
     private val currentDestination: NavDestination?
         @Composable get() = navController
@@ -49,7 +49,7 @@ internal class MainNavigator(
             MainTab.VOCA -> navController.navigateToVoca(
                 navOptions = navOptions
             )
-            //TODO: 추후 스프린트 기간에 구현
+            // TODO: 추후 스프린트 기간에 구현
             MainTab.COMMUNITY -> {}
             MainTab.MY -> {}
         }
@@ -100,7 +100,7 @@ internal class MainNavigator(
 
 @Composable
 internal fun rememberMainNavigator(
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController = rememberNavController()
 ): MainNavigator = remember(navController) {
     MainNavigator(navController)
 }

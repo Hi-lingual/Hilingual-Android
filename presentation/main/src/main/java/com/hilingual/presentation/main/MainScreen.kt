@@ -3,7 +3,6 @@ package com.hilingual.presentation.main
 import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
-import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.material3.Scaffold
@@ -23,7 +22,7 @@ import com.hilingual.presentation.splash.navigation.splashNavGraph
 import com.hilingual.presentation.voca.navigation.vocaNavGraph
 import kotlinx.collections.immutable.toPersistentList
 
-private const val EXIT_MILLIS = 3000L //TODO: 추후 정책에 맞게 변경 필요
+private const val EXIT_MILLIS = 3000L // TODO: 추후 정책에 맞게 변경 필요
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -43,11 +42,11 @@ internal fun MainScreen(
                     currentTab = navigator.currentTab,
                     onTabSelected = navigator::navigate
                 )
-            },
+            }
         ) { innerPadding ->
             NavHost(
                 navController = navigator.navController,
-                startDestination = navigator.startDestination,
+                startDestination = navigator.startDestination
 
             ) {
                 splashNavGraph(

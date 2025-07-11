@@ -103,7 +103,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
                     LocalDate.of(yearMonth.year, yearMonth.month, 15),
                     LocalDate.of(yearMonth.year, yearMonth.month, 28)
                 )
-                
+
                 loadDataForDate(currentState.data.selectedDate)
 
                 currentState.copy(data = currentState.data.copy(writtenDates = newWrittenDates))

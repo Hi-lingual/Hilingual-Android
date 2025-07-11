@@ -21,7 +21,7 @@ import kotlinx.collections.immutable.persistentListOf
 internal fun DiaryFeedbackTabRow(
     tabIndex: Int,
     onTabSelected: (Int) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val titles = persistentListOf("문법·철자", "추천표현")
 
@@ -52,7 +52,7 @@ internal fun DiaryFeedbackTabRow(
                         selected = selected,
                         onClick = { onTabSelected(index) },
                         selectedContentColor = HilingualTheme.colors.black,
-                        unselectedContentColor = HilingualTheme.colors.gray500,
+                        unselectedContentColor = HilingualTheme.colors.gray500
                     )
                 }
             }

@@ -17,7 +17,7 @@ import com.hilingual.presentation.diaryfeedback.component.DiaryFeedbackTabRow
 import com.hilingual.presentation.diaryfeedback.tab.GrammarSpellingScreen
 import com.hilingual.presentation.diaryfeedback.tab.RecommendExpressionScreen
 
-//TODO: Route 추가
+// TODO: Route 추가
 
 @Composable
 private fun DiaryFeedbackScreen(
@@ -34,10 +34,10 @@ private fun DiaryFeedbackScreen(
         BackAndMoreTopAppBar(
             title = "일기장",
             onBackClicked = {
-                //TODO: 뒤로가기 동작 추가
+                // TODO: 뒤로가기 동작 추가
             },
             onMoreClicked = {
-                //TODO: AI 신고하기 바텀시트 노출
+                // TODO: AI 신고하기 바텀시트 노출
             }
         )
 

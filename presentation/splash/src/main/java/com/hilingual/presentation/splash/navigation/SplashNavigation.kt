@@ -4,7 +4,6 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.fadeIn
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -32,7 +31,7 @@ fun NavGraphBuilder.splashNavGraph(
     sharedTransitionScope: SharedTransitionScope
 ) {
     composable<Splash>(
-        exitTransition = { fadeOut(tween(500), 0.999f) },
+        exitTransition = { fadeOut(tween(500), 0.999f) }
     ) {
         SplashRoute(
             navigateToAuth = navigateToAuth,

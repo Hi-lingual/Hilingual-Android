@@ -68,7 +68,7 @@ internal fun DiaryCard(
         )
 
         Text(
-            text = "${clipContent.length}/${maxContentLength}",
+            text = "${clipContent.length}/$maxContentLength",
             style = HilingualTheme.typography.captionR12,
             color = HilingualTheme.colors.gray400,
             textAlign = TextAlign.End,
@@ -80,7 +80,7 @@ internal fun DiaryCard(
 @Composable
 private fun getAnnotatedString(
     content: String,
-    diffRanges: ImmutableList<Pair<Int, Int>>,
+    diffRanges: ImmutableList<Pair<Int, Int>>
 ): AnnotatedString {
     return buildAnnotatedString {
         append(content)
@@ -120,13 +120,13 @@ private class DiaryContentCardPreviewProvider :
             isAIDiary = true,
             imageUrl = null,
             content = "Today I went to the cafe Conhas in Yeonnam to meet my teammates.\n I was planning to arrive around 1:30 p.m., but I got there at 2:20 because I overslept, as always.\n I wore rain boots and brought my favorite umbrella because the weather forecast said it would rain all day, but it wasn’t really raining much outside.\n I got kind of disappointed. But yes, no rain is better than rain, I guess.\n" +
-                    "After arriving, I had a jambon arugula sandwich with a vanilla latte.\n Honestly, I should be more careful when I'm drinking milk because I get stomachaches easily, but I always order lattes.\nMy life feels like a disaster, a mess that I call myself.\n But they tasted really good, so I felt more motivated to work.\n I really liked this café because it's spacious, chill, and has a great atmosphere for focusing.\n I’ll definitely come back again soon!",
+                "After arriving, I had a jambon arugula sandwich with a vanilla latte.\n Honestly, I should be more careful when I'm drinking milk because I get stomachaches easily, but I always order lattes.\nMy life feels like a disaster, a mess that I call myself.\n But they tasted really good, so I felt more motivated to work.\n I really liked this café because it's spacious, chill, and has a great atmosphere for focusing.\n I’ll definitely come back again soon!",
             diffRanges = persistentListOf(
                 Pair(84, 164),
                 Pair(278, 316),
                 Pair(508, 583),
-                Pair(740, 802),
-            ),
+                Pair(740, 802)
+            )
         )
     )
 }
