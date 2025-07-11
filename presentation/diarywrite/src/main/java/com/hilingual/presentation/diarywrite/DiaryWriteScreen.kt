@@ -161,7 +161,6 @@ private fun DiaryWriteScreen(
                 )
             }
         ) { balloon ->
-            // TODO: 10자 이상일 때만 버튼 활성화되도록 처리
             HilingualButton(
                 modifier = Modifier
                     .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
