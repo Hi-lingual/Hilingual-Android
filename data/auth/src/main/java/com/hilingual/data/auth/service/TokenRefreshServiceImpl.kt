@@ -1,8 +1,7 @@
-package com.hilingual.data.auth.tokenrefresh
+package com.hilingual.data.auth.service
 
 import com.hilingual.core.localstorage.TokenManager
 import com.hilingual.core.network.service.TokenRefreshService
-import com.hilingual.data.auth.service.AuthService
 import com.hilingual.core.common.util.suspendRunCatching
 import javax.inject.Inject
 

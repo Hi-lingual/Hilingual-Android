@@ -1,7 +1,7 @@
 package com.hilingual.data.auth.di
 
 import com.hilingual.core.network.service.TokenRefreshService
-import com.hilingual.data.auth.tokenrefresh.TokenRefreshServiceImpl
+import com.hilingual.data.auth.service.TokenRefreshServiceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

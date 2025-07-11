@@ -1,12 +1,16 @@
 package com.hilingual.data.auth.di
 
-import com.hilingual.data.auth.datasource.AuthRemoteDataSource
+import android.content.Context
+import androidx.credentials.CredentialManager
+import com.hilingual.data.auth.datasource.AuthApiDataSource
 import com.hilingual.data.auth.datasource.GoogleAuthDataSource
-import com.hilingual.data.auth.datasourceimpl.AuthRemoteDataSourceImpl
+import com.hilingual.data.auth.datasourceimpl.AuthApiDataSourceImpl
 import com.hilingual.data.auth.datasourceimpl.GoogleAuthDataSourceImpl
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -21,7 +25,15 @@ internal abstract class DataSourceModule {
 
     @Binds
     @Singleton
-    abstract fun bindAuthRemoteDataSource(
-        authRemoteDataSourceImpl: AuthRemoteDataSourceImpl
-    ): AuthRemoteDataSource
+    abstract fun bindAuthApiDataSource(
+        authApiDataSourceImpl: AuthApiDataSourceImpl
+    ): AuthApiDataSource
+
+    companion object {
+        @Provides
+        @Singleton
+        fun provideCredentialManager(@ApplicationContext context: Context): CredentialManager {
+            return CredentialManager.create(context)
+        }
+    }
 }
