@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -19,10 +19,11 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualOrange
+import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.auth.component.GoogleSignButton
 import kotlinx.coroutines.flow.collectLatest
 
@@ -33,10 +34,18 @@ internal fun AuthRoute(
     navigateToOnboarding: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
-    val systemUiController = rememberSystemUiController()
+    val localSystemBarsColor = LocalSystemBarsColor.current
 
-    SideEffect {
-        systemUiController.setStatusBarColor(color = hilingualOrange, darkIcons = false)
+    DisposableEffect(Unit) {
+        localSystemBarsColor.setSystemBarColor(
+            systemBarsColor = hilingualOrange
+        )
+
+        onDispose {
+            localSystemBarsColor.setSystemBarColor(
+                systemBarsColor = white
+            )
+        }
     }
 
     LaunchedEffect(Unit) {
