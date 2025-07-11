@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -34,6 +36,12 @@ import com.hilingual.presentation.diarywrite.component.ImageSelectBottomSheet
 import com.hilingual.presentation.diarywrite.component.PhotoSelectButton
 import com.hilingual.presentation.diarywrite.component.RecommendedTopicDropdown
 import com.hilingual.presentation.diarywrite.component.TextScanButton
+import com.hilingual.presentation.diarywrite.component.WriteGuideTooltip
+import com.skydoves.balloon.BalloonSizeSpec
+import com.skydoves.balloon.compose.Balloon
+import com.skydoves.balloon.compose.rememberBalloonBuilder
+import com.skydoves.balloon.compose.setBackgroundColor
+import kotlinx.coroutines.delay
 import java.time.LocalDate
 
 @Composable
@@ -140,13 +148,35 @@ private fun DiaryWriteScreen(
             )
         }
 
-        // TODO: 10자 이상일 때만 버튼 활성화되도록 처리
-        HilingualButton(
-            modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 16.dp),
-            text = "피드백 요청",
-            enabled = isRequestButtonEnabled,
-            onClick = onDiaryFeedbackRequestButtonClick
-        )
+        Balloon(
+            builder = rememberBalloonBuilder {
+                setWidth(BalloonSizeSpec.WRAP)
+                setHeight(BalloonSizeSpec.WRAP)
+                setBackgroundColor(Color.Transparent)
+                setIsVisibleArrow(false)
+                setArrowSize(0)
+            },
+            balloonContent = {
+                WriteGuideTooltip(
+                    text = "10자 이상 작성해야 피드백 요청이 가능해요!"
+                )
+            }
+        ) { balloon ->
+            // TODO: 10자 이상일 때만 버튼 활성화되도록 처리
+            HilingualButton(
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                text = "피드백 요청",
+                enabled = isRequestButtonEnabled,
+                onClick = onDiaryFeedbackRequestButtonClick
+            )
+
+            LaunchedEffect(Unit) {
+                balloon.showAlignTop()
+                delay(5000)
+                balloon.dismiss()
+            }
+        }
     }
 }
 
