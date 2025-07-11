@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.credentials.CredentialManager
 import com.hilingual.data.auth.datasource.AuthApiDataSource
 import com.hilingual.data.auth.datasource.GoogleAuthDataSource
-import com.hilingual.data.auth.datasourceimpl.AuthApiDataSourceImpl
+import com.hilingual.data.auth.datasourceimpl.AuthRemoteDataSourceImpl
 import com.hilingual.data.auth.datasourceimpl.GoogleAuthDataSourceImpl
 import dagger.Binds
 import dagger.Module
@@ -26,7 +26,7 @@ internal abstract class DataSourceModule {
     @Binds
     @Singleton
     abstract fun bindAuthApiDataSource(
-        authApiDataSourceImpl: AuthApiDataSourceImpl
+        authRemoteDataSourceImpl: AuthRemoteDataSourceImpl
     ): AuthApiDataSource
 
     companion object {

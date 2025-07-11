@@ -20,7 +20,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object RetrofitModule {
+object NetworkModule {
     private const val UNIT_TAB = 4
 
     @Provides
@@ -79,11 +79,11 @@ object RetrofitModule {
 
     @Provides
     @Singleton
-    fun provideAuthClientOkHttpClient(
+    fun provideDefaultOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
         authInterceptor: AuthInterceptor,
         tokenAuthenticator: TokenAuthenticator
-    ) = OkHttpClient.Builder()
+    ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .addInterceptor(authInterceptor)
         .authenticator(tokenAuthenticator)
@@ -92,24 +92,24 @@ object RetrofitModule {
     @Provides
     @Singleton
     @LoginClient
-    fun provideLoginClientOkHttpClient(
+    fun provideLoginOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor
-    ) = OkHttpClient.Builder()
+    ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .build()
 
     @Provides
     @Singleton
     @RefreshClient
-    fun provideRefreshClientOkHttpClient(
+    fun provideRefreshOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor
-    ) = OkHttpClient.Builder()
+    ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .build()
 
     @Provides
     @Singleton
-    fun provideAuthClientRetrofit(
+    fun provideDefaultRetrofit(
         client: OkHttpClient,
         factory: Converter.Factory
     ): Retrofit =
@@ -122,7 +122,7 @@ object RetrofitModule {
     @Provides
     @Singleton
     @LoginClient
-    fun provideLoginClientRetrofit(
+    fun provideLoginRetrofit(
         @LoginClient client: OkHttpClient,
         factory: Converter.Factory
     ): Retrofit =
@@ -135,7 +135,7 @@ object RetrofitModule {
     @Provides
     @Singleton
     @RefreshClient
-    fun provideRefreshClientRetrofit(
+    fun provideRefreshRetrofit(
         @RefreshClient client: OkHttpClient,
         factory: Converter.Factory
     ): Retrofit =
