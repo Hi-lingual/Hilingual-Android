@@ -100,7 +100,8 @@ internal fun MainScreen(
                     paddingValues = innerPadding
                 )
                 vocaNavGraph(
-                    paddingValues = innerPadding
+                    paddingValues = innerPadding,
+                    navigateToHome = navigator::navigateToHome
                 )
             }
         }

@@ -43,7 +43,7 @@ internal class VocaViewModel : ViewModel() {
         )
     )
 
-    private var originalLatestGroupList = persistentListOf(
+    private var originalLatestGroupList = persistentListOf<VocaGroup>() /*persistentListOf(
         VocaGroup(
             "today",
             persistentListOf(
@@ -77,7 +77,7 @@ internal class VocaViewModel : ViewModel() {
                 VocaItem(0, "run late", persistentListOf("동사", "숙어"))
             )
         )
-    )
+    )*/
 
     init {
         fetchWords(WordSortType.Latest)
