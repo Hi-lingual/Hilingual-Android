@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.component.topappbar.CloseOnlyTopAppBar
@@ -17,7 +18,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
 internal fun PhotoDetailView(
     imageUrl: String,
-    onClickBack: () -> Unit,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -26,13 +27,14 @@ internal fun PhotoDetailView(
             .background(HilingualTheme.colors.black)
     ) {
         CloseOnlyTopAppBar(
-            onCloseClicked = onClickBack,
+            onCloseClicked = onBackClick,
             modifier = Modifier.align(Alignment.TopCenter)
         )
 
         NetworkImage(
             imageUrl = imageUrl,
             shape = RectangleShape,
+            contentScale = ContentScale.FillWidth,
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.Center)
@@ -46,7 +48,7 @@ private fun PhotoDetailPreview() {
     HilingualTheme {
         PhotoDetailView(
             imageUrl = "",
-            onClickBack = {}
+            onBackClick = {}
         )
     }
 }
