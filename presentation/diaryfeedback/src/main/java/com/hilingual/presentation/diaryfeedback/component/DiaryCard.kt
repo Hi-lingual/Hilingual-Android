@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import kotlinx.collections.immutable.ImmutableList
@@ -28,6 +29,7 @@ internal fun DiaryCard(
     isAIWritten: Boolean,
     diaryContent: String,
     modifier: Modifier = Modifier,
+    onImageClick: (String) -> Unit,
     diffRanges: ImmutableList<Pair<Int, Int>> = persistentListOf(),
     imageUrl: String? = null
 ) {
@@ -57,6 +59,9 @@ internal fun DiaryCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f / 0.6f)
+                    .noRippleClickable(
+                        onClick = { onImageClick(imageUrl) }
+                    )
             )
         }
 
@@ -141,7 +146,8 @@ private fun DiaryCardPreview(
             isAIWritten = state.isAIDiary,
             diaryContent = state.content,
             imageUrl = state.imageUrl,
-            diffRanges = state.diffRanges
+            diffRanges = state.diffRanges,
+            onImageClick = {}
         )
     }
 }

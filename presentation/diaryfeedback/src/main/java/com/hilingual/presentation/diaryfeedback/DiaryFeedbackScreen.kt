@@ -83,6 +83,8 @@ private fun DiaryFeedbackScreen(
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
     var isReportDialogVisible by remember { mutableStateOf(false) }
 
+    var selectedImageUrl by remember { mutableStateOf<String?>(null) }
+
     if (isReportBottomSheetVisible) {
         FeedbackReportBottomSheet(
             onDismiss = { isReportBottomSheetVisible = false },
@@ -127,7 +129,8 @@ private fun DiaryFeedbackScreen(
                     diaryContent = diaryContent,
                     feedbackList = feedbackList,
                     onToggleDiaryViewMode = onToggleDiaryViewMode,
-                    isAIWritten = isAIWritten
+                    isAIWritten = isAIWritten,
+                    onImageClick = { selectedImageUrl = it }
                 )
                 1 -> RecommendExpressionScreen(
                     writtenDate = writtenDate,
@@ -136,6 +139,14 @@ private fun DiaryFeedbackScreen(
                 )
             }
         }
+    }
+
+    if (selectedImageUrl != null) {
+        PhotoDetailModal(
+            imageUrl = selectedImageUrl!!,
+            onBackClick = { selectedImageUrl = null },
+            modifier = modifier.padding(paddingValues)
+        )
     }
 }
 
@@ -157,7 +168,7 @@ private fun DiaryFeedbackScreenPreview() {
             ),
             onBackClick = {},
             onToggleDiaryViewMode = { isAIWritten = !isAIWritten },
-            onToggleBookmark = { _, _ -> {} }
+            onToggleBookmark = { _, _ -> {} },
         )
     }
 }

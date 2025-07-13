@@ -39,6 +39,7 @@ internal fun GrammarSpellingScreen(
     diaryContent: DiaryContent,
     feedbackList: ImmutableList<FeedbackContent>,
     onToggleDiaryViewMode: (Boolean) -> Unit,
+    onImageClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     isAIWritten: Boolean = true
 ) {
@@ -69,7 +70,8 @@ internal fun GrammarSpellingScreen(
                     isAIWritten = isAIWritten,
                     diaryContent = if (isAIWritten) aiText else originalText,
                     diffRanges = diffRanges,
-                    imageUrl = imageUrl
+                    imageUrl = imageUrl,
+                    onImageClick = onImageClick
                 )
             }
             Spacer(Modifier.height(24.dp))
@@ -136,7 +138,8 @@ private fun GrammarSpellingScreenPreview() {
             isAIWritten = isAI,
             onToggleDiaryViewMode = { isAI = !isAI },
             diaryContent = dummyDiary,
-            feedbackList = DiaryFeedbackViewModel.dummyFeedbacks
+            feedbackList = DiaryFeedbackViewModel.dummyFeedbacks,
+            onImageClick = {}
         )
     }
 }
