@@ -84,7 +84,7 @@ internal class DiaryFeedbackViewModel @Inject constructor() : ViewModel() {
                 Pair(508, 583),
                 Pair(740, 802),
             ),
-            imageUrl = ""
+            imageUrl = "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/29/cb/cc/85/caption.jpg?w=600&h=400&s=1"
         )
 
         val dummyFeedbacks = persistentListOf(
