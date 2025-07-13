@@ -31,7 +31,6 @@ import com.hilingual.presentation.diaryfeedback.component.FeedbackReportDialog
 import com.hilingual.presentation.diaryfeedback.tab.GrammarSpellingScreen
 import com.hilingual.presentation.diaryfeedback.tab.RecommendExpressionScreen
 
-// TODO: Route 설정
 @Composable
 internal fun DiaryFeedbackRoute(
     paddingValues: PaddingValues,
