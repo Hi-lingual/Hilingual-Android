@@ -2,8 +2,10 @@ package com.hilingual.presentation.diaryfeedback.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -63,6 +65,8 @@ internal fun DiaryCard(
                         onClick = { onImageClick(imageUrl) }
                     )
             )
+
+            Spacer(Modifier.height(12.dp))
         }
 
         Text(
