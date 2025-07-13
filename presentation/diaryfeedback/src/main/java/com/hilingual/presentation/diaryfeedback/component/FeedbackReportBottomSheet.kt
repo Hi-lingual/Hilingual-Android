@@ -57,7 +57,12 @@ internal fun FeedbackReportBottomSheet(
             Row(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier
+                    .padding(12.dp)
+                    .fillMaxWidth()
+                    .noRippleClickable(
+                        onClick = onReportClick
+                    )
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_report_24),
@@ -65,9 +70,6 @@ internal fun FeedbackReportBottomSheet(
                     tint = Color.Unspecified,
                     modifier = Modifier
                         .size(24.dp)
-                        .noRippleClickable(
-                            onClick = onReportClick
-                        )
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(

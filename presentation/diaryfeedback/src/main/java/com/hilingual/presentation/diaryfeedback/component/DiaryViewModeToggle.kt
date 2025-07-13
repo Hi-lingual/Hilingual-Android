@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-internal fun AIDiaryToggle(
-    isAIDiary: Boolean,
+internal fun DiaryViewModeToggle(
+    isAIWritten: Boolean,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -41,7 +41,7 @@ internal fun AIDiaryToggle(
             color = HilingualTheme.colors.gray700
         )
         BasicSwitch(
-            isChecked = isAIDiary,
+            isChecked = isAIWritten,
             onCheckedChange = onToggle
         )
     }
@@ -105,8 +105,8 @@ private fun AIDiaryTogglePreview() {
     HilingualTheme {
         var isAI by remember { mutableStateOf(true) }
 
-        AIDiaryToggle(
-            isAIDiary = isAI,
+        DiaryViewModeToggle(
+            isAIWritten = isAI,
             onToggle = { isAI = !isAI }
         )
     }
