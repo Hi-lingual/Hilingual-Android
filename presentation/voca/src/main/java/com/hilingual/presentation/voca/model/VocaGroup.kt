@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
 
 @Immutable
-internal data class  VocaGroup(
+internal data class VocaGroup(
     val group: String,
     val words: ImmutableList<VocaItem>
 )
