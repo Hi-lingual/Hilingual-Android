@@ -23,4 +23,3 @@ internal class AuthRepositoryImpl @Inject constructor(
         LoginModel(loginResponse.isProfileCompleted)
     }
 }
-

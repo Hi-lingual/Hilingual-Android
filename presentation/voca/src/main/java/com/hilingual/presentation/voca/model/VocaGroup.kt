@@ -8,4 +8,3 @@ internal data class VocaGroup(
     val group: String,
     val words: ImmutableList<VocaItem>
 )
-

@@ -27,8 +27,8 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.diaryfeedback.DiaryContent
 import com.hilingual.presentation.diaryfeedback.DiaryFeedbackViewModel
 import com.hilingual.presentation.diaryfeedback.FeedbackContent
-import com.hilingual.presentation.diaryfeedback.component.DiaryViewModeToggle
 import com.hilingual.presentation.diaryfeedback.component.DiaryCard
+import com.hilingual.presentation.diaryfeedback.component.DiaryViewModeToggle
 import com.hilingual.presentation.diaryfeedback.component.FeedbackCard
 import com.hilingual.presentation.diaryfeedback.component.FeedbackEmptyCard
 import kotlinx.collections.immutable.ImmutableList
@@ -52,7 +52,7 @@ internal fun GrammarSpellingScreen(
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
-            ){
+            ) {
                 Text(
                     text = writtenDate,
                     style = HilingualTheme.typography.bodySB14,
@@ -114,7 +114,7 @@ private fun FeedbackTitle(feedbackSize: Int) {
 
 @Composable
 private fun getFeedbackTitleAnnotatedString(
-    feedbackSize: Int,
+    feedbackSize: Int
 ) = buildAnnotatedString {
     append("주요 피드백 ")
     withStyle(style = SpanStyle(color = HilingualTheme.colors.hilingualOrange)) {

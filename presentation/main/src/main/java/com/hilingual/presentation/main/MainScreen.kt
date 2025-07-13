@@ -74,7 +74,7 @@ internal fun MainScreen(
                     currentTab = navigator.currentTab,
                     onTabSelected = navigator::navigate
                 )
-            },
+            }
         ) { innerPadding ->
             NavHost(
                 navController = navigator.navController,

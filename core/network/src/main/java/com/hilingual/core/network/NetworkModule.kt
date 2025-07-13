@@ -1,8 +1,8 @@
 package com.hilingual.core.network
 
 import com.hilingual.core.localstorage.TokenManager
-import com.hilingual.core.network.service.TokenRefreshService
 import com.hilingual.core.network.BuildConfig.BASE_URL
+import com.hilingual.core.network.service.TokenRefreshService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides

@@ -45,7 +45,7 @@ internal fun FeedbackReportBottomSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 24.dp, horizontal = 16.dp),
+                .padding(vertical = 24.dp, horizontal = 16.dp)
         ) {
             Text(
                 text = "AI 피드백",
@@ -75,7 +75,7 @@ internal fun FeedbackReportBottomSheet(
                 Text(
                     text = "신고하기",
                     style = HilingualTheme.typography.bodySB14,
-                    color = HilingualTheme.colors.gray700,
+                    color = HilingualTheme.colors.gray700
                 )
             }
         }
@@ -100,7 +100,7 @@ private fun FeedbackReportPreview() {
                 .background(HilingualTheme.colors.white)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "바텀시트를 띄워보아요",

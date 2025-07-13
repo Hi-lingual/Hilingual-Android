@@ -14,7 +14,7 @@ import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.component.topappbar.CloseOnlyTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
-//TODO: sharedTransition 사용
+// TODO: sharedTransition 사용
 @Composable
 internal fun PhotoDetailModal(
     imageUrl: String,

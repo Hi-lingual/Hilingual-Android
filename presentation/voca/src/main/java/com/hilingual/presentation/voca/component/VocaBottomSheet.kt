@@ -48,7 +48,6 @@ internal fun SortBottomSheetContent(
     onTypeSelected: (WordSortType) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     Column(
         modifier = modifier
             .padding(horizontal = 16.dp, vertical = 24.dp),

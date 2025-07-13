@@ -18,8 +18,8 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.common.util.EmojiFilter.removeEmoji
+import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun HilingualLongTextField(
@@ -69,8 +69,6 @@ fun HilingualLongTextField(
         }
     )
 }
-
-
 
 @Preview
 @Composable

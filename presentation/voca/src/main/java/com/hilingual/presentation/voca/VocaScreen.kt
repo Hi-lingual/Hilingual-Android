@@ -317,8 +317,7 @@ private fun SearchResultSection(
 private fun VocaListWithInfoSectionEmptyPreview() {
     HilingualTheme {
         VocaListWithInfoSection(
-            vocaGroupList = persistentListOf(
-            ),
+            vocaGroupList = persistentListOf(),
             sortType = WordSortType.Latest,
             wordCount = 0,
             onWriteDiaryClick = {},
