@@ -50,7 +50,8 @@ import java.util.Locale
 
 @Composable
 fun DiaryWriteRoute(
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    navigateUp: () -> Unit
 ) {
     val localSystemBarsColor = LocalSystemBarsColor.current
     var diaryText by remember { mutableStateOf("") }
@@ -65,7 +66,7 @@ fun DiaryWriteRoute(
 
     DiaryWriteScreen(
         paddingValues = paddingValues,
-        onBackClicked = {},
+        onBackClicked = navigateUp,
         selectedDate = LocalDate.now(),
         topicKo = "",
         topicEn = "",

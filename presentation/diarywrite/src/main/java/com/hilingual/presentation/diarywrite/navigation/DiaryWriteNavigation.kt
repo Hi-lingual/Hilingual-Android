@@ -22,11 +22,13 @@ fun NavController.navigateToDiaryWrite(
 }
 
 fun NavGraphBuilder.diaryWriteNavGraph(
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    navigateUp: () -> Unit
 ) {
     composable<DiaryWrite> {
         DiaryWriteRoute(
-            paddingValues = paddingValues
+            paddingValues = paddingValues,
+            navigateUp = navigateUp
         )
     }
 }
