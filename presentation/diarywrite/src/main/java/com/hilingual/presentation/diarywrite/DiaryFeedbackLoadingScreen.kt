@@ -74,7 +74,7 @@ private fun DiaryFeedbackLoadingScreen(
     state: DiaryWriteFeedbackState,
     navigateUp: () -> Unit,
     navigateToDiaryFeedback: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
@@ -171,7 +171,6 @@ private fun TextAndLottie(
             rawResFile = lottieRawRes,
             isInfinite = true
         )
-
     }
 }
 
