@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.common.util.EmojiFilter.removeEmoji
 
 @Composable
 fun HilingualLongTextField(
@@ -38,12 +39,13 @@ fun HilingualLongTextField(
         placeholder = placeholder,
         textStyle = HilingualTheme.typography.bodyM16,
         onValueChanged = {
-            if (it.length <= maxLength) onValueChanged(it)
+            val filteredValue = it.removeEmoji()
+            if (filteredValue.length <= maxLength) onValueChanged(filteredValue)
         },
         onFocusChanged = { isFocused = it },
         modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .height(height),
+            .height(height)
+            .verticalScroll(rememberScrollState()),
         borderModifier = if (isFocused) {
             Modifier.border(
                 1.dp,
@@ -67,6 +69,8 @@ fun HilingualLongTextField(
         }
     )
 }
+
+
 
 @Preview
 @Composable
