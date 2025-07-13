@@ -1,0 +1,195 @@
+package com.hilingual.presentation.diarywrite
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.hilingual.core.common.provider.LocalSystemBarsColor
+import com.hilingual.core.designsystem.component.button.HilingualButton
+import com.hilingual.core.designsystem.component.image.HilingualLottieAnimation
+import com.hilingual.core.designsystem.component.topappbar.CloseOnlyTopAppBar
+import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.designsystem.theme.white
+
+internal enum class DiaryWriteFeedbackState(
+    val title: String,
+    val description: String,
+    val lottieRawRes: Int
+) {
+    Loading(
+        title = "일기 저장 중..",
+        description = "피드백을 요청하고 있어요.",
+        lottieRawRes = R.raw.lottie_feedback_loading
+    ),
+    Complete(
+        title = "AI 피드백 완료!",
+        description = "틀린 부분을 고치고,\n더 나은 표현으로 수정했어요!",
+        lottieRawRes = R.raw.lottie_feedback_complete
+    )
+}
+
+@Composable
+internal fun DiaryFeedbackLoadingScreenRoute(
+    paddingValues: PaddingValues,
+    state: DiaryWriteFeedbackState
+) {
+    val localSystemBarsColor = LocalSystemBarsColor.current
+
+    LaunchedEffect(Unit) {
+        localSystemBarsColor.setSystemBarColor(
+            systemBarsColor = white,
+            isDarkIcon = false
+        )
+    }
+
+    DiaryFeedbackLoadingScreen(
+        paddingValues = paddingValues,
+        state = state,
+        navigateUp = {},
+        navigateToDiaryFeedback = {}
+    )
+}
+
+@Composable
+private fun DiaryFeedbackLoadingScreen(
+    paddingValues: PaddingValues,
+    state: DiaryWriteFeedbackState,
+    navigateUp: () -> Unit,
+    navigateToDiaryFeedback: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .background(HilingualTheme.colors.white)
+    ) {
+        CloseOnlyTopAppBar(
+            modifier = Modifier.align(Alignment.TopCenter),
+            onCloseClicked = navigateUp,
+            iconTint = HilingualTheme.colors.black
+        )
+
+        TextAndLottie(
+            modifier = Modifier.align(Alignment.Center),
+            title = state.title,
+            description = state.description,
+            lottieRawRes = state.lottieRawRes
+        )
+
+        if (state == DiaryWriteFeedbackState.Loading) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    modifier = Modifier.size(16.dp),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_error_16),
+                    contentDescription = null,
+                    tint = HilingualTheme.colors.gray300
+                )
+                Text(
+                    text = "지금 화면을 나가면, 작성 중인 일기가\n저장되지 않아요",
+                    color = HilingualTheme.colors.gray300,
+                    style = HilingualTheme.typography.captionR12,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+
+        if (state == DiaryWriteFeedbackState.Complete) {
+            HilingualButton(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 14.dp),
+                text = "피드백 보러가기",
+                onClick = navigateToDiaryFeedback
+            )
+        }
+    }
+}
+
+@Composable
+private fun TextAndLottie(
+    title: String,
+    description: String,
+    lottieRawRes: Int,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = title,
+            color = HilingualTheme.colors.gray850,
+            style = HilingualTheme.typography.headB20,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            text = description,
+            color = HilingualTheme.colors.gray400,
+            style = HilingualTheme.typography.bodyR18,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        val lottieModifier = when (lottieRawRes) {
+            R.raw.lottie_feedback_loading -> Modifier.height(194.dp)
+            R.raw.lottie_feedback_complete -> Modifier.height(180.dp)
+            else -> Modifier
+        }
+
+        HilingualLottieAnimation(
+            modifier = lottieModifier.width(200.dp),
+            rawResFile = lottieRawRes,
+            isInfinite = true
+        )
+
+    }
+}
+
+@Preview
+@Composable
+private fun DiaryFeedbackLoadingScreenPreview() {
+    HilingualTheme {
+        DiaryFeedbackLoadingScreen(
+            paddingValues = PaddingValues(0.dp),
+            state = DiaryWriteFeedbackState.Loading,
+            navigateUp = {},
+            navigateToDiaryFeedback = {}
+        )
+//        DiaryFeedbackLoadingScreen(
+//            paddingValues = PaddingValues(0.dp),
+//            state = DiaryWriteFeedbackState.Complete,
+//            navigateUp = {},
+//            navigateToDiaryFeedback = {}
+//        )
+    }
+}
