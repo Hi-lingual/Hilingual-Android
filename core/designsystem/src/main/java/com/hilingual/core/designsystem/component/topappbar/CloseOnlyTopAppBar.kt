@@ -13,8 +13,9 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun CloseOnlyTopAppBar(
+    onCloseClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    onCloseClicked: () -> Unit
+    iconTint: Color = HilingualTheme.colors.white
 ) {
     HilingualBasicTopAppBar(
         modifier = modifier,
@@ -23,7 +24,7 @@ fun CloseOnlyTopAppBar(
                 modifier = Modifier.noRippleClickable(onClick = onCloseClicked),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_close_24),
                 contentDescription = null,
-                tint = HilingualTheme.colors.white
+                tint = iconTint
             )
         },
         backgroundColor = Color.Transparent
