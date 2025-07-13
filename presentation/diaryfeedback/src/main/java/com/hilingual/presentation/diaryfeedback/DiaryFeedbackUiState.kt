@@ -8,7 +8,7 @@ import kotlinx.collections.immutable.persistentListOf
 data class DiaryFeedbackUiState(
     val diaryId: Long = 0L,
     val writtenDate: String = "",
-    val isAI: Boolean = true,
+    val isAIWritten: Boolean = true,
     val diaryContent: DiaryContent = DiaryContent(),
     val feedbackList: ImmutableList<FeedbackContent> = persistentListOf(),
     val recommendExpressionList: ImmutableList<RecommendExpression> = persistentListOf(),

@@ -38,7 +38,7 @@ internal fun DiaryFeedbackRoute(
     navigateUp: () -> Unit,
     viewModel: DiaryFeedbackViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
 
     LaunchedEffect(Unit) {
@@ -47,7 +47,7 @@ internal fun DiaryFeedbackRoute(
         )
     }
 
-    when (val state = uiState) {
+    when (state) {
         is UiState.Loading -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -60,7 +60,7 @@ internal fun DiaryFeedbackRoute(
         is UiState.Success -> {
             DiaryFeedbackScreen(
                 paddingValues = paddingValues,
-                uiState = state.data,
+                uiState = (state as UiState.Success<DiaryFeedbackUiState>).data,
                 onBackClick = navigateUp,
                 onToggleDiaryViewMode = viewModel::toggleDiaryShowOption,
                 onToggleBookmark = viewModel::toggleBookmark
@@ -81,22 +81,22 @@ private fun DiaryFeedbackScreen(
     modifier: Modifier = Modifier
 ) {
     var tabIndex by remember { mutableIntStateOf(0) }
-    var isShowReportBottomSheet by remember { mutableStateOf(false) }
-    var isShowReportDialog by remember { mutableStateOf(false) }
+    var isReportBottomSheetVisible by remember { mutableStateOf(false) }
+    var isReportDialogVisible by remember { mutableStateOf(false) }
 
-    if (isShowReportBottomSheet) {
+    if (isReportBottomSheetVisible) {
         FeedbackReportBottomSheet(
-            onDismiss = { isShowReportBottomSheet = false },
+            onDismiss = { isReportBottomSheetVisible = false },
             onReportClick = {
-                isShowReportDialog = true
-                isShowReportBottomSheet = false
+                isReportDialogVisible = true
+                isReportBottomSheetVisible = false
             }
         )
     }
 
-    if (isShowReportDialog) {
+    if (isReportDialogVisible) {
         FeedbackReportDialog(
-            onDismiss = { isShowReportDialog = false },
+            onDismiss = { isReportDialogVisible = false },
             onReportClick = {
                 //TODO: 구글폼으로 이동
             }
@@ -113,7 +113,7 @@ private fun DiaryFeedbackScreen(
         BackAndMoreTopAppBar(
             title = "일기장",
             onBackClicked = onBackClick,
-            onMoreClicked = { isShowReportBottomSheet = true }
+            onMoreClicked = { isReportBottomSheetVisible = true }
         )
 
         DiaryFeedbackTabRow(
@@ -128,7 +128,7 @@ private fun DiaryFeedbackScreen(
                     diaryContent = diaryContent,
                     feedbackList = feedbackList,
                     onToggleDiaryViewMode = onToggleDiaryViewMode,
-                    isAIWritten = isAI
+                    isAIWritten = isAIWritten
                 )
                 1 -> RecommendExpressionScreen(
                     writtenDate = writtenDate,
@@ -150,7 +150,7 @@ private fun DiaryFeedbackScreenPreview() {
         DiaryFeedbackScreen(
             paddingValues = PaddingValues(),
             uiState = DiaryFeedbackUiState(
-                isAI = isAIWritten,
+                isAIWritten = isAIWritten,
                 writtenDate = "7월 11일 금요일",
                 diaryContent = vm.dummyDiaryContent,
                 feedbackList = vm.dummyFeedbacks,

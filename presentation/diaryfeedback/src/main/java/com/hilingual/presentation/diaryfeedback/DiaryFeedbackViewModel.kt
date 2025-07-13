@@ -47,7 +47,7 @@ internal class DiaryFeedbackViewModel @Inject constructor() : ViewModel() {
     fun toggleDiaryShowOption(isAI: Boolean) {
         _uiState.update {
             (it as UiState.Success).copy(
-                data = it.data.copy(isAI = isAI)
+                data = it.data.copy(isAIWritten = isAI)
             )
         }
     }

@@ -43,7 +43,6 @@ internal fun GrammarSpellingScreen(
     isAIWritten: Boolean = true
 ) {
     LazyColumn(
-        verticalArrangement = Arrangement.Top,
         contentPadding = PaddingValues(vertical = 24.dp, horizontal = 16.dp),
         modifier = modifier
             .fillMaxSize()

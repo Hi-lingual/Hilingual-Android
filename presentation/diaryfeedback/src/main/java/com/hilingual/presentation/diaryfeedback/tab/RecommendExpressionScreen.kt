@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,7 +28,6 @@ internal fun RecommendExpressionScreen(
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalAlignment = Alignment.Start,
         contentPadding = PaddingValues(vertical = 24.dp, horizontal = 16.dp),
         modifier = modifier
             .fillMaxSize()
