@@ -1,8 +1,8 @@
 package com.hilingual.data.auth.datasource
 
 import android.content.Context
-import androidx.credentials.GetCredentialResponse
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 
 interface GoogleAuthDataSource {
-    suspend fun signIn(context: Context): Result<GetCredentialResponse>
+    suspend fun signIn(context: Context): Result<GoogleIdTokenCredential>
 }

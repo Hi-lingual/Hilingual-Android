@@ -34,10 +34,10 @@ android {
 }
 
 dependencies {
-    //core
+    // core
     implementation(projects.core.localstorage)
 
-    //others
+    // others
     implementation(platform(libs.okhttp.bom))
     implementation(libs.bundles.okhttp)
 

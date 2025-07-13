@@ -3,8 +3,6 @@ package com.hilingual.presentation.home.component.calendar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -29,7 +27,7 @@ internal fun CalendarHeader(
     onLeftArrowClick: () -> Unit,
     onRightArrowClick: () -> Unit,
     yearMonth: () -> YearMonth,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val currentYearMonth = yearMonth()
     Row(
@@ -38,10 +36,10 @@ internal fun CalendarHeader(
     ) {
         Text(
             text = "${currentYearMonth.year}년 ${
-                currentYearMonth.month.getDisplayName(
-                    TextStyle.SHORT,
-                    Locale.getDefault()
-                )
+            currentYearMonth.month.getDisplayName(
+                TextStyle.SHORT,
+                Locale.getDefault()
+            )
             }",
             style = HilingualTheme.typography.headB18,
             color = HilingualTheme.colors.black

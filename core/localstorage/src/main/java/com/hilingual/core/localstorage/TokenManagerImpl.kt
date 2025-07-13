@@ -16,12 +16,16 @@ class TokenManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : TokenManager {
 
+    @Volatile
+    private var cachedAccessToken: String? = null
+
     private object PreferencesKeys {
         val ACCESS_TOKEN = stringPreferencesKey("access_token")
         val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
     }
 
     override suspend fun saveAccessToken(token: String) {
+        cachedAccessToken = token
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.ACCESS_TOKEN] = token
         }
@@ -34,6 +38,7 @@ class TokenManagerImpl @Inject constructor(
     }
 
     override suspend fun saveTokens(accessToken: String, refreshToken: String) {
+        cachedAccessToken = accessToken
         context.dataStore.edit {
             it[PreferencesKeys.ACCESS_TOKEN] = accessToken
             it[PreferencesKeys.REFRESH_TOKEN] = refreshToken
@@ -41,7 +46,9 @@ class TokenManagerImpl @Inject constructor(
     }
 
     override suspend fun getAccessToken(): String? {
-        return context.dataStore.data.first()[PreferencesKeys.ACCESS_TOKEN]
+        return cachedAccessToken ?: context.dataStore.data.first()[PreferencesKeys.ACCESS_TOKEN].also {
+            cachedAccessToken = it
+        }
     }
 
     override suspend fun getRefreshToken(): String? {
@@ -49,10 +56,10 @@ class TokenManagerImpl @Inject constructor(
     }
 
     override suspend fun clearTokens() {
+        cachedAccessToken = null
         context.dataStore.edit { preferences ->
             preferences.remove(PreferencesKeys.ACCESS_TOKEN)
             preferences.remove(PreferencesKeys.REFRESH_TOKEN)
         }
     }
 }
-

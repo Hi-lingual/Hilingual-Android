@@ -16,7 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -49,23 +49,16 @@ internal fun HomeRoute(
     paddingValues: PaddingValues,
     navigateToDiaryWrite: () -> Unit,
     navigateToDiaryFeedback: (diaryId: Long) -> Unit,
-    viewModel: HomeViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
 
-    DisposableEffect(Unit) {
+    LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
             systemBarsColor = hilingualBlack,
             isDarkIcon = false
         )
-
-        onDispose {
-            localSystemBarsColor.setSystemBarColor(
-                systemBarsColor = white,
-                isDarkIcon = true
-            )
-        }
     }
 
     when (val state = uiState) {
@@ -163,11 +156,11 @@ private fun HomeScreen(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 DiaryDateInfo(
                     selectedDateProvider = { date },
-                    isWrittenProvider = { isWritten },
+                    isWrittenProvider = { isWritten }
                 )
 
                 if (isWritable) {

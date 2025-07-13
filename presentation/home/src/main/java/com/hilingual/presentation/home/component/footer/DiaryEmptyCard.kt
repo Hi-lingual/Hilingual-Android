@@ -70,4 +70,3 @@ private fun DiaryEmptyCardPreview(
         DiaryEmptyCard(type = type)
     }
 }
-

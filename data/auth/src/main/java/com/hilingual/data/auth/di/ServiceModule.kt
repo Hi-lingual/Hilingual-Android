@@ -1,13 +1,12 @@
 package com.hilingual.data.auth.di
 
-import android.content.Context
-import androidx.credentials.CredentialManager
+import com.hilingual.core.network.LoginClient
 import com.hilingual.core.network.RefreshClient
-import com.hilingual.data.auth.service.AuthService
+import com.hilingual.data.auth.service.LoginService
+import com.hilingual.data.auth.service.ReissueService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import javax.inject.Singleton
@@ -17,12 +16,9 @@ import javax.inject.Singleton
 object ServiceModule {
     @Provides
     @Singleton
-    fun provideCredentialManager(@ApplicationContext context: Context): CredentialManager {
-        return CredentialManager.create(context)
-    }
+    fun provideLoginService(@LoginClient retrofit: Retrofit): LoginService = retrofit.create(LoginService::class.java)
 
     @Provides
     @Singleton
-    fun provideAuthService(@RefreshClient retrofit: Retrofit): AuthService = 
-        retrofit.create(AuthService::class.java)
+    fun provideReissueService(@RefreshClient retrofit: Retrofit): ReissueService = retrofit.create(ReissueService::class.java)
 }

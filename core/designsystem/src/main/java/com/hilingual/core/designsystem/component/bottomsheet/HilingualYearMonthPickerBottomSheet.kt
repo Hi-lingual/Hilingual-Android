@@ -44,7 +44,7 @@ fun HilingualYearMonthPickerBottomSheet(
             HilingualYearMonthPicker(
                 initialYearMonth = initialYearMonth,
                 onYearSelected = { selectedYear = it },
-                onMonthSelected = { selectedMonth = it },
+                onMonthSelected = { selectedMonth = it }
             )
 
             HilingualButton(
@@ -66,7 +66,7 @@ private fun YearMonthPickerBottomSheetPreview() {
         var selectedYearMonth by remember { mutableStateOf(YearMonth.now()) }
 
         if (isDateBottomSheetVisible) {
-            HilingualYearMonthPickerBottomSheet (
+            HilingualYearMonthPickerBottomSheet(
                 onDismiss = { isDateBottomSheetVisible = false },
                 onDateSelected = { yearMonth ->
                     selectedYearMonth = yearMonth
@@ -79,7 +79,7 @@ private fun YearMonthPickerBottomSheetPreview() {
             modifier = Modifier
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "${selectedYearMonth.year}년 ${selectedYearMonth.monthValue}월",

@@ -114,7 +114,7 @@ private fun StatSeparator() {
     Text(
         text = "·",
         style = HilingualTheme.typography.captionM12,
-        color = HilingualTheme.colors.gray100,
+        color = HilingualTheme.colors.gray100
     )
 }
 

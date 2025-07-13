@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-internal fun AIDiaryToggle(
-    isAIDiary: Boolean,
+internal fun DiaryViewModeToggle(
+    isAIWritten: Boolean,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -41,7 +41,7 @@ internal fun AIDiaryToggle(
             color = HilingualTheme.colors.gray700
         )
         BasicSwitch(
-            isChecked = isAIDiary,
+            isChecked = isAIWritten,
             onCheckedChange = onToggle
         )
     }
@@ -63,10 +63,11 @@ private fun BasicSwitch(
     val density = LocalDensity.current
     val targetPosition = remember(isChecked) {
         with(density) {
-            if (isChecked)
+            if (isChecked) {
                 (width - thumbRadius - gapBetweenThumbAndTrackEdge).toPx()
-            else
+            } else {
                 (thumbRadius + gapBetweenThumbAndTrackEdge).toPx()
+            }
         }
     }
 
@@ -85,10 +86,10 @@ private fun BasicSwitch(
     ) {
         drawRoundRect( // Track
             color = if (isChecked) checkedTrackColor else uncheckedTrackColor,
-            cornerRadius = CornerRadius(x = halfHeight.toPx(), y = halfHeight.toPx()),
+            cornerRadius = CornerRadius(x = halfHeight.toPx(), y = halfHeight.toPx())
         )
 
-        drawCircle(  // Thumb
+        drawCircle( // Thumb
             color = Color.White,
             radius = thumbRadius.toPx(),
             center = Offset(
@@ -105,8 +106,8 @@ private fun AIDiaryTogglePreview() {
     HilingualTheme {
         var isAI by remember { mutableStateOf(true) }
 
-        AIDiaryToggle(
-            isAIDiary = isAI,
+        DiaryViewModeToggle(
+            isAIWritten = isAI,
             onToggle = { isAI = !isAI }
         )
     }

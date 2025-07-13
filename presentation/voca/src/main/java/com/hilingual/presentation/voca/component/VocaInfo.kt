@@ -1,5 +1,6 @@
 package com.hilingual.presentation.voca.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,9 +18,12 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.voca.R
 
-internal enum class WordSortType(val text: String) {
-    Latest(text = "최신순"),
-    AtoZ(text = "A-Z 순")
+internal enum class WordSortType(
+    val text: String,
+    @DrawableRes val iconRes: Int
+) {
+    AtoZ(text = "A-Z 순", iconRes = R.drawable.ic_az_24),
+    Latest(text = "최신순", iconRes = R.drawable.ic_listdown_24)
 }
 
 @Composable

@@ -20,9 +20,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.text.style.TextOverflow
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.home.R
@@ -40,7 +40,7 @@ internal fun TodayTopic(
             .background(HilingualTheme.colors.gray100)
             .fillMaxWidth()
             .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -57,7 +57,7 @@ internal fun TodayTopic(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_transfer_28),
                 contentDescription = null,
                 tint = Color.Unspecified,
-                modifier = Modifier.noRippleClickable { isKo = !isKo  }
+                modifier = Modifier.noRippleClickable { isKo = !isKo }
             )
         }
 
@@ -76,7 +76,7 @@ internal fun TodayTopic(
 @Preview
 @Composable
 private fun TodayTopicPreview() {
-    HilingualTheme{
+    HilingualTheme {
         TodayTopic(
             enTopic = "What surprised you today?",
             koTopic = "오늘 무엇이 당신을 놀라게 했나요?"

@@ -18,17 +18,17 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.diarywrite.R
-import androidx.core.net.toUri
-import com.hilingual.core.designsystem.component.image.NetworkImage
 
 @Composable
 internal fun PhotoSelectButton(
     onPhotoSelectClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    selectedImgUri: Uri? = null,
+    selectedImgUri: Uri? = null
 ) {
     Box(
         modifier = Modifier.size(width = 88.dp, height = 89.dp)

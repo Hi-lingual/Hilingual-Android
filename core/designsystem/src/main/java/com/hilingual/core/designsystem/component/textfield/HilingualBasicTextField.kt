@@ -36,12 +36,12 @@ fun HilingualBasicTextField(
     borderModifier: Modifier = Modifier,
     backgroundColor: Color = HilingualTheme.colors.gray100,
     focusRequester: FocusRequester = FocusRequester(),
-    singleLine: Boolean = true,  // 한 줄 입력만 허용할지 여부
+    singleLine: Boolean = true, // 한 줄 입력만 허용할지 여부
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
-    keyboardImeAction: ImeAction = ImeAction.Done,  // 키보드 오른쪽 아래 버튼 (기본값: Done)
-    onDoneAction: () -> Unit = {},  // 키보드의 완료 액션이 눌렸을 때 실행되는 콜백
-    onSearchAction: () -> Unit = {},  // 키보드의 검색 액션이 눌렸을 때 실행되는 콜백
+    keyboardImeAction: ImeAction = ImeAction.Done, // 키보드 오른쪽 아래 버튼 (기본값: Done)
+    onDoneAction: () -> Unit = {}, // 키보드의 완료 액션이 눌렸을 때 실행되는 콜백
+    onSearchAction: () -> Unit = {}, // 키보드의 검색 액션이 눌렸을 때 실행되는 콜백
     bottomRightContent: @Composable (() -> Unit)? = null
 ) {
     BasicTextField(
