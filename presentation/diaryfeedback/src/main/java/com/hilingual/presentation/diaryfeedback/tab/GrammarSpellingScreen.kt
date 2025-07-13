@@ -27,7 +27,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.diaryfeedback.DiaryContent
 import com.hilingual.presentation.diaryfeedback.DiaryFeedbackViewModel
 import com.hilingual.presentation.diaryfeedback.FeedbackContent
-import com.hilingual.presentation.diaryfeedback.component.AIDiaryToggle
+import com.hilingual.presentation.diaryfeedback.component.DiaryViewModeToggle
 import com.hilingual.presentation.diaryfeedback.component.DiaryCard
 import com.hilingual.presentation.diaryfeedback.component.FeedbackCard
 import com.hilingual.presentation.diaryfeedback.component.FeedbackEmptyCard
@@ -40,7 +40,7 @@ internal fun GrammarSpellingScreen(
     feedbackList: ImmutableList<FeedbackContent>,
     onToggleDiaryViewMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    isAIDiary: Boolean = true
+    isAIWritten: Boolean = true
 ) {
     val isEmptyFeedback = feedbackList.isEmpty()
 
@@ -61,16 +61,16 @@ internal fun GrammarSpellingScreen(
                     style = HilingualTheme.typography.bodySB14,
                     color = HilingualTheme.colors.gray700
                 )
-                AIDiaryToggle(
-                    isAIDiary = isAIDiary,
-                    onToggle = { onToggleDiaryViewMode(!isAIDiary) }
+                DiaryViewModeToggle(
+                    isAIWritten = isAIWritten,
+                    onToggle = { onToggleDiaryViewMode(!isAIWritten) }
                 )
             }
             Spacer(Modifier.height(12.dp))
             with(diaryContent) {
                 DiaryCard(
-                    isAIDiary = isAIDiary,
-                    diaryContent = if (isAIDiary) aiText else originalText,
+                    isAIWritten = isAIWritten,
+                    diaryContent = if (isAIWritten) aiText else originalText,
                     diffRanges = diffRanges,
                     imageUrl = imageUrl
                 )
@@ -136,7 +136,7 @@ private fun GrammarSpellingScreenPreview() {
 
         GrammarSpellingScreen(
             writtenDate = "7월 11일 금요일",
-            isAIDiary = isAI,
+            isAIWritten = isAI,
             onToggleDiaryViewMode = { isAI = !isAI },
             diaryContent = dummyDiary,
             feedbackList = DiaryFeedbackViewModel.dummyFeedbacks

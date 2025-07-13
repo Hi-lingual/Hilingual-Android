@@ -128,7 +128,7 @@ private fun DiaryFeedbackScreen(
                     diaryContent = diaryContent,
                     feedbackList = feedbackList,
                     onToggleDiaryViewMode = onToggleDiaryViewMode,
-                    isAIDiary = isAI
+                    isAIWritten = isAI
                 )
                 1 -> RecommendExpressionScreen(
                     writtenDate = writtenDate,
@@ -145,19 +145,19 @@ private fun DiaryFeedbackScreen(
 private fun DiaryFeedbackScreenPreview() {
     HilingualTheme {
         val vm = DiaryFeedbackViewModel
-        var isAI by remember { mutableStateOf(true) }
+        var isAIWritten by remember { mutableStateOf(true) }
 
         DiaryFeedbackScreen(
             paddingValues = PaddingValues(),
             uiState = DiaryFeedbackUiState(
-                isAI = isAI,
+                isAI = isAIWritten,
                 writtenDate = "7월 11일 금요일",
                 diaryContent = vm.dummyDiaryContent,
                 feedbackList = vm.dummyFeedbacks,
                 recommendExpressionList = vm.dummyRecommendExpressions
             ),
             onBackClick = {},
-            onToggleDiaryViewMode = { isAI = !isAI },
+            onToggleDiaryViewMode = { isAIWritten = !isAIWritten },
             onToggleBookmark = { _, _ -> {} }
         )
     }
