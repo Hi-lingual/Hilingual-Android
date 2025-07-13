@@ -16,7 +16,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,9 +23,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.hilingual.core.common.extension.addFocusCleaner
+import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualLongTextField
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
@@ -47,19 +48,19 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-private val DATE_FORMATTER: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("M월 d일 EEEE", Locale.KOREAN)
-
 @Composable
-internal fun DiaryWriteRoute(
+fun DiaryWriteRoute(
     paddingValues: PaddingValues
 ) {
-    val systemUiController = rememberSystemUiController()
+    val localSystemBarsColor = LocalSystemBarsColor.current
     var diaryText by remember { mutableStateOf("") }
     val diaryImageUri by remember { mutableStateOf<Uri?>(null) }
 
-    SideEffect {
-        systemUiController.setStatusBarColor(color = white, darkIcons = false)
+    LaunchedEffect(Unit) {
+        localSystemBarsColor.setSystemBarColor(
+            systemBarsColor = white,
+            isDarkIcon = false
+        )
     }
 
     DiaryWriteScreen(
@@ -88,6 +89,7 @@ private fun DiaryWriteScreen(
     onDiaryFeedbackRequestButtonClick: () -> Unit
 ) {
     val verticalScrollState = rememberScrollState()
+    val focusManager = LocalFocusManager.current
     var isDialogVisible by remember { mutableStateOf(false) }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
 
@@ -113,6 +115,7 @@ private fun DiaryWriteScreen(
             .fillMaxSize()
             // TODO: 네비 연결 후 advancedImePadding() 적용
             .padding(paddingValues)
+            .addFocusCleaner(focusManager)
     ) {
         BackTopAppBar(
             title = "일기 작성하기",
@@ -152,7 +155,10 @@ private fun DiaryWriteScreen(
             HilingualLongTextField(
                 value = diaryText,
                 onValueChanged = onDiaryTextChanged,
-                maxLength = 1000
+                maxLength = 1000,
+                onDoneAction = {
+                    focusManager.clearFocus()
+                }
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -211,6 +217,9 @@ private fun DateText(
         color = HilingualTheme.colors.black
     )
 }
+
+private val DATE_FORMATTER: DateTimeFormatter =
+    DateTimeFormatter.ofPattern("M월 d일 EEEE", Locale.KOREAN)
 
 @Preview
 @Composable

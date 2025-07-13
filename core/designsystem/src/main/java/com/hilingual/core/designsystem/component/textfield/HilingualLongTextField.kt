@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.common.util.EmojiFilter.removeEmoji
 
 @Composable
 fun HilingualLongTextField(
@@ -69,9 +70,7 @@ fun HilingualLongTextField(
     )
 }
 
-private fun String.removeEmoji(): String {
-    return this.replace(Regex("[\\p{So}\\p{Cn}]+"), "")
-}
+
 
 @Preview
 @Composable
