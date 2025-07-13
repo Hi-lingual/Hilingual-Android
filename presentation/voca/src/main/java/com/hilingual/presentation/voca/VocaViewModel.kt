@@ -42,9 +42,7 @@ internal class VocaViewModel : ViewModel() {
         )
     )
 
-
-    private
-    var originalLatestGroupList = persistentListOf(
+    private var originalLatestGroupList = persistentListOf(
         VocaGroup(
             "today", persistentListOf(
                 VocaItem(10, "come across as", persistentListOf("동사", "숙어")),
@@ -138,5 +136,4 @@ internal class VocaViewModel : ViewModel() {
             )
         }
     }
-
 }

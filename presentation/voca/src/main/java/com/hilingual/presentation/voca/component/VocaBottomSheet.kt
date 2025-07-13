@@ -22,6 +22,26 @@ import com.hilingual.core.designsystem.component.bottomsheet.HilingualBasicBotto
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.voca.R
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun WordSortBottomSheet(
+    selectedType: WordSortType,
+    onDismiss: () -> Unit,
+    onTypeSelected: (WordSortType) -> Unit
+) {
+    HilingualBasicBottomSheet(
+        onDismiss = onDismiss
+    ) {
+        SortBottomSheetContent(
+            selectedType = selectedType,
+            onTypeSelected = {
+                onTypeSelected(it)
+                onDismiss()
+            }
+        )
+    }
+}
+
 @Composable
 internal fun SortBottomSheetContent(
     selectedType: WordSortType,
@@ -77,25 +97,5 @@ internal fun SortBottomSheetContent(
                 }
             }
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-internal fun WordSortBottomSheet(
-    selectedType: WordSortType,
-    onDismiss: () -> Unit,
-    onTypeSelected: (WordSortType) -> Unit
-) {
-    HilingualBasicBottomSheet(
-        onDismiss = onDismiss
-    ) {
-        SortBottomSheetContent(
-            selectedType = selectedType,
-            onTypeSelected = {
-                onTypeSelected(it)
-                onDismiss()
-            }
-        )
     }
 }

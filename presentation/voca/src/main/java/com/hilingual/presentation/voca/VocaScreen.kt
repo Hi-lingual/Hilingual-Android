@@ -44,7 +44,6 @@ import com.hilingual.presentation.voca.component.WordSortBottomSheet
 import com.hilingual.presentation.voca.component.WordSortType
 import com.hilingual.presentation.voca.model.VocaGroup
 import com.hilingual.presentation.voca.model.VocaItem
-import com.hilingual.presentation.voca.model.VocaItemDetail
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -52,11 +51,13 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 internal fun VocaRoute(
     paddingValues: PaddingValues,
-    viewModel: VocaViewModel = hiltViewModel(),
-    naviagteToDiaryWrite: () -> Unit
+    navigateToDiaryWrite: () -> Unit,
+    viewModel: VocaViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
+    var isVocaModalVisibility by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
 
     LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
@@ -65,13 +66,19 @@ internal fun VocaRoute(
         )
     }
 
+    LaunchedEffect(uiState.vocaItemDetail) {
+        isVocaModalVisibility = uiState.vocaItemDetail is UiState.Success
+        if (isVocaModalVisibility) {
+            focusManager.clearFocus()
+        }
+    }
+
     with(uiState) {
         VocaScreen(
             paddingValues = paddingValues,
             viewType = viewType,
             sortType = sortType,
             vocaCount = vocaCount,
-            vocaDetail = (vocaItemDetail as? UiState.Success)?.data,
             vocaGroupList = (vocaGroupList as? UiState.Success)?.data ?: persistentListOf(),
             searchResultList = (searchResultList as? UiState.Success)?.data
                 ?: persistentListOf(),
@@ -79,11 +86,41 @@ internal fun VocaRoute(
             onSortTypeChanged = viewModel::fetchWords,
             onCardClick = viewModel::fetchVocaDetail,
             onBookmarkClick = viewModel::toggleBookmark,
-            onDismissModal = viewModel::clearSelectedVocaDetail,
             onSearchTextChanged = viewModel::updateSearchKeywordAndSearch,
-            onWriteDiaryClick = naviagteToDiaryWrite,
+            onWriteDiaryClick = navigateToDiaryWrite,
             onCloseButtonClick = viewModel::clearSearchKeyword
         )
+    }
+
+    if (isVocaModalVisibility) {
+        val vocaDetail = (uiState.vocaItemDetail as? UiState.Success)?.data
+        if (vocaDetail != null) {
+            Box(
+                modifier = Modifier
+                    .background(HilingualTheme.colors.dim)
+                    .noRippleClickable(onClick = {
+                        isVocaModalVisibility = false
+                        viewModel.clearSelectedVocaDetail()
+                    })
+                    .padding(paddingValues)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                with(vocaDetail) {
+                    VocaModal(
+                        phrase = phrase,
+                        phraseType = phraseType,
+                        explanation = explanation,
+                        createdAt = createdAt,
+                        isBookmarked = isBookmarked,
+                        onBookmarkClick = { viewModel.toggleBookmark(phraseId) },
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .navigationBarsPadding()
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -92,7 +129,6 @@ private fun VocaScreen(
     paddingValues: PaddingValues,
     viewType: ScreenType,
     sortType: WordSortType,
-    vocaDetail: VocaItemDetail?,
     vocaCount: Int,
     vocaGroupList: ImmutableList<VocaGroup>,
     searchResultList: ImmutableList<VocaItem>,
@@ -101,18 +137,11 @@ private fun VocaScreen(
     onSortTypeChanged: (WordSortType) -> Unit,
     onCardClick: (Long) -> Unit,
     onBookmarkClick: (Long) -> Unit,
-    onDismissModal: () -> Unit,
     onSearchTextChanged: (String) -> Unit,
     onCloseButtonClick: () -> Unit
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
-
-    LaunchedEffect(vocaDetail) {
-        if (vocaDetail != null) {
-            focusManager.clearFocus()
-        }
-    }
 
     Column(
         modifier = Modifier
@@ -153,29 +182,6 @@ private fun VocaScreen(
         }
     }
 
-    if (vocaDetail != null) {
-        Box(
-            modifier = Modifier
-                .background(HilingualTheme.colors.dim)
-                .noRippleClickable(onClick = onDismissModal)
-                .padding(paddingValues)
-                .fillMaxSize(),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            VocaModal(
-                phrase = vocaDetail.phrase,
-                phraseType = vocaDetail.phraseType,
-                explanation = vocaDetail.explanation,
-                createdAt = vocaDetail.createdAt,
-                isBookmarked = vocaDetail.isBookmarked,
-                onBookmarkClick = { onBookmarkClick(vocaDetail.phraseId) },
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .navigationBarsPadding()
-            )
-        }
-    }
-
     if (showBottomSheet) {
         WordSortBottomSheet(
             selectedType = sortType,
@@ -185,9 +191,8 @@ private fun VocaScreen(
     }
 }
 
-
 @Composable
-internal fun VocaListWithInfoSection(
+private fun VocaListWithInfoSection(
     vocaGroupList: ImmutableList<VocaGroup>,
     sortType: WordSortType,
     wordCount: Int,
@@ -271,7 +276,7 @@ internal fun VocaListWithInfoSection(
 }
 
 @Composable
-internal fun SearchResultSection(
+private fun SearchResultSection(
     searchResultList: ImmutableList<VocaItem>,
     onCardClick: (Long) -> Unit,
     onBookmarkClick: (Long) -> Unit,
@@ -306,7 +311,6 @@ internal fun SearchResultSection(
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
@@ -361,4 +365,3 @@ private fun SearchResultSectionListPreview() {
         )
     }
 }
-

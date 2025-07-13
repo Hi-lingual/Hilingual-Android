@@ -27,7 +27,7 @@ fun NavGraphBuilder.vocaNavGraph(
     composable<Voca> {
         VocaRoute(
             paddingValues = paddingValues,
-            naviagteToDiaryWrite = {}
+            navigateToDiaryWrite = { }
         )
     }
 }
