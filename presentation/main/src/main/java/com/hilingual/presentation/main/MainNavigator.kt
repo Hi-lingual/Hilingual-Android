@@ -9,13 +9,14 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.hilingual.presentation.auth.navigation.navigateToAuth
 import com.hilingual.presentation.home.navigation.Home
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.voca.navigation.navigateToVoca
 
 internal class MainNavigator(
-    val navController: NavHostController,
+    val navController: NavHostController
 ) {
     private val currentDestination: NavDestination?
         @Composable get() = navController
@@ -44,13 +45,25 @@ internal class MainNavigator(
             MainTab.HOME -> navController.navigateToHome(
                 navOptions = navOptions
             )
+
             MainTab.VOCA -> navController.navigateToVoca(
                 navOptions = navOptions
             )
-            //TODO: 추후 스프린트 기간에 구현
+            // TODO: 추후 스프린트 기간에 구현
             MainTab.COMMUNITY -> {}
             MainTab.MY -> {}
         }
+    }
+
+    fun navigateToAuth(
+        navOptions: NavOptions? = navOptions {
+            popUpTo(0) {
+                inclusive = true
+            }
+            launchSingleTop = true
+        }
+    ) {
+        navController.navigateToAuth(navOptions)
     }
 
     fun navigateToHome(
@@ -87,7 +100,7 @@ internal class MainNavigator(
 
 @Composable
 internal fun rememberMainNavigator(
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController = rememberNavController()
 ): MainNavigator = remember(navController) {
     MainNavigator(navController)
 }

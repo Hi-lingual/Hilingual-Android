@@ -67,7 +67,7 @@ internal fun ImageSelectBottomSheet(
                 Text(
                     text = "카메라로 사진 찍기",
                     style = HilingualTheme.typography.bodySB14,
-                    color = HilingualTheme.colors.gray700,
+                    color = HilingualTheme.colors.gray700
                 )
             }
 
@@ -88,7 +88,7 @@ internal fun ImageSelectBottomSheet(
                 Text(
                     text = "갤러리에서 선택하기",
                     style = HilingualTheme.typography.bodySB14,
-                    color = HilingualTheme.colors.gray700,
+                    color = HilingualTheme.colors.gray700
                 )
             }
         }

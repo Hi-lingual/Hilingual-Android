@@ -1,6 +1,5 @@
 import com.hilingual.build_logic.setNamespace
 import java.util.Properties
-import java.io.FileInputStream
 
 plugins {
     alias(libs.plugins.hilingual.data)

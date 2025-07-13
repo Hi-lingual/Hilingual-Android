@@ -9,7 +9,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 internal fun DiaryWriteCancelDialog(
     onDismiss: () -> Unit,
     onNoClick: () -> Unit,
-    onCancelClick: () -> Unit,
+    onCancelClick: () -> Unit
 ) {
     TwoButtonDialog(
         title = "일기 작성을 취소하시겠어요?",

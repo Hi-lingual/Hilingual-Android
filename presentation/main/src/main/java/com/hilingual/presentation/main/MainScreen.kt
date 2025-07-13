@@ -29,6 +29,7 @@ import com.hilingual.presentation.auth.navigation.authNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.onboarding.navigation.onboardingGraph
+import com.hilingual.presentation.splash.navigation.splashNavGraph
 import com.hilingual.presentation.voca.navigation.vocaNavGraph
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.delay
@@ -73,16 +74,23 @@ internal fun MainScreen(
                     currentTab = navigator.currentTab,
                     onTabSelected = navigator::navigate
                 )
-            },
+            }
         ) { innerPadding ->
             NavHost(
                 navController = navigator.navController,
-                startDestination = navigator.startDestination,
+                startDestination = navigator.startDestination
+
             ) {
+                splashNavGraph(
+                    navigateToAuth = navigator::navigateToAuth,
+                    navigateToHome = navigator::navigateToHome,
+                    sharedTransitionScope = this@SharedTransitionLayout
+                )
                 authNavGraph(
                     paddingValues = innerPadding,
                     navigateToHome = navigator::navigateToHome,
                     navigateToOnboarding = navigator::navigateToOnboarding,
+                    sharedTransitionScope = this@SharedTransitionLayout
                 )
                 onboardingGraph(
                     paddingValues = innerPadding,

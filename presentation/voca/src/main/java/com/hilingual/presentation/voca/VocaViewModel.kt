@@ -29,7 +29,8 @@ internal class VocaViewModel : ViewModel() {
             )
         ),
         VocaGroup(
-            "B", persistentListOf(
+            "B",
+            persistentListOf(
                 VocaItem(3, "banana", persistentListOf("동사"))
             )
         ),
@@ -44,7 +45,8 @@ internal class VocaViewModel : ViewModel() {
 
     private var originalLatestGroupList = persistentListOf(
         VocaGroup(
-            "today", persistentListOf(
+            "today",
+            persistentListOf(
                 VocaItem(10, "come across as", persistentListOf("동사", "숙어")),
                 VocaItem(9, "underwhelming", persistentListOf("형용사")),
                 VocaItem(8, "spacious", persistentListOf("형용사")),
@@ -52,7 +54,8 @@ internal class VocaViewModel : ViewModel() {
             )
         ),
         VocaGroup(
-            "7days", persistentListOf(
+            "7days",
+            persistentListOf(
                 VocaItem(6, "resonate with", persistentListOf("동사", "구")),
                 VocaItem(
                     5,
@@ -81,7 +84,6 @@ internal class VocaViewModel : ViewModel() {
     }
 
     fun fetchWords(sort: WordSortType) {
-
         val source = when (sort) {
             WordSortType.AtoZ -> originalAtoZGroupList
             WordSortType.Latest -> originalLatestGroupList
@@ -113,7 +115,6 @@ internal class VocaViewModel : ViewModel() {
     }
 
     fun toggleBookmark(phraseId: Long) {
-
     }
 
     fun clearSelectedVocaDetail() {

@@ -67,4 +67,3 @@ private fun VocaHeaderPreview() {
         )
     }
 }
-

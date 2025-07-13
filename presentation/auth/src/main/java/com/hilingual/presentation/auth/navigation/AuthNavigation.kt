@@ -1,5 +1,7 @@
 package com.hilingual.presentation.auth.navigation
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -21,16 +23,20 @@ fun NavController.navigateToAuth(
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.authNavGraph(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
     navigateToOnboarding: () -> Unit,
+    sharedTransitionScope: SharedTransitionScope
 ) {
     composable<Auth> {
         AuthRoute(
             paddingValues = paddingValues,
             navigateToHome = navigateToHome,
-            navigateToOnboarding = navigateToOnboarding
+            navigateToOnboarding = navigateToOnboarding,
+            sharedTransitionScope = sharedTransitionScope,
+            animatedVisibilityScope = this
         )
     }
 }

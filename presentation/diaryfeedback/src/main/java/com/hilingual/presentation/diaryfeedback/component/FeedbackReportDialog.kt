@@ -9,7 +9,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
 internal fun FeedbackReportDialog(
     onDismiss: () -> Unit,
-    onReportClick: () -> Unit,
+    onReportClick: () -> Unit
 ) {
     TwoButtonDialog(
         title = "AI 피드백을 신고하시겠어요?",
@@ -33,6 +33,6 @@ private fun FeedbackReportDialogPreview() {
         FeedbackReportDialog(
             onDismiss = {},
             onReportClick = {}
-       )
+        )
     }
 }

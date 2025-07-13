@@ -69,7 +69,7 @@ private fun GrammarSpellingScreenPreview() {
         RecommendExpressionScreen(
             writtenDate = "7월 11일 금요일",
             recommendExpressionList = dummyExpressions,
-            isBookmarkClick = {_,_->}
+            isBookmarkClick = { _, _ -> }
         )
     }
 }

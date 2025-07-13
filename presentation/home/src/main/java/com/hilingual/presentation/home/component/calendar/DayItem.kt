@@ -23,7 +23,7 @@ internal fun DayItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
-    isWritten: Boolean = false,
+    isWritten: Boolean = false
 ) {
     val textColor = when {
         isSelected -> HilingualTheme.colors.hilingualBlue
@@ -62,12 +62,13 @@ internal fun DayItem(
             color = textColor
         )
 
-        if (day.date == LocalDate.now())
+        if (day.date == LocalDate.now()) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_today_4),
                 contentDescription = null,
                 tint = Color.Unspecified,
                 modifier = Modifier.align(Alignment.BottomCenter)
             )
+        }
     }
 }

@@ -16,11 +16,9 @@ import javax.inject.Singleton
 object ServiceModule {
     @Provides
     @Singleton
-    fun provideLoginService(@LoginClient retrofit: Retrofit): LoginService = 
-        retrofit.create(LoginService::class.java)
+    fun provideLoginService(@LoginClient retrofit: Retrofit): LoginService = retrofit.create(LoginService::class.java)
 
     @Provides
     @Singleton
-    fun provideReissueService(@RefreshClient retrofit: Retrofit): ReissueService = 
-        retrofit.create(ReissueService::class.java)
+    fun provideReissueService(@RefreshClient retrofit: Retrofit): ReissueService = retrofit.create(ReissueService::class.java)
 }
