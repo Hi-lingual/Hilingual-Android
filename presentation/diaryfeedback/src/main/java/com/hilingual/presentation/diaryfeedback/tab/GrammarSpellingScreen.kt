@@ -42,8 +42,6 @@ internal fun GrammarSpellingScreen(
     modifier: Modifier = Modifier,
     isAIWritten: Boolean = true
 ) {
-    val isEmptyFeedback = feedbackList.isEmpty()
-
     LazyColumn(
         verticalArrangement = Arrangement.Top,
         contentPadding = PaddingValues(vertical = 24.dp, horizontal = 16.dp),
@@ -85,7 +83,7 @@ internal fun GrammarSpellingScreen(
 
         if (feedbackList.isEmpty()) {
             item {
-                if (isEmptyFeedback) FeedbackEmptyCard()
+                FeedbackEmptyCard()
             }
         } else {
             itemsIndexed(
