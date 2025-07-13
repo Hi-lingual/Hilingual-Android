@@ -187,7 +187,7 @@ private fun DiaryWriteScreen(
             HilingualButton(
                 modifier = Modifier
                     .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                text = "피드백 요청",
+                text = "피드백 요청하기",
                 enabled = diaryText.length >= 10,
                 onClick = onDiaryFeedbackRequestButtonClick
             )
