@@ -38,16 +38,10 @@ internal fun AuthRoute(
     val localSystemBarsColor = LocalSystemBarsColor.current
     val context = LocalContext.current
 
-    DisposableEffect(Unit) {
+    LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
             systemBarsColor = hilingualOrange
         )
-
-        onDispose {
-            localSystemBarsColor.setSystemBarColor(
-                systemBarsColor = white
-            )
-        }
     }
 
     LaunchedEffect(Unit) {
