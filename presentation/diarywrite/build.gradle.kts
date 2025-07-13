@@ -7,3 +7,7 @@ plugins {
 android {
     setNamespace("presentation.diarywrite")
 }
+
+dependencies {
+    implementation(libs.balloon.compose)
+}

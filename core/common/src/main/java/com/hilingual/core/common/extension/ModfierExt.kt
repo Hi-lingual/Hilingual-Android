@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -57,14 +57,14 @@ fun Modifier.addFocusCleaner(focusManager: FocusManager): Modifier {
 }
 
 fun Modifier.advancedImePadding() = composed {
-    var consumePadding by remember { mutableIntStateOf(0) }
+    var consumePadding by remember { mutableStateOf(0) }
     onGloballyPositioned { coordinates ->
-        consumePadding = coordinates.findRootCoordinates().size.height -
-            (coordinates.positionInWindow().y + coordinates.size.height).toInt().coerceAtLeast(0)
+        val rootCoordinate = coordinates.findRootCoordinates()
+        val bottom = coordinates.positionInWindow().y + coordinates.size.height
+
+        consumePadding = (rootCoordinate.size.height - bottom).toInt().coerceAtLeast(0)
     }
-        .consumeWindowInsets(
-            PaddingValues(bottom = with(LocalDensity.current) { consumePadding.toDp() })
-        )
+        .consumeWindowInsets(PaddingValues(bottom = (consumePadding / LocalDensity.current.density).dp))
         .imePadding()
 }
 

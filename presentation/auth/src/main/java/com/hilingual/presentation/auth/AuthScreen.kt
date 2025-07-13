@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -48,17 +49,12 @@ internal fun AuthRoute(
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     val localSystemBarsColor = LocalSystemBarsColor.current
+    val context = LocalContext.current
 
-    DisposableEffect(Unit) {
+    LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
             systemBarsColor = hilingualOrange
         )
-
-        onDispose {
-            localSystemBarsColor.setSystemBarColor(
-                systemBarsColor = white
-            )
-        }
     }
 
     LaunchedEffect(Unit) {
@@ -72,7 +68,7 @@ internal fun AuthRoute(
 
     AuthScreen(
         paddingValues = paddingValues,
-        onGoogleSignClick = viewModel::onGoogleSignClick,
+        onGoogleSignClick = { viewModel.onGoogleSignClick(context) },
         onPrivacyPolicyClick = { },
         sharedTransitionScope = sharedTransitionScope,
         animatedVisibilityScope = animatedVisibilityScope

@@ -25,7 +25,7 @@ android {
         buildConfigField(
             "String",
             "BASE_URL",
-            properties.getProperty("dev.base.url")
+            properties["dev.base.url"] as String
         )
     }
 

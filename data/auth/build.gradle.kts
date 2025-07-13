@@ -16,7 +16,7 @@ android {
         buildConfigField(
             "String",
             "GOOGLE_WEB_CLIENT_ID",
-            properties.getProperty("google.client.id")
+            properties["google.client.id"] as String
         )
     }
 

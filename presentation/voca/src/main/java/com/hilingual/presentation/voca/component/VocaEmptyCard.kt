@@ -24,11 +24,11 @@ internal enum class VocaEmptyCardType(
     @DrawableRes val imageRes: Int
 ) {
     NOT_ADD(
-        text = "아직 단어가 추가되지 않았어요",
+        text = "아직 단어가 추가되지 않았어요.",
         imageRes = R.drawable.img_word
     ),
     NOT_SEARCH(
-        text = "검색 결과가 없습니다",
+        text = "검색 결과가 없습니다.",
         imageRes = R.drawable.img_search
     )
 }

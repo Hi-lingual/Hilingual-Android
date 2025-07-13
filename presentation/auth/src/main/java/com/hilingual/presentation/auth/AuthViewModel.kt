@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.auth.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -16,8 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
-    @ApplicationContext private val context: Context
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _navigationEvent = MutableSharedFlow<AuthSideEffect>(
@@ -27,12 +25,20 @@ class AuthViewModel @Inject constructor(
     )
     val navigationEvent = _navigationEvent.asSharedFlow()
 
-    fun onGoogleSignClick() {
+    fun onGoogleSignClick(context: Context) {
         viewModelScope.launch {
             authRepository.signInWithGoogle(context)
-                .onSuccess { credential ->
-                    Timber.d("Google ID Token: ${credential.idToken}")
-                    _navigationEvent.tryEmit(AuthSideEffect.NavigateToHome)
+                .onSuccess { idToken ->
+                    Timber.d("Google ID Token: $idToken")
+                    authRepository.login(idToken, "GOOGLE")
+                        .onSuccess { authResult ->
+                            if (authResult.isProfileCompleted) {
+                                _navigationEvent.tryEmit(AuthSideEffect.NavigateToHome)
+                            } else {
+                                _navigationEvent.tryEmit(AuthSideEffect.NavigateToOnboarding)
+                            }
+                        }
+                        .onLogFailure { }
                 }
                 .onLogFailure { }
         }
