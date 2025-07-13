@@ -42,6 +42,8 @@ internal fun GrammarSpellingScreen(
     modifier: Modifier = Modifier,
     isAIDiary: Boolean = true
 ) {
+    val isEmptyFeedback = feedbackList.isEmpty()
+
     LazyColumn(
         verticalArrangement = Arrangement.Top,
         contentPadding = PaddingValues(vertical = 24.dp, horizontal = 16.dp),
@@ -75,37 +77,42 @@ internal fun GrammarSpellingScreen(
             }
             Spacer(Modifier.height(24.dp))
         }
+
         item {
-           FeedbackTitle(feedbackList.size)
+            FeedbackTitle(feedbackList.size)
+            Spacer(Modifier.height(12.dp))
         }
-        itemsIndexed(
-            feedbackList
-        ) { index, content ->
-            with(content) {
-                FeedbackCard(
-                    originalText = originalText,
-                    feedbackText = feedbackText,
-                    explain = explain,
-                    modifier = Modifier.fillMaxWidth()
-                )
+
+        if (feedbackList.isEmpty()) {
+            item {
+                if (isEmptyFeedback) FeedbackEmptyCard()
             }
-            if (index != feedbackList.lastIndex) Spacer(Modifier.height(12.dp))
+        } else {
+            itemsIndexed(
+                feedbackList,
+                key = { _, feedback -> Pair(feedback.originalText, feedback.feedbackText) }
+            ) { index, content ->
+                with(content) {
+                    FeedbackCard(
+                        originalText = originalText,
+                        feedbackText = feedbackText,
+                        explain = explain,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                if (index != feedbackList.lastIndex) Spacer(Modifier.height(12.dp))
+            }
         }
     }
 }
 
 @Composable
 private fun FeedbackTitle(feedbackSize: Int) {
-    val isEmptyFeedback = (feedbackSize == 0)
-
     Text(
-        text = if (isEmptyFeedback) AnnotatedString("일기에서 발견된 피드백 알려드릴게요!") else getFeedbackTitleAnnotatedString(feedbackSize),
+        text = if (feedbackSize == 0) AnnotatedString("일기에서 발견된 피드백 알려드릴게요!") else getFeedbackTitleAnnotatedString(feedbackSize),
         style = HilingualTheme.typography.bodySB16,
         color = HilingualTheme.colors.black
     )
-    Spacer(Modifier.height(12.dp))
-
-    if (isEmptyFeedback) FeedbackEmptyCard()
 }
 
 @Composable
@@ -132,7 +139,7 @@ private fun GrammarSpellingScreenPreview() {
             isAIDiary = isAI,
             onToggleDiaryViewMode = { isAI = !isAI },
             diaryContent = dummyDiary,
-            feedbackList = DiaryFeedbackViewModel.dummyEmptyFeedback
+            feedbackList = DiaryFeedbackViewModel.dummyFeedbacks
         )
     }
 }
