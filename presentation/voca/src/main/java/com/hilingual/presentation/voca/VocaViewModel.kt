@@ -43,41 +43,7 @@ internal class VocaViewModel : ViewModel() {
         )
     )
 
-    private var originalLatestGroupList = persistentListOf<VocaGroup>() /*persistentListOf(
-        VocaGroup(
-            "today",
-            persistentListOf(
-                VocaItem(10, "come across as", persistentListOf("동사", "숙어")),
-                VocaItem(9, "underwhelming", persistentListOf("형용사")),
-                VocaItem(8, "spacious", persistentListOf("형용사")),
-                VocaItem(7, "oversleep", persistentListOf("동사"))
-            )
-        ),
-        VocaGroup(
-            "7days",
-            persistentListOf(
-                VocaItem(6, "resonate with", persistentListOf("동사", "구")),
-                VocaItem(
-                    5,
-                    "rekindle my interest",
-                    persistentListOf("동사", "구")
-                ),
-                VocaItem(
-                    4,
-                    "emotional vulnerability",
-                    persistentListOf("명사", "구")
-                ),
-                VocaItem(3, "out of the blue", persistentListOf("부사")),
-                VocaItem(
-                    2,
-                    "short-lived but impactful",
-                    persistentListOf("형용사", "구")
-                ),
-                VocaItem(1, "ghost", persistentListOf("명사")),
-                VocaItem(0, "run late", persistentListOf("동사", "숙어"))
-            )
-        )
-    )*/
+    private var originalLatestGroupList = persistentListOf<VocaGroup>()
 
     init {
         fetchWords(WordSortType.Latest)
