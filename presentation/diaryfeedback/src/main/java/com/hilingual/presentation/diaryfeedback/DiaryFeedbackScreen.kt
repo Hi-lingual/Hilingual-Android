@@ -43,8 +43,11 @@ internal fun DiaryFeedbackRoute(
     var selectedImageUrl by remember { mutableStateOf<String?>(null) }
 
     BackHandler {
-        if (selectedImageUrl == null) navigateUp()
-        else selectedImageUrl = null
+        if (selectedImageUrl == null) {
+            navigateUp()
+        } else {
+            selectedImageUrl = null
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -179,7 +182,7 @@ private fun DiaryFeedbackScreenPreview() {
             onChangeSelectedUrl = {},
             onBackClick = {},
             onToggleDiaryViewMode = { isAIWritten = !isAIWritten },
-            onToggleBookmark = { _, _ -> {} },
+            onToggleBookmark = { _, _ -> {} }
         )
     }
 }

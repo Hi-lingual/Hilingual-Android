@@ -10,9 +10,9 @@ import com.hilingual.presentation.diaryfeedback.DiaryFeedbackRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DiaryFeedback (
+data class DiaryFeedback(
     val diaryId: Long
-): Route
+) : Route
 
 fun NavController.navigateToDiaryFeedback(
     diaryId: Long,
