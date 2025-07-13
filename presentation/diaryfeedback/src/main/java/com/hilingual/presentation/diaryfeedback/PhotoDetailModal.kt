@@ -16,7 +16,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 //TODO: sharedTransition 사용
 @Composable
-internal fun PhotoDetailView(
+internal fun PhotoDetailModal(
     imageUrl: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -46,7 +46,7 @@ internal fun PhotoDetailView(
 @Composable
 private fun PhotoDetailPreview() {
     HilingualTheme {
-        PhotoDetailView(
+        PhotoDetailModal(
             imageUrl = "",
             onBackClick = {}
         )
