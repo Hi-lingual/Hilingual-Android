@@ -38,7 +38,8 @@ fun HilingualLongTextField(
         placeholder = placeholder,
         textStyle = HilingualTheme.typography.bodyM16,
         onValueChanged = {
-            if (it.length <= maxLength) onValueChanged(it)
+            val filteredValue = it.removeEmoji()
+            if (filteredValue.length <= maxLength) onValueChanged(filteredValue)
         },
         onFocusChanged = { isFocused = it },
         modifier = modifier
@@ -66,6 +67,10 @@ fun HilingualLongTextField(
             )
         }
     )
+}
+
+private fun String.removeEmoji(): String {
+    return this.replace(Regex("[\\p{So}\\p{Cn}]+"), "")
 }
 
 @Preview
