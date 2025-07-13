@@ -1,5 +1,6 @@
 package com.hilingual.presentation.diaryfeedback
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,6 +40,12 @@ internal fun DiaryFeedbackRoute(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
+    var selectedImageUrl by remember { mutableStateOf<String?>(null) }
+
+    BackHandler {
+        if (selectedImageUrl == null) navigateUp()
+        else selectedImageUrl = null
+    }
 
     LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
@@ -61,6 +68,8 @@ internal fun DiaryFeedbackRoute(
                 paddingValues = paddingValues,
                 uiState = (state as UiState.Success<DiaryFeedbackUiState>).data,
                 onBackClick = navigateUp,
+                selectedImageUrl = selectedImageUrl,
+                onChangeSelectedUrl = { selectedImageUrl = it },
                 onToggleDiaryViewMode = viewModel::toggleDiaryShowOption,
                 onToggleBookmark = viewModel::toggleBookmark
             )
@@ -75,6 +84,8 @@ private fun DiaryFeedbackScreen(
     paddingValues: PaddingValues,
     uiState: DiaryFeedbackUiState,
     onBackClick: () -> Unit,
+    selectedImageUrl: String?,
+    onChangeSelectedUrl: (String?) -> Unit,
     onToggleDiaryViewMode: (Boolean) -> Unit,
     onToggleBookmark: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
@@ -82,8 +93,6 @@ private fun DiaryFeedbackScreen(
     var tabIndex by remember { mutableIntStateOf(0) }
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
     var isReportDialogVisible by remember { mutableStateOf(false) }
-
-    var selectedImageUrl by remember { mutableStateOf<String?>(null) }
 
     if (isReportBottomSheetVisible) {
         FeedbackReportBottomSheet(
@@ -130,7 +139,7 @@ private fun DiaryFeedbackScreen(
                     feedbackList = feedbackList,
                     onToggleDiaryViewMode = onToggleDiaryViewMode,
                     isAIWritten = isAIWritten,
-                    onImageClick = { selectedImageUrl = it }
+                    onImageClick = onChangeSelectedUrl
                 )
                 1 -> RecommendExpressionScreen(
                     writtenDate = writtenDate,
@@ -143,8 +152,8 @@ private fun DiaryFeedbackScreen(
 
     if (selectedImageUrl != null) {
         PhotoDetailModal(
-            imageUrl = selectedImageUrl!!,
-            onBackClick = { selectedImageUrl = null },
+            imageUrl = selectedImageUrl,
+            onBackClick = { onChangeSelectedUrl(null) },
             modifier = modifier.padding(paddingValues)
         )
     }
@@ -166,6 +175,8 @@ private fun DiaryFeedbackScreenPreview() {
                 feedbackList = vm.dummyFeedbacks,
                 recommendExpressionList = vm.dummyRecommendExpressions
             ),
+            selectedImageUrl = "",
+            onChangeSelectedUrl = {},
             onBackClick = {},
             onToggleDiaryViewMode = { isAIWritten = !isAIWritten },
             onToggleBookmark = { _, _ -> {} },
