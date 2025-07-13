@@ -286,14 +286,10 @@ internal fun SearchResultSection(
         )
     } else {
         LazyColumn(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 16.dp)
+                .padding(16.dp)
         ) {
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-            }
             items(
                 searchResultList,
                 key = { voca -> voca.phraseId }
@@ -304,6 +300,7 @@ internal fun SearchResultSection(
                     onCardClick = { onCardClick(voca.phraseId) },
                     isBookmarked = voca.isBookmarked,
                     onBookmarkClick = { onBookmarkClick(voca.phraseId) },
+                    modifier = Modifier.padding(bottom = 16.dp)
                 )
             }
         }
