@@ -55,7 +55,7 @@ internal fun ImageSelectBottomSheet(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .padding(12.dp)
-                    .noRippleClickable { onCameraSelected() }
+                    .noRippleClickable(onClick = onCameraSelected)
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_camera_24),
@@ -76,7 +76,7 @@ internal fun ImageSelectBottomSheet(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .padding(12.dp)
-                    .noRippleClickable { onGallerySelected() }
+                    .noRippleClickable(onClick = onGallerySelected)
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_gallary_24),

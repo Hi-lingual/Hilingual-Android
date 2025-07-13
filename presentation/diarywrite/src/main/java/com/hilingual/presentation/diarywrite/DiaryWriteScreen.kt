@@ -111,6 +111,7 @@ private fun DiaryWriteScreen(
         modifier = Modifier
             .background(HilingualTheme.colors.white)
             .fillMaxSize()
+            // TODO: 네비 연결 후 advancedImePadding() 적용
             .padding(paddingValues)
     ) {
         BackTopAppBar(
@@ -121,7 +122,8 @@ private fun DiaryWriteScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 16.dp),
+                .padding(horizontal = 16.dp)
+                .padding(top = 12.dp, bottom = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {

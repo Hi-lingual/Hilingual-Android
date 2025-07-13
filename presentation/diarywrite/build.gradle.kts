@@ -9,5 +9,5 @@ android {
 }
 
 dependencies {
-    implementation("com.github.skydoves:balloon-compose:1.6.12")
+    implementation(libs.balloon.compose)
 }
