@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -31,7 +32,6 @@ import com.hilingual.core.designsystem.component.textfield.HilingualLongTextFiel
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
-import com.hilingual.presentation.diarywrite.component.DateText
 import com.hilingual.presentation.diarywrite.component.DiaryWriteCancelDialog
 import com.hilingual.presentation.diarywrite.component.ImageSelectBottomSheet
 import com.hilingual.presentation.diarywrite.component.PhotoSelectButton
@@ -44,6 +44,11 @@ import com.skydoves.balloon.compose.rememberBalloonBuilder
 import com.skydoves.balloon.compose.setBackgroundColor
 import kotlinx.coroutines.delay
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+
+private val DATE_FORMATTER: DateTimeFormatter =
+    DateTimeFormatter.ofPattern("M월 d일 EEEE", Locale.KOREAN)
 
 @Composable
 internal fun DiaryWriteRoute(
@@ -186,6 +191,23 @@ private fun DiaryWriteScreen(
             }
         }
     }
+}
+
+@Composable
+private fun DateText(
+    selectedDateProvider: () -> LocalDate
+) {
+    val selectedDate = selectedDateProvider()
+
+    val formattedDate = remember(selectedDate) {
+        selectedDate.format(DATE_FORMATTER)
+    }
+
+    Text(
+        text = formattedDate,
+        style = HilingualTheme.typography.bodySB16,
+        color = HilingualTheme.colors.black
+    )
 }
 
 @Preview
