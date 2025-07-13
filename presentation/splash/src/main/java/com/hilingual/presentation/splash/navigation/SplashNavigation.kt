@@ -6,8 +6,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.navOptions
 import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.splash.SplashRoute
 import kotlinx.serialization.Serializable
@@ -15,12 +15,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 data object Splash : Route
 
-fun NavController.navigateToSplash(
-    navOptions: NavOptions? = null
-) {
+fun NavController.navigateToSplash() {
     navigate(
         route = Splash,
-        navOptions = navOptions
+        navOptions = navOptions {
+            popUpTo(0) {
+                inclusive = true
+            }
+            launchSingleTop = true
+        }
     )
 }
 
@@ -31,7 +34,7 @@ fun NavGraphBuilder.splashNavGraph(
     sharedTransitionScope: SharedTransitionScope
 ) {
     composable<Splash>(
-        exitTransition = { fadeOut(tween(500), 0.999f) }
+        exitTransition = { fadeOut(tween(500), 1f) }
     ) {
         SplashRoute(
             navigateToAuth = navigateToAuth,

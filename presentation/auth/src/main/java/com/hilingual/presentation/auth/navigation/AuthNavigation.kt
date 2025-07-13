@@ -2,8 +2,6 @@ package com.hilingual.presentation.auth.navigation
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -32,9 +30,7 @@ fun NavGraphBuilder.authNavGraph(
     navigateToOnboarding: () -> Unit,
     sharedTransitionScope: SharedTransitionScope
 ) {
-    composable<Auth>(
-        enterTransition = { fadeIn(tween(500), 0.999f) }
-    ) {
+    composable<Auth> {
         AuthRoute(
             paddingValues = paddingValues,
             navigateToHome = navigateToHome,
