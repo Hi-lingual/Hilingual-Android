@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.image.HilingualLottieAnimation
@@ -30,17 +31,20 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 internal enum class DiaryWriteFeedbackState(
     val title: String,
     val description: String,
-    @RawRes val lottieRawRes: Int
+    @RawRes val lottieRawRes: Int,
+    val lottieRawResHeightDp: Dp
 ) {
     Loading(
         title = "일기 저장 중..",
         description = "피드백을 요청하고 있어요.",
-        lottieRawRes = R.raw.lottie_feedback_loading
+        lottieRawRes = R.raw.lottie_feedback_loading,
+        lottieRawResHeightDp = 194.dp
     ),
     Complete(
         title = "AI 피드백 완료!",
         description = "틀린 부분을 고치고,\n더 나은 표현으로 수정했어요!",
-        lottieRawRes = R.raw.lottie_feedback_complete
+        lottieRawRes = R.raw.lottie_feedback_complete,
+        lottieRawResHeightDp = 180.dp
     )
 }
 
@@ -58,17 +62,12 @@ private fun DiaryFeedbackLoadingScreen(
             .padding(paddingValues)
             .background(HilingualTheme.colors.white)
     ) {
-        CloseOnlyTopAppBar(
-            modifier = Modifier.align(Alignment.TopCenter),
-            onCloseClicked = onCloseButtonClick,
-            iconTint = HilingualTheme.colors.black
-        )
-
         TextAndLottie(
             modifier = Modifier.align(Alignment.Center),
             title = state.title,
             description = state.description,
-            lottieRawRes = state.lottieRawRes
+            lottieRawRes = state.lottieRawRes,
+            lottieRawResHeightDp = state.lottieRawResHeightDp
         )
 
         when (state) {
@@ -95,14 +94,22 @@ private fun DiaryFeedbackLoadingScreen(
                 }
             }
 
-            DiaryWriteFeedbackState.Complete -> HilingualButton(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 14.dp),
-                text = "피드백 보러가기",
-                onClick = onShowFeedbackButtonClick
-            )
+            DiaryWriteFeedbackState.Complete -> {
+                CloseOnlyTopAppBar(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    onCloseClicked = onCloseButtonClick,
+                    iconTint = HilingualTheme.colors.black
+                )
+
+                HilingualButton(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 14.dp),
+                    text = "피드백 보러가기",
+                    onClick = onShowFeedbackButtonClick
+                )
+            }
         }
     }
 }
@@ -112,6 +119,7 @@ private fun TextAndLottie(
     title: String,
     description: String,
     lottieRawRes: Int,
+    lottieRawResHeightDp: Dp,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -136,14 +144,10 @@ private fun TextAndLottie(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        val lottieModifier = when (lottieRawRes) {
-            R.raw.lottie_feedback_loading -> Modifier.height(194.dp)
-            R.raw.lottie_feedback_complete -> Modifier.height(180.dp)
-            else -> Modifier
-        }
-
         HilingualLottieAnimation(
-            modifier = lottieModifier.width(200.dp),
+            modifier = Modifier
+                .width(200.dp)
+                .height(lottieRawResHeightDp),
             rawResFile = lottieRawRes,
             isInfinite = true
         )
