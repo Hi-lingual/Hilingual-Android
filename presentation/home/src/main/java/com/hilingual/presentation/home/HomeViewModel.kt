@@ -3,20 +3,21 @@ package com.hilingual.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
-import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.data.calendar.repository.CalendarRepository
+import com.hilingual.data.user.repository.UserRepository
+import com.hilingual.presentation.home.model.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
 import javax.inject.Inject
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.coroutines.async
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -34,21 +35,32 @@ class HomeViewModel @Inject constructor(
     private fun loadInitialData() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
+            val today = LocalDate.now()
 
             val userInfoDeferred = async { userRepository.getUserInfo() }
+            val calendarDeferred = async { calendarRepository.getCalendar(today.year, today.monthValue) }
 
             val userInfoResult = userInfoDeferred.await()
+            val calendarResult = calendarDeferred.await()
 
-            userInfoResult
-                .onSuccess { userInfoModel ->
+            userInfoResult.onSuccess { userInfo ->
+                calendarResult.onSuccess { calendarData ->
+                    val hasDiaryToday = calendarData.dateList.any { LocalDate.parse(it.date) == today }
                     _uiState.value = UiState.Success(
                         HomeUiState(
-                            userProfile = userInfoModel.toState(),
-                            dateList = persistentListOf()
+                            userProfile = userInfo.toState(),
+                            dateList = calendarData.dateList.map { it.toState() }.toImmutableList(),
+                            selectedDate = today,
+                            isDiaryThumbnailLoading = hasDiaryToday,
+                            diaryThumbnail = null
                         )
                     )
-                }
-                .onLogFailure { }
+                    if (hasDiaryToday) {
+                        getDiaryThumbnail(today.toString())
+                    }
+                    return@launch
+                }.onLogFailure { }
+            }.onLogFailure { }
         }
     }
 
@@ -56,12 +68,8 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             calendarRepository.getCalendar(year, month)
                 .onSuccess { calendarModel ->
-                    _uiState.update { currentState ->
-                        (currentState as UiState.Success).copy(
-                            data = currentState.data.copy(
-                                dateList = persistentListOf(*calendarModel.dateList.map { it.toState() }.toTypedArray())
-                            )
-                        )
+                    _uiState.updateSuccess {
+                        it.copy(dateList = calendarModel.dateList.map { it.toState() }.toImmutableList())
                     }
                 }
                 .onLogFailure { }
@@ -69,22 +77,23 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onDateSelected(date: LocalDate) {
-        _uiState.update { currentState ->
-            (currentState as UiState.Success).copy(
-                data = currentState.data.copy(selectedDate = date)
+        val currentState = _uiState.value
+        if (currentState !is UiState.Success) return
+
+        if (currentState.data.selectedDate == date) return
+
+        val hasDiary = currentState.data.dateList.any { LocalDate.parse(it.date) == date }
+
+        _uiState.updateSuccess {
+            it.copy(
+                selectedDate = date,
+                diaryThumbnail = null,
+                isDiaryThumbnailLoading = hasDiary
             )
         }
-        val currentUiState = (_uiState.value as? UiState.Success)?.data
-        if (currentUiState?.dateList?.any { LocalDate.parse(it.date) == date } == true) {
+
+        if (hasDiary) {
             getDiaryThumbnail(date.toString())
-        } else {
-            _uiState.update { currentState ->
-                if (currentState is UiState.Success) {
-                    currentState.copy(data = currentState.data.copy(diaryThumbnail = null))
-                } else {
-                    currentState
-                }
-            }
         }
     }
 
@@ -94,18 +103,20 @@ class HomeViewModel @Inject constructor(
 
     private fun getDiaryThumbnail(date: String) {
         viewModelScope.launch {
-            calendarRepository.getDiaryThumbnail(date).onSuccess {
-                _uiState.update { currentState ->
-                    if (currentState is UiState.Success) {
-                        currentState.copy(data = currentState.data.copy(
-                            diaryThumbnail = it.toState()
-                        ))
-                    } else {
-                        currentState
+            calendarRepository.getDiaryThumbnail(date)
+                .onSuccess { thumbnail ->
+                    _uiState.updateSuccess {
+                        it.copy(
+                            diaryThumbnail = thumbnail.toState(),
+                            isDiaryThumbnailLoading = false
+                        )
                     }
                 }
-            }
-            .onLogFailure { }
+                .onLogFailure {
+                    _uiState.updateSuccess {
+                        it.copy(isDiaryThumbnailLoading = false)
+                    }
+                }
         }
     }
 }

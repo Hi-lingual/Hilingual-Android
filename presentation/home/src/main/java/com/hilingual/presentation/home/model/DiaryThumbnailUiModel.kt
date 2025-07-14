@@ -1,4 +1,4 @@
-package com.hilingual.presentation.home
+package com.hilingual.presentation.home.model
 
 import androidx.compose.runtime.Immutable
 import com.hilingual.data.calendar.model.DiaryThumbnailModel
