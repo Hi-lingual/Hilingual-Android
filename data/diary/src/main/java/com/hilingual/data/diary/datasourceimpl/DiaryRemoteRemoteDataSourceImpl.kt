@@ -4,6 +4,7 @@ import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
 import com.hilingual.data.diary.dto.response.DiaryContentResponseDto
 import com.hilingual.data.diary.dto.response.DiaryFeedbackResponseDto
+import com.hilingual.data.diary.dto.response.DiaryRecommendExpressionResponseDto
 import com.hilingual.data.diary.service.DiaryService
 import javax.inject.Inject
 
@@ -15,4 +16,7 @@ internal class DiaryRemoteRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getDiaryFeedbacks(diaryId: Long): BaseResponse<DiaryFeedbackResponseDto> =
         diaryService.getDiaryFeedbacks(diaryId)
+
+    override suspend fun getDiaryRecommendExpressions(diaryId: Long): BaseResponse<DiaryRecommendExpressionResponseDto> =
+        diaryService.getDiaryRecommendExpressions(diaryId)
 }

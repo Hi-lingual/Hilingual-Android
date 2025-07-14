@@ -4,6 +4,7 @@ import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
 import com.hilingual.data.diary.model.DiaryContentModel
 import com.hilingual.data.diary.model.DiaryFeedbackModel
+import com.hilingual.data.diary.model.DiaryRecommendExpressionModel
 import com.hilingual.data.diary.model.toModel
 import com.hilingual.data.diary.repository.DiaryRepository
 import javax.inject.Inject
@@ -19,5 +20,10 @@ internal class DiaryRepositoryImpl @Inject constructor(
     override suspend fun getDiaryFeedbacks(diaryId: Long): Result<List<DiaryFeedbackModel>> =
         suspendRunCatching {
             diaryRemoteDataSource.getDiaryFeedbacks(diaryId).data!!.feedbackList.map { it.toModel() }
+        }
+
+    override suspend fun getDiaryRecommendExpressions(diaryId: Long): Result<List<DiaryRecommendExpressionModel>> =
+        suspendRunCatching {
+            diaryRemoteDataSource.getDiaryRecommendExpressions(diaryId).data!!.phraseList.map { it.toModel() }
         }
 }

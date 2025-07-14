@@ -27,6 +27,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
     init {
         getDiaryContent()
         getFeedbacks()
+        getRecommendExpressions()
     }
 
     private fun getDiaryContent() {
@@ -68,7 +69,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                         UiState.Success(
                             DiaryFeedbackUiState(
                                 writtenDate = currentData?.writtenDate.orEmpty(),
-                                diaryContent = currentData?.diaryContent!!,
+                                diaryContent = currentData?.diaryContent ?: DiaryContent(),
                                 feedbackList = feedbacks.map {
                                     FeedbackContent(
                                         originalText = it.originalText,
@@ -77,6 +78,36 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                                     )
                                 }.toImmutableList(),
                                 isLoading = false
+                            )
+                        )
+                    }
+                }
+                .onLogFailure {  }
+        }
+    }
+
+    private fun getRecommendExpressions() {
+        viewModelScope.launch {
+            diaryRepository.getDiaryRecommendExpressions(diaryId)
+                .onSuccess { expressions ->
+                    _uiState.update { current ->
+                        val currentData = (current as? UiState.Success)?.data
+
+                        UiState.Success(
+                            DiaryFeedbackUiState(
+                                writtenDate = currentData?.writtenDate.orEmpty(),
+                                diaryContent = currentData?.diaryContent ?: DiaryContent(),
+                                feedbackList = currentData?.feedbackList ?: persistentListOf(),
+                                recommendExpressionList = expressions.map {
+                                    RecommendExpression(
+                                        phraseId = it.phraseId,
+                                        phraseType = it.phraseType.toImmutableList(),
+                                        phrase = it.phrase,
+                                        explanation = it.explanation,
+                                        reason = it.reason,
+                                        isMarked = it.isMarked
+                                    )
+                                }.toImmutableList(),
                             )
                         )
                     }
