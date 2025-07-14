@@ -2,6 +2,7 @@ package com.hilingual.data.diary.service
 
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.diary.dto.response.DiaryContentResponseDto
+import com.hilingual.data.diary.dto.response.DiaryFeedbackResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 
@@ -10,4 +11,9 @@ interface DiaryService {
     suspend fun getDiaryContent(
         @Path(value = "diaryId") diaryId: Long
     ): BaseResponse<DiaryContentResponseDto>
+
+    @GET("/api/v1/diaries/{diaryId}/feedbacks")
+    suspend fun getDiaryFeedbacks(
+        @Path(value = "diaryId") diaryId: Long
+    ): BaseResponse<DiaryFeedbackResponseDto>
 }

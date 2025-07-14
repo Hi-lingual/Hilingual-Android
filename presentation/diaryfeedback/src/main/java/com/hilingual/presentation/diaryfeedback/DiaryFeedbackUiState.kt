@@ -6,7 +6,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 data class DiaryFeedbackUiState(
-    val diaryId: Long = 0L,
+    val diaryId: Long = 9L,
     val writtenDate: String = "",
     val isAIWritten: Boolean = true,
     val diaryContent: DiaryContent = DiaryContent(),

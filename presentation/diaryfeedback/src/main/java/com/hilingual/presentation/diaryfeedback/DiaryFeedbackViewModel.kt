@@ -19,35 +19,69 @@ import javax.inject.Inject
 internal class DiaryFeedbackViewModel @Inject constructor(
     private val diaryRepository: DiaryRepository
 ) : ViewModel() {
+    val diaryId: Long = 9L // TODO: 수정 필요
+
     private val _uiState = MutableStateFlow<UiState<DiaryFeedbackUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<DiaryFeedbackUiState>> = _uiState.asStateFlow()
 
     init {
         getDiaryContent()
+        getFeedbacks()
     }
 
     private fun getDiaryContent() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            diaryRepository.getDiaryContent(9L)
+            diaryRepository.getDiaryContent(diaryId)
                 .onSuccess { diaryResult ->
-                    _uiState.value = UiState.Success(
-                        DiaryFeedbackUiState(
-                            writtenDate = diaryResult.writtenDate,
-                            diaryContent = DiaryContent(
-                                originalText = diaryResult.originalText,
-                                aiText = diaryResult.rewriteText,
-                                diffRanges = diaryResult.diffRanges.map {
-                                    Pair(it.diffRange.first, it.diffRange.second)
-                                }.toImmutableList(),
-                                imageUrl = diaryResult.imageUrl
-                            ),
-                            isLoading = false
+                    _uiState.update { current ->
+                        val currentData = (current as? UiState.Success)?.data
+
+                        UiState.Success(
+                            DiaryFeedbackUiState(
+                                writtenDate = diaryResult.writtenDate,
+                                diaryContent = DiaryContent(
+                                    originalText = diaryResult.originalText,
+                                    aiText = diaryResult.rewriteText,
+                                    diffRanges = diaryResult.diffRanges.map {
+                                        it.diffRange.first to it.diffRange.second
+                                    }.toImmutableList(),
+                                    imageUrl = diaryResult.imageUrl
+                                ),
+                                feedbackList = currentData?.feedbackList ?: persistentListOf(),
+                                isLoading = false
+                            )
                         )
-                    )
+                    }
                 }
-                .onLogFailure {
+                .onLogFailure { }
+        }
+    }
+
+    private fun getFeedbacks() {
+        viewModelScope.launch {
+            diaryRepository.getDiaryFeedbacks(diaryId)
+                .onSuccess { feedbacks ->
+                    _uiState.update { current ->
+                        val currentData = (current as? UiState.Success)?.data
+
+                        UiState.Success(
+                            DiaryFeedbackUiState(
+                                writtenDate = currentData?.writtenDate.orEmpty(),
+                                diaryContent = currentData?.diaryContent!!,
+                                feedbackList = feedbacks.map {
+                                    FeedbackContent(
+                                        originalText = it.originalText,
+                                        feedbackText = it.rewriteText,
+                                        explain = it.explain,
+                                    )
+                                }.toImmutableList(),
+                                isLoading = false
+                            )
+                        )
+                    }
                 }
+                .onLogFailure {  }
         }
     }
 
