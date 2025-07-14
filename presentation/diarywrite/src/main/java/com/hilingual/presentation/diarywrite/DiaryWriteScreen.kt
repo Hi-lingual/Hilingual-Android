@@ -26,6 +26,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.component.button.HilingualButton
@@ -49,13 +51,13 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun DiaryWriteRoute(
+internal fun DiaryWriteRoute(
     paddingValues: PaddingValues,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    viewModel: DiaryWriteViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
-    var diaryText by remember { mutableStateOf("") }
-    val diaryImageUri by remember { mutableStateOf<Uri?>(null) }
 
     LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
@@ -64,17 +66,19 @@ fun DiaryWriteRoute(
         )
     }
 
-    DiaryWriteScreen(
-        paddingValues = paddingValues,
-        onBackClicked = navigateUp,
-        selectedDate = LocalDate.now(),
-        topicKo = "",
-        topicEn = "",
-        diaryText = diaryText,
-        onDiaryTextChanged = { diaryText = it },
-        diaryImageUri = diaryImageUri,
-        onDiaryFeedbackRequestButtonClick = {}
-    )
+    with(uiState) {
+        DiaryWriteScreen(
+            paddingValues = paddingValues,
+            onBackClicked = navigateUp,
+            selectedDate = uiState.selectedDate,
+            topicKo = uiState.topicKo,
+            topicEn = uiState.topicEn,
+            diaryText = uiState.diaryText,
+            onDiaryTextChanged = viewModel::updateDiaryText,
+            diaryImageUri = uiState.diaryImageUri,
+            onDiaryFeedbackRequestButtonClick = {}
+        )
+    }
 }
 
 @Composable
