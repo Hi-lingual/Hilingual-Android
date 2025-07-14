@@ -182,7 +182,7 @@ private fun DiaryFeedbackScreenPreview() {
             onChangeImageDetailVisible = {},
             onBackClick = {},
             onToggleDiaryViewMode = { isAIWritten = !isAIWritten },
-            onToggleBookmark = { _, _ -> {} },
+            onToggleBookmark = { _, _ -> {} }
         )
     }
 }
