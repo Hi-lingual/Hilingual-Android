@@ -3,7 +3,7 @@ package com.hilingual.presentation.onboarding
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
-import com.hilingual.data.user.model.UserProfile
+import com.hilingual.data.user.model.UserProfileModel
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -61,7 +61,7 @@ class OnboardingViewModel @Inject constructor(
 
     fun onRegisterClick(nickname: String) {
         viewModelScope.launch {
-            userRepository.postUserProfile(UserProfile(profileImg = "", nickname = nickname))
+            userRepository.postUserProfile(UserProfileModel(profileImg = "", nickname = nickname))
                 .onSuccess {
                     _eventChannel.send(OnboardingEvent.NavigateToHome)
                 }

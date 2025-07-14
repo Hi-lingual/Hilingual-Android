@@ -123,7 +123,7 @@ private fun HomeScreen(
 
         HilingualCalendar(
             selectedDate = uiState.selectedDate,
-            writtenDates = uiState.writtenDates,
+            writtenDates = uiState.dateList.map { LocalDate.parse(it.date) }.toSet(),
             onDateClick = onDateSelected,
             onMonthChanged = onMonthChanged,
             modifier = Modifier

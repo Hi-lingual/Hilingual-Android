@@ -10,4 +10,6 @@ android {
 
 dependencies {
     implementation(libs.compose.calendar)
+    implementation(projects.data.user)
+    implementation(projects.data.calendar)
 }
