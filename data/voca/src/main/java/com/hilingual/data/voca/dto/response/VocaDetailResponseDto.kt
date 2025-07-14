@@ -13,7 +13,7 @@ data class VocaDetailResponseDto(
     val phraseType: List<String>,
     @SerialName("explanation")
     val explanation: String,
-    @SerialName("createdAt")
+    @SerialName("writtenDate")
     val createdAt: String,
     @SerialName("isBookmarked")
     val isBookmarked: Boolean

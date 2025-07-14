@@ -18,12 +18,13 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.voca.R
 
-internal enum class WordSortType(
+enum class WordSortType(
     val text: String,
-    @DrawableRes val iconRes: Int
+    @DrawableRes val iconRes: Int,
+    val sortParam: Int
 ) {
-    AtoZ(text = "A-Z 순", iconRes = R.drawable.ic_az_24),
-    Latest(text = "최신순", iconRes = R.drawable.ic_listdown_24)
+    AtoZ(text = "A-Z 순", iconRes = R.drawable.ic_az_24, sortParam = 1),
+    Latest(text = "최신순", iconRes = R.drawable.ic_listdown_24, sortParam = 2)
 }
 
 @Composable

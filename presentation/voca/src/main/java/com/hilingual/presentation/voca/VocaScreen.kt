@@ -42,11 +42,12 @@ import com.hilingual.presentation.voca.component.VocaInfo
 import com.hilingual.presentation.voca.component.VocaModal
 import com.hilingual.presentation.voca.component.WordSortBottomSheet
 import com.hilingual.presentation.voca.component.WordSortType
-import com.hilingual.presentation.voca.model.VocaGroup
-import com.hilingual.presentation.voca.model.VocaItem
+import com.hilingual.data.voca.model.VocaList
+import com.hilingual.data.voca.model.VocaItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 internal fun VocaRoute(
@@ -73,6 +74,10 @@ internal fun VocaRoute(
         }
     }
 
+    LaunchedEffect(uiState.sortType) {
+        viewModel.fetchWords(uiState.sortType)
+    }
+
     with(uiState) {
         VocaScreen(
             paddingValues = paddingValues,
@@ -80,13 +85,12 @@ internal fun VocaRoute(
             sortType = sortType,
             vocaCount = vocaCount,
             vocaGroupList = (vocaGroupList as? UiState.Success)?.data ?: persistentListOf(),
-            searchResultList = (searchResultList as? UiState.Success)?.data
-                ?: persistentListOf(),
+            searchResultList = searchResultList,
             searchText = searchKeyword,
-            onSortTypeChanged = viewModel::fetchWords,
+            onSortTypeChanged = viewModel::updateSort,
             onCardClick = viewModel::fetchVocaDetail,
             onBookmarkClick = viewModel::toggleBookmark,
-            onSearchTextChanged = viewModel::updateSearchKeywordAndSearch,
+            onSearchTextChanged = viewModel::updateSearchKeyword,
             onWriteDiaryClick = navigateToDiaryWrite,
             onCloseButtonClick = viewModel::clearSearchKeyword
         )
@@ -109,7 +113,7 @@ internal fun VocaRoute(
                 with(vocaDetail) {
                     VocaModal(
                         phrase = phrase,
-                        phraseType = phraseType,
+                        phraseType = phraseType.toPersistentList(),
                         explanation = explanation,
                         createdAt = createdAt,
                         isBookmarked = isBookmarked,
@@ -130,7 +134,7 @@ private fun VocaScreen(
     viewType: ScreenType,
     sortType: WordSortType,
     vocaCount: Int,
-    vocaGroupList: ImmutableList<VocaGroup>,
+    vocaGroupList: ImmutableList<VocaList>,
     searchResultList: ImmutableList<VocaItem>,
     searchText: String,
     onWriteDiaryClick: () -> Unit,
@@ -193,7 +197,7 @@ private fun VocaScreen(
 
 @Composable
 private fun VocaListWithInfoSection(
-    vocaGroupList: ImmutableList<VocaGroup>,
+    vocaGroupList: ImmutableList<VocaList>,
     sortType: WordSortType,
     wordCount: Int,
     onWriteDiaryClick: () -> Unit,
@@ -260,7 +264,7 @@ private fun VocaListWithInfoSection(
                         val isLastItem = index == group.words.lastIndex
                         VocaCard(
                             phrase = voca.phrase,
-                            phraseType = voca.phraseType,
+                            phraseType = voca.phraseType.toPersistentList(),
                             onCardClick = { onCardClick(voca.phraseId) },
                             isBookmarked = voca.isBookmarked,
                             onBookmarkClick = { onBookmarkClick(voca.phraseId) },
@@ -301,7 +305,7 @@ private fun SearchResultSection(
             ) { voca ->
                 VocaCard(
                     phrase = voca.phrase,
-                    phraseType = voca.phraseType,
+                    phraseType = voca.phraseType.toPersistentList(),
                     onCardClick = { onCardClick(voca.phraseId) },
                     isBookmarked = voca.isBookmarked,
                     onBookmarkClick = { onBookmarkClick(voca.phraseId) },
