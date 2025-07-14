@@ -1,13 +1,10 @@
-package com.hilingual.data.user.service
+package com.hilingual.data.user.datasource
 
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.user.dto.reponse.NicknameResponseDto
-import retrofit2.http.GET
-import retrofit2.http.Query
 
-interface UserService {
-    @GET("/api/v1/users/profile")
+interface UserRemoteDataSource {
     suspend fun getNicknameAvailability(
-        @Query("nickname") nickname: String
+        nickname: String
     ): BaseResponse<NicknameResponseDto>
 }

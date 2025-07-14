@@ -3,14 +3,14 @@ package com.hilingual.data.auth.repositoryimpl
 import android.content.Context
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.localstorage.TokenManager
-import com.hilingual.data.auth.datasource.AuthApiDataSource
+import com.hilingual.data.auth.datasource.AuthRemoteDataSource
 import com.hilingual.data.auth.datasource.GoogleAuthDataSource
 import com.hilingual.data.auth.model.LoginModel
 import com.hilingual.data.auth.repository.AuthRepository
 import javax.inject.Inject
 
 internal class AuthRepositoryImpl @Inject constructor(
-    private val authApiDataSource: AuthApiDataSource,
+    private val authApiDataSource: AuthRemoteDataSource,
     private val googleAuthDataSource: GoogleAuthDataSource,
     private val tokenManager: TokenManager
 ) : AuthRepository {

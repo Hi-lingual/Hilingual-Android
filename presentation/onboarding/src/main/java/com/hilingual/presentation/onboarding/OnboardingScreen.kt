@@ -17,19 +17,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualShortTextField
 import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppBar
@@ -40,10 +41,11 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 @Composable
 internal fun OnboardingRoute(
     paddingValues: PaddingValues,
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
+    viewModel: OnboardingViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val systemUiController = rememberSystemUiController()
-    var value by remember { mutableStateOf("") }
 
     SideEffect {
         systemUiController.setStatusBarColor(color = white, darkIcons = false)
@@ -51,11 +53,11 @@ internal fun OnboardingRoute(
 
     OnboardingScreen(
         paddingValues = paddingValues,
-        value = value,
-        onValueChanged = { value = it },
-        isValid = { true },
-        errorMessage = "",
-        onDoneAction = {},
+        value = uiState.nickname,
+        onValueChanged = viewModel::onNicknameChanged,
+        isValid = { uiState.isNicknameValid },
+        errorMessage = uiState.validationMessage,
+        onDoneAction = viewModel::onDoneAction,
         onButtonClick = navigateToHome
     )
 }
@@ -71,12 +73,15 @@ private fun OnboardingScreen(
     onButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val focusManager = LocalFocusManager.current
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
             .padding(paddingValues)
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .addFocusCleaner(focusManager),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         HilingualBasicTopAppBar(title = "프로필 작성")
@@ -123,7 +128,10 @@ private fun OnboardingScreen(
             isValid = isValid,
             errorMessage = errorMessage,
             successMessage = "사용 가능한 닉네임이에요",
-            onDoneAction = onDoneAction
+            onDoneAction = {
+                onDoneAction()
+                focusManager.clearFocus()
+            }
         )
 
         Spacer(Modifier.weight(79f))

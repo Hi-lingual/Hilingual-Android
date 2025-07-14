@@ -49,8 +49,11 @@ fun HilingualShortTextField(
             value = value,
             placeholder = placeholder,
             textStyle = HilingualTheme.typography.bodyM16,
-            onValueChanged = {
-                if (it.graphemeLength <= maxLength) onValueChanged(it)
+            onValueChanged = { it ->
+                val newText = it.filter { !it.isWhitespace() }
+                if (newText.graphemeLength <= maxLength) {
+                    onValueChanged(newText)
+                }
             },
             modifier = modifier.height(height),
             borderModifier = Modifier.border(
