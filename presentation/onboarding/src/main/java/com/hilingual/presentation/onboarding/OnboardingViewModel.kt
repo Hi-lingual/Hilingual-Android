@@ -13,7 +13,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
@@ -36,12 +38,10 @@ class OnboardingViewModel @Inject constructor(
     init {
         @OptIn(FlowPreview::class)
         _uiState
-            .debounce(1000L)
-            .onEach { uiState ->
-                if (uiState.validationMessage.isEmpty() && !uiState.isNicknameValid) {
-                    validateNickname(uiState.nickname)
-                }
-            }
+            .map { it.nickname }
+            .distinctUntilChanged()
+            .debounce(700L)
+            .onEach(::validateNickname)
             .launchIn(viewModelScope)
     }
 
@@ -55,7 +55,7 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
-    fun onDoneAction(nickname: String) {
+    fun onSubmitNickname(nickname: String) {
         validateNickname(nickname)
     }
 
@@ -65,12 +65,20 @@ class OnboardingViewModel @Inject constructor(
                 .onSuccess {
                     _eventChannel.send(OnboardingEvent.NavigateToHome)
                 }
-                .onLogFailure {
-                }
+                .onLogFailure { }
         }
     }
 
     private fun validateNickname(nickname: String) {
+        if (nickname.isBlank()) {
+            _uiState.update {
+                it.copy(
+                    validationMessage = "",
+                    isNicknameValid = false
+                )
+            }
+            return
+        }
         viewModelScope.launch {
             if (nickname.length < 2) {
                 _uiState.update {

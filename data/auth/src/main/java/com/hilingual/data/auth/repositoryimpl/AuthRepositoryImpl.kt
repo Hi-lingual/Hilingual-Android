@@ -10,7 +10,7 @@ import com.hilingual.data.auth.repository.AuthRepository
 import javax.inject.Inject
 
 internal class AuthRepositoryImpl @Inject constructor(
-    private val authApiDataSource: AuthRemoteDataSource,
+    private val authRemoteDataSource: AuthRemoteDataSource,
     private val googleAuthDataSource: GoogleAuthDataSource,
     private val tokenManager: TokenManager
 ) : AuthRepository {
@@ -18,7 +18,7 @@ internal class AuthRepositoryImpl @Inject constructor(
         googleAuthDataSource.signIn(context).map { it.idToken }
 
     override suspend fun login(providerToken: String, provider: String): Result<LoginModel> = suspendRunCatching {
-        val loginResponse = authApiDataSource.login(providerToken, provider).data!!
+        val loginResponse = authRemoteDataSource.login(providerToken, provider).data!!
         tokenManager.saveTokens(loginResponse.accessToken, loginResponse.refreshToken)
         LoginModel(loginResponse.isProfileCompleted)
     }

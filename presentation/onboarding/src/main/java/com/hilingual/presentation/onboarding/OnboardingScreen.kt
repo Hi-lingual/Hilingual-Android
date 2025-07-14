@@ -67,7 +67,7 @@ internal fun OnboardingRoute(
         onValueChanged = viewModel::onNicknameChanged,
         isValid = { uiState.isNicknameValid },
         errorMessage = uiState.validationMessage,
-        onDoneAction = viewModel::onDoneAction,
+        onDoneAction = viewModel::onSubmitNickname,
         onButtonClick = viewModel::onRegisterClick
     )
 }
