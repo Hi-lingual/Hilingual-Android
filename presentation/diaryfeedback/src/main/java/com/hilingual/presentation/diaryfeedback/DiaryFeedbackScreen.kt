@@ -154,7 +154,7 @@ private fun DiaryFeedbackScreen(
     }
 
     if (isImageDetailVisible && uiState.diaryContent.imageUrl != null) {
-        PhotoDetailModal(
+        ModalImage(
             imageUrl = uiState.diaryContent.imageUrl,
             onBackClick = onChangeImageDetailVisible,
             modifier = modifier.padding(paddingValues)
