@@ -40,9 +40,7 @@ import com.hilingual.presentation.home.component.footer.DiaryPreviewCard
 import com.hilingual.presentation.home.component.footer.TodayTopic
 import com.hilingual.presentation.home.component.footer.WriteDiaryButton
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.YearMonth
-import java.time.format.DateTimeFormatter
 
 @Composable
 internal fun HomeRoute(
@@ -158,21 +156,7 @@ private fun HomeScreen(
                     isWrittenProvider = { isWritten }
                 )
 
-                if (isWritable) {
-                    val writtenTime = remember(uiState.diaryPreview) {
-                        if (uiState.diaryPreview?.createdAt != null) {
-                            LocalDateTime.parse(uiState.diaryPreview.createdAt)
-                                .format(DateTimeFormatter.ofPattern("HH:mm"))
-                        } else {
-                            null
-                        }
-                    }
-                    DateTimeInfo(
-                        isWritten = isWritten,
-                        writtenTime = writtenTime,
-                        remainingTime = uiState.todayTopic?.remainingTime
-                    )
-                }
+                if (isWritable) DateTimeInfo(remainingTime = uiState.todayTopic?.remainingTime)
             }
 
             with(uiState) {

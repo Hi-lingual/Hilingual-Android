@@ -10,6 +10,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.hilingual.presentation.auth.navigation.navigateToAuth
+import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedback
+import com.hilingual.presentation.home.navigation.Home
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.splash.navigation.Splash
@@ -86,6 +88,13 @@ internal class MainNavigator(
         }
     ) {
         navController.navigateToOnboarding(navOptions)
+    }
+
+    fun navigateToDiaryFeedback(
+        diaryId: Long,
+        navOptions: NavOptions? = null
+    ) {
+        navController.navigateToDiaryFeedback(diaryId, navOptions)
     }
 
     fun navigateUp() {
