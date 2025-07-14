@@ -26,8 +26,8 @@ import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.image.HilingualLottieAnimation
 import com.hilingual.core.designsystem.component.topappbar.CloseOnlyTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.diarywrite.component.FeedbackUIData
 import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
+import com.hilingual.presentation.diarywrite.component.FeedbackUIData
 
 @Composable
 internal fun DiaryFeedbackStatusScreen(
