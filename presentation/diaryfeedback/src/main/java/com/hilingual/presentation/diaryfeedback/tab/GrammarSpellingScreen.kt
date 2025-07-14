@@ -131,13 +131,11 @@ private fun GrammarSpellingScreenPreview() {
     HilingualTheme {
         var isAI by remember { mutableStateOf(true) }
 
-        val dummyDiary = DiaryFeedbackViewModel.dummyDiaryContent
-
         GrammarSpellingScreen(
             writtenDate = "7월 11일 금요일",
             isAIWritten = isAI,
             onToggleDiaryViewMode = { isAI = !isAI },
-            diaryContent = dummyDiary,
+            diaryContent = DiaryContent(),
             feedbackList = DiaryFeedbackViewModel.dummyFeedbacks,
             onImageClick = {}
         )

@@ -2,11 +2,12 @@ package com.hilingual.presentation.diaryfeedback
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
+import com.hilingual.data.diary.repository.DiaryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,32 +16,38 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class DiaryFeedbackViewModel @Inject constructor() : ViewModel() {
+internal class DiaryFeedbackViewModel @Inject constructor(
+    private val diaryRepository: DiaryRepository
+) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<DiaryFeedbackUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<DiaryFeedbackUiState>> = _uiState.asStateFlow()
 
     init {
-        loadInitialData()
+        getDiaryContent()
     }
 
-    private fun loadInitialData() {
+    private fun getDiaryContent() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            delay(500)
-
-            val diaryContent = dummyDiaryContent
-            val feedbacks = dummyFeedbacks
-            val recommendExpression = dummyRecommendExpressions
-
-            _uiState.value = UiState.Success(
-                DiaryFeedbackUiState(
-                    diaryId = 0L, // TODO: 홈이나 일기 작성에서 id 받아오기
-                    diaryContent = diaryContent,
-                    feedbackList = feedbacks,
-                    recommendExpressionList = recommendExpression,
-                    isLoading = false
-                )
-            )
+            diaryRepository.getDiaryContent(9L)
+                .onSuccess { diaryResult ->
+                    _uiState.value = UiState.Success(
+                        DiaryFeedbackUiState(
+                            writtenDate = diaryResult.writtenDate,
+                            diaryContent = DiaryContent(
+                                originalText = diaryResult.originalText,
+                                aiText = diaryResult.rewriteText,
+                                diffRanges = diaryResult.diffRanges.map {
+                                    Pair(it.diffRange.first, it.diffRange.second)
+                                }.toImmutableList(),
+                                imageUrl = diaryResult.imageUrl
+                            ),
+                            isLoading = false
+                        )
+                    )
+                }
+                .onLogFailure {
+                }
         }
     }
 
@@ -72,21 +79,6 @@ internal class DiaryFeedbackViewModel @Inject constructor() : ViewModel() {
     }
 
     companion object {
-        // TODO: 서버 붙인 이후 삭제
-        val dummyDiaryContent = DiaryContent(
-            originalText = "Today I went to the cafe Conhas in Yeonnam to meet my teammates.\u2028 I was planning to arrive around 1:30 p.m., but I got there at 2:20 because I overslept, as always.\u2028 I wore rain boots and brought my favorite umbrella because the weather forecast said it would rain all day, but it wasn’t really raining much outside.\u2028 I got kind of disappointed. But yes, no rain is better than rain, I guess.\n" +
-                "After arriving, I had a jambon arugula sandwich with a vanilla latte.\u2028 Honestly, I should be more careful when I'm drinking milk because I get stomachaches easily, but I always order lattes.\u2028My life feels like a disaster, a mess that I call myself.\u2028 But they tasted really good, so I felt more motivated to work.\u2028 I really liked this café because it's spacious, chill, and has a great atmosphere for focusing.\u2028 I’ll definitely come back again soon!",
-            aiText = "Today I went to the cafe Conhas in Yeonnam to meet my teammates.\n I was planning to arrive around 1:30 p.m., but I got there at 2:20 because I overslept, as always.\n I wore rain boots and brought my favorite umbrella because the weather forecast said it would rain all day, but it wasn’t really raining much outside.\n I got kind of disappointed. But yes, no rain is better than rain, I guess.\n" +
-                "After arriving, I had a jambon arugula sandwich with a vanilla latte.\n Honestly, I should be more careful when I'm drinking milk because I get stomachaches easily, but I always order lattes.\nMy life feels like a disaster, a mess that I call myself.\n But they tasted really good, so I felt more motivated to work.\n I really liked this café because it's spacious, chill, and has a great atmosphere for focusing.\n I’ll definitely come back again soon!",
-            diffRanges = persistentListOf(
-                Pair(84, 164),
-                Pair(278, 316),
-                Pair(508, 583),
-                Pair(740, 802)
-            ),
-            imageUrl = "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/29/cb/cc/85/caption.jpg?w=600&h=400&s=1"
-        )
-
         val dummyFeedbacks = persistentListOf(
             FeedbackContent(
                 originalText = "i’m drinking milk because I easily get stomachache",

@@ -174,7 +174,6 @@ private fun DiaryFeedbackScreenPreview() {
             uiState = DiaryFeedbackUiState(
                 isAIWritten = isAIWritten,
                 writtenDate = "7월 11일 금요일",
-                diaryContent = vm.dummyDiaryContent,
                 feedbackList = vm.dummyFeedbacks,
                 recommendExpressionList = vm.dummyRecommendExpressions
             ),
