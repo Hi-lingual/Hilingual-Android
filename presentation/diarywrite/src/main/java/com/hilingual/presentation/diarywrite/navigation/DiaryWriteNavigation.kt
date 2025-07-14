@@ -28,7 +28,9 @@ fun NavGraphBuilder.diaryWriteNavGraph(
     composable<DiaryWrite> {
         DiaryWriteRoute(
             paddingValues = paddingValues,
-            navigateUp = navigateUp
+            navigateUp = navigateUp,
+            navigateToHome = {},
+            navigateToDiaryFeedback = {}
         )
     }
 }

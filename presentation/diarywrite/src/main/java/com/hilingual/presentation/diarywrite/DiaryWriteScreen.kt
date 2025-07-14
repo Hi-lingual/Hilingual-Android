@@ -36,7 +36,9 @@ import com.hilingual.core.designsystem.component.textfield.HilingualLongTextFiel
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
+import com.hilingual.presentation.diarywrite.component.FeedbackUIData
 import com.hilingual.presentation.diarywrite.component.DiaryWriteCancelDialog
+import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
 import com.hilingual.presentation.diarywrite.component.ImageSelectBottomSheet
 import com.hilingual.presentation.diarywrite.component.PhotoSelectButton
 import com.hilingual.presentation.diarywrite.component.RecommendedTopicDropdown
@@ -55,6 +57,8 @@ import java.util.Locale
 internal fun DiaryWriteRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
+    navigateToHome: () -> Unit,
+    navigateToDiaryFeedback: () -> Unit,
     viewModel: DiaryWriteViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -67,18 +71,41 @@ internal fun DiaryWriteRoute(
         )
     }
 
-    with(uiState) {
-        DiaryWriteScreen(
-            paddingValues = paddingValues,
-            onBackClicked = navigateUp,
-            selectedDate = uiState.selectedDate,
-            topicKo = uiState.topicKo,
-            topicEn = uiState.topicEn,
-            diaryText = uiState.diaryText,
-            onDiaryTextChanged = viewModel::updateDiaryText,
-            diaryImageUri = uiState.diaryImageUri,
-            onDiaryFeedbackRequestButtonClick = {}
-        )
+    when (viewModel.feedbackState.value) {
+        DiaryFeedbackState.Default -> {
+            DiaryWriteScreen(
+                paddingValues = paddingValues,
+                onBackClicked = navigateUp,
+                selectedDate = uiState.selectedDate,
+                topicKo = uiState.topicKo,
+                topicEn = uiState.topicEn,
+                diaryText = uiState.diaryText,
+                onDiaryTextChanged = viewModel::updateDiaryText,
+                diaryImageUri = uiState.diaryImageUri,
+                onDiaryFeedbackRequestButtonClick = {}
+            )
+        }
+
+        DiaryFeedbackState.Loading -> {
+            DiaryFeedbackStatusScreen(
+                paddingValues = paddingValues,
+                state = viewModel.feedbackState.value.data ?: FeedbackUIData(),
+                content = { LoadingContent() }
+            )
+        }
+
+        DiaryFeedbackState.Complete -> {
+            DiaryFeedbackStatusScreen(
+                paddingValues = paddingValues,
+                state = viewModel.feedbackState.value.data ?: FeedbackUIData(),
+                content = {
+                    CompleteContent(
+                        onCloseButtonClick = navigateToHome,
+                        onShowFeedbackButtonClick = navigateToDiaryFeedback
+                    )
+                }
+            )
+        }
     }
 }
 

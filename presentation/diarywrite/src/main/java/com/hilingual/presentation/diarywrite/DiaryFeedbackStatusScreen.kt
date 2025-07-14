@@ -26,14 +26,14 @@ import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.image.HilingualLottieAnimation
 import com.hilingual.core.designsystem.component.topappbar.CloseOnlyTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.diarywrite.component.DiaryWriteFeedbackState
+import com.hilingual.presentation.diarywrite.component.FeedbackUIData
+import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
 
 @Composable
-private fun DiaryFeedbackLoadingScreen(
+internal fun DiaryFeedbackStatusScreen(
     paddingValues: PaddingValues,
-    state: DiaryWriteFeedbackState,
-    onCloseButtonClick: () -> Unit,
-    onShowFeedbackButtonClick: () -> Unit,
+    state: FeedbackUIData,
+    content: @Composable () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -50,47 +50,58 @@ private fun DiaryFeedbackLoadingScreen(
             lottieRawResHeightDp = state.lottieRawResHeightDp
         )
 
-        when (state) {
-            DiaryWriteFeedbackState.Loading -> {
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        modifier = Modifier.size(16.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_error_16),
-                        contentDescription = null,
-                        tint = HilingualTheme.colors.gray300
-                    )
-                    Text(
-                        text = "지금 화면을 나가면, 작성 중인 일기가\n저장되지 않아요",
-                        color = HilingualTheme.colors.gray300,
-                        style = HilingualTheme.typography.captionR12,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
+        content()
+    }
+}
 
-            DiaryWriteFeedbackState.Complete -> {
-                CloseOnlyTopAppBar(
-                    modifier = Modifier.align(Alignment.TopCenter),
-                    onCloseClicked = onCloseButtonClick,
-                    iconTint = HilingualTheme.colors.black
-                )
+@Composable
+internal fun LoadingContent(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(bottom = 16.dp),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            modifier = Modifier.size(16.dp),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_error_16),
+            contentDescription = null,
+            tint = HilingualTheme.colors.gray300
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = "지금 화면을 나가면, 작성 중인 일기가\n저장되지 않아요",
+            color = HilingualTheme.colors.gray300,
+            style = HilingualTheme.typography.captionR12,
+            textAlign = TextAlign.Center
+        )
+    }
+}
 
-                HilingualButton(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 14.dp),
-                    text = "피드백 보러가기",
-                    onClick = onShowFeedbackButtonClick
-                )
-            }
-        }
+@Composable
+internal fun CompleteContent(
+    onCloseButtonClick: () -> Unit,
+    onShowFeedbackButtonClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        CloseOnlyTopAppBar(
+            onCloseClicked = onCloseButtonClick,
+            iconTint = HilingualTheme.colors.black
+        )
+
+        HilingualButton(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 14.dp),
+            text = "피드백 보러가기",
+            onClick = onShowFeedbackButtonClick
+        )
     }
 }
 
@@ -136,26 +147,29 @@ private fun TextAndLottie(
 
 @Preview
 @Composable
-private fun DiaryFeedbackLoadingScreenPreview() {
+private fun DiaryFeedbackLoadingStatusScreenPreview() {
     HilingualTheme {
-        DiaryFeedbackLoadingScreen(
+        DiaryFeedbackStatusScreen(
             paddingValues = PaddingValues(0.dp),
-            state = DiaryWriteFeedbackState.Loading,
-            onCloseButtonClick = {},
-            onShowFeedbackButtonClick = {}
+            state = DiaryFeedbackState.Loading.data ?: FeedbackUIData(),
+            content = { LoadingContent() }
         )
     }
 }
 
 @Preview
 @Composable
-private fun DiaryFeedbackCompleteScreenPreview() {
+private fun DiaryFeedbackCompleteStatusScreenPreview() {
     HilingualTheme {
-        DiaryFeedbackLoadingScreen(
+        DiaryFeedbackStatusScreen(
             paddingValues = PaddingValues(0.dp),
-            state = DiaryWriteFeedbackState.Complete,
-            onCloseButtonClick = {},
-            onShowFeedbackButtonClick = {}
+            state = DiaryFeedbackState.Complete.data ?: FeedbackUIData(),
+            content = {
+                CompleteContent(
+                    onCloseButtonClick = {},
+                    onShowFeedbackButtonClick = {}
+                )
+            }
         )
     }
 }
