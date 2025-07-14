@@ -39,7 +39,7 @@ internal fun GrammarSpellingScreen(
     diaryContent: DiaryContent,
     feedbackList: ImmutableList<FeedbackContent>,
     onToggleDiaryViewMode: (Boolean) -> Unit,
-    onImageClick: (String) -> Unit,
+    onImageClick: () -> Unit,
     modifier: Modifier = Modifier,
     isAIWritten: Boolean = true
 ) {
