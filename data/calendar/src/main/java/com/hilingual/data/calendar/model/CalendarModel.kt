@@ -1,7 +1,7 @@
 package com.hilingual.data.calendar.model
 
-import com.hilingual.data.calendar.dto.reponse.CalendarResponseDto
-import com.hilingual.data.calendar.dto.reponse.DateDto
+import com.hilingual.data.calendar.dto.response.CalendarResponseDto
+import com.hilingual.data.calendar.dto.response.DateDto
 
 data class CalendarModel(
     val dateList: List<DateModel>

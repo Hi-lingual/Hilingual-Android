@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.hilingual.data.user.model.UserInfoModel
 import java.time.LocalDate
 import com.hilingual.data.calendar.model.DateModel
+import com.hilingual.data.calendar.model.DiaryThumbnailModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -11,10 +12,9 @@ import kotlinx.collections.immutable.persistentListOf
 data class HomeUiState(
     val userProfile: UserProfile = UserProfile(),
     val selectedDate: LocalDate = LocalDate.now(),
-    val writtenDates: Set<LocalDate> = emptySet(),
-    val diaryPreview: DiaryPreview? = null,
+    val diaryThumbnail: DiaryThumbnailUiModel? = null,
     val todayTopic: TodayTopic? = null,
-    val isLoading: Boolean = true,
+    
     val dateList: ImmutableList<DateUiModel> = persistentListOf()
 )
 
@@ -34,14 +34,6 @@ fun UserInfoModel.toState() = UserProfile(
 )
 
 @Immutable
-data class DiaryPreview(
-    val diaryId: Long,
-    val createdAt: String,
-    val imageUrl: String? = "https://avatars.githubusercontent.com/u/160750136?v=4",
-    val originalText: String
-)
-
-@Immutable
 data class TodayTopic(
     val topicKo: String,
     val topicEn: String,
@@ -53,6 +45,6 @@ data class DateUiModel(
     val date: String
 )
 
-fun DateModel.toUiModel() = DateUiModel(
+fun DateModel.toState() = DateUiModel(
     date = this.date
 )

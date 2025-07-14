@@ -1,4 +1,4 @@
-package com.hilingual.data.calendar.dto.reponse
+package com.hilingual.data.calendar.dto.response
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName

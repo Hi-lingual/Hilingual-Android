@@ -16,7 +16,6 @@ import java.time.LocalDate
 import java.time.YearMonth
 import javax.inject.Inject
 import kotlinx.collections.immutable.persistentListOf
-import com.hilingual.presentation.home.toUiModel
 import kotlinx.coroutines.async
 
 @HiltViewModel
@@ -60,7 +59,7 @@ class HomeViewModel @Inject constructor(
                     _uiState.update { currentState ->
                         (currentState as UiState.Success).copy(
                             data = currentState.data.copy(
-                                dateList = persistentListOf(*calendarModel.dateList.map { it.toUiModel() }.toTypedArray())
+                                dateList = persistentListOf(*calendarModel.dateList.map { it.toState() }.toTypedArray())
                             )
                         )
                     }
@@ -75,9 +74,38 @@ class HomeViewModel @Inject constructor(
                 data = currentState.data.copy(selectedDate = date)
             )
         }
+        val currentUiState = (_uiState.value as? UiState.Success)?.data
+        if (currentUiState?.dateList?.any { LocalDate.parse(it.date) == date } == true) {
+            getDiaryThumbnail(date.toString())
+        } else {
+            _uiState.update { currentState ->
+                if (currentState is UiState.Success) {
+                    currentState.copy(data = currentState.data.copy(diaryThumbnail = null))
+                } else {
+                    currentState
+                }
+            }
+        }
     }
 
     fun onMonthChanged(yearMonth: YearMonth) {
         getCalendarData(yearMonth.year, yearMonth.monthValue)
+    }
+
+    private fun getDiaryThumbnail(date: String) {
+        viewModelScope.launch {
+            calendarRepository.getDiaryThumbnail(date).onSuccess {
+                _uiState.update { currentState ->
+                    if (currentState is UiState.Success) {
+                        currentState.copy(data = currentState.data.copy(
+                            diaryThumbnail = it.toState()
+                        ))
+                    } else {
+                        currentState
+                    }
+                }
+            }
+            .onLogFailure { }
+        }
     }
 }

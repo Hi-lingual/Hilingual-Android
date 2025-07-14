@@ -95,7 +95,7 @@ private fun HomeScreen(
 ) {
     val date = uiState.selectedDate
     val today = remember { LocalDate.now() }
-    val isWritten = remember(uiState.writtenDates, date) { uiState.writtenDates.contains(date) }
+    val isWritten = remember(uiState.dateList, date) { uiState.dateList.any { LocalDate.parse(it.date) == date } }
     val isFuture = remember(date, today) { date.isAfter(today) }
     val isWritable =
         remember(isFuture, date, today) { !isFuture && date.isAfter(today.minusDays(2)) }
@@ -161,24 +161,14 @@ private fun HomeScreen(
 
             with(uiState) {
                 when {
-                    isLoading -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 24.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
-
+                    // Removed uiState.isLoading check here
                     isWritten -> {
-                        if (diaryPreview != null) {
+                        if (diaryThumbnail != null) {
                             DiaryPreviewCard(
-                                diaryText = diaryPreview.originalText,
-                                diaryId = diaryPreview.diaryId,
+                                diaryText = diaryThumbnail.originalText,
+                                diaryId = diaryThumbnail.diaryId,
                                 onClick = onDiaryPreviewClick,
-                                imageUrl = diaryPreview.imageUrl,
+                                imageUrl = diaryThumbnail.imageUrl,
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
