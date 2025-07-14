@@ -23,19 +23,10 @@ import com.hilingual.presentation.home.R
 
 @Composable
 internal fun DateTimeInfo(
-    isWritten: Boolean,
-    writtenTime: String?,
     remainingTime: Int?,
     modifier: Modifier = Modifier
 ) {
-    if (isWritten) {
-        Text(
-            text = writtenTime ?: "",
-            style = HilingualTheme.typography.bodyM14,
-            color = HilingualTheme.colors.gray300,
-            modifier = modifier
-        )
-    } else if (remainingTime != null) {
+    if (remainingTime != null) {
         Row(
             modifier = modifier,
             verticalAlignment = Alignment.CenterVertically
@@ -73,16 +64,13 @@ private fun calculateRemainingTime(remainingTime: Int): Pair<Int, String> =
     }
 
 private data class DateTimeInfoPreviewState(
-    val isWritten: Boolean,
-    val writtenTime: String?,
     val remainingTime: Int?
 )
 
 private class DateTimeInfoPreviewProvider :
     PreviewParameterProvider<DateTimeInfoPreviewState> {
     override val values = sequenceOf(
-        DateTimeInfoPreviewState(isWritten = false, writtenTime = null, remainingTime = 1440),
-        DateTimeInfoPreviewState(isWritten = true, writtenTime = "14:30", remainingTime = null)
+        DateTimeInfoPreviewState(remainingTime = 1440)
     )
 }
 
@@ -93,8 +81,6 @@ private fun DateTimeInfoPreview(
 ) {
     HilingualTheme {
         DateTimeInfo(
-            isWritten = state.isWritten,
-            writtenTime = state.writtenTime,
             remainingTime = state.remainingTime
         )
     }
