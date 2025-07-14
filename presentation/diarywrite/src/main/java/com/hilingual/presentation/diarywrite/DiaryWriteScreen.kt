@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.addFocusCleaner
+import com.hilingual.core.common.extension.advancedImePadding
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualLongTextField
@@ -118,7 +119,6 @@ private fun DiaryWriteScreen(
         modifier = Modifier
             .background(HilingualTheme.colors.white)
             .fillMaxSize()
-            // TODO: 네비 연결 후 advancedImePadding() 적용
             .padding(paddingValues)
             .addFocusCleaner(focusManager)
     ) {
@@ -147,6 +147,7 @@ private fun DiaryWriteScreen(
         Column(
             modifier = Modifier
                 .weight(1f)
+                .advancedImePadding()
                 .verticalScroll(verticalScrollState)
                 .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
         ) {
