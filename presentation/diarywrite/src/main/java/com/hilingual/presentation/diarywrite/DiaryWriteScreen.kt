@@ -54,7 +54,7 @@ fun DiaryWriteRoute(
 ) {
     val localSystemBarsColor = LocalSystemBarsColor.current
     var diaryText by remember { mutableStateOf("") }
-    val diaryImageUri by remember { mutableStateOf<Uri?>(null) }
+    var diaryImageUri by remember { mutableStateOf<Uri?>(null) }
 
     LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
@@ -72,6 +72,7 @@ fun DiaryWriteRoute(
         diaryText = diaryText,
         onDiaryTextChanged = { diaryText = it },
         diaryImageUri = diaryImageUri,
+        onDiaryImageUriChanged = { diaryImageUri = it },
         onDiaryFeedbackRequestButtonClick = {}
     )
 }
@@ -86,6 +87,7 @@ private fun DiaryWriteScreen(
     diaryText: String,
     onDiaryTextChanged: (String) -> Unit,
     diaryImageUri: Uri?,
+    onDiaryImageUriChanged: (Uri?) -> Unit,
     onDiaryFeedbackRequestButtonClick: () -> Unit
 ) {
     val verticalScrollState = rememberScrollState()
@@ -164,9 +166,8 @@ private fun DiaryWriteScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             PhotoSelectButton(
-                onPhotoSelectClick = { /* TODO: 갤러리로 이동 */ },
-                onDeleteClick = { /* TODO: 컴포넌트 내에서 해당 작업 처리되도록 리팩토링 예정 */ },
-                selectedImgUri = diaryImageUri
+                selectedImgUri = diaryImageUri,
+                onImgSelected = onDiaryImageUriChanged
             )
         }
 
@@ -225,6 +226,7 @@ private val DATE_FORMATTER: DateTimeFormatter =
 @Composable
 private fun DiaryWriteScreenPreview() {
     var diaryText by remember { mutableStateOf("") }
+    var diaryImageUri by remember { mutableStateOf<Uri?>(null) }
 
     HilingualTheme {
         DiaryWriteScreen(
@@ -235,7 +237,8 @@ private fun DiaryWriteScreenPreview() {
             topicEn = "What surprised you today?",
             diaryText = diaryText,
             onDiaryTextChanged = { diaryText = it },
-            diaryImageUri = null,
+            diaryImageUri = diaryImageUri,
+            onDiaryImageUriChanged = { diaryImageUri = it },
             onDiaryFeedbackRequestButtonClick = {}
         )
     }

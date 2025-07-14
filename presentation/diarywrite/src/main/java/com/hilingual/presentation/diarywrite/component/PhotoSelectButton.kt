@@ -1,6 +1,9 @@
 package com.hilingual.presentation.diarywrite.component
 
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -18,7 +21,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -26,10 +28,17 @@ import com.hilingual.presentation.diarywrite.R
 
 @Composable
 internal fun PhotoSelectButton(
-    onPhotoSelectClick: () -> Unit,
-    onDeleteClick: () -> Unit,
-    selectedImgUri: Uri? = null
+    selectedImgUri: Uri? = null,
+    onImgSelected: (Uri?) -> Unit
 ) {
+    val photoSelectLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) {
+            onImgSelected(uri)
+        }
+    }
+
     Box(
         modifier = Modifier.size(width = 88.dp, height = 89.dp)
     ) {
@@ -46,7 +55,9 @@ internal fun PhotoSelectButton(
                 modifier = Modifier
                     .size(22.dp)
                     .align(Alignment.TopEnd)
-                    .noRippleClickable(onClick = onDeleteClick),
+                    .noRippleClickable {
+                        onImgSelected(null)
+                    },
                 imageVector = ImageVector.vectorResource(R.drawable.ic_delete_circle_22),
                 contentDescription = null,
                 tint = Color.Unspecified
@@ -58,7 +69,11 @@ internal fun PhotoSelectButton(
                     .align(Alignment.BottomStart)
                     .clip(RoundedCornerShape(8.dp))
                     .background(HilingualTheme.colors.gray100)
-                    .noRippleClickable(onClick = onPhotoSelectClick),
+                    .noRippleClickable(onClick = {
+                        photoSelectLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    }),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -76,16 +91,14 @@ internal fun PhotoSelectButton(
 @Preview
 @Composable
 private fun PhotoSelectButtonPreview() {
-    val imgUriState = remember { mutableStateOf<Uri?>("".toUri()) }
+    val imgUriState = remember { mutableStateOf<Uri?>(null) }
 
     HilingualTheme {
         PhotoSelectButton(
-            onPhotoSelectClick = {
-                // Preview에서는 초기 상태의 버튼을 클릭했을 때 이미지가 자동으로 삽입된다고 가정해 테스트 진행함 (실제 UI에서는 바텀시트로 연결됨)
-                imgUriState.value = "".toUri()
-            },
-            onDeleteClick = { imgUriState.value = null },
-            selectedImgUri = imgUriState.value
+            selectedImgUri = imgUriState.value,
+            onImgSelected = { newUri ->
+                imgUriState.value = newUri
+            }
         )
     }
 }
