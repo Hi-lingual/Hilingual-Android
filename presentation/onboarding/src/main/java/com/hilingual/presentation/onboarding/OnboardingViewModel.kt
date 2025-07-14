@@ -2,15 +2,20 @@ package com.hilingual.presentation.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.data.user.model.UserProfile
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,6 +29,9 @@ class OnboardingViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(OnboardingUiState())
     val uiState: StateFlow<OnboardingUiState> = _uiState.asStateFlow()
+
+    private val _eventChannel = Channel<OnboardingEvent>(Channel.CONFLATED)
+    val eventChannel: Flow<OnboardingEvent> = _eventChannel.receiveAsFlow()
 
     init {
         @OptIn(FlowPreview::class)
@@ -47,8 +55,19 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
-    fun onDoneAction() {
-        validateNickname(_uiState.value.nickname)
+    fun onDoneAction(nickname: String) {
+        validateNickname(nickname)
+    }
+
+    fun onRegisterClick(nickname: String) {
+        viewModelScope.launch {
+            userRepository.postUserProfile(UserProfile(profileImg = "", nickname = nickname))
+                .onSuccess {
+                    _eventChannel.send(OnboardingEvent.NavigateToHome)
+                }
+                .onLogFailure {
+                }
+        }
     }
 
     private fun validateNickname(nickname: String) {
@@ -91,7 +110,7 @@ class OnboardingViewModel @Inject constructor(
                         }
                     }
                 }
-                .onFailure {
+                .onLogFailure {
                     _uiState.update {
                         it.copy(
                             isNicknameValid = false
@@ -100,4 +119,8 @@ class OnboardingViewModel @Inject constructor(
                 }
         }
     }
+}
+
+sealed interface OnboardingEvent {
+    data object NavigateToHome : OnboardingEvent
 }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -47,6 +48,14 @@ internal fun OnboardingRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val systemUiController = rememberSystemUiController()
 
+    LaunchedEffect(viewModel.eventChannel) {
+        viewModel.eventChannel.collect { event ->
+            when (event) {
+                OnboardingEvent.NavigateToHome -> navigateToHome()
+            }
+        }
+    }
+
     SideEffect {
         systemUiController.setStatusBarColor(color = white, darkIcons = false)
     }
@@ -58,7 +67,7 @@ internal fun OnboardingRoute(
         isValid = { uiState.isNicknameValid },
         errorMessage = uiState.validationMessage,
         onDoneAction = viewModel::onDoneAction,
-        onButtonClick = navigateToHome
+        onButtonClick = viewModel::onRegisterClick
     )
 }
 
@@ -69,8 +78,8 @@ private fun OnboardingScreen(
     onValueChanged: (String) -> Unit,
     isValid: () -> Boolean,
     errorMessage: String,
-    onDoneAction: () -> Unit,
-    onButtonClick: () -> Unit,
+    onDoneAction: (String) -> Unit,
+    onButtonClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
@@ -129,7 +138,7 @@ private fun OnboardingScreen(
             errorMessage = errorMessage,
             successMessage = "사용 가능한 닉네임이에요",
             onDoneAction = {
-                onDoneAction()
+                onDoneAction(value)
                 focusManager.clearFocus()
             }
         )
@@ -138,7 +147,7 @@ private fun OnboardingScreen(
 
         HilingualButton(
             text = "시작하기",
-            onClick = onButtonClick,
+            onClick = { onButtonClick(value) },
             enabled = isValid(),
             modifier = Modifier.padding(vertical = 12.dp)
         )
@@ -155,8 +164,8 @@ private fun OnboardingScreenPreview() {
             onValueChanged = {},
             isValid = { true },
             errorMessage = "",
-            onDoneAction = {},
-            onButtonClick = {}
+            onDoneAction = { _ -> },
+            onButtonClick = { _ -> }
         )
     }
 }
