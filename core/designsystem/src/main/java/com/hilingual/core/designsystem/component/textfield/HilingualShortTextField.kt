@@ -26,27 +26,27 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun HilingualShortTextField(
-    value: String,
+    value: () -> String,
     placeholder: String,
     onValueChanged: (String) -> Unit,
     maxLength: Int,
     isValid: () -> Boolean,
-    errorMessage: String,
+    errorMessage: () -> String,
     successMessage: String,
     modifier: Modifier = Modifier,
     height: Dp = 54.dp,
     onDoneAction: () -> Unit = {}
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-
-    val isError = value.isNotEmpty() && !isValid()
-    val isSuccess = value.isNotEmpty() && isValid()
+    val text = value()
+    val isError = text.isNotEmpty() && !isValid()
+    val isSuccess = text.isNotEmpty() && isValid()
 
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         HilingualBasicTextField(
-            value = value,
+            value = text,
             placeholder = placeholder,
             textStyle = HilingualTheme.typography.bodyM16,
             onValueChanged = { it ->
@@ -69,7 +69,7 @@ fun HilingualShortTextField(
         Row {
             Text(
                 text = when {
-                    isError -> errorMessage
+                    isError -> errorMessage()
                     isSuccess -> successMessage
                     else -> ""
                 },
@@ -84,7 +84,7 @@ fun HilingualShortTextField(
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = "${value.graphemeLength} / $maxLength",
+                text = "${text.graphemeLength} / $maxLength",
                 style = HilingualTheme.typography.captionR12,
                 color = HilingualTheme.colors.gray300
             )
@@ -100,7 +100,7 @@ private fun HilingualShortTextFieldPreview() {
 
     HilingualTheme {
         HilingualShortTextField(
-            value = text,
+            value = { text },
             placeholder = "한글, 영문, 숫자 조합만 가능",
             onValueChanged = { text = it },
             onDoneAction = {
@@ -109,7 +109,7 @@ private fun HilingualShortTextFieldPreview() {
             },
             maxLength = 10,
             isValid = { text.matches(Regex("^[가-힣a-zA-Z0-9]+$")) },
-            errorMessage = "한글, 영문, 숫자만 입력 가능합니다.",
+            errorMessage = { "한글, 영문, 숫자만 입력 가능합니다." },
             successMessage = "올바른 형식입니다."
         )
     }

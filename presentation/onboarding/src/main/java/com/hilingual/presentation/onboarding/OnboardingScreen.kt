@@ -63,10 +63,10 @@ internal fun OnboardingRoute(
 
     OnboardingScreen(
         paddingValues = paddingValues,
-        value = uiState.nickname,
+        value = { uiState.nickname },
         onValueChanged = viewModel::onNicknameChanged,
         isValid = { uiState.isNicknameValid },
-        errorMessage = uiState.validationMessage,
+        errorMessage = { uiState.validationMessage },
         onDoneAction = viewModel::onSubmitNickname,
         onButtonClick = viewModel::onRegisterClick
     )
@@ -75,10 +75,10 @@ internal fun OnboardingRoute(
 @Composable
 private fun OnboardingScreen(
     paddingValues: PaddingValues,
-    value: String,
+    value: () -> String,
     onValueChanged: (String) -> Unit,
     isValid: () -> Boolean,
-    errorMessage: String,
+    errorMessage: () -> String,
     onDoneAction: (String) -> Unit,
     onButtonClick: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -139,7 +139,7 @@ private fun OnboardingScreen(
             errorMessage = errorMessage,
             successMessage = "사용 가능한 닉네임이에요",
             onDoneAction = {
-                onDoneAction(value)
+                onDoneAction(value())
                 focusManager.clearFocus()
             }
         )
@@ -148,8 +148,8 @@ private fun OnboardingScreen(
 
         HilingualButton(
             text = "시작하기",
-            onClick = { onButtonClick(value) },
-            enabled = isValid(),
+            onClick = { onButtonClick(value()) },
+            enableProvider = isValid,
             modifier = Modifier.padding(vertical = 12.dp)
         )
     }
@@ -161,10 +161,10 @@ private fun OnboardingScreenPreview() {
     HilingualTheme {
         OnboardingScreen(
             paddingValues = PaddingValues(0.dp),
-            value = "",
+            value = { "" },
             onValueChanged = {},
             isValid = { true },
-            errorMessage = "",
+            errorMessage = { "" },
             onDoneAction = { _ -> },
             onButtonClick = { _ -> }
         )
