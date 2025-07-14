@@ -45,19 +45,6 @@ internal enum class DiaryWriteFeedbackState(
 }
 
 @Composable
-internal fun DiaryFeedbackLoadingScreenRoute(
-    paddingValues: PaddingValues,
-    state: DiaryWriteFeedbackState
-) {
-    DiaryFeedbackLoadingScreen(
-        paddingValues = paddingValues,
-        state = state,
-        onCloseButtonClick = {},
-        onShowFeedbackButtonClick = {}
-    )
-}
-
-@Composable
 private fun DiaryFeedbackLoadingScreen(
     paddingValues: PaddingValues,
     state: DiaryWriteFeedbackState,
