@@ -7,7 +7,7 @@ data class UserProfile(
     val nickname: String
 )
 
-fun UserProfile.toDto(): UserProfileRequestDto = UserProfileRequestDto(
+internal fun UserProfile.toDto(): UserProfileRequestDto = UserProfileRequestDto(
     profileImg = this.profileImg,
     nickname = this.nickname
 )

@@ -7,7 +7,7 @@ import com.hilingual.data.user.dto.request.UserProfileRequestDto
 import com.hilingual.data.user.service.UserService
 import jakarta.inject.Inject
 
-class UserRemoteDataSourceImpl @Inject constructor(
+internal class UserRemoteDataSourceImpl @Inject constructor(
     private val userService: UserService
 ) : UserRemoteDataSource {
     override suspend fun getNicknameAvailability(nickname: String): BaseResponse<NicknameResponseDto> =

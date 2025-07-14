@@ -7,7 +7,7 @@ import com.hilingual.data.user.model.toDto
 import com.hilingual.data.user.repository.UserRepository
 import jakarta.inject.Inject
 
-class UserRepositoryImpl @Inject constructor(
+internal class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource
 ) : UserRepository {
     override suspend fun getNicknameAvailability(nickname: String): Result<Boolean> =

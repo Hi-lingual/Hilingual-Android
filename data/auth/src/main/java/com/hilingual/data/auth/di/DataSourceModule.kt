@@ -29,7 +29,7 @@ internal abstract class DataSourceModule {
         authRemoteDataSourceImpl: AuthRemoteDataSourceImpl
     ): AuthRemoteDataSource
 
-    companion object {
+    internal companion object {
         @Provides
         @Singleton
         fun provideCredentialManager(@ApplicationContext context: Context): CredentialManager {

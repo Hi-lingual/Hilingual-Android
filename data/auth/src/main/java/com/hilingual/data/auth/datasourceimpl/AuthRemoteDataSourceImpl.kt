@@ -7,7 +7,7 @@ import com.hilingual.data.auth.dto.response.LoginResponseDto
 import com.hilingual.data.auth.service.LoginService
 import javax.inject.Inject
 
-class AuthRemoteDataSourceImpl @Inject constructor(
+internal class AuthRemoteDataSourceImpl @Inject constructor(
     private val loginService: LoginService
 ) : AuthRemoteDataSource {
     override suspend fun login(providerToken: String, provider: String): BaseResponse<LoginResponseDto> =
