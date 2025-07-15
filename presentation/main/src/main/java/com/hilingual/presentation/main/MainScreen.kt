@@ -34,6 +34,7 @@ import com.hilingual.core.designsystem.event.LocalDialogController
 import com.hilingual.core.designsystem.event.rememberDialogController
 import com.hilingual.presentation.auth.navigation.authNavGraph
 import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
+import com.hilingual.presentation.diarywrite.navigation.diaryWriteNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.onboarding.navigation.onboardingGraph
@@ -101,35 +102,40 @@ internal fun MainScreen(
                     navController = navigator.navController,
                     startDestination = navigator.startDestination
 
-                ) {
-                    splashNavGraph(
-                        navigateToAuth = navigator::navigateToAuth,
-                        navigateToHome = navigator::navigateToHome,
-                        sharedTransitionScope = this@SharedTransitionLayout
-                    )
-                    authNavGraph(
-                        paddingValues = innerPadding,
-                        navigateToHome = navigator::navigateToHome,
-                        navigateToOnboarding = navigator::navigateToOnboarding,
-                        sharedTransitionScope = this@SharedTransitionLayout
-                    )
-                    onboardingGraph(
-                        paddingValues = innerPadding,
-                        navigateToHome = navigator::navigateToHome
-                    )
-                    homeNavGraph(
-                        paddingValues = innerPadding,
-                        navigateToDiaryFeedback = navigator::navigateToDiaryFeedback
-                    )
-                    vocaNavGraph(
-                        paddingValues = innerPadding,
-                        navigateToHome = navigator::navigateToHome
-                    )
-                    diaryFeedbackNavGraph(
-                        paddingValues = innerPadding,
-                        navigateUp = navigator::navigateUp
-                    )
-                }
+            ) {
+                splashNavGraph(
+                    navigateToAuth = navigator::navigateToAuth,
+                    navigateToHome = navigator::navigateToHome,
+                    sharedTransitionScope = this@SharedTransitionLayout
+                )
+                authNavGraph(
+                    paddingValues = innerPadding,
+                    navigateToHome = navigator::navigateToHome,
+                    navigateToOnboarding = navigator::navigateToOnboarding,
+                    sharedTransitionScope = this@SharedTransitionLayout
+                )
+                onboardingGraph(
+                    paddingValues = innerPadding,
+                    navigateToHome = navigator::navigateToHome
+                )
+                homeNavGraph(
+                    paddingValues = innerPadding,
+                    navigateToDiaryFeedback = navigator::navigateToDiaryFeedback,
+                    navigateToDiaryWrite = navigator::navigateToDiaryWrite
+                )
+                diaryWriteNavGraph(
+                    paddingValues = innerPadding,
+                    navigateUp = navigator::navigateUp
+                )
+                vocaNavGraph(
+                    paddingValues = innerPadding,
+                    navigateToHome = navigator::navigateToHome
+                )
+                diaryFeedbackNavGraph(
+                    paddingValues = innerPadding,
+                    navigateUp = navigator::navigateUp
+                )
+            }
 
                 HilingualErrorDialog(controller = dialogController)
             }

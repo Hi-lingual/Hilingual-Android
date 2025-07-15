@@ -2,20 +2,28 @@ package com.hilingual.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
+import com.hilingual.data.calendar.repository.CalendarRepository
+import com.hilingual.data.user.repository.UserRepository
+import com.hilingual.presentation.home.model.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor() : ViewModel() {
+class HomeViewModel @Inject constructor(
+    private val userRepository: UserRepository,
+    private val calendarRepository: CalendarRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<HomeUiState>> = _uiState.asStateFlow()
@@ -27,100 +35,139 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     private fun loadInitialData() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            delay(500)
+            val today = LocalDate.now()
 
-            val userProfile = UserProfile(nickname = "하이링", profileImg = "https://avatars.githubusercontent.com/u/160750136?v=4", totalDiaries = 12, streak = 4)
-            val writtenDates = setOf(LocalDate.now().minusDays(2), LocalDate.now().minusDays(4))
-            val selectedDate = LocalDate.now()
+            val userInfoDeferred = async { userRepository.getUserInfo() }
+            val calendarDeferred = async { calendarRepository.getCalendar(today.year, today.monthValue) }
 
-            _uiState.value = UiState.Success(
-                HomeUiState(
-                    userProfile = userProfile,
-                    writtenDates = writtenDates,
-                    selectedDate = selectedDate,
-                    isLoading = false
-                )
-            )
-            loadDataForDate(selectedDate)
+            val userInfoResult = userInfoDeferred.await()
+            val calendarResult = calendarDeferred.await()
+
+            userInfoResult.onSuccess { userInfo ->
+                calendarResult.onSuccess { calendarData ->
+                    val hasDiaryToday = calendarData.dateList.any { LocalDate.parse(it.date) == today }
+                    _uiState.value = UiState.Success(
+                        HomeUiState(
+                            userProfile = userInfo.toState(),
+                            dateList = calendarData.dateList.map { it.toState() }.toImmutableList(),
+                            selectedDate = today,
+                            isDiaryThumbnailLoading = hasDiaryToday,
+                            diaryThumbnail = null
+                        )
+                    )
+                    if (hasDiaryToday) {
+                        getDiaryThumbnail(today.toString())
+                    } else {
+                        getTopic(today.toString())
+                    }
+                    return@launch
+                }.onLogFailure { }
+            }.onLogFailure { }
         }
     }
 
     fun onDateSelected(date: LocalDate) {
-        val currentUiState = _uiState.value
-        if (currentUiState !is UiState.Success || currentUiState.data.selectedDate == date) {
-            return
+        val currentState = _uiState.value
+        if (currentState !is UiState.Success) return
+
+        if (currentState.data.selectedDate == date) return
+
+        val hasDiary = currentState.data.dateList.any { LocalDate.parse(it.date) == date }
+
+        _uiState.updateSuccess {
+            it.copy(
+                selectedDate = date,
+                diaryThumbnail = null,
+                isDiaryThumbnailLoading = hasDiary,
+                todayTopic = null
+            )
         }
 
-        _uiState.update {
-            (it as UiState.Success).copy(data = it.data.copy(selectedDate = date, diaryPreview = null, todayTopic = null))
+        /*
+        val today = LocalDate.now()
+        val isWritable = !date.isAfter(today) && date.isAfter(today.minusDays(2))
+
+        when {
+            hasDiary -> getDiaryThumbnail(date.toString())
+            isWritable -> getTopic(date.toString())
         }
-        loadDataForDate(date)
-    }
-
-    private fun loadDataForDate(date: LocalDate) {
-        viewModelScope.launch {
-            _uiState.update {
-                if (it is UiState.Success) it.copy(data = it.data.copy(isLoading = true)) else it
-            }
-            delay(150)
-
-            _uiState.update { currentState ->
-                if (currentState !is UiState.Success || currentState.data.selectedDate != date) {
-                    return@update currentState
-                }
-
-                val isWritten = currentState.data.writtenDates.contains(date)
-                val updatedData = if (isWritten) {
-                    currentState.data.copy(
-                        diaryPreview = createFakeDiaryPreview(),
-                        todayTopic = null,
-                        isLoading = false
-                    )
-                } else {
-                    currentState.data.copy(
-                        diaryPreview = null,
-                        todayTopic = createFakeTodayTopic(),
-                        isLoading = false
-                    )
-                }
-                UiState.Success(updatedData)
-            }
+        */
+        if (hasDiary) {
+            getDiaryThumbnail(date.toString())
+        } else {
+            getTopic(date.toString())
         }
     }
 
     fun onMonthChanged(yearMonth: YearMonth) {
+        val currentState = _uiState.value
+        if (currentState !is UiState.Success) return
+
+        if (YearMonth.from(currentState.data.selectedDate) == yearMonth) return
+
         viewModelScope.launch {
-            _uiState.update {
-                if (it is UiState.Success) it.copy(data = it.data.copy(isLoading = true)) else it
-            }
-            delay(300)
+            _uiState.updateSuccess { it.copy(isDiaryThumbnailLoading = true) }
+            calendarRepository.getCalendar(yearMonth.year, yearMonth.monthValue)
+                .onSuccess { calendarModel ->
+                    val newDate = yearMonth.atDay(1)
+                    val hasDiaryOnFirst = calendarModel.dateList.any { LocalDate.parse(it.date) == newDate }
 
-            _uiState.update { currentState ->
-                if (currentState !is UiState.Success) return@update currentState
+                    _uiState.updateSuccess { it ->
+                        it.copy(
+                            dateList = calendarModel.dateList.map { it.toState() }.toImmutableList(),
+                            selectedDate = newDate,
+                            diaryThumbnail = null,
+                            todayTopic = null,
+                            isDiaryThumbnailLoading = hasDiaryOnFirst
+                        )
+                    }
 
-                val newWrittenDates = setOf(
-                    LocalDate.of(yearMonth.year, yearMonth.month, 3),
-                    LocalDate.of(yearMonth.year, yearMonth.month, 15),
-                    LocalDate.of(yearMonth.year, yearMonth.month, 28)
-                )
-
-                loadDataForDate(currentState.data.selectedDate)
-
-                currentState.copy(data = currentState.data.copy(writtenDates = newWrittenDates))
-            }
+                    /*
+                    val today = LocalDate.now()
+                    val isWritable = !newDate.isAfter(today) && newDate.isAfter(today.minusDays(2))
+                    when {
+                        hasDiaryOnFirst -> getDiaryThumbnail(newDate.toString())
+                        isWritable -> getTopic(newDate.toString())
+                    }
+                    */
+                    if (hasDiaryOnFirst) {
+                        getDiaryThumbnail(newDate.toString())
+                    } else {
+                        getTopic(newDate.toString())
+                    }
+                }
+                .onLogFailure { }
         }
     }
 
-    private fun createFakeDiaryPreview() = DiaryPreview(
-        diaryId = 1,
-        createdAt = "2025-06-27T16:30:12",
-        imageUrl = "https://avatars.githubusercontent.com/u/160750136?v=4",
-        originalText = "Today was such a meaningful day. I went to the park..."
-    )
+    private fun getDiaryThumbnail(date: String) {
+        viewModelScope.launch {
+            calendarRepository.getDiaryThumbnail(date)
+                .onSuccess { thumbnail ->
+                    _uiState.updateSuccess {
+                        it.copy(
+                            diaryThumbnail = thumbnail.toState(),
+                            isDiaryThumbnailLoading = false
+                        )
+                    }
+                }
+                .onLogFailure {
+                    _uiState.updateSuccess {
+                        it.copy(isDiaryThumbnailLoading = false)
+                    }
+                }
+        }
+    }
 
-    private fun createFakeTodayTopic() = TodayTopic(
-        topicKo = "오늘 가장 기억에 남는 일은?",
-        topicEn = "What was the most memorable moment today?",
-        remainingTime = 1440
-    )
+    private fun getTopic(date: String) {
+        viewModelScope.launch {
+            calendarRepository.getTopic(date)
+                .onSuccess { topic ->
+                    _uiState.updateSuccess {
+                        it.copy(todayTopic = topic.toState())
+                    }
+                }
+                .onLogFailure { }
+        }
+    }
 }

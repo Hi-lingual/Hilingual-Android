@@ -1,5 +1,6 @@
 package com.hilingual.presentation.diarywrite
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,14 +27,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.addFocusCleaner
+import com.hilingual.core.common.extension.advancedImePadding
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualLongTextField
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
+import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
 import com.hilingual.presentation.diarywrite.component.DiaryWriteCancelDialog
+import com.hilingual.presentation.diarywrite.component.FeedbackCompleteContent
+import com.hilingual.presentation.diarywrite.component.FeedbackLoadingContent
+import com.hilingual.presentation.diarywrite.component.FeedbackUIData
 import com.hilingual.presentation.diarywrite.component.ImageSelectBottomSheet
 import com.hilingual.presentation.diarywrite.component.PhotoSelectButton
 import com.hilingual.presentation.diarywrite.component.RecommendedTopicDropdown
@@ -48,13 +56,17 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun DiaryWriteRoute(
-    paddingValues: PaddingValues
+internal fun DiaryWriteRoute(
+    paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
+    navigateToHome: () -> Unit,
+    navigateToDiaryFeedback: () -> Unit,
+    viewModel: DiaryWriteViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
-    var diaryText by remember { mutableStateOf("") }
-    val diaryImageUri by remember { mutableStateOf<Uri?>(null) }
 
     LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
@@ -63,17 +75,43 @@ fun DiaryWriteRoute(
         )
     }
 
-    DiaryWriteScreen(
-        paddingValues = paddingValues,
-        onBackClicked = {},
-        selectedDate = LocalDate.now(),
-        topicKo = "",
-        topicEn = "",
-        diaryText = diaryText,
-        onDiaryTextChanged = { diaryText = it },
-        diaryImageUri = diaryImageUri,
-        onDiaryFeedbackRequestButtonClick = {}
-    )
+    when (viewModel.feedbackState.value) {
+        DiaryFeedbackState.Default -> {
+            DiaryWriteScreen(
+                paddingValues = paddingValues,
+                onBackClicked = navigateUp,
+                selectedDate = uiState.selectedDate,
+                topicKo = uiState.topicKo,
+                topicEn = uiState.topicEn,
+                diaryText = uiState.diaryText,
+                onDiaryTextChanged = viewModel::updateDiaryText,
+                diaryImageUri = uiState.diaryImageUri,
+                onDiaryImageUriChanged = viewModel::updateDiaryImageUri,
+                onDiaryFeedbackRequestButtonClick = {}
+            )
+        }
+
+        DiaryFeedbackState.Loading -> {
+            DiaryFeedbackStatusScreen(
+                paddingValues = paddingValues,
+                state = viewModel.feedbackState.value.data ?: FeedbackUIData(),
+                content = { FeedbackLoadingContent() }
+            )
+        }
+
+        DiaryFeedbackState.Complete -> {
+            DiaryFeedbackStatusScreen(
+                paddingValues = paddingValues,
+                state = viewModel.feedbackState.value.data ?: FeedbackUIData(),
+                content = {
+                    FeedbackCompleteContent(
+                        onCloseButtonClick = navigateToHome,
+                        onShowFeedbackButtonClick = navigateToDiaryFeedback
+                    )
+                }
+            )
+        }
+    }
 }
 
 @Composable
@@ -86,6 +124,7 @@ private fun DiaryWriteScreen(
     diaryText: String,
     onDiaryTextChanged: (String) -> Unit,
     diaryImageUri: Uri?,
+    onDiaryImageUriChanged: (Uri?) -> Unit,
     onDiaryFeedbackRequestButtonClick: () -> Unit
 ) {
     val verticalScrollState = rememberScrollState()
@@ -113,7 +152,6 @@ private fun DiaryWriteScreen(
         modifier = Modifier
             .background(HilingualTheme.colors.white)
             .fillMaxSize()
-            // TODO: 네비 연결 후 advancedImePadding() 적용
             .padding(paddingValues)
             .addFocusCleaner(focusManager)
     ) {
@@ -142,6 +180,7 @@ private fun DiaryWriteScreen(
         Column(
             modifier = Modifier
                 .weight(1f)
+                .advancedImePadding()
                 .verticalScroll(verticalScrollState)
                 .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
         ) {
@@ -164,9 +203,8 @@ private fun DiaryWriteScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             PhotoSelectButton(
-                onPhotoSelectClick = { /* TODO: 갤러리로 이동 */ },
-                onDeleteClick = { /* TODO: 컴포넌트 내에서 해당 작업 처리되도록 리팩토링 예정 */ },
-                selectedImgUri = diaryImageUri
+                selectedImgUri = diaryImageUri,
+                onImgSelected = onDiaryImageUriChanged
             )
         }
 
@@ -187,7 +225,7 @@ private fun DiaryWriteScreen(
             HilingualButton(
                 modifier = Modifier
                     .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                text = "피드백 요청",
+                text = "피드백 요청하기",
                 enableProvider = { diaryText.length >= 10 },
                 onClick = onDiaryFeedbackRequestButtonClick
             )
@@ -225,6 +263,7 @@ private val DATE_FORMATTER: DateTimeFormatter =
 @Composable
 private fun DiaryWriteScreenPreview() {
     var diaryText by remember { mutableStateOf("") }
+    var diaryImageUri by remember { mutableStateOf<Uri?>(null) }
 
     HilingualTheme {
         DiaryWriteScreen(
@@ -235,7 +274,8 @@ private fun DiaryWriteScreenPreview() {
             topicEn = "What surprised you today?",
             diaryText = diaryText,
             onDiaryTextChanged = { diaryText = it },
-            diaryImageUri = null,
+            diaryImageUri = diaryImageUri,
+            onDiaryImageUriChanged = { diaryImageUri = it },
             onDiaryFeedbackRequestButtonClick = {}
         )
     }
