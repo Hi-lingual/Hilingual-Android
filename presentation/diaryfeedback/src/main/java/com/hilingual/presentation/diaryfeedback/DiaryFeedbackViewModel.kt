@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.repository.DiaryRepository
+import com.hilingual.presentation.diaryfeedback.model.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
@@ -49,30 +50,12 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                 val newUiState = DiaryFeedbackUiState(
                     diaryId = diaryId,
                     writtenDate = diaryResult.writtenDate,
-                    diaryContent = DiaryContent(
-                        originalText = diaryResult.originalText,
-                        aiText = diaryResult.rewriteText,
-                        diffRanges = diaryResult.diffRanges.map {
-                            it.diffRange.first to it.diffRange.second
-                        }.toImmutableList(),
-                        imageUrl = diaryResult.imageUrl
-                    ),
+                    diaryContent = diaryResult.toState(),
                     feedbackList = feedbacks.map {
-                        FeedbackContent(
-                            originalText = it.originalText,
-                            feedbackText = it.rewriteText,
-                            explain = it.explain,
-                        )
+                        it.toState()
                     }.toImmutableList(),
                     recommendExpressionList = recommendExpressions.map {
-                        RecommendExpression(
-                            phraseId = it.phraseId,
-                            phraseType = it.phraseType.toImmutableList(),
-                            phrase = it.phrase,
-                            explanation = it.explanation,
-                            reason = it.reason,
-                            isMarked = it.isMarked
-                        )
+                        it.toState()
                     }.toImmutableList()
                 )
                 _uiState.value = UiState.Success(newUiState)
