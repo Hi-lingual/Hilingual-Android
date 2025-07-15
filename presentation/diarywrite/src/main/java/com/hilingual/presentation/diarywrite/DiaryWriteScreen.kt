@@ -38,6 +38,8 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
 import com.hilingual.presentation.diarywrite.component.DiaryWriteCancelDialog
+import com.hilingual.presentation.diarywrite.component.FeedbackCompleteContent
+import com.hilingual.presentation.diarywrite.component.FeedbackLoadingContent
 import com.hilingual.presentation.diarywrite.component.FeedbackUIData
 import com.hilingual.presentation.diarywrite.component.ImageSelectBottomSheet
 import com.hilingual.presentation.diarywrite.component.PhotoSelectButton
@@ -90,7 +92,7 @@ internal fun DiaryWriteRoute(
             DiaryFeedbackStatusScreen(
                 paddingValues = paddingValues,
                 state = viewModel.feedbackState.value.data ?: FeedbackUIData(),
-                content = { LoadingContent() }
+                content = { FeedbackLoadingContent() }
             )
         }
 
@@ -99,7 +101,7 @@ internal fun DiaryWriteRoute(
                 paddingValues = paddingValues,
                 state = viewModel.feedbackState.value.data ?: FeedbackUIData(),
                 content = {
-                    CompleteContent(
+                    FeedbackCompleteContent(
                         onCloseButtonClick = navigateToHome,
                         onShowFeedbackButtonClick = navigateToDiaryFeedback
                     )
