@@ -74,7 +74,6 @@ internal fun DiaryFeedbackRoute(
                 onBackClick = navigateUp,
                 isImageDetailVisible = isImageDetailVisible,
                 onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
-                onToggleDiaryViewMode = viewModel::toggleDiaryShowOption,
                 onToggleBookmark = viewModel::toggleBookmark
             )
         }
@@ -90,7 +89,6 @@ private fun DiaryFeedbackScreen(
     onBackClick: () -> Unit,
     isImageDetailVisible: Boolean,
     onChangeImageDetailVisible: () -> Unit,
-    onToggleDiaryViewMode: (Boolean) -> Unit,
     onToggleBookmark: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -141,8 +139,6 @@ private fun DiaryFeedbackScreen(
                     writtenDate = writtenDate,
                     diaryContent = diaryContent,
                     feedbackList = feedbackList,
-                    onToggleDiaryViewMode = onToggleDiaryViewMode,
-                    isAIWritten = isAIWritten,
                     onImageClick = onChangeImageDetailVisible
                 )
                 1 -> RecommendExpressionScreen(
@@ -167,12 +163,9 @@ private fun DiaryFeedbackScreen(
 @Composable
 private fun DiaryFeedbackScreenPreview() {
     HilingualTheme {
-        var isAIWritten by remember { mutableStateOf(true) }
-
         DiaryFeedbackScreen(
             paddingValues = PaddingValues(),
             uiState = DiaryFeedbackUiState(
-                isAIWritten = isAIWritten,
                 writtenDate = "7월 11일 금요일",
                 feedbackList = persistentListOf(),
                 recommendExpressionList = persistentListOf()
@@ -180,7 +173,6 @@ private fun DiaryFeedbackScreenPreview() {
             isImageDetailVisible = false,
             onChangeImageDetailVisible = {},
             onBackClick = {},
-            onToggleDiaryViewMode = { isAIWritten = !isAIWritten },
             onToggleBookmark = { _, _ -> {} }
         )
     }

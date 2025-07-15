@@ -68,14 +68,6 @@ internal class DiaryFeedbackViewModel @Inject constructor(
         }
     }
 
-    fun toggleDiaryShowOption(isAI: Boolean) {
-        _uiState.update {
-            (it as UiState.Success).copy(
-                data = it.data.copy(isAIWritten = isAI)
-            )
-        }
-    }
-
     fun toggleBookmark(phraseId: Long, isMarked: Boolean) {
         _uiState.update { currentState ->
             val successState = currentState as UiState.Success
