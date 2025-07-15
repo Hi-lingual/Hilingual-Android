@@ -23,7 +23,7 @@ import kotlinx.collections.immutable.persistentListOf
 internal fun RecommendExpressionScreen(
     writtenDate: String,
     recommendExpressionList: ImmutableList<RecommendExpressionUiState>,
-    isBookmarkClick: (Long, Boolean) -> Unit,
+    onBookmarkClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -54,7 +54,7 @@ internal fun RecommendExpressionScreen(
                 explanation = it.explanation,
                 reason = it.reason,
                 isMarked = it.isMarked,
-                onBookmarkClick = { isBookmarkClick(it.phraseId, it.isMarked) }
+                onBookmarkClick = { onBookmarkClick(it.phraseId, !it.isMarked) }
             )
         }
     }
@@ -67,7 +67,7 @@ private fun GrammarSpellingScreenPreview() {
         RecommendExpressionScreen(
             writtenDate = "7월 11일 금요일",
             recommendExpressionList = persistentListOf(),
-            isBookmarkClick = { _, _ -> }
+            onBookmarkClick = { _, _ -> }
         )
     }
 }

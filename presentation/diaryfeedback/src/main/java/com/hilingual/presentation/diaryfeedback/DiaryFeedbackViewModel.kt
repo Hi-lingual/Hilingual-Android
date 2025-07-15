@@ -4,7 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
+import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.presentation.diaryfeedback.model.toState
 import com.hilingual.presentation.diaryfeedback.navigation.DiaryFeedback
@@ -69,21 +71,31 @@ internal class DiaryFeedbackViewModel @Inject constructor(
     }
 
     fun toggleBookmark(phraseId: Long, isMarked: Boolean) {
-        _uiState.update { currentState ->
-            val successState = currentState as UiState.Success
-            val oldList = successState.data.recommendExpressionList
-
-            val updatedList = oldList.map { item ->
-                if (item.phraseId == phraseId) {
-                    item.copy(isMarked = isMarked)
-                } else {
-                    item
-                }
-            }.toImmutableList()
-
-            successState.copy(
-                data = successState.data.copy(recommendExpressionList = updatedList)
+        viewModelScope.launch {
+            diaryRepository.patchPhraseBookmark(
+                phraseId = phraseId,
+                bookmarkModel = PhraseBookmarkModel(isMarked)
             )
+                .onSuccess {
+                    _uiState.update { currentState ->
+
+                        val successState = currentState as UiState.Success
+                        val oldList = successState.data.recommendExpressionList
+
+                        val updatedList = oldList.map { item ->
+                            if (item.phraseId == phraseId) {
+                                item.copy(isMarked = isMarked)
+                            } else {
+                                item
+                            }
+                        }.toImmutableList()
+
+                        successState.copy(
+                            data = successState.data.copy(recommendExpressionList = updatedList)
+                        )
+                    }
+                }
+                .onLogFailure { }
         }
     }
 }

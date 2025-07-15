@@ -5,6 +5,8 @@ import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
 import com.hilingual.data.diary.model.DiaryContentModel
 import com.hilingual.data.diary.model.DiaryFeedbackModel
 import com.hilingual.data.diary.model.DiaryRecommendExpressionModel
+import com.hilingual.data.diary.model.PhraseBookmarkModel
+import com.hilingual.data.diary.model.toDto
 import com.hilingual.data.diary.model.toModel
 import com.hilingual.data.diary.repository.DiaryRepository
 import javax.inject.Inject
@@ -25,5 +27,16 @@ internal class DiaryRepositoryImpl @Inject constructor(
     override suspend fun getDiaryRecommendExpressions(diaryId: Long): Result<List<DiaryRecommendExpressionModel>> =
         suspendRunCatching {
             diaryRemoteDataSource.getDiaryRecommendExpressions(diaryId).data!!.phraseList.map { it.toModel() }
+        }
+
+    override suspend fun patchPhraseBookmark(
+        phraseId: Long,
+        bookmarkModel: PhraseBookmarkModel
+    ): Result<Unit> =
+        suspendRunCatching {
+            diaryRemoteDataSource.patchPhraseBookmark(
+                phraseId = phraseId,
+                bookmarkRequestDto = bookmarkModel.toDto()
+            )
         }
 }

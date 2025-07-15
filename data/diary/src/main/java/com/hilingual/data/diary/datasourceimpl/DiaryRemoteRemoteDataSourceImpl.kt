@@ -2,6 +2,7 @@ package com.hilingual.data.diary.datasourceimpl
 
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
+import com.hilingual.data.diary.dto.request.BookmarkRequestDto
 import com.hilingual.data.diary.dto.response.DiaryContentResponseDto
 import com.hilingual.data.diary.dto.response.DiaryFeedbackResponseDto
 import com.hilingual.data.diary.dto.response.DiaryRecommendExpressionResponseDto
@@ -19,4 +20,13 @@ internal class DiaryRemoteRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getDiaryRecommendExpressions(diaryId: Long): BaseResponse<DiaryRecommendExpressionResponseDto> =
         diaryService.getDiaryRecommendExpressions(diaryId)
+
+    override suspend fun patchPhraseBookmark(
+        phraseId: Long,
+        bookmarkRequestDto: BookmarkRequestDto
+    ): BaseResponse<Unit> =
+        diaryService.patchPhraseBookmark(
+            phraseId = phraseId,
+            bookmarkRequestDto = bookmarkRequestDto
+        )
 }

@@ -144,7 +144,7 @@ private fun DiaryFeedbackScreen(
                 1 -> RecommendExpressionScreen(
                     writtenDate = writtenDate,
                     recommendExpressionList = recommendExpressionList,
-                    isBookmarkClick = onToggleBookmark
+                    onBookmarkClick = onToggleBookmark
                 )
             }
         }
