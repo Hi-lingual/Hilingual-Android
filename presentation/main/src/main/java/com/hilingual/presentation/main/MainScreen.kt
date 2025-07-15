@@ -22,8 +22,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import com.hilingual.core.common.provider.LocalSystemBarsColor
+import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
 import com.hilingual.core.designsystem.component.snackbar.TextSnackBar
 import com.hilingual.presentation.auth.navigation.authNavGraph
 import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
@@ -42,8 +45,11 @@ private const val EXIT_MILLIS = 3000L
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun MainScreen(
-    navigator: MainNavigator = rememberMainNavigator()
+    navigator: MainNavigator = rememberMainNavigator(),
+    viewModel: MainViewModel = hiltViewModel()
 ) {
+    val isOffline by viewModel.isOffline.collectAsStateWithLifecycle()
+
     val systemBarsColor = LocalSystemBarsColor.current
     val activity = LocalActivity.current
 
@@ -114,6 +120,12 @@ internal fun MainScreen(
                 diaryFeedbackNavGraph(
                     paddingValues = innerPadding,
                     navigateUp = navigator::navigateUp
+                )
+            }
+
+            if (isOffline) {
+                HilingualErrorDialog(
+                    onClick = navigator::navigateToHome
                 )
             }
         }

@@ -25,7 +25,7 @@ fun HilingualButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enableProvider: () -> Boolean = { false }
+    enableProvider: () -> Boolean = { true }
 ) {
     val enabled = enableProvider()
     Row(
