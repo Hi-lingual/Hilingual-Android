@@ -1,9 +1,6 @@
 package com.hilingual.presentation.diarywrite
 
 import android.net.Uri
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,9 +16,9 @@ internal class DiaryWriteViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow(DiaryWriteUiState())
     val uiState: StateFlow<DiaryWriteUiState> = _uiState.asStateFlow()
 
-    var _feedbackState: MutableState<DiaryFeedbackState> =
-        mutableStateOf(DiaryFeedbackState.Default)
-    val feedbackState: State<DiaryFeedbackState> = _feedbackState
+    private var _feedbackState: MutableStateFlow<DiaryFeedbackState> =
+        MutableStateFlow(DiaryFeedbackState.Default)
+    val feedbackState: StateFlow<DiaryFeedbackState> = _feedbackState.asStateFlow()
 
     fun updateSelectedDate(newDate: LocalDate) {
         _uiState.update { it.copy(selectedDate = newDate) }
