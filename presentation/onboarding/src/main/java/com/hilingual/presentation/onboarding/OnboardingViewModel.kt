@@ -7,17 +7,17 @@ import com.hilingual.data.user.model.UserProfile
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,8 +32,8 @@ internal class OnboardingViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(OnboardingUiState())
     val uiState: StateFlow<OnboardingUiState> = _uiState.asStateFlow()
 
-    private val _eventChannel = Channel<OnboardingEvent>(Channel.CONFLATED)
-    val eventChannel: Flow<OnboardingEvent> = _eventChannel.receiveAsFlow()
+    private val _sideEffect = MutableSharedFlow<OnboardingSideEffect>()
+    val sideEffect: SharedFlow<OnboardingSideEffect> = _sideEffect.asSharedFlow()
 
     init {
         @OptIn(FlowPreview::class)
@@ -63,9 +63,13 @@ internal class OnboardingViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.postUserProfile(UserProfile(profileImg = "", nickname = nickname))
                 .onSuccess {
-                    _eventChannel.send(OnboardingEvent.NavigateToHome)
+                    _sideEffect.emit(OnboardingSideEffect.NavigateToHome)
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    viewModelScope.launch {
+                        _sideEffect.emit(OnboardingSideEffect.ShowRetryDialog { onRegisterClick(nickname) })
+                    }
+                }
         }
     }
 
@@ -124,11 +128,15 @@ internal class OnboardingViewModel @Inject constructor(
                             isNicknameValid = false
                         )
                     }
+                    viewModelScope.launch {
+                        _sideEffect.emit(OnboardingSideEffect.ShowRetryDialog { validateNickname(nickname) })
+                    }
                 }
         }
     }
 }
 
-sealed interface OnboardingEvent {
-    data object NavigateToHome : OnboardingEvent
+sealed interface OnboardingSideEffect {
+    data object NavigateToHome : OnboardingSideEffect
+    data class ShowRetryDialog(val onRetry: () -> Unit) : OnboardingSideEffect
 }
