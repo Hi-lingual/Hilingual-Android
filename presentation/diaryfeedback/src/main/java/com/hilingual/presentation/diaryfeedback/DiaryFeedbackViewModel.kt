@@ -2,12 +2,11 @@ package com.hilingual.presentation.diaryfeedback
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hilingual.core.common.extension.onLogFailure
-import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.repository.DiaryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,81 +24,61 @@ internal class DiaryFeedbackViewModel @Inject constructor(
     val uiState: StateFlow<UiState<DiaryFeedbackUiState>> = _uiState.asStateFlow()
 
     init {
-        getDiaryContent()
-        getFeedbacks()
-        getRecommendExpressions()
+        loadInitialData()
     }
 
-    private fun getDiaryContent() {
+    private fun loadInitialData() {
         viewModelScope.launch {
-            _uiState.value = UiState.Loading
-            diaryRepository.getDiaryContent(diaryId)
-                .onSuccess { diaryResult ->
-                    _uiState.value = UiState.Success(
-                        DiaryFeedbackUiState(
-                            writtenDate = diaryResult.writtenDate,
-                            diaryContent = DiaryContent(
-                                originalText = diaryResult.originalText,
-                                aiText = diaryResult.rewriteText,
-                                diffRanges = diaryResult.diffRanges.map {
-                                    it.diffRange.first to it.diffRange.second
-                                }.toImmutableList(),
-                                imageUrl = diaryResult.imageUrl
-                            )
+            val contentDeferred = async { diaryRepository.getDiaryContent(diaryId) }
+            val feedbacksDeferred = async { diaryRepository.getDiaryFeedbacks(diaryId) }
+            val recommendExpressionsDeferred = async { diaryRepository.getDiaryRecommendExpressions(diaryId) }
+
+            val contentResult = contentDeferred.await()
+            val feedbacksResult = feedbacksDeferred.await()
+            val recommendExpressionsResult = recommendExpressionsDeferred.await()
+
+            if (
+                contentResult.isSuccess &&
+                feedbacksResult.isSuccess &&
+                recommendExpressionsResult.isSuccess
+            ) {
+                val diaryResult = contentResult.getOrThrow()
+                val feedbacks = feedbacksResult.getOrThrow()
+                val recommendExpressions = recommendExpressionsResult.getOrThrow()
+
+                val newUiState = DiaryFeedbackUiState(
+                    diaryId = diaryId,
+                    writtenDate = diaryResult.writtenDate,
+                    diaryContent = DiaryContent(
+                        originalText = diaryResult.originalText,
+                        aiText = diaryResult.rewriteText,
+                        diffRanges = diaryResult.diffRanges.map {
+                            it.diffRange.first to it.diffRange.second
+                        }.toImmutableList(),
+                        imageUrl = diaryResult.imageUrl
+                    ),
+                    feedbackList = feedbacks.map {
+                        FeedbackContent(
+                            originalText = it.originalText,
+                            feedbackText = it.rewriteText,
+                            explain = it.explain,
                         )
-                    )
-                }
-
-                .onLogFailure { }
-        }
-    }
-
-    private fun getFeedbacks() {
-        viewModelScope.launch {
-            diaryRepository.getDiaryFeedbacks(diaryId)
-                .onSuccess { feedbacks ->
-                    val currentState = _uiState.value
-                    if (currentState !is UiState.Success) return@launch
-
-                    _uiState.updateSuccess {
-                        it.copy(
-                            feedbackList = feedbacks.map {
-                                FeedbackContent(
-                                    originalText = it.originalText,
-                                    feedbackText = it.rewriteText,
-                                    explain = it.explain,
-                                )
-                            }.toImmutableList(),
+                    }.toImmutableList(),
+                    recommendExpressionList = recommendExpressions.map {
+                        RecommendExpression(
+                            phraseId = it.phraseId,
+                            phraseType = it.phraseType.toImmutableList(),
+                            phrase = it.phrase,
+                            explanation = it.explanation,
+                            reason = it.reason,
+                            isMarked = it.isMarked
                         )
-                    }
-                }
-                .onLogFailure { }
-        }
-    }
-
-    private fun getRecommendExpressions() {
-        viewModelScope.launch {
-            diaryRepository.getDiaryRecommendExpressions(diaryId)
-                .onSuccess { expressions ->
-                    val currentState = _uiState.value
-                    if (currentState !is UiState.Success) return@launch
-
-                    _uiState.updateSuccess {
-                        it.copy(
-                            recommendExpressionList = expressions.map {
-                                RecommendExpression(
-                                    phraseId = it.phraseId,
-                                    phraseType = it.phraseType.toImmutableList(),
-                                    phrase = it.phrase,
-                                    explanation = it.explanation,
-                                    reason = it.reason,
-                                    isMarked = it.isMarked
-                                )
-                            }.toImmutableList(),
-                        )
-                    }
-                }
-                .onLogFailure { }
+                    }.toImmutableList()
+                )
+                _uiState.value = UiState.Success(newUiState)
+            } else {
+                _uiState.value = UiState.Failure
+            }
         }
     }
 
