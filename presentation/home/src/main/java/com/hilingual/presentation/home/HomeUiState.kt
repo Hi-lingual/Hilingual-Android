@@ -16,5 +16,5 @@ data class HomeUiState(
     val diaryThumbnail: DiaryThumbnailUiModel? = null,
     val dateList: ImmutableList<DateUiModel> = persistentListOf(),
     val isDiaryThumbnailLoading: Boolean = false,
-    val todayTopic: TodayTopicUiModel? = null,
+    val todayTopic: TodayTopicUiModel? = null
 )
