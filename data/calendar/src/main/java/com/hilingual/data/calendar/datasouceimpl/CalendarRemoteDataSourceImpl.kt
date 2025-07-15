@@ -16,4 +16,7 @@ internal class CalendarRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getDiaryThumbnail(date: String): BaseResponse<DiaryThumbnailResponseDto> =
         calendarService.getDiaryThumbnail(date = date)
+
+    override suspend fun getTopic(date: String): BaseResponse<com.hilingual.data.calendar.dto.TopicResponse> =
+        calendarService.getTopic(date = date)
 }

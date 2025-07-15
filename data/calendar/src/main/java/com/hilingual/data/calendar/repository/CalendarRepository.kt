@@ -13,4 +13,6 @@ interface CalendarRepository {
     suspend fun getDiaryThumbnail(
         date: String
     ): Result<DiaryThumbnailModel>
+
+    suspend fun getTopic(date: String): Result<com.hilingual.data.calendar.model.Topic> 
 }

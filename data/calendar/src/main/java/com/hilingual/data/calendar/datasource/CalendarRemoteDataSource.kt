@@ -14,4 +14,6 @@ interface CalendarRemoteDataSource {
     suspend fun getDiaryThumbnail(
         date: String
     ): BaseResponse<DiaryThumbnailResponseDto>
+
+    suspend fun getTopic(date: String): BaseResponse<com.hilingual.data.calendar.dto.TopicResponse>
 }

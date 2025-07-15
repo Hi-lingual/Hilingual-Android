@@ -64,18 +64,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun getCalendarData(year: Int, month: Int) {
-        viewModelScope.launch {
-            calendarRepository.getCalendar(year, month)
-                .onSuccess { calendarModel ->
-                    _uiState.updateSuccess {
-                        it.copy(dateList = calendarModel.dateList.map { it.toState() }.toImmutableList())
-                    }
-                }
-                .onLogFailure { }
-        }
-    }
-
     fun onDateSelected(date: LocalDate) {
         val currentState = _uiState.value
         if (currentState !is UiState.Success) return
@@ -88,17 +76,56 @@ class HomeViewModel @Inject constructor(
             it.copy(
                 selectedDate = date,
                 diaryThumbnail = null,
-                isDiaryThumbnailLoading = hasDiary
+                isDiaryThumbnailLoading = hasDiary,
+                todayTopic = null
             )
         }
 
+        val today = LocalDate.now()
+        val isWritable = !date.isAfter(today) && date.isAfter(today.minusDays(2))
+
         if (hasDiary) {
             getDiaryThumbnail(date.toString())
+        } else if (isWritable) {
+            getTopic(date.toString())
         }
     }
 
     fun onMonthChanged(yearMonth: YearMonth) {
-        getCalendarData(yearMonth.year, yearMonth.monthValue)
+        val currentState = _uiState.value
+        if (currentState !is UiState.Success) return
+
+        if (YearMonth.from(currentState.data.selectedDate) == yearMonth) return
+
+        viewModelScope.launch {
+            _uiState.updateSuccess { it.copy(isDiaryThumbnailLoading = true) }
+            calendarRepository.getCalendar(yearMonth.year, yearMonth.monthValue)
+                .onSuccess { calendarModel ->
+                    val newDate = yearMonth.atDay(1)
+                    val hasDiaryOnFirst = calendarModel.dateList.any { LocalDate.parse(it.date) == newDate }
+
+                    _uiState.updateSuccess {
+                        it.copy(
+                            dateList = calendarModel.dateList.map { it.toState() }.toImmutableList(),
+                            selectedDate = newDate,
+                            diaryThumbnail = null,
+                            todayTopic = null,
+                            isDiaryThumbnailLoading = hasDiaryOnFirst
+                        )
+                    }
+
+                    if (hasDiaryOnFirst) {
+                        getDiaryThumbnail(newDate.toString())
+                    } else {
+                        val today = LocalDate.now()
+                        val isWritable = !newDate.isAfter(today) && newDate.isAfter(today.minusDays(2))
+                        if (isWritable) {
+                            getTopic(newDate.toString())
+                        }
+                    }
+                }
+                .onLogFailure { }
+        }
     }
 
     private fun getDiaryThumbnail(date: String) {
@@ -117,6 +144,18 @@ class HomeViewModel @Inject constructor(
                         it.copy(isDiaryThumbnailLoading = false)
                     }
                 }
+        }
+    }
+
+    private fun getTopic(date: String) {
+        viewModelScope.launch {
+            calendarRepository.getTopic(date)
+                .onSuccess { topic ->
+                    _uiState.updateSuccess {
+                        it.copy(todayTopic = topic.toState())
+                    }
+                }
+                .onLogFailure { }
         }
     }
 }
