@@ -52,7 +52,7 @@ import kotlinx.collections.immutable.toPersistentList
 @Composable
 internal fun VocaRoute(
     paddingValues: PaddingValues,
-    navigateToDiaryWrite: () -> Unit,
+    navigateToHome: () -> Unit,
     viewModel: VocaViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -91,7 +91,7 @@ internal fun VocaRoute(
             onCardClick = viewModel::fetchVocaDetail,
             onBookmarkClick = viewModel::toggleBookmark,
             onSearchTextChanged = viewModel::updateSearchKeyword,
-            onWriteDiaryClick = navigateToDiaryWrite,
+            onWriteDiaryClick = navigateToHome,
             onCloseButtonClick = viewModel::clearSearchKeyword
         )
     }

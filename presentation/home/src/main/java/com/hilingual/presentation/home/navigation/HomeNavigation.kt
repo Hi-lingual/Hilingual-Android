@@ -22,13 +22,15 @@ fun NavController.navigateToHome(
 }
 
 fun NavGraphBuilder.homeNavGraph(
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    navigateToDiaryFeedback: (diaryId: Long) -> Unit,
+    navigateToDiaryWrite: () -> Unit
 ) {
     composable<Home> {
         HomeRoute(
             paddingValues = paddingValues,
-            navigateToDiaryWrite = {},
-            navigateToDiaryFeedback = {}
+            navigateToDiaryFeedback = navigateToDiaryFeedback,
+            navigateToDiaryWrite = navigateToDiaryWrite
         )
     }
 }
