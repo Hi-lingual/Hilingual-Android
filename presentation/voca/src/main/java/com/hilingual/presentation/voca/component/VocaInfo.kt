@@ -23,8 +23,8 @@ enum class WordSortType(
     @DrawableRes val iconRes: Int,
     val sortParam: Int
 ) {
-    AtoZ(text = "A-Z 순", iconRes = R.drawable.ic_az_24, sortParam = 1),
-    Latest(text = "최신순", iconRes = R.drawable.ic_listdown_24, sortParam = 2)
+    AtoZ(text = "A-Z 순", iconRes = R.drawable.ic_az_24, sortParam = 2),
+    Latest(text = "최신순", iconRes = R.drawable.ic_listdown_24, sortParam = 1)
 }
 
 @Composable
