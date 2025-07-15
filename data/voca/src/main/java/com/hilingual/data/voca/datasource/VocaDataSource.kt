@@ -7,10 +7,9 @@ import com.hilingual.data.voca.dto.response.VocaListResponseDto
 interface VocaDataSource {
     suspend fun getVocaList(
         sort: Int
-    ):  BaseResponse<VocaListResponseDto>
+    ): BaseResponse<VocaListResponseDto>
 
     suspend fun getVocaDetail(
         phraseId: Long
     ): BaseResponse<VocaDetailResponseDto>
-
 }

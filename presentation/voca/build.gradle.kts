@@ -8,6 +8,6 @@ android {
     setNamespace("presentation.voca")
 }
 
-dependencies{
+dependencies {
     implementation(project(":data:voca"))
 }

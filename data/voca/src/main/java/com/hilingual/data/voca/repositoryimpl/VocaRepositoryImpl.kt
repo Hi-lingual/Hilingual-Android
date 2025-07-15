@@ -8,7 +8,7 @@ import com.hilingual.data.voca.model.toModel
 import com.hilingual.data.voca.repository.VocaRepository
 import javax.inject.Inject
 
-class VocaRepositoryImpl @Inject constructor (
+class VocaRepositoryImpl @Inject constructor(
     private val vocaDataSource: VocaDataSource
 ) : VocaRepository {
     override suspend fun getVocaList(sort: Int): Result<Pair<Int, List<VocaList>>> =
