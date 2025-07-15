@@ -7,7 +7,7 @@ import com.hilingual.data.diary.dto.response.DiaryRecommendExpressionResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 
-interface DiaryService {
+internal interface DiaryService {
     @GET("/api/v1/diaries/{diaryId}")
     suspend fun getDiaryContent(
         @Path(value = "diaryId") diaryId: Long

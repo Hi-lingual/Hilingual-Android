@@ -19,7 +19,7 @@ import javax.inject.Inject
 internal class DiaryFeedbackViewModel @Inject constructor(
     private val diaryRepository: DiaryRepository
 ) : ViewModel() {
-    val diaryId: Long = 9L // TODO: 수정 필요
+    val diaryId: Long = 18L // TODO: 수정 필요
 
     private val _uiState = MutableStateFlow<UiState<DiaryFeedbackUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<DiaryFeedbackUiState>> = _uiState.asStateFlow()

@@ -5,7 +5,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
-data class DiaryFeedbackUiState(
+internal data class DiaryFeedbackUiState(
     val diaryId: Long = 9L,
     val writtenDate: String = "",
     val isAIWritten: Boolean = true,
@@ -16,7 +16,7 @@ data class DiaryFeedbackUiState(
 )
 
 @Immutable
-data class DiaryContent(
+internal data class DiaryContent(
     val originalText: String = "",
     val aiText: String = "",
     val diffRanges: ImmutableList<Pair<Int, Int>> = persistentListOf(),
@@ -24,14 +24,14 @@ data class DiaryContent(
 )
 
 @Immutable
-data class FeedbackContent(
+internal data class FeedbackContent(
     val originalText: String,
     val feedbackText: String,
     val explain: String
 )
 
 @Immutable
-data class RecommendExpression(
+internal data class RecommendExpression(
     val phraseId: Long,
     val phraseType: ImmutableList<String>,
     val phrase: String,
