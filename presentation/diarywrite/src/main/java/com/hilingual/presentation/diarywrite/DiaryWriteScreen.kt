@@ -1,5 +1,6 @@
 package com.hilingual.presentation.diarywrite
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -55,6 +56,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 internal fun DiaryWriteRoute(
     paddingValues: PaddingValues,
@@ -84,6 +86,7 @@ internal fun DiaryWriteRoute(
                 diaryText = uiState.diaryText,
                 onDiaryTextChanged = viewModel::updateDiaryText,
                 diaryImageUri = uiState.diaryImageUri,
+                onDiaryImageUriChanged = viewModel::updateDiaryImageUri,
                 onDiaryFeedbackRequestButtonClick = {}
             )
         }
@@ -121,6 +124,7 @@ private fun DiaryWriteScreen(
     diaryText: String,
     onDiaryTextChanged: (String) -> Unit,
     diaryImageUri: Uri?,
+    onDiaryImageUriChanged: (Uri?) -> Unit,
     onDiaryFeedbackRequestButtonClick: () -> Unit
 ) {
     val verticalScrollState = rememberScrollState()
@@ -199,9 +203,8 @@ private fun DiaryWriteScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             PhotoSelectButton(
-                onPhotoSelectClick = { /* TODO: 갤러리로 이동 */ },
-                onDeleteClick = { /* TODO: 컴포넌트 내에서 해당 작업 처리되도록 리팩토링 예정 */ },
-                selectedImgUri = diaryImageUri
+                selectedImgUri = diaryImageUri,
+                onImgSelected = onDiaryImageUriChanged
             )
         }
 
@@ -260,6 +263,7 @@ private val DATE_FORMATTER: DateTimeFormatter =
 @Composable
 private fun DiaryWriteScreenPreview() {
     var diaryText by remember { mutableStateOf("") }
+    var diaryImageUri by remember { mutableStateOf<Uri?>(null) }
 
     HilingualTheme {
         DiaryWriteScreen(
@@ -270,7 +274,8 @@ private fun DiaryWriteScreenPreview() {
             topicEn = "What surprised you today?",
             diaryText = diaryText,
             onDiaryTextChanged = { diaryText = it },
-            diaryImageUri = null,
+            diaryImageUri = diaryImageUri,
+            onDiaryImageUriChanged = { diaryImageUri = it },
             onDiaryFeedbackRequestButtonClick = {}
         )
     }
