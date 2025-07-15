@@ -2,8 +2,8 @@ package com.hilingual.data.calendar.datasource
 
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.calendar.dto.response.CalendarResponseDto
-
 import com.hilingual.data.calendar.dto.response.DiaryThumbnailResponseDto
+import com.hilingual.data.calendar.dto.response.TopicResponseDto
 
 interface CalendarRemoteDataSource {
     suspend fun getCalendar(
@@ -15,5 +15,5 @@ interface CalendarRemoteDataSource {
         date: String
     ): BaseResponse<DiaryThumbnailResponseDto>
 
-    suspend fun getTopic(date: String): BaseResponse<com.hilingual.data.calendar.dto.TopicResponse>
+    suspend fun getTopic(date: String): BaseResponse<TopicResponseDto>
 }

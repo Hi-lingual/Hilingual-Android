@@ -9,7 +9,7 @@ data class UserInfoModel(
     val totalDiaries: Int
 )
 
-fun UserInfoResponseDto.toModel() = UserInfoModel(
+internal fun UserInfoResponseDto.toModel() = UserInfoModel(
     nickname = this.nickname,
     profileImg = this.profileImg,
     streak = this.streak,

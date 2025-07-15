@@ -11,7 +11,7 @@ data class UserProfileUiModel(
     val streak: Int = 0
 )
 
-fun UserInfoModel.toState() = UserProfileUiModel(
+internal fun UserInfoModel.toState() = UserProfileUiModel(
     nickname = this.nickname,
     profileImg = this.profileImg,
     totalDiaries = this.totalDiaries,

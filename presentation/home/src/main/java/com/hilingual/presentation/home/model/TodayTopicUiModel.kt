@@ -1,7 +1,7 @@
 package com.hilingual.presentation.home.model
 
 import androidx.compose.runtime.Immutable
-import com.hilingual.data.calendar.model.Topic
+import com.hilingual.data.calendar.model.TopicModel
 
 @Immutable
 data class TodayTopicUiModel(
@@ -10,7 +10,7 @@ data class TodayTopicUiModel(
     val remainingTime: Int
 )
 
-internal fun Topic.toState(): TodayTopicUiModel = TodayTopicUiModel(
+internal fun TopicModel.toState(): TodayTopicUiModel = TodayTopicUiModel(
     topicKo = topicKor,
     topicEn = topicEn,
     remainingTime = remainingTime

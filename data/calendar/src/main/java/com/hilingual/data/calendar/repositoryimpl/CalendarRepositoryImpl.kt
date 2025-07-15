@@ -2,7 +2,6 @@ package com.hilingual.data.calendar.repositoryimpl
 
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.data.calendar.datasource.CalendarRemoteDataSource
-import com.hilingual.data.calendar.dto.toModel
 import com.hilingual.data.calendar.model.CalendarModel
 import com.hilingual.data.calendar.model.DiaryThumbnailModel
 import com.hilingual.data.calendar.model.toModel
@@ -22,7 +21,7 @@ internal class CalendarRepositoryImpl @Inject constructor(
             calendarRemoteDataSource.getDiaryThumbnail(date = date).data!!.toModel()
         }
 
-    override suspend fun getTopic(date: String): Result<com.hilingual.data.calendar.model.Topic> =
+    override suspend fun getTopic(date: String): Result<com.hilingual.data.calendar.model.TopicModel> =
         suspendRunCatching {
             calendarRemoteDataSource.getTopic(date = date).data!!.toModel()
         }

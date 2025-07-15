@@ -1,7 +1,6 @@
 package com.hilingual.data.calendar.repository
 
 import com.hilingual.data.calendar.model.CalendarModel
-
 import com.hilingual.data.calendar.model.DiaryThumbnailModel
 
 interface CalendarRepository {
@@ -14,5 +13,5 @@ interface CalendarRepository {
         date: String
     ): Result<DiaryThumbnailModel>
 
-    suspend fun getTopic(date: String): Result<com.hilingual.data.calendar.model.Topic> 
+    suspend fun getTopic(date: String): Result<com.hilingual.data.calendar.model.TopicModel>
 }

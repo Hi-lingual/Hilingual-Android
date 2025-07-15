@@ -8,7 +8,7 @@ data class DiaryThumbnailModel(
     val originalText: String
 )
 
-fun DiaryThumbnailResponseDto.toModel() = DiaryThumbnailModel(
+internal fun DiaryThumbnailResponseDto.toModel() = DiaryThumbnailModel(
     diaryId = this.diaryId,
     imageUrl = this.imageUrl,
     originalText = this.originalText

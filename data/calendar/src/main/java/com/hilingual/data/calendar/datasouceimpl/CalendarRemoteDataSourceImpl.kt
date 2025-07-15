@@ -3,10 +3,10 @@ package com.hilingual.data.calendar.datasouceimpl
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.calendar.datasource.CalendarRemoteDataSource
 import com.hilingual.data.calendar.dto.response.CalendarResponseDto
+import com.hilingual.data.calendar.dto.response.DiaryThumbnailResponseDto
+import com.hilingual.data.calendar.dto.response.TopicResponseDto
 import com.hilingual.data.calendar.service.CalendarService
 import jakarta.inject.Inject
-
-import com.hilingual.data.calendar.dto.response.DiaryThumbnailResponseDto
 
 internal class CalendarRemoteDataSourceImpl @Inject constructor(
     private val calendarService: CalendarService
@@ -17,6 +17,6 @@ internal class CalendarRemoteDataSourceImpl @Inject constructor(
     override suspend fun getDiaryThumbnail(date: String): BaseResponse<DiaryThumbnailResponseDto> =
         calendarService.getDiaryThumbnail(date = date)
 
-    override suspend fun getTopic(date: String): BaseResponse<com.hilingual.data.calendar.dto.TopicResponse> =
+    override suspend fun getTopic(date: String): BaseResponse<TopicResponseDto> =
         calendarService.getTopic(date = date)
 }

@@ -10,7 +10,7 @@ data class DiaryThumbnailUiModel(
     val originalText: String
 )
 
-fun DiaryThumbnailModel.toState() = DiaryThumbnailUiModel(
+internal fun DiaryThumbnailModel.toState() = DiaryThumbnailUiModel(
     diaryId = this.diaryId,
     imageUrl = this.imageUrl,
     originalText = this.originalText

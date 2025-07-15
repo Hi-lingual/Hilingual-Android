@@ -8,6 +8,6 @@ data class DateUiModel(
     val date: String
 )
 
-fun DateModel.toState() = DateUiModel(
+internal fun DateModel.toState() = DateUiModel(
     date = this.date
 )

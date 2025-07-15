@@ -11,10 +11,10 @@ data class DateModel(
     val date: String
 )
 
-fun CalendarResponseDto.toModel() = CalendarModel(
+internal fun CalendarResponseDto.toModel() = CalendarModel(
     dateList = this.dateList.map { it.toModel() }
 )
 
-fun DateDto.toModel() = DateModel(
+internal fun DateDto.toModel() = DateModel(
     date = this.date
 )
