@@ -9,7 +9,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 
-interface UserService {
+internal interface UserService {
     @GET("/api/v1/users/profile")
     suspend fun getNicknameAvailability(
         @Query("nickname") nickname: String

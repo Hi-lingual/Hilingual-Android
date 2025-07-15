@@ -102,7 +102,8 @@ internal fun MainScreen(
                     navigateToDiaryFeedback = navigator::navigateToDiaryFeedback
                 )
                 vocaNavGraph(
-                    paddingValues = innerPadding
+                    paddingValues = innerPadding,
+                    navigateToHome = navigator::navigateToHome
                 )
                 diaryFeedbackNavGraph(
                     paddingValues = innerPadding,
