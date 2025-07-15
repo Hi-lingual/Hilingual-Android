@@ -18,6 +18,7 @@ import com.hilingual.presentation.diaryfeedback.DiaryFeedbackViewModel
 import com.hilingual.presentation.diaryfeedback.RecommendExpression
 import com.hilingual.presentation.diaryfeedback.component.RecommendExpressionCard
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun RecommendExpressionScreen(
@@ -64,11 +65,10 @@ internal fun RecommendExpressionScreen(
 @Composable
 private fun GrammarSpellingScreenPreview() {
     HilingualTheme {
-        val dummyExpressions = DiaryFeedbackViewModel.dummyRecommendExpressions
 
         RecommendExpressionScreen(
             writtenDate = "7월 11일 금요일",
-            recommendExpressionList = dummyExpressions,
+            recommendExpressionList = persistentListOf(),
             isBookmarkClick = { _, _ -> }
         )
     }

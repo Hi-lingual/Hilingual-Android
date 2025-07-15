@@ -31,6 +31,7 @@ import com.hilingual.presentation.diaryfeedback.component.FeedbackReportBottomSh
 import com.hilingual.presentation.diaryfeedback.component.FeedbackReportDialog
 import com.hilingual.presentation.diaryfeedback.tab.GrammarSpellingScreen
 import com.hilingual.presentation.diaryfeedback.tab.RecommendExpressionScreen
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun DiaryFeedbackRoute(
@@ -166,7 +167,6 @@ private fun DiaryFeedbackScreen(
 @Composable
 private fun DiaryFeedbackScreenPreview() {
     HilingualTheme {
-        val vm = DiaryFeedbackViewModel
         var isAIWritten by remember { mutableStateOf(true) }
 
         DiaryFeedbackScreen(
@@ -174,8 +174,8 @@ private fun DiaryFeedbackScreenPreview() {
             uiState = DiaryFeedbackUiState(
                 isAIWritten = isAIWritten,
                 writtenDate = "7월 11일 금요일",
-                feedbackList = vm.dummyFeedbacks,
-                recommendExpressionList = vm.dummyRecommendExpressions
+                feedbackList = persistentListOf(),
+                recommendExpressionList = persistentListOf()
             ),
             isImageDetailVisible = false,
             onChangeImageDetailVisible = {},

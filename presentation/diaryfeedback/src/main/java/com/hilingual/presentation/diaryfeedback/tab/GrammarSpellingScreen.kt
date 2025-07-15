@@ -32,6 +32,7 @@ import com.hilingual.presentation.diaryfeedback.component.DiaryViewModeToggle
 import com.hilingual.presentation.diaryfeedback.component.FeedbackCard
 import com.hilingual.presentation.diaryfeedback.component.FeedbackEmptyCard
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun GrammarSpellingScreen(
@@ -136,7 +137,7 @@ private fun GrammarSpellingScreenPreview() {
             isAIWritten = isAI,
             onToggleDiaryViewMode = { isAI = !isAI },
             diaryContent = DiaryContent(),
-            feedbackList = DiaryFeedbackViewModel.dummyFeedbacks,
+            feedbackList = persistentListOf(),
             onImageClick = {}
         )
     }

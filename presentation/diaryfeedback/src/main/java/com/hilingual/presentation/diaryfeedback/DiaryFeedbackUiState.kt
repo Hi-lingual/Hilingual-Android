@@ -8,11 +8,10 @@ import kotlinx.collections.immutable.persistentListOf
 internal data class DiaryFeedbackUiState(
     val diaryId: Long = 9L,
     val writtenDate: String = "",
-    val isAIWritten: Boolean = true,
+    val isAIWritten: Boolean = true, // 이거 빨리
     val diaryContent: DiaryContent = DiaryContent(),
     val feedbackList: ImmutableList<FeedbackContent> = persistentListOf(),
     val recommendExpressionList: ImmutableList<RecommendExpression> = persistentListOf(),
-    val isLoading: Boolean = true
 )
 
 @Immutable
