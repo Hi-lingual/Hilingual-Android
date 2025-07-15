@@ -36,7 +36,7 @@ internal fun VocaModal(
     phrase: String,
     phraseType: ImmutableList<String>,
     explanation: String,
-    createdAt: String,
+    writtenDate: String,
     isBookmarked: Boolean,
     onBookmarkClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -93,7 +93,7 @@ internal fun VocaModal(
             tint = Color.Unspecified
         )
         Text(
-            text = "$createdAt 일기에서 저장됨",
+            text = "$writtenDate 일기에서 저장됨",
             style = HilingualTheme.typography.captionM12,
             color = HilingualTheme.colors.gray400,
             modifier = Modifier.align(Alignment.BottomEnd)
@@ -111,7 +111,7 @@ private fun VocaModalPreview() {
             phrase = "end up ~ing",
             phraseType = persistentListOf("동사", "숙어"),
             explanation = "결국 ~하게 되다",
-            createdAt = "25.06.12",
+            writtenDate = "25.06.12",
             isBookmarked = isBookmarked,
             onBookmarkClick = { isBookmarked = !isBookmarked }
         )

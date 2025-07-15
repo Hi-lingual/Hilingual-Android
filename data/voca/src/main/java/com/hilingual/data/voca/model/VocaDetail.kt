@@ -7,16 +7,16 @@ data class VocaDetail(
     val phrase: String,
     val phraseType: List<String>,
     val explanation: String,
-    val createdAt: String,
+    val writtenDate: String,
     val isBookmarked: Boolean
 )
 
-fun VocaDetailResponseDto.toModel(): VocaDetail =
+internal fun VocaDetailResponseDto.toModel(): VocaDetail =
     VocaDetail(
         phraseId = this.phraseId,
         phrase = this.phrase,
         phraseType = this.phraseType,
         explanation = this.explanation,
-        createdAt = this.createdAt,
+        writtenDate = this.writtenDate,
         isBookmarked = this.isBookmarked
     )

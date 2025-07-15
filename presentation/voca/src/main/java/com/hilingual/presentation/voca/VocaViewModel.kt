@@ -8,6 +8,7 @@ import com.hilingual.data.voca.model.VocaList
 import com.hilingual.data.voca.repository.VocaRepository
 import com.hilingual.presentation.voca.component.WordSortType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
@@ -36,16 +37,24 @@ constructor(
     private var AtoZGroupList: List<VocaList> = persistentListOf()
 
     init {
-        fetchWords(WordSortType.Latest)
+        fetchWords(WordSortType.AtoZ)
         @OptIn(FlowPreview::class)
         _uiState
             .map { it.searchKeyword }
-            .debounce(300L)
+            .debounce(400L)
             .distinctUntilChanged()
             .onEach { keyword ->
                 performSearch(keyword)
             }
             .launchIn(viewModelScope)
+    }
+
+    fun updateSort(sort: WordSortType) {
+        _uiState.update {
+            it.copy(
+                sortType = sort
+            )
+        }
     }
 
     fun fetchWords(sort: WordSortType) {
@@ -64,15 +73,6 @@ constructor(
         }
     }
 
-
-    fun updateSort(sort: WordSortType) {
-        _uiState.update {
-            it.copy(
-                sortType = sort
-            )
-        }
-    }
-
     fun fetchVocaDetail(phraseId: Long) {
         viewModelScope.launch {
             vocaRepository.getVocaDetail(phraseId = phraseId)
@@ -85,19 +85,6 @@ constructor(
                 }
                 .onLogFailure { }
         }
-    }
-
-    fun clearSearchKeyword() {
-        _uiState.update {
-            it.copy(
-                searchKeyword = "",
-                viewType = ScreenType.DEFAULT
-            )
-        }
-    }
-
-    fun toggleBookmark(phraseId: Long) {
-
     }
 
     fun clearSelectedVocaDetail() {
@@ -128,4 +115,18 @@ constructor(
             )
         }
     }
+
+    fun clearSearchKeyword() {
+        _uiState.update {
+            it.copy(
+                searchKeyword = "",
+                viewType = ScreenType.DEFAULT
+            )
+        }
+    }
+
+    fun toggleBookmark(phraseId: Long) {
+
+    }
+
 }

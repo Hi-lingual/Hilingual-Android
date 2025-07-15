@@ -12,7 +12,7 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 data class VocaUiState(
     val viewType: ScreenType = ScreenType.DEFAULT,
-    val sortType: WordSortType = WordSortType.Latest,
+    val sortType: WordSortType = WordSortType.AtoZ,
     val vocaCount: Int = 0,
     val vocaGroupList: UiState<ImmutableList<VocaList>> = UiState.Loading,
     val searchKeyword: String = "",

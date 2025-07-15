@@ -14,7 +14,7 @@ data class VocaDetailResponseDto(
     @SerialName("explanation")
     val explanation: String,
     @SerialName("writtenDate")
-    val createdAt: String,
+    val writtenDate: String,
     @SerialName("isBookmarked")
     val isBookmarked: Boolean
 )

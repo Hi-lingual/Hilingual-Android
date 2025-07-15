@@ -15,13 +15,13 @@ data class VocaItem(
     val isBookmarked: Boolean
 )
 
-fun VocaGroupResponseDto.toModel(): VocaList =
+internal fun VocaGroupResponseDto.toModel(): VocaList =
     VocaList(
         group = this.group,
         words = this.words.map { it.toModel() }
     )
 
-fun VocaItemResponseDto.toModel(): VocaItem =
+internal fun VocaItemResponseDto.toModel(): VocaItem =
     VocaItem(
         phraseId = this.phraseId,
         phrase = this.phrase,

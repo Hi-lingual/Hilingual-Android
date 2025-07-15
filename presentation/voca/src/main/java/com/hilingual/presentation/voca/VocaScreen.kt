@@ -33,6 +33,8 @@ import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
+import com.hilingual.data.voca.model.VocaItem
+import com.hilingual.data.voca.model.VocaList
 import com.hilingual.presentation.voca.component.AddVocaButton
 import com.hilingual.presentation.voca.component.VocaCard
 import com.hilingual.presentation.voca.component.VocaEmptyCard
@@ -42,8 +44,6 @@ import com.hilingual.presentation.voca.component.VocaInfo
 import com.hilingual.presentation.voca.component.VocaModal
 import com.hilingual.presentation.voca.component.WordSortBottomSheet
 import com.hilingual.presentation.voca.component.WordSortType
-import com.hilingual.data.voca.model.VocaList
-import com.hilingual.data.voca.model.VocaItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -96,33 +96,31 @@ internal fun VocaRoute(
         )
     }
 
-    if (isVocaModalVisibility) {
-        val vocaDetail = (uiState.vocaItemDetail as? UiState.Success)?.data
-        if (vocaDetail != null) {
-            Box(
-                modifier = Modifier
-                    .background(HilingualTheme.colors.dim)
-                    .noRippleClickable(onClick = {
-                        isVocaModalVisibility = false
-                        viewModel.clearSelectedVocaDetail()
-                    })
-                    .padding(paddingValues)
-                    .fillMaxSize(),
-                contentAlignment = Alignment.BottomCenter
-            ) {
-                with(vocaDetail) {
-                    VocaModal(
-                        phrase = phrase,
-                        phraseType = phraseType.toPersistentList(),
-                        explanation = explanation,
-                        createdAt = createdAt,
-                        isBookmarked = isBookmarked,
-                        onBookmarkClick = { viewModel.toggleBookmark(phraseId) },
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .navigationBarsPadding()
-                    )
-                }
+    if (isVocaModalVisibility) { //TODO: 모달 네비게이션 위치까지 dim 처리
+        val vocaDetail = (uiState.vocaItemDetail as UiState.Success).data
+        Box(
+            modifier = Modifier
+                .background(HilingualTheme.colors.dim)
+                .noRippleClickable(onClick = {
+                    isVocaModalVisibility = false
+                    viewModel.clearSelectedVocaDetail()
+                })
+                .padding(paddingValues)
+                .fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            with(vocaDetail) {
+                VocaModal(
+                    phrase = phrase,
+                    phraseType = phraseType.toPersistentList(),
+                    explanation = explanation,
+                    writtenDate = writtenDate,
+                    isBookmarked = isBookmarked,
+                    onBookmarkClick = { viewModel.toggleBookmark(phraseId) },
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .navigationBarsPadding()
+                )
             }
         }
     }
