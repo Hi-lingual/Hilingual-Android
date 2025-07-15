@@ -1,10 +1,13 @@
 package com.hilingual.presentation.diaryfeedback
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.presentation.diaryfeedback.model.toState
+import com.hilingual.presentation.diaryfeedback.navigation.DiaryFeedback
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
@@ -17,12 +20,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class DiaryFeedbackViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val diaryRepository: DiaryRepository
 ) : ViewModel() {
-    val diaryId: Long = 18L // TODO: 수정 필요
-
     private val _uiState = MutableStateFlow<UiState<DiaryFeedbackUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<DiaryFeedbackUiState>> = _uiState.asStateFlow()
+
+    val diaryId = savedStateHandle.toRoute<DiaryFeedback>().diaryId
 
     init {
         loadInitialData()
@@ -48,7 +52,6 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                 val recommendExpressions = recommendExpressionsResult.getOrThrow()
 
                 val newUiState = DiaryFeedbackUiState(
-                    diaryId = diaryId,
                     writtenDate = diaryResult.writtenDate,
                     diaryContent = diaryResult.toState(),
                     feedbackList = feedbacks.map {
