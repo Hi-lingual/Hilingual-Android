@@ -66,9 +66,7 @@ internal class OnboardingViewModel @Inject constructor(
                     _sideEffect.emit(OnboardingSideEffect.NavigateToHome)
                 }
                 .onLogFailure {
-                    viewModelScope.launch {
-                        _sideEffect.emit(OnboardingSideEffect.ShowRetryDialog { onRegisterClick(nickname) })
-                    }
+                    _sideEffect.emit(OnboardingSideEffect.ShowRetryDialog { onRegisterClick(nickname) })
                 }
         }
     }
@@ -128,9 +126,7 @@ internal class OnboardingViewModel @Inject constructor(
                             isNicknameValid = false
                         )
                     }
-                    viewModelScope.launch {
-                        _sideEffect.emit(OnboardingSideEffect.ShowRetryDialog { validateNickname(nickname) })
-                    }
+                    _sideEffect.emit(OnboardingSideEffect.ShowRetryDialog { validateNickname(nickname) })
                 }
         }
     }
