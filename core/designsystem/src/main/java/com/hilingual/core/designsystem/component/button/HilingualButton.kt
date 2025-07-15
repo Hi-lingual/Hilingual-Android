@@ -25,8 +25,9 @@ fun HilingualButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enableProvider: () -> Boolean = { false }
 ) {
+    val enabled = enableProvider()
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -67,7 +68,7 @@ private fun DisabledButtonPreview() {
     HilingualTheme {
         HilingualButton(
             text = "시작하기",
-            enabled = false,
+            enableProvider = { false },
             onClick = {}
         )
     }
@@ -81,7 +82,7 @@ private fun ButtonTogglePreview() {
 
         HilingualButton(
             text = if (isEnabled) "활성화됨" else "비활성화됨",
-            enabled = isEnabled,
+            enableProvider = { isEnabled },
             onClick = { isEnabled = !isEnabled }
         )
     }
