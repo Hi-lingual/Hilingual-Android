@@ -26,6 +26,7 @@ import androidx.navigation.compose.NavHost
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.component.snackbar.TextSnackBar
 import com.hilingual.presentation.auth.navigation.authNavGraph
+import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
 import com.hilingual.presentation.diarywrite.navigation.diaryWriteNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
@@ -99,6 +100,7 @@ internal fun MainScreen(
                 )
                 homeNavGraph(
                     paddingValues = innerPadding,
+                    navigateToDiaryFeedback = navigator::navigateToDiaryFeedback,
                     navigateToDiaryWrite = navigator::navigateToDiaryWrite
                 )
                 diaryWriteNavGraph(
@@ -106,7 +108,12 @@ internal fun MainScreen(
                     navigateUp = navigator::navigateUp
                 )
                 vocaNavGraph(
-                    paddingValues = innerPadding
+                    paddingValues = innerPadding,
+                    navigateToHome = navigator::navigateToHome
+                )
+                diaryFeedbackNavGraph(
+                    paddingValues = innerPadding,
+                    navigateUp = navigator::navigateUp
                 )
             }
         }
