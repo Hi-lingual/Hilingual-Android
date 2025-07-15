@@ -102,40 +102,40 @@ internal fun MainScreen(
                     navController = navigator.navController,
                     startDestination = navigator.startDestination
 
-            ) {
-                splashNavGraph(
-                    navigateToAuth = navigator::navigateToAuth,
-                    navigateToHome = navigator::navigateToHome,
-                    sharedTransitionScope = this@SharedTransitionLayout
-                )
-                authNavGraph(
-                    paddingValues = innerPadding,
-                    navigateToHome = navigator::navigateToHome,
-                    navigateToOnboarding = navigator::navigateToOnboarding,
-                    sharedTransitionScope = this@SharedTransitionLayout
-                )
-                onboardingGraph(
-                    paddingValues = innerPadding,
-                    navigateToHome = navigator::navigateToHome
-                )
-                homeNavGraph(
-                    paddingValues = innerPadding,
-                    navigateToDiaryFeedback = navigator::navigateToDiaryFeedback,
-                    navigateToDiaryWrite = navigator::navigateToDiaryWrite
-                )
-                diaryWriteNavGraph(
-                    paddingValues = innerPadding,
-                    navigateUp = navigator::navigateUp
-                )
-                vocaNavGraph(
-                    paddingValues = innerPadding,
-                    navigateToHome = navigator::navigateToHome
-                )
-                diaryFeedbackNavGraph(
-                    paddingValues = innerPadding,
-                    navigateUp = navigator::navigateUp
-                )
-            }
+                ) {
+                    splashNavGraph(
+                        navigateToAuth = navigator::navigateToAuth,
+                        navigateToHome = navigator::navigateToHome,
+                        sharedTransitionScope = this@SharedTransitionLayout
+                    )
+                    authNavGraph(
+                        paddingValues = innerPadding,
+                        navigateToHome = navigator::navigateToHome,
+                        navigateToOnboarding = navigator::navigateToOnboarding,
+                        sharedTransitionScope = this@SharedTransitionLayout
+                    )
+                    onboardingGraph(
+                        paddingValues = innerPadding,
+                        navigateToHome = navigator::navigateToHome
+                    )
+                    homeNavGraph(
+                        paddingValues = innerPadding,
+                        navigateToDiaryFeedback = navigator::navigateToDiaryFeedback,
+                        navigateToDiaryWrite = navigator::navigateToDiaryWrite
+                    )
+                    diaryWriteNavGraph(
+                        paddingValues = innerPadding,
+                        navigateUp = navigator::navigateUp
+                    )
+                    vocaNavGraph(
+                        paddingValues = innerPadding,
+                        navigateToHome = navigator::navigateToHome
+                    )
+                    diaryFeedbackNavGraph(
+                        paddingValues = innerPadding,
+                        navigateUp = navigator::navigateUp
+                    )
+                }
 
                 HilingualErrorDialog(controller = dialogController)
             }
