@@ -22,12 +22,13 @@ fun NavController.navigateToVoca(
 }
 
 fun NavGraphBuilder.vocaNavGraph(
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    navigateToHome: () -> Unit
 ) {
     composable<Voca> {
         VocaRoute(
             paddingValues = paddingValues,
-            navigateToDiaryWrite = { }
+            navigateToHome = navigateToHome
         )
     }
 }
