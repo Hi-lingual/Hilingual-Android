@@ -1,5 +1,6 @@
 package com.hilingual.presentation.diarywrite
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -55,6 +56,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 internal fun DiaryWriteRoute(
     paddingValues: PaddingValues,
@@ -84,7 +86,7 @@ internal fun DiaryWriteRoute(
                 diaryText = uiState.diaryText,
                 onDiaryTextChanged = viewModel::updateDiaryText,
                 diaryImageUri = uiState.diaryImageUri,
-                onDiaryImageUriChanged = { uiState.diaryImageUri = it },
+                onDiaryImageUriChanged = viewModel::updateDiaryImageUri,
                 onDiaryFeedbackRequestButtonClick = {}
             )
         }
