@@ -70,20 +70,13 @@ internal fun HomeRoute(
         }
 
         is UiState.Success -> {
-            val onDiaryPreviewClickHandler = remember(state.data.diaryPreview) {
-                {
-                    if (state.data.diaryPreview != null) {
-                        navigateToDiaryFeedback(state.data.diaryPreview!!.diaryId)
-                    }
-                }
-            }
             HomeScreen(
                 paddingValues = paddingValues,
                 uiState = state.data,
                 onDateSelected = viewModel::onDateSelected,
                 onMonthChanged = viewModel::onMonthChanged,
                 onWriteDiaryClick = navigateToDiaryWrite,
-                onDiaryPreviewClick = onDiaryPreviewClickHandler
+                onDiaryPreviewClick = navigateToDiaryFeedback
             )
         }
 
@@ -98,7 +91,7 @@ private fun HomeScreen(
     onDateSelected: (LocalDate) -> Unit,
     onMonthChanged: (YearMonth) -> Unit,
     onWriteDiaryClick: () -> Unit,
-    onDiaryPreviewClick: () -> Unit
+    onDiaryPreviewClick: (diaryId: Long) -> Unit
 ) {
     val date = uiState.selectedDate
     val today = remember { LocalDate.now() }
@@ -115,16 +108,18 @@ private fun HomeScreen(
             .padding(paddingValues)
             .verticalScroll(verticalScrollState)
     ) {
-        HomeHeader(
-            imageUrl = uiState.userProfile.profileImg,
-            nickname = uiState.userProfile.nickname,
-            totalDiaries = uiState.userProfile.totalDiaries,
-            streak = uiState.userProfile.streak,
-            modifier = Modifier
-                .background(hilingualBlack)
-                .padding(horizontal = 16.dp)
-                .padding(top = 8.dp, bottom = 12.dp)
-        )
+        with(uiState) {
+            HomeHeader(
+                imageUrl = userProfile.profileImg,
+                nickname = userProfile.nickname,
+                totalDiaries = userProfile.totalDiaries,
+                streak = userProfile.streak,
+                modifier = Modifier
+                    .background(hilingualBlack)
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 8.dp, bottom = 12.dp)
+            )
+        }
 
         HilingualCalendar(
             selectedDate = uiState.selectedDate,
@@ -164,47 +159,50 @@ private fun HomeScreen(
                 if (isWritable) DateTimeInfo(remainingTime = uiState.todayTopic?.remainingTime)
             }
 
-            when {
-                uiState.isLoading -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 24.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
+            with(uiState) {
+                when {
+                    isLoading -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 24.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
-                }
 
-                isWritten -> {
-                    if (uiState.diaryPreview != null) {
-                        DiaryPreviewCard(
-                            diaryText = uiState.diaryPreview.originalText,
-                            onClick = onDiaryPreviewClick,
-                            imageUrl = uiState.diaryPreview.imageUrl,
+                    isWritten -> {
+                        if (diaryPreview != null) {
+                            DiaryPreviewCard(
+                                diaryText = diaryPreview.originalText,
+                                diaryId = diaryPreview.diaryId,
+                                onClick = onDiaryPreviewClick,
+                                imageUrl = diaryPreview.imageUrl,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+
+                    isFuture -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
+                    isWritable -> {
+                        if (todayTopic != null) {
+                            TodayTopic(
+                                koTopic = todayTopic.topicKo,
+                                enTopic = todayTopic.topicEn,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .animateContentSize()
+                            )
+                        }
+                        WriteDiaryButton(
+                            onClick = onWriteDiaryClick,
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
-                }
 
-                isFuture -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
-                isWritable -> {
-                    if (uiState.todayTopic != null) {
-                        TodayTopic(
-                            koTopic = uiState.todayTopic.topicKo,
-                            enTopic = uiState.todayTopic.topicEn,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .animateContentSize()
-                        )
-                    }
-                    WriteDiaryButton(
-                        onClick = onWriteDiaryClick,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    else -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
                 }
-
-                else -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
             }
         }
     }

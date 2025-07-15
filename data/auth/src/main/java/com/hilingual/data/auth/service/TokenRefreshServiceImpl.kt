@@ -6,7 +6,7 @@ import com.hilingual.core.network.BEARER
 import com.hilingual.core.network.service.TokenRefreshService
 import javax.inject.Inject
 
-class TokenRefreshServiceImpl @Inject constructor(
+internal class TokenRefreshServiceImpl @Inject constructor(
     private val reissueService: ReissueService,
     private val tokenManager: TokenManager
 ) : TokenRefreshService {
