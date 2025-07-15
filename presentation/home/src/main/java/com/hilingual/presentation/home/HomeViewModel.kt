@@ -83,12 +83,19 @@ class HomeViewModel @Inject constructor(
             )
         }
 
+        /*
         val today = LocalDate.now()
         val isWritable = !date.isAfter(today) && date.isAfter(today.minusDays(2))
 
         when {
             hasDiary -> getDiaryThumbnail(date.toString())
             isWritable -> getTopic(date.toString())
+        }
+        */
+        if (hasDiary) {
+            getDiaryThumbnail(date.toString())
+        } else {
+            getTopic(date.toString())
         }
     }
 
@@ -115,11 +122,18 @@ class HomeViewModel @Inject constructor(
                         )
                     }
 
+                    /*
                     val today = LocalDate.now()
                     val isWritable = !newDate.isAfter(today) && newDate.isAfter(today.minusDays(2))
                     when {
                         hasDiaryOnFirst -> getDiaryThumbnail(newDate.toString())
                         isWritable -> getTopic(newDate.toString())
+                    }
+                    */
+                    if (hasDiaryOnFirst) {
+                        getDiaryThumbnail(newDate.toString())
+                    } else {
+                        getTopic(newDate.toString())
                     }
                 }
                 .onLogFailure { }

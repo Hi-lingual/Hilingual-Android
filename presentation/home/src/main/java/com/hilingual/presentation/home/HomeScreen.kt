@@ -34,8 +34,6 @@ import com.hilingual.presentation.home.component.HomeHeader
 import com.hilingual.presentation.home.component.calendar.HilingualCalendar
 import com.hilingual.presentation.home.component.footer.DateTimeInfo
 import com.hilingual.presentation.home.component.footer.DiaryDateInfo
-import com.hilingual.presentation.home.component.footer.DiaryEmptyCard
-import com.hilingual.presentation.home.component.footer.DiaryEmptyCardType
 import com.hilingual.presentation.home.component.footer.DiaryPreviewCard
 import com.hilingual.presentation.home.component.footer.TodayTopic
 import com.hilingual.presentation.home.component.footer.WriteDiaryButton
@@ -96,9 +94,10 @@ private fun HomeScreen(
     val date = uiState.selectedDate
     val today = remember { LocalDate.now() }
     val isWritten = remember(uiState.dateList, date) { uiState.dateList.any { LocalDate.parse(it.date) == date } }
-    val isFuture = remember(date, today) { date.isAfter(today) }
-    val isWritable =
-        remember(isFuture, date, today) { !isFuture && date.isAfter(today.minusDays(2)) }
+    // val isFuture = remember(date, today) { date.isAfter(today) }
+    /* val isWritable =
+        remember(isFuture, date, today) { !isFuture && date.isAfter(today.minusDays(2)) } */
+    val isWritable = true
     val verticalScrollState = rememberScrollState()
 
     Column(
@@ -177,8 +176,7 @@ private fun HomeScreen(
                             )
                         }
                     }
-
-                    isFuture -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
+                    /* isFuture -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE) */
                     isWritable -> {
                         if (todayTopic != null) {
                             TodayTopic(
@@ -195,7 +193,7 @@ private fun HomeScreen(
                         )
                     }
 
-                    else -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
+                    // else -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
                 }
             }
         }
