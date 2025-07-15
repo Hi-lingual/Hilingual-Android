@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.hilingual.presentation.auth.navigation.navigateToAuth
 import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedback
+import com.hilingual.presentation.diarywrite.navigation.navigateToDiaryWrite
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.splash.navigation.Splash
@@ -94,6 +95,14 @@ internal class MainNavigator(
         navOptions: NavOptions? = null
     ) {
         navController.navigateToDiaryFeedback(diaryId, navOptions)
+    }
+
+    fun navigateToDiaryWrite(
+        navOptions: NavOptions? = navOptions {
+            launchSingleTop = true
+        }
+    ) {
+        navController.navigateToDiaryWrite(navOptions)
     }
 
     fun navigateUp() {
