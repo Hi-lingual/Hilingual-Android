@@ -2,7 +2,7 @@ package com.hilingual.data.auth.di
 
 import android.content.Context
 import androidx.credentials.CredentialManager
-import com.hilingual.data.auth.datasource.AuthApiDataSource
+import com.hilingual.data.auth.datasource.AuthRemoteDataSource
 import com.hilingual.data.auth.datasource.GoogleAuthDataSource
 import com.hilingual.data.auth.datasourceimpl.AuthRemoteDataSourceImpl
 import com.hilingual.data.auth.datasourceimpl.GoogleAuthDataSourceImpl
@@ -25,11 +25,11 @@ internal abstract class DataSourceModule {
 
     @Binds
     @Singleton
-    abstract fun bindAuthApiDataSource(
+    abstract fun bindAuthRemoteDataSource(
         authRemoteDataSourceImpl: AuthRemoteDataSourceImpl
-    ): AuthApiDataSource
+    ): AuthRemoteDataSource
 
-    companion object {
+    internal companion object {
         @Provides
         @Singleton
         fun provideCredentialManager(@ApplicationContext context: Context): CredentialManager {

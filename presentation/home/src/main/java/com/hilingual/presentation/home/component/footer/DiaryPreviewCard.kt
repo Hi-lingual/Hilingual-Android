@@ -26,14 +26,15 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
 internal fun DiaryPreviewCard(
     diaryText: String,
-    onClick: () -> Unit,
+    diaryId: Long,
+    onClick: (diaryId: Long) -> Unit,
     modifier: Modifier = Modifier,
     imageUrl: String? = null
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .noRippleClickable(onClick = onClick)
+            .noRippleClickable(onClick = { onClick(diaryId) })
             .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -75,12 +76,14 @@ private fun DiaryPreviewCardPreview() {
             DiaryPreviewCard(
                 imageUrl = "",
                 diaryText = text,
+                diaryId = 0,
                 onClick = {}
             )
 
             DiaryPreviewCard(
                 imageUrl = null,
                 diaryText = text,
+                diaryId = 0,
                 onClick = {}
             )
         }

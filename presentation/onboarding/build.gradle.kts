@@ -7,3 +7,7 @@ plugins {
 android {
     setNamespace("presentation.onboarding")
 }
+
+dependencies {
+    implementation(projects.data.user)
+}
