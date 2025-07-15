@@ -25,7 +25,7 @@ import javax.inject.Inject
 private val specialCharRegex = Regex("[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]")
 
 @HiltViewModel
-class OnboardingViewModel @Inject constructor(
+internal class OnboardingViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
