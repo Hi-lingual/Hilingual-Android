@@ -12,5 +12,5 @@ internal data class DiaryFeedbackUiState(
     val writtenDate: String = "",
     val diaryContent: DiaryContentUiModel = DiaryContentUiModel(),
     val feedbackList: ImmutableList<FeedbackContentUiModel> = persistentListOf(),
-    val recommendExpressionList: ImmutableList<RecommendExpressionUiState> = persistentListOf(),
+    val recommendExpressionList: ImmutableList<RecommendExpressionUiState> = persistentListOf()
 )

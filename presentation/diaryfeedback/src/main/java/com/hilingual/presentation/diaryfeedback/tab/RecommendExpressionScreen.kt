@@ -64,7 +64,6 @@ internal fun RecommendExpressionScreen(
 @Composable
 private fun GrammarSpellingScreenPreview() {
     HilingualTheme {
-
         RecommendExpressionScreen(
             writtenDate = "7월 11일 금요일",
             recommendExpressionList = persistentListOf(),

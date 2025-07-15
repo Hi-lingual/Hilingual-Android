@@ -24,4 +24,3 @@ data class RecommendExpressionResult(
     @SerialName("isBookmarked")
     val isBookmarked: Boolean
 )
-

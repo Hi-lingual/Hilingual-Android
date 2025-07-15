@@ -39,7 +39,7 @@ internal fun GrammarSpellingScreen(
     diaryContent: DiaryContentUiModel,
     feedbackList: ImmutableList<FeedbackContentUiModel>,
     onImageClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     var isAIWrittenDiary by remember { mutableStateOf(true) }
 

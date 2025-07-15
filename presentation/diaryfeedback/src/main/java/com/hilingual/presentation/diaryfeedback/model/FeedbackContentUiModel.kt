@@ -13,5 +13,5 @@ internal data class FeedbackContentUiModel(
 internal fun DiaryFeedbackModel.toState() = FeedbackContentUiModel(
     originalText = this.originalText,
     feedbackText = this.rewriteText,
-    explain = this.explain,
+    explain = this.explain
 )
