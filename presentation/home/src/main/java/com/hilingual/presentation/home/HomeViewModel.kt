@@ -57,6 +57,8 @@ class HomeViewModel @Inject constructor(
                     )
                     if (hasDiaryToday) {
                         getDiaryThumbnail(today.toString())
+                    } else {
+                        getTopic(today.toString())
                     }
                     return@launch
                 }.onLogFailure { }
@@ -84,10 +86,9 @@ class HomeViewModel @Inject constructor(
         val today = LocalDate.now()
         val isWritable = !date.isAfter(today) && date.isAfter(today.minusDays(2))
 
-        if (hasDiary) {
-            getDiaryThumbnail(date.toString())
-        } else if (isWritable) {
-            getTopic(date.toString())
+        when {
+            hasDiary -> getDiaryThumbnail(date.toString())
+            isWritable -> getTopic(date.toString())
         }
     }
 
@@ -104,7 +105,7 @@ class HomeViewModel @Inject constructor(
                     val newDate = yearMonth.atDay(1)
                     val hasDiaryOnFirst = calendarModel.dateList.any { LocalDate.parse(it.date) == newDate }
 
-                    _uiState.updateSuccess {
+                    _uiState.updateSuccess { it ->
                         it.copy(
                             dateList = calendarModel.dateList.map { it.toState() }.toImmutableList(),
                             selectedDate = newDate,
@@ -114,14 +115,11 @@ class HomeViewModel @Inject constructor(
                         )
                     }
 
-                    if (hasDiaryOnFirst) {
-                        getDiaryThumbnail(newDate.toString())
-                    } else {
-                        val today = LocalDate.now()
-                        val isWritable = !newDate.isAfter(today) && newDate.isAfter(today.minusDays(2))
-                        if (isWritable) {
-                            getTopic(newDate.toString())
-                        }
+                    val today = LocalDate.now()
+                    val isWritable = !newDate.isAfter(today) && newDate.isAfter(today.minusDays(2))
+                    when {
+                        hasDiaryOnFirst -> getDiaryThumbnail(newDate.toString())
+                        isWritable -> getTopic(newDate.toString())
                     }
                 }
                 .onLogFailure { }
