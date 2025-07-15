@@ -11,10 +11,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -28,10 +31,12 @@ internal fun SplashRoute(
     navigateToAuth: () -> Unit,
     navigateToHome: () -> Unit,
     sharedTransitionScope: SharedTransitionScope,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: SplashViewModel = hiltViewModel()
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
     val localSystemBarsColor = LocalSystemBarsColor.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
@@ -39,10 +44,10 @@ internal fun SplashRoute(
         )
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(isLoggedIn) {
         lifecycleOwner.lifecycleScope.launch {
             delay(1400)
-            navigateToAuth()
+            if (isLoggedIn != null) navigateToHome() else navigateToAuth()
         }
     }
 

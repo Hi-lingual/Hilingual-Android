@@ -7,3 +7,7 @@ plugins {
 android {
     setNamespace("presentation.splash")
 }
+
+dependencies {
+    implementation(projects.core.localstorage)
+}
