@@ -1,9 +1,11 @@
 package com.hilingual.data.diary.repository
 
+import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResposeDto
 import com.hilingual.data.diary.model.DiaryContentModel
 import com.hilingual.data.diary.model.DiaryFeedbackModel
 import com.hilingual.data.diary.model.DiaryRecommendExpressionModel
 import com.hilingual.data.diary.model.PhraseBookmarkModel
+import java.io.File
 
 interface DiaryRepository {
     suspend fun getDiaryContent(diaryId: Long): Result<DiaryContentModel>
@@ -16,4 +18,10 @@ interface DiaryRepository {
         phraseId: Long,
         bookmarkModel: PhraseBookmarkModel
     ): Result<Unit>
+
+    suspend fun postDiaryFeedbackCreate(
+        originalText: String,
+        date: String,
+        imageFile: File? = null
+    ): Result<DiaryFeedbackCreateResposeDto>
 }

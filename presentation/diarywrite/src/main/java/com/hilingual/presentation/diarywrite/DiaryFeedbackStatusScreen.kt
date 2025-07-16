@@ -104,10 +104,12 @@ private fun DiaryFeedbackLoadingStatusScreenPreview() {
 @Preview
 @Composable
 private fun DiaryFeedbackCompleteStatusScreenPreview() {
+    val completeState = DiaryFeedbackState.Complete(diaryId = 1L)
+
     HilingualTheme {
         DiaryFeedbackStatusScreen(
             paddingValues = PaddingValues(0.dp),
-            state = DiaryFeedbackState.Complete.data ?: FeedbackUIData(),
+            state = completeState.data ?: FeedbackUIData(),
             content = {
                 FeedbackCompleteContent(
                     onCloseButtonClick = {},

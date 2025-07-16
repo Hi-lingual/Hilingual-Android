@@ -2,6 +2,7 @@ package com.hilingual.data.diary.repositoryimpl
 
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
+import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResposeDto
 import com.hilingual.data.diary.model.DiaryContentModel
 import com.hilingual.data.diary.model.DiaryFeedbackModel
 import com.hilingual.data.diary.model.DiaryRecommendExpressionModel
@@ -9,6 +10,7 @@ import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.model.toDto
 import com.hilingual.data.diary.model.toModel
 import com.hilingual.data.diary.repository.DiaryRepository
+import java.io.File
 import javax.inject.Inject
 
 internal class DiaryRepositoryImpl @Inject constructor(
@@ -38,5 +40,18 @@ internal class DiaryRepositoryImpl @Inject constructor(
                 phraseId = phraseId,
                 bookmarkRequestDto = bookmarkModel.toDto()
             )
+        }
+
+    override suspend fun postDiaryFeedbackCreate(
+        originalText: String,
+        date: String,
+        imageFile: File?
+    ): Result<DiaryFeedbackCreateResposeDto> =
+        suspendRunCatching {
+            diaryRemoteDataSource.getDiaryFeedbackCreate(
+                originalText = originalText,
+                date = date,
+                imageFile = imageFile
+            ).data!!
         }
 }

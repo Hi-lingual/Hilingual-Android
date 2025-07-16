@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -66,7 +67,9 @@ internal fun DiaryWriteRoute(
     viewModel: DiaryWriteViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val postState by viewModel.feedbackState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
@@ -75,8 +78,8 @@ internal fun DiaryWriteRoute(
         )
     }
 
-    when (viewModel.feedbackState.value) {
-        DiaryFeedbackState.Default -> {
+    when (postState) {
+        is DiaryFeedbackState.Default -> {
             DiaryWriteScreen(
                 paddingValues = paddingValues,
                 onBackClicked = navigateUp,
@@ -87,11 +90,11 @@ internal fun DiaryWriteRoute(
                 onDiaryTextChanged = viewModel::updateDiaryText,
                 diaryImageUri = uiState.diaryImageUri,
                 onDiaryImageUriChanged = viewModel::updateDiaryImageUri,
-                onDiaryFeedbackRequestButtonClick = {}
+                onDiaryFeedbackRequestButtonClick = { viewModel.postDiaryFeedbackCreate(context) }
             )
         }
 
-        DiaryFeedbackState.Loading -> {
+        is DiaryFeedbackState.Loading -> {
             DiaryFeedbackStatusScreen(
                 paddingValues = paddingValues,
                 state = viewModel.feedbackState.value.data ?: FeedbackUIData(),
@@ -99,7 +102,7 @@ internal fun DiaryWriteRoute(
             )
         }
 
-        DiaryFeedbackState.Complete -> {
+        is DiaryFeedbackState.Complete -> {
             DiaryFeedbackStatusScreen(
                 paddingValues = paddingValues,
                 state = viewModel.feedbackState.value.data ?: FeedbackUIData(),
@@ -110,6 +113,9 @@ internal fun DiaryWriteRoute(
                     )
                 }
             )
+        }
+
+        is DiaryFeedbackState.Failure -> { /* TODO: 에러 페이지 노출 */
         }
     }
 }
