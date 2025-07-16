@@ -31,6 +31,7 @@ import com.hilingual.presentation.diaryfeedback.component.FeedbackReportBottomSh
 import com.hilingual.presentation.diaryfeedback.component.FeedbackReportDialog
 import com.hilingual.presentation.diaryfeedback.tab.GrammarSpellingScreen
 import com.hilingual.presentation.diaryfeedback.tab.RecommendExpressionScreen
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun DiaryFeedbackRoute(
@@ -73,7 +74,6 @@ internal fun DiaryFeedbackRoute(
                 onBackClick = navigateUp,
                 isImageDetailVisible = isImageDetailVisible,
                 onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
-                onToggleDiaryViewMode = viewModel::toggleDiaryShowOption,
                 onToggleBookmark = viewModel::toggleBookmark
             )
         }
@@ -89,7 +89,6 @@ private fun DiaryFeedbackScreen(
     onBackClick: () -> Unit,
     isImageDetailVisible: Boolean,
     onChangeImageDetailVisible: () -> Unit,
-    onToggleDiaryViewMode: (Boolean) -> Unit,
     onToggleBookmark: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -140,14 +139,12 @@ private fun DiaryFeedbackScreen(
                     writtenDate = writtenDate,
                     diaryContent = diaryContent,
                     feedbackList = feedbackList,
-                    onToggleDiaryViewMode = onToggleDiaryViewMode,
-                    isAIWritten = isAIWritten,
                     onImageClick = onChangeImageDetailVisible
                 )
                 1 -> RecommendExpressionScreen(
                     writtenDate = writtenDate,
                     recommendExpressionList = recommendExpressionList,
-                    isBookmarkClick = onToggleBookmark
+                    onBookmarkClick = onToggleBookmark
                 )
             }
         }
@@ -166,22 +163,16 @@ private fun DiaryFeedbackScreen(
 @Composable
 private fun DiaryFeedbackScreenPreview() {
     HilingualTheme {
-        val vm = DiaryFeedbackViewModel
-        var isAIWritten by remember { mutableStateOf(true) }
-
         DiaryFeedbackScreen(
             paddingValues = PaddingValues(),
             uiState = DiaryFeedbackUiState(
-                isAIWritten = isAIWritten,
                 writtenDate = "7월 11일 금요일",
-                diaryContent = vm.dummyDiaryContent,
-                feedbackList = vm.dummyFeedbacks,
-                recommendExpressionList = vm.dummyRecommendExpressions
+                feedbackList = persistentListOf(),
+                recommendExpressionList = persistentListOf()
             ),
             isImageDetailVisible = false,
             onChangeImageDetailVisible = {},
             onBackClick = {},
-            onToggleDiaryViewMode = { isAIWritten = !isAIWritten },
             onToggleBookmark = { _, _ -> {} }
         )
     }
