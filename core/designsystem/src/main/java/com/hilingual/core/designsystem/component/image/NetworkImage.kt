@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
@@ -20,14 +21,27 @@ import coil.request.ImageRequest
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
+enum class ErrorImageSize {
+    SMALL,
+    LARGE
+}
+
 @Composable
 fun NetworkImage(
-    imageUrl: Any,
+    imageUrl: Any?,
     modifier: Modifier = Modifier,
     shape: Shape = CircleShape,
+    errorImageSize: ErrorImageSize = ErrorImageSize.SMALL,
     contentScale: ContentScale = ContentScale.Crop,
     contentDescription: String? = null
 ) {
+    val errorImage = remember {
+        when (errorImageSize) {
+            ErrorImageSize.SMALL -> R.drawable.img_load_fail_small
+            ErrorImageSize.LARGE -> R.drawable.img_load_fail_large
+        }
+    }
+
     if (LocalInspectionMode.current) {
         Image(
             painter = painterResource(R.drawable.img_default_image),
@@ -44,6 +58,7 @@ fun NetworkImage(
                 .build(),
             contentDescription = contentDescription,
             contentScale = contentScale,
+            error = painterResource(errorImage),
             modifier = modifier.clip(shape)
         )
     }
