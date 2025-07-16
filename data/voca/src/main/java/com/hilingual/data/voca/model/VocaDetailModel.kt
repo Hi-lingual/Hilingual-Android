@@ -2,7 +2,7 @@ package com.hilingual.data.voca.model
 
 import com.hilingual.data.voca.dto.response.VocaDetailResponseDto
 
-data class VocaDetail(
+data class VocaDetailModel(
     val phraseId: Long,
     val phrase: String,
     val phraseType: List<String>,
@@ -11,8 +11,8 @@ data class VocaDetail(
     val isBookmarked: Boolean
 )
 
-internal fun VocaDetailResponseDto.toModel(): VocaDetail =
-    VocaDetail(
+internal fun VocaDetailResponseDto.toModel(): VocaDetailModel =
+    VocaDetailModel(
         phraseId = this.phraseId,
         phrase = this.phrase,
         phraseType = this.phraseType,

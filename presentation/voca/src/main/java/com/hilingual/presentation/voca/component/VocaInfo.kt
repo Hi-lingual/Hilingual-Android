@@ -18,7 +18,7 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.voca.R
 
-enum class WordSortType(
+internal enum class WordSortType(
     val text: String,
     @DrawableRes val iconRes: Int,
     val sortParam: Int

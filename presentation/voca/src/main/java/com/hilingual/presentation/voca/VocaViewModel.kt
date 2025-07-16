@@ -4,10 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
-import com.hilingual.data.voca.model.VocaList
+import com.hilingual.data.voca.model.GroupingVocaModel
 import com.hilingual.data.voca.repository.VocaRepository
 import com.hilingual.presentation.voca.component.WordSortType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
@@ -25,7 +26,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class VocaViewModel @Inject
+internal class VocaViewModel @Inject
 constructor(
     private val vocaRepository: VocaRepository
 ) : ViewModel() {
@@ -33,7 +34,7 @@ constructor(
     private val _uiState = MutableStateFlow(VocaUiState())
     val uiState: StateFlow<VocaUiState> = _uiState.asStateFlow()
 
-    private var AtoZGroupList: List<VocaList> = persistentListOf()
+    private var AtoZGroupList: ImmutableList<GroupingVocaModel> = persistentListOf()
 
     init {
         fetchWords(WordSortType.AtoZ)
@@ -66,7 +67,7 @@ constructor(
                             vocaCount = count
                         )
                     }
-                    AtoZGroupList = vocaLists
+                    AtoZGroupList = vocaLists.toPersistentList()
                 }
                 .onLogFailure { }
         }
@@ -98,7 +99,7 @@ constructor(
         _uiState.update { it.copy(searchKeyword = searchKeyword) }
     }
 
-    fun performSearch(searchKeyword: String) {
+    private fun performSearch(searchKeyword: String) {
         _uiState.update { currentState ->
             val filteredList = if (searchKeyword.isNotBlank()) {
                 AtoZGroupList.flatMap { it.words }

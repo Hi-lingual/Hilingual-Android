@@ -33,8 +33,8 @@ import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
-import com.hilingual.data.voca.model.VocaItem
-import com.hilingual.data.voca.model.VocaList
+import com.hilingual.data.voca.model.GroupingVocaModel
+import com.hilingual.data.voca.model.VocaItemModel
 import com.hilingual.presentation.voca.component.AddVocaButton
 import com.hilingual.presentation.voca.component.VocaCard
 import com.hilingual.presentation.voca.component.VocaEmptyCard
@@ -96,33 +96,39 @@ internal fun VocaRoute(
         )
     }
 
-    if (isVocaModalVisibility) { // TODO: 모달 네비게이션 위치까지 dim 처리
-        val vocaDetail = (uiState.vocaItemDetail as UiState.Success).data
-        Box(
-            modifier = Modifier
-                .background(HilingualTheme.colors.dim)
-                .noRippleClickable(onClick = {
-                    isVocaModalVisibility = false
-                    viewModel.clearSelectedVocaDetail()
-                })
-                .padding(paddingValues)
-                .fillMaxSize(),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            with(vocaDetail) {
-                VocaModal(
-                    phrase = phrase,
-                    phraseType = phraseType.toPersistentList(),
-                    explanation = explanation,
-                    writtenDate = writtenDate,
-                    isBookmarked = isBookmarked,
-                    onBookmarkClick = { viewModel.toggleBookmark(phraseId) },
+    when (val state = uiState.vocaItemDetail) {
+        is UiState.Success -> {
+            val vocaDetail = state.data
+            if (isVocaModalVisibility) {
+                Box(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .navigationBarsPadding()
-                )
+                        .background(HilingualTheme.colors.dim)
+                        .noRippleClickable(onClick = {
+                            isVocaModalVisibility = false
+                            viewModel.clearSelectedVocaDetail()
+                        })
+                        .padding(paddingValues)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    with(vocaDetail) {
+                        VocaModal(
+                            phrase = phrase,
+                            phraseType = phraseType.toPersistentList(),
+                            explanation = explanation,
+                            writtenDate = writtenDate,
+                            isBookmarked = isBookmarked,
+                            onBookmarkClick = { viewModel.toggleBookmark(phraseId) },
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .navigationBarsPadding()
+                        )
+                    }
+                }
             }
         }
+
+        else -> {}
     }
 }
 
@@ -132,8 +138,8 @@ private fun VocaScreen(
     viewType: ScreenType,
     sortType: WordSortType,
     vocaCount: Int,
-    vocaGroupList: ImmutableList<VocaList>,
-    searchResultList: ImmutableList<VocaItem>,
+    vocaGroupList: ImmutableList<GroupingVocaModel>,
+    searchResultList: ImmutableList<VocaItemModel>,
     searchText: String,
     onWriteDiaryClick: () -> Unit,
     onSortTypeChanged: (WordSortType) -> Unit,
@@ -195,7 +201,7 @@ private fun VocaScreen(
 
 @Composable
 private fun VocaListWithInfoSection(
-    vocaGroupList: ImmutableList<VocaList>,
+    vocaGroupList: ImmutableList<GroupingVocaModel>,
     sortType: WordSortType,
     wordCount: Int,
     onWriteDiaryClick: () -> Unit,
@@ -279,7 +285,7 @@ private fun VocaListWithInfoSection(
 
 @Composable
 private fun SearchResultSection(
-    searchResultList: ImmutableList<VocaItem>,
+    searchResultList: ImmutableList<VocaItemModel>,
     onCardClick: (Long) -> Unit,
     onBookmarkClick: (Long) -> Unit,
     modifier: Modifier = Modifier
@@ -348,13 +354,13 @@ private fun SearchResultSectionListPreview() {
     HilingualTheme {
         SearchResultSection(
             searchResultList = persistentListOf(
-                VocaItem(
+                VocaItemModel(
                     phraseId = 1,
                     phrase = "healing",
                     phraseType = persistentListOf("명사"),
                     isBookmarked = true
                 ),
-                VocaItem(
+                VocaItemModel(
                     phraseId = 2,
                     phrase = "relax",
                     phraseType = persistentListOf("동사"),

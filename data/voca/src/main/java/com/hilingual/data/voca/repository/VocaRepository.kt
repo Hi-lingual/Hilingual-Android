@@ -1,14 +1,14 @@
 package com.hilingual.data.voca.repository
 
-import com.hilingual.data.voca.model.VocaDetail
-import com.hilingual.data.voca.model.VocaList
+import com.hilingual.data.voca.model.VocaDetailModel
+import com.hilingual.data.voca.model.VocaListResultModel
 
 interface VocaRepository {
     suspend fun getVocaList(
         sort: Int
-    ): Result<Pair<Int, List<VocaList>>>
+    ): Result<VocaListResultModel>
 
     suspend fun getVocaDetail(
         phraseId: Long
-    ): Result<VocaDetail>
+    ): Result<VocaDetailModel>
 }
