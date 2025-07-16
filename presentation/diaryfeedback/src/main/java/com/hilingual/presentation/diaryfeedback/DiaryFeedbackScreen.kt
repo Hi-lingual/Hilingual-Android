@@ -9,12 +9,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -46,7 +47,7 @@ internal fun DiaryFeedbackRoute(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
-    var isImageDetailVisible by remember { mutableStateOf<Boolean>(false) }
+    var isImageDetailVisible by remember { mutableStateOf(false) }
 
     BackHandler {
         if (isImageDetailVisible) {
@@ -99,12 +100,29 @@ private fun DiaryFeedbackScreen(
     onToggleBookmark: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var tabIndex by remember { mutableIntStateOf(0) }
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
     var isReportDialogVisible by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    val listState = rememberLazyListState()
-    val isFabVisible by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
+    val pagerState = rememberPagerState(pageCount = { 2 })
+    val grammarListState = rememberLazyListState()
+    val recommendListState = rememberLazyListState()
+
+    val isFabVisible by remember {
+        derivedStateOf {
+            when (pagerState.currentPage) {
+                0 -> grammarListState.firstVisibleItemScrollOffset > 5
+                else -> recommendListState.firstVisibleItemScrollOffset > 5
+            }
+        }
+    }
+
+    LaunchedEffect(pagerState.currentPage) {
+        if (pagerState.currentPage == 0) {
+            grammarListState.scrollToItem(0)
+        } else {
+            recommendListState.scrollToItem(0)
+        }
+    }
 
     if (isReportBottomSheetVisible) {
         FeedbackReportBottomSheet(
@@ -143,35 +161,47 @@ private fun DiaryFeedbackScreen(
             )
 
             DiaryFeedbackTabRow(
-                tabIndex = tabIndex,
-                onTabSelected = { tabIndex = it }
+                tabIndex = pagerState.currentPage,
+                onTabSelected = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(it)
+                    }
+                }
             )
 
-            with(uiState) {
-                when (tabIndex) {
-                    0 -> GrammarSpellingScreen(
-                        listState = listState,
-                        writtenDate = writtenDate,
-                        diaryContent = diaryContent,
-                        feedbackList = feedbackList,
-                        onToggleDiaryViewMode = onToggleDiaryViewMode,
-                        isAIWritten = isAIWritten,
-                        onImageClick = onChangeImageDetailVisible
-                    )
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize()
+            ) { page ->
+                with(uiState) {
+                    when (page) {
+                        0 -> GrammarSpellingScreen(
+                            listState = grammarListState,
+                            writtenDate = writtenDate,
+                            diaryContent = diaryContent,
+                            feedbackList = feedbackList,
+                            onToggleDiaryViewMode = onToggleDiaryViewMode,
+                            isAIWritten = isAIWritten,
+                            onImageClick = onChangeImageDetailVisible
+                        )
 
-                    1 -> RecommendExpressionScreen(
-                        listState = listState,
-                        writtenDate = writtenDate,
-                        recommendExpressionList = recommendExpressionList,
-                        isBookmarkClick = onToggleBookmark
-                    )
+                        1 -> RecommendExpressionScreen(
+                            listState = recommendListState,
+                            writtenDate = writtenDate,
+                            recommendExpressionList = recommendExpressionList,
+                            isBookmarkClick = onToggleBookmark
+                        )
+                    }
                 }
             }
         }
         HilingualFloatingButton(
             onClick = {
                 coroutineScope.launch {
-                    listState.animateScrollToItem(0)
+                    when (pagerState.currentPage) {
+                        0 -> grammarListState.animateScrollToItem(0)
+                        else -> recommendListState.animateScrollToItem(0)
+                    }
                 }
             },
             isVisible = isFabVisible,

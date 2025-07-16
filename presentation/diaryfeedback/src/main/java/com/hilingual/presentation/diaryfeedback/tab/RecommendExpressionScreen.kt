@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,9 +20,6 @@ import com.hilingual.presentation.diaryfeedback.DiaryFeedbackViewModel
 import com.hilingual.presentation.diaryfeedback.RecommendExpression
 import com.hilingual.presentation.diaryfeedback.component.RecommendExpressionCard
 import kotlinx.collections.immutable.ImmutableList
-
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 
 @Composable
 internal fun RecommendExpressionScreen(

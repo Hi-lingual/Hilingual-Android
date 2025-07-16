@@ -69,7 +69,6 @@ fun BoxScope.HilingualFloatingButton(
     }
 }
 
-
 @Preview
 @Composable
 private fun HilingualFloatingButtonPreview() {
@@ -81,7 +80,7 @@ private fun HilingualFloatingButtonPreview() {
         ) {
             HilingualFloatingButton(
                 onClick = {},
-                isVisible = true,
+                isVisible = true
             )
         }
     }

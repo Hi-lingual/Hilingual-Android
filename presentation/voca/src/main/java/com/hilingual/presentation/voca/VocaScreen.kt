@@ -150,7 +150,11 @@ private fun VocaScreen(
     val focusManager = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
-    val isFabVisible by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
+    val isFabVisible by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 5
+        }
+    }
 
     Box(
         modifier = Modifier

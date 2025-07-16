@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,9 +34,6 @@ import com.hilingual.presentation.diaryfeedback.component.DiaryViewModeToggle
 import com.hilingual.presentation.diaryfeedback.component.FeedbackCard
 import com.hilingual.presentation.diaryfeedback.component.FeedbackEmptyCard
 import kotlinx.collections.immutable.ImmutableList
-
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 
 @Composable
 internal fun GrammarSpellingScreen(
