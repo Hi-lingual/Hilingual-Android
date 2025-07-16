@@ -6,7 +6,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 @Immutable
-internal data class RecommendExpressionUiState(
+internal data class RecommendExpressionUiModel(
     val phraseId: Long,
     val phraseType: ImmutableList<String>,
     val phrase: String,
@@ -15,7 +15,7 @@ internal data class RecommendExpressionUiState(
     val isMarked: Boolean = false
 )
 
-internal fun DiaryRecommendExpressionModel.toState() = RecommendExpressionUiState(
+internal fun DiaryRecommendExpressionModel.toState() = RecommendExpressionUiModel(
     phraseId = this.phraseId,
     phraseType = this.phraseType.toImmutableList(),
     phrase = this.phrase,

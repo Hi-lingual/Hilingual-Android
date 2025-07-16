@@ -15,14 +15,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.diaryfeedback.component.RecommendExpressionCard
-import com.hilingual.presentation.diaryfeedback.model.RecommendExpressionUiState
+import com.hilingual.presentation.diaryfeedback.model.RecommendExpressionUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun RecommendExpressionScreen(
     writtenDate: String,
-    recommendExpressionList: ImmutableList<RecommendExpressionUiState>,
+    recommendExpressionList: ImmutableList<RecommendExpressionUiModel>,
     onBookmarkClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
