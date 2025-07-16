@@ -7,3 +7,8 @@ plugins {
 android {
     setNamespace("presentation.voca")
 }
+
+dependencies {
+    implementation(project(":data:voca"))
+    implementation(project(":data:diary"))
+}
