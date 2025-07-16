@@ -8,21 +8,27 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
@@ -32,6 +38,7 @@ import com.hilingual.presentation.diaryfeedback.component.FeedbackReportDialog
 import com.hilingual.presentation.diaryfeedback.tab.GrammarSpellingScreen
 import com.hilingual.presentation.diaryfeedback.tab.RecommendExpressionScreen
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun DiaryFeedbackRoute(
@@ -41,7 +48,7 @@ internal fun DiaryFeedbackRoute(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
-    var isImageDetailVisible by remember { mutableStateOf<Boolean>(false) }
+    var isImageDetailVisible by remember { mutableStateOf(false) }
 
     BackHandler {
         if (isImageDetailVisible) {
@@ -92,9 +99,29 @@ private fun DiaryFeedbackScreen(
     onToggleBookmark: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var tabIndex by remember { mutableIntStateOf(0) }
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
     var isReportDialogVisible by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    val pagerState = rememberPagerState(pageCount = { 2 })
+    val grammarListState = rememberLazyListState()
+    val recommendListState = rememberLazyListState()
+
+    val isFabVisible by remember {
+        derivedStateOf {
+            when (pagerState.currentPage) {
+                0 -> grammarListState.firstVisibleItemScrollOffset > 5
+                else -> recommendListState.firstVisibleItemScrollOffset > 5
+            }
+        }
+    }
+
+    LaunchedEffect(pagerState.currentPage) {
+        if (pagerState.currentPage == 0) {
+            grammarListState.scrollToItem(0)
+        } else {
+            recommendListState.scrollToItem(0)
+        }
+    }
 
     if (isReportBottomSheetVisible) {
         FeedbackReportBottomSheet(
@@ -115,39 +142,70 @@ private fun DiaryFeedbackScreen(
         )
     }
 
-    Column(
-        verticalArrangement = Arrangement.Top,
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .background(HilingualTheme.colors.white)
             .padding(paddingValues)
     ) {
-        BackAndMoreTopAppBar(
-            title = "일기장",
-            onBackClicked = onBackClick,
-            onMoreClicked = { isReportBottomSheetVisible = true }
-        )
+        Column(
+            verticalArrangement = Arrangement.Top,
+            modifier = modifier
+                .fillMaxSize()
+                .background(HilingualTheme.colors.white)
+        ) {
+            BackAndMoreTopAppBar(
+                title = "일기장",
+                onBackClicked = onBackClick,
+                onMoreClicked = { isReportBottomSheetVisible = true }
+            )
 
-        DiaryFeedbackTabRow(
-            tabIndex = tabIndex,
-            onTabSelected = { tabIndex = it }
-        )
+            DiaryFeedbackTabRow(
+                tabIndex = pagerState.currentPage,
+                onTabSelected = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(it)
+                    }
+                }
+            )
 
-        with(uiState) {
-            when (tabIndex) {
-                0 -> GrammarSpellingScreen(
-                    writtenDate = writtenDate,
-                    diaryContent = diaryContent,
-                    feedbackList = feedbackList,
-                    onImageClick = onChangeImageDetailVisible
-                )
-                1 -> RecommendExpressionScreen(
-                    writtenDate = writtenDate,
-                    recommendExpressionList = recommendExpressionList,
-                    onBookmarkClick = onToggleBookmark
-                )
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize()
+            ) { page ->
+                with(uiState) {
+                    when (page) {
+                        0 -> GrammarSpellingScreen(
+                            listState = grammarListState,
+                            writtenDate = writtenDate,
+                            diaryContent = diaryContent,
+                            feedbackList = feedbackList,
+                            onImageClick = onChangeImageDetailVisible
+                        )
+
+                        1 -> RecommendExpressionScreen(
+                            listState = recommendListState,
+                            writtenDate = writtenDate,
+                            recommendExpressionList = recommendExpressionList,
+                            onBookmarkClick = onToggleBookmark
+                        )
+                    }
+                }
             }
         }
+        HilingualFloatingButton(
+            onClick = {
+                coroutineScope.launch {
+                    when (pagerState.currentPage) {
+                        0 -> grammarListState.animateScrollToItem(0)
+                        else -> recommendListState.animateScrollToItem(0)
+                    }
+                }
+            },
+            isVisible = isFabVisible,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(bottom = 24.dp, end = 16.dp)
+        )
     }
 
     if (isImageDetailVisible && uiState.diaryContent.imageUrl != null) {
