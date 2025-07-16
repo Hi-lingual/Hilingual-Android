@@ -27,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.designsystem.event.LocalDialogController
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
@@ -34,8 +35,6 @@ import com.hilingual.presentation.home.component.HomeHeader
 import com.hilingual.presentation.home.component.calendar.HilingualCalendar
 import com.hilingual.presentation.home.component.footer.DateTimeInfo
 import com.hilingual.presentation.home.component.footer.DiaryDateInfo
-import com.hilingual.presentation.home.component.footer.DiaryEmptyCard
-import com.hilingual.presentation.home.component.footer.DiaryEmptyCardType
 import com.hilingual.presentation.home.component.footer.DiaryPreviewCard
 import com.hilingual.presentation.home.component.footer.TodayTopic
 import com.hilingual.presentation.home.component.footer.WriteDiaryButton
@@ -51,6 +50,17 @@ internal fun HomeRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
+    val dialogController = LocalDialogController.current
+
+    LaunchedEffect(viewModel.sideEffect) {
+        viewModel.sideEffect.collect { event ->
+            when (event) {
+                is HomeSideEffect.ShowRetryDialog -> {
+                    dialogController.show { dialogController.dismiss() }
+                }
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
@@ -95,10 +105,11 @@ private fun HomeScreen(
 ) {
     val date = uiState.selectedDate
     val today = remember { LocalDate.now() }
-    val isWritten = remember(uiState.writtenDates, date) { uiState.writtenDates.contains(date) }
-    val isFuture = remember(date, today) { date.isAfter(today) }
-    val isWritable =
-        remember(isFuture, date, today) { !isFuture && date.isAfter(today.minusDays(2)) }
+    val isWritten = remember(uiState.dateList, date) { uiState.dateList.any { LocalDate.parse(it.date) == date } }
+    // val isFuture = remember(date, today) { date.isAfter(today) }
+    /* val isWritable =
+        remember(isFuture, date, today) { !isFuture && date.isAfter(today.minusDays(2)) } */
+    val isWritable = true
     val verticalScrollState = rememberScrollState()
 
     Column(
@@ -123,7 +134,7 @@ private fun HomeScreen(
 
         HilingualCalendar(
             selectedDate = uiState.selectedDate,
-            writtenDates = uiState.writtenDates,
+            writtenDates = uiState.dateList.map { LocalDate.parse(it.date) }.toSet(),
             onDateClick = onDateSelected,
             onMonthChanged = onMonthChanged,
             modifier = Modifier
@@ -161,30 +172,23 @@ private fun HomeScreen(
 
             with(uiState) {
                 when {
-                    isLoading -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 24.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
+                    isDiaryThumbnailLoading -> {
+                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                             CircularProgressIndicator()
                         }
                     }
-
                     isWritten -> {
-                        if (diaryPreview != null) {
+                        if (diaryThumbnail != null) {
                             DiaryPreviewCard(
-                                diaryText = diaryPreview.originalText,
-                                diaryId = diaryPreview.diaryId,
+                                diaryText = diaryThumbnail.originalText,
+                                diaryId = diaryThumbnail.diaryId,
                                 onClick = onDiaryPreviewClick,
-                                imageUrl = diaryPreview.imageUrl,
+                                imageUrl = diaryThumbnail.imageUrl,
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
                     }
-
-                    isFuture -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
+                    /* isFuture -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE) */
                     isWritable -> {
                         if (todayTopic != null) {
                             TodayTopic(
@@ -201,7 +205,7 @@ private fun HomeScreen(
                         )
                     }
 
-                    else -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
+                    // else -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
                 }
             }
         }

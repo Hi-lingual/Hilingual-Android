@@ -1,6 +1,7 @@
 package com.hilingual.data.user.repository
 
-import com.hilingual.data.user.model.UserProfile
+import com.hilingual.data.user.model.UserInfoModel
+import com.hilingual.data.user.model.UserProfileModel
 
 interface UserRepository {
     suspend fun getNicknameAvailability(
@@ -8,6 +9,8 @@ interface UserRepository {
     ): Result<Boolean>
 
     suspend fun postUserProfile(
-        userProfile: UserProfile
+        userProfileModel: UserProfileModel
     ): Result<Unit>
+
+    suspend fun getUserInfo(): Result<UserInfoModel>
 }

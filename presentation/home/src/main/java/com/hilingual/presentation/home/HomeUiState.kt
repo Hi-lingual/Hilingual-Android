@@ -1,37 +1,20 @@
 package com.hilingual.presentation.home
 
 import androidx.compose.runtime.Immutable
+import com.hilingual.presentation.home.model.DateUiModel
+import com.hilingual.presentation.home.model.DiaryThumbnailUiModel
+import com.hilingual.presentation.home.model.TodayTopicUiModel
+import com.hilingual.presentation.home.model.UserProfileUiModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import java.time.LocalDate
 
 @Immutable
 data class HomeUiState(
-    val userProfile: UserProfile = UserProfile(),
+    val userProfile: UserProfileUiModel = UserProfileUiModel(),
     val selectedDate: LocalDate = LocalDate.now(),
-    val writtenDates: Set<LocalDate> = emptySet(),
-    val diaryPreview: DiaryPreview? = null,
-    val todayTopic: TodayTopic? = null,
-    val isLoading: Boolean = true
-)
-
-@Immutable
-data class UserProfile(
-    val nickname: String = "",
-    val profileImg: String = "",
-    val totalDiaries: Int = 0,
-    val streak: Int = 0
-)
-
-@Immutable
-data class DiaryPreview(
-    val diaryId: Long,
-    val createdAt: String,
-    val imageUrl: String? = "https://avatars.githubusercontent.com/u/160750136?v=4",
-    val originalText: String
-)
-
-@Immutable
-data class TodayTopic(
-    val topicKo: String,
-    val topicEn: String,
-    val remainingTime: Int
+    val diaryThumbnail: DiaryThumbnailUiModel? = null,
+    val dateList: ImmutableList<DateUiModel> = persistentListOf(),
+    val isDiaryThumbnailLoading: Boolean = false,
+    val todayTopic: TodayTopicUiModel? = null
 )
