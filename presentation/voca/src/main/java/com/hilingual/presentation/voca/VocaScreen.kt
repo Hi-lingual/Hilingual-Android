@@ -184,6 +184,12 @@ private fun VocaScreen(
         }
     }
 
+    LaunchedEffect(viewType) {
+        if (viewType == ScreenType.DEFAULT) {
+            listState.animateScrollToItem(0)
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
