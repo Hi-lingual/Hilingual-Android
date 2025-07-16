@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -94,24 +95,30 @@ internal fun VocaRoute(
         }
     }
 
-    with(uiState) {
-        VocaScreen(
-            paddingValues = paddingValues,
-            viewType = viewType,
-            sortType = sortType,
-            vocaCount = vocaCount,
-            vocaGroupList = (vocaGroupList as? UiState.Success)?.data ?: persistentListOf(),
-            searchResultList = searchResultList,
-            searchText = searchKeyword,
-            onSortTypeChanged = viewModel::updateSort,
-            onCardClick = viewModel::fetchVocaDetail,
-            onBookmarkClick = { phraseId, isMarked ->
-                viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
-            },
-            onSearchTextChanged = viewModel::updateSearchKeyword,
-            onWriteDiaryClick = navigateToHome,
-            onCloseButtonClick = viewModel::clearSearchKeyword
-        )
+    val isLoading = uiState.vocaGroupList is UiState.Loading
+
+    if (isLoading) {
+        CircularProgressIndicator()
+    } else {
+        with(uiState) {
+            VocaScreen(
+                paddingValues = paddingValues,
+                viewType = viewType,
+                sortType = sortType,
+                vocaCount = vocaCount,
+                vocaGroupList = (vocaGroupList as? UiState.Success)?.data ?: persistentListOf(),
+                searchResultList = searchResultList,
+                searchText = searchKeyword,
+                onSortTypeChanged = viewModel::updateSort,
+                onCardClick = viewModel::fetchVocaDetail,
+                onBookmarkClick = { phraseId, isMarked ->
+                    viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
+                },
+                onSearchTextChanged = viewModel::updateSearchKeyword,
+                onWriteDiaryClick = navigateToHome,
+                onCloseButtonClick = viewModel::clearSearchKeyword
+            )
+        }
     }
 
     when (val state = uiState.vocaItemDetail) {
@@ -326,6 +333,9 @@ private fun VocaListWithInfoSection(
                     }
                 }
             }
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+            }
         }
     }
 }
@@ -364,6 +374,9 @@ private fun SearchResultSection(
                     onBookmarkClick = { onBookmarkClick(voca.phraseId, !voca.isBookmarked) },
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
+            }
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }
