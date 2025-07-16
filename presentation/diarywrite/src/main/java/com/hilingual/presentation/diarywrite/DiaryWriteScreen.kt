@@ -75,6 +75,7 @@ internal fun DiaryWriteRoute(
             isDarkIcon = false
         )
         viewModel.updateSelectedDate(selectedDate)
+        viewModel.getTopic(selectedDate.toString())
     }
 
     when (viewModel.feedbackState.value) {
