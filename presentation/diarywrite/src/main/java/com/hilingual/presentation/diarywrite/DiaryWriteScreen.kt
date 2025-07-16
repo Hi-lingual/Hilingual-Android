@@ -59,6 +59,7 @@ import java.util.Locale
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 internal fun DiaryWriteRoute(
+    selectedDate: LocalDate,
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToHome: () -> Unit,
@@ -73,6 +74,7 @@ internal fun DiaryWriteRoute(
             systemBarsColor = white,
             isDarkIcon = false
         )
+        viewModel.updateSelectedDate(selectedDate)
     }
 
     when (viewModel.feedbackState.value) {
