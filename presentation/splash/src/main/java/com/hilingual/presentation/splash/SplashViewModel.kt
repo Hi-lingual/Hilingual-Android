@@ -9,13 +9,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+sealed interface SplashUiState {
+    data object LoggedIn : SplashUiState
+    data object NotLoggedIn : SplashUiState
+}
+
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val tokenManager: TokenManager
 ) : ViewModel() {
 
-    private val _isLoggedIn = MutableStateFlow<Boolean?>(null)
-    val isLoggedIn = _isLoggedIn.asStateFlow()
+    private val _uiState = MutableStateFlow<SplashUiState>(SplashUiState.NotLoggedIn)
+    val uiState = _uiState.asStateFlow()
 
     init {
         checkLoginStatus()
@@ -25,7 +30,11 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch {
             val accessToken = tokenManager.getAccessToken()
             val refreshToken = tokenManager.getRefreshToken()
-            _isLoggedIn.value = !accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty()
+            _uiState.value = if (!accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty()) {
+                SplashUiState.LoggedIn
+            } else {
+                SplashUiState.NotLoggedIn
+            }
         }
     }
 }
