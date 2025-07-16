@@ -112,6 +112,7 @@ internal fun MainScreen(
                     splashNavGraph(
                         navigateToAuth = navigator::navigateToAuth,
                         navigateToHome = navigator::navigateToHome,
+                        navigateToOnboarding = navigator::navigateToOnboarding,
                         sharedTransitionScope = this@SharedTransitionLayout
                     )
                     authNavGraph(

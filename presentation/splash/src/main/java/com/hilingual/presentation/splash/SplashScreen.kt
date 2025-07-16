@@ -27,6 +27,7 @@ import kotlinx.coroutines.delay
 internal fun SplashRoute(
     navigateToAuth: () -> Unit,
     navigateToHome: () -> Unit,
+    navigateToOnboarding: () -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: SplashViewModel = hiltViewModel()
@@ -45,6 +46,7 @@ internal fun SplashRoute(
         when (uiState) {
             SplashUiState.LoggedIn -> navigateToHome()
             SplashUiState.NotLoggedIn -> navigateToAuth()
+            SplashUiState.OnboardingRequired -> navigateToOnboarding()
         }
     }
 

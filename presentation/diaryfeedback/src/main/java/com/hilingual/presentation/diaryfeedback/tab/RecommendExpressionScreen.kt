@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,12 +23,14 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun RecommendExpressionScreen(
+    listState: LazyListState,
     writtenDate: String,
     recommendExpressionList: ImmutableList<RecommendExpressionUiModel>,
     onBookmarkClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
+        state = listState,
         verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(vertical = 24.dp, horizontal = 16.dp),
         modifier = modifier
@@ -65,6 +69,7 @@ internal fun RecommendExpressionScreen(
 private fun GrammarSpellingScreenPreview() {
     HilingualTheme {
         RecommendExpressionScreen(
+            listState = rememberLazyListState(),
             writtenDate = "7월 11일 금요일",
             recommendExpressionList = persistentListOf(),
             onBookmarkClick = { _, _ -> }

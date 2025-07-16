@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,6 +37,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun GrammarSpellingScreen(
+    listState: LazyListState,
     writtenDate: String,
     diaryContent: DiaryContentUiModel,
     feedbackList: ImmutableList<FeedbackContentUiModel>,
@@ -44,6 +47,7 @@ internal fun GrammarSpellingScreen(
     var isAIWrittenDiary by remember { mutableStateOf(true) }
 
     LazyColumn(
+        state = listState,
         contentPadding = PaddingValues(vertical = 24.dp, horizontal = 16.dp),
         modifier = modifier
             .fillMaxSize()
@@ -130,6 +134,7 @@ private fun getFeedbackTitleAnnotatedString(
 private fun GrammarSpellingScreenPreview() {
     HilingualTheme {
         GrammarSpellingScreen(
+            listState = rememberLazyListState(),
             writtenDate = "7월 11일 금요일",
             diaryContent = DiaryContentUiModel(),
             feedbackList = persistentListOf(),
