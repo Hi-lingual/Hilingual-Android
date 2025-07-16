@@ -31,6 +31,7 @@ import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.designsystem.event.LocalDialogController
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.data.voca.model.GroupingVocaModel
@@ -59,6 +60,7 @@ internal fun VocaRoute(
     val localSystemBarsColor = LocalSystemBarsColor.current
     var isVocaModalVisibility by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
+    val dialogController = LocalDialogController.current
 
     LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
@@ -76,6 +78,16 @@ internal fun VocaRoute(
 
     LaunchedEffect(uiState.sortType) {
         viewModel.fetchWords(uiState.sortType)
+    }
+
+    LaunchedEffect(viewModel.sideEffect) {
+        viewModel.sideEffect.collect { event ->
+            when (event) {
+                is VocaSideEffect.ShowRetryDialog -> {
+                    dialogController.show { dialogController.dismiss() }
+                }
+            }
+        }
     }
 
     with(uiState) {

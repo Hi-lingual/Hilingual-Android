@@ -13,8 +13,11 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -33,6 +36,9 @@ constructor(
 
     private val _uiState = MutableStateFlow(VocaUiState())
     val uiState: StateFlow<VocaUiState> = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<VocaSideEffect>()
+    val sideEffect: SharedFlow<VocaSideEffect> = _sideEffect.asSharedFlow()
 
     private var AtoZGroupList: ImmutableList<GroupingVocaModel> = persistentListOf()
 
@@ -69,7 +75,9 @@ constructor(
                     }
                     AtoZGroupList = vocaLists.toPersistentList()
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(VocaSideEffect.ShowRetryDialog {})
+                }
         }
     }
 
@@ -83,7 +91,9 @@ constructor(
                         )
                     }
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(VocaSideEffect.ShowRetryDialog {})
+                }
         }
     }
 
@@ -127,4 +137,8 @@ constructor(
 
     fun toggleBookmark(phraseId: Long) {
     }
+}
+
+sealed interface VocaSideEffect {
+    data class ShowRetryDialog(val onRetry: () -> Unit) : VocaSideEffect
 }
