@@ -25,8 +25,14 @@ internal class SplashViewModel @Inject constructor(
         viewModelScope.launch {
             val accessToken = tokenManager.getAccessToken()
             val refreshToken = tokenManager.getRefreshToken()
+            val isProfileCompleted = tokenManager.isProfileCompleted()
+
             _uiState.value = if (!accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty()) {
-                SplashUiState.LoggedIn
+                if (isProfileCompleted) {
+                    SplashUiState.LoggedIn
+                } else {
+                    SplashUiState.OnboardingRequired
+                }
             } else {
                 SplashUiState.NotLoggedIn
             }
@@ -37,4 +43,5 @@ internal class SplashViewModel @Inject constructor(
 sealed interface SplashUiState {
     data object LoggedIn : SplashUiState
     data object NotLoggedIn : SplashUiState
+    data object OnboardingRequired : SplashUiState
 }
