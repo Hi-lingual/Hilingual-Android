@@ -9,13 +9,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-sealed interface SplashUiState {
-    data object LoggedIn : SplashUiState
-    data object NotLoggedIn : SplashUiState
-}
-
 @HiltViewModel
-class SplashViewModel @Inject constructor(
+internal class SplashViewModel @Inject constructor(
     private val tokenManager: TokenManager
 ) : ViewModel() {
 
@@ -37,4 +32,9 @@ class SplashViewModel @Inject constructor(
             }
         }
     }
+}
+
+sealed interface SplashUiState {
+    data object LoggedIn : SplashUiState
+    data object NotLoggedIn : SplashUiState
 }
