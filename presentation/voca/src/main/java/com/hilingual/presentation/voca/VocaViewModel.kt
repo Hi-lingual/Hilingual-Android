@@ -180,7 +180,6 @@ constructor(
                 }
         }
     }
-
 }
 
 sealed interface VocaSideEffect {
