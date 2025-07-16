@@ -6,7 +6,6 @@ import com.hilingual.data.diary.model.DiaryFeedbackCreateModel
 import com.hilingual.data.diary.model.DiaryFeedbackModel
 import com.hilingual.data.diary.model.DiaryRecommendExpressionModel
 import com.hilingual.data.diary.model.PhraseBookmarkModel
-import okhttp3.RequestBody
 import java.time.LocalDate
 
 interface DiaryRepository {

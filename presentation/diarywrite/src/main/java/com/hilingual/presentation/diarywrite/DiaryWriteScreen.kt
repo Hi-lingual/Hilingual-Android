@@ -24,7 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,10 +51,10 @@ import com.skydoves.balloon.BalloonSizeSpec
 import com.skydoves.balloon.compose.Balloon
 import com.skydoves.balloon.compose.rememberBalloonBuilder
 import com.skydoves.balloon.compose.setBackgroundColor
-import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlinx.coroutines.delay
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -69,7 +68,6 @@ internal fun DiaryWriteRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val postState by viewModel.feedbackState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
-    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
@@ -90,7 +88,7 @@ internal fun DiaryWriteRoute(
                 onDiaryTextChanged = viewModel::updateDiaryText,
                 diaryImageUri = uiState.diaryImageUri,
                 onDiaryImageUriChanged = viewModel::updateDiaryImageUri,
-                onDiaryFeedbackRequestButtonClick = { viewModel.postDiaryFeedbackCreate(context) }
+                onDiaryFeedbackRequestButtonClick = { viewModel.postDiaryFeedbackCreate() }
             )
         }
 
