@@ -65,7 +65,6 @@ internal class DiaryWriteViewModel @Inject constructor(
             }.onLogFailure { throwable ->
                 _feedbackState.value = DiaryFeedbackState.Failure(throwable)
             }
-
         }
     }
 
