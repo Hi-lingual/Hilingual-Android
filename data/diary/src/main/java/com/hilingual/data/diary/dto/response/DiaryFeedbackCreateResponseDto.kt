@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DiaryFeedbackCreateResposeDto(
-    @SerialName("diaryId")
+data class DiaryFeedbackCreateResponseDto(
+    @SerialName("id")
     val diaryId: Long
 )

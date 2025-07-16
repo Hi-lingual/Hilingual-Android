@@ -4,7 +4,7 @@ import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
 import com.hilingual.data.diary.dto.request.BookmarkRequestDto
 import com.hilingual.data.diary.dto.response.DiaryContentResponseDto
-import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResposeDto
+import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResponseDto
 import com.hilingual.data.diary.dto.response.DiaryFeedbackResponseDto
 import com.hilingual.data.diary.dto.response.DiaryRecommendExpressionResponseDto
 import com.hilingual.data.diary.service.DiaryService
@@ -37,11 +37,11 @@ internal class DiaryRemoteRemoteDataSourceImpl @Inject constructor(
             bookmarkRequestDto = bookmarkRequestDto
         )
 
-    override suspend fun getDiaryFeedbackCreate(
+    override suspend fun postDiaryFeedbackCreate(
         originalText: String,
         date: String,
         imageFile: File?
-    ): BaseResponse<DiaryFeedbackCreateResposeDto> {
+    ): BaseResponse<DiaryFeedbackCreateResponseDto> {
         val originalTextPart = originalText.toRequestBody("text/plain".toMediaType())
         val datePart = date.toRequestBody("text/plain".toMediaType())
 

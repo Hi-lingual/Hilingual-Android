@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.image.HilingualLottieAnimation
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
 import com.hilingual.presentation.diarywrite.component.FeedbackCompleteContent
 import com.hilingual.presentation.diarywrite.component.FeedbackLoadingContent
 import com.hilingual.presentation.diarywrite.component.FeedbackUIData
@@ -95,7 +94,12 @@ private fun DiaryFeedbackLoadingStatusScreenPreview() {
     HilingualTheme {
         DiaryFeedbackStatusScreen(
             paddingValues = PaddingValues(0.dp),
-            state = DiaryFeedbackState.Loading.data ?: FeedbackUIData(),
+            state = FeedbackUIData(
+                title = "일기 저장 중..",
+                description = "피드백을 요청하고 있어요.",
+                lottieRawRes = R.raw.lottie_feedback_loading,
+                lottieRawResHeightDp = 194.dp
+            ),
             content = { FeedbackLoadingContent() }
         )
     }
@@ -104,12 +108,15 @@ private fun DiaryFeedbackLoadingStatusScreenPreview() {
 @Preview
 @Composable
 private fun DiaryFeedbackCompleteStatusScreenPreview() {
-    val completeState = DiaryFeedbackState.Complete(diaryId = 1L)
-
     HilingualTheme {
         DiaryFeedbackStatusScreen(
             paddingValues = PaddingValues(0.dp),
-            state = completeState.data ?: FeedbackUIData(),
+            state = FeedbackUIData(
+                title = "AI 피드백 완료!",
+                description = "틀린 부분을 고치고,\n더 나은 표현으로 수정했어요!",
+                lottieRawRes = R.raw.lottie_feedback_complete,
+                lottieRawResHeightDp = 180.dp
+            ),
             content = {
                 FeedbackCompleteContent(
                     onCloseButtonClick = {},

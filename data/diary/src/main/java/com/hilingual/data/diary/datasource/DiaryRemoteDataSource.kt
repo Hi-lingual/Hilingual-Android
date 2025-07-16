@@ -3,7 +3,7 @@ package com.hilingual.data.diary.datasource
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.diary.dto.request.BookmarkRequestDto
 import com.hilingual.data.diary.dto.response.DiaryContentResponseDto
-import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResposeDto
+import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResponseDto
 import com.hilingual.data.diary.dto.response.DiaryFeedbackResponseDto
 import com.hilingual.data.diary.dto.response.DiaryRecommendExpressionResponseDto
 import java.io.File
@@ -26,9 +26,9 @@ interface DiaryRemoteDataSource {
         bookmarkRequestDto: BookmarkRequestDto
     ): BaseResponse<Unit>
 
-    suspend fun getDiaryFeedbackCreate(
+    suspend fun postDiaryFeedbackCreate(
         originalText: String,
         date: String,
         imageFile: File? = null
-    ): BaseResponse<DiaryFeedbackCreateResposeDto>
+    ): BaseResponse<DiaryFeedbackCreateResponseDto>
 }

@@ -2,7 +2,6 @@ package com.hilingual.presentation.diarywrite
 
 import android.content.Context
 import android.net.Uri
-import androidx.core.net.toFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
@@ -26,7 +25,7 @@ internal class DiaryWriteViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(DiaryWriteUiState())
     val uiState: StateFlow<DiaryWriteUiState> = _uiState.asStateFlow()
 
-    private var _feedbackState: MutableStateFlow<DiaryFeedbackState> = MutableStateFlow(DiaryFeedbackState.Default)
+    private var _feedbackState = MutableStateFlow<DiaryFeedbackState>(DiaryFeedbackState.Default)
     val feedbackState: StateFlow<DiaryFeedbackState> = _feedbackState.asStateFlow()
 
     fun updateSelectedDate(newDate: LocalDate) {
@@ -58,10 +57,8 @@ internal class DiaryWriteViewModel @Inject constructor(
                 originalText = originalText,
                 date = date,
                 imageFile = imageFile
-            ).onSuccess { res ->
-                _feedbackState.update {
-                    it.also { DiaryFeedbackState.Complete(res.diaryId) }
-                }
+            ).onSuccess { response ->
+                _feedbackState.update { DiaryFeedbackState.Complete(response.diaryId) }
             }.onLogFailure { throwable ->
                 _feedbackState.value = DiaryFeedbackState.Failure(throwable)
             }

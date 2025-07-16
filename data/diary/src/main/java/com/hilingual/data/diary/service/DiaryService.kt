@@ -3,7 +3,7 @@ package com.hilingual.data.diary.service
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.diary.dto.request.BookmarkRequestDto
 import com.hilingual.data.diary.dto.response.DiaryContentResponseDto
-import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResposeDto
+import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResponseDto
 import com.hilingual.data.diary.dto.response.DiaryFeedbackResponseDto
 import com.hilingual.data.diary.dto.response.DiaryRecommendExpressionResponseDto
 import okhttp3.MultipartBody
@@ -44,5 +44,5 @@ internal interface DiaryService {
         @Part("originalText") originalText: RequestBody,
         @Part("date") date: RequestBody,
         @Part imageFile: MultipartBody.Part? = null
-    ): BaseResponse<DiaryFeedbackCreateResposeDto>
+    ): BaseResponse<DiaryFeedbackCreateResponseDto>
 }

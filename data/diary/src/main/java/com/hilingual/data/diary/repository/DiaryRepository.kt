@@ -1,6 +1,6 @@
 package com.hilingual.data.diary.repository
 
-import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResposeDto
+import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResponseDto
 import com.hilingual.data.diary.model.DiaryContentModel
 import com.hilingual.data.diary.model.DiaryFeedbackModel
 import com.hilingual.data.diary.model.DiaryRecommendExpressionModel
@@ -23,5 +23,5 @@ interface DiaryRepository {
         originalText: String,
         date: String,
         imageFile: File? = null
-    ): Result<DiaryFeedbackCreateResposeDto>
+    ): Result<DiaryFeedbackCreateResponseDto>
 }

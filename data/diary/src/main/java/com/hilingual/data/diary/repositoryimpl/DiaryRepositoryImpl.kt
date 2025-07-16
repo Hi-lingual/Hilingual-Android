@@ -2,7 +2,7 @@ package com.hilingual.data.diary.repositoryimpl
 
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
-import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResposeDto
+import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResponseDto
 import com.hilingual.data.diary.model.DiaryContentModel
 import com.hilingual.data.diary.model.DiaryFeedbackModel
 import com.hilingual.data.diary.model.DiaryRecommendExpressionModel
@@ -46,9 +46,9 @@ internal class DiaryRepositoryImpl @Inject constructor(
         originalText: String,
         date: String,
         imageFile: File?
-    ): Result<DiaryFeedbackCreateResposeDto> =
+    ): Result<DiaryFeedbackCreateResponseDto> =
         suspendRunCatching {
-            diaryRemoteDataSource.getDiaryFeedbackCreate(
+            diaryRemoteDataSource.postDiaryFeedbackCreate(
                 originalText = originalText,
                 date = date,
                 imageFile = imageFile
