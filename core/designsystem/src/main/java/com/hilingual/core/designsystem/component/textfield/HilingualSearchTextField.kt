@@ -69,7 +69,7 @@ fun HilingualSearchTextField(
                 )
             }
         },
-        keyboardType = KeyboardType.Ascii,
+        keyboardType = KeyboardType.Password,
         keyboardImeAction = ImeAction.Search,
         onSearchAction = {
             onSearchAction()
