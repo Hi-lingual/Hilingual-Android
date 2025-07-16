@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.designsystem.component.image.ErrorImageSize
 import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import kotlinx.collections.immutable.ImmutableList
@@ -58,6 +59,7 @@ internal fun DiaryCard(
             NetworkImage(
                 imageUrl = imageUrl,
                 shape = RoundedCornerShape(8.dp),
+                errorImageSize = ErrorImageSize.LARGE,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f / 0.6f)
