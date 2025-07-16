@@ -40,7 +40,7 @@ internal fun VocaModal(
     onBookmarkClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var isMarked by remember(isBookmarked) { mutableStateOf(isBookmarked) }
+    var isMarked by remember { mutableStateOf(isBookmarked) }
 
     Box(
         modifier = modifier
