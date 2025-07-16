@@ -105,7 +105,7 @@ internal fun MainScreen(
                     exitTransition = { ExitTransition.None },
                     popEnterTransition = { EnterTransition.None },
                     popExitTransition = { ExitTransition.None },
-                    navController =  navigator.navController,
+                    navController = navigator.navController,
                     startDestination = navigator.startDestination
 
                 ) {
