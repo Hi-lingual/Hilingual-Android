@@ -103,9 +103,9 @@ class HomeViewModel @Inject constructor(
         // TODO: QA 이후 시연용으로 변경 필요 by. 민재
         // if (hasDiary) {
         //    getDiaryThumbnail(date.toString())
-        //} else {
+        // } else {
         //    getTopic(date.toString())
-        //}
+        // }
     }
 
     fun onMonthChanged(yearMonth: YearMonth) {
@@ -144,7 +144,7 @@ class HomeViewModel @Inject constructor(
                     //     getDiaryThumbnail(newDate.toString())
                     // } else {
                     //    getTopic(newDate.toString())
-                    //}
+                    // }
                 }
                 .onLogFailure {
                     _sideEffect.emit(HomeSideEffect.ShowRetryDialog {})
