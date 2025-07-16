@@ -17,9 +17,6 @@ android {
         debug {
             val devUrl = properties["dev.base.url"] as? String ?: ""
             buildConfigField("String", "BASE_URL", devUrl)
-
-            val testToken = properties["test.token"] as? String ?: ""
-            buildConfigField("String", "TEST_TOKEN", testToken)
         }
 
         release {
