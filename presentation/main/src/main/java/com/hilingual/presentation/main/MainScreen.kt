@@ -3,6 +3,8 @@ package com.hilingual.presentation.main
 import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Box
@@ -79,6 +81,10 @@ internal fun MainScreen(
             }
         ) { innerPadding ->
             NavHost(
+                enterTransition = { EnterTransition.None },
+                exitTransition = { ExitTransition.None },
+                popEnterTransition = { EnterTransition.None },
+                popExitTransition = { ExitTransition.None },
                 navController = navigator.navController,
                 startDestination = navigator.startDestination
 
