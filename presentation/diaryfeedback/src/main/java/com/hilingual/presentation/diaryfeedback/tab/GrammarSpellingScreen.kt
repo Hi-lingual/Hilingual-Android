@@ -24,25 +24,25 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.diaryfeedback.DiaryContent
-import com.hilingual.presentation.diaryfeedback.DiaryFeedbackViewModel
-import com.hilingual.presentation.diaryfeedback.FeedbackContent
 import com.hilingual.presentation.diaryfeedback.component.DiaryCard
 import com.hilingual.presentation.diaryfeedback.component.DiaryViewModeToggle
 import com.hilingual.presentation.diaryfeedback.component.FeedbackCard
 import com.hilingual.presentation.diaryfeedback.component.FeedbackEmptyCard
+import com.hilingual.presentation.diaryfeedback.model.DiaryContentUiModel
+import com.hilingual.presentation.diaryfeedback.model.FeedbackContentUiModel
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun GrammarSpellingScreen(
     writtenDate: String,
-    diaryContent: DiaryContent,
-    feedbackList: ImmutableList<FeedbackContent>,
-    onToggleDiaryViewMode: (Boolean) -> Unit,
+    diaryContent: DiaryContentUiModel,
+    feedbackList: ImmutableList<FeedbackContentUiModel>,
     onImageClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    isAIWritten: Boolean = true
+    modifier: Modifier = Modifier
 ) {
+    var isAIWrittenDiary by remember { mutableStateOf(true) }
+
     LazyColumn(
         contentPadding = PaddingValues(vertical = 24.dp, horizontal = 16.dp),
         modifier = modifier
@@ -60,15 +60,15 @@ internal fun GrammarSpellingScreen(
                     color = HilingualTheme.colors.gray700
                 )
                 DiaryViewModeToggle(
-                    isAIWritten = isAIWritten,
-                    onToggle = { onToggleDiaryViewMode(!isAIWritten) }
+                    isAIWritten = isAIWrittenDiary,
+                    onToggle = { isAIWrittenDiary = !isAIWrittenDiary }
                 )
             }
             Spacer(Modifier.height(12.dp))
             with(diaryContent) {
                 DiaryCard(
-                    isAIWritten = isAIWritten,
-                    diaryContent = if (isAIWritten) aiText else originalText,
+                    isAIWritten = isAIWrittenDiary,
+                    diaryContent = if (isAIWrittenDiary) aiText else originalText,
                     diffRanges = diffRanges,
                     imageUrl = imageUrl,
                     onImageClick = onImageClick
@@ -129,16 +129,10 @@ private fun getFeedbackTitleAnnotatedString(
 @Composable
 private fun GrammarSpellingScreenPreview() {
     HilingualTheme {
-        var isAI by remember { mutableStateOf(true) }
-
-        val dummyDiary = DiaryFeedbackViewModel.dummyDiaryContent
-
         GrammarSpellingScreen(
             writtenDate = "7월 11일 금요일",
-            isAIWritten = isAI,
-            onToggleDiaryViewMode = { isAI = !isAI },
-            diaryContent = dummyDiary,
-            feedbackList = DiaryFeedbackViewModel.dummyFeedbacks,
+            diaryContent = DiaryContentUiModel(),
+            feedbackList = persistentListOf(),
             onImageClick = {}
         )
     }

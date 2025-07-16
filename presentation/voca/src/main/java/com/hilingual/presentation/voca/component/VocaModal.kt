@@ -22,25 +22,26 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.tag.WordPhraseTypeTag
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.voca.R
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun VocaModal(
+    phraseId: Long,
     phrase: String,
     phraseType: ImmutableList<String>,
     explanation: String,
-    createdAt: String,
+    writtenDate: String,
     isBookmarked: Boolean,
-    onBookmarkClick: () -> Unit,
+    onBookmarkClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var isMarked by remember(isBookmarked) { mutableStateOf(isBookmarked) }
+
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
@@ -52,10 +53,10 @@ internal fun VocaModal(
             .padding(start = 24.dp, top = 28.dp, end = 24.dp, bottom = 40.dp)
     ) {
         Column(
-            modifier = Modifier.align(Alignment.TopStart)
+            modifier = Modifier
+                .align(Alignment.TopStart)
                 .padding(bottom = 80.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
-
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 phraseType.forEach { type ->
@@ -80,7 +81,7 @@ internal fun VocaModal(
 
         Icon(
             imageVector = ImageVector.vectorResource(
-                id = if (isBookmarked) {
+                id = if (isMarked) {
                     R.drawable.ic_save_36_filled
                 } else {
                     R.drawable.ic_save_36_empty
@@ -89,31 +90,18 @@ internal fun VocaModal(
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .noRippleClickable(onClick = onBookmarkClick),
+                .noRippleClickable {
+                    isMarked = !isMarked
+                    onBookmarkClick(phraseId, isMarked)
+                },
             tint = Color.Unspecified
         )
+
         Text(
-            text = "$createdAt 일기에서 저장됨",
+            text = "$writtenDate 일기에서 저장됨",
             style = HilingualTheme.typography.captionM12,
             color = HilingualTheme.colors.gray400,
             modifier = Modifier.align(Alignment.BottomEnd)
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun VocaModalPreview() {
-    HilingualTheme {
-        var isBookmarked by remember { mutableStateOf(true) }
-
-        VocaModal(
-            phrase = "end up ~ing",
-            phraseType = persistentListOf("동사", "숙어"),
-            explanation = "결국 ~하게 되다",
-            createdAt = "25.06.12",
-            isBookmarked = isBookmarked,
-            onBookmarkClick = { isBookmarked = !isBookmarked }
         )
     }
 }

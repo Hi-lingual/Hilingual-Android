@@ -22,6 +22,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
@@ -40,6 +41,7 @@ fun HilingualBasicTextField(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     keyboardImeAction: ImeAction = ImeAction.Done, // 키보드 오른쪽 아래 버튼 (기본값: Done)
+    keyboardType: KeyboardType = KeyboardType.Unspecified,
     onDoneAction: () -> Unit = {}, // 키보드의 완료 액션이 눌렸을 때 실행되는 콜백
     onSearchAction: () -> Unit = {}, // 키보드의 검색 액션이 눌렸을 때 실행되는 콜백
     bottomRightContent: @Composable (() -> Unit)? = null
@@ -57,7 +59,10 @@ fun HilingualBasicTextField(
                 onFocusChanged(focusState.isFocused)
             },
         singleLine = singleLine,
-        keyboardOptions = KeyboardOptions(imeAction = keyboardImeAction),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = keyboardType,
+            imeAction = keyboardImeAction
+        ),
         keyboardActions = KeyboardActions(
             onDone = { onDoneAction() },
             onSearch = { onSearchAction() }

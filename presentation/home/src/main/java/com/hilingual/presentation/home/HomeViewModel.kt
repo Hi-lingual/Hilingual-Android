@@ -11,8 +11,11 @@ import com.hilingual.presentation.home.model.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -27,6 +30,9 @@ class HomeViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<HomeUiState>> = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<HomeSideEffect>()
+    val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
 
     init {
         loadInitialData()
@@ -62,7 +68,9 @@ class HomeViewModel @Inject constructor(
                     }
                     return@launch
                 }.onLogFailure { }
-            }.onLogFailure { }
+            }.onLogFailure {
+                _sideEffect.emit(HomeSideEffect.ShowRetryDialog {})
+            }
         }
     }
 
@@ -136,7 +144,9 @@ class HomeViewModel @Inject constructor(
                         getTopic(newDate.toString())
                     }
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(HomeSideEffect.ShowRetryDialog {})
+                }
         }
     }
 
@@ -155,6 +165,7 @@ class HomeViewModel @Inject constructor(
                     _uiState.updateSuccess {
                         it.copy(isDiaryThumbnailLoading = false)
                     }
+                    _sideEffect.emit(HomeSideEffect.ShowRetryDialog {})
                 }
         }
     }
@@ -167,7 +178,13 @@ class HomeViewModel @Inject constructor(
                         it.copy(todayTopic = topic.toState())
                     }
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(HomeSideEffect.ShowRetryDialog {})
+                }
         }
     }
+}
+
+sealed interface HomeSideEffect {
+    data class ShowRetryDialog(val onRetry: () -> Unit) : HomeSideEffect
 }

@@ -7,3 +7,7 @@ plugins {
 android {
     setNamespace("presentation.diaryfeedback")
 }
+
+dependencies {
+    implementation(project(":data:diary"))
+}
