@@ -46,7 +46,6 @@ constructor(
     private var AtoZGroupList: ImmutableList<GroupingVocaModel> = persistentListOf()
 
     init {
-        fetchWords(WordSortType.AtoZ)
         @OptIn(FlowPreview::class)
         _uiState
             .map { it.searchKeyword }
