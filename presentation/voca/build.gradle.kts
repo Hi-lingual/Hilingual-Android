@@ -10,4 +10,5 @@ android {
 
 dependencies {
     implementation(project(":data:voca"))
+    implementation(project(":data:diary"))
 }

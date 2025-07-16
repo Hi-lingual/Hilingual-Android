@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
+import com.hilingual.data.diary.model.PhraseBookmarkModel
+import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.voca.model.GroupingVocaModel
 import com.hilingual.data.voca.repository.VocaRepository
 import com.hilingual.presentation.voca.component.WordSortType
@@ -31,7 +33,8 @@ import javax.inject.Inject
 @HiltViewModel
 class VocaViewModel @Inject
 constructor(
-    private val vocaRepository: VocaRepository
+    private val vocaRepository: VocaRepository,
+    private val diaryRepository: DiaryRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(VocaUiState())
@@ -135,8 +138,49 @@ constructor(
         }
     }
 
-    fun toggleBookmark(phraseId: Long) {
+    fun toggleBookmark(phraseId: Long, isMarked: Boolean) {
+        viewModelScope.launch {
+            diaryRepository.patchPhraseBookmark(
+                phraseId = phraseId,
+                bookmarkModel = PhraseBookmarkModel(isMarked)
+            )
+                .onSuccess {
+                    _uiState.update { currentState ->
+                        val updatedGroupList = when (val groupState = currentState.vocaGroupList) {
+                            is UiState.Success -> {
+                                val updatedList = groupState.data.map { group ->
+                                    val updatedWords = group.words.map { item ->
+                                        if (item.phraseId == phraseId) {
+                                            item.copy(isBookmarked = isMarked)
+                                        } else {
+                                            item
+                                        }
+                                    }.toPersistentList()
+                                    group.copy(words = updatedWords)
+                                }.toPersistentList()
+
+                                UiState.Success(updatedList)
+                            }
+
+                            else -> groupState
+                        }
+
+                        val updatedSearchResults = currentState.searchResultList.map {
+                            if (it.phraseId == phraseId) it.copy(isBookmarked = isMarked) else it
+                        }.toPersistentList()
+
+                        currentState.copy(
+                            vocaGroupList = updatedGroupList,
+                            searchResultList = updatedSearchResults
+                        )
+                    }
+                }
+                .onLogFailure {
+                    _sideEffect.emit(VocaSideEffect.ShowRetryDialog {})
+                }
+        }
     }
+
 }
 
 sealed interface VocaSideEffect {
