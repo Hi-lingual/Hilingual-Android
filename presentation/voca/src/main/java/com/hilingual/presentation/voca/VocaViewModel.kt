@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class VocaViewModel @Inject
+class VocaViewModel @Inject
 constructor(
     private val vocaRepository: VocaRepository
 ) : ViewModel() {

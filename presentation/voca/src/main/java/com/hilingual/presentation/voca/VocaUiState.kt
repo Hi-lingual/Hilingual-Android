@@ -10,7 +10,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
-internal data class VocaUiState(
+data class VocaUiState(
     val viewType: ScreenType = ScreenType.DEFAULT,
     val sortType: WordSortType = WordSortType.AtoZ,
     val vocaCount: Int = 0,
