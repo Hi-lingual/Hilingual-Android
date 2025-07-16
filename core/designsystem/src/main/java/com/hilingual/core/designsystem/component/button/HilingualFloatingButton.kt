@@ -51,7 +51,7 @@ fun BoxScope.HilingualFloatingButton(
             imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_up_fab_24),
             contentDescription = null,
             tint = Color.Unspecified,
-            modifier = modifier
+            modifier = Modifier
                 .noRippleClickable(onClick = onClick)
                 .dropShadow(
                     shape = CircleShape,

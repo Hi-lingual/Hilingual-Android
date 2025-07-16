@@ -11,14 +11,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +35,7 @@ import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.presentation.voca.component.AddVocaButton
@@ -47,6 +52,7 @@ import com.hilingual.presentation.voca.model.VocaItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun VocaRoute(
@@ -142,44 +148,65 @@ private fun VocaScreen(
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
+    val coroutineScope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
+    val isFabVisible by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(HilingualTheme.colors.gray100)
             .padding(paddingValues)
-            .addFocusCleaner(focusManager)
     ) {
-        VocaHeader(
-            searchText = { searchText },
-            onSearchTextChanged = onSearchTextChanged,
-            onCloseButtonClick = onCloseButtonClick,
+        Column(
             modifier = Modifier
-                .background(hilingualBlack)
-                .fillMaxWidth()
-        )
+                .fillMaxSize()
+                .background(HilingualTheme.colors.gray100)
+                .addFocusCleaner(focusManager)
+        ) {
+            VocaHeader(
+                searchText = { searchText },
+                onSearchTextChanged = onSearchTextChanged,
+                onCloseButtonClick = onCloseButtonClick,
+                modifier = Modifier
+                    .background(hilingualBlack)
+                    .fillMaxWidth()
+            )
 
-        when (viewType) {
-            ScreenType.DEFAULT -> {
-                VocaListWithInfoSection(
-                    vocaGroupList = vocaGroupList,
-                    sortType = sortType,
-                    wordCount = vocaCount,
-                    onSortClick = { showBottomSheet = true },
-                    onCardClick = onCardClick,
-                    onBookmarkClick = onBookmarkClick,
-                    onWriteDiaryClick = onWriteDiaryClick
-                )
-            }
+            when (viewType) {
+                ScreenType.DEFAULT -> {
+                    VocaListWithInfoSection(
+                        listState = listState,
+                        vocaGroupList = vocaGroupList,
+                        sortType = sortType,
+                        wordCount = vocaCount,
+                        onSortClick = { showBottomSheet = true },
+                        onCardClick = onCardClick,
+                        onBookmarkClick = onBookmarkClick,
+                        onWriteDiaryClick = onWriteDiaryClick
+                    )
+                }
 
-            ScreenType.SEARCH -> {
-                SearchResultSection(
-                    searchResultList = searchResultList,
-                    onCardClick = onCardClick,
-                    onBookmarkClick = onBookmarkClick
-                )
+                ScreenType.SEARCH -> {
+                    SearchResultSection(
+                        listState = listState,
+                        searchResultList = searchResultList,
+                        onCardClick = onCardClick,
+                        onBookmarkClick = onBookmarkClick
+                    )
+                }
             }
         }
+        HilingualFloatingButton(
+            onClick = {
+                coroutineScope.launch {
+                    listState.animateScrollToItem(0)
+                }
+            },
+            isVisible = isFabVisible,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(bottom = 24.dp, end = 16.dp)
+        )
     }
 
     if (showBottomSheet) {
@@ -193,6 +220,7 @@ private fun VocaScreen(
 
 @Composable
 private fun VocaListWithInfoSection(
+    listState: LazyListState,
     vocaGroupList: ImmutableList<VocaGroup>,
     sortType: WordSortType,
     wordCount: Int,
@@ -204,6 +232,7 @@ private fun VocaListWithInfoSection(
     val isEmpty = vocaGroupList.all { it.words.isEmpty() }
 
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
@@ -277,6 +306,7 @@ private fun VocaListWithInfoSection(
 
 @Composable
 private fun SearchResultSection(
+    listState: LazyListState,
     searchResultList: ImmutableList<VocaItem>,
     onCardClick: (Long) -> Unit,
     onBookmarkClick: (Long) -> Unit,
@@ -291,6 +321,7 @@ private fun SearchResultSection(
         )
     } else {
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
@@ -317,6 +348,7 @@ private fun SearchResultSection(
 private fun VocaListWithInfoSectionEmptyPreview() {
     HilingualTheme {
         VocaListWithInfoSection(
+            listState = rememberLazyListState(),
             vocaGroupList = persistentListOf(),
             sortType = WordSortType.Latest,
             wordCount = 0,
@@ -333,6 +365,7 @@ private fun VocaListWithInfoSectionEmptyPreview() {
 private fun SearchResultSectionEmptyPreview() {
     HilingualTheme {
         SearchResultSection(
+            listState = rememberLazyListState(),
             searchResultList = persistentListOf(),
             onCardClick = {},
             onBookmarkClick = {}
@@ -345,6 +378,7 @@ private fun SearchResultSectionEmptyPreview() {
 private fun SearchResultSectionListPreview() {
     HilingualTheme {
         SearchResultSection(
+            listState = rememberLazyListState(),
             searchResultList = persistentListOf(
                 VocaItem(
                     phraseId = 1,

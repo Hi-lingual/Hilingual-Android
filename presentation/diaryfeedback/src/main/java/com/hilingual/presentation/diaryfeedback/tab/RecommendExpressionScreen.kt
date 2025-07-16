@@ -19,14 +19,19 @@ import com.hilingual.presentation.diaryfeedback.RecommendExpression
 import com.hilingual.presentation.diaryfeedback.component.RecommendExpressionCard
 import kotlinx.collections.immutable.ImmutableList
 
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
+
 @Composable
 internal fun RecommendExpressionScreen(
+    listState: LazyListState,
     writtenDate: String,
     recommendExpressionList: ImmutableList<RecommendExpression>,
     isBookmarkClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
+        state = listState,
         verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(vertical = 24.dp, horizontal = 16.dp),
         modifier = modifier
@@ -67,6 +72,7 @@ private fun GrammarSpellingScreenPreview() {
         val dummyExpressions = DiaryFeedbackViewModel.dummyRecommendExpressions
 
         RecommendExpressionScreen(
+            listState = rememberLazyListState(),
             writtenDate = "7월 11일 금요일",
             recommendExpressionList = dummyExpressions,
             isBookmarkClick = { _, _ -> }

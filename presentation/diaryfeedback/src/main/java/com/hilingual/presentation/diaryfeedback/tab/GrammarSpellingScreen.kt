@@ -33,8 +33,12 @@ import com.hilingual.presentation.diaryfeedback.component.FeedbackCard
 import com.hilingual.presentation.diaryfeedback.component.FeedbackEmptyCard
 import kotlinx.collections.immutable.ImmutableList
 
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
+
 @Composable
 internal fun GrammarSpellingScreen(
+    listState: LazyListState,
     writtenDate: String,
     diaryContent: DiaryContent,
     feedbackList: ImmutableList<FeedbackContent>,
@@ -44,6 +48,7 @@ internal fun GrammarSpellingScreen(
     isAIWritten: Boolean = true
 ) {
     LazyColumn(
+        state = listState,
         contentPadding = PaddingValues(vertical = 24.dp, horizontal = 16.dp),
         modifier = modifier
             .fillMaxSize()
@@ -134,6 +139,7 @@ private fun GrammarSpellingScreenPreview() {
         val dummyDiary = DiaryFeedbackViewModel.dummyDiaryContent
 
         GrammarSpellingScreen(
+            listState = rememberLazyListState(),
             writtenDate = "7월 11일 금요일",
             isAIWritten = isAI,
             onToggleDiaryViewMode = { isAI = !isAI },
