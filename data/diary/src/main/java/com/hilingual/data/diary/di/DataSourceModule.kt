@@ -1,7 +1,7 @@
 package com.hilingual.data.diary.di
 
 import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
-import com.hilingual.data.diary.datasourceimpl.DiaryRemoteRemoteDataSourceImpl
+import com.hilingual.data.diary.datasourceimpl.DiaryRemoteDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,6 +14,6 @@ internal abstract class DataSourceModule {
     @Binds
     @Singleton
     abstract fun bindDiaryDataSource(
-        diaryRemoteDataSourceImpl: DiaryRemoteRemoteDataSourceImpl
+        diaryRemoteDataSourceImpl: DiaryRemoteDataSourceImpl
     ): DiaryRemoteDataSource
 }

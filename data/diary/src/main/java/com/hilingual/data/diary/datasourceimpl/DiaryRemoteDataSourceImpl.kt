@@ -1,5 +1,9 @@
 package com.hilingual.data.diary.datasourceimpl
 
+import android.content.Context
+import android.net.Uri
+import android.provider.MediaStore
+import android.provider.OpenableColumns
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
 import com.hilingual.data.diary.dto.request.BookmarkRequestDto
@@ -8,15 +12,12 @@ import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResponseDto
 import com.hilingual.data.diary.dto.response.DiaryFeedbackResponseDto
 import com.hilingual.data.diary.dto.response.DiaryRecommendExpressionResponseDto
 import com.hilingual.data.diary.service.DiaryService
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.RequestBody
 import java.io.File
 import javax.inject.Inject
 
-internal class DiaryRemoteRemoteDataSourceImpl @Inject constructor(
+internal class DiaryRemoteDataSourceImpl @Inject constructor(
     private val diaryService: DiaryService
 ) : DiaryRemoteDataSource {
     override suspend fun getDiaryContent(diaryId: Long): BaseResponse<DiaryContentResponseDto> =
@@ -38,22 +39,13 @@ internal class DiaryRemoteRemoteDataSourceImpl @Inject constructor(
         )
 
     override suspend fun postDiaryFeedbackCreate(
-        originalText: String,
-        date: String,
-        imageFile: File?
-    ): BaseResponse<DiaryFeedbackCreateResponseDto> {
-        val originalTextPart = originalText.toRequestBody("text/plain".toMediaType())
-        val datePart = date.toRequestBody("text/plain".toMediaType())
-
-        val imagePart = imageFile?.let {
-            val requestFile = it.asRequestBody("image/*".toMediaTypeOrNull())
-            MultipartBody.Part.createFormData("imageFile", it.name, requestFile)
-        }
-
-        return diaryService.postDiaryFeedbackCreate(
-            originalText = originalTextPart,
-            date = datePart,
-            imageFile = imagePart
+        originalText: RequestBody,
+        date: RequestBody,
+        imageFile: MultipartBody.Part?
+    ): BaseResponse<DiaryFeedbackCreateResponseDto> =
+        diaryService.postDiaryFeedbackCreate(
+            originalText = originalText,
+            date = date,
+            imageFile = imageFile
         )
-    }
 }

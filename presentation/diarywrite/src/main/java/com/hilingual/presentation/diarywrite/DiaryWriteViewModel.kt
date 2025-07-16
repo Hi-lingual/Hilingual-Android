@@ -48,15 +48,14 @@ internal class DiaryWriteViewModel @Inject constructor(
     fun postDiaryFeedbackCreate(context: Context) {
         val originalText = uiState.value.diaryText
         val date = uiState.value.selectedDate.format(DateTimeFormatter.ISO_DATE)
-        val imageFile = uiState.value.diaryImageUri?.toFile(context)
 
         _feedbackState.value = DiaryFeedbackState.Loading
 
         viewModelScope.launch {
             diaryRepository.postDiaryFeedbackCreate(
                 originalText = originalText,
-                date = date,
-                imageFile = imageFile
+                date = uiState.value.selectedDate,
+                imageFileUri = uiState.value.diaryImageUri
             ).onSuccess { response ->
                 _feedbackState.update { DiaryFeedbackState.Complete(response.diaryId) }
             }.onLogFailure { throwable ->

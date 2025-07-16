@@ -1,11 +1,13 @@
 package com.hilingual.data.diary.repository
 
-import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResponseDto
+import android.net.Uri
 import com.hilingual.data.diary.model.DiaryContentModel
+import com.hilingual.data.diary.model.DiaryFeedbackCreateModel
 import com.hilingual.data.diary.model.DiaryFeedbackModel
 import com.hilingual.data.diary.model.DiaryRecommendExpressionModel
 import com.hilingual.data.diary.model.PhraseBookmarkModel
-import java.io.File
+import okhttp3.RequestBody
+import java.time.LocalDate
 
 interface DiaryRepository {
     suspend fun getDiaryContent(diaryId: Long): Result<DiaryContentModel>
@@ -21,7 +23,7 @@ interface DiaryRepository {
 
     suspend fun postDiaryFeedbackCreate(
         originalText: String,
-        date: String,
-        imageFile: File? = null
-    ): Result<DiaryFeedbackCreateResponseDto>
+        date: LocalDate,
+        imageFileUri: Uri? = null
+    ): Result<DiaryFeedbackCreateModel>
 }
