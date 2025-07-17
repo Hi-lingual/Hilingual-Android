@@ -46,7 +46,6 @@ constructor(
     private var AtoZGroupList: ImmutableList<GroupingVocaModel> = persistentListOf()
 
     init {
-        fetchWords(WordSortType.AtoZ)
         @OptIn(FlowPreview::class)
         _uiState
             .map { it.searchKeyword }
@@ -116,7 +115,7 @@ constructor(
         _uiState.update { currentState ->
             val filteredList = if (searchKeyword.isNotBlank()) {
                 AtoZGroupList.flatMap { it.words }
-                    .filter { it.phrase.startsWith(searchKeyword, ignoreCase = true) }
+                    .filter { it.phrase.contains(searchKeyword, ignoreCase = true) }
                     .toImmutableList()
             } else {
                 persistentListOf()
