@@ -1,9 +1,5 @@
 package com.hilingual.data.diary.datasourceimpl
 
-import android.content.Context
-import android.net.Uri
-import android.provider.MediaStore
-import android.provider.OpenableColumns
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
 import com.hilingual.data.diary.dto.request.BookmarkRequestDto
@@ -12,10 +8,9 @@ import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResponseDto
 import com.hilingual.data.diary.dto.response.DiaryFeedbackResponseDto
 import com.hilingual.data.diary.dto.response.DiaryRecommendExpressionResponseDto
 import com.hilingual.data.diary.service.DiaryService
+import javax.inject.Inject
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import java.io.File
-import javax.inject.Inject
 
 internal class DiaryRemoteDataSourceImpl @Inject constructor(
     private val diaryService: DiaryService

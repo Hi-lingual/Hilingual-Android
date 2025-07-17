@@ -13,13 +13,11 @@ import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.model.toDto
 import com.hilingual.data.diary.model.toModel
 import com.hilingual.data.diary.repository.DiaryRepository
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 
 internal class DiaryRepositoryImpl @Inject constructor(
     private val contentResolver: ContentResolver,
@@ -56,21 +54,19 @@ internal class DiaryRepositoryImpl @Inject constructor(
         date: LocalDate,
         imageFileUri: Uri?
     ): Result<DiaryFeedbackCreateModel> {
-        var imageFile: MultipartBody.Part? = null
-
-        val originalTextToRequestBody =
-            Json.encodeToString(originalText).toRequestBody("application/json".toMediaType())
+        val originalTextToRequestBody = originalText.toRequestBody(APPLICATION_JSON.toMediaType())
 
         val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
         val dateToString = date.format(dateFormatter)
-        val dateToRequestBody =
-            Json.encodeToString(dateToString).toRequestBody("application/json".toMediaType())
+        val dateToRequestBody = dateToString.toRequestBody(APPLICATION_JSON.toMediaType())
 
-        if (imageFileUri != null) {
-            imageFile = ContentUriRequestBody(
+        val imageFile = if (imageFileUri != null) {
+            ContentUriRequestBody(
                 contentResolver = contentResolver,
                 uri = imageFileUri
             ).toFormData(name = IMAGE_FILE_NAME)
+        } else {
+            null
         }
 
         return suspendRunCatching {
@@ -83,6 +79,7 @@ internal class DiaryRepositoryImpl @Inject constructor(
     }
 
     companion object {
+        const val APPLICATION_JSON = "application/json"
         const val IMAGE_FILE_NAME = "imageFile"
     }
 }
