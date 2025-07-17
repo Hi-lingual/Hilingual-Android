@@ -137,14 +137,13 @@ internal fun MainScreen(
                         navigateUp = navigator::navigateUp,
                         navigateToHome = navigator::navigateToHome,
                         navigateToDiaryFeedback = { diaryId ->
-                            val navOptions = navOptions {
-                                popUpTo<DiaryWrite> {
-                                    inclusive = true
-                                }
-                            }
                             navigator.navigateToDiaryFeedback(
                                 diaryId = diaryId,
-                                navOptions = navOptions
+                                navOptions = navOptions {
+                                    popUpTo<DiaryWrite> {
+                                        inclusive = true
+                                    }
+                                }
                             )
                         }
                     )

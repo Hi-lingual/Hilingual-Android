@@ -80,8 +80,7 @@ internal class DiaryRepositoryImpl @Inject constructor(
     companion object {
         const val APPLICATION_JSON = "application/json"
         const val IMAGE_FILE_NAME = "imageFile"
-    }
 
-    private val DATE_FORMATTER: DateTimeFormatter =
-        DateTimeFormatter.ISO_LOCAL_DATE
+        val DATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+    }
 }
