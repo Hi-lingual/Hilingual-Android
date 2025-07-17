@@ -1,11 +1,16 @@
 package com.hilingual.presentation.diarywrite
 
 import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
+import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -18,20 +23,25 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 internal class DiaryWriteViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val calendarRepository: CalendarRepository,
     private val diaryRepository: DiaryRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(DiaryWriteUiState())
+    private val route: DiaryWrite = savedStateHandle.toRoute<DiaryWrite>()
+
+    private val _uiState = MutableStateFlow(
+        DiaryWriteUiState(
+            selectedDate = LocalDate.parse(route.selectedDate)
+        )
+    )
     val uiState: StateFlow<DiaryWriteUiState> = _uiState.asStateFlow()
 
-    private var _feedbackState = MutableStateFlow<DiaryFeedbackState>(DiaryFeedbackState.Default)
+    private var _feedbackState: MutableStateFlow<DiaryFeedbackState> =
+        MutableStateFlow(DiaryFeedbackState.Default)
     val feedbackState: StateFlow<DiaryFeedbackState> = _feedbackState.asStateFlow()
 
-    fun updateSelectedDate(newDate: LocalDate) {
-        _uiState.update { it.copy(selectedDate = newDate) }
-    }
-
-    fun updateTopic(newTopicKo: String, newTopicEn: String) {
-        _uiState.update { it.copy(topicKo = newTopicKo, topicEn = newTopicEn) }
+    init {
+        getTopic(route.selectedDate)
     }
 
     fun updateDiaryText(newText: String) {
@@ -43,6 +53,15 @@ internal class DiaryWriteViewModel @Inject constructor(
     }
 
     // TODO: 일기 피드백 요청 POST API 관련 함수
+    fun getTopic(date: String) {
+        viewModelScope.launch {
+            calendarRepository.getTopic(date)
+                .onSuccess { topic ->
+                    _uiState.update { it.copy(topicKo = topic.topicKor, topicEn = topic.topicEn) }
+                }
+                .onLogFailure { }
+        }
+    }
     fun postDiaryFeedbackCreate() {
         // TODO: date fomatting 어디에서 할건지 고민해보기!!
         val date = uiState.value.selectedDate.format(DateTimeFormatter.ISO_DATE)

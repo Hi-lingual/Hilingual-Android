@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.hilingual.core.navigation.MainTabRoute
 import com.hilingual.presentation.home.HomeRoute
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
 
 @Serializable
 data object Home : MainTabRoute
@@ -24,7 +25,7 @@ fun NavController.navigateToHome(
 fun NavGraphBuilder.homeNavGraph(
     paddingValues: PaddingValues,
     navigateToDiaryFeedback: (diaryId: Long) -> Unit,
-    navigateToDiaryWrite: () -> Unit
+    navigateToDiaryWrite: (selectedDate: LocalDate) -> Unit
 ) {
     composable<Home> {
         HomeRoute(

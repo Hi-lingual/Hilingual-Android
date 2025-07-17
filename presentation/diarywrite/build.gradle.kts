@@ -10,5 +10,6 @@ android {
 
 dependencies {
     implementation(libs.balloon.compose)
+    implementation(projects.data.calendar)
     implementation(projects.data.diary)
 }
