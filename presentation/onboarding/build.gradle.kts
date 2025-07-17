@@ -10,4 +10,5 @@ android {
 
 dependencies {
     implementation(projects.data.user)
+    implementation(projects.core.localstorage)
 }

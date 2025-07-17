@@ -17,6 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +36,7 @@ import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualShortTextField
+import com.hilingual.core.designsystem.component.textfield.TextFieldState
 import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppBar
 import com.hilingual.core.designsystem.event.LocalDialogController
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -48,6 +52,18 @@ internal fun OnboardingRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
     val dialogController = LocalDialogController.current
+
+    var textFieldState by remember { mutableStateOf(TextFieldState.NORMAL) }
+
+    LaunchedEffect(uiState.isNicknameValid, uiState.validationMessage, uiState.nickname) {
+        if (uiState.nickname.isNotEmpty()) {
+            textFieldState = when {
+                uiState.isNicknameValid -> TextFieldState.SUCCESS
+                uiState.validationMessage.isNotEmpty() -> TextFieldState.ERROR
+                else -> TextFieldState.NORMAL
+            }
+        }
+    }
 
     LaunchedEffect(viewModel.sideEffect) {
         viewModel.sideEffect.collect { event ->
@@ -68,10 +84,14 @@ internal fun OnboardingRoute(
 
     OnboardingScreen(
         paddingValues = paddingValues,
-        value = { uiState.nickname },
-        onValueChanged = viewModel::onNicknameChanged,
-        isValid = { uiState.isNicknameValid },
-        errorMessage = { uiState.validationMessage },
+        nickname = { uiState.nickname },
+        onNicknameChanged = {
+            textFieldState = TextFieldState.NORMAL
+            viewModel.onNicknameChanged(it)
+        },
+        textFieldState = { textFieldState },
+        validationMessage = { uiState.validationMessage },
+        isNicknameValid = { uiState.isNicknameValid },
         onDoneAction = viewModel::onSubmitNickname,
         onButtonClick = viewModel::onRegisterClick
     )
@@ -80,10 +100,11 @@ internal fun OnboardingRoute(
 @Composable
 private fun OnboardingScreen(
     paddingValues: PaddingValues,
-    value: () -> String,
-    onValueChanged: (String) -> Unit,
-    isValid: () -> Boolean,
-    errorMessage: () -> String,
+    nickname: () -> String,
+    onNicknameChanged: (String) -> Unit,
+    textFieldState: () -> TextFieldState,
+    validationMessage: () -> String,
+    isNicknameValid: () -> Boolean,
     onDoneAction: (String) -> Unit,
     onButtonClick: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -136,15 +157,15 @@ private fun OnboardingScreen(
         Spacer(Modifier.height(4.dp))
 
         HilingualShortTextField(
-            value = value,
-            onValueChanged = onValueChanged,
+            value = nickname,
+            onValueChanged = onNicknameChanged,
             placeholder = "한글, 영문, 숫자 조합만 가능",
             maxLength = 10,
-            isValid = isValid,
-            errorMessage = errorMessage,
+            state = textFieldState,
+            errorMessage = validationMessage,
             successMessage = "사용 가능한 닉네임이에요",
             onDoneAction = {
-                onDoneAction(value())
+                onDoneAction(nickname())
                 focusManager.clearFocus()
             }
         )
@@ -153,8 +174,8 @@ private fun OnboardingScreen(
 
         HilingualButton(
             text = "시작하기",
-            onClick = { onButtonClick(value()) },
-            enableProvider = isValid,
+            onClick = { onButtonClick(nickname()) },
+            enableProvider = isNicknameValid,
             modifier = Modifier.padding(vertical = 12.dp)
         )
     }
@@ -166,10 +187,11 @@ private fun OnboardingScreenPreview() {
     HilingualTheme {
         OnboardingScreen(
             paddingValues = PaddingValues(0.dp),
-            value = { "" },
-            onValueChanged = {},
-            isValid = { true },
-            errorMessage = { "" },
+            nickname = { "" },
+            onNicknameChanged = {},
+            textFieldState = { TextFieldState.NORMAL },
+            validationMessage = { "" },
+            isNicknameValid = { true },
             onDoneAction = { _ -> },
             onButtonClick = { _ -> }
         )

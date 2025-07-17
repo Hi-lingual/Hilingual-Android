@@ -65,6 +65,10 @@ internal fun HomeRoute(
     }
 
     LaunchedEffect(Unit) {
+        viewModel.loadInitialData()
+    }
+
+    LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
             systemBarsColor = hilingualBlack,
             isDarkIcon = false
@@ -180,15 +184,6 @@ private fun HomeScreen(
 
             with(uiState) {
                 when {
-                    isDiaryThumbnailLoading -> {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
-
                     isWritten -> {
                         if (diaryThumbnail != null) {
                             DiaryPreviewCard(

@@ -34,11 +34,7 @@ class HomeViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<HomeSideEffect>()
     val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
 
-    init {
-        loadInitialData()
-    }
-
-    private fun loadInitialData() {
+    fun loadInitialData() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             val today = LocalDate.now()
@@ -57,7 +53,6 @@ class HomeViewModel @Inject constructor(
                             userProfile = userInfo.toState(),
                             dateList = calendarData.dateList.map { it.toState() }.toImmutableList(),
                             selectedDate = today,
-                            isDiaryThumbnailLoading = hasDiaryToday,
                             diaryThumbnail = null
                         )
                     )
@@ -86,7 +81,6 @@ class HomeViewModel @Inject constructor(
             it.copy(
                 selectedDate = date,
                 diaryThumbnail = null,
-                isDiaryThumbnailLoading = hasDiary,
                 todayTopic = null
             )
         }
@@ -115,7 +109,6 @@ class HomeViewModel @Inject constructor(
         if (YearMonth.from(currentState.data.selectedDate) == yearMonth) return
 
         viewModelScope.launch {
-            _uiState.updateSuccess { it.copy(isDiaryThumbnailLoading = true) }
             calendarRepository.getCalendar(yearMonth.year, yearMonth.monthValue)
                 .onSuccess { calendarModel ->
                     val newDate = yearMonth.atDay(1)
@@ -126,8 +119,7 @@ class HomeViewModel @Inject constructor(
                             dateList = calendarModel.dateList.map { it.toState() }.toImmutableList(),
                             selectedDate = newDate,
                             diaryThumbnail = null,
-                            todayTopic = null,
-                            isDiaryThumbnailLoading = hasDiaryOnFirst
+                            todayTopic = null
                         )
                     }
 
@@ -158,15 +150,11 @@ class HomeViewModel @Inject constructor(
                 .onSuccess { thumbnail ->
                     _uiState.updateSuccess {
                         it.copy(
-                            diaryThumbnail = thumbnail.toState(),
-                            isDiaryThumbnailLoading = false
+                            diaryThumbnail = thumbnail.toState()
                         )
                     }
                 }
                 .onLogFailure {
-                    _uiState.updateSuccess {
-                        it.copy(isDiaryThumbnailLoading = false)
-                    }
                     _sideEffect.emit(HomeSideEffect.ShowRetryDialog {})
                 }
         }

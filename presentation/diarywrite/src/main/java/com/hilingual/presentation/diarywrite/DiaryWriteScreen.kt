@@ -2,6 +2,7 @@ package com.hilingual.presentation.diarywrite
 
 import android.content.Context
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -193,6 +194,12 @@ private fun DiaryWriteScreen(
     val focusManager = LocalFocusManager.current
     var isDialogVisible by remember { mutableStateOf(false) }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
+
+    BackHandler {
+        if (!isDialogVisible) {
+            isDialogVisible = true
+        }
+    }
 
     if (isDialogVisible) {
         DiaryWriteCancelDialog(

@@ -70,4 +70,10 @@ class TokenManagerImpl @Inject constructor(
             preferences.remove(PreferencesKeys.IS_PROFILE_COMPLETED)
         }
     }
+
+    override suspend fun completeOnboarding() {
+        context.dataStore.edit {
+            it[PreferencesKeys.IS_PROFILE_COMPLETED] = true
+        }
+    }
 }
