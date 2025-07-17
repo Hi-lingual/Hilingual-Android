@@ -77,12 +77,14 @@ internal fun RecommendedTopicDropdown(
                     .background(HilingualTheme.colors.white)
                     .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
+                    modifier = Modifier.weight(1f),
                     text = if (isKo) koTopic else enTopic,
                     style = HilingualTheme.typography.bodySB16,
-                    color = HilingualTheme.colors.gray700
+                    color = HilingualTheme.colors.gray700,
+                    maxLines = 2
                 )
                 Icon(
                     modifier = Modifier

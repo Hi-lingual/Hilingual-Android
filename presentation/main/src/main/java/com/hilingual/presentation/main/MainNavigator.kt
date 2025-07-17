@@ -16,6 +16,7 @@ import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.voca.navigation.navigateToVoca
+import java.time.LocalDate
 
 internal class MainNavigator(
     val navController: NavHostController
@@ -98,11 +99,12 @@ internal class MainNavigator(
     }
 
     fun navigateToDiaryWrite(
+        selectedDate: LocalDate,
         navOptions: NavOptions? = navOptions {
             launchSingleTop = true
         }
     ) {
-        navController.navigateToDiaryWrite(navOptions)
+        navController.navigateToDiaryWrite(selectedDate, navOptions)
     }
 
     fun navigateUp() {
