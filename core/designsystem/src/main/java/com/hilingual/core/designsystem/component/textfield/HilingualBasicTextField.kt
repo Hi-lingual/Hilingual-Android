@@ -38,6 +38,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.chattymin.pebble.graphemeLength
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
@@ -67,7 +68,7 @@ fun HilingualBasicTextField(
     BasicTextField(
         value = value,
         onValueChange = {
-            if (it.length <= maxLength) {
+            if (it.graphemeLength <= maxLength) {
                 onValueChanged(it)
             }
         },
