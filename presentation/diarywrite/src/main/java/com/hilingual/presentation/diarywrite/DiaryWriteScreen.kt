@@ -1,6 +1,7 @@
 package com.hilingual.presentation.diarywrite
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -58,7 +59,6 @@ import java.util.Locale
 @Composable
 internal fun DiaryWriteRoute(
     paddingValues: PaddingValues,
-    navigateUp: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToDiaryFeedback: (diaryId: Long) -> Unit,
     viewModel: DiaryWriteViewModel = hiltViewModel()
@@ -78,7 +78,7 @@ internal fun DiaryWriteRoute(
         is DiaryFeedbackState.Default -> {
             DiaryWriteScreen(
                 paddingValues = paddingValues,
-                onBackClicked = navigateUp,
+                onBackClicked = navigateToHome,
                 selectedDate = uiState.selectedDate,
                 topicKo = uiState.topicKo,
                 topicEn = uiState.topicEn,
@@ -145,6 +145,12 @@ private fun DiaryWriteScreen(
     val focusManager = LocalFocusManager.current
     var isDialogVisible by remember { mutableStateOf(false) }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
+
+    BackHandler {
+        if (!isDialogVisible) {
+            isDialogVisible = true
+        }
+    }
 
     if (isDialogVisible) {
         DiaryWriteCancelDialog(

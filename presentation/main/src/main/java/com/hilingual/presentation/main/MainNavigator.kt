@@ -36,11 +36,9 @@ internal class MainNavigator(
         val navOptions = navOptions {
             navController.currentDestination?.route?.let {
                 popUpTo(0) {
-                    saveState = true
                     inclusive = true
                 }
                 launchSingleTop = true
-                restoreState = true
             }
         }
 
