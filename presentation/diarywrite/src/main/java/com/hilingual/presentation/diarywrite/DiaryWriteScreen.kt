@@ -86,7 +86,7 @@ internal fun DiaryWriteRoute(
                 onDiaryTextChanged = viewModel::updateDiaryText,
                 diaryImageUri = uiState.diaryImageUri,
                 onDiaryImageUriChanged = viewModel::updateDiaryImageUri,
-                onDiaryFeedbackRequestButtonClick = { viewModel.postDiaryFeedbackCreate() }
+                onDiaryFeedbackRequestButtonClick = viewModel::postDiaryFeedbackCreate
             )
         }
 

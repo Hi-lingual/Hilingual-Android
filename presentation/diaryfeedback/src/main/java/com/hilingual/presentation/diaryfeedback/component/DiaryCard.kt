@@ -24,6 +24,7 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.image.ErrorImageSize
 import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.designsystem.theme.SuitMedium
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -36,7 +37,7 @@ internal fun DiaryCard(
     diffRanges: ImmutableList<Pair<Int, Int>> = persistentListOf(),
     imageUrl: String? = null
 ) {
-    val maxContentLength = if (isAIWritten) 1000 else 1500
+    val maxContentLength = if (isAIWritten) 1500 else 1000
 
     val clipContent = diaryContent.run {
         if (length > maxContentLength) this.take(maxContentLength) else this
@@ -97,7 +98,10 @@ private fun getAnnotatedString(
         append(content)
         diffRanges.forEach {
             addStyle(
-                style = SpanStyle(color = HilingualTheme.colors.hilingualOrange),
+                style = SpanStyle(
+                    color = HilingualTheme.colors.hilingualOrange,
+                    fontFamily = SuitMedium
+                ),
                 start = it.first,
                 end = it.second
             )
