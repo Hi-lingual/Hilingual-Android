@@ -32,17 +32,18 @@ internal fun DiaryDateInfo(
         selectedDate.format(DATE_FORMATTER)
     }
 
-    /* val isFutureDate = remember(selectedDate) {
+    // TODO: isFutureDate QA 이후 시연용으로 변경 필요 by. 민재
+    val isFutureDate = remember(selectedDate) {
         LocalDate.now().isBefore(selectedDate)
-    } */
+    }
 
     val diaryStatusText = when {
-        // isFutureDate -> "작성 불가"
+        isFutureDate -> "작성 불가"
         isWritten -> "작성완료"
         else -> "미작성"
     }
     val diaryStatusColor = when {
-        // isFutureDate -> HilingualTheme.colors.gray300
+        isFutureDate -> HilingualTheme.colors.gray300
         isWritten -> HilingualTheme.colors.hilingualBlue
         else -> HilingualTheme.colors.gray300
     }

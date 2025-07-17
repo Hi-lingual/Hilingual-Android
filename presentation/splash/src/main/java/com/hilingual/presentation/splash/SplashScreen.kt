@@ -11,27 +11,29 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.lifecycleScope
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualOrange
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun SplashRoute(
     navigateToAuth: () -> Unit,
     navigateToHome: () -> Unit,
+    navigateToOnboarding: () -> Unit,
     sharedTransitionScope: SharedTransitionScope,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: SplashViewModel = hiltViewModel()
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
     val localSystemBarsColor = LocalSystemBarsColor.current
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
@@ -39,10 +41,12 @@ internal fun SplashRoute(
         )
     }
 
-    LaunchedEffect(Unit) {
-        lifecycleOwner.lifecycleScope.launch {
-            delay(1400)
-            navigateToAuth()
+    LaunchedEffect(uiState) {
+        delay(1400)
+        when (uiState) {
+            SplashUiState.LoggedIn -> navigateToHome()
+            SplashUiState.NotLoggedIn -> navigateToAuth()
+            SplashUiState.OnboardingRequired -> navigateToOnboarding()
         }
     }
 

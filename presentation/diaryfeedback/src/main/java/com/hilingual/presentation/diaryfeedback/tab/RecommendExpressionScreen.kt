@@ -7,26 +7,30 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.diaryfeedback.DiaryFeedbackViewModel
-import com.hilingual.presentation.diaryfeedback.RecommendExpression
 import com.hilingual.presentation.diaryfeedback.component.RecommendExpressionCard
+import com.hilingual.presentation.diaryfeedback.model.RecommendExpressionUiModel
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun RecommendExpressionScreen(
+    listState: LazyListState,
     writtenDate: String,
-    recommendExpressionList: ImmutableList<RecommendExpression>,
-    isBookmarkClick: (Long, Boolean) -> Unit,
+    recommendExpressionList: ImmutableList<RecommendExpressionUiModel>,
+    onBookmarkClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
+        state = listState,
         verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(vertical = 24.dp, horizontal = 16.dp),
         modifier = modifier
@@ -54,7 +58,7 @@ internal fun RecommendExpressionScreen(
                 explanation = it.explanation,
                 reason = it.reason,
                 isMarked = it.isMarked,
-                onBookmarkClick = { isBookmarkClick(it.phraseId, it.isMarked) }
+                onBookmarkClick = { onBookmarkClick(it.phraseId, !it.isMarked) }
             )
         }
     }
@@ -64,12 +68,11 @@ internal fun RecommendExpressionScreen(
 @Composable
 private fun GrammarSpellingScreenPreview() {
     HilingualTheme {
-        val dummyExpressions = DiaryFeedbackViewModel.dummyRecommendExpressions
-
         RecommendExpressionScreen(
+            listState = rememberLazyListState(),
             writtenDate = "7월 11일 금요일",
-            recommendExpressionList = dummyExpressions,
-            isBookmarkClick = { _, _ -> }
+            recommendExpressionList = persistentListOf(),
+            onBookmarkClick = { _, _ -> }
         )
     }
 }

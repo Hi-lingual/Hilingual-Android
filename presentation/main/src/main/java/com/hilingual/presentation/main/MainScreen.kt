@@ -3,6 +3,8 @@ package com.hilingual.presentation.main
 import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Box
@@ -13,6 +15,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +32,8 @@ import androidx.navigation.compose.NavHost
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
 import com.hilingual.core.designsystem.component.snackbar.TextSnackBar
+import com.hilingual.core.designsystem.event.LocalDialogController
+import com.hilingual.core.designsystem.event.rememberDialogController
 import com.hilingual.presentation.auth.navigation.authNavGraph
 import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
 import com.hilingual.presentation.diarywrite.navigation.diaryWriteNavGraph
@@ -55,6 +61,7 @@ internal fun MainScreen(
 
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
+    val dialogController = rememberDialogController()
 
     val onShowSnackBar: (String) -> Unit = { message ->
         coroutineScope.launch {
@@ -67,66 +74,77 @@ internal fun MainScreen(
         }
     }
 
+    LaunchedEffect(isOffline, dialogController.isVisible) {
+        if (isOffline && !dialogController.isVisible) {
+            dialogController.show { navigator.navigateToHome() }
+        }
+    }
+
     HandleBackPressToExit(
         onShowSnackbar = {
             onShowSnackBar("버튼을 한번 더 누르면 앱이 종료됩니다!")
         }
     )
 
-    SharedTransitionLayout {
-        Scaffold(
-            bottomBar = {
-                MainBottomBar(
-                    visible = navigator.isBottomBarVisible(),
-                    tabs = MainTab.entries.toPersistentList(),
-                    currentTab = navigator.currentTab,
-                    onTabSelected = navigator::navigate
-                )
-            }
-        ) { innerPadding ->
-            NavHost(
-                navController = navigator.navController,
-                startDestination = navigator.startDestination
+    CompositionLocalProvider(
+        LocalDialogController provides dialogController
+    ) {
+        SharedTransitionLayout {
+            Scaffold(
+                bottomBar = {
+                    MainBottomBar(
+                        visible = navigator.isBottomBarVisible(),
+                        tabs = MainTab.entries.toPersistentList(),
+                        currentTab = navigator.currentTab,
+                        onTabSelected = navigator::navigate
+                    )
+                }
+            ) { innerPadding ->
+                NavHost(
+                    enterTransition = { EnterTransition.None },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { ExitTransition.None },
+                    navController = navigator.navController,
+                    startDestination = navigator.startDestination
 
-            ) {
-                splashNavGraph(
-                    navigateToAuth = navigator::navigateToAuth,
-                    navigateToHome = navigator::navigateToHome,
-                    sharedTransitionScope = this@SharedTransitionLayout
-                )
-                authNavGraph(
-                    paddingValues = innerPadding,
-                    navigateToHome = navigator::navigateToHome,
-                    navigateToOnboarding = navigator::navigateToOnboarding,
-                    sharedTransitionScope = this@SharedTransitionLayout
-                )
-                onboardingGraph(
-                    paddingValues = innerPadding,
-                    navigateToHome = navigator::navigateToHome
-                )
-                homeNavGraph(
-                    paddingValues = innerPadding,
-                    navigateToDiaryFeedback = navigator::navigateToDiaryFeedback,
-                    navigateToDiaryWrite = navigator::navigateToDiaryWrite
-                )
-                diaryWriteNavGraph(
-                    paddingValues = innerPadding,
-                    navigateUp = navigator::navigateUp
-                )
-                vocaNavGraph(
-                    paddingValues = innerPadding,
-                    navigateToHome = navigator::navigateToHome
-                )
-                diaryFeedbackNavGraph(
-                    paddingValues = innerPadding,
-                    navigateUp = navigator::navigateUp
-                )
-            }
+                ) {
+                    splashNavGraph(
+                        navigateToAuth = navigator::navigateToAuth,
+                        navigateToHome = navigator::navigateToHome,
+                        navigateToOnboarding = navigator::navigateToOnboarding,
+                        sharedTransitionScope = this@SharedTransitionLayout
+                    )
+                    authNavGraph(
+                        paddingValues = innerPadding,
+                        navigateToHome = navigator::navigateToHome,
+                        navigateToOnboarding = navigator::navigateToOnboarding,
+                        sharedTransitionScope = this@SharedTransitionLayout
+                    )
+                    onboardingGraph(
+                        paddingValues = innerPadding,
+                        navigateToHome = navigator::navigateToHome
+                    )
+                    homeNavGraph(
+                        paddingValues = innerPadding,
+                        navigateToDiaryFeedback = navigator::navigateToDiaryFeedback,
+                        navigateToDiaryWrite = navigator::navigateToDiaryWrite
+                    )
+                    diaryWriteNavGraph(
+                        paddingValues = innerPadding,
+                        navigateUp = navigator::navigateUp
+                    )
+                    vocaNavGraph(
+                        paddingValues = innerPadding,
+                        navigateToHome = navigator::navigateToHome
+                    )
+                    diaryFeedbackNavGraph(
+                        paddingValues = innerPadding,
+                        navigateUp = navigator::navigateUp
+                    )
+                }
 
-            if (isOffline) {
-                HilingualErrorDialog(
-                    onClick = navigator::navigateToHome
-                )
+                HilingualErrorDialog(controller = dialogController)
             }
         }
     }

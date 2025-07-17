@@ -11,8 +11,11 @@ import com.hilingual.presentation.home.model.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -27,6 +30,9 @@ class HomeViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<HomeUiState>> = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<HomeSideEffect>()
+    val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
 
     init {
         loadInitialData()
@@ -62,7 +68,9 @@ class HomeViewModel @Inject constructor(
                     }
                     return@launch
                 }.onLogFailure { }
-            }.onLogFailure { }
+            }.onLogFailure {
+                _sideEffect.emit(HomeSideEffect.ShowRetryDialog {})
+            }
         }
     }
 
@@ -83,7 +91,7 @@ class HomeViewModel @Inject constructor(
             )
         }
 
-        /*
+        // TODO: QA 이후 시연용으로 변경 필요 by. 민재
         val today = LocalDate.now()
         val isWritable = !date.isAfter(today) && date.isAfter(today.minusDays(2))
 
@@ -91,12 +99,13 @@ class HomeViewModel @Inject constructor(
             hasDiary -> getDiaryThumbnail(date.toString())
             isWritable -> getTopic(date.toString())
         }
-        */
-        if (hasDiary) {
-            getDiaryThumbnail(date.toString())
-        } else {
-            getTopic(date.toString())
-        }
+
+        // TODO: QA 이후 시연용으로 변경 필요 by. 민재
+        // if (hasDiary) {
+        //    getDiaryThumbnail(date.toString())
+        // } else {
+        //    getTopic(date.toString())
+        // }
     }
 
     fun onMonthChanged(yearMonth: YearMonth) {
@@ -122,21 +131,24 @@ class HomeViewModel @Inject constructor(
                         )
                     }
 
-                    /*
+                    // TODO: QA 이후 시연용으로 변경 필요 by. 민재
                     val today = LocalDate.now()
                     val isWritable = !newDate.isAfter(today) && newDate.isAfter(today.minusDays(2))
                     when {
                         hasDiaryOnFirst -> getDiaryThumbnail(newDate.toString())
                         isWritable -> getTopic(newDate.toString())
                     }
-                    */
-                    if (hasDiaryOnFirst) {
-                        getDiaryThumbnail(newDate.toString())
-                    } else {
-                        getTopic(newDate.toString())
-                    }
+
+                    // TODO: QA 이후 시연용으로 변경 필요 by. 민재
+                    // if (hasDiaryOnFirst) {
+                    //     getDiaryThumbnail(newDate.toString())
+                    // } else {
+                    //    getTopic(newDate.toString())
+                    // }
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(HomeSideEffect.ShowRetryDialog {})
+                }
         }
     }
 
@@ -155,6 +167,7 @@ class HomeViewModel @Inject constructor(
                     _uiState.updateSuccess {
                         it.copy(isDiaryThumbnailLoading = false)
                     }
+                    _sideEffect.emit(HomeSideEffect.ShowRetryDialog {})
                 }
         }
     }
@@ -167,7 +180,13 @@ class HomeViewModel @Inject constructor(
                         it.copy(todayTopic = topic.toState())
                     }
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(HomeSideEffect.ShowRetryDialog {})
+                }
         }
     }
+}
+
+sealed interface HomeSideEffect {
+    data class ShowRetryDialog(val onRetry: () -> Unit) : HomeSideEffect
 }

@@ -27,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.designsystem.event.LocalDialogController
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
@@ -34,6 +35,8 @@ import com.hilingual.presentation.home.component.HomeHeader
 import com.hilingual.presentation.home.component.calendar.HilingualCalendar
 import com.hilingual.presentation.home.component.footer.DateTimeInfo
 import com.hilingual.presentation.home.component.footer.DiaryDateInfo
+import com.hilingual.presentation.home.component.footer.DiaryEmptyCard
+import com.hilingual.presentation.home.component.footer.DiaryEmptyCardType
 import com.hilingual.presentation.home.component.footer.DiaryPreviewCard
 import com.hilingual.presentation.home.component.footer.TodayTopic
 import com.hilingual.presentation.home.component.footer.WriteDiaryButton
@@ -49,6 +52,17 @@ internal fun HomeRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
+    val dialogController = LocalDialogController.current
+
+    LaunchedEffect(viewModel.sideEffect) {
+        viewModel.sideEffect.collect { event ->
+            when (event) {
+                is HomeSideEffect.ShowRetryDialog -> {
+                    dialogController.show { dialogController.dismiss() }
+                }
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
@@ -93,14 +107,17 @@ private fun HomeScreen(
 ) {
     val date = uiState.selectedDate
     val today = remember { LocalDate.now() }
-    val isWritten = remember(
-        uiState.dateList,
-        date
-    ) { uiState.dateList.any { LocalDate.parse(it.date) == date } }
-    // val isFuture = remember(date, today) { date.isAfter(today) }
-    /* val isWritable =
-        remember(isFuture, date, today) { !isFuture && date.isAfter(today.minusDays(2)) } */
-    val isWritable = true
+    val isWritten = remember(uiState.dateList, date) {
+        uiState.dateList.any { LocalDate.parse(it.date) == date }
+    }
+
+    // TODO: QA 이후 시연용으로 변경 필요 by. 민재
+    val isFuture = remember(date, today) { date.isAfter(today) }
+    val isWritable = remember(isFuture, date, today) {
+        !isFuture && date.isAfter(today.minusDays(2))
+    }
+
+    // val isWritable = true
     val verticalScrollState = rememberScrollState()
 
     Column(
@@ -183,7 +200,10 @@ private fun HomeScreen(
                             )
                         }
                     }
-                    /* isFuture -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE) */
+
+                    // TODO: QA 이후 시연용으로 변경 필요 by. 민재
+                    isFuture -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
+
                     isWritable -> {
                         if (todayTopic != null) {
                             TodayTopic(
@@ -200,7 +220,8 @@ private fun HomeScreen(
                         )
                     }
 
-                    // else -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
+                    // TODO: QA 이후 시연용으로 변경 필요 by. 민재
+                    else -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
                 }
             }
         }

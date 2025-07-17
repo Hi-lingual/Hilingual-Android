@@ -34,6 +34,7 @@ import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualShortTextField
 import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppBar
+import com.hilingual.core.designsystem.event.LocalDialogController
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.designsystem.R as DesignSystemR
@@ -46,11 +47,15 @@ internal fun OnboardingRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
+    val dialogController = LocalDialogController.current
 
-    LaunchedEffect(viewModel.eventChannel) {
-        viewModel.eventChannel.collect { event ->
+    LaunchedEffect(viewModel.sideEffect) {
+        viewModel.sideEffect.collect { event ->
             when (event) {
-                OnboardingEvent.NavigateToHome -> navigateToHome()
+                is OnboardingSideEffect.NavigateToHome -> navigateToHome()
+                is OnboardingSideEffect.ShowRetryDialog -> {
+                    dialogController.show(event.onRetry)
+                }
             }
         }
     }

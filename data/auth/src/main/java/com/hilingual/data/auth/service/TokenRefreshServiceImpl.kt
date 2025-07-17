@@ -13,7 +13,7 @@ internal class TokenRefreshServiceImpl @Inject constructor(
     override suspend fun refreshToken(refreshToken: String): Result<Pair<String, String>> = suspendRunCatching {
         val response = reissueService.reissueToken("$BEARER $refreshToken")
         val data = response.data!!
-        tokenManager.saveTokens(data.accessToken, data.refreshToken)
+        tokenManager.saveTokens(data.accessToken, data.refreshToken, tokenManager.isProfileCompleted())
         Pair(data.accessToken, data.refreshToken)
     }
 }
