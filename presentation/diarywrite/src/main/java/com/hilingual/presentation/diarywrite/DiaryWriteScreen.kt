@@ -1,6 +1,10 @@
 package com.hilingual.presentation.diarywrite
 
+import android.content.Context
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,9 +27,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.addFocusCleaner
@@ -51,6 +57,7 @@ import com.skydoves.balloon.compose.Balloon
 import com.skydoves.balloon.compose.rememberBalloonBuilder
 import com.skydoves.balloon.compose.setBackgroundColor
 import kotlinx.coroutines.delay
+import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -63,9 +70,40 @@ internal fun DiaryWriteRoute(
     navigateToDiaryFeedback: () -> Unit,
     viewModel: DiaryWriteViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val feedbackState by viewModel.feedbackState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
+
+    var diaryTextImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            diaryTextImageUri?.let {
+                viewModel.extractTextFromImage(it)
+            }
+        }
+    }
+
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            val uri = createImageUri(context)
+            diaryTextImageUri = uri
+            cameraLauncher.launch(uri)
+        }
+    }
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        uri?.let {
+            viewModel.extractTextFromImage(it)
+        }
+    }
 
     LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
@@ -86,6 +124,12 @@ internal fun DiaryWriteRoute(
                 onDiaryTextChanged = viewModel::updateDiaryText,
                 diaryImageUri = uiState.diaryImageUri,
                 onDiaryImageUriChanged = viewModel::updateDiaryImageUri,
+                onBottomSheetCameraClicked = {
+                    cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
+                },
+                onBottomSheetGalleryClicked = {
+                    galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                },
                 onDiaryFeedbackRequestButtonClick = {}
             )
         }
@@ -113,6 +157,16 @@ internal fun DiaryWriteRoute(
     }
 }
 
+private fun createImageUri(context: Context): Uri {
+    val imageFile = File.createTempFile("camera_", ".jpg", context.cacheDir)
+
+    return FileProvider.getUriForFile(
+        context,
+        "${context.packageName}.fileprovider",
+        imageFile
+    )
+}
+
 @Composable
 private fun DiaryWriteScreen(
     paddingValues: PaddingValues,
@@ -124,6 +178,8 @@ private fun DiaryWriteScreen(
     onDiaryTextChanged: (String) -> Unit,
     diaryImageUri: Uri?,
     onDiaryImageUriChanged: (Uri?) -> Unit,
+    onBottomSheetCameraClicked: () -> Unit,
+    onBottomSheetGalleryClicked: () -> Unit,
     onDiaryFeedbackRequestButtonClick: () -> Unit
 ) {
     val verticalScrollState = rememberScrollState()
@@ -142,8 +198,8 @@ private fun DiaryWriteScreen(
     if (isBottomSheetVisible) {
         ImageSelectBottomSheet(
             onDismiss = { isBottomSheetVisible = false },
-            onCameraSelected = { /* TODO: 카메라로 사진 찍기 클릭 시 처리 */ },
-            onGallerySelected = { /* TODO: 갤러리에서 선택하기 클릭 시 처리 */ }
+            onCameraSelected = onBottomSheetCameraClicked,
+            onGallerySelected = onBottomSheetGalleryClicked
         )
     }
 
@@ -275,6 +331,8 @@ private fun DiaryWriteScreenPreview() {
             onDiaryTextChanged = { diaryText = it },
             diaryImageUri = diaryImageUri,
             onDiaryImageUriChanged = { diaryImageUri = it },
+            onBottomSheetCameraClicked = {},
+            onBottomSheetGalleryClicked = {},
             onDiaryFeedbackRequestButtonClick = {}
         )
     }
