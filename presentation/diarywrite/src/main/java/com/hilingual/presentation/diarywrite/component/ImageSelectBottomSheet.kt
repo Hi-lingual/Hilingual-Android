@@ -59,7 +59,8 @@ internal fun ImageSelectBottomSheet(
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_camera_24),
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = HilingualTheme.colors.gray400
                 )
 
                 Spacer(Modifier.width(8.dp))
@@ -80,7 +81,8 @@ internal fun ImageSelectBottomSheet(
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_gallary_24),
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = HilingualTheme.colors.gray400
                 )
 
                 Spacer(Modifier.width(8.dp))
