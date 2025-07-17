@@ -261,7 +261,8 @@ private fun DiaryWriteScreen(
         ) {
             RecommendedTopicDropdown(
                 enTopic = topicEn,
-                koTopic = topicKo
+                koTopic = topicKo,
+                focusManager = focusManager
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -367,3 +368,4 @@ private fun DiaryWriteScreenPreview() {
         )
     }
 }
+
