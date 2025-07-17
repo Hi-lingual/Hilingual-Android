@@ -74,8 +74,7 @@ internal fun VocaDialog(
             Column(
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .padding(bottom = 80.dp)
-                    .padding(end = 44.dp),
+                    .padding(bottom = 80.dp, end = 44.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
