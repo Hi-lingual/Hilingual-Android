@@ -39,6 +39,7 @@ import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
 import com.hilingual.presentation.diarywrite.component.DiaryWriteCancelDialog
 import com.hilingual.presentation.diarywrite.component.FeedbackCompleteContent
+import com.hilingual.presentation.diarywrite.component.FeedbackFailureContent
 import com.hilingual.presentation.diarywrite.component.FeedbackLoadingContent
 import com.hilingual.presentation.diarywrite.component.FeedbackMedia
 import com.hilingual.presentation.diarywrite.component.FeedbackUIData
@@ -128,7 +129,23 @@ internal fun DiaryWriteRoute(
             )
         }
 
-        is DiaryFeedbackState.Failure -> { /* TODO: 에러 페이지 노출 */
+        is DiaryFeedbackState.Failure -> {
+            DiaryFeedbackStatusScreen(
+                paddingValues = paddingValues,
+                uiData = FeedbackUIData(
+                    title = "앗! 일시적인 오류가 발생했어요.",
+                    media = FeedbackMedia.Image(
+                        resId = R.drawable.img_error,
+                        heightDp = 175.dp
+                    )
+                ),
+                content = {
+                    FeedbackFailureContent(
+                        onCloseButtonClick = navigateToHome,
+                        onRequestAgainButtonClick = viewModel::postDiaryFeedbackCreate
+                    )
+                }
+            )
         }
     }
 }
