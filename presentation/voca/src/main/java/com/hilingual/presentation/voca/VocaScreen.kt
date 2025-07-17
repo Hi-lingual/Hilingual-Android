@@ -91,30 +91,34 @@ internal fun VocaRoute(
         }
     }
 
-    val isLoading = uiState.vocaGroupList is UiState.Loading
-
-    if (isLoading) {
-        CircularProgressIndicator()
-    } else {
-        with(uiState) {
-            VocaScreen(
-                paddingValues = paddingValues,
-                viewType = viewType,
-                sortType = sortType,
-                vocaCount = vocaCount,
-                vocaGroupList = (vocaGroupList as? UiState.Success)?.data ?: persistentListOf(),
-                searchResultList = searchResultList,
-                searchText = searchKeyword,
-                onSortTypeChanged = viewModel::updateSort,
-                onCardClick = viewModel::fetchVocaDetail,
-                onBookmarkClick = { phraseId, isMarked ->
-                    viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
-                },
-                onSearchTextChanged = viewModel::updateSearchKeyword,
-                onWriteDiaryClick = navigateToHome,
-                onCloseButtonClick = viewModel::clearSearchKeyword
-            )
+    when (uiState.vocaGroupList) {
+        is UiState.Loading -> {
+            CircularProgressIndicator()
         }
+
+        is UiState.Success -> {
+            with(uiState) {
+                VocaScreen(
+                    paddingValues = paddingValues,
+                    viewType = viewType,
+                    sortType = sortType,
+                    vocaCount = vocaCount,
+                    vocaGroupList = (vocaGroupList as? UiState.Success)?.data ?: persistentListOf(),
+                    searchResultList = searchResultList,
+                    searchText = searchKeyword,
+                    onSortTypeChanged = viewModel::updateSort,
+                    onCardClick = viewModel::fetchVocaDetail,
+                    onBookmarkClick = { phraseId, isMarked ->
+                        viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
+                    },
+                    onSearchTextChanged = viewModel::updateSearchKeyword,
+                    onWriteDiaryClick = navigateToHome,
+                    onCloseButtonClick = viewModel::clearSearchKeyword
+                )
+            }
+        }
+
+        else -> {}
     }
 
     when (val state = uiState.vocaItemDetail) {

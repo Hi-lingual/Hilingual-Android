@@ -53,8 +53,8 @@ internal fun VocaDialog(
         onDismissRequest = onDismiss,
         properties = properties
     ) {
-        val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
-        dialogWindowProvider.window.setGravity(Gravity.BOTTOM)
+        val dialogWindowProvider = LocalView.current.parent as? DialogWindowProvider
+        dialogWindowProvider?.window?.setGravity(Gravity.BOTTOM)
 
         Box(
             modifier = modifier
