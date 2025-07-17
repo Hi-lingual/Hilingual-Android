@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.calendar.repository.CalendarRepository
+import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import com.hilingual.presentation.diarywrite.util.TextRecognitionManager
@@ -24,6 +25,7 @@ import javax.inject.Inject
 internal class DiaryWriteViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val calendarRepository: CalendarRepository,
+    private val diaryRepository: DiaryRepository,
     private val textRecognitionManager: TextRecognitionManager
 ) : ViewModel() {
     private val route: DiaryWrite = savedStateHandle.toRoute<DiaryWrite>()
@@ -51,7 +53,6 @@ internal class DiaryWriteViewModel @Inject constructor(
         _uiState.update { it.copy(diaryImageUri = newImageUri) }
     }
 
-    // TODO: 일기 피드백 요청 POST API 관련 함수
     fun getTopic(date: String) {
         viewModelScope.launch {
             calendarRepository.getTopic(date)
@@ -59,6 +60,22 @@ internal class DiaryWriteViewModel @Inject constructor(
                     _uiState.update { it.copy(topicKo = topic.topicKor, topicEn = topic.topicEn) }
                 }
                 .onLogFailure { }
+        }
+    }
+
+    fun postDiaryFeedbackCreate() {
+        _feedbackState.value = DiaryFeedbackState.Loading
+
+        viewModelScope.launch {
+            diaryRepository.postDiaryFeedbackCreate(
+                originalText = uiState.value.diaryText,
+                date = uiState.value.selectedDate,
+                imageFileUri = uiState.value.diaryImageUri
+            ).onSuccess { response ->
+                _feedbackState.update { DiaryFeedbackState.Complete(response.diaryId) }
+            }.onLogFailure { throwable ->
+                _feedbackState.value = DiaryFeedbackState.Failure(throwable)
+            }
         }
     }
 

@@ -13,8 +13,9 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 internal fun FeedbackCompleteContent(
+    diaryId: Long,
     onCloseButtonClick: () -> Unit,
-    onShowFeedbackButtonClick: () -> Unit
+    onShowFeedbackButtonClick: (diaryId: Long) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -30,7 +31,7 @@ internal fun FeedbackCompleteContent(
                 .padding(horizontal = 16.dp)
                 .padding(bottom = 14.dp),
             text = "피드백 보러가기",
-            onClick = onShowFeedbackButtonClick
+            onClick = { onShowFeedbackButtonClick(diaryId) }
         )
     }
 }

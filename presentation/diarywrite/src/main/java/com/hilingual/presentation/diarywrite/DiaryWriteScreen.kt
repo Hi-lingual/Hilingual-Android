@@ -67,7 +67,7 @@ internal fun DiaryWriteRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToHome: () -> Unit,
-    navigateToDiaryFeedback: () -> Unit,
+    navigateToDiaryFeedback: (diaryId: Long) -> Unit,
     viewModel: DiaryWriteViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -111,7 +111,7 @@ internal fun DiaryWriteRoute(
     }
 
     when (feedbackState) {
-        DiaryFeedbackState.Default -> {
+        is DiaryFeedbackState.Default -> {
             DiaryWriteScreen(
                 paddingValues = paddingValues,
                 onBackClicked = navigateUp,
@@ -128,29 +128,44 @@ internal fun DiaryWriteRoute(
                 onBottomSheetGalleryClicked = {
                     galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 },
-                onDiaryFeedbackRequestButtonClick = {}
+                onDiaryFeedbackRequestButtonClick = viewModel::postDiaryFeedbackCreate
             )
         }
 
-        DiaryFeedbackState.Loading -> {
+        is DiaryFeedbackState.Loading -> {
             DiaryFeedbackStatusScreen(
                 paddingValues = paddingValues,
-                state = viewModel.feedbackState.value.data ?: FeedbackUIData(),
+                state = FeedbackUIData(
+                    title = "일기 저장 중..",
+                    description = "피드백을 요청하고 있어요.",
+                    lottieRawRes = R.raw.lottie_feedback_loading,
+                    lottieRawResHeightDp = 194.dp
+                ),
                 content = { FeedbackLoadingContent() }
             )
         }
 
-        DiaryFeedbackState.Complete -> {
+        is DiaryFeedbackState.Complete -> {
+            val diaryId = (feedbackState as DiaryFeedbackState.Complete).diaryId
             DiaryFeedbackStatusScreen(
                 paddingValues = paddingValues,
-                state = viewModel.feedbackState.value.data ?: FeedbackUIData(),
+                state = FeedbackUIData(
+                    title = "AI 피드백 완료!",
+                    description = "틀린 부분을 고치고,\n더 나은 표현으로 수정했어요!",
+                    lottieRawRes = R.raw.lottie_feedback_complete,
+                    lottieRawResHeightDp = 180.dp
+                ),
                 content = {
                     FeedbackCompleteContent(
+                        diaryId = diaryId,
                         onCloseButtonClick = navigateToHome,
                         onShowFeedbackButtonClick = navigateToDiaryFeedback
                     )
                 }
             )
+        }
+
+        is DiaryFeedbackState.Failure -> { /* TODO: 에러 페이지 노출 */
         }
     }
 }

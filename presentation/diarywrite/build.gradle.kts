@@ -11,6 +11,7 @@ android {
 dependencies {
     implementation(libs.balloon.compose)
     implementation(projects.data.calendar)
+    implementation(projects.data.diary)
 
     // ML Kit
     implementation(libs.mlkit.text.recognition)
