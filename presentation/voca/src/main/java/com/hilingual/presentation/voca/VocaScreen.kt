@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -32,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.addFocusCleaner
-import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -43,11 +41,11 @@ import com.hilingual.data.voca.model.GroupingVocaModel
 import com.hilingual.data.voca.model.VocaItemModel
 import com.hilingual.presentation.voca.component.AddVocaButton
 import com.hilingual.presentation.voca.component.VocaCard
+import com.hilingual.presentation.voca.component.VocaDialog
 import com.hilingual.presentation.voca.component.VocaEmptyCard
 import com.hilingual.presentation.voca.component.VocaEmptyCardType
 import com.hilingual.presentation.voca.component.VocaHeader
 import com.hilingual.presentation.voca.component.VocaInfo
-import com.hilingual.presentation.voca.component.VocaModal
 import com.hilingual.presentation.voca.component.WordSortBottomSheet
 import com.hilingual.presentation.voca.component.WordSortType
 import kotlinx.collections.immutable.ImmutableList
@@ -63,7 +61,6 @@ internal fun VocaRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
-    var isVocaModalVisibility by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val dialogController = LocalDialogController.current
 
@@ -75,8 +72,7 @@ internal fun VocaRoute(
     }
 
     LaunchedEffect(uiState.vocaItemDetail) {
-        isVocaModalVisibility = uiState.vocaItemDetail is UiState.Success
-        if (isVocaModalVisibility) {
+        if (uiState.vocaItemDetail is UiState.Success) {
             focusManager.clearFocus()
         }
     }
@@ -124,34 +120,18 @@ internal fun VocaRoute(
     when (val state = uiState.vocaItemDetail) {
         is UiState.Success -> {
             val vocaDetail = state.data
-            if (isVocaModalVisibility) {
-                Box(
-                    modifier = Modifier
-                        .background(HilingualTheme.colors.dim)
-                        .noRippleClickable(onClick = {
-                            isVocaModalVisibility = false
-                            viewModel.clearSelectedVocaDetail()
-                        })
-                        .padding(paddingValues)
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.BottomCenter
-                ) {
-                    VocaModal(
-                        phraseId = vocaDetail.phraseId,
-                        phrase = vocaDetail.phrase,
-                        phraseType = vocaDetail.phraseType.toPersistentList(),
-                        explanation = vocaDetail.explanation,
-                        writtenDate = vocaDetail.writtenDate,
-                        isBookmarked = vocaDetail.isBookmarked,
-                        onBookmarkClick = { phraseId, isMarked ->
-                            viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
-                        },
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .navigationBarsPadding()
-                    )
+            VocaDialog(
+                onDismiss = viewModel::clearSelectedVocaDetail,
+                phraseId = vocaDetail.phraseId,
+                phrase = vocaDetail.phrase,
+                phraseType = vocaDetail.phraseType.toPersistentList(),
+                explanation = vocaDetail.explanation,
+                writtenDate = vocaDetail.writtenDate,
+                isBookmarked = vocaDetail.isBookmarked,
+                onBookmarkClick = { phraseId, isMarked ->
+                    viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
                 }
-            }
+            )
         }
 
         else -> {}
@@ -278,7 +258,8 @@ private fun VocaListWithInfoSection(
         if (isEmpty) {
             item {
                 Column(
-                    modifier = Modifier.fillParentMaxSize()
+                    modifier = Modifier
+                        .fillParentMaxSize()
                         .padding(top = 120.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -331,7 +312,12 @@ private fun VocaListWithInfoSection(
                             phraseType = voca.phraseType.toPersistentList(),
                             onCardClick = { onCardClick(voca.phraseId) },
                             isBookmarked = voca.isBookmarked,
-                            onBookmarkClick = { onBookmarkClick(voca.phraseId, !voca.isBookmarked) },
+                            onBookmarkClick = {
+                                onBookmarkClick(
+                                    voca.phraseId,
+                                    !voca.isBookmarked
+                                )
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(bottom = if (isLastItem) 20.dp else 16.dp)
