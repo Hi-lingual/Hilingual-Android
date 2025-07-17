@@ -48,7 +48,7 @@ internal fun GrammarSpellingScreen(
 
     LazyColumn(
         state = listState,
-        contentPadding = PaddingValues(vertical = 24.dp, horizontal = 16.dp),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 40.dp),
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.gray100)
