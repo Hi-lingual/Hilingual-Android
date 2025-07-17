@@ -50,14 +50,14 @@ android {
         }
 
         release {
-            applicationIdSuffix = ".release"
             buildConfigField(
                 "String",
                 "BASE_URL",
                 properties["prod.base.url"] as String
             )
 
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
