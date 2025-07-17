@@ -64,6 +64,10 @@ pebble = "0.1.0"
 phoenix = "3.0.0"
 balloonCompose = "1.6.12"
 
+# ML Kit
+mlkitTextRecognition = "16.0.1"
+coroutinesPlayServices = "1.7.1"
+
 [libraries]
 # Build Tools
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
@@ -154,6 +158,10 @@ pebble = { group = "io.github.chattymin", name = "pebble", version.ref = "pebble
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+
+# ML Kit
+mlkit-text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "mlkitTextRecognition" }
+kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutinesPlayServices" }
 
 [plugins]
 # Android

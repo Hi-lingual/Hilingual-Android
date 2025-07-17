@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -33,6 +34,7 @@ import com.hilingual.core.designsystem.component.tag.WordPhraseTypeTag
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.voca.R
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun VocaDialog(
@@ -72,7 +74,7 @@ internal fun VocaDialog(
             Column(
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .padding(bottom = 80.dp),
+                    .padding(bottom = 80.dp, end = 44.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -121,5 +123,22 @@ internal fun VocaDialog(
                 modifier = Modifier.align(Alignment.BottomEnd)
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun VocaDialogPreview() {
+    HilingualTheme {
+        VocaDialog(
+            onDismiss = {},
+            phraseId = 1L,
+            phrase = "take a rain check",
+            phraseType = persistentListOf("동사", "숙어"),
+            explanation = "다음 기회로 미루다, 나중에 하자고 하다",
+            writtenDate = "2024.03.15",
+            isBookmarked = true,
+            onBookmarkClick = { _, _ -> }
+        )
     }
 }
