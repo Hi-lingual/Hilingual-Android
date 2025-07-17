@@ -1,6 +1,5 @@
 package com.hilingual.core.designsystem.component.textfield
 
-import androidx.annotation.ColorRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
