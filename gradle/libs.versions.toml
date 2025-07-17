@@ -33,6 +33,7 @@ security = "1.1.0-beta01"
 datastorePreferences = "1.1.7"
 material = "1.10.0"
 desugarJdkLibs = "2.1.4"
+browser="1.8.0"
 
 # Room
 room = "2.7.2"
@@ -103,6 +104,7 @@ androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
+androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser"}
 
 # Coroutines
 coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutine" }
