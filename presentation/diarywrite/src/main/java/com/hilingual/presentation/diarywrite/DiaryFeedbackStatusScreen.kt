@@ -119,6 +119,7 @@ private fun DiaryFeedbackCompleteStatusScreenPreview() {
             ),
             content = {
                 FeedbackCompleteContent(
+                    diaryId = 0,
                     onCloseButtonClick = {},
                     onShowFeedbackButtonClick = {}
                 )

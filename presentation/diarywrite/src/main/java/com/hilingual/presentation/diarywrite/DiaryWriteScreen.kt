@@ -60,7 +60,7 @@ internal fun DiaryWriteRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToHome: () -> Unit,
-    navigateToDiaryFeedback: () -> Unit,
+    navigateToDiaryFeedback: (diaryId: Long) -> Unit,
     viewModel: DiaryWriteViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -104,6 +104,7 @@ internal fun DiaryWriteRoute(
         }
 
         is DiaryFeedbackState.Complete -> {
+            val diaryId = (feedbackState as DiaryFeedbackState.Complete).diaryId
             DiaryFeedbackStatusScreen(
                 paddingValues = paddingValues,
                 state = FeedbackUIData(
@@ -114,6 +115,7 @@ internal fun DiaryWriteRoute(
                 ),
                 content = {
                     FeedbackCompleteContent(
+                        diaryId = diaryId,
                         onCloseButtonClick = navigateToHome,
                         onShowFeedbackButtonClick = navigateToDiaryFeedback
                     )

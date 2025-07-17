@@ -51,7 +51,6 @@ internal class DiaryWriteViewModel @Inject constructor(
         _uiState.update { it.copy(diaryImageUri = newImageUri) }
     }
 
-    // TODO: 일기 피드백 요청 POST API 관련 함수
     fun getTopic(date: String) {
         viewModelScope.launch {
             calendarRepository.getTopic(date)
@@ -61,6 +60,7 @@ internal class DiaryWriteViewModel @Inject constructor(
                 .onLogFailure { }
         }
     }
+
     fun postDiaryFeedbackCreate() {
         // TODO: date fomatting 어디에서 할건지 고민해보기!!
         val date = uiState.value.selectedDate.format(DateTimeFormatter.ISO_DATE)

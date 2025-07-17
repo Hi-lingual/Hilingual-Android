@@ -132,7 +132,9 @@ internal fun MainScreen(
                     )
                     diaryWriteNavGraph(
                         paddingValues = innerPadding,
-                        navigateUp = navigator::navigateUp
+                        navigateUp = navigator::navigateUp,
+                        navigateToHome = navigator::navigateToHome,
+                        navigateToDiaryFeedback = navigator::navigateToDiaryFeedback
                     )
                     vocaNavGraph(
                         paddingValues = innerPadding,
