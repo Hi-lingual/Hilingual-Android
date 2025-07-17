@@ -2,7 +2,6 @@ package com.hilingual.presentation.diarywrite
 
 import android.app.Application
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -21,6 +20,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -86,7 +86,7 @@ internal class DiaryWriteViewModel @Inject constructor(
                     it.copy(diaryText = filteredText)
                 }
             } catch (e: Exception) {
-                Log.e("DiaryWriteViewModel", "Text recognition failed", e)
+                Timber.tag("DiaryWriteViewModel").e(e, "Text recognition failed")
             }
         }
     }
