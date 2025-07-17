@@ -13,11 +13,11 @@ import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.model.toDto
 import com.hilingual.data.diary.model.toModel
 import com.hilingual.data.diary.repository.DiaryRepository
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
 
 internal class DiaryRepositoryImpl @Inject constructor(
     private val contentResolver: ContentResolver,
