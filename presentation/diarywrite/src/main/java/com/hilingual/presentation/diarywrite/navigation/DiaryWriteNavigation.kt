@@ -27,14 +27,12 @@ fun NavController.navigateToDiaryWrite(
 
 fun NavGraphBuilder.diaryWriteNavGraph(
     paddingValues: PaddingValues,
-    navigateUp: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToDiaryFeedback: (diaryId: Long) -> Unit
 ) {
     composable<DiaryWrite> {
         DiaryWriteRoute(
             paddingValues = paddingValues,
-            navigateUp = navigateUp,
             navigateToHome = navigateToHome,
             navigateToDiaryFeedback = navigateToDiaryFeedback
         )

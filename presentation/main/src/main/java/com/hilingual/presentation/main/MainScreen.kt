@@ -134,7 +134,6 @@ internal fun MainScreen(
                     )
                     diaryWriteNavGraph(
                         paddingValues = innerPadding,
-                        navigateUp = navigator::navigateUp,
                         navigateToHome = navigator::navigateToHome,
                         navigateToDiaryFeedback = { diaryId ->
                             navigator.navigateToDiaryFeedback(
