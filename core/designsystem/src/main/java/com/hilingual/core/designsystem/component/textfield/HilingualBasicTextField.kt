@@ -1,5 +1,6 @@
 package com.hilingual.core.designsystem.component.textfield
 
+import androidx.annotation.ColorRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -54,7 +55,7 @@ fun HilingualBasicTextField(
     focusRequester: FocusRequester = FocusRequester(),
     onFocusChanged: (Boolean) -> Unit = {},
     backgroundColor: Color = HilingualTheme.colors.gray100,
-    borderColor: Color = HilingualTheme.colors.black,
+    borderColor: Color = Color.Unspecified,
     verticalPadding: PaddingValues = PaddingValues(vertical = 12.dp),
     decorationBoxHeight: Dp = 22.dp,
     leadingIcon: @Composable () -> Unit = {},
@@ -95,7 +96,7 @@ fun HilingualBasicTextField(
         decorationBox = { innerTextField ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 leadingIcon()
 
@@ -133,7 +134,7 @@ fun HilingualBasicTextField(
     )
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+@Preview(showBackground = true, backgroundColor = 0xFF212121)
 @Composable
 private fun HilingualBasicTextFieldWithIconsPreview() {
     var text by remember { mutableStateOf("") }
@@ -162,7 +163,7 @@ private fun HilingualBasicTextFieldWithIconsPreview() {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+@Preview(showBackground = true, backgroundColor = 0xFF212121)
 @Composable
 private fun HilingualBasicTextFieldPadding16Preview() {
     var text by remember { mutableStateOf("Input text") }
@@ -176,7 +177,7 @@ private fun HilingualBasicTextFieldPadding16Preview() {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+@Preview(showBackground = true, backgroundColor = 0xFF212121)
 @Composable
 private fun HilingualBasicTextFieldMultiLineWithLengthPreview() {
     var text by remember {
