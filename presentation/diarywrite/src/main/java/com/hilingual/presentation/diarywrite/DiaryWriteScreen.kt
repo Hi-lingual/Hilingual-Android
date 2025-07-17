@@ -100,9 +100,7 @@ internal fun DiaryWriteRoute(
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
-        uri?.let {
-            viewModel.extractTextFromImage(it)
-        }
+        uri?.let(viewModel::extractTextFromImage)
     }
 
     LaunchedEffect(Unit) {
