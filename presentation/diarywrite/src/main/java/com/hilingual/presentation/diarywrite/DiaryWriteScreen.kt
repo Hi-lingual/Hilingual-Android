@@ -40,6 +40,7 @@ import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
 import com.hilingual.presentation.diarywrite.component.DiaryWriteCancelDialog
 import com.hilingual.presentation.diarywrite.component.FeedbackCompleteContent
 import com.hilingual.presentation.diarywrite.component.FeedbackLoadingContent
+import com.hilingual.presentation.diarywrite.component.FeedbackMedia
 import com.hilingual.presentation.diarywrite.component.FeedbackUIData
 import com.hilingual.presentation.diarywrite.component.ImageSelectBottomSheet
 import com.hilingual.presentation.diarywrite.component.PhotoSelectButton
@@ -93,11 +94,13 @@ internal fun DiaryWriteRoute(
         is DiaryFeedbackState.Loading -> {
             DiaryFeedbackStatusScreen(
                 paddingValues = paddingValues,
-                state = FeedbackUIData(
+                uiData = FeedbackUIData(
                     title = "일기 저장 중..",
                     description = "피드백을 요청하고 있어요.",
-                    lottieRawRes = R.raw.lottie_feedback_loading,
-                    lottieRawResHeightDp = 194.dp
+                    media = FeedbackMedia.Lottie(
+                        resId = R.raw.lottie_feedback_loading,
+                        heightDp = 194.dp
+                    )
                 ),
                 content = { FeedbackLoadingContent() }
             )
@@ -107,11 +110,13 @@ internal fun DiaryWriteRoute(
             val diaryId = (feedbackState as DiaryFeedbackState.Complete).diaryId
             DiaryFeedbackStatusScreen(
                 paddingValues = paddingValues,
-                state = FeedbackUIData(
+                uiData = FeedbackUIData(
                     title = "AI 피드백 완료!",
                     description = "틀린 부분을 고치고,\n더 나은 표현으로 수정했어요!",
-                    lottieRawRes = R.raw.lottie_feedback_complete,
-                    lottieRawResHeightDp = 180.dp
+                    media = FeedbackMedia.Lottie(
+                        resId = R.raw.lottie_feedback_complete,
+                        heightDp = 180.dp
+                    )
                 ),
                 content = {
                     FeedbackCompleteContent(
