@@ -1,6 +1,5 @@
 package com.hilingual.presentation.diarywrite
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -56,7 +55,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 internal fun DiaryWriteRoute(
     paddingValues: PaddingValues,
@@ -66,6 +64,7 @@ internal fun DiaryWriteRoute(
     viewModel: DiaryWriteViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val feedbackState by viewModel.feedbackState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
 
     LaunchedEffect(Unit) {
@@ -75,7 +74,7 @@ internal fun DiaryWriteRoute(
         )
     }
 
-    when (viewModel.feedbackState.value) {
+    when (feedbackState) {
         DiaryFeedbackState.Default -> {
             DiaryWriteScreen(
                 paddingValues = paddingValues,

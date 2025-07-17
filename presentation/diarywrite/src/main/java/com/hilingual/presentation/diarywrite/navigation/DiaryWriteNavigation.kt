@@ -8,15 +8,19 @@ import androidx.navigation.compose.composable
 import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.diarywrite.DiaryWriteRoute
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
 
 @Serializable
-data object DiaryWrite : Route
+data class DiaryWrite(
+    val selectedDate: String
+) : Route
 
 fun NavController.navigateToDiaryWrite(
+    selectedDate: LocalDate,
     navOptions: NavOptions? = null
 ) {
     navigate(
-        route = DiaryWrite,
+        route = DiaryWrite(selectedDate.toString()),
         navOptions = navOptions
     )
 }

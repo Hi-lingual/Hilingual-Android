@@ -46,7 +46,7 @@ import java.time.YearMonth
 @Composable
 internal fun HomeRoute(
     paddingValues: PaddingValues,
-    navigateToDiaryWrite: () -> Unit,
+    navigateToDiaryWrite: (selectedDate: LocalDate) -> Unit,
     navigateToDiaryFeedback: (diaryId: Long) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -102,7 +102,7 @@ private fun HomeScreen(
     uiState: HomeUiState,
     onDateSelected: (LocalDate) -> Unit,
     onMonthChanged: (YearMonth) -> Unit,
-    onWriteDiaryClick: () -> Unit,
+    onWriteDiaryClick: (LocalDate) -> Unit,
     onDiaryPreviewClick: (diaryId: Long) -> Unit
 ) {
     val date = uiState.selectedDate
@@ -215,7 +215,7 @@ private fun HomeScreen(
                             )
                         }
                         WriteDiaryButton(
-                            onClick = onWriteDiaryClick,
+                            onClick = { onWriteDiaryClick(date) },
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
