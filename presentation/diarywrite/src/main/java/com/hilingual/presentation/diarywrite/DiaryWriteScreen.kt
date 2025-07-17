@@ -255,7 +255,7 @@ private fun DiaryWriteScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             PhotoSelectButton(
                 selectedImgUri = diaryImageUri,
