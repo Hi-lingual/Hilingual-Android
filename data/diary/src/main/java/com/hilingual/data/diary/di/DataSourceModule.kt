@@ -13,7 +13,5 @@ import javax.inject.Singleton
 internal abstract class DataSourceModule {
     @Binds
     @Singleton
-    abstract fun bindDiaryDataSource(
-        diaryRemoteDataSourceImpl: DiaryRemoteDataSourceImpl
-    ): DiaryRemoteDataSource
+    abstract fun bindDiaryRemoteDataSource(impl: DiaryRemoteDataSourceImpl): DiaryRemoteDataSource
 }
