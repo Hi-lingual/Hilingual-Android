@@ -35,11 +35,20 @@ internal class MainNavigator(
     fun navigate(tab: MainTab) {
         val navOptions = navOptions {
             navController.currentDestination?.route?.let {
-                popUpTo(0) {
+                popUpTo(it) {
                     inclusive = true
+                    saveState = true
                 }
+                restoreState = true
                 launchSingleTop = true
             }
+        }
+
+        val vocaNavOptions = navOptions {
+            popUpTo(0) {
+                inclusive = true
+            }
+            launchSingleTop
         }
 
         when (tab) {
@@ -48,7 +57,7 @@ internal class MainNavigator(
             )
 
             MainTab.VOCA -> navController.navigateToVoca(
-                navOptions = navOptions
+                navOptions = vocaNavOptions
             )
             // TODO: 추후 스프린트 기간에 구현
             MainTab.COMMUNITY -> {}

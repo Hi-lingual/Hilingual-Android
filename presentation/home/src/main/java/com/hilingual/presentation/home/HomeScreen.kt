@@ -65,6 +65,10 @@ internal fun HomeRoute(
     }
 
     LaunchedEffect(Unit) {
+        viewModel.loadInitialData()
+    }
+
+    LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
             systemBarsColor = hilingualBlack,
             isDarkIcon = false

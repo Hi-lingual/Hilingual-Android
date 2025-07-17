@@ -34,11 +34,7 @@ class HomeViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<HomeSideEffect>()
     val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
 
-    init {
-        loadInitialData()
-    }
-
-    private fun loadInitialData() {
+    fun loadInitialData() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             val today = LocalDate.now()

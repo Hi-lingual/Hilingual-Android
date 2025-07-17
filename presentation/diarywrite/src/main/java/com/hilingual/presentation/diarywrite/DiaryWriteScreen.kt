@@ -66,6 +66,7 @@ import java.util.Locale
 @Composable
 internal fun DiaryWriteRoute(
     paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToDiaryFeedback: (diaryId: Long) -> Unit,
     viewModel: DiaryWriteViewModel = hiltViewModel()
@@ -118,7 +119,7 @@ internal fun DiaryWriteRoute(
         is DiaryFeedbackState.Default -> {
             DiaryWriteScreen(
                 paddingValues = paddingValues,
-                onBackClicked = navigateToHome,
+                onBackClicked = navigateUp,
                 selectedDate = uiState.selectedDate,
                 topicKo = uiState.topicKo,
                 topicEn = uiState.topicEn,
