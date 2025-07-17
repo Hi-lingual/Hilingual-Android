@@ -39,30 +39,34 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideLoggingInterceptor() = HttpLoggingInterceptor { message ->
-        val jsonMessage = when {
-            message.contains("Content-Disposition: form-data;") -> {
-                val jsonStart = message.indexOf("{")
-                val jsonEnd = message.lastIndexOf("}")
-
-                if (jsonStart != -1 && jsonEnd != -1 && jsonEnd > jsonStart) {
-                    message.substring(jsonStart, jsonEnd + 1)
-                } else {
-                    message
-                }
-            }
-
-            else -> message
-        }
+        // TODO: 이건 민재씨가 해줘ㅋㅋ
+//        val jsonMessage = when {
+//            message.contains("Content-Disposition: form-data;") -> {
+//                val jsonStart = message.indexOf("{")
+//                val jsonEnd = message.lastIndexOf("}")
+//
+//                if (jsonStart != -1 && jsonEnd != -1 && jsonEnd > jsonStart) {
+//                    message.substring(jsonStart, jsonEnd + 1)
+//                } else {
+//                    message
+//                }
+//            }
+//
+//            else -> message
+//        }
 
         when {
-            jsonMessage.isJsonObject() ->
-                Timber.tag("okhttp").d(JSONObject(jsonMessage).toString(UNIT_TAB))
+            message.contains("Content-Disposition: form-data;") ->
+                Timber.tag("okhttp").d("CONNECTION INFO -> $message")
 
-            jsonMessage.isJsonArray() ->
-                Timber.tag("okhttp").d(JSONObject(jsonMessage).toString(UNIT_TAB))
+            message.isJsonObject() ->
+                Timber.tag("okhttp").d(JSONObject(message).toString(UNIT_TAB))
+
+            message.isJsonArray() ->
+                Timber.tag("okhttp").d(JSONObject(message).toString(UNIT_TAB))
 
             else -> {
-                Timber.tag("okhttp").d("CONNECTION INFO -> $jsonMessage")
+                Timber.tag("okhttp").d("CONNECTION INFO -> $message")
             }
         }
     }.apply {

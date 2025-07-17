@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
+import androidx.navigation.navOptions
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
 import com.hilingual.core.designsystem.component.snackbar.TextSnackBar
@@ -36,6 +37,7 @@ import com.hilingual.core.designsystem.event.LocalDialogController
 import com.hilingual.core.designsystem.event.rememberDialogController
 import com.hilingual.presentation.auth.navigation.authNavGraph
 import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
+import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import com.hilingual.presentation.diarywrite.navigation.diaryWriteNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
@@ -132,7 +134,18 @@ internal fun MainScreen(
                     )
                     diaryWriteNavGraph(
                         paddingValues = innerPadding,
-                        navigateUp = navigator::navigateUp
+                        navigateUp = navigator::navigateUp,
+                        navigateToHome = navigator::navigateToHome,
+                        navigateToDiaryFeedback = { diaryId ->
+                            navigator.navigateToDiaryFeedback(
+                                diaryId = diaryId,
+                                navOptions = navOptions {
+                                    popUpTo<DiaryWrite> {
+                                        inclusive = true
+                                    }
+                                }
+                            )
+                        }
                     )
                     vocaNavGraph(
                         paddingValues = innerPadding,
