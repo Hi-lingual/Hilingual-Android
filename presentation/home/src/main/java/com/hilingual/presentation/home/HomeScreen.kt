@@ -180,15 +180,6 @@ private fun HomeScreen(
 
             with(uiState) {
                 when {
-                    isDiaryThumbnailLoading -> {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
-
                     isWritten -> {
                         if (diaryThumbnail != null) {
                             DiaryPreviewCard(
