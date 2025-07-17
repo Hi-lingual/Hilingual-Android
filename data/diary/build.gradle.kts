@@ -7,3 +7,7 @@ plugins {
 android {
     setNamespace("data.diary")
 }
+
+dependencies {
+    implementation(projects.core.network)
+}
