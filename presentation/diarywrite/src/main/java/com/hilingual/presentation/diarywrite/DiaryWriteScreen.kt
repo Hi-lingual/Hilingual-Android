@@ -77,12 +77,15 @@ internal fun DiaryWriteRoute(
 
     var diaryTextImageUri by remember { mutableStateOf<Uri?>(null) }
 
+    var diaryTextImageFile by remember { mutableStateOf<File?>(null) }
+
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
         if (success) {
-            diaryTextImageUri?.let {
-                viewModel.extractTextFromImage(it)
+            val uri = diaryTextImageUri
+            if (uri != null) {
+                viewModel.extractTextFromImage(uri, diaryTextImageFile)
             }
         }
     }
@@ -91,8 +94,9 @@ internal fun DiaryWriteRoute(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            val uri = createImageUri(context)
+            val (uri, file) = createTempImageFile(context)
             diaryTextImageUri = uri
+            diaryTextImageFile = file
             cameraLauncher.launch(uri)
         }
     }
@@ -100,13 +104,13 @@ internal fun DiaryWriteRoute(
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
-        uri?.let(viewModel::extractTextFromImage)
+        uri?.let { viewModel.extractTextFromImage(it) }
     }
 
     LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
             systemBarsColor = white,
-            isDarkIcon = false
+            isDarkIcon = true
         )
     }
 
@@ -170,16 +174,6 @@ internal fun DiaryWriteRoute(
     }
 }
 
-private fun createImageUri(context: Context): Uri {
-    val imageFile = File.createTempFile("camera_", ".jpg", context.cacheDir)
-
-    return FileProvider.getUriForFile(
-        context,
-        "${context.packageName}.fileprovider",
-        imageFile
-    )
-}
-
 @Composable
 private fun DiaryWriteScreen(
     paddingValues: PaddingValues,
@@ -211,8 +205,14 @@ private fun DiaryWriteScreen(
     if (isBottomSheetVisible) {
         ImageSelectBottomSheet(
             onDismiss = { isBottomSheetVisible = false },
-            onCameraSelected = onBottomSheetCameraClicked,
-            onGallerySelected = onBottomSheetGalleryClicked
+            onCameraSelected = {
+                onBottomSheetCameraClicked()
+                isBottomSheetVisible = false
+            },
+            onGallerySelected = {
+                onBottomSheetGalleryClicked()
+                isBottomSheetVisible = false
+            }
         )
     }
 
@@ -326,6 +326,16 @@ private fun DateText(
 
 private val DATE_FORMATTER: DateTimeFormatter =
     DateTimeFormatter.ofPattern("M월 d일 EEEE", Locale.KOREAN)
+
+private fun createTempImageFile(context: Context): Pair<Uri, File> {
+    val imageFile = File.createTempFile("camera_", ".jpg", context.cacheDir)
+    val uri = FileProvider.getUriForFile(
+        context,
+        "${context.packageName}.fileprovider",
+        imageFile
+    )
+    return uri to imageFile
+}
 
 @Preview
 @Composable
