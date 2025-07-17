@@ -29,11 +29,8 @@ fun NavGraphBuilder.diaryWriteNavGraph(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit
 ) {
-    composable<DiaryWrite> { backStateEntry ->
-        val selectedDate = LocalDate.parse(backStateEntry.arguments?.getString("selectedDate"))
-
+    composable<DiaryWrite> {
         DiaryWriteRoute(
-            selectedDate = selectedDate,
             paddingValues = paddingValues,
             navigateUp = navigateUp,
             navigateToHome = {},

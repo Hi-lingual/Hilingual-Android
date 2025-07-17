@@ -1,11 +1,14 @@
 package com.hilingual.presentation.diarywrite
 
 import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
+import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,21 +20,24 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class DiaryWriteViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val calendarRepository: CalendarRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(DiaryWriteUiState())
+    private val route: DiaryWrite = savedStateHandle.toRoute<DiaryWrite>()
+
+    private val _uiState = MutableStateFlow(
+        DiaryWriteUiState(
+            selectedDate = LocalDate.parse(route.selectedDate)
+        )
+    )
     val uiState: StateFlow<DiaryWriteUiState> = _uiState.asStateFlow()
 
     private var _feedbackState: MutableStateFlow<DiaryFeedbackState> =
         MutableStateFlow(DiaryFeedbackState.Default)
     val feedbackState: StateFlow<DiaryFeedbackState> = _feedbackState.asStateFlow()
 
-    fun updateSelectedDate(newDate: LocalDate) {
-        _uiState.update { it.copy(selectedDate = newDate) }
-    }
-
-    fun updateTopic(newTopicKo: String, newTopicEn: String) {
-        _uiState.update { it.copy(topicKo = newTopicKo, topicEn = newTopicEn) }
+    init {
+        getTopic(route.selectedDate)
     }
 
     fun updateDiaryText(newText: String) {
