@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -62,9 +61,6 @@ internal class DiaryWriteViewModel @Inject constructor(
     }
 
     fun postDiaryFeedbackCreate() {
-        // TODO: date fomatting 어디에서 할건지 고민해보기!!
-        val date = uiState.value.selectedDate.format(DateTimeFormatter.ISO_DATE)
-
         _feedbackState.value = DiaryFeedbackState.Loading
 
         viewModelScope.launch {

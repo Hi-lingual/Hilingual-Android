@@ -56,8 +56,7 @@ internal class DiaryRepositoryImpl @Inject constructor(
     ): Result<DiaryFeedbackCreateModel> {
         val originalTextToRequestBody = originalText.toRequestBody(APPLICATION_JSON.toMediaType())
 
-        val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
-        val dateToString = date.format(dateFormatter)
+        val dateToString = date.format(DATE_FORMATTER)
         val dateToRequestBody = dateToString.toRequestBody(APPLICATION_JSON.toMediaType())
 
         val imageFile = if (imageFileUri != null) {
@@ -82,4 +81,7 @@ internal class DiaryRepositoryImpl @Inject constructor(
         const val APPLICATION_JSON = "application/json"
         const val IMAGE_FILE_NAME = "imageFile"
     }
+
+    private val DATE_FORMATTER: DateTimeFormatter =
+        DateTimeFormatter.ISO_LOCAL_DATE
 }
