@@ -1,9 +1,11 @@
 package com.hilingual.core.designsystem.component.textfield
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -48,7 +50,7 @@ fun HilingualShortTextField(
         HilingualBasicTextField(
             value = text,
             placeholder = placeholder,
-            textStyle = HilingualTheme.typography.bodyM16,
+            maxLength = maxLength,
             onValueChanged = { it ->
                 val newText = it.filter { !it.isWhitespace() }
                 if (newText.graphemeLength <= maxLength) {
@@ -56,15 +58,12 @@ fun HilingualShortTextField(
                 }
             },
             modifier = modifier.height(height),
-            borderModifier = Modifier.border(
-                width = 1.dp,
-                color = if (isError) HilingualTheme.colors.alertRed else Color.Transparent,
-                shape = RoundedCornerShape(8.dp)
-            ),
+            borderColor = if (isError) HilingualTheme.colors.alertRed else Color.Transparent,
             onDoneAction = {
                 onDoneAction()
                 keyboardController?.hide()
-            }
+            },
+            verticalPadding = PaddingValues(vertical = 16.dp)
         )
         Row {
             Text(
