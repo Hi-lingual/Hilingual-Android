@@ -1,6 +1,8 @@
 package com.hilingual.presentation.diaryfeedback
 
+import android.content.Context
 import androidx.activity.compose.BackHandler
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,8 +24,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.provider.LocalSystemBarsColor
@@ -40,12 +44,16 @@ import com.hilingual.presentation.diaryfeedback.tab.RecommendExpressionScreen
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
+private const val REPORT_URL = "https://hilingual.notion.site/230829677ebf801c965be24b0ef444e9"
+
 @Composable
 internal fun DiaryFeedbackRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     viewModel: DiaryFeedbackViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
     var isImageDetailVisible by remember { mutableStateOf(false) }
@@ -79,6 +87,7 @@ internal fun DiaryFeedbackRoute(
                 paddingValues = paddingValues,
                 uiState = (state as UiState.Success<DiaryFeedbackUiState>).data,
                 onBackClick = navigateUp,
+                onReportClick = { navigateToReportWebView(context) },
                 isImageDetailVisible = isImageDetailVisible,
                 onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
                 onToggleBookmark = viewModel::toggleBookmark
@@ -94,6 +103,7 @@ private fun DiaryFeedbackScreen(
     paddingValues: PaddingValues,
     uiState: DiaryFeedbackUiState,
     onBackClick: () -> Unit,
+    onReportClick: () -> Unit,
     isImageDetailVisible: Boolean,
     onChangeImageDetailVisible: () -> Unit,
     onToggleBookmark: (Long, Boolean) -> Unit,
@@ -136,9 +146,7 @@ private fun DiaryFeedbackScreen(
     if (isReportDialogVisible) {
         FeedbackReportDialog(
             onDismiss = { isReportDialogVisible = false },
-            onReportClick = {
-                // TODO: 구글폼으로 이동
-            }
+            onReportClick = onReportClick
         )
     }
 
@@ -217,6 +225,10 @@ private fun DiaryFeedbackScreen(
     }
 }
 
+private fun navigateToReportWebView(context: Context) {
+    CustomTabsIntent.Builder().build().launchUrl(context, REPORT_URL.toUri())
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun DiaryFeedbackScreenPreview() {
@@ -231,6 +243,7 @@ private fun DiaryFeedbackScreenPreview() {
             isImageDetailVisible = false,
             onChangeImageDetailVisible = {},
             onBackClick = {},
+            onReportClick = {},
             onToggleBookmark = { _, _ -> {} }
         )
     }
