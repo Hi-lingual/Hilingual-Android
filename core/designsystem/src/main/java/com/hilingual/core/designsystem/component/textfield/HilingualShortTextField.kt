@@ -5,13 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.chattymin.pebble.graphemeLength
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -30,7 +28,6 @@ fun HilingualShortTextField(
     errorMessage: () -> String,
     successMessage: String,
     modifier: Modifier = Modifier,
-    height: Dp = 54.dp,
     onDoneAction: () -> Unit = {}
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -49,13 +46,15 @@ fun HilingualShortTextField(
             value = text,
             placeholder = placeholder,
             maxLength = maxLength,
+            placeholderTextStyle = HilingualTheme.typography.bodyM16,
+            inputTextStyle = HilingualTheme.typography.bodySB16,
             onValueChanged = {
                 val newText = it.filter { !it.isWhitespace() }
                 if (newText.graphemeLength <= maxLength) {
                     onValueChanged(newText)
                 }
             },
-            modifier = modifier.height(height),
+            modifier = modifier,
             borderColor = borderColor,
             onDoneAction = {
                 onDoneAction()

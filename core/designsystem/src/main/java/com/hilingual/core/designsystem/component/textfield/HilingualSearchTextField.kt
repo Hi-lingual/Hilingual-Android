@@ -38,6 +38,8 @@ fun HilingualSearchTextField(
         placeholder = placeholder,
         onValueChanged = onValueChanged,
         modifier = modifier,
+        placeholderTextStyle = HilingualTheme.typography.bodyM16,
+        inputTextStyle = HilingualTheme.typography.bodyM16,
         backgroundColor = HilingualTheme.colors.white,
         leadingIcon = {
             Icon(

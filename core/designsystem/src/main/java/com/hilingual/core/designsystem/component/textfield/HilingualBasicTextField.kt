@@ -32,6 +32,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,6 +46,8 @@ fun HilingualBasicTextField(
     onValueChanged: (String) -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
+    placeholderTextStyle: TextStyle = HilingualTheme.typography.bodyM16,
+    inputTextStyle: TextStyle = HilingualTheme.typography.bodyM16,
     singleLine: Boolean = true,
     maxLength: Int = Int.MAX_VALUE,
     isShowLength: Boolean = false,
@@ -90,7 +93,7 @@ fun HilingualBasicTextField(
             onDone = { onDoneAction() },
             onSearch = { onSearchAction() }
         ),
-        textStyle = HilingualTheme.typography.bodyM16.copy(
+        textStyle = inputTextStyle.copy(
             color = HilingualTheme.colors.black
         ),
         decorationBox = { innerTextField ->
@@ -113,7 +116,7 @@ fun HilingualBasicTextField(
                                 Text(
                                     text = placeholder,
                                     color = HilingualTheme.colors.gray400,
-                                    style = HilingualTheme.typography.bodyR16
+                                    style = placeholderTextStyle
                                 )
                             }
                             innerTextField()

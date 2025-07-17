@@ -31,6 +31,8 @@ fun HilingualLongTextField(
         value = value,
         maxLength = maxLength,
         placeholder = placeholder,
+        placeholderTextStyle = HilingualTheme.typography.bodyR16,
+        inputTextStyle = HilingualTheme.typography.bodyR16,
         decorationBoxHeight = 241.dp,
         onValueChanged = {
             val filteredValue = it.removeEmoji()
