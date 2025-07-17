@@ -1,6 +1,7 @@
 package com.hilingual.core.localstorage
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -68,6 +69,12 @@ class TokenManagerImpl @Inject constructor(
             preferences.remove(PreferencesKeys.ACCESS_TOKEN)
             preferences.remove(PreferencesKeys.REFRESH_TOKEN)
             preferences.remove(PreferencesKeys.IS_PROFILE_COMPLETED)
+        }
+    }
+
+    override suspend fun completeOnboarding() {
+        context.dataStore.edit {
+            it[PreferencesKeys.IS_PROFILE_COMPLETED] = true
         }
     }
 }
