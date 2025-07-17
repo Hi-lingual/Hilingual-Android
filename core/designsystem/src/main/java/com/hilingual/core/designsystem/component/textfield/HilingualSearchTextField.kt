@@ -19,7 +19,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.R
@@ -30,7 +29,6 @@ fun HilingualSearchTextField(
     value: String,
     onValueChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
-    height: Dp = 46.dp,
     placeholder: String = "단어나 표현을 검색해 주세요",
     onSearchAction: () -> Unit = {},
     onTrailingIconClick: () -> Unit = {}
@@ -40,18 +38,15 @@ fun HilingualSearchTextField(
     HilingualBasicTextField(
         value = value,
         placeholder = placeholder,
-        textStyle = HilingualTheme.typography.bodyM16,
         onValueChanged = onValueChanged,
-        modifier = modifier.height(height),
+        modifier = modifier,
         backgroundColor = HilingualTheme.colors.white,
         leadingIcon = {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_search_20),
                 contentDescription = null,
                 tint = HilingualTheme.colors.gray500,
-                modifier = Modifier
-                    .padding(end = 4.dp)
-                    .size(20.dp)
+                modifier = Modifier.size(20.dp)
             )
         },
         trailingIcon = {
@@ -61,15 +56,12 @@ fun HilingualSearchTextField(
                     contentDescription = null,
                     tint = Color.Unspecified,
                     modifier = Modifier
-                        .padding(start = 4.dp)
                         .size(20.dp)
-                        .noRippleClickable(
-                            onClick = onTrailingIconClick
-                        )
+                        .noRippleClickable(onClick = onTrailingIconClick)
                 )
             }
         },
-        keyboardType = KeyboardType.Ascii,
+        keyboardType = KeyboardType.Password,
         keyboardImeAction = ImeAction.Search,
         onSearchAction = {
             onSearchAction()
@@ -78,7 +70,7 @@ fun HilingualSearchTextField(
     )
 }
 
-@Preview
+@Preview(showBackground = true, backgroundColor = 0xFF212121)
 @Composable
 private fun HilingualSearchTextFieldPreview() {
     var text by remember { mutableStateOf("") }
