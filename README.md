@@ -2,7 +2,7 @@
 <h2 align="center">AI 피드백으로 완성하는 나만의 영어 일기</h2>
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/a2788032-cb66-49cc-aeef-462ef828c75d">
+  <img src="https://github.com/user-attachments/assets/21a2dd30-5128-43b1-9436-d4d047231ada">
 </p>
 
 <br>
@@ -31,21 +31,24 @@ Hilingual과 함께 영어 일기 습관을 만들고, 자연스러운 영어 �
 
 <br>
 
-<!--
-| 온보딩1 | 온보딩2 | 온보딩1 | 온보딩2 |
-|:---:|:---:|:---:|:---:|
-<video width="365" src="https://github.com/user-attachments/assets/b26f3d2a-a5a0-4951-9fef-30c8b3782ee7" /> | <video width="375" src="https://github.com/user-attachments/assets/b26f3d2a-a5a0-4951-9fef-30c8b3782ee7" /> | <video width="365" src="https://github.com/user-attachments/assets/b26f3d2a-a5a0-4951-9fef-30c8b3782ee7" /> | <video width="375" src="https://github.com/user-attachments/assets/b26f3d2a-a5a0-4951-9fef-30c8b3782ee7" /> 
-
-| 온보딩1 | 온보딩2 | 온보딩1 | 온보딩2 |
-|:---:|:---:|:---:|:---:|
-<video width="365" src="https://github.com/user-attachments/assets/b26f3d2a-a5a0-4951-9fef-30c8b3782ee7" /> | <video width="375" src="https://github.com/user-attachments/assets/b26f3d2a-a5a0-4951-9fef-30c8b3782ee7" /> | <video width="365" src="https://github.com/user-attachments/assets/b26f3d2a-a5a0-4951-9fef-30c8b3782ee7" /> | <video width="375" src="https://github.com/user-attachments/assets/b26f3d2a-a5a0-4951-9fef-30c8b3782ee7" /> 
--->
-
 ## CONTRIBUTORS
 | 🤴한민재<br/>([@angryPodo](https://github.com/angryPodo)) | 🦔김나현<br/>([@nahy-512](https://github.com/nahy-512)) | 😻김나현<br/>([@nhyeonii](https://github.com/nhyeonii)) | 🐻문지영<br/>([@Daljyeong](https://github.com/Daljyeong)) | 🎓박효빈<br/>([@Hyobeen-Park](https://github.com/Hyobeen-Park)) |
 |:---:|:---:|:---:|:---:|:---:|
 | <img width="200px" src="https://github.com/user-attachments/assets/47519d54-92fb-4c31-bf53-9f52b2de51a7"/> | <img width="220px" src="https://github.com/user-attachments/assets/26ed7623-3155-4e47-b431-13341467d337"/> | <img width="200px" src="https://github.com/user-attachments/assets/0fbacb28-a3f6-4671-b615-3d27524b3faf"/> | <img width="200px" src="https://github.com/user-attachments/assets/12e04461-bb3c-42b4-9f3b-008b983ce9f3"/> | <img width="200px" src="https://github.com/user-attachments/assets/922fee37-551a-4309-8a6e-d40746ccb9b1"/> |
 | `로그인`<br/>`홈` | `일기 상세` | `단어장` | `일기 작성` | `멘토` |
+
+<br>
+
+## SCREENSHOTS
+|       뷰       |                                                      1                                                      |                                                              2                                                              |
+|:-------------:|:-----------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------:|
+| 로그인 <br> 온보딩 | <img width="200px" src="https://github.com/user-attachments/assets/9af6fb8f-bf17-47d2-99ff-28983946f0c7"/>  | <img width="200px" src="https://github.com/user-attachments/assets/2aa36354-9713-4e38-b6e8-06a58ab15531"/> |                                                                                                                              |                                                                                                                             |
+| 캘린더 | <img width="200px" src="https://github.com/user-attachments/assets/39b0d2bd-d627-40ea-b91f-139db4974030"/>  | <img width="200px" src="https://github.com/user-attachments/assets/3551dcb8-8104-424a-8c76-544ea033af61"/> |                                                |
+| 일기작성 <br> AI 피드백  | <img width="200px" src="https://github.com/user-attachments/assets/c69e0ffb-bbe5-4990-89c2-10aadc15bbd6"/>  | <img width="200px" src="https://github.com/user-attachments/assets/661e474f-7314-486e-8e71-afcb649f6af6"/> |       
+|   일기, AI 피드백 확인   | <img width="200px" src ="https://github.com/user-attachments/assets/4c816af6-ee0c-49cf-9104-838d618e37c4"/> | <img width="200px" src="https://github.com/user-attachments/assets/67fff437-2dd8-4d45-8602-d1d2e1b18633"/> | 
+|   단어장   |                                         <img width="200px" src="https://github.com/user-attachments/assets/24ce2255-4a6a-452b-a3d6-a990ea5de2b7"/>                                         | <img width="200px" src="https://github.com/user-attachments/assets/5cd50d60-0dce-4012-a395-808bdd8e63e1"/> |                                                                                                            
+
+<br>
 
 
 ## ARCHITECTURE
@@ -57,6 +60,7 @@ Hilingual은 Google의 권장 아키텍처 가이드를 따르며, **MVVM (Model
 - **Data Layer**: 데이터 소스(네트워크, 로컬 DB)를 관리하고, 비즈니스 로직을 처리합니다. (Repository, DataSource)
 
 <br>
+
 
 ## FOLDER STRUCTURE
 
