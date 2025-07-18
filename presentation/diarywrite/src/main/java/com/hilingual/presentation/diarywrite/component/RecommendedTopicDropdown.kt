@@ -19,8 +19,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,6 +34,7 @@ import com.hilingual.presentation.diarywrite.R
 internal fun RecommendedTopicDropdown(
     enTopic: String,
     koTopic: String,
+    focusManager: FocusManager,
     modifier: Modifier = Modifier
 ) {
     var isKo by remember { mutableStateOf(false) }
@@ -62,7 +65,12 @@ internal fun RecommendedTopicDropdown(
                     .graphicsLayer {
                         scaleY = if (isExpanded) -1f else 1f
                     }
-                    .noRippleClickable { isExpanded = !isExpanded },
+                    .noRippleClickable {
+                        isExpanded = !isExpanded
+                        if (isExpanded) {
+                            focusManager.clearFocus()
+                        }
+                    },
                 imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_down_20),
                 contentDescription = null,
                 tint = HilingualTheme.colors.gray400
@@ -105,7 +113,8 @@ private fun RecommendedTopicDropdownPreview() {
     HilingualTheme {
         RecommendedTopicDropdown(
             enTopic = "What surprised you today?",
-            koTopic = "오늘 무엇이 당신을 놀라게 했나요?"
+            koTopic = "오늘 무엇이 당신을 놀라게 했나요?",
+            focusManager = LocalFocusManager.current
         )
     }
 }
