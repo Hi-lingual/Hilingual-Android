@@ -16,6 +16,8 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
@@ -61,12 +63,13 @@ fun HilingualSearchTextField(
                 )
             }
         },
-        keyboardType = KeyboardType.Password,
+        keyboardType = KeyboardType.Email,
         keyboardImeAction = ImeAction.Search,
         onSearchAction = {
             onSearchAction()
             keyboardController?.hide()
-        }
+        },
+        hintLocales = LocaleList(Locale("ko"))
     )
 }
 

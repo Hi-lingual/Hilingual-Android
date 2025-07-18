@@ -35,6 +35,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -54,6 +56,7 @@ fun HilingualBasicTextField(
     isShowLength: Boolean = false,
     keyboardImeAction: ImeAction = ImeAction.Done,
     keyboardType: KeyboardType = KeyboardType.Unspecified,
+    hintLocales: LocaleList = LocaleList(Locale.current),
     onDoneAction: () -> Unit = {},
     onSearchAction: () -> Unit = {},
     focusRequester: FocusRequester = FocusRequester(),
@@ -88,7 +91,8 @@ fun HilingualBasicTextField(
         singleLine = singleLine,
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,
-            imeAction = keyboardImeAction
+            imeAction = keyboardImeAction,
+            hintLocales = hintLocales
         ),
         keyboardActions = KeyboardActions(
             onDone = { onDoneAction() },

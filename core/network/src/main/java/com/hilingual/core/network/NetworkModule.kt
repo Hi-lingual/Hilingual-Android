@@ -16,6 +16,7 @@ import org.json.JSONObject
 import retrofit2.Converter
 import retrofit2.Retrofit
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -38,39 +39,56 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideLoggingInterceptor() = HttpLoggingInterceptor { message ->
-        // TODO: 이건 민재씨가 해줘ㅋㅋ
-//        val jsonMessage = when {
-//            message.contains("Content-Disposition: form-data;") -> {
-//                val jsonStart = message.indexOf("{")
-//                val jsonEnd = message.lastIndexOf("}")
-//
-//                if (jsonStart != -1 && jsonEnd != -1 && jsonEnd > jsonStart) {
-//                    message.substring(jsonStart, jsonEnd + 1)
-//                } else {
-//                    message
-//                }
-//            }
-//
-//            else -> message
-//        }
+    fun provideLoggingInterceptor(): HttpLoggingInterceptor {
+        var isMultipart = false
+        return HttpLoggingInterceptor { message ->
+            when {
+                message.contains("Content-Type: multipart/form-data") -> {
+                    isMultipart = true
+                    Timber.tag("okhttp").d("CONNECTION INFO -> $message")
+                }
 
-        when {
-            message.contains("Content-Disposition: form-data;") ->
-                Timber.tag("okhttp").d("CONNECTION INFO -> $message")
+                isMultipart && message.startsWith("--") -> {
+                    Timber.tag("okhttp").d("CONNECTION INFO -> (multipart boundary)")
+                    if (message.endsWith("--")) {
+                        isMultipart = false // End of multipart content
+                    }
+                }
 
-            message.isJsonObject() ->
-                Timber.tag("okhttp").d(JSONObject(message).toString(UNIT_TAB))
+                isMultipart -> {
+                    if (message.contains("Content-Disposition")) {
+                        Timber.tag("okhttp").d("CONNECTION INFO -> $message")
+                    } else {
+                        try {
+                            val json = JSONObject(message)
+                            Timber.tag("okhttp").d(json.toString(UNIT_TAB))
+                        } catch (e: org.json.JSONException) {
+                            Timber.tag("okhttp").d("CONNECTION INFO -> (multipart content part)")
+                        }
+                    }
+                }
 
-            message.isJsonArray() ->
-                Timber.tag("okhttp").d(JSONObject(message).toString(UNIT_TAB))
+                message.isJsonObject() ->
+                    try {
+                        Timber.tag("okhttp").d(JSONObject(message).toString(UNIT_TAB))
+                    } catch (e: org.json.JSONException) {
+                        Timber.tag("okhttp").d("CONNECTION INFO -> $message")
+                    }
 
-            else -> {
-                Timber.tag("okhttp").d("CONNECTION INFO -> $message")
+                message.isJsonArray() ->
+                    try {
+                        Timber.tag("okhttp").d(org.json.JSONArray(message).toString(UNIT_TAB))
+                    } catch (e: org.json.JSONException) {
+                        Timber.tag("okhttp").d("CONNECTION INFO -> $message")
+                    }
+
+                else -> {
+                    Timber.tag("okhttp").d("CONNECTION INFO -> $message")
+                }
             }
+        }.apply {
+            level = HttpLoggingInterceptor.Level.BODY
         }
-    }.apply {
-        level = HttpLoggingInterceptor.Level.BODY
     }
 
     @Provides
@@ -113,6 +131,22 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @MultipartClient
+    fun provideMultipartOkHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor,
+        authInterceptor: AuthInterceptor,
+        tokenAuthenticator: TokenAuthenticator
+    ): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(loggingInterceptor)
+        .addInterceptor(authInterceptor)
+        .authenticator(tokenAuthenticator)
+        .connectTimeout(60, TimeUnit.SECONDS)
+        .readTimeout(60, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
+        .build()
+
+    @Provides
+    @Singleton
     fun provideDefaultRetrofit(
         client: OkHttpClient,
         factory: Converter.Factory
@@ -141,6 +175,19 @@ object NetworkModule {
     @RefreshClient
     fun provideRefreshRetrofit(
         @RefreshClient client: OkHttpClient,
+        factory: Converter.Factory
+    ): Retrofit =
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(client)
+            .addConverterFactory(factory)
+            .build()
+
+    @Provides
+    @Singleton
+    @MultipartClient
+    fun provideMultipartRetrofit(
+        @MultipartClient client: OkHttpClient,
         factory: Converter.Factory
     ): Retrofit =
         Retrofit.Builder()
