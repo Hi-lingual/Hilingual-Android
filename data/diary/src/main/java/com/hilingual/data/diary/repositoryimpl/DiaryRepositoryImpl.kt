@@ -1,6 +1,6 @@
 package com.hilingual.data.diary.repositoryimpl
 
-import android.content.ContentResolver
+import android.content.Context
 import android.net.Uri
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.network.ContentUriRequestBody
@@ -13,6 +13,9 @@ import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.model.toDto
 import com.hilingual.data.diary.model.toModel
 import com.hilingual.data.diary.repository.DiaryRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.time.LocalDate
@@ -20,7 +23,7 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 internal class DiaryRepositoryImpl @Inject constructor(
-    private val contentResolver: ContentResolver,
+    @ApplicationContext private val context: Context,
     private val diaryRemoteDataSource: DiaryRemoteDataSource
 ) : DiaryRepository {
     override suspend fun getDiaryContent(diaryId: Long): Result<DiaryContentModel> =
@@ -53,26 +56,23 @@ internal class DiaryRepositoryImpl @Inject constructor(
         originalText: String,
         date: LocalDate,
         imageFileUri: Uri?
-    ): Result<DiaryFeedbackCreateModel> {
-        val originalTextToRequestBody = originalText.toRequestBody(APPLICATION_JSON.toMediaType())
+    ): Result<DiaryFeedbackCreateModel> = suspendRunCatching {
+        coroutineScope {
+            val originalTextRequestBody = originalText.toRequestBody(APPLICATION_JSON.toMediaType())
+            val dateRequestBody = date.format(DATE_FORMATTER).toRequestBody(APPLICATION_JSON.toMediaType())
 
-        val dateToString = date.format(DATE_FORMATTER)
-        val dateToRequestBody = dateToString.toRequestBody(APPLICATION_JSON.toMediaType())
+            val imagePart = imageFileUri?.let {
+                async {
+                    val requestBody = ContentUriRequestBody(context, it)
+                    requestBody.prepareImage()
+                    requestBody.toFormData(IMAGE_FILE_NAME)
+                }
+            }?.await()
 
-        val imageFile = if (imageFileUri != null) {
-            ContentUriRequestBody(
-                contentResolver = contentResolver,
-                uri = imageFileUri
-            ).toFormData(name = IMAGE_FILE_NAME)
-        } else {
-            null
-        }
-
-        return suspendRunCatching {
             diaryRemoteDataSource.postDiaryFeedbackCreate(
-                originalText = originalTextToRequestBody,
-                date = dateToRequestBody,
-                imageFile = imageFile
+                originalText = originalTextRequestBody,
+                date = dateRequestBody,
+                imageFile = imagePart
             ).data!!.toModel()
         }
     }

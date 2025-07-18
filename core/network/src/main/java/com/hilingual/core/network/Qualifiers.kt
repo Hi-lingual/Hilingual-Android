@@ -9,3 +9,7 @@ annotation class LoginClient
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class RefreshClient
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class MultipartClient

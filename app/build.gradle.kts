@@ -21,12 +21,6 @@ android {
         versionName = libs.versions.versionName.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        buildConfigField(
-            "String",
-            "BASE_URL",
-            properties["dev.base.url"] as String
-        )
     }
 
     signingConfigs {
@@ -46,8 +40,24 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                properties["dev.base.url"] as String
+            )
+        }
+
         release {
-            isMinifyEnabled = false
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                properties["prod.base.url"] as String
+            )
+
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -82,6 +92,7 @@ dependencies {
     // other dependencies
     implementation(libs.timber)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.credentials.play.services.auth)
 }
 
 ktlint {
