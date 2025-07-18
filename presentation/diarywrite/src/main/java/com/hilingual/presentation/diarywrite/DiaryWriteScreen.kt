@@ -217,18 +217,13 @@ private fun DiaryWriteScreen(
     var isDialogVisible by remember { mutableStateOf(false) }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
 
-    fun cancelDiaryWrite() {
-        val isInputNotEmpty = diaryText.isNotBlank() || diaryImageUri != null
-
-        if (isInputNotEmpty) {
-            isDialogVisible = true
-        } else {
-            onBackClicked()
-        }
-    }
-
     BackHandler {
-        cancelDiaryWrite()
+        cancelDiaryWrite(
+            diaryText = diaryText,
+            diaryImageUri = diaryImageUri,
+            onBackClicked = onBackClicked,
+            setDialogVisible = { isDialogVisible = it }
+        )
     }
 
     if (isDialogVisible) {
@@ -262,7 +257,14 @@ private fun DiaryWriteScreen(
     ) {
         BackTopAppBar(
             title = "일기 작성하기",
-            onBackClicked = { cancelDiaryWrite() }
+            onBackClicked = {
+                cancelDiaryWrite(
+                    diaryText = diaryText,
+                    diaryImageUri = diaryImageUri,
+                    onBackClicked = onBackClicked,
+                    setDialogVisible = { isDialogVisible = it }
+                )
+            }
         )
 
         Row(
@@ -342,6 +344,21 @@ private fun DiaryWriteScreen(
                 balloon.dismiss()
             }
         }
+    }
+}
+
+private fun cancelDiaryWrite(
+    diaryText: String,
+    diaryImageUri: Uri?,
+    onBackClicked: () -> Unit,
+    setDialogVisible: (Boolean) -> Unit
+) {
+    val isInputNotEmpty = diaryText.isNotBlank() || diaryImageUri != null
+
+    if (isInputNotEmpty) {
+        setDialogVisible(true)
+    } else {
+        onBackClicked()
     }
 }
 

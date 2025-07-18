@@ -74,6 +74,7 @@ internal fun PhotoSelectButton(
                     .clip(RoundedCornerShape(8.dp))
                     .background(HilingualTheme.colors.gray100)
                     .noRippleClickable(onClick = {
+                        // TODO: flow나 channel 등으로 리팩토링하기
                         if (!isGalleryLaunching.value) {
                             isGalleryLaunching.value = true
                             photoSelectLauncher.launch(

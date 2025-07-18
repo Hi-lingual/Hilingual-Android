@@ -11,7 +11,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.util.EmojiFilter.removeEmoji
@@ -49,8 +48,7 @@ fun HilingualLongTextField(
             keyboardController?.hide()
         },
         isShowLength = true,
-        keyboardImeAction = ImeAction.Default,
-        keyboardType = KeyboardType.Password
+        keyboardImeAction = ImeAction.Default
     )
 }
 
