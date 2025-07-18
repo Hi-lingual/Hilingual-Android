@@ -46,7 +46,7 @@ Hilingual과 함께 영어 일기 습관을 만들고, 자연스러운 영어 �
 | 캘린더 | <img width="200px" src="https://github.com/user-attachments/assets/39b0d2bd-d627-40ea-b91f-139db4974030"/>  | <img width="200px" src="https://github.com/user-attachments/assets/3551dcb8-8104-424a-8c76-544ea033af61"/> |                                                |
 | 일기작성 <br> AI 피드백  | <img width="200px" src="https://github.com/user-attachments/assets/c69e0ffb-bbe5-4990-89c2-10aadc15bbd6"/>  | <img width="200px" src="https://github.com/user-attachments/assets/661e474f-7314-486e-8e71-afcb649f6af6"/> |       
 |   일기, AI 피드백 확인   | <img width="200px" src ="https://github.com/user-attachments/assets/4c816af6-ee0c-49cf-9104-838d618e37c4"/> | <img width="200px" src="https://github.com/user-attachments/assets/67fff437-2dd8-4d45-8602-d1d2e1b18633"/> | 
-|   단어장   |                                         <img width="200px" src="https://github.com/user-attachments/assets/22cd90fe-cb9c-46fe-b689-b447c50bf511"/>                                         | <img width="200px" src="https://github.com/user-attachments/assets/5cd50d60-0dce-4012-a395-808bdd8e63e1"/> |                                                                                                            
+|   단어장   |                                         <img width="200px" src="https://github.com/user-attachments/assets/24ce2255-4a6a-452b-a3d6-a990ea5de2b7"/>                                         | <img width="200px" src="https://github.com/user-attachments/assets/5cd50d60-0dce-4012-a395-808bdd8e63e1"/> |                                                                                                            
 
 <br>
 
