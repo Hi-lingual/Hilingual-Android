@@ -1,7 +1,7 @@
 # Hilingual
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/c2f22712-77b4-477c-8fa6-50dcd72fe98b">
+  <img src="https://github.com/user-attachments/assets/f4501e38-de15-4e84-a7fa-6b8c3609635d">
 </p>
 
 <h2 align="center">AI 피드백으로 완성하는 나만의 영어 일기</h2>
@@ -25,7 +25,7 @@
 ## CONTRIBUTORS
 | 🤴한민재<br/>([@angryPodo](https://github.com/angryPodo)) | 🦔김나현<br/>([@nahy-512](https://github.com/nahy-512)) | 😻김나현<br/>([@nhyeonii](https://github.com/nhyeonii)) | 🐻문지영<br/>([@Daljyeong](https://github.com/Daljyeong)) | 🎓박효빈<br/>([@Hyobeen-Park](https://github.com/Hyobeen-Park)) |
 |:---:|:---:|:---:|:---:|:---:|
-| <img width="270px" src="https://github.com/angryPodo.png"/> | <img width="270px" src="https://github.com/nahy-512.png"/> | <img width="270px" src="https://github.com/nhyeonii.png"/> | <img width="270px" src="https://github.com/Daljyeong.png"/> | <img width="270px" src="https://github.com/Hyobeen-Park.png"/> |
+| <img width="270px" src="https://github.com/user-attachments/assets/47519d54-92fb-4c31-bf53-9f52b2de51a7"/> | <img width="270px" src="https://github.com/user-attachments/assets/26ed7623-3155-4e47-b431-13341467d337"/> | <img width="270px" src="https://github.com/user-attachments/assets/0fbacb28-a3f6-4671-b615-3d27524b3faf"/> | <img width="270px" src="https://github.com/user-attachments/assets/12e04461-bb3c-42b4-9f3b-008b983ce9f3"/> | <img width="270px" src="https://github.com/user-attachments/assets/922fee37-551a-4309-8a6e-d40746ccb9b1"/> |
 | `로그인`<br/>`홈` | `일기 상세` | `단어장` | `일기 작성` | `멘토` |
 
 
