@@ -398,4 +398,3 @@ private fun DiaryWriteScreenPreview() {
         )
     }
 }
-
