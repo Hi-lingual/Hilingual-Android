@@ -30,6 +30,7 @@ Hilingual과 함께 영어 일기 습관을 만들고, 자연스러운 영어 �
 > <i> 작성한 일기에 대해 AI가 문법, 철자, 그리고 더 자연스러운 표현을 추천해줍니다. 내 영어 수준에 맞는 맞춤형 피드백으로 실력을 향상시켜 보세요. </i>
 
 <br>
+
 ## CONTRIBUTORS
 | 🤴한민재<br/>([@angryPodo](https://github.com/angryPodo)) | 🦔김나현<br/>([@nahy-512](https://github.com/nahy-512)) | 😻김나현<br/>([@nhyeonii](https://github.com/nhyeonii)) | 🐻문지영<br/>([@Daljyeong](https://github.com/Daljyeong)) | 🎓박효빈<br/>([@Hyobeen-Park](https://github.com/Hyobeen-Park)) |
 |:---:|:---:|:---:|:---:|:---:|
