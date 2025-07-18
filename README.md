@@ -35,6 +35,7 @@ Hilingual과 함께 영어 일기 습관을 만들고, 자연스러운 영어 �
 |:---:|:---:|:---:|:---:|:---:|
 | <img width="200px" height="260px" src="https://github.com/user-attachments/assets/47519d54-92fb-4c31-bf53-9f52b2de51a7"/> | <img width="200px" height="260px" src="https://github.com/user-attachments/assets/26ed7623-3155-4e47-b431-13341467d337"/> | <img width="200px" height="260px" src="https://github.com/user-attachments/assets/0fbacb28-a3f6-4671-b615-3d27524b3faf"/> | <img width="200px" height="260px" src="https://github.com/user-attachments/assets/12e04461-bb3c-42b4-9f3b-008b983ce9f3"/> | <img width="200px" height="260px" src="https://github.com/user-attachments/assets/922fee37-551a-4309-8a6e-d40746ccb9b1"/> |
 | `로그인`<br/>`홈` | `일기 상세` | `단어장` | `일기 작성` | `멘토` |
+
 <br>
 
 ## SCREENSHOTS
