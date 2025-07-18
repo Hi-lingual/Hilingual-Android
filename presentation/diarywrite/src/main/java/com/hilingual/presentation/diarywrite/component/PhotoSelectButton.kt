@@ -31,9 +31,13 @@ internal fun PhotoSelectButton(
     selectedImgUri: Uri? = null,
     onImgSelected: (Uri?) -> Unit
 ) {
+    val isGalleryLaunching = remember { mutableStateOf(false) }
+
     val photoSelectLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri ->
+        isGalleryLaunching.value = false
+
         if (uri != null) {
             onImgSelected(uri)
         }
@@ -70,9 +74,12 @@ internal fun PhotoSelectButton(
                     .clip(RoundedCornerShape(8.dp))
                     .background(HilingualTheme.colors.gray100)
                     .noRippleClickable(onClick = {
-                        photoSelectLauncher.launch(
-                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                        )
+                        if (!isGalleryLaunching.value) {
+                            isGalleryLaunching.value = true
+                            photoSelectLauncher.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        }
                     }),
                 contentAlignment = Alignment.Center
             ) {
