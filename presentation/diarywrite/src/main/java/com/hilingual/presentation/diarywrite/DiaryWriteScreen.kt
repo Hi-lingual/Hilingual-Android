@@ -218,9 +218,12 @@ private fun DiaryWriteScreen(
     var isBottomSheetVisible by remember { mutableStateOf(false) }
 
     BackHandler {
-        if (!isDialogVisible) {
-            isDialogVisible = true
-        }
+        cancelDiaryWrite(
+            diaryText = diaryText,
+            diaryImageUri = diaryImageUri,
+            onBackClicked = onBackClicked,
+            setDialogVisible = { isDialogVisible = it }
+        )
     }
 
     if (isDialogVisible) {
@@ -254,7 +257,14 @@ private fun DiaryWriteScreen(
     ) {
         BackTopAppBar(
             title = "일기 작성하기",
-            onBackClicked = { isDialogVisible = true }
+            onBackClicked = {
+                cancelDiaryWrite(
+                    diaryText = diaryText,
+                    diaryImageUri = diaryImageUri,
+                    onBackClicked = onBackClicked,
+                    setDialogVisible = { isDialogVisible = it }
+                )
+            }
         )
 
         Row(
@@ -283,7 +293,8 @@ private fun DiaryWriteScreen(
         ) {
             RecommendedTopicDropdown(
                 enTopic = topicEn,
-                koTopic = topicKo
+                koTopic = topicKo,
+                focusManager = focusManager
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -333,6 +344,19 @@ private fun DiaryWriteScreen(
                 balloon.dismiss()
             }
         }
+    }
+}
+
+private fun cancelDiaryWrite(
+    diaryText: String,
+    diaryImageUri: Uri?,
+    onBackClicked: () -> Unit,
+    setDialogVisible: (Boolean) -> Unit
+) {
+    if (diaryText.isNotBlank() || diaryImageUri != null) {
+        setDialogVisible(true)
+    } else {
+        onBackClicked()
     }
 }
 

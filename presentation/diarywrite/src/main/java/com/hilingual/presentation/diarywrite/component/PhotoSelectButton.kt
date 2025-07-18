@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,9 +33,13 @@ internal fun PhotoSelectButton(
     selectedImgUri: Uri? = null,
     onImgSelected: (Uri?) -> Unit
 ) {
+    var isGalleryLaunching by remember { mutableStateOf(false) }
+
     val photoSelectLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri ->
+        isGalleryLaunching = false
+
         if (uri != null) {
             onImgSelected(uri)
         }
@@ -70,9 +76,13 @@ internal fun PhotoSelectButton(
                     .clip(RoundedCornerShape(8.dp))
                     .background(HilingualTheme.colors.gray100)
                     .noRippleClickable(onClick = {
-                        photoSelectLauncher.launch(
-                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                        )
+                        // TODO: flow나 channel 등으로 리팩토링하기
+                        if (!isGalleryLaunching) {
+                            isGalleryLaunching = true
+                            photoSelectLauncher.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        }
                     }),
                 contentAlignment = Alignment.Center
             ) {
