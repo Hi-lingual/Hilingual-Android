@@ -30,13 +30,11 @@ Hilingual과 함께 영어 일기 습관을 만들고, 자연스러운 영어 �
 > <i> 작성한 일기에 대해 AI가 문법, 철자, 그리고 더 자연스러운 표현을 추천해줍니다. 내 영어 수준에 맞는 맞춤형 피드백으로 실력을 향상시켜 보세요. </i>
 
 <br>
-
 ## CONTRIBUTORS
 | 🤴한민재<br/>([@angryPodo](https://github.com/angryPodo)) | 🦔김나현<br/>([@nahy-512](https://github.com/nahy-512)) | 😻김나현<br/>([@nhyeonii](https://github.com/nhyeonii)) | 🐻문지영<br/>([@Daljyeong](https://github.com/Daljyeong)) | 🎓박효빈<br/>([@Hyobeen-Park](https://github.com/Hyobeen-Park)) |
 |:---:|:---:|:---:|:---:|:---:|
-| <img width="200px" src="https://github.com/user-attachments/assets/47519d54-92fb-4c31-bf53-9f52b2de51a7"/> | <img width="220px" src="https://github.com/user-attachments/assets/26ed7623-3155-4e47-b431-13341467d337"/> | <img width="200px" src="https://github.com/user-attachments/assets/0fbacb28-a3f6-4671-b615-3d27524b3faf"/> | <img width="200px" src="https://github.com/user-attachments/assets/12e04461-bb3c-42b4-9f3b-008b983ce9f3"/> | <img width="200px" src="https://github.com/user-attachments/assets/922fee37-551a-4309-8a6e-d40746ccb9b1"/> |
+| <img width="200px" height="260px" src="https://github.com/user-attachments/assets/47519d54-92fb-4c31-bf53-9f52b2de51a7"/> | <img width="200px" height="260px" src="https://github.com/user-attachments/assets/26ed7623-3155-4e47-b431-13341467d337"/> | <img width="200px" height="260px" src="https://github.com/user-attachments/assets/0fbacb28-a3f6-4671-b615-3d27524b3faf"/> | <img width="200px" height="260px" src="https://github.com/user-attachments/assets/12e04461-bb3c-42b4-9f3b-008b983ce9f3"/> | <img width="200px" height="260px" src="https://github.com/user-attachments/assets/922fee37-551a-4309-8a6e-d40746ccb9b1"/> |
 | `로그인`<br/>`홈` | `일기 상세` | `단어장` | `일기 작성` | `멘토` |
-
 <br>
 
 ## SCREENSHOTS
