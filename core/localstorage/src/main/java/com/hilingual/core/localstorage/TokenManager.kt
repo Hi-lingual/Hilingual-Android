@@ -8,4 +8,5 @@ interface TokenManager {
     suspend fun getRefreshToken(): String?
     suspend fun isProfileCompleted(): Boolean
     suspend fun clearTokens()
+    suspend fun completeOnboarding()
 }

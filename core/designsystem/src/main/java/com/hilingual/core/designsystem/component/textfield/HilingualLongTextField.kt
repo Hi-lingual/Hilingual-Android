@@ -1,22 +1,16 @@
 package com.hilingual.core.designsystem.component.textfield
 
 import android.widget.Toast
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.util.EmojiFilter.removeEmoji
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -27,7 +21,6 @@ fun HilingualLongTextField(
     onValueChanged: (String) -> Unit,
     maxLength: Int,
     modifier: Modifier = Modifier,
-    height: Dp = 292.dp,
     placeholder: String = "What's been going on today?",
     onDoneAction: () -> Unit = {}
 ) {
@@ -36,37 +29,24 @@ fun HilingualLongTextField(
 
     HilingualBasicTextField(
         value = value,
+        maxLength = maxLength,
         placeholder = placeholder,
-        textStyle = HilingualTheme.typography.bodyM16,
+        placeholderTextStyle = HilingualTheme.typography.bodyR16,
+        inputTextStyle = HilingualTheme.typography.bodyR16,
+        decorationBoxHeight = 241.dp,
         onValueChanged = {
             val filteredValue = it.removeEmoji()
             if (filteredValue.length <= maxLength) onValueChanged(filteredValue)
         },
         onFocusChanged = { isFocused = it },
-        modifier = modifier
-            .height(height)
-            .verticalScroll(rememberScrollState()),
-        borderModifier = if (isFocused) {
-            Modifier.border(
-                1.dp,
-                HilingualTheme.colors.black,
-                RoundedCornerShape(8.dp)
-            )
-        } else {
-            Modifier
-        },
+        modifier = modifier,
+        borderColor = if (isFocused) HilingualTheme.colors.black else Color.Unspecified,
         singleLine = false,
         onDoneAction = {
             onDoneAction()
             keyboardController?.hide()
         },
-        bottomRightContent = {
-            Text(
-                text = "${value.length} / $maxLength",
-                style = HilingualTheme.typography.captionR12,
-                color = HilingualTheme.colors.gray400
-            )
-        }
+        isShowLength = true
     )
 }
 
@@ -84,7 +64,7 @@ private fun HilingualLongTextFieldPreview() {
                 Toast.makeText(context, "Enter key pressed with text: $text", Toast.LENGTH_SHORT)
                     .show()
             },
-            maxLength = 100
+            maxLength = 1000
         )
     }
 }

@@ -3,6 +3,7 @@ package com.hilingual.presentation.onboarding
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.localstorage.TokenManager
 import com.hilingual.data.user.model.UserProfileModel
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +27,8 @@ private val specialCharRegex = Regex("[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]")
 
 @HiltViewModel
 internal class OnboardingViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val tokenManager: TokenManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OnboardingUiState())
@@ -63,6 +65,7 @@ internal class OnboardingViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.postUserProfile(UserProfileModel(profileImg = "", nickname = nickname))
                 .onSuccess {
+                    tokenManager.completeOnboarding()
                     _sideEffect.emit(OnboardingSideEffect.NavigateToHome)
                 }
                 .onLogFailure {
