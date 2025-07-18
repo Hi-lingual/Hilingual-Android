@@ -34,6 +34,7 @@ import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
+import com.hilingual.core.designsystem.event.LocalDialogController
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.diaryfeedback.component.DiaryFeedbackTabRow
@@ -57,6 +58,7 @@ internal fun DiaryFeedbackRoute(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
     var isImageDetailVisible by remember { mutableStateOf(false) }
+    val dialogController = LocalDialogController.current
 
     BackHandler {
         if (isImageDetailVisible) {
@@ -72,10 +74,22 @@ internal fun DiaryFeedbackRoute(
         )
     }
 
+    LaunchedEffect(viewModel.sideEffect) {
+        viewModel.sideEffect.collect { event ->
+            when (event) {
+                is DiaryFeedbackSideEffect.ShowRetryDialog -> {
+                    dialogController.show(event.onRetry)
+                }
+            }
+        }
+    }
+
     when (state) {
         is UiState.Loading -> {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(HilingualTheme.colors.white),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
