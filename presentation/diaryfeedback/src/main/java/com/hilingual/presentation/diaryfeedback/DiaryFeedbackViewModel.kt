@@ -42,14 +42,14 @@ internal class DiaryFeedbackViewModel @Inject constructor(
         loadInitialData()
     }
 
-    private suspend fun requestDiaryFeedbackData() = coroutineScope {
-        val contentDeferred = async { diaryRepository.getDiaryContent(diaryId) }
-        val feedbacksDeferred = async { diaryRepository.getDiaryFeedbacks(diaryId) }
-        val recommendExpressionsDeferred = async { diaryRepository.getDiaryRecommendExpressions(diaryId) }
+    private suspend fun requestDiaryFeedbackData() {
+        val (contentResult, feedbacksResult, recommendExpressionsResult) = coroutineScope {
+            val contentDeferred = async { diaryRepository.getDiaryContent(diaryId) }
+            val feedbacksDeferred = async { diaryRepository.getDiaryFeedbacks(diaryId) }
+            val recommendExpressionsDeferred = async { diaryRepository.getDiaryRecommendExpressions(diaryId) }
 
-        val contentResult = contentDeferred.await()
-        val feedbacksResult = feedbacksDeferred.await()
-        val recommendExpressionsResult = recommendExpressionsDeferred.await()
+            Triple(contentDeferred.await(), feedbacksDeferred.await(), recommendExpressionsDeferred.await())
+        }
 
         if (
             contentResult.isSuccess &&
@@ -68,7 +68,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
             )
             _uiState.value = UiState.Success(newUiState)
         } else {
-            throw Exception("API error")
+            throw Exception()
         }
     }
 
