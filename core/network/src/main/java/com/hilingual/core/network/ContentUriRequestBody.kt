@@ -55,7 +55,7 @@ class ContentUriRequestBody @Inject constructor(
             val DEFAULT = ImageConfig(
                 maxWidth = 1920,
                 maxHeight = 1920,
-                maxFileSize = 5 * 1024 * 1024, // 5MB
+                maxFileSize = 2 * 1024 * 1024,
                 initialQuality = 90,
                 minQuality = 50
             )
