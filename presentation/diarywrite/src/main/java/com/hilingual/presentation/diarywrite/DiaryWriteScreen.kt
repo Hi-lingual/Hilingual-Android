@@ -217,10 +217,18 @@ private fun DiaryWriteScreen(
     var isDialogVisible by remember { mutableStateOf(false) }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
 
-    BackHandler {
-        if (!isDialogVisible) {
+    fun cancelDiaryWrite() {
+        val isInputNotEmpty = diaryText.isNotBlank() || diaryImageUri != null
+
+        if (isInputNotEmpty) {
             isDialogVisible = true
+        } else {
+            onBackClicked()
         }
+    }
+
+    BackHandler {
+        cancelDiaryWrite()
     }
 
     if (isDialogVisible) {
@@ -254,7 +262,7 @@ private fun DiaryWriteScreen(
     ) {
         BackTopAppBar(
             title = "일기 작성하기",
-            onBackClicked = { isDialogVisible = true }
+            onBackClicked = { cancelDiaryWrite() }
         )
 
         Row(
