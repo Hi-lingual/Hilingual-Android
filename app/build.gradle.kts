@@ -82,6 +82,7 @@ dependencies {
     // other dependencies
     implementation(libs.timber)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.credentials.play.services.auth)
 }
 
 ktlint {
