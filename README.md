@@ -31,6 +31,14 @@ Hilingual과 함께 영어 일기 습관을 만들고, 자연스러운 영어 �
 
 <br>
 
+| 온보딩1 | 온보딩2 | 온보딩1 | 온보딩2 |
+|:---:|:---:|:---:|:---:|
+<video width="365" src="https://github.com/user-attachments/assets/b26f3d2a-a5a0-4951-9fef-30c8b3782ee7" /> | <video width="375" src="https://github.com/user-attachments/assets/b26f3d2a-a5a0-4951-9fef-30c8b3782ee7" /> | <video width="365" src="https://github.com/user-attachments/assets/b26f3d2a-a5a0-4951-9fef-30c8b3782ee7" /> | <video width="375" src="https://github.com/user-attachments/assets/b26f3d2a-a5a0-4951-9fef-30c8b3782ee7" /> 
+
+| 온보딩1 | 온보딩2 | 온보딩1 | 온보딩2 |
+|:---:|:---:|:---:|:---:|
+<video width="365" src="https://github.com/user-attachments/assets/b26f3d2a-a5a0-4951-9fef-30c8b3782ee7" /> | <video width="375" src="https://github.com/user-attachments/assets/b26f3d2a-a5a0-4951-9fef-30c8b3782ee7" /> | <video width="365" src="https://github.com/user-attachments/assets/b26f3d2a-a5a0-4951-9fef-30c8b3782ee7" /> | <video width="375" src="https://github.com/user-attachments/assets/b26f3d2a-a5a0-4951-9fef-30c8b3782ee7" /> 
+
 ## CONTRIBUTORS
 | 🤴한민재<br/>([@angryPodo](https://github.com/angryPodo)) | 🦔김나현<br/>([@nahy-512](https://github.com/nahy-512)) | 😻김나현<br/>([@nhyeonii](https://github.com/nhyeonii)) | 🐻문지영<br/>([@Daljyeong](https://github.com/Daljyeong)) | 🎓박효빈<br/>([@Hyobeen-Park](https://github.com/Hyobeen-Park)) |
 |:---:|:---:|:---:|:---:|:---:|
