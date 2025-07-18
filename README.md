@@ -2,7 +2,7 @@
 <h2 align="center">AI 피드백으로 완성하는 나만의 영어 일기</h2>
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/a2788032-cb66-49cc-aeef-462ef828c75d">
+  <img src="https://github.com/user-attachments/assets/21a2dd30-5128-43b1-9436-d4d047231ada">
 </p>
 
 <br>
