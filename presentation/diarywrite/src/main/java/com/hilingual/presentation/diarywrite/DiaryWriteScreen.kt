@@ -353,9 +353,7 @@ private fun cancelDiaryWrite(
     onBackClicked: () -> Unit,
     setDialogVisible: (Boolean) -> Unit
 ) {
-    val isInputNotEmpty = diaryText.isNotBlank() || diaryImageUri != null
-
-    if (isInputNotEmpty) {
+    if (diaryText.isNotBlank() || diaryImageUri != null) {
         setDialogVisible(true)
     } else {
         onBackClicked()
