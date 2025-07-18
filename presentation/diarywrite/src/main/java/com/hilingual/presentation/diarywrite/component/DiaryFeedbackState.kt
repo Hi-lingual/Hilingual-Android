@@ -1,9 +1,8 @@
 package com.hilingual.presentation.diarywrite.component
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import com.hilingual.presentation.diarywrite.R
 
 sealed class DiaryFeedbackState() {
     object Default : DiaryFeedbackState()
@@ -12,9 +11,20 @@ sealed class DiaryFeedbackState() {
     data class Failure(val throwable: Throwable) : DiaryFeedbackState()
 }
 
+sealed class FeedbackMedia {
+    data class Lottie(
+        @RawRes val resId: Int,
+        val heightDp: Dp
+    ) : FeedbackMedia()
+
+    data class Image(
+        @DrawableRes val resId: Int,
+        val heightDp: Dp
+    ) : FeedbackMedia()
+}
+
 data class FeedbackUIData(
     val title: String = "",
-    val description: String = "",
-    @RawRes val lottieRawRes: Int = R.raw.lottie_feedback_loading,
-    val lottieRawResHeightDp: Dp = 0.dp
+    val description: String? = null,
+    val media: FeedbackMedia
 )

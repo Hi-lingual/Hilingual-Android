@@ -75,14 +75,26 @@ internal class DiaryWriteViewModel @Inject constructor(
         _feedbackState.value = DiaryFeedbackState.Loading
 
         viewModelScope.launch {
-            diaryRepository.postDiaryFeedbackCreate(
-                originalText = uiState.value.diaryText,
-                date = uiState.value.selectedDate,
-                imageFileUri = uiState.value.diaryImageUri
-            ).onSuccess { response ->
-                _feedbackState.update { DiaryFeedbackState.Complete(response.diaryId) }
-            }.onLogFailure { throwable ->
-                _feedbackState.value = DiaryFeedbackState.Failure(throwable)
+            val maxAttempts = 3
+            for (attempt in 1..maxAttempts) {
+                val result = diaryRepository.postDiaryFeedbackCreate(
+                    originalText = uiState.value.diaryText,
+                    date = uiState.value.selectedDate,
+                    imageFileUri = uiState.value.diaryImageUri
+                )
+
+                if (result.isSuccess) {
+                    result.onSuccess { response ->
+                        _feedbackState.update { DiaryFeedbackState.Complete(response.diaryId) }
+                    }
+                    return@launch
+                }
+
+                if (attempt == maxAttempts) {
+                    result.onLogFailure { throwable ->
+                        _feedbackState.update { DiaryFeedbackState.Failure(throwable) }
+                    }
+                }
             }
         }
     }
