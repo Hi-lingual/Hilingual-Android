@@ -10,9 +10,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.hilingual.presentation.auth.navigation.navigateToAuth
+import com.hilingual.presentation.community.navigateToCommunity
 import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedback
 import com.hilingual.presentation.diarywrite.navigation.navigateToDiaryWrite
 import com.hilingual.presentation.home.navigation.navigateToHome
+import com.hilingual.presentation.mypage.navigateToMyPage
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.voca.navigation.navigateToVoca
@@ -52,16 +54,10 @@ internal class MainNavigator(
         }
 
         when (tab) {
-            MainTab.HOME -> navController.navigateToHome(
-                navOptions = navOptions
-            )
-
-            MainTab.VOCA -> navController.navigateToVoca(
-                navOptions = vocaNavOptions
-            )
-            // TODO: 추후 스프린트 기간에 구현
-            MainTab.COMMUNITY -> {}
-            MainTab.MY -> {}
+            MainTab.HOME -> navController.navigateToHome(navOptions = navOptions)
+            MainTab.VOCA -> navController.navigateToVoca(navOptions = vocaNavOptions)
+            MainTab.COMMUNITY -> navController.navigateToCommunity(navOptions = navOptions)
+            MainTab.MY -> navController.navigateToMyPage(navOptions = navOptions)
         }
     }
 
