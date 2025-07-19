@@ -36,11 +36,13 @@ import com.hilingual.core.designsystem.component.snackbar.TextSnackBar
 import com.hilingual.core.designsystem.event.LocalDialogController
 import com.hilingual.core.designsystem.event.rememberDialogController
 import com.hilingual.presentation.auth.navigation.authNavGraph
+import com.hilingual.presentation.community.communityNavGraph
 import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import com.hilingual.presentation.diarywrite.navigation.diaryWriteNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
+import com.hilingual.presentation.mypage.myPageNavGraph
 import com.hilingual.presentation.onboarding.navigation.onboardingGraph
 import com.hilingual.presentation.splash.navigation.splashNavGraph
 import com.hilingual.presentation.voca.navigation.vocaNavGraph
@@ -117,21 +119,25 @@ internal fun MainScreen(
                         navigateToOnboarding = navigator::navigateToOnboarding,
                         sharedTransitionScope = this@SharedTransitionLayout
                     )
+
                     authNavGraph(
                         paddingValues = innerPadding,
                         navigateToHome = navigator::navigateToHome,
                         navigateToOnboarding = navigator::navigateToOnboarding,
                         sharedTransitionScope = this@SharedTransitionLayout
                     )
+
                     onboardingGraph(
                         paddingValues = innerPadding,
                         navigateToHome = navigator::navigateToHome
                     )
+
                     homeNavGraph(
                         paddingValues = innerPadding,
                         navigateToDiaryFeedback = navigator::navigateToDiaryFeedback,
                         navigateToDiaryWrite = navigator::navigateToDiaryWrite
                     )
+
                     diaryWriteNavGraph(
                         paddingValues = innerPadding,
                         navigateUp = navigator::navigateUp,
@@ -147,13 +153,23 @@ internal fun MainScreen(
                             )
                         }
                     )
+
                     vocaNavGraph(
                         paddingValues = innerPadding,
                         navigateToHome = navigator::navigateToHome
                     )
+
                     diaryFeedbackNavGraph(
                         paddingValues = innerPadding,
                         navigateUp = navigator::navigateUp
+                    )
+
+                    communityNavGraph(
+                        paddingValues = innerPadding
+                    )
+
+                    myPageNavGraph(
+                        paddingValues = innerPadding
                     )
                 }
 

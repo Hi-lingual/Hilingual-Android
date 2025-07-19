@@ -3,10 +3,10 @@ package com.hilingual.presentation.main
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import com.hilingual.core.navigation.MainTabRoute
-import com.hilingual.core.navigation.MainTabRoute.Community
-import com.hilingual.core.navigation.MainTabRoute.My
 import com.hilingual.core.navigation.Route
+import com.hilingual.presentation.community.Community
 import com.hilingual.presentation.home.navigation.Home
+import com.hilingual.presentation.mypage.MyPage
 import com.hilingual.presentation.voca.navigation.Voca
 
 internal enum class MainTab(
@@ -31,7 +31,7 @@ internal enum class MainTab(
     ),
     MY(
         iconRes = R.drawable.ic_my_24,
-        route = My,
+        route = MyPage,
         label = "마이"
     );
 
