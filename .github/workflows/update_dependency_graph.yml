@@ -1,0 +1,69 @@
+name: Update Module Dependency Graph
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - '**/build.gradle.kts'
+
+jobs:
+  update-graph:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Install graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Create local.properties from secret
+        env:
+          LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
+        run: |
+          echo "${LOCAL_PROPERTIES}" > local.properties
+          echo "sdk.dir=$ANDROID_SDK_ROOT" >> local.properties
+
+      - name: Generate project dependency graph
+        run: ./gradlew projectDependencyGraph
+
+      - name: Update README.md with graph
+        run: |
+          README_PATH="README.md"
+          GRAPH_IMAGE_PATH="build/reports/dependency-graph/project.dot.png"
+          START_MARKER="<!--- MODULE_DEPENDENCY_GRAPH_START -->"
+          END_MARKER="<!--- MODULE_DEPENDENCY_GRAPH_END -->"
+          IMAGE_MARKDOWN="![Module Dependency Graph]($GRAPH_IMAGE_PATH)"
+
+          # Read the README content
+          README_CONTENT=$(cat "$README_PATH")
+
+          # Check if markers exist
+          if [[ "$README_CONTENT" =~ "$START_MARKER" && "$README_CONTENT" =~ "$END_MARKER" ]]; then
+            # Replace content between markers
+            NEW_README_CONTENT=$(echo "$README_CONTENT" | sed -e "/$START_MARKER/,/$END_MARKER/c\
+$START_MARKER\
+$IMAGE_MARKDOWN\
+$END_MARKER")
+            echo "$NEW_README_CONTENT" > "$README_PATH"
+            echo "README.md updated successfully."
+          else
+            echo "Markers not found in README.md. Appending graph to end of file."
+            echo -e "\n\n$START_MARKER\n$IMAGE_MARKDOWN\n$END_MARKER" >> "$README_PATH"
+          fi
+
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs(readme): Update module dependency graph"
+          branch: develop
+          file_pattern: README.md

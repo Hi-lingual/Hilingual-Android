@@ -9,3 +9,5 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.jvm) apply false
     alias(libs.plugins.ktlint) apply false
 }
+
+apply(from = "gradle/projectDependencyGraph.gradle.kts")
