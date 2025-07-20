@@ -10,6 +10,8 @@ on:
 jobs:
   update-graph:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -48,7 +50,7 @@ jobs:
           README_CONTENT=$(cat "$README_PATH")
 
           if [[ "$README_CONTENT" == *$START_MARKER* && "$README_CONTENT" == *$END_MARKER* ]]; then
-            NEW_README_CONTENT=$(echo "$README_CONTENT" | sed "/$START_MARKER/,/$END_MARKER/c\\n$START_MARKER\\n$IMAGE_MARKDOWN\\n$END_MARKER")
+            NEW_README_CONTENT=$(echo "$README_CONTENT" | sed "/$START_MARKER/,/$END_MARKER/c\n$START_MARKER\n$IMAGE_MARKDOWN\n$END_MARKER")
             echo "$NEW_README_CONTENT" > "$README_PATH"
             echo "README.md updated successfully."
           else
