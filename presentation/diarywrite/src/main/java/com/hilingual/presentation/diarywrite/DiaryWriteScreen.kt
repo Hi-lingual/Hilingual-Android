@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -252,7 +253,8 @@ private fun DiaryWriteScreen(
         modifier = Modifier
             .background(HilingualTheme.colors.white)
             .fillMaxSize()
-            .padding(paddingValues)
+            .padding(top = paddingValues.calculateTopPadding())
+            .navigationBarsPadding()
             .addFocusCleaner(focusManager)
     ) {
         BackTopAppBar(
@@ -332,19 +334,19 @@ private fun DiaryWriteScreen(
                 )
             }
         ) { balloon ->
-            HilingualButton(
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                text = "피드백 요청하기",
-                enableProvider = { diaryText.length >= 10 },
-                onClick = onDiaryFeedbackRequestButtonClick
-            )
-
             LaunchedEffect(Unit) {
                 balloon.showAlignTop()
                 delay(5000)
                 balloon.dismiss()
             }
+            HilingualButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                text = "피드백 요청하기",
+                enableProvider = { diaryText.length >= 10 },
+                onClick = onDiaryFeedbackRequestButtonClick
+            )
         }
     }
 }
