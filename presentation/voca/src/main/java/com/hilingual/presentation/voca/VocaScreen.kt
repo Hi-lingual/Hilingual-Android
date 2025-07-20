@@ -193,7 +193,6 @@ private fun VocaScreen(
                 .background(HilingualTheme.colors.gray100)
                 .addFocusCleaner(focusManager)
         ) {
-
             // TODO: 헤더 아래만 로딩되도록 바꿔보면 좋을듯(사실 하라는뜻) to.큰나
             VocaHeader(
                 searchText = { searchText },
