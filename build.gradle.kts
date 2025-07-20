@@ -8,5 +8,5 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.jetbrains.kotlin.jvm) apply false
     alias(libs.plugins.ktlint) apply false
-    alias(libs.plugins.module.graph) apply false
+    alias(libs.plugins.module.graph)
 }
