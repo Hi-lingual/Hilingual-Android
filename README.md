@@ -95,6 +95,10 @@ Hi-lingual
     └── voca/              // 단어장 UI
 ```
 
+## Module Dependency Graph
+<!--- MODULE_DEPENDENCY_GRAPH_START -->
+<!--- MODULE_DEPENDENCY_GRAPH_END -->
+
 ## TECH STACK
 
 | Category        | Stack                                                  |
