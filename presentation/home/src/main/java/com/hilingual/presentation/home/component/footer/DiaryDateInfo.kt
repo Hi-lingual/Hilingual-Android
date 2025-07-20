@@ -32,7 +32,6 @@ internal fun DiaryDateInfo(
         selectedDate.format(DATE_FORMATTER)
     }
 
-    // TODO: isFutureDate QA 이후 시연용으로 변경 필요 by. 민재
     val isFutureDate = remember(selectedDate) {
         LocalDate.now().isBefore(selectedDate)
     }

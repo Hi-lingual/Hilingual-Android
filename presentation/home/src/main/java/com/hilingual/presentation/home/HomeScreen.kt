@@ -78,7 +78,9 @@ internal fun HomeRoute(
     when (val state = uiState) {
         is UiState.Loading -> {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(white),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
@@ -115,13 +117,8 @@ private fun HomeScreen(
         uiState.dateList.any { LocalDate.parse(it.date) == date }
     }
 
-    // TODO: QA 이후 시연용으로 변경 필요 by. 민재
     val isFuture = remember(date, today) { date.isAfter(today) }
-    val isWritable = remember(isFuture, date, today) {
-        !isFuture && date.isAfter(today.minusDays(2))
-    }
-
-    // val isWritable = true
+    val isWritable = remember(isFuture, date, today) { !isFuture && date.isAfter(today.minusDays(2)) }
     val verticalScrollState = rememberScrollState()
 
     Column(
@@ -196,7 +193,6 @@ private fun HomeScreen(
                         }
                     }
 
-                    // TODO: QA 이후 시연용으로 변경 필요 by. 민재
                     isFuture -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
 
                     isWritable -> {
@@ -215,7 +211,6 @@ private fun HomeScreen(
                         )
                     }
 
-                    // TODO: QA 이후 시연용으로 변경 필요 by. 민재
                     else -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
                 }
             }

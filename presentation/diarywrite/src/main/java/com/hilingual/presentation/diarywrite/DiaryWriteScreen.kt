@@ -323,6 +323,8 @@ private fun DiaryWriteScreen(
                 setBackgroundColor(Color.Transparent)
                 setIsVisibleArrow(false)
                 setArrowSize(0)
+                setDismissWhenTouchOutside(false)
+                setIsAttachedInDecor(false)
             },
             balloonContent = {
                 WriteGuideTooltip(

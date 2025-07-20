@@ -1,5 +1,7 @@
 package com.hilingual.presentation.diaryfeedback.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -28,7 +30,14 @@ fun NavGraphBuilder.diaryFeedbackNavGraph(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit
 ) {
-    composable<DiaryFeedback> {
+    composable<DiaryFeedback>(
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(500)
+            )
+        }
+    ) {
         DiaryFeedbackRoute(
             paddingValues = paddingValues,
             navigateUp = navigateUp

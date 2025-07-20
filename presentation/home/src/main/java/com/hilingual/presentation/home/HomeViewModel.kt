@@ -11,6 +11,7 @@ import com.hilingual.presentation.home.model.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -40,14 +41,16 @@ class HomeViewModel @Inject constructor(
             val today = LocalDate.now()
 
             val userInfoDeferred = async { userRepository.getUserInfo() }
-            val calendarDeferred = async { calendarRepository.getCalendar(today.year, today.monthValue) }
+            val calendarDeferred =
+                async { calendarRepository.getCalendar(today.year, today.monthValue) }
 
             val userInfoResult = userInfoDeferred.await()
             val calendarResult = calendarDeferred.await()
-
+            delay(200)
             userInfoResult.onSuccess { userInfo ->
                 calendarResult.onSuccess { calendarData ->
-                    val hasDiaryToday = calendarData.dateList.any { LocalDate.parse(it.date) == today }
+                    val hasDiaryToday =
+                        calendarData.dateList.any { LocalDate.parse(it.date) == today }
                     _uiState.value = UiState.Success(
                         HomeUiState(
                             userProfile = userInfo.toState(),
@@ -85,7 +88,6 @@ class HomeViewModel @Inject constructor(
             )
         }
 
-        // TODO: QA 이후 시연용으로 변경 필요 by. 민재
         val today = LocalDate.now()
         val isWritable = !date.isAfter(today) && date.isAfter(today.minusDays(2))
 
@@ -93,13 +95,6 @@ class HomeViewModel @Inject constructor(
             hasDiary -> getDiaryThumbnail(date.toString())
             isWritable -> getTopic(date.toString())
         }
-
-        // TODO: QA 이후 시연용으로 변경 필요 by. 민재
-        // if (hasDiary) {
-        //    getDiaryThumbnail(date.toString())
-        // } else {
-        //    getTopic(date.toString())
-        // }
     }
 
     fun onMonthChanged(yearMonth: YearMonth) {
@@ -112,18 +107,19 @@ class HomeViewModel @Inject constructor(
             calendarRepository.getCalendar(yearMonth.year, yearMonth.monthValue)
                 .onSuccess { calendarModel ->
                     val newDate = yearMonth.atDay(1)
-                    val hasDiaryOnFirst = calendarModel.dateList.any { LocalDate.parse(it.date) == newDate }
+                    val hasDiaryOnFirst =
+                        calendarModel.dateList.any { LocalDate.parse(it.date) == newDate }
 
                     _uiState.updateSuccess { it ->
                         it.copy(
-                            dateList = calendarModel.dateList.map { it.toState() }.toImmutableList(),
+                            dateList = calendarModel.dateList.map { it.toState() }
+                                .toImmutableList(),
                             selectedDate = newDate,
                             diaryThumbnail = null,
                             todayTopic = null
                         )
                     }
 
-                    // TODO: QA 이후 시연용으로 변경 필요 by. 민재
                     val today = LocalDate.now()
                     val isWritable = !newDate.isAfter(today) && newDate.isAfter(today.minusDays(2))
                     when {
@@ -131,12 +127,6 @@ class HomeViewModel @Inject constructor(
                         isWritable -> getTopic(newDate.toString())
                     }
 
-                    // TODO: QA 이후 시연용으로 변경 필요 by. 민재
-                    // if (hasDiaryOnFirst) {
-                    //     getDiaryThumbnail(newDate.toString())
-                    // } else {
-                    //    getTopic(newDate.toString())
-                    // }
                 }
                 .onLogFailure {
                     _sideEffect.emit(HomeSideEffect.ShowRetryDialog {})
