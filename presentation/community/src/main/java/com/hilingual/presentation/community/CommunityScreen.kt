@@ -2,9 +2,9 @@ package com.hilingual.presentation.community
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -24,13 +24,12 @@ internal fun CommunityScreen(
             .fillMaxSize()
             .padding(paddingValues)
             .background(HilingualTheme.colors.gray100),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Spacer(Modifier.weight(0.35f))
         Image(
             painter = painterResource(DesignSystemR.drawable.img_prototype),
             contentDescription = null
         )
-        Spacer(Modifier.weight(0.65f))
     }
 }
