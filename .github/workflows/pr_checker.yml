@@ -32,19 +32,12 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Create local.properties
-        run: touch local.properties
-
-      - name: Write local.properties from secrets
+      - name: Create local.properties from secret
         env:
-          DEV_BASE_URL: ${{ secrets.DEV_BASE_URL }}
-          PROD_BASE_URL: ${{ secrets.PROD_BASE_URL }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
         run: |
-          echo sdk.dir=$ANDROID_SDK_ROOT >> local.properties
-          echo dev.base.url=\"${DEV_BASE_URL}\" >> local.properties
-          echo prod.base.url=\"${PROD_BASE_URL}\" >> local.properties
-          echo google.client.id=\"${GOOGLE_CLIENT_ID}\" >> local.properties
+          echo "${LOCAL_PROPERTIES}" > local.properties
+          echo "sdk.dir=$ANDROID_SDK_ROOT" >> local.properties
 
       - name: Grant permission to gradlew
         run: chmod +x ./gradlew

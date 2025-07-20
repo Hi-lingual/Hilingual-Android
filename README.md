@@ -32,12 +32,14 @@ Hilingual과 함께 영어 일기 습관을 만들고, 자연스러운 영어 �
 <br>
 
 ## CONTRIBUTORS
-| 🤴한민재<br/>([@angryPodo](https://github.com/angryPodo)) | 🦔김나현<br/>([@nahy-512](https://github.com/nahy-512)) | 😻김나현<br/>([@nhyeonii](https://github.com/nhyeonii)) | 🐻문지영<br/>([@Daljyeong](https://github.com/Daljyeong)) | 🎓박효빈<br/>([@Hyobeen-Park](https://github.com/Hyobeen-Park)) |
+
+| 🤴한민재<br/>[@angryPodo](https://github.com/angryPodo) | 🦔김나현<br/>[@nahy-512](https://github.com/nahy-512) | 😻김나현<br/>[@nhyeonii](https://github.com/nhyeonii) | 🐻문지영<br/>[@Daljyeong](https://github.com/Daljyeong) | 🎓박효빈<br/>[@Hyobeen-Park](https://github.com/Hyobeen-Park) |
 |:---:|:---:|:---:|:---:|:---:|
-| <img width="200px" height="260px" src="https://github.com/user-attachments/assets/47519d54-92fb-4c31-bf53-9f52b2de51a7"/> | <img width="200px" height="260px" src="https://github.com/user-attachments/assets/26ed7623-3155-4e47-b431-13341467d337"/> | <img width="200px" height="260px" src="https://github.com/user-attachments/assets/0fbacb28-a3f6-4671-b615-3d27524b3faf"/> | <img width="200px" height="260px" src="https://github.com/user-attachments/assets/12e04461-bb3c-42b4-9f3b-008b983ce9f3"/> | <img width="200px" height="260px" src="https://github.com/user-attachments/assets/922fee37-551a-4309-8a6e-d40746ccb9b1"/> |
-| `로그인`<br/>`홈` | `일기 상세` | `단어장` | `일기 작성` | `멘토` |
+| <img src="https://github.com/user-attachments/assets/4a0a822a-f7ea-47c5-83ca-563ea3b90cc4" height="280" /> | <img src="https://github.com/user-attachments/assets/612c32be-c117-45a6-9392-958ff11de010" height="280" /> | <img src="https://github.com/user-attachments/assets/7af7e584-b763-407c-8628-bdccf731d8b7" height="280" /> | <img src="https://github.com/user-attachments/assets/fc497adb-66b1-4748-b864-7c5e2a18d82f" height="280" /> | <img src="https://github.com/user-attachments/assets/6bedede6-fd60-4514-90ad-7c596ce41fbb" height="280" /> |
+| `스플래시`, `온보딩`<br/>`로그인`,`홈(캘린더)` | `일기 상세` | `단어장` | `일기 작성` | `멘토` |
 
 <br>
+
 
 ## SCREENSHOTS
 |       뷰       |                                                      1                                                      |                                                              2                                                              |
@@ -82,28 +84,36 @@ Hi-lingual
 │   └── voca/              // 단어장
 └── presentation/          // UI 레이어
     ├── auth/              // 인증 UI
+    ├── community/         // 커뮤니티 UI
     ├── diaryfeedback/     // 일기 피드백 UI
     ├── diarywrite/        // 일기 작성 UI
     ├── home/              // 홈 UI
     ├── main/              // 메인 UI
+    ├── mypage/            // 마이페이지 UI
+    ├── onboarding/        // 온보딩 UI
+    ├── splash/            // 스플래시 UI
     └── voca/              // 단어장 UI
 ```
 
-<br>
-
 ## TECH STACK
-| Category | Stack                               |
-| :--- |:------------------------------------|
-| **Architecture** | MVVM, Unidirectional Data Flow |
-| **UI** | 100% Jetpack Compose |
-| **DI** | Hilt |
-| **Asynchronous** | Coroutine, Flow |
-| **Navigation** | Jetpack Navigation Compose (Type-safe) |
-| **Network** | Retrofit2, OkHttp3 |
-| **Local DB** | Room, DataStore |
-| **Image Loading**| Coil |
 
-<br>
+| Category        | Stack                                                  |
+| :-------------- | :----------------------------------------------------- |
+| **Architecture** | MVVM, Unidirectional Data Flow                        |
+| **UI**           | 100% Jetpack Compose                                  |
+| **DI**           | Hilt                                                  |
+| **Asynchronous** | Coroutine, Flow                                       |
+| **Navigation**   | Jetpack Navigation Compose (Type-safe)                |
+| **Network**      | Retrofit2, OkHttp3, Kotlinx Serialization             |
+| **Local DB**     | Room, DataStore                                       |
+| **Image Loading**| Coil                                                  |
+| **ETC**          | Timber, Lottie, ML Kit, Google Identity Service       |
+
+
+## Module Dependency Graph
+<!--- MODULE_DEPENDENCY_GRAPH_START -->
+<!--- MODULE_DEPENDENCY_GRAPH_END -->
+
 
 ## CONVENTION
 > 프로젝트의 일관성과 효율적인 협업을 위해 아래 컨벤션을 준수합니다.
