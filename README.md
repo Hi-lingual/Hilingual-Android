@@ -110,11 +110,6 @@ Hi-lingual
 | **ETC**          | Timber, Lottie, ML Kit, Google Identity Service       |
 
 
-## Module Dependency Graph
-<!--- MODULE_DEPENDENCY_GRAPH_START -->
-<!--- MODULE_DEPENDENCY_GRAPH_END -->
-
-
 ## CONVENTION
 > 프로젝트의 일관성과 효율적인 협업을 위해 아래 컨벤션을 준수합니다.
 

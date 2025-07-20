@@ -67,7 +67,6 @@ balloonCompose = "1.6.12"
 # ML Kit
 mlkitTextRecognition = "16.0.1"
 coroutinesPlayServices = "1.7.1"
-moduleGraph = "0.12"
 
 [libraries]
 # Build Tools
@@ -179,7 +178,6 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "daggerHilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
-module-graph = { id = "com.savvasdalkitsis.module-dependency-graph", version.ref = "moduleGraph" }
 
 hilingual-application = { id = "hilingual.android.application", version = "unspecified" }
 hilingual-compose = { id = "hilingual.android.compose", version = "unspecified" }
