@@ -1,0 +1,60 @@
+name: Update Module Dependency Graph
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - '**/build.gradle.kts'
+      - 'gradle/libs.versions.toml'
+
+jobs:
+  update-graph:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Generate module dependency graph
+        run: ./gradlew generateModuleDependencyGraph
+
+      - name: Update README.md
+        run: |
+          MODULE_GRAPH_FILE="build/reports/module_dependency_graph/graph.md"
+          if [ -f "$MODULE_GRAPH_FILE" ]; then
+            START_COMMENT="<!--- MODULE_DEPENDENCY_GRAPH_START -->"
+            END_COMMENT="<!--- MODULE_DEPENDENCY_GRAPH_END -->"
+            
+            # Read the generated graph content
+            GRAPH_CONTENT=$(cat "$MODULE_GRAPH_FILE")
+            
+            # Create the full content to be inserted
+            FULL_CONTENT="$START_COMMENT\n$GRAPH_CONTENT\n$END_COMMENT"
+            
+            # Use awk to replace the content between the comments
+            awk -v start="$START_COMMENT" -v end="$END_COMMENT" -v content="$GRAPH_CONTENT" '
+            BEGIN { p = 1 }
+            $0 == start { print; print content; p = 0 }
+            $0 == end { p = 1 }
+            p { print }
+            ' README.md > README.md.tmp && mv README.md.tmp README.md
+          else
+            echo "Module dependency graph file not found!"
+            exit 1
+          fi
+
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs(readme): Update module dependency graph"
+          branch: develop
+          file_pattern: README.md
