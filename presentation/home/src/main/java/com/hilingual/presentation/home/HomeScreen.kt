@@ -58,7 +58,7 @@ internal fun HomeRoute(
         viewModel.sideEffect.collect { event ->
             when (event) {
                 is HomeSideEffect.ShowRetryDialog -> {
-                    dialogController.show { dialogController.dismiss() }
+                    dialogController.show(event.onRetry)
                 }
             }
         }
