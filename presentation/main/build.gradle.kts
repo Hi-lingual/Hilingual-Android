@@ -24,6 +24,8 @@ dependencies {
     implementation(projects.presentation.voca)
     implementation(projects.presentation.onboarding)
     implementation(projects.presentation.splash)
+    implementation(projects.presentation.mypage)
+    implementation(projects.presentation.community)
 
     // others
     implementation(libs.accompanist.systemuicontroller)

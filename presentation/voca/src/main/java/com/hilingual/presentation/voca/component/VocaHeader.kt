@@ -42,13 +42,15 @@ internal fun VocaHeader(
         HilingualSearchTextField(
             value = searchText(),
             onValueChanged = onSearchTextChanged,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .addFocusCleaner(focusManager),
             onTrailingIconClick = {
                 onCloseButtonClick()
                 focusManager.clearFocus()
-            }
+            },
+            onSearchAction = { focusManager.clearFocus() }
         )
         Spacer(modifier = Modifier.height(20.dp))
     }

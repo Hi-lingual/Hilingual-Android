@@ -69,7 +69,7 @@ fun HilingualSearchTextField(
             onSearchAction()
             keyboardController?.hide()
         },
-        hintLocales = LocaleList(Locale("ko"))
+        hintLocales = LocaleList(Locale("en"))
     )
 }
 

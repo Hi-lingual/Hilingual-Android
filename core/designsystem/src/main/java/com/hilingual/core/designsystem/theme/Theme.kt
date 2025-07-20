@@ -1,6 +1,7 @@
 package com.hilingual.core.designsystem.theme
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
@@ -13,6 +14,11 @@ private val LocalHilingualColors = staticCompositionLocalOf<HilingualColors> {
 private val LocalHilingualTypography = staticCompositionLocalOf<HilingualTypography> {
     error("No HilingualTypography provided")
 }
+
+private val LightColorScheme = lightColorScheme(
+    primary = hilingualBlack,
+    background = white
+)
 
 object HilingualTheme {
     val colors: HilingualColors
@@ -43,10 +49,14 @@ fun ProvideHilingualColorsAndTypography(
 }
 
 @Composable
-fun HilingualTheme(darkTheme: Boolean = false, content: @Composable () -> Unit) {
+fun HilingualTheme(content: @Composable () -> Unit) {
     val colors = DefaultHilingualColors()
+    val colorScheme = LightColorScheme
     val typography = HilingualTypography()
     ProvideHilingualColorsAndTypography(colors, typography) {
-        MaterialTheme(content = content)
+        MaterialTheme(
+            colorScheme = colorScheme,
+            content = content
+        )
     }
 }

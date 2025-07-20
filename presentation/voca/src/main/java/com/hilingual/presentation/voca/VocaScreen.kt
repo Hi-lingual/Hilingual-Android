@@ -37,6 +37,7 @@ import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.event.LocalDialogController
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
+import com.hilingual.core.designsystem.theme.white
 import com.hilingual.data.voca.model.GroupingVocaModel
 import com.hilingual.data.voca.model.VocaItemModel
 import com.hilingual.presentation.voca.component.AddVocaButton
@@ -93,7 +94,14 @@ internal fun VocaRoute(
 
     when (uiState.vocaGroupList) {
         is UiState.Loading -> {
-            CircularProgressIndicator()
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(white),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
         }
 
         is UiState.Success -> {
@@ -185,6 +193,7 @@ private fun VocaScreen(
                 .background(HilingualTheme.colors.gray100)
                 .addFocusCleaner(focusManager)
         ) {
+            // TODO: 헤더 아래만 로딩되도록 바꿔보면 좋을듯(사실 하라는뜻) to.큰나
             VocaHeader(
                 searchText = { searchText },
                 onSearchTextChanged = onSearchTextChanged,
