@@ -37,23 +37,18 @@ jobs:
         run: ./gradlew projectDependencyGraph
 
       - name: Update README.md with graph
+        shell: bash
         run: |
           README_PATH="README.md"
           GRAPH_IMAGE_PATH="build/reports/dependency-graph/project.dot.png"
           START_MARKER="<!--- MODULE_DEPENDENCY_GRAPH_START -->"
           END_MARKER="<!--- MODULE_DEPENDENCY_GRAPH_END -->"
-          IMAGE_MARKDOWN="![Module Dependency Graph]($GRAPH_IMAGE_PATH)"
+          IMAGE_MARKDOWN="![Module Dependency Graph](${GRAPH_IMAGE_PATH})"
 
-          # Read the README content
           README_CONTENT=$(cat "$README_PATH")
 
-          # Check if markers exist
-          if [[ "$README_CONTENT" =~ "$START_MARKER" && "$README_CONTENT" =~ "$END_MARKER" ]]; then
-            # Replace content between markers
-            NEW_README_CONTENT=$(echo "$README_CONTENT" | sed -e "/$START_MARKER/,/$END_MARKER/c\
-$START_MARKER\
-$IMAGE_MARKDOWN\
-$END_MARKER")
+          if [[ "$README_CONTENT" == *$START_MARKER* && "$README_CONTENT" == *$END_MARKER* ]]; then
+            NEW_README_CONTENT=$(echo "$README_CONTENT" | sed "/$START_MARKER/,/$END_MARKER/c\\n$START_MARKER\\n$IMAGE_MARKDOWN\\n$END_MARKER")
             echo "$NEW_README_CONTENT" > "$README_PATH"
             echo "README.md updated successfully."
           else
