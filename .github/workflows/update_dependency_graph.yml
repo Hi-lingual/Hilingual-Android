@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -38,24 +39,29 @@ jobs:
       - name: Generate project dependency graph
         run: ./gradlew projectDependencyGraph
 
+      - name: Copy graph image to project root
+        run: cp build/reports/dependency-graph/project.dot.png project-dependency-graph.png
+
       - name: Update README.md with graph
         shell: bash
         run: |
           README_PATH="README.md"
-          GRAPH_IMAGE_PATH="build/reports/dependency-graph/project.dot.png"
+          GRAPH_IMAGE_PATH="project-dependency-graph.png"
           START_MARKER="<!--- MODULE_DEPENDENCY_GRAPH_START -->"
           END_MARKER="<!--- MODULE_DEPENDENCY_GRAPH_END -->"
           IMAGE_MARKDOWN="![Module Dependency Graph](${GRAPH_IMAGE_PATH})"
 
-          README_CONTENT=$(cat "$README_PATH")
-
-          if [[ "$README_CONTENT" == *$START_MARKER* && "$README_CONTENT" == *$END_MARKER* ]]; then
-            NEW_README_CONTENT=$(echo "$README_CONTENT" | sed "/$START_MARKER/,/$END_MARKER/c\n$START_MARKER\n$IMAGE_MARKDOWN\n$END_MARKER")
-            echo "$NEW_README_CONTENT" > "$README_PATH"
+          if grep -q "$START_MARKER" "$README_PATH" && grep -q "$END_MARKER" "$README_PATH"; then
+            awk -v s="$START_MARKER" -v e="$END_MARKER" -v img="$IMAGE_MARKDOWN" '
+              BEGIN { inBlock=0 }
+              $0 ~ s { print s; print img; print e; inBlock=1; next }
+              $0 ~ e { inBlock=0; next }
+              !inBlock { print }
+            ' "$README_PATH" > tmp && mv tmp "$README_PATH"
             echo "README.md updated successfully."
           else
-            echo "Markers not found in README.md. Appending graph to end of file."
             echo -e "\n\n$START_MARKER\n$IMAGE_MARKDOWN\n$END_MARKER" >> "$README_PATH"
+            echo "Markers not found. Appended to README.md."
           fi
 
       - name: Commit and push changes
@@ -63,4 +69,6 @@ jobs:
         with:
           commit_message: "docs(readme): Update module dependency graph"
           branch: develop
-          file_pattern: README.md
+          file_pattern: |
+            README.md
+            project-dependency-graph.png
