@@ -25,6 +25,13 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Create local.properties from secret
+        env:
+          LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
+        run: |
+          echo "${LOCAL_PROPERTIES}" > local.properties
+          echo "sdk.dir=$ANDROID_SDK_ROOT" >> local.properties
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
