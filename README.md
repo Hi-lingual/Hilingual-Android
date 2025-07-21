@@ -97,7 +97,6 @@ Hi-lingual
 
 ## Module Dependency Graph
 <!--- MODULE_DEPENDENCY_GRAPH_START -->
-![Module Dependency Graph](project-dependency-graph.png)
 <!--- MODULE_DEPENDENCY_GRAPH_END -->
 
 ## TECH STACK
