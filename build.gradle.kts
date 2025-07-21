@@ -10,4 +10,4 @@ plugins {
     alias(libs.plugins.ktlint) apply false
 }
 
-apply("gradle/projectDependencyGraph.gradle.kts")
+apply(from = "gradle/projectDependencyGraph.gradle.kts")
