@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Hilingual Project
+ * Copyright $YEAR The Hilingual Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,3 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.network
-
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-
-@Serializable
-data class BaseResponse<T>(
-    @SerialName("code")
-    val code: Int,
-    @SerialName("message")
-    val message: String,
-    @SerialName("data")
-    val data: T? = null
-)
