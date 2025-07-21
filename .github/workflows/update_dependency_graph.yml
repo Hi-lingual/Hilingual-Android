@@ -1,4 +1,4 @@
-name: Update Module Dependency Graph
+name: Update Module Dependency Graph and Create PR
 
 on:
   push:
@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout code
@@ -39,14 +40,17 @@ jobs:
       - name: Generate project dependency graph
         run: ./gradlew projectDependencyGraph
 
-      - name: Copy graph image to project root
-        run: cp build/reports/dependency-graph/project.dot.png project-dependency-graph.png
+      - name: Create .graph directory
+        run: mkdir -p .graph
 
-      - name: Update README.md with graph
+      - name: Move graph image to .graph directory
+        run: mv build/reports/dependency-graph/project.dot.png .graph/project-dependency-graph.png
+
+      - name: Update README.md with graph image path
         shell: bash
         run: |
           README_PATH="README.md"
-          GRAPH_IMAGE_PATH="project-dependency-graph.png"
+          GRAPH_IMAGE_PATH=".graph/project-dependency-graph.png"
           START_MARKER="<!--- MODULE_DEPENDENCY_GRAPH_START -->"
           END_MARKER="<!--- MODULE_DEPENDENCY_GRAPH_END -->"
           IMAGE_MARKDOWN="![Module Dependency Graph](${GRAPH_IMAGE_PATH})"
@@ -64,11 +68,27 @@ jobs:
             echo "Markers not found. Appended to README.md."
           fi
 
-      - name: Commit and push changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Create new branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b update-dependency-graph
+
+      - name: Commit changes
+        run: |
+          git add README.md .graph/project-dependency-graph.png
+          git commit -m "docs(readme): Update module dependency graph"
+
+      - name: Push branch
+        run: git push origin update-dependency-graph --force
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
         with:
-          commit_message: "docs(readme): Update module dependency graph"
-          branch: develop
-          file_pattern: |
-            README.md
-            project-dependency-graph.png
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "docs(readme): Update module dependency graph"
+          branch: update-dependency-graph
+          base: develop
+          title: "[DOCS] Update Dependency Graph"
+          body: |
+            This PR updates the module dependency graph image and README.
