@@ -92,3 +92,4 @@ jobs:
           title: "[DOCS] Update Dependency Graph"
           body: |
             This PR updates the module dependency graph image and README.
+          delete-branch: true
