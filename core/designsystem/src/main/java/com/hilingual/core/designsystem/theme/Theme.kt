@@ -81,7 +81,6 @@ fun HilingualTheme(content: @Composable () -> Unit) {
                         content()
                     }
                 }
-
             }
         )
     }
