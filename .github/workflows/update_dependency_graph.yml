@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write
 
     steps:
       - name: Checkout code
@@ -68,11 +67,13 @@ jobs:
             echo "Markers not found. Appended to README.md."
           fi
 
-      - name: Create new branch
+      - name: Configure git user
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -b update-dependency-graph
+
+      - name: Create branch
+        run: git checkout -b update-dependency-graph
 
       - name: Commit changes
         run: |
@@ -80,16 +81,19 @@ jobs:
           git commit -m "docs(readme): Update module dependency graph"
 
       - name: Push branch
-        run: git push origin update-dependency-graph --force
+        run: git push --set-upstream origin update-dependency-graph --force
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "docs(readme): Update module dependency graph"
-          branch: update-dependency-graph
-          base: develop
-          title: "[DOCS] Update Dependency Graph"
-          body: |
-            This PR updates the module dependency graph image and README.
-          delete-branch: true
+      - name: Install GitHub CLI
+        uses: actions/setup-gh-cli@v2
+
+      - name: Create Pull Request via gh CLI
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh auth setup-git
+          gh pr create \
+            --title "[DOCS] Update Dependency Graph" \
+            --body "This PR updates the module dependency graph image and README." \
+            --base develop \
+            --head update-dependency-graph \
+            --reviewer @your-reviewer-id || echo "PR already exists or failed"
