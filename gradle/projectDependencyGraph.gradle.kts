@@ -9,9 +9,9 @@ tasks.register("projectDependencyGraph") {
     description = "Generates a DOT graph of project module dependencies."
 
     doLast {
-        val dotFile = File(rootProject.layout.buildDirectory.get().asFile, "reports/dependency-graph/project.dot")
-        dotFile.parentFile.mkdirs()
-        dotFile.delete()
+        val dotDir = File(rootProject.projectDir, "graph")
+        val dotFile = File(dotDir, "project.dot")
+        dotDir.mkdirs()
 
         dotFile.bufferedWriter().use { writer ->
             writer.appendLine("digraph {")
@@ -44,7 +44,7 @@ tasks.register("projectDependencyGraph") {
                             val targetProject = projectDependency.dependencyProject
                             projects.add(currentProject)
                             projects.add(targetProject)
-                            rootProjects.remove(targetProject) // Remove if it's a dependency of another project
+                            rootProjects.remove(targetProject)
 
                             val graphKey = Pair(currentProject, targetProject)
                             val traits = dependencies.computeIfAbsent(graphKey) { mutableListOf() }
@@ -66,23 +66,20 @@ tasks.register("projectDependencyGraph") {
                     traits.add("shape=box")
                 }
 
-                // Check for specific plugins to determine fillcolor
-                // Note: This part needs to be adapted based on actual plugin IDs used in Hilingual
-                // For now, using generic checks. You might need to refine these based on your build.gradle.kts
                 if (project.plugins.hasPlugin("com.android.application")) {
-                    traits.add("fillcolor=\"#baffc9\"") // Light green for application
+                    traits.add("fillcolor=\"#baffc9\"")
                 } else if (project.plugins.hasPlugin("com.android.library")) {
-                    traits.add("fillcolor=\"#add8e6\"") // Light blue for Android libraries
+                    traits.add("fillcolor=\"#add8e6\"")
                 } else if (project.plugins.hasPlugin("org.jetbrains.kotlin.jvm") || project.plugins.hasPlugin("java-library") || project.plugins.hasPlugin("java")) {
-                    traits.add("fillcolor=\"#ffb3ba\"") // Light red/pink for JVM libraries
+                    traits.add("fillcolor=\"#ffb3ba\"")
                 } else if (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
-                    traits.add("fillcolor=\"#ffd2b3\"") // Orange for multiplatform (if any)
+                    traits.add("fillcolor=\"#ffd2b3\"")
                 } else if (project.plugins.hasPlugin("org.jetbrains.kotlin.js")) {
-                    traits.add("fillcolor=\"#ffffba\"") // Yellow for JS (if any)
+                    traits.add("fillcolor=\"#ffffba\"")
                 } else if (project.plugins.hasPlugin("com.android.dynamic-feature")) {
-                    traits.add("fillcolor=\"#c9baff\"") // Purple for dynamic features (if any)
+                    traits.add("fillcolor=\"#c9baff\"")
                 } else {
-                    traits.add("fillcolor=\"#eeeeee\"") // Default light grey
+                    traits.add("fillcolor=\"#eeeeee\"")
                 }
 
                 writer.appendLine("  \"${project.path}\" [${traits.joinToString(", ")}];")
@@ -109,10 +106,11 @@ tasks.register("projectDependencyGraph") {
         }
 
         exec {
-            commandLine("dot", "-Tpng", "-O", "project.dot")
+            commandLine("dot", "-Tpng", "-O", dotFile.name)
             workingDir = dotFile.parentFile
         }
-        dotFile.delete() // Delete the .dot file after generating png
+
+        dotFile.delete()
 
         println("Project module dependency graph created at ${dotFile.absolutePath}.png")
     }

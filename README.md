@@ -96,8 +96,7 @@ Hi-lingual
 ```
 
 ## Module Dependency Graph
-<!--- MODULE_DEPENDENCY_GRAPH_START -->
-<!--- MODULE_DEPENDENCY_GRAPH_END -->
+![Module Dependency Graph](graph/project.dot.png)
 
 ## TECH STACK
 
