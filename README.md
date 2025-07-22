@@ -1,5 +1,10 @@
-# Hilingual
-<h2 align="center">AI 피드백으로 완성하는 나만의 영어 일기</h2>
+<h1 align="center">Hilingual</h1> 
+<h3 align="center">AI 피드백으로 완성하는 나만의 영어 일기</h3>
+<p align="center">
+  <img src="https://img.shields.io/badge/Android-000000?style=for-the-badge&logo=android&logoColor=3DDC84&labelColor=000000&color=000000" />
+  <img src="https://img.shields.io/badge/Compose_1.5.15-000000?style=for-the-badge&logo=jetpackcompose&logoColor=4285F4&labelColor=000000&color=000000" />
+  <img src="https://img.shields.io/badge/Kotlin_2.1.21-000000?style=for-the-badge&logo=kotlin&logoColor=7F52FF&labelColor=000000&color=000000" />
+</p>
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/21a2dd30-5128-43b1-9436-d4d047231ada">
