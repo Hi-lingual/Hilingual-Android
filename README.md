@@ -115,7 +115,7 @@ Hi-lingual
 | **Network**      | Retrofit2, OkHttp3, Kotlinx Serialization             |
 | **Local DB**     | Room, DataStore                                       |
 | **Image Loading**| Coil                                                  |
-| **ETC**          | Timber, Lottie, ML Kit, Google Identity Service       |
+| **ETC**          | Timber, Lottie, ML Kit, Google Identity Service, Balloon       |
 
 
 ## CONVENTION
