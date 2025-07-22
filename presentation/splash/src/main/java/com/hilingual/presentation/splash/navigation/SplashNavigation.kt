@@ -15,8 +15,6 @@
  */
 package com.hilingual.presentation.splash.navigation
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.navigation.NavController
@@ -42,12 +40,10 @@ fun NavController.navigateToSplash() {
     )
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.splashNavGraph(
     navigateToAuth: () -> Unit,
     navigateToHome: () -> Unit,
-    navigateToOnboarding: () -> Unit,
-    sharedTransitionScope: SharedTransitionScope
+    navigateToOnboarding: () -> Unit
 ) {
     composable<Splash>(
         exitTransition = { fadeOut(tween(500), 0.9999f) }
@@ -56,7 +52,6 @@ fun NavGraphBuilder.splashNavGraph(
             navigateToAuth = navigateToAuth,
             navigateToHome = navigateToHome,
             navigateToOnboarding = navigateToOnboarding,
-            sharedTransitionScope = sharedTransitionScope,
             animatedVisibilityScope = this
         )
     }

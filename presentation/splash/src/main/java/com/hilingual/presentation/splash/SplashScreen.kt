@@ -17,7 +17,6 @@ package com.hilingual.presentation.splash
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,17 +32,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.provider.LocalSystemBarsColor
+import com.hilingual.core.designsystem.event.LocalSharedTransitionScope
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualOrange
 import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun SplashRoute(
     navigateToAuth: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToOnboarding: () -> Unit,
-    sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: SplashViewModel = hiltViewModel()
 ) {
@@ -66,7 +64,6 @@ internal fun SplashRoute(
     }
 
     SplashScreen(
-        sharedTransitionScope = sharedTransitionScope,
         animatedVisibilityScope = animatedVisibilityScope
     )
 }
@@ -74,7 +71,6 @@ internal fun SplashRoute(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun SplashScreen(
-    sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     Column(
@@ -87,7 +83,7 @@ private fun SplashScreen(
             modifier = Modifier.weight(18f)
         )
 
-        with(sharedTransitionScope) {
+        with(LocalSharedTransitionScope.current) {
             Image(
                 painter = painterResource(R.drawable.img_logo),
                 contentDescription = null,

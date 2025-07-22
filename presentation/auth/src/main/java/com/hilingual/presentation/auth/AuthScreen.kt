@@ -19,7 +19,6 @@ import android.content.Context
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -48,6 +47,7 @@ import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.provider.LocalSystemBarsColor
+import com.hilingual.core.designsystem.event.LocalSharedTransitionScope
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualOrange
 import com.hilingual.presentation.auth.component.GoogleSignButton
@@ -56,14 +56,12 @@ import kotlinx.coroutines.flow.collectLatest
 
 private const val POLICY_URL = "https://hilingual.notion.site/230829677ebf8104b52ce74c65c27607?pvs=74"
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun AuthRoute(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
     navigateToOnboarding: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel(),
-    sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     val localSystemBarsColor = LocalSystemBarsColor.current
@@ -88,7 +86,6 @@ internal fun AuthRoute(
         paddingValues = paddingValues,
         onGoogleSignClick = { viewModel.onGoogleSignClick(context) },
         onPrivacyPolicyClick = { navigateToPolicyWebView(context) },
-        sharedTransitionScope = sharedTransitionScope,
         animatedVisibilityScope = animatedVisibilityScope
     )
 }
@@ -100,7 +97,6 @@ private fun AuthScreen(
     onGoogleSignClick: () -> Unit,
     onPrivacyPolicyClick: () -> Unit,
     modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     var visible by remember { mutableStateOf(false) }
@@ -127,7 +123,7 @@ private fun AuthScreen(
     ) {
         Spacer(Modifier.weight(0.47f))
 
-        with(sharedTransitionScope) {
+        with(LocalSharedTransitionScope.current) {
             Image(
                 painter = painterResource(R.drawable.img_logo),
                 contentDescription = null,
