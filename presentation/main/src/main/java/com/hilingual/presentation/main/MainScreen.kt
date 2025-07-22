@@ -20,8 +20,6 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -67,7 +65,6 @@ import kotlinx.coroutines.launch
 
 private const val EXIT_MILLIS = 3000L
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator(),
@@ -108,88 +105,84 @@ internal fun MainScreen(
     CompositionLocalProvider(
         LocalDialogController provides dialogController
     ) {
-        SharedTransitionLayout {
-            Scaffold(
-                bottomBar = {
-                    MainBottomBar(
-                        visible = navigator.isBottomBarVisible(),
-                        tabs = MainTab.entries.toPersistentList(),
-                        currentTab = navigator.currentTab,
-                        onTabSelected = navigator::navigate
-                    )
-                }
-            ) { innerPadding ->
-                NavHost(
-                    enterTransition = { EnterTransition.None },
-                    exitTransition = { ExitTransition.None },
-                    popEnterTransition = { EnterTransition.None },
-                    popExitTransition = { ExitTransition.None },
-                    navController = navigator.navController,
-                    startDestination = navigator.startDestination
-
-                ) {
-                    splashNavGraph(
-                        navigateToAuth = navigator::navigateToAuth,
-                        navigateToHome = navigator::navigateToHome,
-                        navigateToOnboarding = navigator::navigateToOnboarding,
-                        sharedTransitionScope = this@SharedTransitionLayout
-                    )
-
-                    authNavGraph(
-                        paddingValues = innerPadding,
-                        navigateToHome = navigator::navigateToHome,
-                        navigateToOnboarding = navigator::navigateToOnboarding,
-                        sharedTransitionScope = this@SharedTransitionLayout
-                    )
-
-                    onboardingGraph(
-                        paddingValues = innerPadding,
-                        navigateToHome = navigator::navigateToHome
-                    )
-
-                    homeNavGraph(
-                        paddingValues = innerPadding,
-                        navigateToDiaryFeedback = navigator::navigateToDiaryFeedback,
-                        navigateToDiaryWrite = navigator::navigateToDiaryWrite
-                    )
-
-                    diaryWriteNavGraph(
-                        paddingValues = innerPadding,
-                        navigateUp = navigator::navigateUp,
-                        navigateToHome = navigator::navigateToHome,
-                        navigateToDiaryFeedback = { diaryId ->
-                            navigator.navigateToDiaryFeedback(
-                                diaryId = diaryId,
-                                navOptions = navOptions {
-                                    popUpTo<DiaryWrite> {
-                                        inclusive = true
-                                    }
-                                }
-                            )
-                        }
-                    )
-
-                    vocaNavGraph(
-                        paddingValues = innerPadding,
-                        navigateToHome = navigator::navigateToHome
-                    )
-
-                    diaryFeedbackNavGraph(
-                        paddingValues = innerPadding,
-                        navigateUp = navigator::navigateUp
-                    )
-
-                    communityNavGraph(
-                        paddingValues = innerPadding
-                    )
-
-                    myPageNavGraph(
-                        paddingValues = innerPadding
-                    )
-                }
-
-                HilingualErrorDialog(controller = dialogController)
+        Scaffold(
+            bottomBar = {
+                MainBottomBar(
+                    visible = navigator.isBottomBarVisible(),
+                    tabs = MainTab.entries.toPersistentList(),
+                    currentTab = navigator.currentTab,
+                    onTabSelected = navigator::navigate
+                )
             }
+        ) { innerPadding ->
+            NavHost(
+                enterTransition = { EnterTransition.None },
+                exitTransition = { ExitTransition.None },
+                popEnterTransition = { EnterTransition.None },
+                popExitTransition = { ExitTransition.None },
+                navController = navigator.navController,
+                startDestination = navigator.startDestination
+
+            ) {
+                splashNavGraph(
+                    navigateToAuth = navigator::navigateToAuth,
+                    navigateToHome = navigator::navigateToHome,
+                    navigateToOnboarding = navigator::navigateToOnboarding
+                )
+
+                authNavGraph(
+                    paddingValues = innerPadding,
+                    navigateToHome = navigator::navigateToHome,
+                    navigateToOnboarding = navigator::navigateToOnboarding
+                )
+
+                onboardingGraph(
+                    paddingValues = innerPadding,
+                    navigateToHome = navigator::navigateToHome
+                )
+
+                homeNavGraph(
+                    paddingValues = innerPadding,
+                    navigateToDiaryFeedback = navigator::navigateToDiaryFeedback,
+                    navigateToDiaryWrite = navigator::navigateToDiaryWrite
+                )
+
+                diaryWriteNavGraph(
+                    paddingValues = innerPadding,
+                    navigateUp = navigator::navigateUp,
+                    navigateToHome = navigator::navigateToHome,
+                    navigateToDiaryFeedback = { diaryId ->
+                        navigator.navigateToDiaryFeedback(
+                            diaryId = diaryId,
+                            navOptions = navOptions {
+                                popUpTo<DiaryWrite> {
+                                    inclusive = true
+                                }
+                            }
+                        )
+                    }
+                )
+
+                vocaNavGraph(
+                    paddingValues = innerPadding,
+                    navigateToHome = navigator::navigateToHome
+                )
+
+                diaryFeedbackNavGraph(
+                    paddingValues = innerPadding,
+                    navigateUp = navigator::navigateUp
+                )
+
+                communityNavGraph(
+                    paddingValues = innerPadding
+                )
+
+                myPageNavGraph(
+                    paddingValues = innerPadding
+                )
+            }
+
+            HilingualErrorDialog(controller = dialogController)
         }
     }
 
