@@ -27,9 +27,8 @@ deploymentTargetDropDown.xml
 render.experimental.xml
 
 # Keystore files
-# TODO: 나중에 주석 꼭 풀어주기
-#*.jks
-#*.keystore
+*.jks
+*.keystore
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json
