@@ -50,7 +50,7 @@ android {
             keyAlias = properties["releaseKeyAlias"] as? String ?: ""
             keyPassword = properties["releaseKeyPassword"] as? String ?: ""
             storeFile = File("${project.rootDir.absolutePath}/keystore/hilingual-release-key.jks")
-            storePassword = "hilingual-release-key"
+            storePassword = properties["releaseStorePassword"] as? String ?: ""
         }
     }
 
