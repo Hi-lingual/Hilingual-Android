@@ -42,15 +42,15 @@ android {
         getByName("debug") {
             keyAlias = properties["debugKeyAlias"] as? String ?: ""
             keyPassword = properties["debugKeyPassword"] as? String ?: ""
-            storeFile = File("${project.rootDir.absolutePath}/keystore/hi-lingual-debug-key.jks")
-            storePassword = "hi-lingual-debug-key"
+            storeFile = File("${project.rootDir.absolutePath}/keystore/hilingual-debug-key.jks")
+            storePassword = "hilingual-debug-key"
         }
 
         create("release") {
             keyAlias = properties["releaseKeyAlias"] as? String ?: ""
             keyPassword = properties["releaseKeyPassword"] as? String ?: ""
-            storeFile = File("${project.rootDir.absolutePath}/keystore/hi-lingual-release-key.jks")
-            storePassword = "hi-lingual-release-key"
+            storeFile = File("${project.rootDir.absolutePath}/keystore/hilingual-release-key.jks")
+            storePassword = "hilingual-release-key"
         }
     }
 
