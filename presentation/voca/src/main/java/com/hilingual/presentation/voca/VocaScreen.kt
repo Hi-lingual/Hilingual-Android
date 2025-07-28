@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.addFocusCleaner
+import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -97,12 +98,10 @@ internal fun VocaRoute(
         viewModel.fetchWords(uiState.sortType)
     }
 
-    LaunchedEffect(viewModel.sideEffect) {
-        viewModel.sideEffect.collect { event ->
-            when (event) {
-                is VocaSideEffect.ShowRetryDialog -> {
-                    dialogController.show { dialogController.dismiss() }
-                }
+    viewModel.sideEffect.collectSideEffect {
+        when (it) {
+            is VocaSideEffect.ShowRetryDialog -> {
+                dialogController.show { dialogController.dismiss() }
             }
         }
     }

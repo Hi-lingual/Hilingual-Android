@@ -92,7 +92,7 @@ internal fun MainScreen(
 
     LaunchedEffect(isOffline, dialogController.isVisible) {
         if (isOffline && !dialogController.isVisible) {
-            dialogController.show { navigator.navigateToHome() }
+            dialogController.show { dialogController.dismiss() }
         }
     }
 

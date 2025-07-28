@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.event.LocalDialogController
@@ -69,15 +70,14 @@ internal fun HomeRoute(
     val localSystemBarsColor = LocalSystemBarsColor.current
     val dialogController = LocalDialogController.current
 
-    LaunchedEffect(viewModel.sideEffect) {
-        viewModel.sideEffect.collect { event ->
-            when (event) {
-                is HomeSideEffect.ShowRetryDialog -> {
-                    dialogController.show(event.onRetry)
-                }
+    viewModel.sideEffect.collectSideEffect {
+        when(it) {
+            is HomeSideEffect.ShowRetryDialog -> {
+                dialogController.show(it.onRetry)
             }
         }
     }
+
 
     LaunchedEffect(Unit) {
         viewModel.loadInitialData()

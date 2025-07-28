@@ -45,6 +45,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.hilingual.core.common.extension.collectLatestSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.event.LocalSharedTransitionScope
@@ -52,9 +53,9 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualOrange
 import com.hilingual.presentation.auth.component.GoogleSignButton
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 
-private const val POLICY_URL = "https://hilingual.notion.site/230829677ebf8104b52ce74c65c27607?pvs=74"
+private const val POLICY_URL =
+    "https://hilingual.notion.site/230829677ebf8104b52ce74c65c27607?pvs=74"
 
 @Composable
 internal fun AuthRoute(
@@ -73,12 +74,10 @@ internal fun AuthRoute(
         )
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.navigationEvent.collectLatest { event ->
-            when (event) {
-                is AuthSideEffect.NavigateToHome -> navigateToHome()
-                is AuthSideEffect.NavigateToOnboarding -> navigateToOnboarding()
-            }
+    viewModel.navigationEvent.collectLatestSideEffect { event ->
+        when (event) {
+            is AuthSideEffect.NavigateToHome -> navigateToHome()
+            is AuthSideEffect.NavigateToOnboarding -> navigateToOnboarding()
         }
     }
 
