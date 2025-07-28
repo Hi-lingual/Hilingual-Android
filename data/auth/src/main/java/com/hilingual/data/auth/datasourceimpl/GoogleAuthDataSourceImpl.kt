@@ -32,7 +32,7 @@ internal class GoogleAuthDataSourceImpl @Inject constructor(
         suspendRunCatching {
             val googleIdOption = GetGoogleIdOption.Builder()
                 .setFilterByAuthorizedAccounts(false)
-                .setAutoSelectEnabled(true)
+                .setAutoSelectEnabled(false)
                 .setServerClientId(BuildConfig.GOOGLE_WEB_CLIENT_ID)
                 .build()
 
