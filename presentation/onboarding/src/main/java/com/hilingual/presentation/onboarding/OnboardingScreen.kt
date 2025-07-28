@@ -82,7 +82,7 @@ internal fun OnboardingRoute(
     }
 
     viewModel.sideEffect.collectSideEffect {
-        when(it) {
+        when (it) {
             is OnboardingSideEffect.NavigateToHome -> navigateToHome()
             is OnboardingSideEffect.ShowRetryDialog -> {
                 dialogController.show(it.onRetry)

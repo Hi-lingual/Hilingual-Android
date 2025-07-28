@@ -28,7 +28,6 @@ import com.hilingual.presentation.auth.navigation.navigateToAuth
 import com.hilingual.presentation.community.navigateToCommunity
 import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedback
 import com.hilingual.presentation.diarywrite.navigation.navigateToDiaryWrite
-import com.hilingual.presentation.home.navigation.Home
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.mypage.navigateToMyPage
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
@@ -43,7 +42,7 @@ internal class MainNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val startDestination = Home
+    val startDestination = Splash
 
     val currentTab: MainTab?
         @Composable get() = MainTab.find { tab ->

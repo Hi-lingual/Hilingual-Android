@@ -71,13 +71,12 @@ internal fun HomeRoute(
     val dialogController = LocalDialogController.current
 
     viewModel.sideEffect.collectSideEffect {
-        when(it) {
+        when (it) {
             is HomeSideEffect.ShowRetryDialog -> {
                 dialogController.show(it.onRetry)
             }
         }
     }
-
 
     LaunchedEffect(Unit) {
         viewModel.loadInitialData()
