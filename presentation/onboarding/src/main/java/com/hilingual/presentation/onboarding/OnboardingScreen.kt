@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.addFocusCleaner
+import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualShortTextField
@@ -80,13 +81,11 @@ internal fun OnboardingRoute(
         }
     }
 
-    LaunchedEffect(viewModel.sideEffect) {
-        viewModel.sideEffect.collect { event ->
-            when (event) {
-                is OnboardingSideEffect.NavigateToHome -> navigateToHome()
-                is OnboardingSideEffect.ShowRetryDialog -> {
-                    dialogController.show(event.onRetry)
-                }
+    viewModel.sideEffect.collectSideEffect {
+        when (it) {
+            is OnboardingSideEffect.NavigateToHome -> navigateToHome()
+            is OnboardingSideEffect.ShowRetryDialog -> {
+                dialogController.show(it.onRetry)
             }
         }
     }

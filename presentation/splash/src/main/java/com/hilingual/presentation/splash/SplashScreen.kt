@@ -54,7 +54,7 @@ internal fun SplashRoute(
         )
     }
 
-    LaunchedEffect(uiState) {
+    LaunchedEffect(Unit) {
         delay(1400)
         when (uiState) {
             SplashUiState.LoggedIn -> navigateToHome()
