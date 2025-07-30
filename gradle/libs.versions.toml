@@ -1,8 +1,8 @@
 [versions]
 # Build Configuration
-compileSdk = "35"
-calendar = "2.7.0"
-credentials = "1.6.0-alpha03"
+compileSdk = "36"
+calendar = "2.8.0"
+credentials = "1.6.0-alpha04"
 googleid = "1.1.1"
 minSdk = "30"
 targetSdk = "35"
@@ -11,29 +11,29 @@ versionCode = "1"
 versionName = "1.0.0"
 kotlinCompilerExtensionVersion = "1.5.15"
 androidGradlePlugin = "8.3.2"
-spotless = "7.2.0"
+spotless = "7.2.1"
 
 # Kotlin
 agp = "8.10.1"
-kotlin = "2.1.21"
+kotlin = "2.2.0"
 kotlinxImmutable = "0.4.0"
-composeCompilerGradlePlugin = "2.1.21"
+composeCompilerGradlePlugin = "2.2.0"
 ksp = "2.1.21-2.0.2"
-jetbrainsKotlinJvm = "2.1.21"
+jetbrainsKotlinJvm = "2.2.0"
 
 # AndroidX
 coreKtx = "1.16.0"
 coreSplachscreen = "1.0.1"
 androidxAppCompat = "1.7.1"
-lifecycleRuntimeKtx = "2.9.1"
-lifecycleRuntimeComposeAndroid = "2.9.1"
+lifecycleRuntimeKtx = "2.9.2"
+lifecycleRuntimeComposeAndroid = "2.9.2"
 activityCompose = "1.10.1"
-composeBom = "2025.06.01"
-composeNavigation = "2.9.0"
+composeBom = "2025.07.00"
+composeNavigation = "2.9.2"
 security = "1.1.0-beta01"
 datastorePreferences = "1.1.7"
-material = "1.10.0"
-desugarJdkLibs = "2.1.4"
+material = "1.12.0"
+desugarJdkLibs = "2.1.5"
 browser="1.8.0"
 
 # Room
@@ -43,18 +43,18 @@ room = "2.7.2"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-mockk = "1.14.4"
+mockk = "1.14.5"
 
 # Accompanist
-accompanistPager = "0.25.0"
-accompanistSystemuicontroller = "0.28.0"
+accompanistPager = "0.36.0"
+accompanistSystemuicontroller = "0.36.0"
 
 # Third Party
-okhttp = "4.12.0"
+okhttp = "5.1.0"
 retrofit = "3.0.0"
 retrofitKotlinSerializationConverter = "1.0.0"
-kotlinxSerializationJson = "1.8.1"
-daggerHilt = "2.56.2"
+kotlinxSerializationJson = "1.9.0"
+daggerHilt = "2.57"
 hiltNavigationCompose = "1.2.0"
 coil = "2.7.0"
 timber = "5.0.1"
@@ -67,7 +67,7 @@ balloonCompose = "1.6.12"
 
 # ML Kit
 mlkitTextRecognition = "16.0.1"
-coroutinesPlayServices = "1.7.1"
+coroutinesPlayServices = "1.10.2"
 
 [libraries]
 # Build Tools
