@@ -39,7 +39,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
@@ -55,6 +54,7 @@ import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import com.hilingual.presentation.diarywrite.navigation.diaryWriteNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
+import com.hilingual.presentation.main.monitor.NetworkMonitor
 import com.hilingual.presentation.mypage.myPageNavGraph
 import com.hilingual.presentation.onboarding.navigation.onboardingGraph
 import com.hilingual.presentation.splash.navigation.splashNavGraph
@@ -67,10 +67,10 @@ private const val EXIT_MILLIS = 3000L
 
 @Composable
 internal fun MainScreen(
-    appState: MainAppState = rememberMainAppState(),
-    viewModel: MainViewModel = hiltViewModel()
+    networkMonitor: NetworkMonitor,
+    appState: MainAppState = rememberMainAppState(networkMonitor = networkMonitor)
 ) {
-    val isOffline by viewModel.isOffline.collectAsStateWithLifecycle()
+    val isOffline by appState.isOffline.collectAsStateWithLifecycle()
     val isBottomBarVisible by appState.isBottomBarVisible.collectAsStateWithLifecycle()
     val currentTab by appState.currentTab.collectAsStateWithLifecycle()
 

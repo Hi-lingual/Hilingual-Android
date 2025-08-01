@@ -16,9 +16,11 @@
 package com.hilingual.presentation.main
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.rememberNavController
@@ -28,21 +30,34 @@ import com.hilingual.presentation.community.navigateToCommunity
 import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedback
 import com.hilingual.presentation.diarywrite.navigation.navigateToDiaryWrite
 import com.hilingual.presentation.home.navigation.navigateToHome
+import com.hilingual.presentation.main.monitor.NetworkMonitor
 import com.hilingual.presentation.mypage.navigateToMyPage
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.voca.navigation.navigateToVoca
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.time.LocalDate
 
+@Stable
 internal class MainAppState(
     val navController: NavHostController,
-    coroutineScope: CoroutineScope
+    coroutineScope: CoroutineScope,
+    networkMonitor: NetworkMonitor
 ) {
     val startDestination = Splash
+
+    val isOffline: StateFlow<Boolean> = networkMonitor.isOnline
+        .map(Boolean::not)
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false
+        )
+
     val currentTab = navController.currentBackStackEntryFlow.map { backStackEntry ->
         MainTab.find { tab ->
             backStackEntry.destination.hasRoute(tab::class)
@@ -65,26 +80,16 @@ internal class MainAppState(
 
     fun navigate(tab: MainTab) {
         val navOptions = navOptions {
-            navController.currentDestination?.route?.let {
-                popUpTo(it) {
-                    inclusive = true
-                    saveState = true
-                }
-                restoreState = true
-                launchSingleTop = true
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
             }
-        }
-
-        val vocaNavOptions = navOptions {
-            popUpTo(0) {
-                inclusive = true
-            }
-            launchSingleTop
+            launchSingleTop = true
+            restoreState = true
         }
 
         when (tab) {
             MainTab.HOME -> navController.navigateToHome(navOptions = navOptions)
-            MainTab.VOCA -> navController.navigateToVoca(navOptions = vocaNavOptions)
+            MainTab.VOCA -> navController.navigateToVoca(navOptions = navOptions)
             MainTab.COMMUNITY -> navController.navigateToCommunity(navOptions = navOptions)
             MainTab.MY -> navController.navigateToMyPage(navOptions = navOptions)
         }
@@ -146,8 +151,9 @@ internal class MainAppState(
 
 @Composable
 internal fun rememberMainAppState(
+    networkMonitor: NetworkMonitor,
     navController: NavHostController = rememberNavController(),
     coroutineScope: CoroutineScope = rememberCoroutineScope()
-): MainAppState = remember(navController, coroutineScope) {
-    MainAppState(navController, coroutineScope)
+): MainAppState = remember(navController, coroutineScope, networkMonitor) {
+    MainAppState(navController, coroutineScope, networkMonitor)
 }
