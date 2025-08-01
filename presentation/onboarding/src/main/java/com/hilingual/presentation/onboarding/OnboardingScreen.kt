@@ -54,7 +54,7 @@ import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualShortTextField
 import com.hilingual.core.designsystem.component.textfield.TextFieldState
 import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppBar
-import com.hilingual.core.designsystem.event.LocalDialogController
+import com.hilingual.core.designsystem.event.LocalDialogEventProvider
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.designsystem.R as DesignSystemR
@@ -67,7 +67,7 @@ internal fun OnboardingRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
-    val dialogController = LocalDialogController.current
+    val dialogEventProvider = LocalDialogEventProvider.current
 
     var textFieldState by remember { mutableStateOf(TextFieldState.NORMAL) }
 
@@ -85,7 +85,7 @@ internal fun OnboardingRoute(
         when (it) {
             is OnboardingSideEffect.NavigateToHome -> navigateToHome()
             is OnboardingSideEffect.ShowRetryDialog -> {
-                dialogController.show(it.onRetry)
+                dialogEventProvider.show(it.onRetry)
             }
         }
     }

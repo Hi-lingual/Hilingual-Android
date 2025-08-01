@@ -45,8 +45,8 @@ import androidx.navigation.navOptions
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
 import com.hilingual.core.designsystem.component.snackbar.TextSnackBar
-import com.hilingual.core.designsystem.event.LocalDialogController
-import com.hilingual.core.designsystem.event.rememberDialogController
+import com.hilingual.core.designsystem.event.LocalDialogEventProvider
+import com.hilingual.core.designsystem.event.rememberDialogEventProvider
 import com.hilingual.presentation.auth.navigation.authNavGraph
 import com.hilingual.presentation.community.communityNavGraph
 import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
@@ -79,7 +79,10 @@ internal fun MainScreen(
 
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
-    val dialogController = rememberDialogController()
+    val dialogEventProvider = rememberDialogEventProvider(
+        show = appState::showDialog,
+        dismiss = appState::dismissDialog
+    )
 
     val onShowSnackBar: (String) -> Unit = { message ->
         coroutineScope.launch {
@@ -92,9 +95,9 @@ internal fun MainScreen(
         }
     }
 
-    LaunchedEffect(isOffline, dialogController.isVisible) {
-        if (isOffline && !dialogController.isVisible) {
-            dialogController.show { dialogController.dismiss() }
+    LaunchedEffect(isOffline, appState.dialogState.isVisible) {
+        if (isOffline && !appState.dialogState.isVisible) {
+            appState.showDialog { appState.dismissDialog() }
         }
     }
 
@@ -105,7 +108,7 @@ internal fun MainScreen(
     )
 
     CompositionLocalProvider(
-        LocalDialogController provides dialogController
+        LocalDialogEventProvider provides dialogEventProvider
     ) {
         Scaffold(
             bottomBar = {
@@ -184,7 +187,10 @@ internal fun MainScreen(
                 )
             }
 
-            HilingualErrorDialog(controller = dialogController)
+            HilingualErrorDialog(
+                state = appState.dialogState,
+                onDismiss = appState::dismissDialog
+            )
         }
     }
 

@@ -17,14 +17,18 @@ package com.hilingual.presentation.main
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.hilingual.core.designsystem.event.DialogState
 import com.hilingual.presentation.auth.navigation.navigateToAuth
 import com.hilingual.presentation.community.navigateToCommunity
 import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedback
@@ -77,6 +81,17 @@ internal class MainAppState(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = false
     )
+
+    var dialogState by mutableStateOf(DialogState())
+        private set
+
+    fun showDialog(onClick: () -> Unit) {
+        dialogState = DialogState(isVisible = true, onClickAction = onClick)
+    }
+
+    fun dismissDialog() {
+        dialogState = dialogState.copy(isVisible = false)
+    }
 
     fun navigate(tab: MainTab) {
         val navOptions = navOptions {

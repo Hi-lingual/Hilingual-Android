@@ -15,8 +15,27 @@
  */
 package com.hilingual.core.designsystem.event
 
-import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.remember
 
-val LocalDialogController = staticCompositionLocalOf<DialogController> {
-    error("No DialogController provided")
+@Immutable
+data class DialogState(
+    val isVisible: Boolean = false,
+    val onClickAction: () -> Unit = {}
+)
+
+@Stable
+class DialogEventProvider(
+    val show: (() -> Unit) -> Unit,
+    val dismiss: () -> Unit
+)
+
+@Composable
+fun rememberDialogEventProvider(
+    show: (() -> Unit) -> Unit,
+    dismiss: () -> Unit
+): DialogEventProvider = remember(show, dismiss) {
+    DialogEventProvider(show, dismiss)
 }

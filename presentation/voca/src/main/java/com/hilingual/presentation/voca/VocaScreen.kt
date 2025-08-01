@@ -50,7 +50,7 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
-import com.hilingual.core.designsystem.event.LocalDialogController
+import com.hilingual.core.designsystem.event.LocalDialogEventProvider
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
@@ -79,7 +79,7 @@ internal fun VocaRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
     val focusManager = LocalFocusManager.current
-    val dialogController = LocalDialogController.current
+    val dialogEventProvider = LocalDialogEventProvider.current
 
     LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(
@@ -101,7 +101,7 @@ internal fun VocaRoute(
     viewModel.sideEffect.collectSideEffect {
         when (it) {
             is VocaSideEffect.ShowRetryDialog -> {
-                dialogController.show { dialogController.dismiss() }
+                dialogEventProvider.show { dialogEventProvider.dismiss() }
             }
         }
     }

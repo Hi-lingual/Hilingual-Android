@@ -50,7 +50,7 @@ import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
-import com.hilingual.core.designsystem.event.LocalDialogController
+import com.hilingual.core.designsystem.event.LocalDialogEventProvider
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.diaryfeedback.component.DiaryFeedbackTabRow
@@ -74,7 +74,7 @@ internal fun DiaryFeedbackRoute(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
     var isImageDetailVisible by remember { mutableStateOf(false) }
-    val dialogController = LocalDialogController.current
+    val dialogEventProvider = LocalDialogEventProvider.current
 
     BackHandler {
         if (isImageDetailVisible) {
@@ -93,7 +93,7 @@ internal fun DiaryFeedbackRoute(
     viewModel.sideEffect.collectSideEffect {
         when (it) {
             is DiaryFeedbackSideEffect.ShowRetryDialog -> {
-                dialogController.show(it.onRetry)
+                dialogEventProvider.show(it.onRetry)
             }
         }
     }
