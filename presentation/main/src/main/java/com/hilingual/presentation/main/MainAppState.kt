@@ -17,11 +17,11 @@ package com.hilingual.presentation.main
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.navigation.NavDestination
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.hilingual.presentation.auth.navigation.navigateToAuth
@@ -33,44 +33,49 @@ import com.hilingual.presentation.mypage.navigateToMyPage
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.voca.navigation.navigateToVoca
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import java.time.LocalDate
 
-internal class MainNavigator(
-    val navController: NavHostController
+internal class MainAppState(
+    val navController: NavHostController,
+    coroutineScope: CoroutineScope
 ) {
-    private val currentDestination: NavDestination?
-        @Composable get() = navController
-            .currentBackStackEntryAsState().value?.destination
-
     val startDestination = Splash
-
-    val currentTab: MainTab?
-        @Composable get() = MainTab.find { tab ->
-            currentDestination?.hasRoute(tab::class) == true
+    val currentTab = navController.currentBackStackEntryFlow.map { backStackEntry ->
+        MainTab.find { tab ->
+            backStackEntry.destination.hasRoute(tab::class)
         }
+    }.stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = null
+    )
+
+    val isBottomBarVisible = navController.currentBackStackEntryFlow.map { backStackEntry ->
+        MainTab.contains { tab ->
+            backStackEntry.destination.hasRoute(tab::class)
+        }
+    }.stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = false
+    )
 
     fun navigate(tab: MainTab) {
         val navOptions = navOptions {
-            navController.currentDestination?.route?.let {
-                popUpTo(it) {
-                    inclusive = true
-                    saveState = true
-                }
-                restoreState = true
-                launchSingleTop = true
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
             }
-        }
-
-        val vocaNavOptions = navOptions {
-            popUpTo(0) {
-                inclusive = true
-            }
-            launchSingleTop
+            launchSingleTop = true
+            restoreState = true
         }
 
         when (tab) {
             MainTab.HOME -> navController.navigateToHome(navOptions = navOptions)
-            MainTab.VOCA -> navController.navigateToVoca(navOptions = vocaNavOptions)
+            MainTab.VOCA -> navController.navigateToVoca(navOptions = navOptions)
             MainTab.COMMUNITY -> navController.navigateToCommunity(navOptions = navOptions)
             MainTab.MY -> navController.navigateToMyPage(navOptions = navOptions)
         }
@@ -128,16 +133,12 @@ internal class MainNavigator(
     fun navigateUp() {
         navController.navigateUp()
     }
-
-    @Composable
-    fun isBottomBarVisible() = MainTab.contains {
-        currentDestination?.hasRoute(it::class) == true
-    }
 }
 
 @Composable
-internal fun rememberMainNavigator(
-    navController: NavHostController = rememberNavController()
-): MainNavigator = remember(navController) {
-    MainNavigator(navController)
+internal fun rememberMainAppState(
+    navController: NavHostController = rememberNavController(),
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
+): MainAppState = remember(navController, coroutineScope) {
+    MainAppState(navController, coroutineScope)
 }

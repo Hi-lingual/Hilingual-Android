@@ -67,10 +67,12 @@ private const val EXIT_MILLIS = 3000L
 
 @Composable
 internal fun MainScreen(
-    navigator: MainNavigator = rememberMainNavigator(),
+    appState: MainAppState = rememberMainAppState(),
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val isOffline by viewModel.isOffline.collectAsStateWithLifecycle()
+    val isBottomBarVisible by appState.isBottomBarVisible.collectAsStateWithLifecycle()
+    val currentTab by appState.currentTab.collectAsStateWithLifecycle()
 
     val systemBarsColor = LocalSystemBarsColor.current
     val activity = LocalActivity.current
@@ -108,10 +110,10 @@ internal fun MainScreen(
         Scaffold(
             bottomBar = {
                 MainBottomBar(
-                    visible = navigator.isBottomBarVisible(),
+                    visible = isBottomBarVisible,
                     tabs = MainTab.entries.toPersistentList(),
-                    currentTab = navigator.currentTab,
-                    onTabSelected = navigator::navigate
+                    currentTab = currentTab,
+                    onTabSelected = appState::navigate
                 )
             }
         ) { innerPadding ->
@@ -120,39 +122,39 @@ internal fun MainScreen(
                 exitTransition = { ExitTransition.None },
                 popEnterTransition = { EnterTransition.None },
                 popExitTransition = { ExitTransition.None },
-                navController = navigator.navController,
-                startDestination = navigator.startDestination
+                navController = appState.navController,
+                startDestination = appState.startDestination
 
             ) {
                 splashNavGraph(
-                    navigateToAuth = navigator::navigateToAuth,
-                    navigateToHome = navigator::navigateToHome,
-                    navigateToOnboarding = navigator::navigateToOnboarding
+                    navigateToAuth = appState::navigateToAuth,
+                    navigateToHome = appState::navigateToHome,
+                    navigateToOnboarding = appState::navigateToOnboarding
                 )
 
                 authNavGraph(
                     paddingValues = innerPadding,
-                    navigateToHome = navigator::navigateToHome,
-                    navigateToOnboarding = navigator::navigateToOnboarding
+                    navigateToHome = appState::navigateToHome,
+                    navigateToOnboarding = appState::navigateToOnboarding
                 )
 
                 onboardingGraph(
                     paddingValues = innerPadding,
-                    navigateToHome = navigator::navigateToHome
+                    navigateToHome = appState::navigateToHome
                 )
 
                 homeNavGraph(
                     paddingValues = innerPadding,
-                    navigateToDiaryFeedback = navigator::navigateToDiaryFeedback,
-                    navigateToDiaryWrite = navigator::navigateToDiaryWrite
+                    navigateToDiaryFeedback = appState::navigateToDiaryFeedback,
+                    navigateToDiaryWrite = appState::navigateToDiaryWrite
                 )
 
                 diaryWriteNavGraph(
                     paddingValues = innerPadding,
-                    navigateUp = navigator::navigateUp,
-                    navigateToHome = navigator::navigateToHome,
+                    navigateUp = appState::navigateUp,
+                    navigateToHome = appState::navigateToHome,
                     navigateToDiaryFeedback = { diaryId ->
-                        navigator.navigateToDiaryFeedback(
+                        appState.navigateToDiaryFeedback(
                             diaryId = diaryId,
                             navOptions = navOptions {
                                 popUpTo<DiaryWrite> {
@@ -165,12 +167,12 @@ internal fun MainScreen(
 
                 vocaNavGraph(
                     paddingValues = innerPadding,
-                    navigateToHome = navigator::navigateToHome
+                    navigateToHome = appState::navigateToHome
                 )
 
                 diaryFeedbackNavGraph(
                     paddingValues = innerPadding,
-                    navigateUp = navigator::navigateUp
+                    navigateUp = appState::navigateUp
                 )
 
                 communityNavGraph(

@@ -16,7 +16,6 @@
 package com.hilingual.presentation.main
 
 import androidx.annotation.DrawableRes
-import androidx.compose.runtime.Composable
 import com.hilingual.core.navigation.MainTabRoute
 import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.community.Community
@@ -51,13 +50,11 @@ internal enum class MainTab(
     );
 
     companion object {
-        @Composable
-        fun find(predicate: @Composable (MainTabRoute) -> Boolean): MainTab? {
+        fun find(predicate: (MainTabRoute) -> Boolean): MainTab? {
             return entries.find { predicate(it.route) }
         }
 
-        @Composable
-        fun contains(predicate: @Composable (Route) -> Boolean): Boolean {
+        fun contains(predicate: (Route) -> Boolean): Boolean {
             return entries.map { it.route }.any { predicate(it) }
         }
     }
