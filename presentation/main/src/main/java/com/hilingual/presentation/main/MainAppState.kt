@@ -95,16 +95,26 @@ internal class MainAppState(
 
     fun navigate(tab: MainTab) {
         val navOptions = navOptions {
-            popUpTo(navController.graph.findStartDestination().id) {
-                saveState = true
+            navController.currentDestination?.route?.let {
+                popUpTo(it) {
+                    inclusive = true
+                    saveState = true
+                }
+                restoreState = true
+                launchSingleTop = true
             }
-            launchSingleTop = true
-            restoreState = true
+        }
+
+        val vocaNavOptions = navOptions {
+            popUpTo(0) {
+                inclusive = true
+            }
+            launchSingleTop
         }
 
         when (tab) {
             MainTab.HOME -> navController.navigateToHome(navOptions = navOptions)
-            MainTab.VOCA -> navController.navigateToVoca(navOptions = navOptions)
+            MainTab.VOCA -> navController.navigateToVoca(navOptions = vocaNavOptions)
             MainTab.COMMUNITY -> navController.navigateToCommunity(navOptions = navOptions)
             MainTab.MY -> navController.navigateToMyPage(navOptions = navOptions)
         }
