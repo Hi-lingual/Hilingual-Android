@@ -13,26 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.main
+package com.hilingual.presentation.main.state
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.hilingual.core.designsystem.event.DialogState
 import com.hilingual.presentation.auth.navigation.navigateToAuth
 import com.hilingual.presentation.community.navigateToCommunity
 import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedback
 import com.hilingual.presentation.diarywrite.navigation.navigateToDiaryWrite
 import com.hilingual.presentation.home.navigation.navigateToHome
+import com.hilingual.presentation.main.MainTab
 import com.hilingual.presentation.main.monitor.NetworkMonitor
 import com.hilingual.presentation.mypage.navigateToMyPage
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
@@ -48,6 +45,7 @@ import java.time.LocalDate
 @Stable
 internal class MainAppState(
     val navController: NavHostController,
+    val dialogStateHolder: DialogStateHolder,
     coroutineScope: CoroutineScope,
     networkMonitor: NetworkMonitor
 ) {
@@ -80,17 +78,6 @@ internal class MainAppState(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = false
     )
-
-    var dialogState by mutableStateOf(DialogState())
-        private set
-
-    fun showDialog(onClick: () -> Unit) {
-        dialogState = DialogState(isVisible = true, onClickAction = onClick)
-    }
-
-    fun dismissDialog() {
-        dialogState = dialogState.copy(isVisible = false)
-    }
 
     fun navigate(tab: MainTab) {
         val navOptions = navOptions {
@@ -177,7 +164,8 @@ internal class MainAppState(
 internal fun rememberMainAppState(
     networkMonitor: NetworkMonitor,
     navController: NavHostController = rememberNavController(),
+    dialogStateHolder: DialogStateHolder = rememberDialogStateHolder(),
     coroutineScope: CoroutineScope = rememberCoroutineScope()
-): MainAppState = remember(navController, coroutineScope, networkMonitor) {
-    MainAppState(navController, coroutineScope, networkMonitor)
+): MainAppState = remember(navController, dialogStateHolder, coroutineScope, networkMonitor) {
+    MainAppState(navController, dialogStateHolder, coroutineScope, networkMonitor)
 }

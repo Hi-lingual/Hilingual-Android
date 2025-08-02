@@ -54,7 +54,7 @@ import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import com.hilingual.presentation.diarywrite.navigation.diaryWriteNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
-import com.hilingual.presentation.main.monitor.NetworkMonitor
+import com.hilingual.presentation.main.state.MainAppState
 import com.hilingual.presentation.mypage.myPageNavGraph
 import com.hilingual.presentation.onboarding.navigation.onboardingGraph
 import com.hilingual.presentation.splash.navigation.splashNavGraph
@@ -67,8 +67,7 @@ private const val EXIT_MILLIS = 3000L
 
 @Composable
 internal fun MainScreen(
-    networkMonitor: NetworkMonitor,
-    appState: MainAppState = rememberMainAppState(networkMonitor = networkMonitor)
+    appState: MainAppState
 ) {
     val isOffline by appState.isOffline.collectAsStateWithLifecycle()
     val isBottomBarVisible by appState.isBottomBarVisible.collectAsStateWithLifecycle()
@@ -80,8 +79,8 @@ internal fun MainScreen(
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
     val dialogEventProvider = rememberDialogEventProvider(
-        show = appState::showDialog,
-        dismiss = appState::dismissDialog
+        show = appState.dialogStateHolder::showDialog,
+        dismiss = appState.dialogStateHolder::dismissDialog
     )
 
     val onShowSnackBar: (String) -> Unit = { message ->
@@ -95,9 +94,9 @@ internal fun MainScreen(
         }
     }
 
-    LaunchedEffect(isOffline, appState.dialogState.isVisible) {
-        if (isOffline && !appState.dialogState.isVisible) {
-            appState.showDialog { appState.dismissDialog() }
+    LaunchedEffect(isOffline, appState.dialogStateHolder.dialogState.isVisible) {
+        if (isOffline && !appState.dialogStateHolder.dialogState.isVisible) {
+            appState.dialogStateHolder.showDialog { appState.dialogStateHolder.dismissDialog() }
         }
     }
 
@@ -188,8 +187,8 @@ internal fun MainScreen(
             }
 
             HilingualErrorDialog(
-                state = appState.dialogState,
-                onDismiss = appState::dismissDialog
+                state = appState.dialogStateHolder.dialogState,
+                onDismiss = appState.dialogStateHolder::dismissDialog
             )
         }
     }

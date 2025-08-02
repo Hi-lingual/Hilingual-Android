@@ -26,6 +26,7 @@ import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.provider.SystemBarsColorController
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.main.monitor.NetworkMonitor
+import com.hilingual.presentation.main.state.rememberMainAppState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -44,8 +45,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             HilingualTheme {
+                val appState = rememberMainAppState(networkMonitor = networkMonitor)
                 CompositionLocalProvider(LocalSystemBarsColor provides systemBarsColor) {
-                    MainScreen(networkMonitor = networkMonitor)
+                    MainScreen(appState = appState)
                 }
             }
         }
