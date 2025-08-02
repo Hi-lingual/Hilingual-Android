@@ -55,7 +55,7 @@ internal fun RecommendExpressionScreen(
         item {
             Text(
                 text = writtenDate,
-                style = HilingualTheme.typography.bodySB14,
+                style = HilingualTheme.typography.bodySB16,
                 color = HilingualTheme.colors.gray700
             )
 

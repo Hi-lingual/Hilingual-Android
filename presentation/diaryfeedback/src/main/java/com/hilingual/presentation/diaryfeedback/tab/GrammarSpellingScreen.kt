@@ -75,7 +75,7 @@ internal fun GrammarSpellingScreen(
             ) {
                 Text(
                     text = writtenDate,
-                    style = HilingualTheme.typography.bodySB14,
+                    style = HilingualTheme.typography.bodySB16,
                     color = HilingualTheme.colors.gray700
                 )
                 DiaryViewModeToggle(
