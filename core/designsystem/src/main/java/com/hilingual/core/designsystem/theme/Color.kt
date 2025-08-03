@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 val hilingualBlack = Color(0xFF212121)
 val hilingualOrange = Color(0xFFFF6937)
 val hilingualBlue = Color(0xFF487AFF)
+val hilingualBlue50 = Color(0xFFE0E9FF)
 
 val nounBg = Color(0xFFCAD8FF)
 val pronounBg = Color(0xFF5642EB)
@@ -49,7 +50,8 @@ val gray300 = Color(0xFFBDBDBD)
 val gray200 = Color(0xFFE0E0E0)
 val gray100 = Color(0xFFF5F5F5)
 val white = Color(0xFFFFFFFF)
-val dim = Color(0xFF000000).copy(alpha = 0.7f)
+val dim1 = Color(0xFF000000).copy(alpha = 0.4f)
+val dim2 = Color(0xFF000000).copy(alpha = 0.7f)
 
 val alertRed = Color(0xFFFF3B30)
 val infoBlue = Color(0xFF007AFF)
@@ -59,6 +61,7 @@ class HilingualColors(
     hilingualBlack: Color,
     hilingualOrange: Color,
     hilingualBlue: Color,
+    hilingualBlue50: Color,
     nounBg: Color,
     pronounBg: Color,
     adjBg: Color,
@@ -77,7 +80,8 @@ class HilingualColors(
     gray200: Color,
     gray100: Color,
     white: Color,
-    dim: Color,
+    dim1: Color,
+    dim2: Color,
     alertRed: Color,
     infoBlue: Color
 
@@ -87,6 +91,8 @@ class HilingualColors(
     var hilingualOrange by mutableStateOf(hilingualOrange)
         private set
     var hilingualBlue by mutableStateOf(hilingualBlue)
+        private set
+    var hilingualBlue50 by mutableStateOf(hilingualBlue50)
         private set
     var nounBg by mutableStateOf(nounBg)
         private set
@@ -124,7 +130,9 @@ class HilingualColors(
         private set
     var white by mutableStateOf(white)
         private set
-    var dim by mutableStateOf(dim)
+    var dim1 by mutableStateOf(dim1)
+        private set
+    var dim2 by mutableStateOf(dim2)
         private set
     var alertRed by mutableStateOf(alertRed)
         private set
@@ -135,6 +143,7 @@ class HilingualColors(
         hilingualBlack,
         hilingualOrange,
         hilingualBlue,
+        hilingualBlue50,
         nounBg,
         pronounBg,
         adjBg,
@@ -153,7 +162,8 @@ class HilingualColors(
         gray200,
         gray100,
         white,
-        dim,
+        dim1,
+        dim2,
         alertRed,
         infoBlue
     )
@@ -162,6 +172,7 @@ class HilingualColors(
         hilingualBlack = other.hilingualBlack
         hilingualOrange = other.hilingualOrange
         hilingualBlue = other.hilingualBlue
+        hilingualBlue50 = other.hilingualBlue50
         nounBg = other.nounBg
         pronounBg = other.pronounBg
         adjBg = other.adjBg
@@ -180,7 +191,8 @@ class HilingualColors(
         gray200 = other.gray200
         gray100 = other.gray100
         white = other.white
-        dim = other.dim
+        dim1 = other.dim1
+        dim2 = other.dim2
         alertRed = other.alertRed
         infoBlue = other.infoBlue
     }
@@ -190,6 +202,7 @@ fun DefaultHilingualColors(
     HilingualBlack: Color = hilingualBlack,
     HilingualOrange: Color = hilingualOrange,
     HilingualBlue: Color = hilingualBlue,
+    HilingualBlue50: Color = hilingualBlue50,
     NounBg: Color = nounBg,
     PronounBg: Color = pronounBg,
     AdjBg: Color = adjBg,
@@ -208,13 +221,15 @@ fun DefaultHilingualColors(
     Gray200: Color = gray200,
     Gray100: Color = gray100,
     White: Color = white,
-    Dim: Color = dim,
+    Dim1: Color = dim1,
+    Dim2: Color = dim2,
     AlertRed: Color = alertRed,
     InfoBlue: Color = infoBlue
 ) = HilingualColors(
     HilingualBlack,
     HilingualOrange,
     HilingualBlue,
+    HilingualBlue50,
     NounBg,
     PronounBg,
     AdjBg,
@@ -233,7 +248,8 @@ fun DefaultHilingualColors(
     Gray200,
     Gray100,
     White,
-    Dim,
+    Dim1,
+    Dim2,
     AlertRed,
     InfoBlue
 )
@@ -255,6 +271,14 @@ fun HilingualMainColorsPreview() {
                 text = "HilingualTheme",
                 style = HilingualTheme.typography.bodyM20,
                 color = HilingualTheme.colors.hilingualBlue,
+                modifier = Modifier.background(
+                    color = HilingualTheme.colors.black
+                )
+            )
+            Text(
+                text = "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.hilingualBlue50,
                 modifier = Modifier.background(
                     color = HilingualTheme.colors.black
                 )
@@ -374,7 +398,13 @@ private fun HilingualGrayColorsPreview() {
             Text(
                 text = "HilingualTheme",
                 style = HilingualTheme.typography.bodyM20,
-                color = HilingualTheme.colors.dim
+                color = HilingualTheme.colors.dim1
+
+            )
+            Text(
+                text = "HilingualTheme",
+                style = HilingualTheme.typography.bodyM20,
+                color = HilingualTheme.colors.dim2
 
             )
         }
