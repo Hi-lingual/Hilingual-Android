@@ -41,8 +41,8 @@ internal fun DayItem(
     isWritten: Boolean = false
 ) {
     val textColor = when {
-        isSelected -> HilingualTheme.colors.hilingualBlue
-        isWritten -> HilingualTheme.colors.white
+        isSelected -> HilingualTheme.colors.white
+        isWritten -> HilingualTheme.colors.hilingualBlue
         day.position == DayPosition.MonthDate -> HilingualTheme.colors.black
         else -> HilingualTheme.colors.gray200
     }
@@ -56,7 +56,7 @@ internal fun DayItem(
         when {
             isSelected -> {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_filled_bubble_34),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_bubble_34),
                     contentDescription = null,
                     tint = Color.Unspecified
                 )
@@ -66,7 +66,7 @@ internal fun DayItem(
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_bubble_34),
                     contentDescription = null,
-                    tint = Color.Unspecified
+                    tint = HilingualTheme.colors.hilingualBlue50
                 )
             }
         }
