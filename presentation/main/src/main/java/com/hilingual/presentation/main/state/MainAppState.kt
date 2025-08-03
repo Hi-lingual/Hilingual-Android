@@ -59,25 +59,37 @@ internal class MainAppState(
             initialValue = false
         )
 
-    val currentTab = navController.currentBackStackEntryFlow.map { backStackEntry ->
-        MainTab.find { tab ->
-            backStackEntry.destination.hasRoute(tab::class)
-        }
-    }.stateIn(
-        scope = coroutineScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = null
-    )
+    private val currentDestination = navController.currentBackStackEntryFlow
+        .map { it.destination }
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = null
+        )
 
-    val isBottomBarVisible = navController.currentBackStackEntryFlow.map { backStackEntry ->
-        MainTab.contains { tab ->
-            backStackEntry.destination.hasRoute(tab::class)
+    val currentTab: StateFlow<MainTab?> = currentDestination
+        .map { destination ->
+            MainTab.find { tab ->
+                destination?.hasRoute(tab::class) == true
+            }
         }
-    }.stateIn(
-        scope = coroutineScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = false
-    )
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = null
+        )
+
+    val isBottomBarVisible: StateFlow<Boolean> = currentDestination
+        .map { destination ->
+            MainTab.contains { tab ->
+                destination?.hasRoute(tab::class) == true
+            }
+        }
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false
+        )
 
     fun navigate(tab: MainTab) {
         val navOptions = navOptions {
@@ -105,37 +117,22 @@ internal class MainAppState(
             MainTab.MY -> navController.navigateToMyPage(navOptions = navOptions)
         }
     }
-
-    fun navigateToAuth(
-        navOptions: NavOptions? = navOptions {
-            popUpTo(0) {
-                inclusive = true
-            }
-            launchSingleTop = true
+    private val clearStackNavOptions = navOptions {
+        popUpTo(0) {
+            inclusive = true
         }
-    ) {
+        launchSingleTop = true
+    }
+
+    fun navigateToAuth(navOptions: NavOptions? = clearStackNavOptions) {
         navController.navigateToAuth(navOptions)
     }
 
-    fun navigateToHome(
-        navOptions: NavOptions? = navOptions {
-            popUpTo(0) {
-                inclusive = true
-            }
-            launchSingleTop = true
-        }
-    ) {
+    fun navigateToHome(navOptions: NavOptions? = clearStackNavOptions) {
         navController.navigateToHome(navOptions)
     }
 
-    fun navigateToOnboarding(
-        navOptions: NavOptions? = navOptions {
-            popUpTo(0) {
-                inclusive = true
-            }
-            launchSingleTop = true
-        }
-    ) {
+    fun navigateToOnboarding(navOptions: NavOptions? = clearStackNavOptions) {
         navController.navigateToOnboarding(navOptions)
     }
 
