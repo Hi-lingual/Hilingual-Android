@@ -60,7 +60,7 @@ internal fun CalendarHeader(
             color = HilingualTheme.colors.black
         )
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_down_24),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_down_28),
             contentDescription = null,
             tint = Color.Unspecified,
             modifier = Modifier
@@ -74,7 +74,7 @@ internal fun CalendarHeader(
             tint = Color.Unspecified,
             modifier = Modifier.noRippleClickable(onClick = onLeftArrowClick)
         )
-        Spacer(Modifier.width(4.dp))
+        Spacer(Modifier.width(8.dp))
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right_28),
             contentDescription = null,
