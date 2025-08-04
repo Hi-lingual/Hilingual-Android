@@ -10,15 +10,14 @@ jvmTarget = "17"
 versionCode = "1"
 versionName = "1.0.0"
 kotlinCompilerExtensionVersion = "1.5.15"
-androidGradlePlugin = "8.3.2"
+androidGradlePlugin = "8.10.1"
 spotless = "7.2.1"
 
 # Kotlin
-agp = "8.10.1"
 kotlin = "2.2.0"
 kotlinxImmutable = "0.4.0"
 composeCompilerGradlePlugin = "2.2.0"
-ksp = "2.1.21-2.0.2"
+ksp = "2.2.0-2.0.2"
 jetbrainsKotlinJvm = "2.2.0"
 
 # AndroidX
@@ -29,30 +28,27 @@ lifecycleRuntimeKtx = "2.9.2"
 lifecycleRuntimeComposeAndroid = "2.9.2"
 activityCompose = "1.10.1"
 composeBom = "2025.07.00"
-composeNavigation = "2.9.2"
-security = "1.1.0-beta01"
+composeNavigation = "2.9.3"
+security = "1.1.0"
 datastorePreferences = "1.1.7"
 material = "1.12.0"
 desugarJdkLibs = "2.1.5"
-browser="1.8.0"
+browser="1.9.0"
 
 # Room
 room = "2.7.2"
 
 # Test
 junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
+junitVersion = "1.3.0"
 mockk = "1.14.5"
 
 # Accompanist
-accompanistPager = "0.36.0"
 accompanistSystemuicontroller = "0.36.0"
 
 # Third Party
 okhttp = "5.1.0"
 retrofit = "3.0.0"
-retrofitKotlinSerializationConverter = "1.0.0"
 kotlinxSerializationJson = "1.9.0"
 daggerHilt = "2.57"
 hiltNavigationCompose = "1.2.0"
@@ -80,7 +76,6 @@ desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref 
 # Test
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
@@ -121,8 +116,6 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxImmutable" }
 
 # Accompanist
-accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
-accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanistPager" }
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 
 # Network
@@ -131,7 +124,6 @@ okhttp = { group = "com.squareup.okhttp3", name = "okhttp" }
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-kotlin-serialization = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "retrofit" }
-retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofitKotlinSerializationConverter" }
 
 # Google Auth
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
@@ -166,8 +158,8 @@ kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-cor
 
 [plugins]
 # Android
-android-application = { id = "com.android.application", version.ref = "agp" }
-android-library = { id = "com.android.library", version.ref = "agp" }
+android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 # Kotlin
@@ -207,7 +199,6 @@ androidx = [
 test = [
     "androidx-junit",
     "androidx-ui-test-junit4",
-    "androidx-espresso-core",
     "mockk-android"
 ]
 
@@ -223,7 +214,7 @@ okhttp = [
 
 retrofit = [
     "retrofit",
-    "retrofit2-kotlinx-serialization-converter"
+    "retrofit-kotlin-serialization"
 ]
 
 hilt = [

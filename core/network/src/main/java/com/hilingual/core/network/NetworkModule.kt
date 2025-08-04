@@ -18,7 +18,6 @@ package com.hilingual.core.network
 import com.hilingual.core.localstorage.TokenManager
 import com.hilingual.core.network.BuildConfig.BASE_URL
 import com.hilingual.core.network.service.TokenRefreshService
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,6 +29,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
 import retrofit2.Converter
 import retrofit2.Retrofit
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import timber.log.Timber
 import javax.inject.Singleton
 import kotlin.time.Duration.Companion.seconds

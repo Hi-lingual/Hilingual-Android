@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.designsystem.event
+package com.hilingual.presentation.main.state
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -21,26 +21,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.hilingual.core.designsystem.event.DialogState
 
 @Stable
-class DialogController {
-    var isVisible by mutableStateOf(false)
+internal class DialogStateHolder {
+    var dialogState by mutableStateOf(DialogState())
         private set
 
-    var onClickAction by mutableStateOf<() -> Unit>({})
-        private set
-
-    fun show(onClick: () -> Unit) {
-        onClickAction = onClick
-        isVisible = true
+    fun showDialog(onClick: () -> Unit) {
+        dialogState = DialogState(isVisible = true, onClickAction = onClick)
     }
 
-    fun dismiss() {
-        isVisible = false
+    fun dismissDialog() {
+        dialogState = dialogState.copy(isVisible = false)
     }
 }
 
 @Composable
-fun rememberDialogController(): DialogController = remember {
-    DialogController()
+internal fun rememberDialogStateHolder(): DialogStateHolder = remember {
+    DialogStateHolder()
 }

@@ -27,23 +27,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.hilingual.core.designsystem.R
-import com.hilingual.core.designsystem.event.DialogController
-import com.hilingual.core.designsystem.event.rememberDialogController
+import com.hilingual.core.designsystem.event.DialogState
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun HilingualErrorDialog(
-    controller: DialogController,
+    state: DialogState,
+    onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (controller.isVisible) {
+    if (state.isVisible) {
         OneButtonDialog(
             confirmText = "확인",
             onConfirm = {
-                controller.onClickAction()
-                controller.dismiss()
+                state.onClickAction()
+                onDismiss()
             },
-            onDismiss = controller::dismiss,
+            onDismiss = onDismiss,
             properties = DialogProperties(
                 dismissOnBackPress = false,
                 dismissOnClickOutside = false
@@ -72,12 +72,12 @@ fun HilingualErrorDialog(
 @Preview
 @Composable
 private fun HilingualErrorDialogPreview() {
-    val controller = rememberDialogController()
-    controller.show { }
+    val state = DialogState(isVisible = true)
 
     HilingualTheme {
         HilingualErrorDialog(
-            controller = controller
+            state = state,
+            onDismiss = {}
         )
     }
 }

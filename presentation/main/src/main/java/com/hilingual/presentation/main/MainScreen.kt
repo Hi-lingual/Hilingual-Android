@@ -39,15 +39,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
 import com.hilingual.core.designsystem.component.snackbar.TextSnackBar
-import com.hilingual.core.designsystem.event.LocalDialogController
-import com.hilingual.core.designsystem.event.rememberDialogController
+import com.hilingual.core.designsystem.event.LocalDialogEventProvider
+import com.hilingual.core.designsystem.event.rememberDialogEventProvider
 import com.hilingual.presentation.auth.navigation.authNavGraph
 import com.hilingual.presentation.community.communityNavGraph
 import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
@@ -55,6 +54,7 @@ import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import com.hilingual.presentation.diarywrite.navigation.diaryWriteNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
+import com.hilingual.presentation.main.state.MainAppState
 import com.hilingual.presentation.mypage.myPageNavGraph
 import com.hilingual.presentation.onboarding.navigation.onboardingGraph
 import com.hilingual.presentation.splash.navigation.splashNavGraph
@@ -67,17 +67,21 @@ private const val EXIT_MILLIS = 3000L
 
 @Composable
 internal fun MainScreen(
-    navigator: MainNavigator = rememberMainNavigator(),
-    viewModel: MainViewModel = hiltViewModel()
+    appState: MainAppState
 ) {
-    val isOffline by viewModel.isOffline.collectAsStateWithLifecycle()
+    val isOffline by appState.isOffline.collectAsStateWithLifecycle()
+    val isBottomBarVisible by appState.isBottomBarVisible.collectAsStateWithLifecycle()
+    val currentTab by appState.currentTab.collectAsStateWithLifecycle()
 
     val systemBarsColor = LocalSystemBarsColor.current
     val activity = LocalActivity.current
 
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
-    val dialogController = rememberDialogController()
+    val dialogEventProvider = rememberDialogEventProvider(
+        show = appState.dialogStateHolder::showDialog,
+        dismiss = appState.dialogStateHolder::dismissDialog
+    )
 
     val onShowSnackBar: (String) -> Unit = { message ->
         coroutineScope.launch {
@@ -90,9 +94,9 @@ internal fun MainScreen(
         }
     }
 
-    LaunchedEffect(isOffline, dialogController.isVisible) {
-        if (isOffline && !dialogController.isVisible) {
-            dialogController.show { dialogController.dismiss() }
+    LaunchedEffect(isOffline, appState.dialogStateHolder.dialogState.isVisible) {
+        if (isOffline && !appState.dialogStateHolder.dialogState.isVisible) {
+            appState.dialogStateHolder.showDialog { appState.dialogStateHolder.dismissDialog() }
         }
     }
 
@@ -103,15 +107,15 @@ internal fun MainScreen(
     )
 
     CompositionLocalProvider(
-        LocalDialogController provides dialogController
+        LocalDialogEventProvider provides dialogEventProvider
     ) {
         Scaffold(
             bottomBar = {
                 MainBottomBar(
-                    visible = navigator.isBottomBarVisible(),
+                    visible = isBottomBarVisible,
                     tabs = MainTab.entries.toPersistentList(),
-                    currentTab = navigator.currentTab,
-                    onTabSelected = navigator::navigate
+                    currentTab = currentTab,
+                    onTabSelected = appState::navigate
                 )
             }
         ) { innerPadding ->
@@ -120,39 +124,39 @@ internal fun MainScreen(
                 exitTransition = { ExitTransition.None },
                 popEnterTransition = { EnterTransition.None },
                 popExitTransition = { ExitTransition.None },
-                navController = navigator.navController,
-                startDestination = navigator.startDestination
+                navController = appState.navController,
+                startDestination = appState.startDestination
 
             ) {
                 splashNavGraph(
-                    navigateToAuth = navigator::navigateToAuth,
-                    navigateToHome = navigator::navigateToHome,
-                    navigateToOnboarding = navigator::navigateToOnboarding
+                    navigateToAuth = appState::navigateToAuth,
+                    navigateToHome = appState::navigateToHome,
+                    navigateToOnboarding = appState::navigateToOnboarding
                 )
 
                 authNavGraph(
                     paddingValues = innerPadding,
-                    navigateToHome = navigator::navigateToHome,
-                    navigateToOnboarding = navigator::navigateToOnboarding
+                    navigateToHome = appState::navigateToHome,
+                    navigateToOnboarding = appState::navigateToOnboarding
                 )
 
                 onboardingGraph(
                     paddingValues = innerPadding,
-                    navigateToHome = navigator::navigateToHome
+                    navigateToHome = appState::navigateToHome
                 )
 
                 homeNavGraph(
                     paddingValues = innerPadding,
-                    navigateToDiaryFeedback = navigator::navigateToDiaryFeedback,
-                    navigateToDiaryWrite = navigator::navigateToDiaryWrite
+                    navigateToDiaryFeedback = appState::navigateToDiaryFeedback,
+                    navigateToDiaryWrite = appState::navigateToDiaryWrite
                 )
 
                 diaryWriteNavGraph(
                     paddingValues = innerPadding,
-                    navigateUp = navigator::navigateUp,
-                    navigateToHome = navigator::navigateToHome,
+                    navigateUp = appState::navigateUp,
+                    navigateToHome = appState::navigateToHome,
                     navigateToDiaryFeedback = { diaryId ->
-                        navigator.navigateToDiaryFeedback(
+                        appState.navigateToDiaryFeedback(
                             diaryId = diaryId,
                             navOptions = navOptions {
                                 popUpTo<DiaryWrite> {
@@ -165,12 +169,12 @@ internal fun MainScreen(
 
                 vocaNavGraph(
                     paddingValues = innerPadding,
-                    navigateToHome = navigator::navigateToHome
+                    navigateToHome = appState::navigateToHome
                 )
 
                 diaryFeedbackNavGraph(
                     paddingValues = innerPadding,
-                    navigateUp = navigator::navigateUp
+                    navigateUp = appState::navigateUp
                 )
 
                 communityNavGraph(
@@ -182,7 +186,10 @@ internal fun MainScreen(
                 )
             }
 
-            HilingualErrorDialog(controller = dialogController)
+            HilingualErrorDialog(
+                state = appState.dialogStateHolder.dialogState,
+                onDismiss = appState.dialogStateHolder::dismissDialog
+            )
         }
     }
 
