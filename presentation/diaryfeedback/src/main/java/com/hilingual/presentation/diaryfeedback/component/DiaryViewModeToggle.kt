@@ -52,8 +52,8 @@ internal fun DiaryViewModeToggle(
     ) {
         Text(
             text = "AI가 쓴 일기",
-            style = HilingualTheme.typography.captionM12,
-            color = HilingualTheme.colors.gray700
+            style = HilingualTheme.typography.captionR14,
+            color = HilingualTheme.colors.gray500
         )
         BasicSwitch(
             isChecked = isAIWritten,
@@ -66,8 +66,8 @@ internal fun DiaryViewModeToggle(
 private fun BasicSwitch(
     isChecked: Boolean,
     onCheckedChange: () -> Unit,
-    width: Dp = 44.dp,
-    height: Dp = 22.dp,
+    width: Dp = 52.dp,
+    height: Dp = 28.dp,
     checkedTrackColor: Color = HilingualTheme.colors.hilingualOrange,
     uncheckedTrackColor: Color = HilingualTheme.colors.gray300,
     gapBetweenThumbAndTrackEdge: Dp = 2.dp

@@ -18,9 +18,7 @@ package com.hilingual.presentation.diaryfeedback.tab
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -55,11 +53,9 @@ internal fun RecommendExpressionScreen(
         item {
             Text(
                 text = writtenDate,
-                style = HilingualTheme.typography.bodySB14,
+                style = HilingualTheme.typography.bodySB16,
                 color = HilingualTheme.colors.gray700
             )
-
-            Spacer(Modifier.height(4.dp))
         }
 
         items(
