@@ -22,8 +22,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,13 +39,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
-import com.hilingual.core.designsystem.event.LocalDialogController
+import com.hilingual.core.designsystem.event.LocalDialogEventProvider
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
@@ -56,6 +59,10 @@ import com.hilingual.presentation.home.component.footer.DiaryEmptyCardType
 import com.hilingual.presentation.home.component.footer.DiaryPreviewCard
 import com.hilingual.presentation.home.component.footer.TodayTopic
 import com.hilingual.presentation.home.component.footer.WriteDiaryButton
+import com.hilingual.presentation.home.model.DateUiModel
+import com.hilingual.presentation.home.model.DiaryThumbnailUiModel
+import com.hilingual.presentation.home.model.UserProfileUiModel
+import kotlinx.collections.immutable.toPersistentList
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -68,12 +75,12 @@ internal fun HomeRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
-    val dialogController = LocalDialogController.current
+    val dialogEventProvider = LocalDialogEventProvider.current
 
     viewModel.sideEffect.collectSideEffect {
         when (it) {
             is HomeSideEffect.ShowRetryDialog -> {
-                dialogController.show(it.onRetry)
+                dialogEventProvider.show(it.onRetry)
             }
         }
     }
@@ -177,8 +184,7 @@ private fun HomeScreen(
             modifier = Modifier
                 .background(HilingualTheme.colors.white)
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(16.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -192,6 +198,8 @@ private fun HomeScreen(
 
                 if (isWritable) DateTimeInfo(remainingTime = uiState.todayTopic?.remainingTime)
             }
+
+            Spacer(Modifier.height(16.dp))
 
             with(uiState) {
                 when {
@@ -219,6 +227,7 @@ private fun HomeScreen(
                                     .animateContentSize()
                             )
                         }
+                        Spacer(Modifier.height(12.dp))
                         WriteDiaryButton(
                             onClick = { onWriteDiaryClick(date) },
                             modifier = Modifier.fillMaxWidth()
@@ -229,5 +238,37 @@ private fun HomeScreen(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun HomeScreenPreview() {
+    val uiState = HomeUiState(
+        userProfile = UserProfileUiModel(
+            profileImg = "",
+            nickname = "Hilingual",
+            totalDiaries = 10,
+            streak = 5
+        ),
+        selectedDate = LocalDate.now(),
+        diaryThumbnail = DiaryThumbnailUiModel(
+            diaryId = 1L,
+            originalText = "Today I went to the park\n and played with my dog.\n It was a lot of fun.",
+            imageUrl = ""
+        ),
+        dateList = List(10) {
+            DateUiModel(date = LocalDate.now().minusDays(it.toLong()).toString())
+        }.toPersistentList()
+    )
+    HilingualTheme {
+        HomeScreen(
+            paddingValues = PaddingValues(0.dp),
+            uiState = uiState,
+            onDateSelected = {},
+            onMonthChanged = {},
+            onWriteDiaryClick = {},
+            onDiaryPreviewClick = {}
+        )
     }
 }

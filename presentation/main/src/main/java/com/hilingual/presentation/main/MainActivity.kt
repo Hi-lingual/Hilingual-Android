@@ -25,6 +25,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.provider.SystemBarsColorController
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.presentation.main.monitor.NetworkMonitor
+import com.hilingual.presentation.main.state.rememberMainAppState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -33,6 +35,9 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var systemBarsColor: SystemBarsColorController
 
+    @Inject
+    lateinit var networkMonitor: NetworkMonitor
+
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +45,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             HilingualTheme {
+                val appState = rememberMainAppState(networkMonitor = networkMonitor)
                 CompositionLocalProvider(LocalSystemBarsColor provides systemBarsColor) {
-                    MainScreen()
+                    MainScreen(appState = appState)
                 }
             }
         }

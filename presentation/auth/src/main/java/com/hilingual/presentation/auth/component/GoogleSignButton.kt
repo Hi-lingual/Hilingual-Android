@@ -51,7 +51,7 @@ internal fun GoogleSignButton(
             .noRippleClickable(onClick = onClick)
             .padding(vertical = 18.dp, horizontal = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_google_20),
@@ -59,13 +59,13 @@ internal fun GoogleSignButton(
             tint = Color.Unspecified
         )
 
-        Spacer(Modifier.width(10.dp))
-
         Text(
             text = "Google로 계속하기",
             style = HilingualTheme.typography.bodySB16,
             color = HilingualTheme.colors.hilingualBlack
         )
+
+        Spacer(Modifier.width(20.dp))
     }
 }
 
