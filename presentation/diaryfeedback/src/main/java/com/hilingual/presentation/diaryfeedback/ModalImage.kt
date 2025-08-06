@@ -41,11 +41,6 @@ internal fun ModalImage(
             .fillMaxSize()
             .background(HilingualTheme.colors.black)
     ) {
-        CloseOnlyTopAppBar(
-            onCloseClicked = onBackClick,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
-
         NetworkImage(
             imageUrl = imageUrl,
             shape = RectangleShape,
@@ -53,6 +48,13 @@ internal fun ModalImage(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.Center)
+        )
+
+        CloseOnlyTopAppBar(
+            onCloseClicked = onBackClick,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .background(HilingualTheme.colors.black)
         )
     }
 }
