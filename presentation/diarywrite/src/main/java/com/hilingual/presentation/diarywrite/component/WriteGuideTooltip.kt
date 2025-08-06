@@ -44,9 +44,9 @@ internal fun WriteGuideTooltip(
             modifier = modifier
                 .clip(shape = RoundedCornerShape(8.dp))
                 .background(HilingualTheme.colors.hilingualBlack)
-                .padding(horizontal = 14.dp, vertical = 8.dp),
+                .padding(horizontal = 12.dp, vertical = 8.dp),
             text = text,
-            style = HilingualTheme.typography.captionM12,
+            style = HilingualTheme.typography.bodyM16,
             color = HilingualTheme.colors.white
         )
 
