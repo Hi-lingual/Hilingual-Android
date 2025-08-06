@@ -1,6 +1,8 @@
 package com.hilingual.core.designsystem.component.tabrow
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.Tab
@@ -12,9 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,6 +60,29 @@ fun HilingualBasicTabRow(
                     )
                 }
             }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun TabRowPreview() {
+    HilingualTheme {
+        val pagerState1 = rememberPagerState(pageCount = { 2 })
+        val pagerState2 = rememberPagerState(pageCount = { 3 })
+
+        Column {
+            HilingualBasicTabRow(
+                tabTitles = persistentListOf("문법·철자", "추천표현"),
+                tabIndex = pagerState1.currentPage,
+                onTabSelected = {}
+            )
+
+            HilingualBasicTabRow(
+                tabTitles = persistentListOf("tab1", "tab2", "tab3"),
+                tabIndex = pagerState2.currentPage,
+                onTabSelected = {}
+            )
         }
     }
 }
