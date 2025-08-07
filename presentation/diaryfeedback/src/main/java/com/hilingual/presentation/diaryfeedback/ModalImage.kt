@@ -20,15 +20,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.component.topappbar.CloseOnlyTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -69,7 +66,7 @@ internal fun ModalImage(
 private fun PhotoDetailPreview() {
     HilingualTheme {
         ModalImage(
-            imageUrl = "https://avatars.githubusercontent.com/u/101113025?v=4",
+            imageUrl = "",
             onBackClick = {}
         )
     }
