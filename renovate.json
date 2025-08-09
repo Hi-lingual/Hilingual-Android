@@ -14,7 +14,7 @@
     },
     {
       "matchDatasources": ["gradle"],
-      "matchPackageNames": ["org.jlleitschuh.gradle.ktlint"],
+      "matchDepNames": ["org.jlleitschuh.gradle.ktlint"],
       "enabled": false
     }
   ]
