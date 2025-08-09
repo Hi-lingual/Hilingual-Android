@@ -24,6 +24,10 @@ plugins {
 android {
     setNamespace("core.network")
 
+    defaultConfig {
+        consumerProguardFile("consumer-rules.pro")
+    }
+
     val properties = Properties().apply {
         load(rootProject.file("local.properties").inputStream())
     }
