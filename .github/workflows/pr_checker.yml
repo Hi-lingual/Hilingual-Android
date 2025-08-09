@@ -86,6 +86,17 @@ jobs:
             echo "LOCAL_PROPERTIES secret not found. Skipping."
           fi
 
+      - name: Decode and install debug keystore
+        env:
+          DEBUG_KEYSTORE_BASE64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$DEBUG_KEYSTORE_BASE64" ]; then
+            mkdir -p ./keystore
+            echo "$DEBUG_KEYSTORE_BASE64" | base64 --decode > ./keystore/hilingual-debug-key.jks
+          else
+            echo "DEBUG_KEYSTORE_BASE64 secret not found. Skipping."
+          fi
+
       - name: Grant permission to gradlew
         run: chmod +x ./gradlew
 
