@@ -6,17 +6,19 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
-
 @Composable
 fun HilingualBasicSwitch(
     isChecked: Boolean,
@@ -66,6 +68,19 @@ fun HilingualBasicSwitch(
                 x = animatePosition,
                 y = size.height / 2
             )
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SwitchPreview() {
+    HilingualTheme {
+        var isChecked by remember { mutableStateOf(true) }
+
+        HilingualBasicSwitch(
+            isChecked = isChecked,
+            onCheckedChange = { isChecked = !isChecked }
         )
     }
 }
