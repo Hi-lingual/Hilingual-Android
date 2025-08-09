@@ -1,6 +1,20 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:base"
+  ],
+  "schedule": ["after 9am every weekday"],
+  "timezone": "Asia/Seoul",
+  "packageRules": [
+    {
+      "matchPackagePatterns": [
+        "^hilingual\\."
+      ],
+      "enabled": false
+    },
+    {
+      "matchPackageNames": ["org.jlleitschuh.gradle.ktlint"],
+      "enabled": false
+    }
   ]
 }
