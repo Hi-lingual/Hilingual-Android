@@ -13,7 +13,6 @@
       "enabled": false
     },
     {
-      "matchDatasources": ["gradle"],
       "matchDepNames": ["org.jlleitschuh.gradle.ktlint"],
       "enabled": false
     }
