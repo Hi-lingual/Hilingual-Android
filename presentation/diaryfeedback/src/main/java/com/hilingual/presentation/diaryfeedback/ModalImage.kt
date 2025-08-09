@@ -17,6 +17,7 @@ package com.hilingual.presentation.diaryfeedback
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -41,18 +42,21 @@ internal fun ModalImage(
             .fillMaxSize()
             .background(HilingualTheme.colors.black)
     ) {
-        CloseOnlyTopAppBar(
-            onCloseClicked = onBackClick,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
-
         NetworkImage(
             imageUrl = imageUrl,
             shape = RectangleShape,
             contentScale = ContentScale.FillWidth,
             modifier = Modifier
                 .fillMaxWidth()
+                .aspectRatio(9f / 16f)
                 .align(Alignment.Center)
+        )
+
+        CloseOnlyTopAppBar(
+            onCloseClicked = onBackClick,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .background(HilingualTheme.colors.black)
         )
     }
 }
