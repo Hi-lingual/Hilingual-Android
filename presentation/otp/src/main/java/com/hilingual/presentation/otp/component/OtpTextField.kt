@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -23,6 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,21 +34,27 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun OtpTextField(
-    otpText: String,
+    otpText: () -> String,
     onOtpTextChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     isError: Boolean = false
 ) {
+    val otpValue = otpText()
+    val focusManager = LocalFocusManager.current
     BasicTextField(
         modifier = modifier,
-        value = otpText,
+        value = otpValue,
         onValueChange = {
             if (it.length <= 6 && it.all { char -> char.isDigit() }) {
                 onOtpTextChange(it)
             }
         },
+        keyboardActions = KeyboardActions(
+            onDone = { focusManager.clearFocus() }
+        ),
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.NumberPassword
+            keyboardType = KeyboardType.NumberPassword,
+            imeAction = ImeAction.Done
         ),
         decorationBox = {
             Row(
@@ -54,7 +63,7 @@ fun OtpTextField(
             ) {
                 repeat(6) { index ->
                     OtpChar(
-                        char = otpText.getOrNull(index),
+                        char = otpValue.getOrNull(index),
                         isError = isError
                     )
                 }
@@ -117,21 +126,21 @@ private fun OtpTextFieldPreview() {
                 var otpText1 by remember { mutableStateOf("") }
                 Text("Empty")
                 OtpTextField(
-                    otpText = otpText1,
+                    otpText = { otpText1 },
                     onOtpTextChange = { otpText1 = it }
                 )
 
                 var otpText2 by remember { mutableStateOf("123") }
                 Text("Filled")
                 OtpTextField(
-                    otpText = otpText2,
+                    otpText = { otpText2 },
                     onOtpTextChange = { otpText2 = it }
                 )
 
                 var otpText3 by remember { mutableStateOf("12345") }
                 Text("Error")
                 OtpTextField(
-                    otpText = otpText3,
+                    otpText = { otpText3 },
                     onOtpTextChange = { otpText3 = it },
                     isError = true
                 )
@@ -139,7 +148,7 @@ private fun OtpTextFieldPreview() {
                 var otpText4 by remember { mutableStateOf("123456") }
                 Text("Full Error")
                 OtpTextField(
-                    otpText = otpText4,
+                    otpText = { otpText4 },
                     onOtpTextChange = { otpText4 = it },
                     isError = true
                 )
