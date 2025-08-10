@@ -32,4 +32,3 @@ subprojects {
     }
 }
 
-apply("gradle/projectDependencyGraph.gradle.kts")
