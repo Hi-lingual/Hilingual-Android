@@ -15,7 +15,7 @@ fun NavController.navigateToOtp(
 
 fun NavGraphBuilder.otpNavGraph(
     paddingValues: PaddingValues,
-    navigateToOnboarding: () -> Unit,
+    navigateToOnboarding: () -> Unit
 ) {
     composable<Otp> {
         OtpScreen(paddingValues = paddingValues)
