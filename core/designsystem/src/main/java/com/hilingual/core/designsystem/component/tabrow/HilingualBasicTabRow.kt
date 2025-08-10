@@ -1,6 +1,8 @@
 package com.hilingual.core.designsystem.component.tabrow
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,12 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,9 +52,13 @@ fun HilingualBasicTabRow(
                         text = {
                             Text(
                                 text = title,
-                                style = if (selected) HilingualTheme.typography.headB18 else HilingualTheme.typography.headM18
+                                style = if (selected) HilingualTheme.typography.headB18 else HilingualTheme.typography.headM18,
+                                textAlign = TextAlign.Center
                             )
                         },
+                        modifier = Modifier
+                            .height(45.dp)
+                            .fillMaxWidth(),
                         selected = selected,
                         onClick = { onTabSelected(index) },
                         selectedContentColor = HilingualTheme.colors.black,
