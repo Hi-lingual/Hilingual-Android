@@ -64,6 +64,7 @@ balloonCompose = "1.6.12"
 # ML Kit
 mlkitTextRecognition = "16.0.1"
 coroutinesPlayServices = "1.10.2"
+espressoCore = "3.7.0"
 
 [libraries]
 # Build Tools
@@ -155,6 +156,7 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 # ML Kit
 mlkit-text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "mlkitTextRecognition" }
 kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutinesPlayServices" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 
 [plugins]
 # Android
