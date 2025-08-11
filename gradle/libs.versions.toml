@@ -59,7 +59,7 @@ coroutine = "1.10.2"
 ktlint = "11.5.1"
 pebble = "0.1.0"
 phoenix = "3.0.0"
-balloonCompose = "1.6.12"
+balloonCompose = "1.6.13"
 
 # ML Kit
 mlkitTextRecognition = "16.0.1"
