@@ -20,13 +20,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HilingualBasicTabRow(
-    tabTitles: PersistentList<String>,
+    tabTitles: ImmutableList<String>,
     tabIndex: Int,
     onTabSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
@@ -47,7 +47,7 @@ fun HilingualBasicTabRow(
         ) {
             tabTitles.forEachIndexed { index, title ->
                 val selected = (tabIndex == index)
-                key(index, title) {
+                key(title) {
                     Tab(
                         text = {
                             Text(
