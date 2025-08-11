@@ -41,6 +41,7 @@ dependencies {
     implementation(projects.presentation.splash)
     implementation(projects.presentation.mypage)
     implementation(projects.presentation.community)
+    implementation(projects.presentation.otp)
 
     // others
     implementation(libs.accompanist.systemuicontroller)
