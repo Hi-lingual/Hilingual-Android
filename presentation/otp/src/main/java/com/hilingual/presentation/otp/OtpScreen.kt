@@ -65,7 +65,7 @@ private fun OtpScreen(
     onTextClick: () -> Unit,
     onButtonClick: () -> Unit,
     isButtonEnable: () -> Boolean,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
     var value by remember { mutableStateOf("") }
