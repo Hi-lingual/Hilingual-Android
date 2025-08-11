@@ -59,13 +59,13 @@ fun OtpRoute(
 }
 
 @Composable
-fun OtpScreen(
+private fun OtpScreen(
     paddingValues: PaddingValues,
     onBackClicked: () -> Unit,
     onTextClick: () -> Unit,
     onButtonClick: () -> Unit,
+    isButtonEnable: () -> Boolean,
     modifier: Modifier = Modifier,
-    isButtonEnable: () -> Boolean
 ) {
     val focusManager = LocalFocusManager.current
     var value by remember { mutableStateOf("") }
@@ -116,9 +116,8 @@ fun OtpScreen(
 
         Text(
             text = "인증 번호가 오지 않았나요?",
-            style = HilingualTheme.typography.bodyM14.copy(
-                textDecoration = TextDecoration.Underline
-            ),
+            style = HilingualTheme.typography.bodyM14,
+            textDecoration = TextDecoration.Underline,
             color = HilingualTheme.colors.gray500,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
@@ -139,7 +138,7 @@ fun OtpScreen(
 
 @Preview
 @Composable
-fun OtpScreenPreview() {
+private fun OtpScreenPreview() {
     HilingualTheme {
         OtpScreen(
             paddingValues = PaddingValues(0.dp),
