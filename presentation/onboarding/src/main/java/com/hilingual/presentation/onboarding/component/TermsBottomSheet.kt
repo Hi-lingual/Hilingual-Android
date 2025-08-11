@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,6 +34,39 @@ import com.hilingual.core.designsystem.component.bottomsheet.HilingualBasicBotto
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.onboarding.R
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentMap
+
+private enum class TermType {
+    REQUIRED,
+    MARKETING
+}
+
+private data class Term(
+    val text: String,
+    val type: TermType,
+    val link: String? = null
+) {
+    val isRequired: Boolean
+        get() = type == TermType.REQUIRED
+}
+
+private val terms = persistentListOf(
+    Term(
+        text = "서비스 이용약관 동의 (필수)",
+        type = TermType.REQUIRED,
+        link = UrlConstant.SERVICE_TERMS
+    ),
+    Term(
+        text = "개인정보 수집 및 이용 동의 (필수)",
+        type = TermType.REQUIRED,
+        link = UrlConstant.ONBOARDING_PRIVACY_POLICY
+    ),
+    Term(
+        text = "광고성 정보 수신 동의 (선택)",
+        type = TermType.MARKETING
+    )
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,18 +77,21 @@ internal fun TermsBottomSheet(
     onTermLinkClick: (url: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var serviceAgreed by remember { mutableStateOf(false) }
-    var privacyAgreed by remember { mutableStateOf(false) }
-    var marketingAgreed by remember { mutableStateOf(false) }
+    var agreements by remember { mutableStateOf(terms.associateWith { false }.toPersistentMap()) }
 
-    val allAgreed = serviceAgreed && privacyAgreed && marketingAgreed
-    val isStartButtonEnabled = serviceAgreed && privacyAgreed
+    val allAgreed = agreements.values.all { it }
+
+    val isStartButtonEnabled = remember(agreements) {
+        agreements.filterKeys { it.isRequired }.values.all { it }
+    }
+
+    val isMarketingAgreed = remember(agreements) {
+        agreements.filterKeys { it.type == TermType.MARKETING }.values.firstOrNull() ?: false
+    }
 
     val onAllAgreedClick: () -> Unit = {
         val newState = !allAgreed
-        serviceAgreed = newState
-        privacyAgreed = newState
-        marketingAgreed = newState
+        agreements = terms.associateWith { newState }.toPersistentMap()
     }
 
     if (isVisible) {
@@ -110,30 +147,25 @@ internal fun TermsBottomSheet(
                         )
                     }
 
-                    TermRow(
-                        text = "서비스 이용약관 동의 (필수)",
-                        isSelected = serviceAgreed,
-                        onSelectedChange = { serviceAgreed = it },
-                        onTextClick = { onTermLinkClick(UrlConstant.SERVICE_TERMS) }
-                    )
-                    TermRow(
-                        text = "개인정보 수집 및 이용 동의 (필수)",
-                        isSelected = privacyAgreed,
-                        onSelectedChange = { privacyAgreed = it },
-                        onTextClick = { onTermLinkClick(UrlConstant.ONBOARDING_PRIVACY_POLICY) }
-                    )
-                    TermRow(
-                        text = "광고성 정보 수신 동의 (선택)",
-                        isSelected = marketingAgreed,
-                        onSelectedChange = { marketingAgreed = it }
-                    )
+                    agreements.forEach { (term, isAgreed) ->
+                        key(term) {
+                            TermRow(
+                                text = term.text,
+                                isSelected = isAgreed,
+                                onSelectedChange = { isSelected ->
+                                    agreements = agreements.put(term, isSelected)
+                                },
+                                onTextClick = term.link?.let { { onTermLinkClick(it) } }
+                            )
+                        }
+                    }
                 }
 
                 Spacer(Modifier.height(64.dp))
 
                 HilingualButton(
                     text = "시작하기",
-                    onClick = { onStartClick(marketingAgreed) },
+                    onClick = { onStartClick(isMarketingAgreed) },
                     enableProvider = { isStartButtonEnabled }
                 )
             }
