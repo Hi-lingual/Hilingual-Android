@@ -15,9 +15,7 @@
  */
 package com.hilingual.presentation.diaryfeedback
 
-import android.content.Context
 import androidx.activity.compose.BackHandler
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,11 +40,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -114,7 +112,7 @@ internal fun DiaryFeedbackRoute(
                 paddingValues = paddingValues,
                 uiState = (state as UiState.Success<DiaryFeedbackUiState>).data,
                 onBackClick = navigateUp,
-                onReportClick = { navigateToReportWebView(context) },
+                onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 isImageDetailVisible = isImageDetailVisible,
                 onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
                 onToggleBookmark = viewModel::toggleBookmark
@@ -250,10 +248,6 @@ private fun DiaryFeedbackScreen(
             modifier = modifier.padding(paddingValues)
         )
     }
-}
-
-private fun navigateToReportWebView(context: Context) {
-    CustomTabsIntent.Builder().build().launchUrl(context, UrlConstant.FEEDBACK_REPORT.toUri())
 }
 
 @Preview(showBackground = true)

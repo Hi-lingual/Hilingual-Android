@@ -36,7 +36,7 @@ import com.hilingual.presentation.onboarding.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TermsBottomSheet(
+internal fun TermsBottomSheet(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     onStartClick: (isMarketingAgreed: Boolean) -> Unit,

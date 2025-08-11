@@ -76,7 +76,7 @@ internal class OnboardingViewModel @Inject constructor(
         validateNickname(nickname)
     }
 
-    fun onRegisterClick(nickname: String) {
+    fun onRegisterClick(nickname: String, isMarketingAgreed: Boolean) {
         viewModelScope.launch {
             userRepository.postUserProfile(UserProfileModel(profileImg = "", nickname = nickname))
                 .onSuccess {
@@ -84,7 +84,7 @@ internal class OnboardingViewModel @Inject constructor(
                     _sideEffect.emit(OnboardingSideEffect.NavigateToHome)
                 }
                 .onLogFailure {
-                    _sideEffect.emit(OnboardingSideEffect.ShowRetryDialog { onRegisterClick(nickname) })
+                    _sideEffect.emit(OnboardingSideEffect.ShowRetryDialog { onRegisterClick(nickname, isMarketingAgreed) })
                 }
         }
     }

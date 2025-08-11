@@ -31,7 +31,9 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 fun HilingualBasicBottomSheet(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    sheetState: SheetState = rememberModalBottomSheetState(),
+    sheetState: SheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    ),
     isDimEnabled: Boolean = true,
     dragHandle: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit

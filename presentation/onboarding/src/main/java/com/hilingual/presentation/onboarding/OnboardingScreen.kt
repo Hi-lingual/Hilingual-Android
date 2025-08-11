@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -49,6 +50,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualShortTextField
@@ -57,6 +59,7 @@ import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppB
 import com.hilingual.core.designsystem.event.LocalDialogEventProvider
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
+import com.hilingual.presentation.onboarding.component.TermsBottomSheet
 import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
@@ -68,6 +71,7 @@ internal fun OnboardingRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
     val dialogEventProvider = LocalDialogEventProvider.current
+    val context = LocalContext.current
 
     var textFieldState by remember { mutableStateOf(TextFieldState.NORMAL) }
 
@@ -107,7 +111,8 @@ internal fun OnboardingRoute(
         validationMessage = { uiState.validationMessage },
         isNicknameValid = { uiState.isNicknameValid },
         onDoneAction = viewModel::onSubmitNickname,
-        onButtonClick = viewModel::onRegisterClick
+        onRegisterClick = viewModel::onRegisterClick,
+        onTermLinkClick = { url -> context.launchCustomTabs(url) }
     )
 }
 
@@ -120,10 +125,12 @@ private fun OnboardingScreen(
     validationMessage: () -> String,
     isNicknameValid: () -> Boolean,
     onDoneAction: (String) -> Unit,
-    onButtonClick: (String) -> Unit,
+    onRegisterClick: (String, Boolean) -> Unit,
+    onTermLinkClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
+    var isBottomSheetVisible by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -187,10 +194,19 @@ private fun OnboardingScreen(
         Spacer(Modifier.weight(79f))
 
         HilingualButton(
-            text = "시작하기",
-            onClick = { onButtonClick(nickname()) },
+            text = "가입하기",
+            onClick = { isBottomSheetVisible = true },
             enableProvider = isNicknameValid,
             modifier = Modifier.padding(vertical = 12.dp)
+        )
+
+        TermsBottomSheet(
+            isVisible = isBottomSheetVisible,
+            onDismiss = { isBottomSheetVisible = false },
+            onStartClick = { isMarketingAgreed ->
+                onRegisterClick(nickname(), isMarketingAgreed)
+            },
+            onTermLinkClick = onTermLinkClick
         )
     }
 }
@@ -207,7 +223,8 @@ private fun OnboardingScreenPreview() {
             validationMessage = { "" },
             isNicknameValid = { true },
             onDoneAction = { _ -> },
-            onButtonClick = { _ -> }
+            onRegisterClick = { _, _ -> },
+            onTermLinkClick = {}
         )
     }
 }
