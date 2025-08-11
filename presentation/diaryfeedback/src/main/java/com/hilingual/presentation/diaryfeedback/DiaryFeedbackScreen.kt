@@ -60,8 +60,7 @@ import com.hilingual.presentation.diaryfeedback.tab.GrammarSpellingScreen
 import com.hilingual.presentation.diaryfeedback.tab.RecommendExpressionScreen
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
-
-private const val REPORT_URL = "https://hilingual.notion.site/230829677ebf801c965be24b0ef444e9"
+import com.hilingual.core.common.constant.UrlConstant
 
 @Composable
 internal fun DiaryFeedbackRoute(
@@ -254,7 +253,7 @@ private fun DiaryFeedbackScreen(
 }
 
 private fun navigateToReportWebView(context: Context) {
-    CustomTabsIntent.Builder().build().launchUrl(context, REPORT_URL.toUri())
+    CustomTabsIntent.Builder().build().launchUrl(context, UrlConstant.FEEDBACK_REPORT.toUri())
 }
 
 @Preview(showBackground = true)
