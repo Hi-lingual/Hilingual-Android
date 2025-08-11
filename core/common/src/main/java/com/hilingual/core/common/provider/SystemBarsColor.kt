@@ -58,7 +58,7 @@ class SystemBarsColorController @Inject constructor() {
         val controller = WindowCompat.getInsetsController(window, window.decorView)
         controller.isAppearanceLightStatusBars = localSystemBarsColor.isDarkIcon
 
-        window.statusBarColor = localSystemBarsColor.statusBarColor.toArgb()
+        window.setStatusBarColor(localSystemBarsColor.statusBarColor.toArgb())
 
         val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
 

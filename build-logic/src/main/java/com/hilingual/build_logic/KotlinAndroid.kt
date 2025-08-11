@@ -56,6 +56,7 @@ internal fun Project.configureKotlin() {
             freeCompilerArgs.set(
                 freeCompilerArgs.get() + listOf(
                     "-opt-in=kotlin.RequiresOptIn",
+                    "-Xannotation-default-target=param-property",
                 )
             )
         }

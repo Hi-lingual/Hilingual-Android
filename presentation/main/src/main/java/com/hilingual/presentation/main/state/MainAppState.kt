@@ -33,6 +33,7 @@ import com.hilingual.presentation.main.MainTab
 import com.hilingual.presentation.main.monitor.NetworkMonitor
 import com.hilingual.presentation.mypage.navigateToMyPage
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
+import com.hilingual.presentation.otp.navigation.navigateToOtp
 import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.voca.navigation.navigateToVoca
 import kotlinx.coroutines.CoroutineScope
@@ -122,6 +123,10 @@ internal class MainAppState(
             inclusive = true
         }
         launchSingleTop = true
+    }
+
+    fun navigateToOtp(navOptions: NavOptions? = clearStackNavOptions) {
+        navController.navigateToOtp(navOptions)
     }
 
     fun navigateToAuth(navOptions: NavOptions? = clearStackNavOptions) {
