@@ -33,7 +33,7 @@ fun HilingualMenuBottomSheet(
     title: String? = null,
     content: @Composable () -> Unit
 ) {
-    if(isVisible) {
+    if (isVisible) {
         HilingualBasicBottomSheet(
             onDismiss = onDismiss,
             modifier = modifier

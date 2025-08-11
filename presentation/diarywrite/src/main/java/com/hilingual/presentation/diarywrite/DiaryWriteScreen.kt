@@ -448,7 +448,7 @@ private fun DiaryWriteScreenBottomSheetPreview() {
             onDiaryImageUriChanged = {},
             onBottomSheetCameraClicked = {},
             onBottomSheetGalleryClicked = {},
-            onDiaryFeedbackRequestButtonClick = {},
+            onDiaryFeedbackRequestButtonClick = {}
         )
     }
 }
