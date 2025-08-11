@@ -15,19 +15,13 @@
  */
 package com.hilingual.presentation.onboarding
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,12 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -51,13 +40,13 @@ import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.component.button.HilingualButton
+import com.hilingual.core.designsystem.component.picker.ProfileImagePicker
 import com.hilingual.core.designsystem.component.textfield.HilingualShortTextField
 import com.hilingual.core.designsystem.component.textfield.TextFieldState
 import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppBar
 import com.hilingual.core.designsystem.event.LocalDialogEventProvider
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
-import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun OnboardingRoute(
@@ -138,26 +127,10 @@ private fun OnboardingScreen(
 
         Spacer(Modifier.weight(13f))
 
-        Box {
-            Image(
-                painter = painterResource(DesignSystemR.drawable.img_default_image),
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(shape = CircleShape)
-                    .border(
-                        shape = CircleShape,
-                        color = HilingualTheme.colors.gray200,
-                        width = 1.dp
-                    ),
-                contentDescription = null
-            )
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_onboarding_camera_32),
-                contentDescription = null,
-                tint = Color.Unspecified,
-                modifier = Modifier.align(Alignment.BottomEnd)
-            )
-        }
+        ProfileImagePicker(
+            onClick = { /* TODO 이미지 선택 바텀시트 로직 by 민재*/ },
+            imageUrl = null
+        )
 
         Spacer(Modifier.weight(8f))
 
