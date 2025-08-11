@@ -49,7 +49,7 @@ import com.hilingual.presentation.otp.component.OtpTextField
 fun OtpRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
-    navigateToOnboarding: () -> Unit,
+    navigateToOnboarding: () -> Unit
 ) {
     var otpCode by remember { mutableStateOf("") }
     var authFailureCount by remember { mutableIntStateOf(0) }
@@ -75,7 +75,7 @@ fun OtpRoute(
             }
         },
         onContactClick = { /* TODO: 문의하기 화면으로 이동 */ },
-        onExitClick = { /* TODO: 앱 종료 처리 */ },
+        onExitClick = { /* TODO: 앱 종료 처리 */ }
     )
 }
 
@@ -91,7 +91,7 @@ private fun OtpScreen(
     onAuthButtonClick: () -> Unit,
     onContactClick: () -> Unit,
     onExitClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -101,11 +101,11 @@ private fun OtpScreen(
             .addFocusCleaner(focusManager)
             .background(HilingualTheme.colors.white)
             .padding(paddingValues),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         BackTopAppBar(
             title = "인증 번호 입력",
-            onBackClicked = onBackClicked,
+            onBackClicked = onBackClicked
         )
 
         Spacer(Modifier.height(32.dp))
@@ -113,7 +113,7 @@ private fun OtpScreen(
         OtpTextField(
             otpText = otpCodeProvider,
             onOtpTextChange = onOtpCodeChange,
-            isError = isOtpInvalidProvider(),
+            isError = isOtpInvalidProvider()
         )
 
         Spacer(Modifier.height(12.dp))
@@ -125,7 +125,7 @@ private fun OtpScreen(
             color = HilingualTheme.colors.alertRed,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp)
         )
 
         Spacer(Modifier.height(12.dp))
@@ -135,18 +135,18 @@ private fun OtpScreen(
                 .fillMaxWidth()
                 .background(HilingualTheme.colors.gray100)
                 .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
                 text = "Q. 인증 번호란?",
                 style = HilingualTheme.typography.headB16,
-                color = HilingualTheme.colors.black,
+                color = HilingualTheme.colors.black
             )
             Text(
                 text = "사전 예약을 신청한 분들을 대상으로 가입 인증 번호가 발급되었어요. 인증 번호를 보유하신 경우에만 가입이 가능해요.\n\n" +
-                        "알림을 신청한 이메일을 확인해주세요.",
+                    "알림을 신청한 이메일을 확인해주세요.",
                 style = HilingualTheme.typography.bodyM14,
-                color = HilingualTheme.colors.gray500,
+                color = HilingualTheme.colors.gray500
             )
         }
 
@@ -160,7 +160,7 @@ private fun OtpScreen(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth()
-                .noRippleClickable(onClick = onNotReceivedCodeClick),
+                .noRippleClickable(onClick = onNotReceivedCodeClick)
         )
 
         Spacer(Modifier.weight(1f))
@@ -169,14 +169,14 @@ private fun OtpScreen(
             text = "인증하기",
             onClick = onAuthButtonClick,
             enableProvider = { otpCodeProvider().length == 6 },
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(16.dp)
         )
     }
 
     if (authFailureCountProvider() >= 5) {
         OtpFailureDialog(
             onContactClick = onContactClick,
-            onExitClick = onExitClick,
+            onExitClick = onExitClick
         )
     }
 }
@@ -185,13 +185,13 @@ private fun OtpScreen(
 private fun OtpFailureDialog(
     modifier: Modifier = Modifier,
     onContactClick: () -> Unit,
-    onExitClick: () -> Unit,
+    onExitClick: () -> Unit
 ) {
     TwoButtonDialog(
         modifier = modifier,
         title = "인증에 실패했어요",
         description = "사전 예약 알림신청을 통해 발급한\n" +
-                "인증코드가 맞는지 다시 한번 확인해주세요.",
+            "인증코드가 맞는지 다시 한번 확인해주세요.",
         cancelText = "앱 종료",
         confirmText = "문의하기",
         onNegative = onExitClick,
@@ -199,8 +199,7 @@ private fun OtpFailureDialog(
         onDismiss = { },
         properties = DialogProperties(
             dismissOnBackPress = false,
-            dismissOnClickOutside = false,
-        ),
+            dismissOnClickOutside = false
+        )
     )
 }
-
