@@ -57,13 +57,13 @@ fun OtpRoute(
 
     OtpScreen(
         paddingValues = paddingValues,
-        otpCode = otpCode,
+        otpCodeProvider = { otpCode },
         onOtpCodeChange = {
             isOtpInvalid = false
             otpCode = it
         },
-        isOtpInvalid = isOtpInvalid,
-        authFailureCount = authFailureCount,
+        isOtpInvalidProvider = { isOtpInvalid },
+        authFailureCountProvider = { authFailureCount },
         onBackClicked = navigateUp,
         onNotReceivedCodeClick = { /* TODO: 인증번호 미수신 처리 */ },
         onAuthButtonClick = {
@@ -82,10 +82,10 @@ fun OtpRoute(
 @Composable
 private fun OtpScreen(
     paddingValues: PaddingValues,
-    otpCode: String,
+    otpCodeProvider: () -> String,
     onOtpCodeChange: (String) -> Unit,
-    isOtpInvalid: Boolean,
-    authFailureCount: Int,
+    isOtpInvalidProvider: () -> Boolean,
+    authFailureCountProvider: () -> Int,
     onBackClicked: () -> Unit,
     onNotReceivedCodeClick: () -> Unit,
     onAuthButtonClick: () -> Unit,
@@ -111,15 +111,16 @@ private fun OtpScreen(
         Spacer(Modifier.height(32.dp))
 
         OtpTextField(
-            otpText = { otpCode },
+            otpText = otpCodeProvider,
             onOtpTextChange = onOtpCodeChange,
-            isError = isOtpInvalid,
+            isError = isOtpInvalidProvider(),
         )
 
         Spacer(Modifier.height(12.dp))
 
+        val isOtpInvalid = isOtpInvalidProvider()
         Text(
-            text = if (isOtpInvalid) "유효하지 않은 인증코드입니다. [실패 횟수 $authFailureCount/5]" else "",
+            text = if (isOtpInvalid) "유효하지 않은 인증코드입니다. [실패 횟수 ${authFailureCountProvider()}/5]" else "",
             style = HilingualTheme.typography.captionR12,
             color = HilingualTheme.colors.alertRed,
             modifier = Modifier
@@ -167,12 +168,12 @@ private fun OtpScreen(
         HilingualButton(
             text = "인증하기",
             onClick = onAuthButtonClick,
-            enableProvider = { otpCode.length == 6 },
+            enableProvider = { otpCodeProvider().length == 6 },
             modifier = Modifier.padding(16.dp),
         )
     }
 
-    if (authFailureCount >= 5) {
+    if (authFailureCountProvider() >= 5) {
         OtpFailureDialog(
             onContactClick = onContactClick,
             onExitClick = onExitClick,
@@ -202,3 +203,4 @@ private fun OtpFailureDialog(
         ),
     )
 }
+
