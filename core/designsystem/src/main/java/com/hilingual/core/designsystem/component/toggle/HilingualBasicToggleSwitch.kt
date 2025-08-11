@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
-fun HilingualBasicSwitch(
+fun HilingualBasicToggleSwitch(
     isChecked: Boolean,
     onCheckedChange: () -> Unit,
     width: Dp = 52.dp,
@@ -74,11 +74,11 @@ fun HilingualBasicSwitch(
 
 @Preview(showBackground = true)
 @Composable
-private fun SwitchPreview() {
+private fun ToggleSwitchPreview() {
     HilingualTheme {
         var isChecked by remember { mutableStateOf(true) }
 
-        HilingualBasicSwitch(
+        HilingualBasicToggleSwitch(
             isChecked = isChecked,
             onCheckedChange = { isChecked = !isChecked }
         )

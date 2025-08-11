@@ -27,7 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.hilingual.core.designsystem.component.toggle.HilingualBasicSwitch
+import com.hilingual.core.designsystem.component.toggle.HilingualBasicToggleSwitch
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
@@ -46,7 +46,7 @@ internal fun DiaryViewModeToggle(
             style = HilingualTheme.typography.captionR14,
             color = HilingualTheme.colors.gray500
         )
-        HilingualBasicSwitch(
+        HilingualBasicToggleSwitch(
             isChecked = isAIWritten,
             onCheckedChange = onToggle
         )
