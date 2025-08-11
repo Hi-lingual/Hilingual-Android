@@ -21,7 +21,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.hilingual.core.navigation.Route
-import com.hilingual.presentation.otp.OtpScreen
+import com.hilingual.presentation.otp.OtpRoute
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToOtp(
@@ -30,10 +30,15 @@ fun NavController.navigateToOtp(
 
 fun NavGraphBuilder.otpNavGraph(
     paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
     navigateToOnboarding: () -> Unit
 ) {
     composable<Otp> {
-        OtpScreen(paddingValues = paddingValues)
+        OtpRoute(
+            paddingValues = paddingValues,
+            navigateUp = navigateUp,
+            navigateToOnboarding = navigateToOnboarding
+        )
     }
 }
 
