@@ -45,6 +45,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectLatestSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.provider.LocalSystemBarsColor
@@ -52,7 +53,6 @@ import com.hilingual.core.designsystem.event.LocalSharedTransitionScope
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualOrange
 import com.hilingual.presentation.auth.component.GoogleSignButton
-import com.hilingual.core.common.constant.UrlConstant
 import kotlinx.coroutines.delay
 
 @Composable
