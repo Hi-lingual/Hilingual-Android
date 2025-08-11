@@ -66,7 +66,7 @@ internal fun TermsBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .padding(top = 32.dp, bottom = 16.dp)
+                    .padding(top = 32.dp, bottom = 12.dp)
             ) {
                 Text(
                     text = "하이링구얼이 처음이시군요!",
@@ -106,7 +106,7 @@ internal fun TermsBottomSheet(
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_check_circle_28_and),
                             tint = if (allAgreed) HilingualTheme.colors.black else Color.Unspecified,
-                            contentDescription = "전체 동의 체크박스"
+                            contentDescription = null
                         )
                     }
 
@@ -168,7 +168,7 @@ private fun TermRow(
             imageVector = ImageVector.vectorResource(R.drawable.ic_check_circle_28_and),
             tint = if (isSelected) HilingualTheme.colors.black else Color.Unspecified,
             modifier = Modifier.noRippleClickable(onClick = { onSelectedChange(!isSelected) }),
-            contentDescription = "$text 체크박스"
+            contentDescription = null
         )
     }
 }
