@@ -24,6 +24,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 fun HilingualBasicToggleSwitch(
     isChecked: Boolean,
     onCheckedChange: () -> Unit,
+    modifier: Modifier = Modifier,
     width: Dp = 52.dp,
     height: Dp = 28.dp,
     checkedTrackColor: Color = HilingualTheme.colors.hilingualOrange,
@@ -49,7 +50,7 @@ fun HilingualBasicToggleSwitch(
     )
 
     Canvas(
-        modifier = Modifier
+        modifier = modifier
             .size(width = width, height = height)
             .pointerInput(onCheckedChange) {
                 detectTapGestures(
