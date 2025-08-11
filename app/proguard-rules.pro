@@ -14,8 +14,59 @@
 
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+-keepattributes SourceFile,LineNumberTable
 
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Hilingual Specific Rules
+
+##---------------Begin: kotlin serialization ----------
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.AnnotationsKt # core serialization annotations
+
+# kotlinx-serialization-json specific. Add this if you have java.lang.NoClassDefFoundError kotlinx.serialization.json.JsonObjectSerializer
+-keepclassmembers class kotlinx.serialization.json.** {
+    *** Companion;
+}
+-keepclasseswithmembers class kotlinx.serialization.json.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+# Application rules
+-keepclassmembers @kotlinx.serialization.Serializable class com.hilingual.** {
+    # lookup for plugin generated serializable classes
+    *** Companion;
+    # lookup for serializable objects
+    *** INSTANCE;
+    kotlinx.serialization.KSerializer serializer(...);
+}
+# lookup for plugin generated serializable classes
+-if @kotlinx.serialization.Serializable class com.hilingual.**
+-keepclassmembers class com.hilingual.<1>$Companion {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+# Serialization supports named companions but for such classes it is necessary to add an additional rule.
+# This rule keeps serializer and serializable class from obfuscation. Therefore, it is recommended not to use wildcards in it, but to write rules for each such class.
+# -keep class com.hilingual.SerializableClassWithNamedCompanion$$serializer {
+#     *** INSTANCE;
+# }
+
+-keep class com.hilingual.** {
+    @kotlinx.serialization.SerialName <fields>;
+}
+
+##---------------END: kotlin serialization ----------
+
+##---------------Begin: Coroutines ----------
+# Keep critical classes for coroutines to work correctly.
+-keep class kotlinx.coroutines.android.AndroidDispatcherFactory
+-keep class kotlinx.coroutines.android.AndroidExceptionPreHandler
+##---------------End: Coroutines ----------
+
+##---------------Begin: Timber ----------
+-keep class timber.log.Timber$Tree { *; }
+-keep class timber.log.Timber$DebugTree { *; }
+##---------------End: Timber ----------
