@@ -35,7 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.diaryfeedback.R
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun FeedbackEmptyCard(
@@ -48,7 +48,7 @@ internal fun FeedbackEmptyCard(
             .padding(12.dp)
     ) {
         Image(
-            painterResource(R.drawable.img_feedback_wow),
+            painterResource(DesignSystemR.drawable.img_feedback_wow),
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)

@@ -36,6 +36,7 @@ import com.hilingual.core.designsystem.event.LocalSharedTransitionScope
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualOrange
 import kotlinx.coroutines.delay
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun SplashRoute(
@@ -85,7 +86,7 @@ private fun SplashScreen(
 
         with(LocalSharedTransitionScope.current) {
             Image(
-                painter = painterResource(R.drawable.img_logo),
+                painter = painterResource(DesignSystemR.drawable.img_logo),
                 contentDescription = null,
                 modifier = Modifier.sharedElement(
                     sharedContentState = rememberSharedContentState(key = "logo"),
