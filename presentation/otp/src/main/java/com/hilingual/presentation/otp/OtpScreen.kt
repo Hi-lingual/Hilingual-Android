@@ -54,7 +54,8 @@ fun OtpRoute(
         onBackClicked = navigateUp,
         onTextClick = {},
         onButtonClick = navigateToOnboarding,
-        isButtonEnable = { true }
+        isButtonEnable = { true },
+        isError = false
     )
 }
 
@@ -64,8 +65,10 @@ private fun OtpScreen(
     onBackClicked: () -> Unit,
     onTextClick: () -> Unit,
     onButtonClick: () -> Unit,
+    isError: Boolean,
     isButtonEnable: () -> Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    failureCount: Int = 0,
 ) {
     val focusManager = LocalFocusManager.current
     var value by remember { mutableStateOf("") }
@@ -87,10 +90,22 @@ private fun OtpScreen(
 
         OtpTextField(
             otpText = { value },
-            onOtpTextChange = { value = it }
+            onOtpTextChange = { value = it },
+            isError = isError
         )
 
-        Spacer(Modifier.height(40.dp))
+        Spacer(Modifier.height(12.dp))
+
+        Text(
+            text = if (isError) "유효하지 않은 인증코드입니다. [실패 횟수${failureCount}/5]" else "",
+            style = HilingualTheme.typography.captionR12,
+            color = HilingualTheme.colors.alertRed,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        )
+
+        Spacer(Modifier.height(12.dp))
 
         Column(
             modifier = Modifier
@@ -106,7 +121,7 @@ private fun OtpScreen(
             )
             Text(
                 text = "사전 예약을 신청한 분들을 대상으로 가입 인증 번호가 발급되었어요. 인증 번호를 보유하신 경우에만 가입이 가능해요.\n\n" +
-                    "알림을 신청한 이메일을 확인해주세요.",
+                        "알림을 신청한 이메일을 확인해주세요.",
                 style = HilingualTheme.typography.bodyM14,
                 color = HilingualTheme.colors.gray500
             )
@@ -145,7 +160,8 @@ private fun OtpScreenPreview() {
             onBackClicked = {},
             onTextClick = {},
             onButtonClick = {},
-            isButtonEnable = { true }
+            isButtonEnable = { true },
+            isError = false
         )
     }
 }
