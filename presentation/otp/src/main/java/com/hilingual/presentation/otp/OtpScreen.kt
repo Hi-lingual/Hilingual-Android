@@ -15,6 +15,7 @@
  */
 package com.hilingual.presentation.otp
 
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -51,6 +53,7 @@ fun OtpRoute(
     navigateUp: () -> Unit,
     navigateToOnboarding: () -> Unit
 ) {
+    val context = LocalContext.current
     var otpCode by remember { mutableStateOf("") }
     var authFailureCount by remember { mutableIntStateOf(0) }
     var isOtpInvalid by remember { mutableStateOf(false) }
@@ -66,7 +69,7 @@ fun OtpRoute(
         authFailureCountProvider = { authFailureCount },
         onBackClicked = navigateUp,
         onNotReceivedCodeClick = { /* TODO: 인증번호 미수신 처리 */ },
-        onAuthButtonClick = {
+        onAuthClick = {
             if (otpCode == "123456") {
                 navigateToOnboarding()
             } else {
@@ -75,7 +78,7 @@ fun OtpRoute(
             }
         },
         onContactClick = { /* TODO: 문의하기 화면으로 이동 */ },
-        onExitClick = { /* TODO: 앱 종료 처리 */ }
+        onExitClick = { (context as? Activity)?.finishAffinity() }
     )
 }
 
@@ -88,7 +91,7 @@ private fun OtpScreen(
     authFailureCountProvider: () -> Int,
     onBackClicked: () -> Unit,
     onNotReceivedCodeClick: () -> Unit,
-    onAuthButtonClick: () -> Unit,
+    onAuthClick: () -> Unit,
     onContactClick: () -> Unit,
     onExitClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -167,39 +170,41 @@ private fun OtpScreen(
 
         HilingualButton(
             text = "인증하기",
-            onClick = onAuthButtonClick,
+            onClick = onAuthClick,
             enableProvider = { otpCodeProvider().length == 6 },
             modifier = Modifier.padding(16.dp)
         )
     }
 
-    if (authFailureCountProvider() >= 5) {
-        OtpFailureDialog(
-            onContactClick = onContactClick,
-            onExitClick = onExitClick
-        )
-    }
+    OtpFailureDialog(
+        isVisible = authFailureCountProvider() >= 5,
+        onContactClick = onContactClick,
+        onExitClick = onExitClick
+    )
 }
 
 @Composable
 private fun OtpFailureDialog(
-    modifier: Modifier = Modifier,
+    isVisible: Boolean,
+    onExitClick: () -> Unit,
     onContactClick: () -> Unit,
-    onExitClick: () -> Unit
+    modifier: Modifier = Modifier
 ) {
-    TwoButtonDialog(
-        modifier = modifier,
-        title = "인증에 실패했어요",
-        description = "사전 예약 알림신청을 통해 발급한\n" +
-            "인증코드가 맞는지 다시 한번 확인해주세요.",
-        cancelText = "앱 종료",
-        confirmText = "문의하기",
-        onNegative = onExitClick,
-        onPositive = onContactClick,
-        onDismiss = { },
-        properties = DialogProperties(
-            dismissOnBackPress = false,
-            dismissOnClickOutside = false
+    if (isVisible) {
+        TwoButtonDialog(
+            modifier = modifier,
+            title = "인증에 실패했어요",
+            description = "사전 예약 알림신청을 통해 발급한\n" +
+                "인증코드가 맞는지 다시 한번 확인해주세요.",
+            cancelText = "앱 종료",
+            confirmText = "문의하기",
+            onNegative = onExitClick,
+            onPositive = onContactClick,
+            onDismiss = { },
+            properties = DialogProperties(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false
+            )
         )
-    )
+    }
 }
