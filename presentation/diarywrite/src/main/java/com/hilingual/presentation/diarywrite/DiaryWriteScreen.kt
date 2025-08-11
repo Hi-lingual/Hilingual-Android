@@ -431,24 +431,3 @@ private fun DiaryWriteScreenPreview() {
         )
     }
 }
-
-@Preview(name = "Bottom Sheet Visible", showBackground = true)
-@Composable
-private fun DiaryWriteScreenBottomSheetPreview() {
-    HilingualTheme {
-        DiaryWriteScreen(
-            paddingValues = PaddingValues(),
-            onBackClicked = {},
-            selectedDate = LocalDate.now(),
-            topicKo = "오늘의 추천 주제",
-            topicEn = "Today's recommended topic",
-            diaryText = "This is a diary text.",
-            onDiaryTextChanged = {},
-            diaryImageUri = null,
-            onDiaryImageUriChanged = {},
-            onBottomSheetCameraClicked = {},
-            onBottomSheetGalleryClicked = {},
-            onDiaryFeedbackRequestButtonClick = {}
-        )
-    }
-}
