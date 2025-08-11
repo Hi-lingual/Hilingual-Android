@@ -250,19 +250,18 @@ private fun DiaryWriteScreen(
         )
     }
 
-    if (isBottomSheetVisible) {
-        ImageSelectBottomSheet(
-            onDismiss = { isBottomSheetVisible = false },
-            onCameraSelected = {
-                onBottomSheetCameraClicked()
-                isBottomSheetVisible = false
-            },
-            onGallerySelected = {
-                onBottomSheetGalleryClicked()
-                isBottomSheetVisible = false
-            }
-        )
-    }
+    ImageSelectBottomSheet(
+        isVisible = isBottomSheetVisible,
+        onDismiss = { isBottomSheetVisible = false },
+        onCameraSelected = {
+            onBottomSheetCameraClicked()
+            isBottomSheetVisible = false
+        },
+        onGallerySelected = {
+            onBottomSheetGalleryClicked()
+            isBottomSheetVisible = false
+        }
+    )
 
     Column(
         modifier = Modifier
@@ -429,6 +428,27 @@ private fun DiaryWriteScreenPreview() {
             onBottomSheetCameraClicked = {},
             onBottomSheetGalleryClicked = {},
             onDiaryFeedbackRequestButtonClick = {}
+        )
+    }
+}
+
+@Preview(name = "Bottom Sheet Visible", showBackground = true)
+@Composable
+private fun DiaryWriteScreenBottomSheetPreview() {
+    HilingualTheme {
+        DiaryWriteScreen(
+            paddingValues = PaddingValues(),
+            onBackClicked = {},
+            selectedDate = LocalDate.now(),
+            topicKo = "오늘의 추천 주제",
+            topicEn = "Today's recommended topic",
+            diaryText = "This is a diary text.",
+            onDiaryTextChanged = {},
+            diaryImageUri = null,
+            onDiaryImageUriChanged = {},
+            onBottomSheetCameraClicked = {},
+            onBottomSheetGalleryClicked = {},
+            onDiaryFeedbackRequestButtonClick = {},
         )
     }
 }
