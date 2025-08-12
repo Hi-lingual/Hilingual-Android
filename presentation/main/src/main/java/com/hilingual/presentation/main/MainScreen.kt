@@ -137,6 +137,7 @@ internal fun MainScreen(
 
                 otpNavGraph(
                     paddingValues = innerPadding,
+                    navigateUp = appState::navigateUp,
                     navigateToOnboarding = appState::navigateToOnboarding
                 )
 

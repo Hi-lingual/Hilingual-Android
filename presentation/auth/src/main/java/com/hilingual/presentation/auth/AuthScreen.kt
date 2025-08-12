@@ -52,6 +52,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualOrange
 import com.hilingual.presentation.auth.component.GoogleSignButton
 import kotlinx.coroutines.delay
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun AuthRoute(
@@ -120,7 +121,7 @@ private fun AuthScreen(
 
         with(LocalSharedTransitionScope.current) {
             Image(
-                painter = painterResource(R.drawable.img_logo),
+                painter = painterResource(DesignSystemR.drawable.img_logo),
                 contentDescription = null,
                 modifier = Modifier.sharedElement(
                     sharedContentState = rememberSharedContentState(key = "logo"),
@@ -139,7 +140,7 @@ private fun AuthScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(R.drawable.img_login),
+                painter = painterResource(DesignSystemR.drawable.img_login),
                 contentDescription = null
             )
             GoogleSignButton(onClick = onGoogleSignClick)
