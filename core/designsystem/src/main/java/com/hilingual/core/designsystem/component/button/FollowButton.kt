@@ -34,7 +34,7 @@ enum class ButtonType() {
 }
 
 @Composable
-fun BasicUserButton(
+fun BasicFollowButton(
     type: ButtonType,
     buttonText: String,
     onClick: () -> Unit,
@@ -120,7 +120,7 @@ enum class FollowState(
     );
 
     companion object {
-        fun findValue(followStateCode: Int) = entries.find {
+        fun findFollowState(followStateCode: Int) = entries.find {
             it.followInfo == followStateCode
         } ?: FOLLOWING
     }
@@ -168,7 +168,7 @@ fun FollowItem(
             )
         }
 
-        BasicUserButton(
+        BasicFollowButton(
             type = followState.type,
             buttonText = followState.text,
             onClick = onClickButton //TODO: API 호출 (userId 필요)
@@ -181,7 +181,7 @@ fun FollowItem(
 @Composable
 private fun UserItemPreview() {
     HilingualTheme {
-        val followState = FollowState.findValue(1)
+        val followState = FollowState.findFollowState(1)
         val buttonClickEvent = when (followState.apiType) {
             ApiType.FOLLOW -> { {} } // 팔로우 등록 API 호출
             ApiType.CANCEL -> { {} } // 팔로우 해제 API 호출
@@ -224,7 +224,7 @@ private fun BasicButtonPreview() {
     HilingualTheme {
         val followStateList = persistentListOf<FollowState>(
             FollowState.FOLLOWING,
-            FollowState.findValue(followStateCode = 2), // follow
+            FollowState.findFollowState(followStateCode = 2), // follow
             FollowState.MUTUAL_FOLLOW
         )
 
@@ -232,7 +232,7 @@ private fun BasicButtonPreview() {
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(followStateList) {
-                BasicUserButton(
+                BasicFollowButton(
                     type = it.type,
                     buttonText = it.text,
                     onClick = {}
