@@ -3,14 +3,20 @@ package com.hilingual.core.designsystem.component.button
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -18,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import kotlinx.collections.immutable.persistentListOf
 
@@ -63,7 +70,7 @@ fun BasicUserButton(
             .noRippleClickable(
                 onClick = onClick
             )
-            .width(80.dp) // TODO: Large 사이즈 지원 (프로필에서) 고민
+            .width(80.dp)
             .clip(RoundedCornerShape(4.dp))
             .background(buttonColor.background)
             .border(
@@ -83,7 +90,7 @@ data class UserButtonColor(
 
 enum class ApiType() {
     CANCEL, // 팔로우 해제
-    FOLLOW // 팔로우
+    FOLLOW // 팔로우 등록
 }
 
 enum class FollowState(
@@ -116,6 +123,98 @@ enum class FollowState(
         fun findValue(followStateCode: Int) = entries.find {
             it.followInfo == followStateCode
         } ?: FOLLOWING
+    }
+}
+
+@Composable
+fun FollowItem(
+    profileUrl: String,
+    nickname: String,
+    followState: FollowState,
+    onClickProfile: () -> Unit,
+    onClickButton: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier
+            .background(HilingualTheme.colors.white)
+            .padding(vertical = 8.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.noRippleClickable(
+                onClick = onClickProfile //TODO: 프로필 화면으로 이동 (userId 필요)
+            )
+        ) {
+            NetworkImage(
+                imageUrl = profileUrl,
+                shape = CircleShape,
+                modifier = Modifier
+                    .size(42.dp)
+                    .border(
+                        width = 1.dp,
+                        color = HilingualTheme.colors.gray200,
+                        shape = CircleShape
+                    ),
+            )
+
+            Text(
+                text = nickname,
+                style = HilingualTheme.typography.headB16,
+                color = HilingualTheme.colors.black
+            )
+        }
+
+        BasicUserButton(
+            type = followState.type,
+            buttonText = followState.text,
+            onClick = onClickButton //TODO: API 호출 (userId 필요)
+        )
+    }
+}
+
+
+@Preview(showBackground = true, backgroundColor = 0x000000)
+@Composable
+private fun UserItemPreview() {
+    HilingualTheme {
+        val followState = FollowState.findValue(1)
+        val buttonClickEvent = when (followState.apiType) {
+            ApiType.FOLLOW -> { {} } // 팔로우 등록 API 호출
+            ApiType.CANCEL -> { {} } // 팔로우 해제 API 호출
+        }
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            FollowItem(
+                profileUrl = "",
+                nickname = "Android1",
+                followState = followState,
+                onClickProfile = {},
+                onClickButton = buttonClickEvent,
+                modifier = Modifier.fillMaxWidth()
+            )
+            FollowItem(
+                profileUrl = "",
+                nickname = "Android2",
+                followState = FollowState.FOLLOW,
+                onClickProfile = {},
+                onClickButton = {},
+                modifier = Modifier.fillMaxWidth()
+            )
+            FollowItem(
+                profileUrl = "",
+                nickname = "Android3",
+                followState = FollowState.MUTUAL_FOLLOW,
+                onClickProfile = {},
+                onClickButton = {},
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
 
