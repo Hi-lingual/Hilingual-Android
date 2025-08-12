@@ -193,7 +193,7 @@ private fun OtpFailureDialog(
     if (isVisible) {
         TwoButtonDialog(
             modifier = modifier,
-            title = "인증에 실패했어요",
+            title = "인증에 실패했어요.",
             description = "사전 예약 알림신청을 통해 발급한\n" +
                 "인증코드가 맞는지 다시 한번 확인해주세요.",
             cancelText = "앱 종료",
