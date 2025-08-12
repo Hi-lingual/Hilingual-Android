@@ -31,7 +31,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.home.R
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 enum class DiaryEmptyCardType(
     val text: String,
@@ -39,11 +39,11 @@ enum class DiaryEmptyCardType(
 ) {
     PAST(
         text = "작성된 일기가 없어요\n좋은 하루 보내셨기를 바라요!",
-        imageRes = R.drawable.img_diary_empty
+        imageRes = DesignSystemR.drawable.img_diary_empty
     ),
     FUTURE(
         text = "아직 작성 가능한 시간이 아니에요.\n오늘의 일기를 작성해주세요!",
-        imageRes = R.drawable.img_diary_lock
+        imageRes = DesignSystemR.drawable.img_diary_lock
     )
 }
 
@@ -71,7 +71,8 @@ internal fun DiaryEmptyCard(
     }
 }
 
-private class DiaryEmptyCardPreviewParameterProvider : PreviewParameterProvider<DiaryEmptyCardType> {
+private class DiaryEmptyCardPreviewParameterProvider :
+    PreviewParameterProvider<DiaryEmptyCardType> {
     override val values: Sequence<DiaryEmptyCardType>
         get() = DiaryEmptyCardType.entries.asSequence()
 }

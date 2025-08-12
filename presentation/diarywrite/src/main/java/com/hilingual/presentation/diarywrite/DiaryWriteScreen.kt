@@ -80,6 +80,7 @@ import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun DiaryWriteRoute(
@@ -198,7 +199,7 @@ internal fun DiaryWriteRoute(
                 uiData = FeedbackUIData(
                     title = "앗! 일시적인 오류가 발생했어요.",
                     media = FeedbackMedia.Image(
-                        resId = R.drawable.img_error,
+                        resId = DesignSystemR.drawable.img_error,
                         heightDp = 175.dp
                     )
                 ),
