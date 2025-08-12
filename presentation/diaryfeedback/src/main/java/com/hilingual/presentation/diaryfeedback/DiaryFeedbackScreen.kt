@@ -122,7 +122,7 @@ internal fun DiaryFeedbackRoute(
             )
         }
 
-        else -> { }
+        else -> {}
     }
 }
 
