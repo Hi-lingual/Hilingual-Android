@@ -32,7 +32,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.voca.R
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 internal enum class VocaEmptyCardType(
     val text: String,
@@ -40,11 +40,11 @@ internal enum class VocaEmptyCardType(
 ) {
     NOT_ADD(
         text = "아직 단어가 추가되지 않았어요.",
-        imageRes = R.drawable.img_word
+        imageRes = DesignSystemR.drawable.img_word
     ),
     NOT_SEARCH(
         text = "검색 결과가 없습니다.",
-        imageRes = R.drawable.img_search
+        imageRes = DesignSystemR.drawable.img_search
     )
 }
 
