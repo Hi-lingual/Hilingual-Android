@@ -37,7 +37,7 @@ fun HilingualProfileImageBottomSheet(
 @Preview
 @Composable
 private fun HilingualImagePickerBottomSheetPreview() {
-    HilingualTheme{
+    HilingualTheme {
         HilingualProfileImageBottomSheet(
             isVisible = true,
             onDismiss = {},
@@ -46,4 +46,3 @@ private fun HilingualImagePickerBottomSheetPreview() {
         )
     }
 }
-
