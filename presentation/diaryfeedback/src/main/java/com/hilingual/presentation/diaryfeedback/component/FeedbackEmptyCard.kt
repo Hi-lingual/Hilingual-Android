@@ -48,7 +48,7 @@ internal fun FeedbackEmptyCard(
             .padding(12.dp)
     ) {
         Image(
-            painterResource(DesignSystemR.drawable.img_feedback_wow),
+            painterResource(DesignSystemR.drawable.img_feedback_wow_grey),
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
