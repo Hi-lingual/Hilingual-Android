@@ -30,7 +30,7 @@ fun ProfileImagePicker(
     imageUrl: String? = null
 ) {
     Box(
-        modifier = modifier
+        modifier = modifier.noRippleClickable(onClick = onClick)
     ) {
         val imageModifier = Modifier
             .size(120.dp)
@@ -60,7 +60,6 @@ fun ProfileImagePicker(
             modifier = Modifier
                 .size(32.dp)
                 .clip(CircleShape)
-                .noRippleClickable(onClick = onClick)
                 .background(HilingualTheme.colors.gray100)
                 .padding(6.dp)
                 .align(Alignment.BottomEnd)
