@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.localstorage.TokenManager
+import com.hilingual.data.user.model.NicknameValidationResult
 import com.hilingual.data.user.model.UserProfileModel
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -121,20 +122,31 @@ internal class OnboardingViewModel @Inject constructor(
             }
 
             userRepository.getNicknameAvailability(nickname)
-                .onSuccess { isAvailable ->
-                    if (isAvailable) {
-                        _uiState.update {
-                            it.copy(
-                                validationMessage = "사용 가능한 닉네임이에요",
-                                isNicknameValid = true
-                            )
+                .onSuccess { result ->
+                    when (result) {
+                        NicknameValidationResult.AVAILABLE -> {
+                            _uiState.update {
+                                it.copy(
+                                    validationMessage = "사용 가능한 닉네임이에요",
+                                    isNicknameValid = true
+                                )
+                            }
                         }
-                    } else {
-                        _uiState.update {
-                            it.copy(
-                                validationMessage = "이미 사용중인 닉네임이에요",
-                                isNicknameValid = false
-                            )
+                        NicknameValidationResult.DUPLICATE -> {
+                            _uiState.update {
+                                it.copy(
+                                    validationMessage = "이미 사용중인 닉네임이에요",
+                                    isNicknameValid = false
+                                )
+                            }
+                        }
+                        NicknameValidationResult.FORBIDDEN_WORD -> {
+                            _uiState.update {
+                                it.copy(
+                                    validationMessage = "금지어가 포함된 닉네임이에요",
+                                    isNicknameValid = false
+                                )
+                            }
                         }
                     }
                 }
