@@ -72,8 +72,9 @@ fun HilingualMenuBottomSheetItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .background(HilingualTheme.colors.white)
-            .padding(12.dp)
+            .fillMaxWidth()
             .noRippleClickable(onClick = onClick)
+            .padding(12.dp)
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(iconResId),
