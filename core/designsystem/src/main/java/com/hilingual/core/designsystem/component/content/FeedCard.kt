@@ -69,66 +69,6 @@ fun FeedHeader(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = nickname,
-                    style = HilingualTheme.typography.headB16,
-                    color = HilingualTheme.colors.gray850
-                )
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_fire_16),
-                    contentDescription = null,
-                    tint = HilingualTheme.colors.hilingualOrange,
-                    modifier = Modifier
-                        .padding(start = 4.dp, end = 1.dp)
-                        .size(16.dp)
-
-                )
-                Text(
-                    text = streak.toString(),
-                    style = HilingualTheme.typography.bodyM14,
-                    color = HilingualTheme.colors.hilingualOrange
-                )
-            }
-            Text(
-                text = formatSharedDate(sharedDate),
-                style = HilingualTheme.typography.captionR12,
-                color = HilingualTheme.colors.gray400
-            )
-        }
-        Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_more_24),
-            contentDescription = null,
-            tint = HilingualTheme.colors.gray400,
-            modifier = Modifier
-                .size(24.dp)
-                .noRippleClickable(onClick = onMenuClick)
-        )
-    }
-}
-
-
-@Composable
-fun FeedHeaderPractice(
-    nickname: String,
-    streak: Int,
-    sharedDate: Long,
-    onMenuClick: () -> Unit,
-    modifier: Modifier
-) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .fillMaxWidth()
-            .background(HilingualTheme.colors.white)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = nickname,
@@ -313,20 +253,6 @@ fun FeedHeaderPreview() {
             nickname = "HilingualUser",
             streak = 10,
             sharedDate = 6000,
-            onMenuClick = {},
-            modifier = Modifier
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun FeedHeaderPracPreview() {
-    HilingualTheme {
-        FeedHeaderPractice(
-            nickname = "HilingualUser",
-            streak = 10,
-            sharedDate = 240,
             onMenuClick = {},
             modifier = Modifier
         )
