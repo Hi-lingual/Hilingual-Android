@@ -16,35 +16,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
-import com.hilingual.core.designsystem.component.button.ApiType
-import com.hilingual.core.designsystem.component.button.FollowButton
-import com.hilingual.core.designsystem.component.button.FollowState
+import com.hilingual.core.designsystem.component.button.UserActionButton
 import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-fun FollowItem(
+fun UserActionItem(
     userId: Long,
     profileUrl: String,
     nickname: String,
-    followState: FollowState,
-    onClickProfile: (Long) -> Unit,
-    onClickButton: (Long) -> Unit,
+    isPressed: Boolean,
+    buttonText: String,
+    onProfileClick: (Long) -> Unit,
+    onButtonClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
+            .fillMaxWidth()
             .background(HilingualTheme.colors.white)
             .padding(vertical = 8.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.noRippleClickable(
-                onClick = { onClickProfile(userId) }
-            )
+            modifier = Modifier.noRippleClickable(onClick = { onProfileClick(userId) })
         ) {
             NetworkImage(
                 imageUrl = profileUrl,
@@ -65,55 +63,47 @@ fun FollowItem(
             )
         }
 
-        FollowButton(
-            type = followState.type,
-            buttonText = followState.text,
-            onClick = { onClickButton(userId) }
+        UserActionButton(
+            isPressed = isPressed,
+            buttonText = buttonText,
+            onClick = { onButtonClick(userId) }
         )
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0x000000)
+@Preview()
 @Composable
-private fun FollowItemPreview() {
+private fun UserActionItemPreview() {
     HilingualTheme {
-        val followState = FollowState.findFollowState(1)
-        val buttonClickEvent: (Long) -> Unit = { userId -> // userId를 파라미터로 받도록 변경
-            when (followState.apiType) {
-                ApiType.FOLLOW -> {}
-                ApiType.CANCEL -> {}
-            }
-        }
-
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            FollowItem(
-                userId = 0L,
+            UserActionItem(
+                userId = 1L,
                 profileUrl = "",
-                nickname = "Android1",
-                followState = followState,
-                onClickProfile = {},
-                onClickButton = buttonClickEvent,
-                modifier = Modifier.fillMaxWidth()
+                nickname = "나현",
+                isPressed = false,
+                buttonText = "팔로우",
+                onProfileClick = {},
+                onButtonClick = {}
             )
-            FollowItem(
-                userId = 0L,
+            UserActionItem(
+                userId = 2L,
                 profileUrl = "",
-                nickname = "Android2",
-                followState = FollowState.FOLLOW,
-                onClickProfile = {},
-                onClickButton = {},
-                modifier = Modifier.fillMaxWidth()
+                nickname = "작나",
+                isPressed = false,
+                buttonText = "맞팔로우",
+                onProfileClick = {},
+                onButtonClick = {}
             )
-            FollowItem(
-                userId = 0L,
+            UserActionItem(
+                userId = 3L,
                 profileUrl = "",
-                nickname = "Android3",
-                followState = FollowState.MUTUAL_FOLLOW,
-                onClickProfile = {},
-                onClickButton = {},
-                modifier = Modifier.fillMaxWidth()
+                nickname = "큰나",
+                isPressed = true,
+                buttonText = "팔로잉",
+                onProfileClick = {},
+                onButtonClick = {}
             )
         }
     }
