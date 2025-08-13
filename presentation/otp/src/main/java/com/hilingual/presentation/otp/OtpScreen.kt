@@ -39,7 +39,9 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.addFocusCleaner
+import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.dialog.TwoButtonDialog
@@ -68,7 +70,7 @@ fun OtpRoute(
         isOtpInvalidProvider = { isOtpInvalid },
         authFailureCountProvider = { authFailureCount },
         onBackClicked = navigateUp,
-        onNotReceivedCodeClick = { /* TODO: 인증번호 미수신 처리 */ },
+        onNotReceivedCodeClick = { context.launchCustomTabs(UrlConstant.KAKAOTALK_CHANNEL) },
         onAuthClick = {
             if (otpCode == "123456") {
                 navigateToOnboarding()
@@ -77,7 +79,7 @@ fun OtpRoute(
                 authFailureCount++
             }
         },
-        onContactClick = { /* TODO: 문의하기 화면으로 이동 */ },
+        onContactClick = { context.launchCustomTabs(UrlConstant.KAKAOTALK_CHANNEL) },
         onExitClick = { (context as? Activity)?.finishAffinity() }
     )
 }
