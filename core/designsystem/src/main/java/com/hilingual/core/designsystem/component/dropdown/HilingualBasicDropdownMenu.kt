@@ -1,6 +1,5 @@
 package com.hilingual.core.designsystem.component.dropdown
 
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -43,11 +42,12 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun HilingualBasicDropdownMenu(
+    isExpanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     offsetY: Dp = 4.dp,
     content: @Composable () -> Unit
 ) {
-    var expanded by remember { mutableStateOf(false) }
     var iconHeight by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
 
@@ -55,19 +55,19 @@ fun HilingualBasicDropdownMenu(
 
     Box {
         Icon(
-            imageVector = Icons.Default.MoreVert,
+            imageVector = Icons.Default.MoreVert, //TODO: 디자인 시스템 아이콘으로 변경 필요
             contentDescription = null,
             modifier = Modifier
                 .onGloballyPositioned { coordinates ->
                     iconHeight = coordinates.size.height
                 }
-                .clickable(onClick = { expanded = true })
+                .clickable(onClick = { onExpandedChange(!isExpanded) })
         )
 
-        if (expanded) {
+        if (isExpanded) {
             Popup(
                 alignment = Alignment.TopEnd,
-                onDismissRequest = { expanded = false },
+                onDismissRequest = { onExpandedChange(false) },
                 offset = IntOffset(x = 0, y = iconHeight + popupYOffset),
             ) {
                 Column(
@@ -123,18 +123,23 @@ fun HilingualDropdownMenuItem(
 @Composable
 private fun DropdownMenuPreview() {
     HilingualTheme {
+        var expanded by remember { mutableStateOf(false) }
+
         Column(
             horizontalAlignment = Alignment.End,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            HilingualBasicDropdownMenu {
+            HilingualBasicDropdownMenu(
+                isExpanded = expanded,
+                onExpandedChange = { expanded = it }
+            ) {
                 HilingualDropdownMenuItem(
-                    text = "Option 1",
+                    text = "비공개하기",
                     iconResId = R.drawable.ic_search_20,
                     onClick = {
-                        Log.d("DropdownMenu", "Option 1 clicked")
+                        expanded = false
                     }
                 )
                 HorizontalDivider(
@@ -142,10 +147,10 @@ private fun DropdownMenuPreview() {
                     color = HilingualTheme.colors.gray200
                 )
                 HilingualDropdownMenuItem(
-                    text = "Option 2",
+                    text = "삭제하기",
                     iconResId = R.drawable.ic_search_20,
                     onClick = {
-                        Log.d("DropdownMenu", "Option 2 clicked")
+                        expanded = false
                     }
                 )
             }
