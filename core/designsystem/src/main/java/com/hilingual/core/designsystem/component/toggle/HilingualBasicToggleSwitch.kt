@@ -2,6 +2,7 @@ package com.hilingual.core.designsystem.component.toggle
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.Composable
@@ -53,7 +54,9 @@ fun HilingualBasicToggleSwitch(
             .size(width = width, height = height)
             .toggleable(
                 value = isChecked,
-                onValueChange = { onCheckedChange(it) }
+                onValueChange = { onCheckedChange(it) },
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
             )
     ) {
         drawRoundRect( // Track
