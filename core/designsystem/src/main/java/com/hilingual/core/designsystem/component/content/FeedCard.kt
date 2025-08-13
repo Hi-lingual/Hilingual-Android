@@ -68,7 +68,7 @@ fun FeedHeader(
             .background(HilingualTheme.colors.white)
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = nickname,
@@ -297,10 +297,10 @@ fun FeedContentPreviewWithImage() {
             streak = 7,
             sharedDate = 3,
             content = "Today was a busy but fulfilling day.\n" +
-                    "I spent the morning working on my project and finally solved a problem that had been bothering me for days.\n" +
-                    "In the afternoon, I met a friend for coffee and we talked about our future plans.\n" +
-                    "The weather was warm and sunny, which made the walk back home really pleasant.\n" +
-                    "I feel tired now, but also proud of how I spent my day.",
+                "I spent the morning working on my project and finally solved a problem that had been bothering me for days.\n" +
+                "In the afternoon, I met a friend for coffee and we talked about our future plans.\n" +
+                "The weather was warm and sunny, which made the walk back home really pleasant.\n" +
+                "I feel tired now, but also proud of how I spent my day.",
             imageUrl = "https://picsum.photos/id/1060/800/600",
             likeCount = likeCount,
             isLiked = isLiked,
@@ -330,10 +330,10 @@ fun FeedContentPreviewNoImage() {
             streak = 32,
             sharedDate = 24,
             content = "Today was a busy but fulfilling day.\n" +
-                    "I spent the morning working on my project and finally solved a problem that had been bothering me for days.\n" +
-                    "In the afternoon, I met a friend for coffee and we talked about our future plans.\n" +
-                    "The weather was warm and sunny, which made the walk back home really pleasant.\n" +
-                    "I feel tired now, but also proud of how I spent my day.",
+                "I spent the morning working on my project and finally solved a problem that had been bothering me for days.\n" +
+                "In the afternoon, I met a friend for coffee and we talked about our future plans.\n" +
+                "The weather was warm and sunny, which made the walk back home really pleasant.\n" +
+                "I feel tired now, but also proud of how I spent my day.",
             imageUrl = null,
             likeCount = likeCount,
             isLiked = isLiked,
