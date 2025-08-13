@@ -15,6 +15,10 @@
  */
 package com.hilingual.presentation.onboarding
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -41,6 +45,7 @@ import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.provider.LocalSystemBarsColor
+import com.hilingual.core.designsystem.component.bottomsheet.HilingualProfileImageBottomSheet
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.picker.ProfileImagePicker
 import com.hilingual.core.designsystem.component.textfield.HilingualShortTextField
@@ -114,12 +119,21 @@ private fun OnboardingScreen(
     validationMessage: () -> String,
     isNicknameValid: () -> Boolean,
     onDoneAction: (String) -> Unit,
-    onRegisterClick: (String, Boolean) -> Unit,
+    onRegisterClick: (String, Boolean, Uri?) -> Unit,
     onTermLinkClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
-    var isBottomSheetVisible by remember { mutableStateOf(false) }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var isImageSheetVisible by remember { mutableStateOf(false) }
+    var isTermsSheetVisible by remember { mutableStateOf(false) }
+
+    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            imageUri = uri
+        }
+    )
 
     Column(
         modifier = modifier
@@ -135,8 +149,8 @@ private fun OnboardingScreen(
         Spacer(Modifier.weight(13f))
 
         ProfileImagePicker(
-            onClick = { /* TODO 이미지 선택 바텀시트 로직 by 민재*/ },
-            imageUrl = null
+            onClick = { isImageSheetVisible = true },
+            imageUrl = imageUri?.toString()
         )
 
         Spacer(Modifier.weight(8f))
@@ -168,20 +182,37 @@ private fun OnboardingScreen(
 
         HilingualButton(
             text = "가입하기",
-            onClick = { isBottomSheetVisible = true },
+            onClick = { isTermsSheetVisible = true },
             enableProvider = isNicknameValid,
             modifier = Modifier.padding(vertical = 12.dp)
         )
-
-        TermsBottomSheet(
-            isVisible = isBottomSheetVisible,
-            onDismiss = { isBottomSheetVisible = false },
-            onStartClick = { isMarketingAgreed ->
-                onRegisterClick(nickname(), isMarketingAgreed)
-            },
-            onTermLinkClick = onTermLinkClick
-        )
     }
+
+    TermsBottomSheet(
+        isVisible = isTermsSheetVisible,
+        onDismiss = { isTermsSheetVisible = false },
+        onStartClick = { isMarketingAgreed ->
+            onRegisterClick(nickname(), isMarketingAgreed, imageUri)
+        },
+        onTermLinkClick = onTermLinkClick
+    )
+
+    HilingualProfileImageBottomSheet(
+        isVisible = isImageSheetVisible,
+        onDismiss = { isImageSheetVisible = false },
+        onDefaultImageClick = {
+            isImageSheetVisible = false
+            imageUri = null
+        },
+        onGalleryImageClick = {
+            isImageSheetVisible = false
+            singlePhotoPickerLauncher.launch(
+                PickVisualMediaRequest(
+                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                )
+            )
+        }
+    )
 }
 
 @Preview
@@ -196,7 +227,7 @@ private fun OnboardingScreenPreview() {
             validationMessage = { "" },
             isNicknameValid = { true },
             onDoneAction = { _ -> },
-            onRegisterClick = { _, _ -> },
+            onRegisterClick = { _, _, _ -> },
             onTermLinkClick = {}
         )
     }

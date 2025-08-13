@@ -15,6 +15,7 @@
  */
 package com.hilingual.presentation.onboarding
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
@@ -77,7 +78,7 @@ internal class OnboardingViewModel @Inject constructor(
         validateNickname(nickname)
     }
 
-    fun onRegisterClick(nickname: String, isMarketingAgreed: Boolean) {
+    fun onRegisterClick(nickname: String, isMarketingAgreed: Boolean, imageUri: Uri?) {
         viewModelScope.launch {
             userRepository.postUserProfile(UserProfileModel(profileImg = "", nickname = nickname))
                 .onSuccess {
@@ -85,7 +86,7 @@ internal class OnboardingViewModel @Inject constructor(
                     _sideEffect.emit(OnboardingSideEffect.NavigateToHome)
                 }
                 .onLogFailure {
-                    _sideEffect.emit(OnboardingSideEffect.ShowRetryDialog { onRegisterClick(nickname, isMarketingAgreed) })
+                    _sideEffect.emit(OnboardingSideEffect.ShowRetryDialog { onRegisterClick(nickname, isMarketingAgreed, imageUri) })
                 }
         }
     }
