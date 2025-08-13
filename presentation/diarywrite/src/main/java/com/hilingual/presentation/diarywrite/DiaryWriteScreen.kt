@@ -251,19 +251,18 @@ private fun DiaryWriteScreen(
         )
     }
 
-    if (isBottomSheetVisible) {
-        ImageSelectBottomSheet(
-            onDismiss = { isBottomSheetVisible = false },
-            onCameraSelected = {
-                onBottomSheetCameraClicked()
-                isBottomSheetVisible = false
-            },
-            onGallerySelected = {
-                onBottomSheetGalleryClicked()
-                isBottomSheetVisible = false
-            }
-        )
-    }
+    ImageSelectBottomSheet(
+        isVisible = isBottomSheetVisible,
+        onDismiss = { isBottomSheetVisible = false },
+        onCameraSelected = {
+            onBottomSheetCameraClicked()
+            isBottomSheetVisible = false
+        },
+        onGallerySelected = {
+            onBottomSheetGalleryClicked()
+            isBottomSheetVisible = false
+        }
+    )
 
     Column(
         modifier = Modifier
