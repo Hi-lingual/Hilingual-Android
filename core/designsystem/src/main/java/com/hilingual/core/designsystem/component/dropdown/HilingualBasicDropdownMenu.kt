@@ -131,52 +131,47 @@ private fun DropdownMenuPreview() {
         var expanded2 by remember { mutableStateOf(false) }
 
         Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.End,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            Row {
-                Text(text = "옵션 1개")
-                HilingualBasicDropdownMenu(
-                    isExpanded = expanded1,
-                    onExpandedChange = { expanded1 = it }
-                ) {
-                    HilingualDropdownMenuItem(
-                        text = "비공개하기",
-                        iconResId = R.drawable.ic_search_20,
-                        onClick = {
-                            expanded1 = false
-                        }
-                    )
-                }
+            HilingualBasicDropdownMenu( // 옵션 1개
+                isExpanded = expanded1,
+                onExpandedChange = { expanded1 = it }
+            ) {
+                HilingualDropdownMenuItem(
+                    text = "비공개하기",
+                    iconResId = R.drawable.ic_search_20,
+                    onClick = {
+                        expanded1 = false
+                    }
+                )
             }
-            Row {
-                Text(text = "옵션 2개")
-                HilingualBasicDropdownMenu(
-                    isExpanded = expanded2,
-                    onExpandedChange = { expanded2 = it }
-                ) {
-                    HilingualDropdownMenuItem(
-                        text = "비공개하기",
-                        iconResId = R.drawable.ic_search_20,
-                        onClick = {
-                            expanded2 = false
-                        }
-                    )
-                    HorizontalDivider(
-                        thickness = 1.dp,
-                        color = HilingualTheme.colors.gray200
-                    )
-                    HilingualDropdownMenuItem(
-                        text = "삭제하기",
-                        iconResId = R.drawable.ic_search_20,
-                        onClick = {
-                            expanded2 = false
-                        },
-                        textColor = HilingualTheme.colors.alertRed
-                    )
-                }
+            HilingualBasicDropdownMenu( // 옵션 2개
+                isExpanded = expanded2,
+                onExpandedChange = { expanded2 = it }
+            ) {
+                HilingualDropdownMenuItem(
+                    text = "비공개하기",
+                    iconResId = R.drawable.ic_search_20,
+                    onClick = {
+                        expanded2 = false
+                    }
+                )
+                HorizontalDivider(
+                    thickness = 1.dp,
+                    color = HilingualTheme.colors.gray200
+                )
+                HilingualDropdownMenuItem(
+                    text = "삭제하기",
+                    iconResId = R.drawable.ic_search_20,
+                    onClick = {
+                        expanded2 = false
+                    },
+                    textColor = HilingualTheme.colors.alertRed
+                )
             }
         }
     }
