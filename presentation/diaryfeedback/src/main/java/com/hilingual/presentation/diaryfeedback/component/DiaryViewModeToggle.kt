@@ -33,7 +33,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
 internal fun DiaryViewModeToggle(
     isAIWritten: Boolean,
-    onToggle: () -> Unit,
+    onToggle: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -61,7 +61,7 @@ private fun AIDiaryTogglePreview() {
 
         DiaryViewModeToggle(
             isAIWritten = isAI,
-            onToggle = { isAI = !isAI }
+            onToggle = { isAI = it }
         )
     }
 }

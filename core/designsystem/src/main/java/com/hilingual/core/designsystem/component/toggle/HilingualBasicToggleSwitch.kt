@@ -2,8 +2,8 @@ package com.hilingual.core.designsystem.component.toggle
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -23,7 +22,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
 fun HilingualBasicToggleSwitch(
     isChecked: Boolean,
-    onCheckedChange: () -> Unit,
+    onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     width: Dp = 52.dp,
     height: Dp = 28.dp,
@@ -52,11 +51,10 @@ fun HilingualBasicToggleSwitch(
     Canvas(
         modifier = modifier
             .size(width = width, height = height)
-            .pointerInput(onCheckedChange) {
-                detectTapGestures(
-                    onTap = { onCheckedChange() }
-                )
-            }
+            .toggleable(
+                value = isChecked,
+                onValueChange = { onCheckedChange(it) }
+            )
     ) {
         drawRoundRect( // Track
             color = if (isChecked) checkedTrackColor else uncheckedTrackColor,
