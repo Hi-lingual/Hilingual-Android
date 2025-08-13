@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -96,9 +97,11 @@ fun HilingualDropdownMenuItem(
     text: String,
     @DrawableRes iconResId: Int,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    textColor: Color = HilingualTheme.colors.gray700
 ) {
     Row(
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
             .clickable(onClick = onClick)
@@ -108,13 +111,14 @@ fun HilingualDropdownMenuItem(
         Icon(
             imageVector = ImageVector.vectorResource(iconResId),
             tint = Color.Unspecified,
-            contentDescription = null
+            contentDescription = null,
+            modifier = Modifier.size(24.dp)
         )
 
         Text(
             text = text,
             style = HilingualTheme.typography.bodySB14,
-            color = HilingualTheme.colors.gray700
+            color = textColor
         )
     }
 }
@@ -169,7 +173,8 @@ private fun DropdownMenuPreview() {
                         iconResId = R.drawable.ic_search_20,
                         onClick = {
                             expanded2 = false
-                        }
+                        },
+                        textColor = HilingualTheme.colors.alertRed
                     )
                 }
             }
