@@ -59,7 +59,7 @@ fun UserActionButton(
 
 @Preview(showBackground = true)
 @Composable
-private fun FollowButton1Preview() {
+private fun UserActionButtonPreview() {
     HilingualTheme {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp)
