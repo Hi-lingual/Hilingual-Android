@@ -143,7 +143,7 @@ internal class OnboardingViewModel @Inject constructor(
                         NicknameValidationResult.FORBIDDEN_WORD -> {
                             _uiState.update {
                                 it.copy(
-                                    validationMessage = "금지어가 포함된 닉네임입니다.",
+                                    validationMessage = "금지어가 포함된 닉네임이에요",
                                     isNicknameValid = false
                                 )
                             }
