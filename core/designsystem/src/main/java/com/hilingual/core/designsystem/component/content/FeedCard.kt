@@ -193,11 +193,7 @@ private fun FeedFooter(
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(
-                    id = if (isLiked) {
-                        R.drawable.ic_like_24
-                    } else {
-                        R.drawable.ic_unliked_24
-                    }
+                    id = if(isLiked) R.drawable.ic_like_24 else R.drawable.ic_unliked_24
                 ),
                 contentDescription = null,
                 tint = Color.Unspecified,
