@@ -44,4 +44,6 @@ dependencies {
 
     // Timber
     implementation(libs.timber)
+
+    implementation(libs.androidx.browser)
 }

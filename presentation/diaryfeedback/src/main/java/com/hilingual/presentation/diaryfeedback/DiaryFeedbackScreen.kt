@@ -15,9 +15,7 @@
  */
 package com.hilingual.presentation.diaryfeedback
 
-import android.content.Context
 import androidx.activity.compose.BackHandler
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,26 +40,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
+import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.event.LocalDialogEventProvider
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
-import com.hilingual.presentation.diaryfeedback.component.DiaryFeedbackTabRow
 import com.hilingual.presentation.diaryfeedback.component.FeedbackReportBottomSheet
 import com.hilingual.presentation.diaryfeedback.component.FeedbackReportDialog
 import com.hilingual.presentation.diaryfeedback.tab.GrammarSpellingScreen
 import com.hilingual.presentation.diaryfeedback.tab.RecommendExpressionScreen
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
-
-private const val REPORT_URL = "https://hilingual.notion.site/230829677ebf801c965be24b0ef444e9"
 
 @Composable
 internal fun DiaryFeedbackRoute(
@@ -115,7 +112,7 @@ internal fun DiaryFeedbackRoute(
                 paddingValues = paddingValues,
                 uiState = (state as UiState.Success<DiaryFeedbackUiState>).data,
                 onBackClick = navigateUp,
-                onReportClick = { navigateToReportWebView(context) },
+                onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 isImageDetailVisible = isImageDetailVisible,
                 onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
                 onToggleBookmark = viewModel::toggleBookmark
@@ -195,7 +192,8 @@ private fun DiaryFeedbackScreen(
                 onMoreClicked = { isReportBottomSheetVisible = true }
             )
 
-            DiaryFeedbackTabRow(
+            HilingualBasicTabRow(
+                tabTitles = persistentListOf("문법·철자", "추천표현"),
                 tabIndex = pagerState.currentPage,
                 onTabSelected = {
                     coroutineScope.launch {
@@ -251,10 +249,6 @@ private fun DiaryFeedbackScreen(
             modifier = modifier.padding(paddingValues)
         )
     }
-}
-
-private fun navigateToReportWebView(context: Context) {
-    CustomTabsIntent.Builder().build().launchUrl(context, REPORT_URL.toUri())
 }
 
 @Preview(showBackground = true)
