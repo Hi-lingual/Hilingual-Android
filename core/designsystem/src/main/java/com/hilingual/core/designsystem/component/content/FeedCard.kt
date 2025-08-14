@@ -182,45 +182,52 @@ private fun FeedFooter(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .fillMaxWidth()
             .background(HilingualTheme.colors.white)
     ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(
-                id = if (isLiked) R.drawable.ic_like_24 else R.drawable.ic_unliked_24
-            ),
-            contentDescription = null,
-            tint = Color.Unspecified,
-            modifier = Modifier
-                .size(24.dp)
-                .noRippleClickable(onClick = onLikeClick)
-        )
-
-        Text(
-            text = likeCount.toString(),
-            style = HilingualTheme.typography.bodySB14,
-            color = HilingualTheme.colors.black,
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .weight(1f)
-        )
-
-        Text(
-            text = "상세보기",
-            style = HilingualTheme.typography.bodyM14,
-            color = HilingualTheme.colors.gray400,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(
+                    id = if (isLiked) {
+                        R.drawable.ic_like_24
+                    } else {
+                        R.drawable.ic_unliked_24
+                    }
+                ),
+                contentDescription = null,
+                tint = Color.Unspecified,
+                modifier = Modifier
+                    .size(24.dp)
+                    .noRippleClickable(onClick = onLikeClick)
+            )
+            Text(
+                text = likeCount.toString(),
+                style = HilingualTheme.typography.bodySB14,
+                color = HilingualTheme.colors.black
+            )
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.noRippleClickable(onClick = onMoreClick)
-        )
-
-        Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_right_16),
-            contentDescription = null,
-            tint = HilingualTheme.colors.gray400,
-            modifier = Modifier
-                .size(16.dp)
-                .noRippleClickable(onClick = onMoreClick)
-        )
+        ) {
+            Text(
+                text = "상세보기",
+                style = HilingualTheme.typography.bodyM14,
+                color = HilingualTheme.colors.gray400
+            )
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_right_16),
+                contentDescription = null,
+                tint = HilingualTheme.colors.gray400,
+                modifier = Modifier
+                    .size(16.dp)
+            )
+        }
     }
 }
 
