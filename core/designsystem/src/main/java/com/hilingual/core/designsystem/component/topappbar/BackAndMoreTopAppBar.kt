@@ -42,7 +42,7 @@ fun BackAndMoreTopAppBar(
                 modifier = Modifier
                     .size(24.dp)
                     .noRippleClickable(onClick = onBackClicked),
-                imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_24),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_24_back),
                 contentDescription = null,
                 tint = HilingualTheme.colors.black
             )
