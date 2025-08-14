@@ -83,7 +83,7 @@ fun FeedContent(
 
             Text(
                 text = content,
-                style = HilingualTheme.typography.bodyM14,
+                style = HilingualTheme.typography.bodyR16,
                 color = HilingualTheme.colors.black,
                 maxLines = 5,
                 overflow = TextOverflow.Ellipsis,
@@ -155,7 +155,7 @@ private fun FeedHeader(
 
         Text(
             text = formattedDate,
-            style = HilingualTheme.typography.captionR12,
+            style = HilingualTheme.typography.captionM12,
             color = HilingualTheme.colors.gray400,
             modifier = Modifier.weight(1f)
         )
@@ -193,7 +193,7 @@ private fun FeedFooter(
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(
-                    id = if (isLiked) R.drawable.ic_like_24 else R.drawable.ic_unliked_24
+                    id = if (isLiked) R.drawable.ic_like_24_filled else R.drawable.ic_like_24_empty
                 ),
                 contentDescription = null,
                 tint = Color.Unspecified,
@@ -217,7 +217,7 @@ private fun FeedFooter(
                 color = HilingualTheme.colors.gray400
             )
             Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_right_16),
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_right_16_thin),
                 contentDescription = null,
                 tint = HilingualTheme.colors.gray400,
                 modifier = Modifier
