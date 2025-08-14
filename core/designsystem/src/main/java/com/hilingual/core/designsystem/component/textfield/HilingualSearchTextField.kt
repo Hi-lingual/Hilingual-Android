@@ -69,7 +69,7 @@ fun HilingualSearchTextField(
         trailingIcon = {
             if (value.isNotEmpty()) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_close_20),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_close_circle_20),
                     contentDescription = null,
                     tint = Color.Unspecified,
                     modifier = Modifier
