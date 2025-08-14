@@ -24,8 +24,5 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:common"))
-    implementation(project(":core:designsystem"))
-    implementation(project(":data:auth"))
-    implementation(libs.androidx.browser)
+    implementation(projects.data.auth)
 }

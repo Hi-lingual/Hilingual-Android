@@ -15,13 +15,14 @@
  */
 package com.hilingual.data.user.repository
 
+import com.hilingual.data.user.model.NicknameValidationResult
 import com.hilingual.data.user.model.UserInfoModel
 import com.hilingual.data.user.model.UserProfileModel
 
 interface UserRepository {
     suspend fun getNicknameAvailability(
         nickname: String
-    ): Result<Boolean>
+    ): Result<NicknameValidationResult>
 
     suspend fun postUserProfile(
         userProfileModel: UserProfileModel

@@ -15,8 +15,6 @@
  */
 package com.hilingual.presentation.auth
 
-import android.content.Context
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.animateFloatAsState
@@ -43,9 +41,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectLatestSideEffect
+import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.event.LocalSharedTransitionScope
@@ -54,9 +53,6 @@ import com.hilingual.core.designsystem.theme.hilingualOrange
 import com.hilingual.presentation.auth.component.GoogleSignButton
 import kotlinx.coroutines.delay
 import com.hilingual.core.designsystem.R as DesignSystemR
-
-private const val POLICY_URL =
-    "https://hilingual.notion.site/230829677ebf8104b52ce74c65c27607?pvs=74"
 
 @Composable
 internal fun AuthRoute(
@@ -85,7 +81,7 @@ internal fun AuthRoute(
     AuthScreen(
         paddingValues = paddingValues,
         onGoogleSignClick = { viewModel.onGoogleSignClick(context) },
-        onPrivacyPolicyClick = { navigateToPolicyWebView(context) },
+        onPrivacyPolicyClick = { context.launchCustomTabs(UrlConstant.PRIVACY_POLICY) },
         animatedVisibilityScope = animatedVisibilityScope
     )
 }
@@ -160,8 +156,4 @@ private fun AuthScreen(
             )
         }
     }
-}
-
-private fun navigateToPolicyWebView(context: Context) {
-    CustomTabsIntent.Builder().build().launchUrl(context, POLICY_URL.toUri())
 }
