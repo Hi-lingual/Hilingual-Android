@@ -48,11 +48,11 @@ import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
+import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.event.LocalDialogEventProvider
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
-import com.hilingual.presentation.diaryfeedback.component.DiaryFeedbackTabRow
 import com.hilingual.presentation.diaryfeedback.component.FeedbackReportBottomSheet
 import com.hilingual.presentation.diaryfeedback.component.FeedbackReportDialog
 import com.hilingual.presentation.diaryfeedback.tab.GrammarSpellingScreen
@@ -192,7 +192,8 @@ private fun DiaryFeedbackScreen(
                 onMoreClicked = { isReportBottomSheetVisible = true }
             )
 
-            DiaryFeedbackTabRow(
+            HilingualBasicTabRow(
+                tabTitles = persistentListOf("문법·철자", "추천표현"),
                 tabIndex = pagerState.currentPage,
                 onTabSelected = {
                     coroutineScope.launch {
