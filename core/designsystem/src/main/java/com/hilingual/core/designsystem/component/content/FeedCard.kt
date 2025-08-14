@@ -25,149 +25,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.common.util.formatSharedDate
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.image.ErrorImageSize
 import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-
-@Composable
-private fun formatSharedDate(sharedDate: Long): String {
-    return when {
-        sharedDate < 1 -> "방금 전"
-        sharedDate < 60 -> "${sharedDate}분 전"
-        sharedDate < 1440 -> "${sharedDate / 60}시간 전"
-        sharedDate < 10080 -> "${sharedDate / 1440}일 전"
-        else -> {
-            val currentTime = System.currentTimeMillis()
-            val sharedTime = currentTime - (sharedDate * 60 * 1000)
-            val dateFormat = SimpleDateFormat("M월 d일", Locale.KOREA)
-            dateFormat.format(Date(sharedTime))
-        }
-    }
-}
-
-@Composable
-fun FeedHeader(
-    nickname: String,
-    streak: Int,
-    sharedDate: Long,
-    onMenuClick: () -> Unit,
-    modifier: Modifier
-) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .fillMaxWidth()
-            .background(HilingualTheme.colors.white)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = nickname,
-                style = HilingualTheme.typography.headB16,
-                color = HilingualTheme.colors.gray850
-            )
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_fire_16),
-                contentDescription = null,
-                tint = HilingualTheme.colors.hilingualOrange,
-                modifier = Modifier
-                    .padding(start = 4.dp, end = 1.dp)
-                    .size(16.dp)
-
-            )
-            Text(
-                text = streak.toString(),
-                style = HilingualTheme.typography.bodyM14,
-                color = HilingualTheme.colors.hilingualOrange,
-                modifier = Modifier.padding(end = 8.dp)
-            )
-            Text(
-                text = formatSharedDate(sharedDate),
-                style = HilingualTheme.typography.captionR12,
-                color = HilingualTheme.colors.gray400
-            )
-        }
-
-        Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_more_24),
-            contentDescription = null,
-            tint = HilingualTheme.colors.gray400,
-            modifier = Modifier
-                .size(24.dp)
-                .noRippleClickable(onClick = onMenuClick)
-        )
-    }
-}
-
-@Composable
-fun FeedFooter(
-    diaryId: Long,
-    likeCount: Int,
-    isLiked: Boolean,
-    onLikeClick: () -> Unit,
-    onMoreClick: () -> Unit,
-    modifier: Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier
-            .fillMaxWidth()
-            .background(HilingualTheme.colors.white)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(
-                    id = if (isLiked) {
-                        R.drawable.ic_like_24
-                    } else {
-                        R.drawable.ic_unliked_24
-                    }
-                ),
-                contentDescription = null,
-                tint = Color.Unspecified,
-                modifier = Modifier
-                    .size(16.dp)
-                    .noRippleClickable(onClick = onLikeClick)
-            )
-            Text(
-                text = likeCount.toString(),
-                style = HilingualTheme.typography.bodySB14,
-                color = HilingualTheme.colors.black
-            )
-        }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.noRippleClickable(onClick = onMoreClick)
-        ) {
-            Text(
-                text = "상세보기",
-                style = HilingualTheme.typography.bodyM14,
-                color = HilingualTheme.colors.gray400
-            )
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_right_16),
-                contentDescription = null,
-                tint = HilingualTheme.colors.gray400,
-                modifier = Modifier
-                    .size(16.dp)
-            )
-        }
-    }
-}
 
 @Composable
 fun FeedContent(
@@ -181,6 +47,7 @@ fun FeedContent(
     likeCount: Int,
     isLiked: Boolean,
     onProfileClick: () -> Unit,
+    onContentClick: () -> Unit,
     onMenuClick: () -> Unit,
     onLikeClick: () -> Unit,
     onMoreClick: () -> Unit,
@@ -188,7 +55,9 @@ fun FeedContent(
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = modifier.background(HilingualTheme.colors.white)
+        modifier = modifier
+            .background(HilingualTheme.colors.white)
+            .padding(vertical = 20.dp)
     ) {
         NetworkImage(
             imageUrl = profileUrl,
@@ -207,8 +76,7 @@ fun FeedContent(
                 nickname = nickname,
                 streak = streak,
                 sharedDate = sharedDate,
-                onMenuClick = onMenuClick,
-                modifier = Modifier
+                onMenuClick = onMenuClick
             )
 
             Spacer(modifier = Modifier.height(4.dp))
@@ -216,7 +84,10 @@ fun FeedContent(
             Text(
                 text = content,
                 style = HilingualTheme.typography.bodyM14,
-                color = HilingualTheme.colors.black
+                color = HilingualTheme.colors.black,
+                maxLines = 5,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.noRippleClickable(onClick = onContentClick)
             )
 
             if (imageUrl != null) {
@@ -238,30 +109,139 @@ fun FeedContent(
                 likeCount = likeCount,
                 isLiked = isLiked,
                 onLikeClick = onLikeClick,
-                onMoreClick = onMoreClick,
-                modifier = Modifier
+                onMoreClick = onMoreClick
             )
         }
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun FeedHeaderPreview() {
-    HilingualTheme {
-        FeedHeader(
-            nickname = "HilingualUser",
-            streak = 10,
-            sharedDate = 6000,
-            onMenuClick = {},
+private fun FeedHeader(
+    nickname: String,
+    streak: Int,
+    sharedDate: Long,
+    onMenuClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .fillMaxWidth()
+            .background(HilingualTheme.colors.white)
+    ) {
+        Text(
+            text = nickname,
+            style = HilingualTheme.typography.headB16,
+            color = HilingualTheme.colors.gray850
+        )
+
+        Icon(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_fire_16),
+            contentDescription = null,
+            tint = HilingualTheme.colors.hilingualOrange,
             modifier = Modifier
+                .padding(start = 4.dp, end = 1.dp)
+                .size(16.dp)
+        )
+
+        Text(
+            text = streak.toString(),
+            style = HilingualTheme.typography.bodyM14,
+            color = HilingualTheme.colors.hilingualOrange,
+            modifier = Modifier.padding(end = 8.dp)
+        )
+
+        Text(
+            text = formatSharedDate(sharedDate),
+            style = HilingualTheme.typography.captionR12,
+            color = HilingualTheme.colors.gray400,
+            modifier = Modifier.weight(1f)
+        )
+
+        Icon(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_more_24),
+            contentDescription = null,
+            tint = HilingualTheme.colors.gray400,
+            modifier = Modifier
+                .size(24.dp)
+                .noRippleClickable(onClick = onMenuClick)
+        )
+    }
+}
+
+@Composable
+private fun FeedFooter(
+    diaryId: Long,
+    likeCount: Int,
+    isLiked: Boolean,
+    onLikeClick: () -> Unit,
+    onMoreClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .fillMaxWidth()
+            .background(HilingualTheme.colors.white)
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(
+                id = if (isLiked) {
+                    R.drawable.ic_like_24
+                } else {
+                    R.drawable.ic_unliked_24
+                }
+            ),
+            contentDescription = null,
+            tint = Color.Unspecified,
+            modifier = Modifier
+                .size(24.dp)
+                .noRippleClickable(onClick = onLikeClick)
+        )
+
+        Text(
+            text = likeCount.toString(),
+            style = HilingualTheme.typography.bodySB14,
+            color = HilingualTheme.colors.black,
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .weight(1f)
+        )
+
+        Text(
+            text = "상세보기",
+            style = HilingualTheme.typography.bodyM14,
+            color = HilingualTheme.colors.gray400,
+            modifier = Modifier.noRippleClickable(onClick = onMoreClick)
+        )
+
+        Icon(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_right_16),
+            contentDescription = null,
+            tint = HilingualTheme.colors.gray400,
+            modifier = Modifier
+                .size(16.dp)
+                .noRippleClickable(onClick = onMoreClick)
         )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun FeedFooterPreview() {
+private fun FeedHeaderPreview() {
+    HilingualTheme {
+        FeedHeader(
+            nickname = "HilingualUser",
+            streak = 10,
+            sharedDate = 6000,
+            onMenuClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FeedFooterPreview() {
     HilingualTheme {
         var isLikedPreview by remember { mutableStateOf(true) }
         var likeCountPreview by remember { mutableStateOf(6) }
@@ -278,7 +258,6 @@ fun FeedFooterPreview() {
                 }
             },
             onMoreClick = {},
-            modifier = Modifier,
             diaryId = 0L
         )
     }
@@ -286,7 +265,7 @@ fun FeedFooterPreview() {
 
 @Preview()
 @Composable
-fun FeedContentPreviewWithImage() {
+private fun FeedContentPreviewWithImage() {
     HilingualTheme {
         var isLiked by remember { mutableStateOf(false) }
         var likeCount by remember { mutableStateOf(25) }
@@ -296,8 +275,7 @@ fun FeedContentPreviewWithImage() {
             nickname = "HilingualDev",
             streak = 7,
             sharedDate = 3,
-            content = "Today was a busy but fulfilling day.\n" +
-                "I spent the morning working on my project and finally solved a problem that had been bothering me for days.\n" +
+            content = "Today was a busy but fulfilling day. I spent the morning working on my project and finally solved a problem that had been bothering me for days. " +
                 "In the afternoon, I met a friend for coffee and we talked about our future plans.\n" +
                 "The weather was warm and sunny, which made the walk back home really pleasant.\n" +
                 "I feel tired now, but also proud of how I spent my day.",
@@ -305,13 +283,13 @@ fun FeedContentPreviewWithImage() {
             likeCount = likeCount,
             isLiked = isLiked,
             onProfileClick = { /*프로필 클릭 로직*/ },
+            onContentClick = { /* 상세보기 클릭 로직 */ },
             onMenuClick = { /* 메뉴 클릭 로직 */ },
             onLikeClick = {
                 isLiked = !isLiked
                 if (isLiked) likeCount++ else likeCount--
             },
             onMoreClick = { /* 상세보기 클릭 로직 */ },
-            modifier = Modifier,
             diaryId = 0L
         )
     }
@@ -319,7 +297,7 @@ fun FeedContentPreviewWithImage() {
 
 @Preview()
 @Composable
-fun FeedContentPreviewNoImage() {
+private fun FeedContentPreviewNoImage() {
     HilingualTheme {
         var isLiked by remember { mutableStateOf(true) }
         var likeCount by remember { mutableStateOf(102) }
@@ -338,13 +316,13 @@ fun FeedContentPreviewNoImage() {
             likeCount = likeCount,
             isLiked = isLiked,
             onProfileClick = { /*프로필 클릭 로직*/ },
+            onContentClick = { /* 상세보기 클릭 로직 */ },
             onMenuClick = { /* 메뉴 클릭 로직 */ },
             onLikeClick = {
                 isLiked = !isLiked
                 if (isLiked) likeCount++ else likeCount--
             },
             onMoreClick = { /* 상세보기 클릭 로직 */ },
-            modifier = Modifier,
             diaryId = 0L
         )
     }
