@@ -37,18 +37,18 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun FeedContent(
-    diaryId: Long,
     profileUrl: String,
+    onProfileClick: () -> Unit,
     nickname: String,
     streak: Int,
-    sharedDate: Long,
+    sharedDateInMinutes: Long,
+    onMenuClick: () -> Unit,
     content: String,
+    onContentClick: () -> Unit,
     imageUrl: String?,
+    diaryId: Long,
     likeCount: Int,
     isLiked: Boolean,
-    onProfileClick: () -> Unit,
-    onContentClick: () -> Unit,
-    onMenuClick: () -> Unit,
     onLikeClick: () -> Unit,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -75,7 +75,7 @@ fun FeedContent(
             FeedHeader(
                 nickname = nickname,
                 streak = streak,
-                sharedDate = sharedDate,
+                sharedDateInMinutes = sharedDateInMinutes,
                 onMenuClick = onMenuClick
             )
 
@@ -119,10 +119,12 @@ fun FeedContent(
 private fun FeedHeader(
     nickname: String,
     streak: Int,
-    sharedDate: Long,
+    sharedDateInMinutes: Long,
     onMenuClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val formattedDate = remember(sharedDateInMinutes) { formatSharedDate(sharedDateInMinutes) }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -152,7 +154,7 @@ private fun FeedHeader(
         )
 
         Text(
-            text = formatSharedDate(sharedDate),
+            text = formattedDate,
             style = HilingualTheme.typography.captionR12,
             color = HilingualTheme.colors.gray400,
             modifier = Modifier.weight(1f)
@@ -172,9 +174,9 @@ private fun FeedHeader(
 @Composable
 private fun FeedFooter(
     diaryId: Long,
-    likeCount: Int,
     isLiked: Boolean,
     onLikeClick: () -> Unit,
+    likeCount: Int,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -186,11 +188,7 @@ private fun FeedFooter(
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(
-                id = if (isLiked) {
-                    R.drawable.ic_like_24
-                } else {
-                    R.drawable.ic_unliked_24
-                }
+                id = if (isLiked) R.drawable.ic_like_24 else R.drawable.ic_unliked_24
             ),
             contentDescription = null,
             tint = Color.Unspecified,
@@ -233,7 +231,7 @@ private fun FeedHeaderPreview() {
         FeedHeader(
             nickname = "HilingualUser",
             streak = 10,
-            sharedDate = 6000,
+            sharedDateInMinutes = 6000,
             onMenuClick = {}
         )
     }
@@ -274,7 +272,7 @@ private fun FeedContentPreviewWithImage() {
             profileUrl = "https://picsum.photos/id/237/200/200",
             nickname = "HilingualDev",
             streak = 7,
-            sharedDate = 3,
+            sharedDateInMinutes = 3,
             content = "Today was a busy but fulfilling day. I spent the morning working on my project and finally solved a problem that had been bothering me for days. " +
                 "In the afternoon, I met a friend for coffee and we talked about our future plans.\n" +
                 "The weather was warm and sunny, which made the walk back home really pleasant.\n" +
@@ -306,7 +304,7 @@ private fun FeedContentPreviewNoImage() {
             profileUrl = "",
             nickname = "User123",
             streak = 32,
-            sharedDate = 24,
+            sharedDateInMinutes = 24,
             content = "Today was a busy but fulfilling day.\n" +
                 "I spent the morning working on my project and finally solved a problem that had been bothering me for days.\n" +
                 "In the afternoon, I met a friend for coffee and we talked about our future plans.\n" +

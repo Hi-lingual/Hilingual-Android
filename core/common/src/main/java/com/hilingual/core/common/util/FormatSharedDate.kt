@@ -1,6 +1,5 @@
 package com.hilingual.core.common.util
 
-import androidx.compose.runtime.Composable
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -8,20 +7,24 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
-@Composable
-fun formatSharedDate(sharedDate: Long): String {
+private const val ONE_MINUTE = 1L
+private const val ONE_HOUR_IN_MINUTES = 60L
+private const val ONE_DAY_IN_MINUTES = 1440L
+private const val ONE_WEEK_IN_MINUTES = 10080L
+
+private val DATE_FORMATTER = DateTimeFormatter.ofPattern("M월 d일", Locale.KOREA)
+
+fun formatSharedDate(sharedMinutes: Long): String {
     return when {
-        sharedDate < 1 -> "방금 전"
-        sharedDate < 60 -> "${sharedDate}분 전"
-        sharedDate < 1440 -> "${sharedDate / 60}시간 전"
-        sharedDate < 10080 -> "${sharedDate / 1440}일 전"
+        sharedMinutes < ONE_MINUTE -> "방금 전"
+        sharedMinutes < ONE_HOUR_IN_MINUTES -> "${sharedMinutes}분 전"
+        sharedMinutes < ONE_DAY_IN_MINUTES -> "${sharedMinutes / ONE_HOUR_IN_MINUTES}시간 전"
+        sharedMinutes < ONE_WEEK_IN_MINUTES -> "${sharedMinutes / ONE_DAY_IN_MINUTES}일 전"
         else -> {
-            val currentTime = System.currentTimeMillis()
-            val sharedTime = currentTime - TimeUnit.MINUTES.toMillis(sharedDate)
-            val formatter = DateTimeFormatter.ofPattern("M월 d일", Locale.KOREA)
+            val sharedTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(sharedMinutes)
             val instant = Instant.ofEpochMilli(sharedTime)
             val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
-            formatter.format(localDateTime)
+            DATE_FORMATTER.format(localDateTime)
         }
     }
 }
