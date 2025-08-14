@@ -20,22 +20,22 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun UserActionButton(
-    isPressed: Boolean,
+    isFilled: Boolean,
     buttonText: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val (buttonColor, textColor, border) = if (isPressed) {
+    val (buttonColor, textColor, borderColor) = if (isFilled) {
         Triple(
             HilingualTheme.colors.white,
             HilingualTheme.colors.gray500,
-            BorderStroke(width = 1.dp, color = HilingualTheme.colors.gray200)
+            HilingualTheme.colors.gray200
         )
     } else {
         Triple(
             HilingualTheme.colors.hilingualBlack,
             HilingualTheme.colors.white,
-            BorderStroke(width = 1.dp, color = HilingualTheme.colors.hilingualBlack)
+            HilingualTheme.colors.hilingualBlack
         )
     }
 
@@ -50,7 +50,8 @@ fun UserActionButton(
             .clip(RoundedCornerShape(4.dp))
             .background(buttonColor)
             .border(
-                border = border,
+                width = 1.dp,
+                color = borderColor,
                 shape = RoundedCornerShape(4.dp)
             )
             .padding(vertical = 8.dp)
@@ -65,17 +66,17 @@ private fun UserActionButtonPreview() {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             UserActionButton(
-                isPressed = false,
+                isFilled = false,
                 buttonText = "팔로우",
                 onClick = {}
             )
             UserActionButton(
-                isPressed = false,
+                isFilled = false,
                 buttonText = "맞팔로우",
                 onClick = {}
             )
             UserActionButton(
-                isPressed = true,
+                isFilled = true,
                 buttonText = "팔로잉",
                 onClick = {}
             )

@@ -25,7 +25,7 @@ fun UserActionItem(
     userId: Long,
     profileUrl: String,
     nickname: String,
-    isPressed: Boolean,
+    isFilled: Boolean,
     buttonText: String,
     onProfileClick: (Long) -> Unit,
     onButtonClick: (Long) -> Unit,
@@ -64,7 +64,7 @@ fun UserActionItem(
         }
 
         UserActionButton(
-            isPressed = isPressed,
+            isFilled = isFilled,
             buttonText = buttonText,
             onClick = { onButtonClick(userId) }
         )
@@ -82,7 +82,7 @@ private fun UserActionItemPreview() {
                 userId = 1L,
                 profileUrl = "",
                 nickname = "나현",
-                isPressed = false,
+                isFilled = false,
                 buttonText = "팔로우",
                 onProfileClick = {},
                 onButtonClick = {}
@@ -91,7 +91,7 @@ private fun UserActionItemPreview() {
                 userId = 2L,
                 profileUrl = "",
                 nickname = "작나",
-                isPressed = false,
+                isFilled = false,
                 buttonText = "맞팔로우",
                 onProfileClick = {},
                 onButtonClick = {}
@@ -100,7 +100,7 @@ private fun UserActionItemPreview() {
                 userId = 3L,
                 profileUrl = "",
                 nickname = "큰나",
-                isPressed = true,
+                isFilled = true,
                 buttonText = "팔로잉",
                 onProfileClick = {},
                 onButtonClick = {}
