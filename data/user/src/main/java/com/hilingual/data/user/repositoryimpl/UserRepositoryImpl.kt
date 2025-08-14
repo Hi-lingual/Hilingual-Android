@@ -17,6 +17,7 @@ package com.hilingual.data.user.repositoryimpl
 
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.data.user.datasource.UserRemoteDataSource
+import com.hilingual.data.user.model.NicknameValidationResult
 import com.hilingual.data.user.model.UserInfoModel
 import com.hilingual.data.user.model.UserProfileModel
 import com.hilingual.data.user.model.toDto
@@ -27,9 +28,15 @@ import jakarta.inject.Inject
 internal class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource
 ) : UserRepository {
-    override suspend fun getNicknameAvailability(nickname: String): Result<Boolean> =
+    override suspend fun getNicknameAvailability(nickname: String): Result<NicknameValidationResult> =
         suspendRunCatching {
-            userRemoteDataSource.getNicknameAvailability(nickname = nickname).data!!.isAvailable
+            val response = userRemoteDataSource.getNicknameAvailability(nickname = nickname)
+            when (response.code) {
+                20000 -> NicknameValidationResult.AVAILABLE
+                20001 -> NicknameValidationResult.DUPLICATE
+                20004 -> NicknameValidationResult.FORBIDDEN_WORD
+                else -> NicknameValidationResult.DUPLICATE
+            }
         }
 
     override suspend fun postUserProfile(userProfileModel: UserProfileModel): Result<Unit> =

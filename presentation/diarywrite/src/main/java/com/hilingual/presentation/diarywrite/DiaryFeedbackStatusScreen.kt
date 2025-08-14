@@ -40,6 +40,7 @@ import com.hilingual.presentation.diarywrite.component.FeedbackFailureContent
 import com.hilingual.presentation.diarywrite.component.FeedbackLoadingContent
 import com.hilingual.presentation.diarywrite.component.FeedbackMedia
 import com.hilingual.presentation.diarywrite.component.FeedbackUIData
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun DiaryFeedbackStatusScreen(
@@ -158,7 +159,7 @@ private fun DiaryFeedbackFailureStatusScreenPreview() {
             uiData = FeedbackUIData(
                 title = "앗! 일시적인 오류가 발생했어요.",
                 media = FeedbackMedia.Image(
-                    resId = R.drawable.img_error,
+                    resId = DesignSystemR.drawable.img_error,
                     heightDp = 175.dp
                 )
             ),

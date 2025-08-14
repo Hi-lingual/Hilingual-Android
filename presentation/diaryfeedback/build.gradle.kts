@@ -24,6 +24,5 @@ android {
 }
 
 dependencies {
-    implementation(project(":data:diary"))
-    implementation(libs.androidx.browser)
+    implementation(projects.data.diary)
 }

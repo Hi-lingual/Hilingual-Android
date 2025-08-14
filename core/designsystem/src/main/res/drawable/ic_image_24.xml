@@ -1,0 +1,34 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:pathData="M0,0h24v24h-24z"
+      android:fillColor="#F5F5F5"/>
+  <path
+      android:pathData="M-390,-500C-390,-501.105 -389.105,-502 -388,-502H3526C3527.1,-502 3528,-501.105 3528,-500V1200C3528,1201.1 3527.1,1202 3526,1202H-388C-389.105,1202 -390,1201.1 -390,1200V-500Z"
+      android:fillColor="#55546C"/>
+  <path
+      android:pathData="M-388,-502V-501H3526V-502V-503H-388V-502ZM3528,-500H3527V1200H3528H3529V-500H3528ZM3526,1202V1201H-388V1202V1203H3526V1202ZM-390,1200H-389V-500H-390H-391V1200H-390ZM-388,1202V1201C-388.552,1201 -389,1200.55 -389,1200H-390H-391C-391,1201.66 -389.657,1203 -388,1203V1202ZM3528,1200H3527C3527,1200.55 3526.55,1201 3526,1201V1202V1203C3527.66,1203 3529,1201.66 3529,1200H3528ZM3526,-502V-501C3526.55,-501 3527,-500.552 3527,-500H3528H3529C3529,-501.657 3527.66,-503 3526,-503V-502ZM-388,-502V-503C-389.657,-503 -391,-501.657 -391,-500H-390H-389C-389,-500.552 -388.552,-501 -388,-501V-502Z"
+      android:fillColor="#000000"
+      android:fillAlpha="0.1"/>
+  <path
+      android:pathData="M5,4L19,4A1,1 0,0 1,20 5L20,19A1,1 0,0 1,19 20L5,20A1,1 0,0 1,4 19L4,5A1,1 0,0 1,5 4z"
+      android:strokeWidth="2"
+      android:fillColor="#00000000"
+      android:strokeColor="#9E9E9E"/>
+  <path
+      android:pathData="M4.5,16.5L8.586,12.414C8.961,12.039 9.47,11.828 10,11.828C10.53,11.828 11.039,12.039 11.414,12.414L16,17M14,15L15.586,13.414C15.961,13.039 16.47,12.828 17,12.828C17.53,12.828 18.039,13.039 18.414,13.414L19.5,14.5"
+      android:strokeLineJoin="round"
+      android:strokeWidth="2"
+      android:fillColor="#00000000"
+      android:strokeColor="#9E9E9E"
+      android:strokeLineCap="round"/>
+  <path
+      android:pathData="M16,8h0.01v0.01h-0.01z"
+      android:strokeLineJoin="round"
+      android:strokeWidth="2"
+      android:fillColor="#00000000"
+      android:strokeColor="#9E9E9E"/>
+</vector>
