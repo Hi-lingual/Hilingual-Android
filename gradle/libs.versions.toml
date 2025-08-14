@@ -21,7 +21,7 @@ ksp = "2.2.0-2.0.2"
 jetbrainsKotlinJvm = "2.2.10"
 
 # AndroidX
-coreKtx = "1.16.0"
+coreKtx = "1.17.0"
 coreSplachscreen = "1.0.1"
 androidxAppCompat = "1.7.1"
 lifecycleRuntimeKtx = "2.9.2"
