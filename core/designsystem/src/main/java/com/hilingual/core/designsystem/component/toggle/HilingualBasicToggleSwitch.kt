@@ -83,7 +83,7 @@ private fun ToggleSwitchPreview() {
 
         HilingualBasicToggleSwitch(
             isChecked = isChecked,
-            onCheckedChange = { isChecked = !isChecked }
+            onCheckedChange = { isChecked = it }
         )
     }
 }
