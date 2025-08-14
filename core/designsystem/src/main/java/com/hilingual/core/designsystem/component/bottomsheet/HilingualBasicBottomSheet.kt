@@ -21,10 +21,12 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,8 +40,15 @@ fun HilingualBasicBottomSheet(
     dragHandle: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
+    val scope = rememberCoroutineScope()
+
     ModalBottomSheet(
-        onDismissRequest = onDismiss,
+        onDismissRequest = {
+            scope.launch {
+                sheetState.hide()
+                onDismiss()
+            }
+        },
         modifier = modifier,
         sheetState = sheetState,
         containerColor = HilingualTheme.colors.white,
