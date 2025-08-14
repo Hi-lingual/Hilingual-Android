@@ -14,11 +14,11 @@ androidGradlePlugin = "8.12.0"
 spotless = "7.2.1"
 
 # Kotlin
-kotlin = "2.2.0"
+kotlin = "2.2.10"
 kotlinxImmutable = "0.4.0"
-composeCompilerGradlePlugin = "2.2.0"
+composeCompilerGradlePlugin = "2.2.10"
 ksp = "2.2.0-2.0.2"
-jetbrainsKotlinJvm = "2.2.0"
+jetbrainsKotlinJvm = "2.2.10"
 
 # AndroidX
 coreKtx = "1.16.0"
