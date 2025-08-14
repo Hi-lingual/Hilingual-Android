@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -38,6 +36,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.hilingual.core.common.extension.dropShadow
+import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
@@ -56,13 +55,13 @@ fun HilingualBasicDropdownMenu(
 
     Box {
         Icon(
-            imageVector = Icons.Default.MoreVert, // TODO: 디자인 시스템 아이콘으로 변경 필요
+            imageVector = ImageVector.vectorResource(R.drawable.ic_more_24),
             contentDescription = null,
             modifier = Modifier
                 .onGloballyPositioned { coordinates ->
                     iconHeight = coordinates.size.height
                 }
-                .clickable(onClick = { onExpandedChange(!isExpanded) })
+                .noRippleClickable(onClick = { onExpandedChange(!isExpanded) })
         )
 
         if (isExpanded) {
@@ -148,7 +147,16 @@ private fun DropdownMenuPreview() {
                         expanded1 = false
                     }
                 )
+                HilingualDropdownMenuItem(
+                    text = "삭제하기",
+                    iconResId = R.drawable.ic_search_20,
+                    onClick = {
+                        expanded2 = false
+                    },
+                    textColor = HilingualTheme.colors.alertRed
+                )
             }
+
             HilingualBasicDropdownMenu( // 옵션 2개
                 isExpanded = expanded2,
                 onExpandedChange = { expanded2 = it }
@@ -162,7 +170,7 @@ private fun DropdownMenuPreview() {
                 )
                 HorizontalDivider(
                     thickness = 1.dp,
-                    color = HilingualTheme.colors.gray200
+                    color = HilingualTheme.colors.gray200,
                 )
                 HilingualDropdownMenuItem(
                     text = "삭제하기",
