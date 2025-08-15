@@ -40,9 +40,9 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.tag.WordPhraseTypeTag
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.voca.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun VocaCard(
@@ -87,9 +87,9 @@ internal fun VocaCard(
         Icon(
             imageVector = ImageVector.vectorResource(
                 id = if (isBookmarked) {
-                    R.drawable.ic_save_28_filled
+                    DesignSystemR.drawable.ic_save_28_filled
                 } else {
-                    R.drawable.ic_save_28_empty
+                    DesignSystemR.drawable.ic_save_28_empty
                 }
             ),
             contentDescription = null,

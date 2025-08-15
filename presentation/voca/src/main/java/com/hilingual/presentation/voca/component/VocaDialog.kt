@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -47,9 +48,9 @@ import androidx.compose.ui.window.DialogWindowProvider
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.tag.WordPhraseTypeTag
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.voca.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun VocaDialog(
@@ -116,13 +117,14 @@ internal fun VocaDialog(
             Icon(
                 imageVector = ImageVector.vectorResource(
                     id = if (isMarked) {
-                        R.drawable.ic_save_36_filled
+                        DesignSystemR.drawable.ic_save_28_filled
                     } else {
-                        R.drawable.ic_save_36_empty
+                        DesignSystemR.drawable.ic_save_28_empty
                     }
                 ),
                 contentDescription = null,
                 modifier = Modifier
+                    .size(36.dp)
                     .align(Alignment.TopEnd)
                     .noRippleClickable {
                         isMarked = !isMarked
