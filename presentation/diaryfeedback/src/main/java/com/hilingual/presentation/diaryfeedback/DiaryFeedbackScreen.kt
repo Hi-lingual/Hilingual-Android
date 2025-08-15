@@ -160,15 +160,14 @@ private fun DiaryFeedbackScreen(
         }
     }
 
-    if (isReportBottomSheetVisible) {
-        FeedbackReportBottomSheet(
-            onDismiss = { isReportBottomSheetVisible = false },
-            onReportClick = {
-                isReportDialogVisible = true
-                isReportBottomSheetVisible = false
-            }
-        )
-    }
+    FeedbackReportBottomSheet(
+        isVisible = isReportBottomSheetVisible,
+        onDismiss = { isReportBottomSheetVisible = false },
+        onReportClick = {
+            isReportDialogVisible = true
+            isReportBottomSheetVisible = false
+        }
+    )
 
     if (isReportDialogVisible) {
         FeedbackReportDialog(

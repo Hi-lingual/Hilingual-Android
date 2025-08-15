@@ -40,6 +40,7 @@ import java.time.YearMonth
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HilingualYearMonthPickerBottomSheet(
+    isVisible: Boolean,
     onDismiss: () -> Unit,
     onDateSelected: (YearMonth) -> Unit,
     modifier: Modifier = Modifier,
@@ -49,6 +50,7 @@ fun HilingualYearMonthPickerBottomSheet(
     var selectedMonth by remember { mutableIntStateOf(initialYearMonth.monthValue) }
 
     HilingualBasicBottomSheet(
+        isVisible = isVisible,
         onDismiss = onDismiss,
         modifier = modifier
     ) {
@@ -80,15 +82,14 @@ private fun YearMonthPickerBottomSheetPreview() {
         var isDateBottomSheetVisible by remember { mutableStateOf(false) }
         var selectedYearMonth by remember { mutableStateOf(YearMonth.now()) }
 
-        if (isDateBottomSheetVisible) {
-            HilingualYearMonthPickerBottomSheet(
-                onDismiss = { isDateBottomSheetVisible = false },
-                onDateSelected = { yearMonth ->
-                    selectedYearMonth = yearMonth
-                },
-                initialYearMonth = selectedYearMonth
-            )
-        }
+        HilingualYearMonthPickerBottomSheet(
+            isVisible = isDateBottomSheetVisible,
+            onDismiss = { isDateBottomSheetVisible = false },
+            onDateSelected = { yearMonth ->
+                selectedYearMonth = yearMonth
+            },
+            initialYearMonth = selectedYearMonth
+        )
 
         Column(
             modifier = Modifier

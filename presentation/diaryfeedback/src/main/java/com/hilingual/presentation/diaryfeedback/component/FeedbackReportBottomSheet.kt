@@ -15,12 +15,10 @@
  */
 package com.hilingual.presentation.diaryfeedback.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -49,11 +47,13 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun FeedbackReportBottomSheet(
+    isVisible: Boolean,
     onDismiss: () -> Unit,
     onReportClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     HilingualBasicBottomSheet(
+        isVisible = isVisible,
         onDismiss = onDismiss,
         modifier = modifier
     ) {
@@ -97,32 +97,18 @@ internal fun FeedbackReportBottomSheet(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 private fun FeedbackReportPreview() {
+    var isVisible by remember { mutableStateOf(true) }
+
     HilingualTheme {
-        var bottomSheetVisibility by remember { mutableStateOf(false) }
-
-        if (bottomSheetVisibility) {
+        HilingualTheme {
             FeedbackReportBottomSheet(
-                onDismiss = { bottomSheetVisibility = false },
+                isVisible = isVisible,
+                onDismiss = { isVisible = false },
                 onReportClick = {}
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .background(HilingualTheme.colors.white)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "바텀시트를 띄워보아요",
-                style = HilingualTheme.typography.bodyB14,
-                modifier = Modifier.noRippleClickable(
-                    onClick = { bottomSheetVisibility = true }
-                )
             )
         }
     }
