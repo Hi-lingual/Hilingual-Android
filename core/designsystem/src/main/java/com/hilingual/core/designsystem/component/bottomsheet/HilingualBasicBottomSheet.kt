@@ -21,7 +21,12 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -33,6 +38,7 @@ import kotlinx.coroutines.launch
 fun HilingualBasicBottomSheet(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    isVisible: Boolean = false,
     sheetState: SheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     ),
@@ -41,21 +47,37 @@ fun HilingualBasicBottomSheet(
     content: @Composable () -> Unit
 ) {
     val scope = rememberCoroutineScope()
+    var internalVisible by remember { mutableStateOf(false) }
 
-    ModalBottomSheet(
-        onDismissRequest = {
-            scope.launch {
-                sheetState.hide()
-                onDismiss()
-            }
-        },
-        modifier = modifier,
-        sheetState = sheetState,
-        containerColor = HilingualTheme.colors.white,
-        scrimColor = if (isDimEnabled) HilingualTheme.colors.dim1 else Color.Transparent,
-        shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
-        dragHandle = dragHandle
-    ) {
-        content()
+    val handleDismiss: () -> Unit = {
+        scope.launch {
+            sheetState.hide()
+            internalVisible = false
+            onDismiss()
+        }
+    }
+
+    LaunchedEffect(isVisible) {
+        if (isVisible) {
+            internalVisible = true
+        }
+
+        if (!isVisible && internalVisible) {
+            handleDismiss()
+        }
+    }
+
+    if (internalVisible) {
+        ModalBottomSheet(
+            onDismissRequest = handleDismiss,
+            modifier = modifier,
+            sheetState = sheetState,
+            containerColor = HilingualTheme.colors.white,
+            scrimColor = if (isDimEnabled) HilingualTheme.colors.dim1 else Color.Transparent,
+            shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+            dragHandle = dragHandle
+        ) {
+            content()
+        }
     }
 }
