@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -158,15 +159,14 @@ private fun DiaryFeedbackScreen(
         }
     }
 
-    if (isReportBottomSheetVisible) {
-        FeedbackReportBottomSheet(
-            onDismiss = { isReportBottomSheetVisible = false },
-            onReportClick = {
-                isReportDialogVisible = true
-                isReportBottomSheetVisible = false
-            }
-        )
-    }
+    FeedbackReportBottomSheet(
+        isVisible = isReportBottomSheetVisible,
+        onDismiss = { isReportBottomSheetVisible = false },
+        onReportClick = {
+            isReportDialogVisible = true
+            isReportBottomSheetVisible = false
+        }
+    )
 
     if (isReportDialogVisible) {
         FeedbackReportDialog(

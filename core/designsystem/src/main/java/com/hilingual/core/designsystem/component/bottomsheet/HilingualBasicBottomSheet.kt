@@ -36,9 +36,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HilingualBasicBottomSheet(
+    isVisible: Boolean,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    isVisible: Boolean = false,
     sheetState: SheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     ),
