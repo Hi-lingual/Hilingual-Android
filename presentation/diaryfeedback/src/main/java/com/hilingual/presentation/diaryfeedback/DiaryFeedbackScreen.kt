@@ -55,7 +55,7 @@ import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.event.LocalDialogEventProvider
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
-import com.hilingual.presentation.diaryfeedback.component.FeedbackReportBottomSheet
+import com.hilingual.presentation.diaryfeedback.component.FeedbackMenuBottomSheet
 import com.hilingual.presentation.diaryfeedback.component.FeedbackReportDialog
 import com.hilingual.presentation.diaryfeedback.tab.GrammarSpellingScreen
 import com.hilingual.presentation.diaryfeedback.tab.RecommendExpressionScreen
@@ -160,12 +160,16 @@ private fun DiaryFeedbackScreen(
         }
     }
 
-    FeedbackReportBottomSheet(
+    FeedbackMenuBottomSheet(
         isVisible = isReportBottomSheetVisible,
         onDismiss = { isReportBottomSheetVisible = false },
-        onReportClick = {
-            isReportDialogVisible = true
+        onDeleteClick = {
             isReportBottomSheetVisible = false
+            //TODO: 삭제 모달 띄우기
+        },
+        onReportClick = {
+            isReportBottomSheetVisible = false
+            isReportDialogVisible = true
         }
     )
 
