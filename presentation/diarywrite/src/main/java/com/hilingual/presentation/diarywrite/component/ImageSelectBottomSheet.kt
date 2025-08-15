@@ -20,7 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualMenuBottomSheet
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualMenuBottomSheetItem
-import com.hilingual.presentation.diarywrite.R
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,13 +39,13 @@ internal fun ImageSelectBottomSheet(
     ) {
         HilingualMenuBottomSheetItem(
             text = "카메라로 사진 찍기",
-            iconResId = R.drawable.ic_camera_24,
+            iconResId = DesignSystemR.drawable.ic_camera_24,
             onClick = onCameraSelected
         )
 
         HilingualMenuBottomSheetItem(
             text = "갤러리에서 선택하기",
-            iconResId = R.drawable.ic_gallary_24,
+            iconResId = DesignSystemR.drawable.ic_gallary_24,
             onClick = onGallerySelected
         )
     }
