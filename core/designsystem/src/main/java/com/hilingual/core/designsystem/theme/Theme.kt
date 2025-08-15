@@ -24,7 +24,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.hilingual.core.designsystem.event.LocalSharedTransitionScope
+import com.hilingual.core.common.event.LocalSharedTransitionScope
 
 private val LocalHilingualColors = staticCompositionLocalOf<HilingualColors> {
     error("No HilingualColors provided")

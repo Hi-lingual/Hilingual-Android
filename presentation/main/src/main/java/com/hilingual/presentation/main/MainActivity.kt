@@ -22,8 +22,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.CompositionLocalProvider
-import com.hilingual.core.common.provider.LocalSystemBarsColor
-import com.hilingual.core.common.provider.SystemBarsColorController
+import com.hilingual.core.common.event.LocalSystemBarsColor
+import com.hilingual.core.common.event.SystemBarsColorController
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.main.monitor.NetworkMonitor
 import com.hilingual.presentation.main.state.rememberMainAppState

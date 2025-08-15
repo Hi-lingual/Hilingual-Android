@@ -1,0 +1,73 @@
+package com.hilingual.core.designsystem.component.snackbar
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.designsystem.theme.HilingualTheme
+
+@Composable
+fun DiarySnackbar(
+    message: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(size = 8.dp))
+            .background(color = HilingualTheme.colors.gray500)
+            .padding(vertical = 8.dp, horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = message,
+            style = HilingualTheme.typography.bodyM16,
+            color = HilingualTheme.colors.white
+        )
+
+        Text(
+            text = "보러가기",
+            style = HilingualTheme.typography.bodySB14,
+            color = HilingualTheme.colors.white,
+            modifier = Modifier
+                .clip(RoundedCornerShape(6.dp))
+                .background(HilingualTheme.colors.gray700)
+                .noRippleClickable(onClick = onClick)
+                .padding(vertical = 8.dp, horizontal = 10.dp)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DiarySnackbarPreview() {
+    HilingualTheme {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            DiarySnackbar(
+                message = "일기가 게시되었어요!",
+                onClick = {},
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 23.dp)
+            )
+        }
+    }
+}

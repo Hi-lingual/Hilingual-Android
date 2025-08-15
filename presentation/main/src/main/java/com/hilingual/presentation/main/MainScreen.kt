@@ -20,9 +20,6 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -35,18 +32,20 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
-import com.hilingual.core.common.provider.LocalSystemBarsColor
+import com.hilingual.core.common.event.LocalDialogTrigger
+import com.hilingual.core.common.event.LocalSnackbarTrigger
+import com.hilingual.core.common.event.LocalSystemBarsColor
+import com.hilingual.core.common.event.LocalToastTrigger
+import com.hilingual.core.common.event.rememberDialogEventProvider
 import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
-import com.hilingual.core.designsystem.component.snackbar.TextSnackBar
-import com.hilingual.core.designsystem.event.LocalDialogEventProvider
-import com.hilingual.core.designsystem.event.rememberDialogEventProvider
+import com.hilingual.core.designsystem.component.snackbar.DiarySnackbar
+import com.hilingual.core.designsystem.component.toast.TextToast
 import com.hilingual.presentation.auth.navigation.authNavGraph
 import com.hilingual.presentation.community.communityNavGraph
 import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
@@ -84,14 +83,35 @@ internal fun MainScreen(
         dismiss = appState.dialogStateHolder::dismissDialog
     )
 
-    val onShowSnackBar: (String) -> Unit = { message ->
-        coroutineScope.launch {
-            snackBarHostState.currentSnackbarData?.dismiss()
-            val job = launch {
-                snackBarHostState.showSnackbar(message)
+    val onShowToast: (String) -> Unit = remember(coroutineScope, snackBarHostState) {
+        { message ->
+            coroutineScope.launch {
+                snackBarHostState.currentSnackbarData?.dismiss()
+                val job = launch {
+                    snackBarHostState.showSnackbar(
+                        message = message,
+                        withDismissAction = false
+                    )
+                }
+                delay(EXIT_MILLIS)
+                job.cancel()
             }
-            delay(EXIT_MILLIS)
-            job.cancel()
+        }
+    }
+
+    val onShowDiarySnackbar: () -> Unit = remember(coroutineScope, snackBarHostState) {
+        {
+            coroutineScope.launch {
+                snackBarHostState.currentSnackbarData?.dismiss()
+                val job = launch {
+                    snackBarHostState.showSnackbar(
+                        message = "일기가 게시되었어요!",
+                        withDismissAction = true
+                    )
+                }
+                delay(EXIT_MILLIS)
+                job.cancel()
+            }
         }
     }
 
@@ -102,15 +122,39 @@ internal fun MainScreen(
     }
 
     HandleBackPressToExit(
-        onShowSnackbar = {
-            onShowSnackBar("버튼을 한번 더 누르면 앱이 종료됩니다!")
+        onShowToast = {
+            onShowToast("버튼을 한번 더 누르면 앱이 종료됩니다!")
         }
     )
 
     CompositionLocalProvider(
-        LocalDialogEventProvider provides dialogEventProvider
+        LocalDialogTrigger provides dialogEventProvider,
+        LocalToastTrigger provides onShowToast,
+        LocalSnackbarTrigger provides onShowDiarySnackbar
     ) {
         Scaffold(
+            snackbarHost = {
+                SnackbarHost(hostState = snackBarHostState) { data ->
+                    if (data.visuals.withDismissAction) {
+                        DiarySnackbar(
+                            message = data.visuals.message,
+                            onClick = {
+                                // TODO: FeedScreen으로 이동하도록 변경 to.작은나현
+                                appState.navigateToHome()
+                                data.dismiss()
+                            },
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 23.dp)
+                        )
+                    } else {
+                        TextToast(
+                            text = data.visuals.message,
+                            modifier = Modifier.padding(bottom = 23.dp)
+                        )
+                    }
+                }
+            },
             bottomBar = {
                 MainBottomBar(
                     visible = isBottomBarVisible,
@@ -200,19 +244,6 @@ internal fun MainScreen(
         }
     }
 
-    Box(
-        contentAlignment = Alignment.BottomCenter,
-        modifier = Modifier
-            .fillMaxSize()
-            .navigationBarsPadding()
-            .padding(bottom = 24.dp)
-    ) {
-        SnackbarHost(
-            hostState = snackBarHostState,
-            snackbar = { snackbarData -> TextSnackBar(text = snackbarData.visuals.message) }
-        )
-    }
-
     if (activity != null) {
         systemBarsColor.Apply(activity)
     }
@@ -221,7 +252,7 @@ internal fun MainScreen(
 @Composable
 private fun HandleBackPressToExit(
     enabled: Boolean = true,
-    onShowSnackbar: () -> Unit = {}
+    onShowToast: () -> Unit = {}
 ) {
     val context = LocalContext.current
     var backPressedTime by remember { mutableLongStateOf(0L) }
@@ -230,7 +261,7 @@ private fun HandleBackPressToExit(
         if (System.currentTimeMillis() - backPressedTime <= EXIT_MILLIS) {
             (context as? Activity)?.finish()
         } else {
-            onShowSnackbar()
+            onShowToast()
         }
         backPressedTime = System.currentTimeMillis()
     }

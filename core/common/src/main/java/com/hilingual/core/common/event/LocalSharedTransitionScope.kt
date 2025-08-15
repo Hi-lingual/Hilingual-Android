@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.common.provider
+package com.hilingual.core.common.event
 
-import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.runtime.compositionLocalOf
 
-val LocalSnackBarTrigger = staticCompositionLocalOf<(String) -> Unit> {
-    error("No SnackBar provided")
+@OptIn(ExperimentalSharedTransitionApi::class)
+val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope> {
+    throw IllegalStateException("No SharedTransitionScope provided")
 }

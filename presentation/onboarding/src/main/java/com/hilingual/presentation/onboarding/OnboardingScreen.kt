@@ -41,17 +41,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.event.LocalDialogTrigger
+import com.hilingual.core.common.event.LocalSystemBarsColor
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
-import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualProfileImageBottomSheet
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.picker.ProfileImagePicker
 import com.hilingual.core.designsystem.component.textfield.HilingualShortTextField
 import com.hilingual.core.designsystem.component.textfield.TextFieldState
 import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppBar
-import com.hilingual.core.designsystem.event.LocalDialogEventProvider
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.onboarding.component.TermsBottomSheet
@@ -64,7 +64,7 @@ internal fun OnboardingRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
-    val dialogEventProvider = LocalDialogEventProvider.current
+    val dialogEventProvider = LocalDialogTrigger.current
     val context = LocalContext.current
 
     var textFieldState by remember { mutableStateOf(TextFieldState.NORMAL) }

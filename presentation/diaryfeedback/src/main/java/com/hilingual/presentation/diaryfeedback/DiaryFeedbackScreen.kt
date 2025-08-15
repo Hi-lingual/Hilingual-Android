@@ -43,14 +43,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
+import com.hilingual.core.common.event.LocalDialogTrigger
+import com.hilingual.core.common.event.LocalSystemBarsColor
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
-import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
-import com.hilingual.core.designsystem.event.LocalDialogEventProvider
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.diaryfeedback.component.FeedbackReportBottomSheet
@@ -71,7 +71,7 @@ internal fun DiaryFeedbackRoute(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
     var isImageDetailVisible by remember { mutableStateOf(false) }
-    val dialogEventProvider = LocalDialogEventProvider.current
+    val dialogEventProvider = LocalDialogTrigger.current
 
     BackHandler {
         if (isImageDetailVisible) {

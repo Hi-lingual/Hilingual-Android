@@ -21,7 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.hilingual.core.designsystem.event.DialogState
+import com.hilingual.core.common.event.DialogState
 
 @Stable
 internal class DialogStateHolder {

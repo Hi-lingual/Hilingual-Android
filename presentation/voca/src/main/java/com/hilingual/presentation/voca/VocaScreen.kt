@@ -45,12 +45,12 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.event.LocalDialogTrigger
+import com.hilingual.core.common.event.LocalSystemBarsColor
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.collectSideEffect
-import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
-import com.hilingual.core.designsystem.event.LocalDialogEventProvider
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
@@ -79,7 +79,7 @@ internal fun VocaRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
     val focusManager = LocalFocusManager.current
-    val dialogEventProvider = LocalDialogEventProvider.current
+    val dialogEventProvider = LocalDialogTrigger.current
 
     LaunchedEffect(Unit) {
         localSystemBarsColor.setSystemBarColor(

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.designsystem.event
+package com.hilingual.core.common.event
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
