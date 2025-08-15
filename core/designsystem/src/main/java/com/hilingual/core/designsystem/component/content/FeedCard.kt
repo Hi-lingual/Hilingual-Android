@@ -29,7 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
-import com.hilingual.core.common.util.formatSharedDate
+import com.hilingual.core.common.util.formatRelativeTime
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.image.ErrorImageSize
 import com.hilingual.core.designsystem.component.image.NetworkImage
@@ -123,7 +123,7 @@ private fun FeedHeader(
     onMenuClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val formattedDate = remember(sharedDateInMinutes) { formatSharedDate(sharedDateInMinutes) }
+    val formattedDate = remember(sharedDateInMinutes) { formatRelativeTime(sharedDateInMinutes) }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,

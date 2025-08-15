@@ -14,15 +14,15 @@ private const val ONE_WEEK_IN_MINUTES = 10080L
 
 private val DATE_FORMATTER = DateTimeFormatter.ofPattern("M월 d일", Locale.KOREA)
 
-fun formatSharedDate(sharedMinutes: Long): String {
+fun formatRelativeTime(minutesAgo: Long): String {
     return when {
-        sharedMinutes < ONE_MINUTE -> "방금 전"
-        sharedMinutes < ONE_HOUR_IN_MINUTES -> "${sharedMinutes}분 전"
-        sharedMinutes < ONE_DAY_IN_MINUTES -> "${sharedMinutes / ONE_HOUR_IN_MINUTES}시간 전"
-        sharedMinutes < ONE_WEEK_IN_MINUTES -> "${sharedMinutes / ONE_DAY_IN_MINUTES}일 전"
+        minutesAgo < ONE_MINUTE -> "방금 전"
+        minutesAgo < ONE_HOUR_IN_MINUTES -> "${minutesAgo}분 전"
+        minutesAgo < ONE_DAY_IN_MINUTES -> "${minutesAgo / ONE_HOUR_IN_MINUTES}시간 전"
+        minutesAgo < ONE_WEEK_IN_MINUTES -> "${minutesAgo / ONE_DAY_IN_MINUTES}일 전"
         else -> {
-            val sharedTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(sharedMinutes)
-            val instant = Instant.ofEpochMilli(sharedTime)
+            val pastTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(minutesAgo)
+            val instant = Instant.ofEpochMilli(pastTime)
             val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
             DATE_FORMATTER.format(localDateTime)
         }
