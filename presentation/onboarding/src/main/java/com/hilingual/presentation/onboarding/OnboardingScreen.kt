@@ -184,7 +184,7 @@ private fun OnboardingScreen(
             text = "가입하기",
             onClick = { isTermsSheetVisible = true },
             enableProvider = isNicknameValid,
-            modifier = Modifier.padding(vertical = 12.dp)
+            modifier = Modifier.padding(vertical = 16.dp)
         )
     }
 
