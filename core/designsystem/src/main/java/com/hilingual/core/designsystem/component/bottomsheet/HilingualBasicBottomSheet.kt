@@ -23,15 +23,11 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,30 +42,17 @@ fun HilingualBasicBottomSheet(
     dragHandle: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-    var internalVisible by remember { mutableStateOf(false) }
-
-    val handleDismiss: () -> Unit = {
-        scope.launch {
-            sheetState.hide()
-            internalVisible = false
-            onDismiss()
-        }
-    }
-
     LaunchedEffect(isVisible) {
         if (isVisible) {
-            internalVisible = true
-        }
-
-        if (!isVisible && internalVisible) {
-            handleDismiss()
+            sheetState.show()
+        } else {
+            sheetState.hide()
         }
     }
 
-    if (internalVisible) {
+    if (sheetState.isVisible) {
         ModalBottomSheet(
-            onDismissRequest = handleDismiss,
+            onDismissRequest = onDismiss,
             modifier = modifier,
             sheetState = sheetState,
             containerColor = HilingualTheme.colors.white,
