@@ -165,7 +165,7 @@ private fun DiaryFeedbackScreen(
         onDismiss = { isReportBottomSheetVisible = false },
         onDeleteClick = {
             isReportBottomSheetVisible = false
-            //TODO: 삭제 모달 띄우기
+            // TODO: 삭제 모달 띄우기
         },
         onReportClick = {
             isReportBottomSheetVisible = false
@@ -258,11 +258,11 @@ private fun DiaryFeedbackScreen(
                 horizontal = 16.dp,
                 vertical = 12.dp
             )
-        ){
+        ) {
             HilingualButton(
                 text = "피드에 게시하기",
                 onClick = {
-                    //TODO: 모달 띄우기
+                    // TODO: 모달 띄우기
                 }
             )
         }

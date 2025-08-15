@@ -60,7 +60,7 @@ internal fun RecommendExpressionScreen(
                 color = HilingualTheme.colors.gray700,
                 modifier = Modifier
                     .heightIn(min = 28.dp)
-                    .wrapContentHeight(align = Alignment.CenterVertically),
+                    .wrapContentHeight(align = Alignment.CenterVertically)
             )
         }
 
