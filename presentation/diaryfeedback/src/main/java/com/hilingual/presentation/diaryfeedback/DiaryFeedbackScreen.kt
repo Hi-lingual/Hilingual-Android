@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -47,6 +48,7 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
@@ -175,71 +177,92 @@ private fun DiaryFeedbackScreen(
         )
     }
 
-    Box(
+    Column(
+        verticalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .fillMaxSize()
-            .padding(paddingValues)
     ) {
-        Column(
-            verticalArrangement = Arrangement.Top,
-            modifier = modifier
-                .fillMaxSize()
-                .background(HilingualTheme.colors.white)
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .padding(paddingValues)
         ) {
-            BackAndMoreTopAppBar(
-                title = "일기장",
-                onBackClicked = onBackClick,
-                onMoreClicked = { isReportBottomSheetVisible = true }
-            )
+            Column(
+                verticalArrangement = Arrangement.Top,
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(HilingualTheme.colors.white)
+            ) {
+                BackAndMoreTopAppBar(
+                    title = "일기장",
+                    onBackClicked = onBackClick,
+                    onMoreClicked = { isReportBottomSheetVisible = true }
+                )
 
-            HilingualBasicTabRow(
-                tabTitles = persistentListOf("문법·철자", "추천표현"),
-                tabIndex = pagerState.currentPage,
-                onTabSelected = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(it)
+                HilingualBasicTabRow(
+                    tabTitles = persistentListOf("문법·철자", "추천표현"),
+                    tabIndex = pagerState.currentPage,
+                    onTabSelected = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(it)
+                        }
                     }
-                }
-            )
+                )
 
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier.fillMaxSize()
-            ) { page ->
-                with(uiState) {
-                    when (page) {
-                        0 -> GrammarSpellingScreen(
-                            listState = grammarListState,
-                            writtenDate = writtenDate,
-                            diaryContent = diaryContent,
-                            feedbackList = feedbackList,
-                            onImageClick = onChangeImageDetailVisible
-                        )
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxSize()
+                ) { page ->
+                    with(uiState) {
+                        when (page) {
+                            0 -> GrammarSpellingScreen(
+                                listState = grammarListState,
+                                writtenDate = writtenDate,
+                                diaryContent = diaryContent,
+                                feedbackList = feedbackList,
+                                onImageClick = onChangeImageDetailVisible
+                            )
 
-                        1 -> RecommendExpressionScreen(
-                            listState = recommendListState,
-                            writtenDate = writtenDate,
-                            recommendExpressionList = recommendExpressionList,
-                            onBookmarkClick = onToggleBookmark
-                        )
+                            1 -> RecommendExpressionScreen(
+                                listState = recommendListState,
+                                writtenDate = writtenDate,
+                                recommendExpressionList = recommendExpressionList,
+                                onBookmarkClick = onToggleBookmark
+                            )
+                        }
                     }
                 }
             }
-        }
-        HilingualFloatingButton(
-            onClick = {
-                coroutineScope.launch {
-                    when (pagerState.currentPage) {
-                        0 -> grammarListState.animateScrollToItem(0)
-                        else -> recommendListState.animateScrollToItem(0)
+            HilingualFloatingButton(
+                onClick = {
+                    coroutineScope.launch {
+                        when (pagerState.currentPage) {
+                            0 -> grammarListState.animateScrollToItem(0)
+                            else -> recommendListState.animateScrollToItem(0)
+                        }
                     }
+                },
+                isVisible = isFabVisible,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = 24.dp, end = 16.dp)
+            )
+        }
+
+        Surface(
+            color = HilingualTheme.colors.gray100,
+            modifier = Modifier.padding(
+                horizontal = 16.dp,
+                vertical = 12.dp
+            )
+        ){
+            HilingualButton(
+                text = "피드에 게시하기",
+                onClick = {
+                    //TODO: 모달 띄우기
                 }
-            },
-            isVisible = isFabVisible,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(bottom = 24.dp, end = 16.dp)
-        )
+            )
+        }
     }
 
     if (isImageDetailVisible && uiState.diaryContent.imageUrl != null) {
