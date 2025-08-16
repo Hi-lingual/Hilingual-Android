@@ -254,13 +254,12 @@ private fun VocaScreen(
         )
     }
 
-    if (showBottomSheet) {
-        WordSortBottomSheet(
-            selectedType = sortType,
-            onDismiss = { showBottomSheet = false },
-            onTypeSelected = onSortTypeChanged
-        )
-    }
+    WordSortBottomSheet(
+        isVisible = showBottomSheet,
+        selectedType = sortType,
+        onDismiss = { showBottomSheet = false },
+        onTypeSelected = onSortTypeChanged
+    )
 }
 
 @Composable
