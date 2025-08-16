@@ -38,9 +38,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
+import com.hilingual.core.common.event.provider.LocalSystemBarsColor
 import com.hilingual.core.common.event.trigger.LocalDialogTrigger
 import com.hilingual.core.common.event.trigger.LocalSnackbarTrigger
-import com.hilingual.core.common.event.provider.LocalSystemBarsColor
 import com.hilingual.core.common.event.trigger.LocalToastTrigger
 import com.hilingual.core.common.event.trigger.rememberDialogTrigger
 import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
