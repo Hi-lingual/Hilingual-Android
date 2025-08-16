@@ -34,7 +34,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.home.R
+import com.hilingual.core.designsystem.R
 
 @Composable
 internal fun DateTimeInfo(
