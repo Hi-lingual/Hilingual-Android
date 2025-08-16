@@ -81,25 +81,28 @@ fun FeedContent(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            Text(
-                text = content,
-                style = HilingualTheme.typography.bodyR16,
-                color = HilingualTheme.colors.black,
-                maxLines = 5,
-                overflow = TextOverflow.Ellipsis,
+            Column(
                 modifier = Modifier.noRippleClickable(onClick = onContentClick)
-            )
-
-            if (imageUrl != null) {
-                NetworkImage(
-                    imageUrl = imageUrl,
-                    shape = RoundedCornerShape(8.dp),
-                    errorImageSize = ErrorImageSize.LARGE,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f / 0.6f)
-                        .padding(top = 4.dp)
+            ) {
+                Text(
+                    text = content,
+                    style = HilingualTheme.typography.bodyR16,
+                    color = HilingualTheme.colors.black,
+                    maxLines = 5,
+                    overflow = TextOverflow.Ellipsis
                 )
+
+                if (imageUrl != null) {
+                    NetworkImage(
+                        imageUrl = imageUrl,
+                        shape = RoundedCornerShape(8.dp),
+                        errorImageSize = ErrorImageSize.LARGE,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f / 0.6f)
+                            .padding(top = 4.dp)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
