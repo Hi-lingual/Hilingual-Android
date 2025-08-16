@@ -36,7 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.diaryfeedback.R
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun FeedbackCard(
@@ -98,13 +98,13 @@ private fun FeedbackSentence(
 ) {
     val (iconRes, color, style) = if (isFeedback) {
         Triple(
-            R.drawable.ic_feedback_ai,
+            DesignSystemR.drawable.chip_feedback_card_ai,
             HilingualTheme.colors.hilingualOrange,
             HilingualTheme.typography.bodyM16
         )
     } else {
         Triple(
-            R.drawable.ic_feedback_my,
+            DesignSystemR.drawable.chip_feedback_card_me,
             HilingualTheme.colors.gray700,
             HilingualTheme.typography.bodyR16
         )

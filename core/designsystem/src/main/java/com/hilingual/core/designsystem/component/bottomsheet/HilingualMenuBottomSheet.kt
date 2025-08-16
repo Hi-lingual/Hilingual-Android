@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,29 +34,28 @@ fun HilingualMenuBottomSheet(
     title: String? = null,
     content: @Composable () -> Unit
 ) {
-    if (isVisible) {
-        HilingualBasicBottomSheet(
-            onDismiss = onDismiss,
-            modifier = modifier
+    HilingualBasicBottomSheet(
+        isVisible = isVisible,
+        onDismiss = onDismiss,
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                if (!title.isNullOrBlank()) {
-                    Text(
-                        text = title,
-                        style = HilingualTheme.typography.headB16,
-                        color = HilingualTheme.colors.black,
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(bottom = 16.dp)
-                    )
-                }
-                content()
+            if (!title.isNullOrBlank()) {
+                Text(
+                    text = title,
+                    style = HilingualTheme.typography.headB16,
+                    color = HilingualTheme.colors.black,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 16.dp)
+                )
             }
+            content()
         }
     }
 }
@@ -65,7 +65,9 @@ fun HilingualMenuBottomSheetItem(
     text: String,
     @DrawableRes iconResId: Int,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    textColor: Color = HilingualTheme.colors.gray700,
+    iconTintColor: Color = Color.Unspecified
 ) {
     Row(
         horizontalArrangement = Arrangement.Start,
@@ -80,7 +82,7 @@ fun HilingualMenuBottomSheetItem(
             imageVector = ImageVector.vectorResource(iconResId),
             contentDescription = null,
             modifier = Modifier.size(24.dp),
-            tint = HilingualTheme.colors.gray400
+            tint = iconTintColor
         )
 
         Spacer(Modifier.width(8.dp))
@@ -88,7 +90,7 @@ fun HilingualMenuBottomSheetItem(
         Text(
             text = text,
             style = HilingualTheme.typography.bodySB14,
-            color = HilingualTheme.colors.gray700
+            color = textColor
         )
     }
 }

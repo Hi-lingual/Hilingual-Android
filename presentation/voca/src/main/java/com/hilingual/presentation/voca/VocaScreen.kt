@@ -42,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -53,7 +54,6 @@ import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.event.LocalDialogEventProvider
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
-import com.hilingual.core.designsystem.theme.white
 import com.hilingual.data.voca.model.GroupingVocaModel
 import com.hilingual.data.voca.model.VocaItemModel
 import com.hilingual.presentation.voca.component.AddVocaButton
@@ -106,41 +106,24 @@ internal fun VocaRoute(
         }
     }
 
-    when (uiState.vocaGroupList) {
-        is UiState.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(white),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
-
-        is UiState.Success -> {
-            with(uiState) {
-                VocaScreen(
-                    paddingValues = paddingValues,
-                    viewType = viewType,
-                    sortType = sortType,
-                    vocaCount = vocaCount,
-                    vocaGroupList = (vocaGroupList as? UiState.Success)?.data ?: persistentListOf(),
-                    searchResultList = searchResultList,
-                    searchText = searchKeyword,
-                    onSortTypeChanged = viewModel::updateSort,
-                    onCardClick = viewModel::fetchVocaDetail,
-                    onBookmarkClick = { phraseId, isMarked ->
-                        viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
-                    },
-                    onSearchTextChanged = viewModel::updateSearchKeyword,
-                    onWriteDiaryClick = navigateToHome,
-                    onCloseButtonClick = viewModel::clearSearchKeyword
-                )
-            }
-        }
-
-        else -> {}
+    with(uiState) {
+        VocaScreen(
+            paddingValues = paddingValues,
+            viewType = viewType,
+            sortType = sortType,
+            vocaCount = vocaCount,
+            vocaGroupList = vocaGroupList,
+            searchResultList = searchResultList,
+            searchText = searchKeyword,
+            onSortTypeChanged = viewModel::updateSort,
+            onCardClick = viewModel::fetchVocaDetail,
+            onBookmarkClick = { phraseId, isMarked ->
+                viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
+            },
+            onSearchTextChanged = viewModel::updateSearchKeyword,
+            onWriteDiaryClick = navigateToHome,
+            onCloseButtonClick = viewModel::clearSearchKeyword
+        )
     }
 
     when (val state = uiState.vocaItemDetail) {
@@ -170,7 +153,7 @@ private fun VocaScreen(
     viewType: ScreenType,
     sortType: WordSortType,
     vocaCount: Int,
-    vocaGroupList: ImmutableList<GroupingVocaModel>,
+    vocaGroupList: UiState<ImmutableList<GroupingVocaModel>>,
     searchResultList: ImmutableList<VocaItemModel>,
     searchText: String,
     onWriteDiaryClick: () -> Unit,
@@ -207,7 +190,6 @@ private fun VocaScreen(
                 .background(HilingualTheme.colors.gray100)
                 .addFocusCleaner(focusManager)
         ) {
-            // TODO: 헤더 아래만 로딩되도록 바꿔보면 좋을듯(사실 하라는뜻) to.큰나
             VocaHeader(
                 searchText = { searchText },
                 onSearchTextChanged = onSearchTextChanged,
@@ -217,30 +199,48 @@ private fun VocaScreen(
                     .fillMaxWidth()
             )
 
-            when (viewType) {
-                ScreenType.DEFAULT -> {
-                    VocaListWithInfoSection(
-                        listState = listState,
-                        vocaGroupList = vocaGroupList,
-                        sortType = sortType,
-                        wordCount = vocaCount,
-                        onSortClick = { showBottomSheet = true },
-                        onCardClick = onCardClick,
-                        onBookmarkClick = onBookmarkClick,
-                        onWriteDiaryClick = onWriteDiaryClick
-                    )
+            when (vocaGroupList) {
+                is UiState.Loading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(HilingualTheme.colors.gray100),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
 
-                ScreenType.SEARCH -> {
-                    SearchResultSection(
-                        listState = listState,
-                        searchResultList = searchResultList,
-                        onCardClick = onCardClick,
-                        onBookmarkClick = onBookmarkClick
-                    )
+                is UiState.Success -> {
+                    when (viewType) {
+                        ScreenType.DEFAULT -> {
+                            VocaListWithInfoSection(
+                                listState = listState,
+                                vocaGroupList = vocaGroupList.data,
+                                sortType = sortType,
+                                wordCount = vocaCount,
+                                onSortClick = { showBottomSheet = true },
+                                onCardClick = onCardClick,
+                                onBookmarkClick = onBookmarkClick,
+                                onWriteDiaryClick = onWriteDiaryClick
+                            )
+                        }
+
+                        ScreenType.SEARCH -> {
+                            SearchResultSection(
+                                listState = listState,
+                                searchResultList = searchResultList,
+                                onCardClick = onCardClick,
+                                onBookmarkClick = onBookmarkClick
+                            )
+                        }
+                    }
                 }
+
+                else -> {}
             }
         }
+
         HilingualFloatingButton(
             onClick = {
                 coroutineScope.launch {
@@ -254,13 +254,12 @@ private fun VocaScreen(
         )
     }
 
-    if (showBottomSheet) {
-        WordSortBottomSheet(
-            selectedType = sortType,
-            onDismiss = { showBottomSheet = false },
-            onTypeSelected = onSortTypeChanged
-        )
-    }
+    WordSortBottomSheet(
+        isVisible = showBottomSheet,
+        selectedType = sortType,
+        onDismiss = { showBottomSheet = false },
+        onTypeSelected = onSortTypeChanged
+    )
 }
 
 @Composable
@@ -398,5 +397,27 @@ private fun SearchResultSection(
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun VocaScreenLoadingPreview() {
+    HilingualTheme {
+        VocaScreen(
+            paddingValues = PaddingValues(0.dp),
+            viewType = ScreenType.DEFAULT,
+            sortType = WordSortType.Latest,
+            vocaCount = 0,
+            vocaGroupList = UiState.Loading,
+            searchResultList = persistentListOf(),
+            searchText = "",
+            onWriteDiaryClick = {},
+            onSortTypeChanged = {},
+            onCardClick = {},
+            onBookmarkClick = { _, _ -> },
+            onSearchTextChanged = {},
+            onCloseButtonClick = {}
+        )
     }
 }

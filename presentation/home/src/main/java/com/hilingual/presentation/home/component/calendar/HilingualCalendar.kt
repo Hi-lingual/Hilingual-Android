@@ -62,18 +62,17 @@ internal fun HilingualCalendar(
         outDateStyle = OutDateStyle.EndOfRow
     )
 
-    if (isBottomSheetVisible) {
-        HilingualYearMonthPickerBottomSheet(
-            initialYearMonth = state.firstVisibleMonth.yearMonth,
-            onDismiss = { isBottomSheetVisible = false },
-            onDateSelected = { newYearMonth ->
-                coroutineScope.launch {
-                    state.scrollToMonth(newYearMonth)
-                }
-                isBottomSheetVisible = false
+    HilingualYearMonthPickerBottomSheet(
+        isVisible = isBottomSheetVisible,
+        initialYearMonth = state.firstVisibleMonth.yearMonth,
+        onDismiss = { isBottomSheetVisible = false },
+        onDateSelected = { newYearMonth ->
+            coroutineScope.launch {
+                state.scrollToMonth(newYearMonth)
             }
-        )
-    }
+            isBottomSheetVisible = false
+        }
+    )
 
     LaunchedEffect(state.firstVisibleMonth) {
         onMonthChanged(state.firstVisibleMonth.yearMonth)
