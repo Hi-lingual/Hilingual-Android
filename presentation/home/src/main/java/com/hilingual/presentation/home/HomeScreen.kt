@@ -52,20 +52,23 @@ import com.hilingual.core.designsystem.event.LocalDialogEventProvider
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
-import com.hilingual.presentation.home.component.HomeDropDownMenu
 import com.hilingual.presentation.home.component.HomeHeader
 import com.hilingual.presentation.home.component.calendar.HilingualCalendar
-import com.hilingual.presentation.home.component.footer.DateTimeInfo
 import com.hilingual.presentation.home.component.footer.DiaryDateInfo
 import com.hilingual.presentation.home.component.footer.DiaryEmptyCard
 import com.hilingual.presentation.home.component.footer.DiaryEmptyCardType
 import com.hilingual.presentation.home.component.footer.DiaryPreviewCard
+import com.hilingual.presentation.home.component.footer.DiaryTimeInfo
+import com.hilingual.presentation.home.component.footer.HomeDropDownMenu
 import com.hilingual.presentation.home.component.footer.TodayTopic
 import com.hilingual.presentation.home.component.footer.WriteDiaryButton
 import com.hilingual.presentation.home.model.DateUiModel
 import com.hilingual.presentation.home.model.DiaryThumbnailUiModel
 import com.hilingual.presentation.home.model.TodayTopicUiModel
 import com.hilingual.presentation.home.model.UserProfileUiModel
+import com.hilingual.presentation.home.util.isDateFuture
+import com.hilingual.presentation.home.util.isDateWritable
+import com.hilingual.presentation.home.util.isDateWritten
 import kotlinx.collections.immutable.toPersistentList
 import java.time.LocalDate
 import java.time.YearMonth
@@ -145,17 +148,14 @@ private fun HomeScreen(
     onUnpublishClick: () -> Unit
 ) {
     val date = uiState.selectedDate
-    val today = remember { LocalDate.now() }
-    val isWritten = remember(uiState.dateList, date) {
-        uiState.dateList.any { LocalDate.parse(it.date) == date }
-    }
-
-    val isFuture = remember(date, today) { date.isAfter(today) }
-    val isWritable = remember(isFuture, date, today) {
-        !isFuture && date.isAfter(today.minusDays(2))
-    }
-    var isExpanded by remember { mutableStateOf(false) }
     val verticalScrollState = rememberScrollState()
+
+    val isWritten = remember(uiState.dateList, date) {
+        isDateWritten(date, uiState.dateList)
+    }
+    val isFuture = remember(date) { isDateFuture(date) }
+    val isWritable = remember(date) { isDateWritable(date) }
+    var isExpanded by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -210,19 +210,19 @@ private fun HomeScreen(
             ) {
                 DiaryDateInfo(
                     selectedDate = date,
-                    isPublished = uiState.isPublished,
+                    isPublished = uiState.diaryThumbnail?.isPublished ?: false,
                     isWritten = isWritten
                 )
                 when {
                     isWritten -> HomeDropDownMenu(
                         isExpanded = isExpanded,
-                        isPublished = uiState.isPublished,
+                        isPublished = uiState.diaryThumbnail?.isPublished ?: false,
                         onExpandedChange = { isExpanded = it },
                         onDeleteClick = onDeleteClick,
                         onPublishClick = onPublishClick,
                         onUnpublishClick = onUnpublishClick
                     )
-                    isWritable -> DateTimeInfo(remainingTime = uiState.todayTopic?.remainingTime)
+                    isWritable -> DiaryTimeInfo(remainingTime = uiState.todayTopic?.remainingTime)
                 }
             }
 
@@ -272,25 +272,35 @@ private fun HomeScreen(
 @Composable
 private fun InteractiveHomeScreenPreview() {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    var writtenDates by remember {
-        mutableStateOf(
-            setOf(
-                LocalDate.now(),
-                LocalDate.now().minusDays(2),
-                LocalDate.now().minusDays(3)
-            )
-        )
-    }
-    var publishedStates by remember {
+    var writtenDiaries by remember {
         mutableStateOf(
             mapOf(
-                LocalDate.now().minusDays(2) to true
+                LocalDate.now() to DiaryThumbnailUiModel(
+                    diaryId = 1L,
+                    originalText = "Today's diary.",
+                    imageUrl = "",
+                    isPublished = false
+                ),
+                LocalDate.now().minusDays(2) to DiaryThumbnailUiModel(
+                    diaryId = 2L,
+                    originalText = "Diary from 2 days ago.",
+                    imageUrl = "",
+                    isPublished = true
+                ),
+                LocalDate.now().minusDays(3) to DiaryThumbnailUiModel(
+                    diaryId = 3L,
+                    originalText = "Diary from 3 days ago.",
+                    imageUrl = "",
+                    isPublished = false
+                )
             )
         )
     }
 
+    val writtenDates = writtenDiaries.keys
+    val diaryForSelectedDate = writtenDiaries[selectedDate]
     val isWritten = selectedDate in writtenDates
-    val isPublished = publishedStates[selectedDate] ?: false
+    val isWritable = remember(selectedDate) { isDateWritable(selectedDate) }
 
     val uiState = HomeUiState(
         userProfile = UserProfileUiModel(
@@ -300,18 +310,9 @@ private fun InteractiveHomeScreenPreview() {
             streak = 5
         ),
         selectedDate = selectedDate,
-        isPublished = isPublished,
         dateList = writtenDates.map { DateUiModel(it.toString()) }.toPersistentList(),
-        diaryThumbnail = if (isWritten) {
-            DiaryThumbnailUiModel(
-                diaryId = 1L,
-                originalText = "An interactive diary entry for $selectedDate. Published: $isPublished",
-                imageUrl = ""
-            )
-        } else {
-            null
-        },
-        todayTopic = if (!isWritten && (selectedDate == LocalDate.now() || selectedDate == LocalDate.now().minusDays(1))) {
+        diaryThumbnail = diaryForSelectedDate,
+        todayTopic = if (!isWritten && isWritable) {
             TodayTopicUiModel(
                 topicKo = "인터랙티브 주제",
                 topicEn = "Interactive Topic",
@@ -334,14 +335,17 @@ private fun InteractiveHomeScreenPreview() {
             onDiaryPreviewClick = {},
             onAlarmClick = {},
             onDeleteClick = {
-                writtenDates = writtenDates - selectedDate
-                publishedStates = publishedStates - selectedDate
+                writtenDiaries = writtenDiaries - selectedDate
             },
             onPublishClick = {
-                publishedStates = publishedStates + (selectedDate to true)
+                writtenDiaries[selectedDate]?.let {
+                    writtenDiaries = writtenDiaries + (selectedDate to it.copy(isPublished = true))
+                }
             },
             onUnpublishClick = {
-                publishedStates = publishedStates - selectedDate
+                writtenDiaries[selectedDate]?.let {
+                    writtenDiaries = writtenDiaries + (selectedDate to it.copy(isPublished = false))
+                }
             }
         )
     }

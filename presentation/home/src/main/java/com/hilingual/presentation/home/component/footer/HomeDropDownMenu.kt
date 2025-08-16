@@ -1,4 +1,4 @@
-package com.hilingual.presentation.home.component
+package com.hilingual.presentation.home.component.footer
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
