@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -41,9 +42,9 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.tag.WordPhraseTypeTag
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.diaryfeedback.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun RecommendExpressionCard(
@@ -82,13 +83,15 @@ internal fun RecommendExpressionCard(
         }
         Icon(
             imageVector = ImageVector.vectorResource(
-                if (isMarked) R.drawable.ic_save_saved_28 else R.drawable.ic_save_unsaved_28
+                if (isMarked) DesignSystemR.drawable.ic_save_28_filled else DesignSystemR.drawable.ic_save_28_empty
             ),
             contentDescription = null,
             tint = Color.Unspecified,
-            modifier = Modifier.noRippleClickable(
-                onClick = onBookmarkClick
-            )
+            modifier = Modifier
+                .size(28.dp)
+                .noRippleClickable(
+                    onClick = onBookmarkClick
+                )
         )
     }
 }

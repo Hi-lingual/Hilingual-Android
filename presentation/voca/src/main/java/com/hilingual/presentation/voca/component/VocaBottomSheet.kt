@@ -40,11 +40,13 @@ import com.hilingual.presentation.voca.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun WordSortBottomSheet(
+    isVisible: Boolean,
     selectedType: WordSortType,
     onDismiss: () -> Unit,
     onTypeSelected: (WordSortType) -> Unit
 ) {
     HilingualBasicBottomSheet(
+        isVisible = isVisible,
         onDismiss = onDismiss
     ) {
         SortBottomSheetContent(
