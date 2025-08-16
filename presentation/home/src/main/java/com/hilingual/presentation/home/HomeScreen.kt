@@ -192,8 +192,8 @@ private fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 DiaryDateInfo(
-                    selectedDateProvider = { date },
-                    isWrittenProvider = { isWritten }
+                    selectedDate = date,
+                    isWritten = isWritten
                 )
 
                 if (isWritable) DateTimeInfo(remainingTime = uiState.todayTopic?.remainingTime)

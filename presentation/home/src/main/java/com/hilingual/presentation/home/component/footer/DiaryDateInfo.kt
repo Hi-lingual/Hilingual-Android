@@ -36,13 +36,11 @@ private val DATE_FORMATTER: DateTimeFormatter =
 
 @Composable
 internal fun DiaryDateInfo(
-    selectedDateProvider: () -> LocalDate,
-    isWrittenProvider: () -> Boolean,
-    modifier: Modifier = Modifier
+    selectedDate: LocalDate,
+    isWritten: Boolean,
+    modifier: Modifier = Modifier,
+    isPublished: Boolean = false,
 ) {
-    val selectedDate = selectedDateProvider()
-    val isWritten = isWrittenProvider()
-
     val formattedDate = remember(selectedDate) {
         selectedDate.format(DATE_FORMATTER)
     }
@@ -51,65 +49,64 @@ internal fun DiaryDateInfo(
         LocalDate.now().isBefore(selectedDate)
     }
 
-    val diaryStatusText = when {
-        isFutureDate -> "작성 불가"
-        isWritten -> "작성완료"
-        else -> "미작성"
-    }
-    val diaryStatusColor = when {
-        isFutureDate -> HilingualTheme.colors.gray300
-        isWritten -> HilingualTheme.colors.hilingualBlue
-        else -> HilingualTheme.colors.gray300
+    val (diaryStatusText, diaryStatusColor) = when {
+        isFutureDate -> "작성 불가" to HilingualTheme.colors.gray300
+        isWritten && isPublished -> "게시된 일기" to HilingualTheme.colors.hilingualBlue
+        isWritten && !isPublished -> "비공개 일기" to HilingualTheme.colors.gray400
+        else -> "미작성" to HilingualTheme.colors.gray300
     }
 
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Text(
             text = formattedDate,
             style = HilingualTheme.typography.headB16,
-            color = HilingualTheme.colors.black
+            color = HilingualTheme.colors.black,
         )
 
         Text(
             text = "·",
             style = HilingualTheme.typography.captionM12,
-            color = HilingualTheme.colors.gray300
+            color = HilingualTheme.colors.gray300,
         )
 
         Text(
             text = diaryStatusText,
             style = HilingualTheme.typography.captionM12,
-            color = diaryStatusColor
+            color = diaryStatusColor,
         )
     }
 }
 
 private data class DateDiaryInfoPreviewState(
     val date: LocalDate,
-    val isWritten: Boolean
+    val isWritten: Boolean,
+    val isPublished: Boolean,
 )
 
 private class DateDiaryInfoPreviewProvider : PreviewParameterProvider<DateDiaryInfoPreviewState> {
     override val values = sequenceOf(
-        DateDiaryInfoPreviewState(LocalDate.now(), true),
-        DateDiaryInfoPreviewState(LocalDate.now(), false),
-        DateDiaryInfoPreviewState(LocalDate.now().plusDays(1), false),
-        DateDiaryInfoPreviewState(LocalDate.now().minusDays(1), false)
+        DateDiaryInfoPreviewState(LocalDate.now(), isWritten = true, isPublished = true),
+        DateDiaryInfoPreviewState(LocalDate.now(), isWritten = true, isPublished = false),
+        DateDiaryInfoPreviewState(LocalDate.now(), isWritten = false, isPublished = false),
+        DateDiaryInfoPreviewState(LocalDate.now().plusDays(1), isWritten = false, isPublished = false),
+        DateDiaryInfoPreviewState(LocalDate.now().minusDays(1), isWritten = false, isPublished = false),
     )
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun DateDiaryInfoPreview(
-    @PreviewParameter(DateDiaryInfoPreviewProvider::class) state: DateDiaryInfoPreviewState
+    @PreviewParameter(DateDiaryInfoPreviewProvider::class) state: DateDiaryInfoPreviewState,
 ) {
     HilingualTheme {
         DiaryDateInfo(
-            selectedDateProvider = { state.date },
-            isWrittenProvider = { state.isWritten }
+            selectedDate = state.date,
+            isWritten = state.isWritten,
+            isPublished = state.isPublished,
         )
     }
 }
