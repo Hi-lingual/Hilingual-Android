@@ -43,8 +43,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hilingual.core.common.constant.UrlConstant
-import com.hilingual.core.common.event.LocalSharedTransitionScope
-import com.hilingual.core.common.event.LocalSystemBarsColor
+import com.hilingual.core.common.event.provider.LocalSharedTransitionScope
+import com.hilingual.core.common.event.provider.LocalSystemBarsColor
 import com.hilingual.core.common.extension.collectLatestSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.noRippleClickable

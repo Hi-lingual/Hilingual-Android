@@ -29,7 +29,7 @@ fun DiarySnackbar(
             .fillMaxWidth()
             .clip(RoundedCornerShape(size = 8.dp))
             .background(color = HilingualTheme.colors.gray500)
-            .padding(vertical = 8.dp, horizontal = 24.dp),
+            .padding(vertical = 10.dp, horizontal = 24.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

@@ -31,8 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hilingual.core.common.event.LocalSharedTransitionScope
-import com.hilingual.core.common.event.LocalSystemBarsColor
+import com.hilingual.core.common.event.provider.LocalSharedTransitionScope
+import com.hilingual.core.common.event.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualOrange
 import kotlinx.coroutines.delay

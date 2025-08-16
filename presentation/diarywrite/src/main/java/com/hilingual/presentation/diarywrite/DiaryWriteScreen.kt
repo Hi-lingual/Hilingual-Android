@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hilingual.core.common.event.LocalSystemBarsColor
+import com.hilingual.core.common.event.provider.LocalSystemBarsColor
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.advancedImePadding
 import com.hilingual.core.designsystem.component.button.HilingualButton
