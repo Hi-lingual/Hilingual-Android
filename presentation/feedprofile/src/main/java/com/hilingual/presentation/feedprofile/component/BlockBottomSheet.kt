@@ -40,61 +40,60 @@ internal fun BlockBottomSheet(
         "상대는 나의 모든 활동을 확인할 수 없어요."
     )
 
-    if (isVisible) {
-        HilingualBasicBottomSheet(
-            onDismiss = onDismiss,
-            modifier = modifier
+    HilingualBasicBottomSheet(
+        isVisible = isVisible,
+        onDismiss = onDismiss,
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 32.dp, bottom = 12.dp)
+                .padding(horizontal = 16.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 32.dp, bottom = 12.dp)
-                    .padding(horizontal = 16.dp)
-            ) {
-                Text(
-                    text = "정말 차단하실건가요?",
-                    style = HilingualTheme.typography.headB18,
-                    color = HilingualTheme.colors.black
-                )
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    text = "차단 시 상대방은 차단 여부를 알 수 없으며,\n" +
-                            "언제든 차단을 해제 할 수 있어요.",
-                    style = HilingualTheme.typography.bodyM14,
-                    color = HilingualTheme.colors.gray400
+            Text(
+                text = "정말 차단하실건가요?",
+                style = HilingualTheme.typography.headB18,
+                color = HilingualTheme.colors.black
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "차단 시 상대방은 차단 여부를 알 수 없으며,\n" +
+                        "언제든 차단을 해제 할 수 있어요.",
+                style = HilingualTheme.typography.bodyM14,
+                color = HilingualTheme.colors.gray400
 
-                )
-                Spacer(Modifier.height(20.dp))
+            )
+            Spacer(Modifier.height(20.dp))
 
-                checkTexts.forEach { text ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 5.5.dp)
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = DesignSystemR.drawable.ic_check_24),
-                            contentDescription = null,
-                            tint = HilingualTheme.colors.black,
-                            modifier = Modifier.size(20.dp)
-                        )
+            checkTexts.forEach { text ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 5.5.dp)
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = DesignSystemR.drawable.ic_check_24),
+                        contentDescription = null,
+                        tint = HilingualTheme.colors.black,
+                        modifier = Modifier.size(20.dp)
+                    )
 
-                        Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
 
-                        Text(
-                            text = text,
-                            style = HilingualTheme.typography.bodyM14,
-                            color = HilingualTheme.colors.gray850
-                        )
-                    }
+                    Text(
+                        text = text,
+                        style = HilingualTheme.typography.bodyM14,
+                        color = HilingualTheme.colors.gray850
+                    )
                 }
-                Spacer(Modifier.height(32.dp))
-                HilingualButton(
-                    text = "차단하기",
-                    onClick = onBlockButtonClick
-                )
             }
+            Spacer(Modifier.height(32.dp))
+            HilingualButton(
+                text = "차단하기",
+                onClick = onBlockButtonClick
+            )
         }
     }
 }
