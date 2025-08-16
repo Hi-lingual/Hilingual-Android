@@ -16,7 +16,9 @@
 package com.hilingual.presentation.home.component.calendar
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,9 +27,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.home.R
+import com.hilingual.core.designsystem.R
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import java.time.LocalDate
@@ -56,16 +60,18 @@ internal fun DayItem(
         when {
             isSelected -> {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_bubble_34),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_bubble_16),
                     contentDescription = null,
+                    modifier = Modifier.size(34.dp),
                     tint = Color.Unspecified
                 )
             }
 
             isWritten -> {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_bubble_34),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_bubble_16),
                     contentDescription = null,
+                    modifier = Modifier.size(34.dp),
                     tint = HilingualTheme.colors.hilingualBlue50
                 )
             }
