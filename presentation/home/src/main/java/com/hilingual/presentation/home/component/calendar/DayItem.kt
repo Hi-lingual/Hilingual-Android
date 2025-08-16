@@ -94,7 +94,7 @@ internal fun DayItem(
 
         if (day.date == LocalDate.now()) {
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_today_4),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_dot_4),
                 contentDescription = null,
                 tint = Color.Unspecified,
                 modifier = Modifier.align(Alignment.BottomCenter)

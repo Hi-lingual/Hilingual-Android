@@ -112,6 +112,7 @@ internal fun HomeRoute(
             HomeScreen(
                 paddingValues = paddingValues,
                 uiState = state.data,
+                onAlarmClick = { /* TODO: 알람 스크린으로 이동 by.angrypodo*/ },
                 onDateSelected = viewModel::onDateSelected,
                 onMonthChanged = viewModel::onMonthChanged,
                 onWriteDiaryClick = navigateToDiaryWrite,
@@ -127,6 +128,7 @@ internal fun HomeRoute(
 private fun HomeScreen(
     paddingValues: PaddingValues,
     uiState: HomeUiState,
+    onAlarmClick: () -> Unit,
     onDateSelected: (LocalDate) -> Unit,
     onMonthChanged: (YearMonth) -> Unit,
     onWriteDiaryClick: (LocalDate) -> Unit,
@@ -139,7 +141,9 @@ private fun HomeScreen(
     }
 
     val isFuture = remember(date, today) { date.isAfter(today) }
-    val isWritable = remember(isFuture, date, today) { !isFuture && date.isAfter(today.minusDays(2)) }
+    val isWritable = remember(isFuture, date, today) {
+        !isFuture && date.isAfter(today.minusDays(2))
+    }
     val verticalScrollState = rememberScrollState()
 
     Column(
@@ -155,6 +159,8 @@ private fun HomeScreen(
                 nickname = userProfile.nickname,
                 totalDiaries = userProfile.totalDiaries,
                 streak = userProfile.streak,
+                isNewAlarm = userProfile.isNewAlarm,
+                onAlarmClick = onAlarmClick,
                 modifier = Modifier
                     .background(hilingualBlack)
                     .padding(horizontal = 16.dp)
@@ -193,6 +199,7 @@ private fun HomeScreen(
             ) {
                 DiaryDateInfo(
                     selectedDate = date,
+                    isPublished = uiState.isPublished,
                     isWritten = isWritten
                 )
 
@@ -245,6 +252,7 @@ private fun HomeScreen(
 @Composable
 private fun HomeScreenPreview() {
     val uiState = HomeUiState(
+        isPublished = true,
         userProfile = UserProfileUiModel(
             profileImg = "",
             nickname = "Hilingual",
@@ -268,7 +276,8 @@ private fun HomeScreenPreview() {
             onDateSelected = {},
             onMonthChanged = {},
             onWriteDiaryClick = {},
-            onDiaryPreviewClick = {}
+            onDiaryPreviewClick = {},
+            onAlarmClick = {}
         )
     }
 }

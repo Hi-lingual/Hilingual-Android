@@ -23,7 +23,8 @@ data class UserProfileUiModel(
     val nickname: String = "",
     val profileImg: String = "",
     val totalDiaries: Int = 0,
-    val streak: Int = 0
+    val streak: Int = 0,
+    val isNewAlarm: Boolean = false
 )
 
 internal fun UserInfoModel.toState() = UserProfileUiModel(

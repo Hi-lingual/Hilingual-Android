@@ -38,8 +38,8 @@ private val DATE_FORMATTER: DateTimeFormatter =
 internal fun DiaryDateInfo(
     selectedDate: LocalDate,
     isWritten: Boolean,
+    isPublished: Boolean,
     modifier: Modifier = Modifier,
-    isPublished: Boolean = false,
 ) {
     val formattedDate = remember(selectedDate) {
         selectedDate.format(DATE_FORMATTER)
