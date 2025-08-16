@@ -42,8 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -68,7 +66,6 @@ import com.hilingual.presentation.home.model.DateUiModel
 import com.hilingual.presentation.home.model.DiaryThumbnailUiModel
 import com.hilingual.presentation.home.model.TodayTopicUiModel
 import com.hilingual.presentation.home.model.UserProfileUiModel
-import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 import java.time.LocalDate
 import java.time.YearMonth
@@ -271,85 +268,81 @@ private fun HomeScreen(
     }
 }
 
-private class HomeScreenPreviewParameterProvider : PreviewParameterProvider<HomeUiState> {
-    private val baseUserProfile = UserProfileUiModel(
-        profileImg = "",
-        nickname = "Hilingual",
-        totalDiaries = 10,
-        streak = 5
-    )
-
-    private val writtenDateList: PersistentList<DateUiModel> = List(10) {
-        DateUiModel(date = LocalDate.now().minusDays(it.toLong() * 2).toString())
-    }.toPersistentList()
-
-    private val diaryThumbnail = DiaryThumbnailUiModel(
-        diaryId = 1L,
-        originalText = "Today I went to the park...",
-        imageUrl = ""
-    )
-
-    override val values: Sequence<HomeUiState> = sequenceOf(
-        HomeUiState(
-            userProfile = baseUserProfile,
-            selectedDate = LocalDate.now(),
-            dateList = writtenDateList.filter { it.date != LocalDate.now().toString() }.toPersistentList(),
-            isPublished = false,
-            diaryThumbnail = null,
-            todayTopic = TodayTopicUiModel(topicKo = "오늘의 주제", topicEn = "Today's Topic", remainingTime = 30)
-        ),
-        HomeUiState(
-            userProfile = baseUserProfile,
-            selectedDate = LocalDate.now(),
-            dateList = writtenDateList.add(DateUiModel(date = LocalDate.now().toString())),
-            isPublished = false,
-            diaryThumbnail = diaryThumbnail,
-            todayTopic = null
-        ),
-        HomeUiState(
-            userProfile = baseUserProfile,
-            selectedDate = LocalDate.now(),
-            dateList = writtenDateList.add(DateUiModel(date = LocalDate.now().toString())),
-            isPublished = true,
-            diaryThumbnail = diaryThumbnail,
-            todayTopic = null
-        ),
-        HomeUiState(
-            userProfile = baseUserProfile,
-            selectedDate = LocalDate.now().minusDays(5),
-            dateList = writtenDateList,
-            isPublished = false,
-            diaryThumbnail = null,
-            todayTopic = null
-        ),
-        HomeUiState(
-            userProfile = baseUserProfile,
-            selectedDate = LocalDate.now().plusDays(1),
-            dateList = writtenDateList,
-            isPublished = false,
-            diaryThumbnail = null,
-            todayTopic = null
-        )
-    )
-}
-
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "Interactive HomeScreen Preview")
 @Composable
-private fun HomeScreenPreview(
-    @PreviewParameter(HomeScreenPreviewParameterProvider::class) uiState: HomeUiState
-) {
+private fun InteractiveHomeScreenPreview() {
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var writtenDates by remember {
+        mutableStateOf(
+            setOf(
+                LocalDate.now(),
+                LocalDate.now().minusDays(2),
+                LocalDate.now().minusDays(3)
+            )
+        )
+    }
+    var publishedStates by remember {
+        mutableStateOf(
+            mapOf(
+                LocalDate.now().minusDays(2) to true
+            )
+        )
+    }
+
+    val isWritten = selectedDate in writtenDates
+    val isPublished = publishedStates[selectedDate] ?: false
+
+    val uiState = HomeUiState(
+        userProfile = UserProfileUiModel(
+            profileImg = "",
+            nickname = "Podo",
+            totalDiaries = writtenDates.size,
+            streak = 5
+        ),
+        selectedDate = selectedDate,
+        isPublished = isPublished,
+        dateList = writtenDates.map { DateUiModel(it.toString()) }.toPersistentList(),
+        diaryThumbnail = if (isWritten) {
+            DiaryThumbnailUiModel(
+                diaryId = 1L,
+                originalText = "An interactive diary entry for $selectedDate. Published: $isPublished",
+                imageUrl = ""
+            )
+        } else {
+            null
+        },
+        todayTopic = if (!isWritten && (selectedDate == LocalDate.now() || selectedDate == LocalDate.now().minusDays(1))) {
+            TodayTopicUiModel(
+                topicKo = "인터랙티브 주제",
+                topicEn = "Interactive Topic",
+                remainingTime = 1000
+            )
+        } else {
+            null
+        }
+    )
+
     HilingualTheme {
         HomeScreen(
             paddingValues = PaddingValues(0.dp),
             uiState = uiState,
-            onDateSelected = {},
+            onDateSelected = { newDate ->
+                selectedDate = newDate
+            },
             onMonthChanged = {},
             onWriteDiaryClick = {},
             onDiaryPreviewClick = {},
             onAlarmClick = {},
-            onDeleteClick = {},
-            onPublishClick = {},
-            onUnpublishClick = {}
+            onDeleteClick = {
+                writtenDates = writtenDates - selectedDate
+                publishedStates = publishedStates - selectedDate
+            },
+            onPublishClick = {
+                publishedStates = publishedStates + (selectedDate to true)
+            },
+            onUnpublishClick = {
+                publishedStates = publishedStates - selectedDate
+            }
         )
     }
 }
