@@ -31,15 +31,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.voca.R
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 enum class WordSortType(
     val text: String,
     @DrawableRes val iconRes: Int,
     val sortParam: Int
 ) {
-    Latest(text = "최신순", iconRes = R.drawable.ic_listdown_24, sortParam = 1),
-    AtoZ(text = "A-Z 순", iconRes = R.drawable.ic_az_24, sortParam = 2)
+    Latest(text = "최신순", iconRes = DesignSystemR.drawable.ic_listdown_24, sortParam = 1),
+    AtoZ(text = "A-Z 순", iconRes = DesignSystemR.drawable.ic_az_24, sortParam = 2)
 }
 
 @Composable
@@ -65,7 +65,7 @@ internal fun VocaInfo(
             horizontalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_list_24),
+                imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_list_24),
                 contentDescription = null,
                 tint = Color.Unspecified
             )
