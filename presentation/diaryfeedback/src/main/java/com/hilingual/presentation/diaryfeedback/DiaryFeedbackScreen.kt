@@ -50,6 +50,7 @@ import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
+import com.hilingual.core.designsystem.component.dialog.diary.DiaryDeleteDialog
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryPublishDialog
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
@@ -138,6 +139,7 @@ private fun DiaryFeedbackScreen(
     modifier: Modifier = Modifier
 ) {
     var isPublishDialogVisible by remember { mutableStateOf(false) }
+    var isDeleteDialogVisible by remember { mutableStateOf(false) }
 
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
     var isReportDialogVisible by remember { mutableStateOf(false) }
@@ -173,12 +175,21 @@ private fun DiaryFeedbackScreen(
         }
     )
 
+    DiaryDeleteDialog(
+        isVisible = isDeleteDialogVisible,
+        onDismiss = { isDeleteDialogVisible = false },
+        onDeleteClick = {
+            //TODO: API 호출 + 토스트 띄우기
+            isDeleteDialogVisible = false
+        }
+    )
+
     FeedbackMenuBottomSheet(
         isVisible = isReportBottomSheetVisible,
         onDismiss = { isReportBottomSheetVisible = false },
         onDeleteClick = {
             isReportBottomSheetVisible = false
-            // TODO: 삭제 모달 띄우기
+            isDeleteDialogVisible = true
         },
         onReportClick = {
             isReportBottomSheetVisible = false
