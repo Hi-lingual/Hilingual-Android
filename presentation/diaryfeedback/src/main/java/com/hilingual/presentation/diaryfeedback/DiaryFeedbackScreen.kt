@@ -50,6 +50,7 @@ import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
+import com.hilingual.core.designsystem.component.dialog.diary.DiaryPublishDialog
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.event.LocalDialogEventProvider
@@ -136,8 +137,11 @@ private fun DiaryFeedbackScreen(
     onToggleBookmark: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var isPublishDialogVisible by remember { mutableStateOf(false) }
+
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
     var isReportDialogVisible by remember { mutableStateOf(false) }
+
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
     val grammarListState = rememberLazyListState()
@@ -159,6 +163,15 @@ private fun DiaryFeedbackScreen(
             recommendListState.scrollToItem(0)
         }
     }
+
+    DiaryPublishDialog(
+        isVisible = isPublishDialogVisible,
+        onDismiss = { isPublishDialogVisible = false },
+        onPostClick = {
+            //TODO: API 호출 + 스낵바 띄우기
+            isPublishDialogVisible = false
+        }
+    )
 
     FeedbackMenuBottomSheet(
         isVisible = isReportBottomSheetVisible,
@@ -260,9 +273,7 @@ private fun DiaryFeedbackScreen(
         ) {
             HilingualButton(
                 text = "피드에 게시하기",
-                onClick = {
-                    // TODO: 모달 띄우기
-                }
+                onClick = { isPublishDialogVisible = true }
             )
         }
     }
