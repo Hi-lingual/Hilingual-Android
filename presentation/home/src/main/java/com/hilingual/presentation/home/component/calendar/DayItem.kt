@@ -60,18 +60,16 @@ internal fun DayItem(
         when {
             isSelected -> {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_bubble_16),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_bubble_34),
                     contentDescription = null,
-                    modifier = Modifier.size(34.dp),
                     tint = Color.Unspecified
                 )
             }
 
             isWritten -> {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_bubble_16),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_bubble_34),
                     contentDescription = null,
-                    modifier = Modifier.size(34.dp),
                     tint = HilingualTheme.colors.hilingualBlue50
                 )
             }
