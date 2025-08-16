@@ -173,12 +173,11 @@ private fun DiaryFeedbackScreen(
         }
     )
 
-    if (isReportDialogVisible) {
-        FeedbackReportDialog(
-            onDismiss = { isReportDialogVisible = false },
-            onReportClick = onReportClick
-        )
-    }
+    FeedbackReportDialog(
+        isVisible = isReportDialogVisible,
+        onDismiss = { isReportDialogVisible = false },
+        onReportClick = onReportClick
+    )
 
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
