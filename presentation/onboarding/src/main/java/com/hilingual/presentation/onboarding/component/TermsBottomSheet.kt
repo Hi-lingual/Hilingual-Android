@@ -94,81 +94,80 @@ internal fun TermsBottomSheet(
         agreements = terms.associateWith { newState }.toPersistentMap()
     }
 
-    if (isVisible) {
-        HilingualBasicBottomSheet(
-            onDismiss = onDismiss,
-            modifier = modifier
+    HilingualBasicBottomSheet(
+        isVisible = isVisible,
+        onDismiss = onDismiss,
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(top = 32.dp, bottom = 12.dp)
         ) {
+            Text(
+                text = "하이링구얼이 처음이시군요!",
+                style = HilingualTheme.typography.headB18,
+                color = HilingualTheme.colors.black
+            )
+
+            Spacer(Modifier.height(4.dp))
+
+            Text(
+                text = "아래 약관에 동의 후 서비스 이용이 가능해요.",
+                style = HilingualTheme.typography.bodyM14,
+                color = HilingualTheme.colors.gray400
+            )
+
+            Spacer(Modifier.height(32.dp))
+
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 32.dp, bottom = 12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(
-                    text = "하이링구얼이 처음이시군요!",
-                    style = HilingualTheme.typography.headB18,
-                    color = HilingualTheme.colors.black
-                )
-
-                Spacer(Modifier.height(4.dp))
-
-                Text(
-                    text = "아래 약관에 동의 후 서비스 이용이 가능해요.",
-                    style = HilingualTheme.typography.bodyM14,
-                    color = HilingualTheme.colors.gray400
-                )
-
-                Spacer(Modifier.height(32.dp))
-
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                Row(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .fillMaxWidth()
+                        .background(HilingualTheme.colors.gray100)
+                        .clickable(onClick = onAllAgreedClick)
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .fillMaxWidth()
-                            .background(HilingualTheme.colors.gray100)
-                            .clickable(onClick = onAllAgreedClick)
-                            .padding(12.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "전체 동의",
-                            style = HilingualTheme.typography.headB18,
-                            color = HilingualTheme.colors.black
-                        )
+                    Text(
+                        text = "전체 동의",
+                        style = HilingualTheme.typography.headB18,
+                        color = HilingualTheme.colors.black
+                    )
 
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_check_circle_28_and),
-                            tint = if (allAgreed) HilingualTheme.colors.black else Color.Unspecified,
-                            contentDescription = null
-                        )
-                    }
-
-                    agreements.forEach { (term, isAgreed) ->
-                        key(term) {
-                            TermRow(
-                                text = term.text,
-                                isSelected = isAgreed,
-                                onSelectedChange = { isSelected ->
-                                    agreements = agreements.put(term, isSelected)
-                                },
-                                onTextClick = term.link?.let { { onTermLinkClick(it) } }
-                            )
-                        }
-                    }
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_check_circle_28_and),
+                        tint = if (allAgreed) HilingualTheme.colors.black else Color.Unspecified,
+                        contentDescription = null
+                    )
                 }
 
-                Spacer(Modifier.height(64.dp))
-
-                HilingualButton(
-                    text = "시작하기",
-                    onClick = { onStartClick(isMarketingAgreed) },
-                    enableProvider = { isStartButtonEnabled }
-                )
+                agreements.forEach { (term, isAgreed) ->
+                    key(term) {
+                        TermRow(
+                            text = term.text,
+                            isSelected = isAgreed,
+                            onSelectedChange = { isSelected ->
+                                agreements = agreements.put(term, isSelected)
+                            },
+                            onTextClick = term.link?.let { { onTermLinkClick(it) } }
+                        )
+                    }
+                }
             }
+
+            Spacer(Modifier.height(64.dp))
+
+            HilingualButton(
+                text = "시작하기",
+                onClick = { onStartClick(isMarketingAgreed) },
+                enableProvider = { isStartButtonEnabled }
+            )
         }
     }
 }

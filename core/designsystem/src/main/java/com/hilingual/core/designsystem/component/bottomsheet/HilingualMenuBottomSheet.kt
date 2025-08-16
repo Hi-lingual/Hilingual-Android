@@ -34,29 +34,28 @@ fun HilingualMenuBottomSheet(
     title: String? = null,
     content: @Composable () -> Unit
 ) {
-    if (isVisible) {
-        HilingualBasicBottomSheet(
-            onDismiss = onDismiss,
-            modifier = modifier
+    HilingualBasicBottomSheet(
+        isVisible = isVisible,
+        onDismiss = onDismiss,
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                if (!title.isNullOrBlank()) {
-                    Text(
-                        text = title,
-                        style = HilingualTheme.typography.headB16,
-                        color = HilingualTheme.colors.black,
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(bottom = 16.dp)
-                    )
-                }
-                content()
+            if (!title.isNullOrBlank()) {
+                Text(
+                    text = title,
+                    style = HilingualTheme.typography.headB16,
+                    color = HilingualTheme.colors.black,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 16.dp)
+                )
             }
+            content()
         }
     }
 }

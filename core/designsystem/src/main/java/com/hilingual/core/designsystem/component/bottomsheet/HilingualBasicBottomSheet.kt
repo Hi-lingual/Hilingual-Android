@@ -21,6 +21,9 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -29,6 +32,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HilingualBasicBottomSheet(
+    isVisible: Boolean,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(
@@ -38,15 +42,25 @@ fun HilingualBasicBottomSheet(
     dragHandle: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        modifier = modifier,
-        sheetState = sheetState,
-        containerColor = HilingualTheme.colors.white,
-        scrimColor = if (isDimEnabled) HilingualTheme.colors.dim1 else Color.Transparent,
-        shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
-        dragHandle = dragHandle
-    ) {
-        content()
+    LaunchedEffect(isVisible) {
+        if (isVisible) {
+            sheetState.show()
+        } else {
+            sheetState.hide()
+        }
+    }
+
+    if (sheetState.isVisible) {
+        ModalBottomSheet(
+            onDismissRequest = onDismiss,
+            modifier = modifier,
+            sheetState = sheetState,
+            containerColor = HilingualTheme.colors.white,
+            scrimColor = if (isDimEnabled) HilingualTheme.colors.dim1 else Color.Transparent,
+            shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+            dragHandle = dragHandle
+        ) {
+            content()
+        }
     }
 }
