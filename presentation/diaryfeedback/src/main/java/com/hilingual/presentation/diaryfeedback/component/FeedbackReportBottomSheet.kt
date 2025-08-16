@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualBasicBottomSheet
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.diaryfeedback.R
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,7 +80,7 @@ internal fun FeedbackReportBottomSheet(
                     )
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_report_24),
+                    imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_report_24),
                     contentDescription = null,
                     tint = Color.Unspecified,
                     modifier = Modifier
