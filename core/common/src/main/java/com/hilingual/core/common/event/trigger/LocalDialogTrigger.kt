@@ -17,6 +17,6 @@ package com.hilingual.core.common.event.trigger
 
 import androidx.compose.runtime.staticCompositionLocalOf
 
-val LocalDialogTrigger = staticCompositionLocalOf<DialogEventProvider> {
+val LocalDialogTrigger = staticCompositionLocalOf<DialogTrigger> {
     error("No DialogEventProvider provided")
 }

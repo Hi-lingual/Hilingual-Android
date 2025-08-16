@@ -42,7 +42,7 @@ import com.hilingual.core.common.event.trigger.LocalDialogTrigger
 import com.hilingual.core.common.event.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.event.provider.LocalSystemBarsColor
 import com.hilingual.core.common.event.trigger.LocalToastTrigger
-import com.hilingual.core.common.event.trigger.rememberDialogEventProvider
+import com.hilingual.core.common.event.trigger.rememberDialogTrigger
 import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
 import com.hilingual.core.designsystem.component.snackbar.DiarySnackbar
 import com.hilingual.core.designsystem.component.toast.TextToast
@@ -78,7 +78,7 @@ internal fun MainScreen(
 
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
-    val dialogEventProvider = rememberDialogEventProvider(
+    val dialogEventProvider = rememberDialogTrigger(
         show = appState.dialogStateHolder::showDialog,
         dismiss = appState.dialogStateHolder::dismissDialog
     )
