@@ -27,7 +27,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -181,61 +180,55 @@ private fun DiaryFeedbackScreen(
     }
 
     Column(
-        verticalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.Top,
         modifier = modifier
             .fillMaxSize()
+            .background(HilingualTheme.colors.white)
+            .padding(paddingValues)
     ) {
+        BackAndMoreTopAppBar(
+            title = "일기장",
+            onBackClicked = onBackClick,
+            onMoreClicked = { isReportBottomSheetVisible = true }
+        )
+
+        HilingualBasicTabRow(
+            tabTitles = persistentListOf("문법·철자", "추천표현"),
+            tabIndex = pagerState.currentPage,
+            onTabSelected = {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(it)
+                }
+            }
+        )
+
         Box(
-            modifier = Modifier
-                .weight(1f)
-                .padding(paddingValues)
+            modifier = Modifier.weight(1f)
         ) {
-            Column(
-                verticalArrangement = Arrangement.Top,
-                modifier = modifier
-                    .fillMaxSize()
-                    .background(HilingualTheme.colors.white)
-            ) {
-                BackAndMoreTopAppBar(
-                    title = "일기장",
-                    onBackClicked = onBackClick,
-                    onMoreClicked = { isReportBottomSheetVisible = true }
-                )
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize()
+            ) { page ->
+                with(uiState) {
+                    when (page) {
+                        0 -> GrammarSpellingScreen(
+                            listState = grammarListState,
+                            writtenDate = writtenDate,
+                            diaryContent = diaryContent,
+                            feedbackList = feedbackList,
+                            onImageClick = onChangeImageDetailVisible
+                        )
 
-                HilingualBasicTabRow(
-                    tabTitles = persistentListOf("문법·철자", "추천표현"),
-                    tabIndex = pagerState.currentPage,
-                    onTabSelected = {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(it)
-                        }
-                    }
-                )
-
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.fillMaxSize()
-                ) { page ->
-                    with(uiState) {
-                        when (page) {
-                            0 -> GrammarSpellingScreen(
-                                listState = grammarListState,
-                                writtenDate = writtenDate,
-                                diaryContent = diaryContent,
-                                feedbackList = feedbackList,
-                                onImageClick = onChangeImageDetailVisible
-                            )
-
-                            1 -> RecommendExpressionScreen(
-                                listState = recommendListState,
-                                writtenDate = writtenDate,
-                                recommendExpressionList = recommendExpressionList,
-                                onBookmarkClick = onToggleBookmark
-                            )
-                        }
+                        1 -> RecommendExpressionScreen(
+                            listState = recommendListState,
+                            writtenDate = writtenDate,
+                            recommendExpressionList = recommendExpressionList,
+                            onBookmarkClick = onToggleBookmark
+                        )
                     }
                 }
             }
+
             HilingualFloatingButton(
                 onClick = {
                     coroutineScope.launch {
@@ -252,20 +245,18 @@ private fun DiaryFeedbackScreen(
             )
         }
 
-        Surface(
-            color = HilingualTheme.colors.gray100,
-            modifier = Modifier.padding(
-                horizontal = 16.dp,
-                vertical = 12.dp
-            )
-        ) {
-            HilingualButton(
-                text = "피드에 게시하기",
-                onClick = {
-                    // TODO: 모달 띄우기
-                }
-            )
-        }
+        HilingualButton(
+            text = "피드에 게시하기",
+            onClick = {
+                // TODO: 모달 띄우기
+            },
+            modifier = Modifier
+                .background(HilingualTheme.colors.gray100)
+                .padding(
+                    horizontal = 16.dp,
+                    vertical = 12.dp
+                )
+        )
     }
 
     if (isImageDetailVisible && uiState.diaryContent.imageUrl != null) {
