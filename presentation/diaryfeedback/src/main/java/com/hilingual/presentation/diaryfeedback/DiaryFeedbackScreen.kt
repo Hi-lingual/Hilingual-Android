@@ -100,39 +100,22 @@ internal fun DiaryFeedbackRoute(
         }
     }
 
-    when (state) {
-        is UiState.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(HilingualTheme.colors.white),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
-
-        is UiState.Success -> {
-            DiaryFeedbackScreen(
-                paddingValues = paddingValues,
-                uiState = (state as UiState.Success<DiaryFeedbackUiState>).data,
-                onBackClick = navigateUp,
-                onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
-                isImageDetailVisible = isImageDetailVisible,
-                onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
-                onToggleIsPublished = viewModel::toggleIsPublished,
-                onToggleBookmark = viewModel::toggleBookmark
-            )
-        }
-
-        else -> {}
-    }
+    DiaryFeedbackScreen(
+        paddingValues = paddingValues,
+        uiState = state,
+        onBackClick = navigateUp,
+        onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
+        isImageDetailVisible = isImageDetailVisible,
+        onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
+        onToggleIsPublished = viewModel::toggleIsPublished,
+        onToggleBookmark = viewModel::toggleBookmark
+    )
 }
 
 @Composable
 private fun DiaryFeedbackScreen(
     paddingValues: PaddingValues,
-    uiState: DiaryFeedbackUiState,
+    uiState: UiState<DiaryFeedbackUiState>,
     onBackClick: () -> Unit,
     onReportClick: () -> Unit,
     isImageDetailVisible: Boolean,
@@ -152,6 +135,8 @@ private fun DiaryFeedbackScreen(
     val grammarListState = rememberLazyListState()
     val recommendListState = rememberLazyListState()
 
+    val successData = (uiState as? UiState.Success)?.data
+
     val isFabVisible by remember {
         derivedStateOf {
             when (pagerState.currentPage) {
@@ -169,112 +154,77 @@ private fun DiaryFeedbackScreen(
         }
     }
 
-    if (uiState.isPublished) {
-        DiaryUnpublishDialog(
-            isVisible = isPublishDialogVisible,
-            onDismiss = { isPublishDialogVisible = false },
-            onPrivateClick = {
-                //TODO: API 호출 + 토스트 띄우기
-                onToggleIsPublished(false)
-                isPublishDialogVisible = false
-            },
-        )
-    } else {
-        DiaryPublishDialog(
-            isVisible = isPublishDialogVisible,
-            onDismiss = { isPublishDialogVisible = false },
-            onPostClick = {
-                //TODO: API 호출 + 스낵바 띄우기
-                onToggleIsPublished(true)
-                isPublishDialogVisible = false
-            }
-        )
-    }
-
-    DiaryDeleteDialog(
-        isVisible = isDeleteDialogVisible,
-        onDismiss = { isDeleteDialogVisible = false },
-        onDeleteClick = {
-            //TODO: API 호출 + 토스트 띄우기
-            isDeleteDialogVisible = false
-        }
-    )
-
-    FeedbackMenuBottomSheet(
-        isVisible = isReportBottomSheetVisible,
-        onDismiss = { isReportBottomSheetVisible = false },
-        onDeleteClick = {
-            isReportBottomSheetVisible = false
-            isDeleteDialogVisible = true
-        },
-        onReportClick = {
-            isReportBottomSheetVisible = false
-            isReportDialogVisible = true
-        }
-    )
-
-    FeedbackReportDialog(
-        isVisible = isReportDialogVisible,
-        onDismiss = { isReportDialogVisible = false },
-        onReportClick = onReportClick
-    )
-
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .fillMaxSize()
+            .padding(paddingValues)
     ) {
+        BackAndMoreTopAppBar(
+            title = "일기장",
+            onBackClicked = onBackClick,
+            onMoreClicked = { isReportBottomSheetVisible = true },
+        )
+
+        HilingualBasicTabRow(
+            tabTitles = persistentListOf("문법·철자", "추천표현"),
+            tabIndex = pagerState.currentPage,
+            onTabSelected = {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(it)
+                }
+            }
+        )
+
         Box(
-            modifier = Modifier
-                .weight(1f)
-                .padding(paddingValues)
+            modifier = Modifier.weight(1f)
         ) {
             Column(
                 verticalArrangement = Arrangement.Top,
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxSize()
                     .background(HilingualTheme.colors.white)
             ) {
-                BackAndMoreTopAppBar(
-                    title = "일기장",
-                    onBackClicked = onBackClick,
-                    onMoreClicked = { isReportBottomSheetVisible = true }
-                )
-
-                HilingualBasicTabRow(
-                    tabTitles = persistentListOf("문법·철자", "추천표현"),
-                    tabIndex = pagerState.currentPage,
-                    onTabSelected = {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(it)
+                when (uiState) {
+                    is UiState.Loading -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(HilingualTheme.colors.white),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
                         }
                     }
-                )
 
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.fillMaxSize()
-                ) { page ->
-                    with(uiState) {
-                        when (page) {
-                            0 -> GrammarSpellingScreen(
-                                listState = grammarListState,
-                                writtenDate = writtenDate,
-                                diaryContent = diaryContent,
-                                feedbackList = feedbackList,
-                                onImageClick = onChangeImageDetailVisible
-                            )
-
-                            1 -> RecommendExpressionScreen(
-                                listState = recommendListState,
-                                writtenDate = writtenDate,
-                                recommendExpressionList = recommendExpressionList,
-                                onBookmarkClick = onToggleBookmark
-                            )
+                    is UiState.Success -> {
+                        val data = uiState.data
+                        HorizontalPager(
+                            state = pagerState,
+                            modifier = Modifier.fillMaxSize()
+                        ) { page ->
+                            when (page) {
+                                0 -> GrammarSpellingScreen(
+                                    listState = grammarListState,
+                                    writtenDate = data.writtenDate,
+                                    diaryContent = data.diaryContent,
+                                    feedbackList = data.feedbackList,
+                                    onImageClick = onChangeImageDetailVisible
+                                )
+                                1 -> RecommendExpressionScreen(
+                                    listState = recommendListState,
+                                    writtenDate = data.writtenDate,
+                                    recommendExpressionList = data.recommendExpressionList,
+                                    onBookmarkClick = onToggleBookmark
+                                )
+                            }
                         }
                     }
+
+                    else -> {}
                 }
             }
+
             HilingualFloatingButton(
                 onClick = {
                     coroutineScope.launch {
@@ -298,16 +248,65 @@ private fun DiaryFeedbackScreen(
                 vertical = 12.dp
             )
         ) {
+            val isPublished = successData?.isPublished ?: false
+
             HilingualButton(
-                text = if (uiState.isPublished) "비공개하기" else "피드에 게시하기",
+                text = if (isPublished) "비공개하기" else "피드에 게시하기",
                 onClick = { isPublishDialogVisible = true }
             )
         }
     }
 
-    if (isImageDetailVisible && uiState.diaryContent.imageUrl != null) {
+    if (successData?.isPublished == true) {
+        DiaryUnpublishDialog(
+            isVisible = isPublishDialogVisible,
+            onDismiss = { isPublishDialogVisible = false },
+            onPrivateClick = {
+                onToggleIsPublished(false)
+                isPublishDialogVisible = false
+            }
+        )
+    } else {
+        DiaryPublishDialog(
+            isVisible = isPublishDialogVisible,
+            onDismiss = { isPublishDialogVisible = false },
+            onPostClick = {
+                onToggleIsPublished(true)
+                isPublishDialogVisible = false
+            }
+        )
+    }
+
+    DiaryDeleteDialog(
+        isVisible = isDeleteDialogVisible,
+        onDismiss = { isDeleteDialogVisible = false },
+        onDeleteClick = {
+            isDeleteDialogVisible = false
+        }
+    )
+
+    FeedbackMenuBottomSheet(
+        isVisible = isReportBottomSheetVisible,
+        onDismiss = { isReportBottomSheetVisible = false },
+        onDeleteClick = {
+            isReportBottomSheetVisible = false
+            isDeleteDialogVisible = true
+        },
+        onReportClick = {
+            isReportBottomSheetVisible = false
+            isReportDialogVisible = true
+        }
+    )
+
+    FeedbackReportDialog(
+        isVisible = isReportDialogVisible,
+        onDismiss = { isReportDialogVisible = false },
+        onReportClick = onReportClick
+    )
+
+    if (isImageDetailVisible && successData?.diaryContent?.imageUrl != null) {
         ModalImage(
-            imageUrl = uiState.diaryContent.imageUrl,
+            imageUrl = successData.diaryContent.imageUrl,
             onBackClick = onChangeImageDetailVisible,
             modifier = modifier.padding(paddingValues)
         )
@@ -320,17 +319,19 @@ private fun DiaryFeedbackScreenPreview() {
     HilingualTheme {
         DiaryFeedbackScreen(
             paddingValues = PaddingValues(),
-            uiState = DiaryFeedbackUiState(
-                writtenDate = "7월 11일 금요일",
-                feedbackList = persistentListOf(),
-                recommendExpressionList = persistentListOf()
+            uiState = UiState.Success(
+                DiaryFeedbackUiState(
+                    writtenDate = "7월 11일 금요일",
+                    feedbackList = persistentListOf(),
+                    recommendExpressionList = persistentListOf()
+                )
             ),
             isImageDetailVisible = false,
             onChangeImageDetailVisible = {},
             onBackClick = {},
             onReportClick = {},
             onToggleBookmark = { _, _ -> {} },
-            onToggleIsPublished = {}
+            onToggleIsPublished = { }
         )
     }
 }
