@@ -15,8 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.R
-import com.hilingual.core.designsystem.component.dialog.TwoButtonDialog
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryDeleteDialog
+import com.hilingual.core.designsystem.component.dialog.diary.DiaryPublishDialog
+import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDialog
 import com.hilingual.core.designsystem.component.dropdown.HilingualBasicDropdownMenu
 import com.hilingual.core.designsystem.component.dropdown.HilingualDropdownMenuItem
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -74,28 +75,26 @@ internal fun HomeDropDownMenu(
                 }
             )
         }
-
         publishDialogVisible -> {
-            val title = if (isPublished) "영어 일기를 비공개 하시겠어요?" else "영어 일기를 게시하시겠어요?"
-            val description =
-                if (isPublished) "비공개로 전환 시, 해당 일기는\n피드 활동에서 확인할 수 없어요." else "공유된 일기는 모든 유저에게 게시되며, \n피드에서 확인하실 수 있어요."
-
-            val confirmText = if (isPublished) "비공개하기" else "게시하기"
-            val onConfirm = {
-                if (isPublished) onUnpublishClick() else onPublishClick()
-                publishDialogVisible = false
+            if (isPublished) {
+                DiaryUnpublishDialog(
+                    isVisible = true,
+                    onDismiss = { publishDialogVisible = false },
+                    onPrivateClick = {
+                        onUnpublishClick()
+                        publishDialogVisible = false
+                    }
+                )
+            } else {
+                DiaryPublishDialog(
+                    isVisible = true,
+                    onDismiss = { publishDialogVisible = false },
+                    onPostClick = {
+                        onPublishClick()
+                        publishDialogVisible = false
+                    }
+                )
             }
-
-            TwoButtonDialog(
-                modifier = modifier,
-                title = title,
-                description = description,
-                cancelText = "아니요",
-                confirmText = confirmText,
-                onNegative = { publishDialogVisible = false },
-                onPositive = onConfirm,
-                onDismiss = { publishDialogVisible = false }
-            )
         }
     }
 }
