@@ -52,6 +52,7 @@ import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryDeleteDialog
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryPublishDialog
+import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDialog
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.event.LocalDialogEventProvider
@@ -119,6 +120,7 @@ internal fun DiaryFeedbackRoute(
                 onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 isImageDetailVisible = isImageDetailVisible,
                 onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
+                onToggleIsPublished = viewModel::toggleIsPublished,
                 onToggleBookmark = viewModel::toggleBookmark
             )
         }
@@ -135,11 +137,11 @@ private fun DiaryFeedbackScreen(
     onReportClick: () -> Unit,
     isImageDetailVisible: Boolean,
     onChangeImageDetailVisible: () -> Unit,
+    onToggleIsPublished: (Boolean) -> Unit,
     onToggleBookmark: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isPublishDialogVisible by remember { mutableStateOf(false) }
-    var isUnpublishDialogVisible by remember { mutableStateOf(false) }
     var isDeleteDialogVisible by remember { mutableStateOf(false) }
 
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
@@ -167,23 +169,27 @@ private fun DiaryFeedbackScreen(
         }
     }
 
-    DiaryPublishDialog(
-        isVisible = isPublishDialogVisible,
-        onDismiss = { isPublishDialogVisible = false },
-        onPostClick = {
-            //TODO: API 호출 + 스낵바 띄우기
-            isPublishDialogVisible = false
-        }
-    )
-
-    DiaryUnpublishDialog(
-        isVisible = isUnpublishDialogVisible,
-        onDismiss = { isUnpublishDialogVisible = false },
-        onPrivateClick = {
-            //TODO: API 호출 + 토스트 띄우기
-            isUnpublishDialogVisible = false
-        },
-    )
+    if (uiState.isPublished) {
+        DiaryUnpublishDialog(
+            isVisible = isPublishDialogVisible,
+            onDismiss = { isPublishDialogVisible = false },
+            onPrivateClick = {
+                //TODO: API 호출 + 토스트 띄우기
+                onToggleIsPublished(false)
+                isPublishDialogVisible = false
+            },
+        )
+    } else {
+        DiaryPublishDialog(
+            isVisible = isPublishDialogVisible,
+            onDismiss = { isPublishDialogVisible = false },
+            onPostClick = {
+                //TODO: API 호출 + 스낵바 띄우기
+                onToggleIsPublished(true)
+                isPublishDialogVisible = false
+            }
+        )
+    }
 
     DiaryDeleteDialog(
         isVisible = isDeleteDialogVisible,
@@ -293,7 +299,7 @@ private fun DiaryFeedbackScreen(
             )
         ) {
             HilingualButton(
-                text = "피드에 게시하기",
+                text = if (uiState.isPublished) "비공개하기" else "피드에 게시하기",
                 onClick = { isPublishDialogVisible = true }
             )
         }
@@ -323,7 +329,8 @@ private fun DiaryFeedbackScreenPreview() {
             onChangeImageDetailVisible = {},
             onBackClick = {},
             onReportClick = {},
-            onToggleBookmark = { _, _ -> {} }
+            onToggleBookmark = { _, _ -> {} },
+            onToggleIsPublished = {}
         )
     }
 }

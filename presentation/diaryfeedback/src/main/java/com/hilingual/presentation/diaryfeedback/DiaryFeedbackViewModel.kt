@@ -101,6 +101,18 @@ internal class DiaryFeedbackViewModel @Inject constructor(
         }
     }
 
+    fun toggleIsPublished(isPublished: Boolean) {
+        viewModelScope.launch {
+            //TODO: 게시/비공개 API 호출
+            _uiState.update { currentState ->
+                val successState = currentState as UiState.Success
+                successState.copy(
+                    data = successState.data.copy(isPublished = isPublished)
+                )
+            }
+        }
+    }
+
     fun toggleBookmark(phraseId: Long, isMarked: Boolean) {
         viewModelScope.launch {
             diaryRepository.patchPhraseBookmark(
