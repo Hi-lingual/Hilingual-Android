@@ -36,7 +36,8 @@ internal fun FeedProfileInfo(
     Row(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
             .background(HilingualTheme.colors.white)
     ) {
         NetworkImage(
@@ -60,7 +61,8 @@ internal fun FeedProfileInfo(
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.noRippleClickable(onClick = onFollowTypeClick)
+                modifier = Modifier
+                    .noRippleClickable(onClick = onFollowTypeClick)
                     .padding(bottom = 8.dp)
             ) {
                 Text(
@@ -99,26 +101,38 @@ internal fun FeedProfileInfo(
                         .size(16.dp)
                 )
                 Text(
-                    text = streak.toString()+"일 연속 작성중",
+                    text = streak.toString() + "일 연속 작성중",
                     style = HilingualTheme.typography.bodyM14,
-                    color = HilingualTheme.colors.hilingualOrange
+                    color = if (streak > 0) HilingualTheme.colors.hilingualOrange else HilingualTheme.colors.gray400
                 )
             }
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview()
 @Composable
 private fun FeedProfileInfoPreview() {
     HilingualTheme {
-        FeedProfileInfo(
-            profileUrl = "",
-            nickname = "하이링",
-            follower = 123,
-            following = 123,
-            onFollowTypeClick = {},
-            streak = 7
-        )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            FeedProfileInfo(
+                profileUrl = "",
+                nickname = "하이링",
+                follower = 123,
+                following = 123,
+                onFollowTypeClick = {},
+                streak = 7
+            )
+            FeedProfileInfo(
+                profileUrl = "",
+                nickname = "하이링",
+                follower = 123,
+                following = 123,
+                onFollowTypeClick = {},
+                streak = 0
+            )
+        }
     }
 }

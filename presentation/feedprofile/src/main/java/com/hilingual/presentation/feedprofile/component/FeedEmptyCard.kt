@@ -22,7 +22,7 @@ internal enum class FeedEmptyCardType(
     val text: String
 ) {
     NOT_SHARED(
-        text = "피드에 아직 공유한 일기가 없어요."
+        text = "아직 공유한 일기가 없어요."
     ),
     NOT_LIKED(
         text = "아직 공감한 일기가 없어요."
