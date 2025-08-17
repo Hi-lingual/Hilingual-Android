@@ -139,6 +139,7 @@ private fun DiaryFeedbackScreen(
     modifier: Modifier = Modifier
 ) {
     var isPublishDialogVisible by remember { mutableStateOf(false) }
+    var isUnpublishDialogVisible by remember { mutableStateOf(false) }
     var isDeleteDialogVisible by remember { mutableStateOf(false) }
 
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
@@ -173,6 +174,15 @@ private fun DiaryFeedbackScreen(
             //TODO: API 호출 + 스낵바 띄우기
             isPublishDialogVisible = false
         }
+    )
+
+    DiaryUnpublishDialog(
+        isVisible = isUnpublishDialogVisible,
+        onDismiss = { isUnpublishDialogVisible = false },
+        onPrivateClick = {
+            //TODO: API 호출 + 토스트 띄우기
+            isUnpublishDialogVisible = false
+        },
     )
 
     DiaryDeleteDialog(
