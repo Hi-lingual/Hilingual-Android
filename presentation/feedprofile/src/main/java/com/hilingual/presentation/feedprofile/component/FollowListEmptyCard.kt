@@ -25,7 +25,7 @@ internal enum class FollowListEmptyCardType(
         text = "아직 팔로워가 없어요."
     ),
     NO_FOLLOWING(
-        text = "아직 팔로우중인 계정이 없어요."
+        text = "아직 팔로잉한 유저가 없어요."
     )
 }
 
