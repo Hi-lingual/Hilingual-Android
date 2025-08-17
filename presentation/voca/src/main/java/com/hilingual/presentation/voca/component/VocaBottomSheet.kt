@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualBasicBottomSheet
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.voca.R
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,7 +105,7 @@ internal fun SortBottomSheetContent(
                     Spacer(modifier = Modifier.weight(1f))
                     if (isSelected) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_check_24),
+                            imageVector = ImageVector.vectorResource(id = DesignSystemR.drawable.ic_check_24),
                             contentDescription = null,
                             tint = HilingualTheme.colors.hilingualBlack
                         )
