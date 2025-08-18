@@ -21,6 +21,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
 fun DiarySnackbar(
     message: String,
+    buttonText: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -40,14 +41,14 @@ fun DiarySnackbar(
         )
 
         Text(
-            text = "보러가기",
+            text = buttonText,
             style = HilingualTheme.typography.bodySB14,
             color = HilingualTheme.colors.white,
             modifier = Modifier
                 .clip(RoundedCornerShape(6.dp))
                 .background(HilingualTheme.colors.gray700)
                 .noRippleClickable(onClick = onClick)
-                .padding(vertical = 8.dp, horizontal = 10.dp)
+                .padding(vertical = 7.dp, horizontal = 11.dp)
         )
     }
 }
@@ -63,6 +64,7 @@ private fun DiarySnackbarPreview() {
         ) {
             DiarySnackbar(
                 message = "일기가 게시되었어요!",
+                buttonText = "보러가기",
                 onClick = {},
                 modifier = Modifier
                     .padding(horizontal = 16.dp)

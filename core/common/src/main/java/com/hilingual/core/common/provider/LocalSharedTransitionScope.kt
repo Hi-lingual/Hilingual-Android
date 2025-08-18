@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.common.event.provider
+package com.hilingual.core.common.provider
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -21,5 +21,5 @@ import androidx.compose.runtime.compositionLocalOf
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope> {
-    throw IllegalStateException("No SharedTransitionScope provided")
+    error("No SharedTransitionScope provided")
 }

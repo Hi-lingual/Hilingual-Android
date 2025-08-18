@@ -13,10 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.common.event.trigger
+package com.hilingual.core.common.trigger
 
-import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.remember
 
-val LocalDialogTrigger = staticCompositionLocalOf<DialogTrigger> {
-    error("No DialogEventProvider provided")
+@Immutable
+data class DialogState(
+    val isVisible: Boolean = false,
+    val onClickAction: () -> Unit = {}
+)
+
+@Stable
+class DialogTrigger(
+    val show: (() -> Unit) -> Unit,
+    val dismiss: () -> Unit
+)
+
+@Composable
+fun rememberDialogTrigger(
+    show: (() -> Unit) -> Unit,
+    dismiss: () -> Unit
+): DialogTrigger = remember(show, dismiss) {
+    DialogTrigger(show, dismiss)
 }

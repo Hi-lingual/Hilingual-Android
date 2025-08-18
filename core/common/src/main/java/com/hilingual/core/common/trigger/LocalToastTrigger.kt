@@ -1,4 +1,4 @@
-package com.hilingual.core.common.event.trigger
+package com.hilingual.core.common.trigger
 
 import androidx.compose.runtime.staticCompositionLocalOf
 
