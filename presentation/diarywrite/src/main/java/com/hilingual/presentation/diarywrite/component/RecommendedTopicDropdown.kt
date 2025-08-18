@@ -43,7 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.diarywrite.R
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun RecommendedTopicDropdown(
@@ -86,7 +86,7 @@ internal fun RecommendedTopicDropdown(
                             focusManager.clearFocus()
                         }
                     },
-                imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_down_20),
+                imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_arrow_down_20_gray),
                 contentDescription = null,
                 tint = HilingualTheme.colors.gray400
             )
@@ -113,7 +113,7 @@ internal fun RecommendedTopicDropdown(
                     modifier = Modifier
                         .size(24.dp)
                         .noRippleClickable { isKo = !isKo },
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_change_20),
+                    imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_change_20),
                     contentDescription = null,
                     tint = HilingualTheme.colors.gray300
                 )

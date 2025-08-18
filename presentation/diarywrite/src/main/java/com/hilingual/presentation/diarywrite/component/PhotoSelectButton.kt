@@ -42,6 +42,7 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.diarywrite.R
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun PhotoSelectButton(
@@ -104,7 +105,7 @@ internal fun PhotoSelectButton(
                 Icon(
                     modifier = Modifier
                         .size(20.dp),
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_camera_20),
+                    imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_camera_20),
                     contentDescription = null,
                     tint = HilingualTheme.colors.gray300
                 )
