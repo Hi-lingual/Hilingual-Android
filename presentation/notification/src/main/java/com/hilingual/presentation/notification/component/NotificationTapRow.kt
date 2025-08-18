@@ -18,6 +18,7 @@ internal fun NotificationTapRow(
     modifier: Modifier = Modifier
 ) {
     val titles = persistentListOf("피드", "공지사항")
+
     HilingualBasicTabRow(
         tabTitles = titles,
         tabIndex = tabIndex,
