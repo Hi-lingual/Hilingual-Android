@@ -45,8 +45,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.provider.LocalSystemBarsColor
+import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.UiState
-import com.hilingual.core.designsystem.event.LocalDialogEventProvider
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
@@ -75,12 +75,12 @@ internal fun HomeRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
-    val dialogEventProvider = LocalDialogEventProvider.current
+    val dialogTrigger = LocalDialogTrigger.current
 
-    viewModel.sideEffect.collectSideEffect {
-        when (it) {
+    viewModel.sideEffect.collectSideEffect { sideEffect ->
+        when (sideEffect) {
             is HomeSideEffect.ShowRetryDialog -> {
-                dialogEventProvider.show(it.onRetry)
+                dialogTrigger.show(sideEffect.onRetry)
             }
         }
     }

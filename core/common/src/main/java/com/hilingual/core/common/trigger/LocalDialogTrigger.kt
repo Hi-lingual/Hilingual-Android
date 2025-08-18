@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.common.provider
+package com.hilingual.core.common.trigger
 
 import androidx.compose.runtime.staticCompositionLocalOf
 
-val LocalSnackBarTrigger = staticCompositionLocalOf<(String) -> Unit> {
-    error("No SnackBar provided")
+val LocalDialogTrigger = staticCompositionLocalOf<DialogTrigger> {
+    error("No DialogTrigger provided")
 }
