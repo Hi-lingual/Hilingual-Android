@@ -43,8 +43,8 @@ import com.hilingual.core.designsystem.theme.white
 
 @Composable
 fun BoxScope.HilingualFloatingButton(
-    onClick: () -> Unit,
     isVisible: Boolean,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     AnimatedVisibility(
