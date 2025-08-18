@@ -64,7 +64,7 @@ internal fun FeedbackEmptyCard(
         Spacer(Modifier.height(8.dp))
 
         Text(
-            text = "완벽한 일기네요. 틀린 부분 하나 없이 잘 썼어요!",
+            text = "추가 설명이 필요 없는 일기네요!",
             style = HilingualTheme.typography.bodyM14,
             color = HilingualTheme.colors.hilingualBlack,
             modifier = Modifier.fillMaxWidth()
