@@ -85,7 +85,7 @@ internal fun MainScreen(
     )
 
     val snackBarHostState = remember { SnackbarHostState() }
-    val snackbarOnClick = remember { mutableStateOf<() -> Unit>({}) }
+    val snackbarOnClick = remember { mutableStateOf({}) }
 
     val onShowToast: (String) -> Unit = remember(coroutineScope, snackBarHostState) {
         { message ->
