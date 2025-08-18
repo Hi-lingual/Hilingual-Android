@@ -94,13 +94,13 @@ private fun NotificationItemPreview() {
     HilingualTheme {
         Column {
             NotificationItem(
-                title = "방금 한민재님이 당신의 8월 14일 일기에 공감했습니다.",
+                title = "방금 이병건님이 당신의 8월 14일 일기에 공감했습니다.",
                 date = "2025-08-15",
                 isRead = false,
                 onClick = {}
             )
             NotificationItem(
-                title = "한민재님이 당신의 8월 14일 일기에 공감했습니다.",
+                title = "토착왜구맨님이 당신의 8월 14일 일기에 공감했습니다.",
                 date = "2025-08-15",
                 isRead = true,
                 onClick = {}
@@ -108,7 +108,7 @@ private fun NotificationItemPreview() {
             NotificationItem(
                 title = "v.1.1.0 업데이트 알림",
                 date = "2025-08-15",
-                isRead = true,
+                isRead = false,
                 onClick = {}
             )
             NotificationItem(
