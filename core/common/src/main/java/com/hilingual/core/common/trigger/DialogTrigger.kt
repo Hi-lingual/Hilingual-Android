@@ -13,13 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.designsystem.event
+package com.hilingual.core.common.trigger
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.remember
 
-@OptIn(ExperimentalSharedTransitionApi::class)
-val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope> {
-    throw IllegalStateException("No SharedTransitionScope provided")
+@Immutable
+data class DialogState(
+    val isVisible: Boolean = false,
+    val onClickAction: () -> Unit = {}
+)
+
+@Stable
+class DialogTrigger(
+    val show: (() -> Unit) -> Unit,
+    val dismiss: () -> Unit
+)
+
+@Composable
+fun rememberDialogTrigger(
+    show: (() -> Unit) -> Unit,
+    dismiss: () -> Unit
+): DialogTrigger = remember(show, dismiss) {
+    DialogTrigger(show, dismiss)
 }
