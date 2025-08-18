@@ -22,11 +22,13 @@ import com.hilingual.data.calendar.model.DiaryThumbnailModel
 data class DiaryThumbnailUiModel(
     val diaryId: Long,
     val imageUrl: String?,
-    val originalText: String
+    val originalText: String,
+    val isPublished: Boolean
 )
 
 internal fun DiaryThumbnailModel.toState() = DiaryThumbnailUiModel(
     diaryId = this.diaryId,
     imageUrl = this.imageUrl,
-    originalText = this.originalText
+    originalText = this.originalText,
+    isPublished = false // TODO: API 연결시 변경
 )

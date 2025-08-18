@@ -19,6 +19,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
@@ -36,9 +37,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.designsystem.R
+import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.home.R
-import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun HomeHeader(
@@ -46,6 +48,8 @@ internal fun HomeHeader(
     nickname: String,
     totalDiaries: Int,
     streak: Int,
+    isNewAlarm: Boolean,
+    onAlarmClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -59,23 +63,42 @@ internal fun HomeHeader(
             ProfileName(nickname)
             UserStatsRow(totalDiaries, streak)
         }
+
+        Box {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_alarm_28),
+                contentDescription = null,
+                tint = Color.Unspecified,
+                modifier = Modifier.noRippleClickable(onClick = onAlarmClick)
+            )
+            if (isNewAlarm) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_dot_4),
+                    contentDescription = null,
+                    tint = HilingualTheme.colors.alertRed,
+                    modifier = Modifier.align(Alignment.TopEnd)
+                )
+            }
+        }
     }
 }
 
 @Composable
 private fun ProfileImage(imageUrl: String) {
-    Image(
-        painter = painterResource(DesignSystemR.drawable.img_default_image),
-        contentDescription = null,
-        modifier = Modifier
-            .size(46.dp)
-            .clip(CircleShape)
-    )
-    // TODO: 앱잼 이후 서버 드리븐으로 변경 by.민재
-    //    NetworkImage(
-    //        imageUrl = imageUrl,
-    //        modifier = Modifier.size(46.dp)
-    //    )
+    if (imageUrl.isBlank()) {
+        Image(
+            painter = painterResource(R.drawable.img_default_image),
+            contentDescription = null,
+            modifier = Modifier
+                .size(46.dp)
+                .clip(CircleShape)
+        )
+    } else {
+        NetworkImage(
+            imageUrl = imageUrl,
+            modifier = Modifier.size(46.dp)
+        )
+    }
 }
 
 @Composable
@@ -156,13 +179,17 @@ private fun HomeHeaderPreview() {
                 imageUrl = "",
                 nickname = "닉네임1",
                 totalDiaries = 10,
-                streak = 5
+                streak = 5,
+                isNewAlarm = true,
+                onAlarmClick = {}
             )
             HomeHeader(
                 imageUrl = "",
                 nickname = "닉네임2",
                 totalDiaries = 0,
-                streak = 0
+                streak = 0,
+                isNewAlarm = false,
+                onAlarmClick = {}
             )
         }
     }

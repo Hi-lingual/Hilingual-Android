@@ -33,11 +33,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.home.R
 
 @Composable
-internal fun DateTimeInfo(
+internal fun DiaryTimeInfo(
     remainingTime: Int?,
     modifier: Modifier = Modifier
 ) {
@@ -78,24 +78,24 @@ private fun calculateRemainingTime(remainingTime: Int): Pair<Int, String> =
         else -> 1 to "분"
     }
 
-private data class DateTimeInfoPreviewState(
+private data class DiaryTimeInfoPreviewState(
     val remainingTime: Int?
 )
 
-private class DateTimeInfoPreviewProvider :
-    PreviewParameterProvider<DateTimeInfoPreviewState> {
+private class DiaryTimeInfoPreviewProvider :
+    PreviewParameterProvider<DiaryTimeInfoPreviewState> {
     override val values = sequenceOf(
-        DateTimeInfoPreviewState(remainingTime = 1440)
+        DiaryTimeInfoPreviewState(remainingTime = 1440)
     )
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun DateTimeInfoPreview(
-    @PreviewParameter(DateTimeInfoPreviewProvider::class) state: DateTimeInfoPreviewState
+private fun DiaryTimeInfoPreview(
+    @PreviewParameter(DiaryTimeInfoPreviewProvider::class) state: DiaryTimeInfoPreviewState
 ) {
     HilingualTheme {
-        DateTimeInfo(
+        DiaryTimeInfo(
             remainingTime = state.remainingTime
         )
     }
