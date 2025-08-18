@@ -41,8 +41,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hilingual.core.common.event.provider.LocalSystemBarsColor
-import com.hilingual.core.common.event.trigger.LocalDialogTrigger
+import com.hilingual.core.common.provider.LocalSystemBarsColor
+import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
@@ -64,7 +64,7 @@ internal fun OnboardingRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
-    val dialogEventProvider = LocalDialogTrigger.current
+    val dialogTrigger = LocalDialogTrigger.current
     val context = LocalContext.current
 
     var textFieldState by remember { mutableStateOf(TextFieldState.NORMAL) }
@@ -83,7 +83,7 @@ internal fun OnboardingRoute(
         when (it) {
             is OnboardingSideEffect.NavigateToHome -> navigateToHome()
             is OnboardingSideEffect.ShowRetryDialog -> {
-                dialogEventProvider.show(it.onRetry)
+                dialogTrigger.show(it.onRetry)
             }
         }
     }

@@ -43,8 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
-import com.hilingual.core.common.event.provider.LocalSystemBarsColor
-import com.hilingual.core.common.event.trigger.LocalDialogTrigger
+import com.hilingual.core.common.provider.LocalSystemBarsColor
+import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.util.UiState
@@ -71,7 +71,7 @@ internal fun DiaryFeedbackRoute(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
     var isImageDetailVisible by remember { mutableStateOf(false) }
-    val dialogEventProvider = LocalDialogTrigger.current
+    val dialogTrigger = LocalDialogTrigger.current
 
     BackHandler {
         if (isImageDetailVisible) {
@@ -90,7 +90,7 @@ internal fun DiaryFeedbackRoute(
     viewModel.sideEffect.collectSideEffect {
         when (it) {
             is DiaryFeedbackSideEffect.ShowRetryDialog -> {
-                dialogEventProvider.show(it.onRetry)
+                dialogTrigger.show(it.onRetry)
             }
         }
     }
