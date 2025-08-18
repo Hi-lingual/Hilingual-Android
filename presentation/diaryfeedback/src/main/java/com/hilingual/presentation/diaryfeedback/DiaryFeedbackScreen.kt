@@ -252,10 +252,8 @@ private fun DiaryFeedbackScreen(
             },
             modifier = Modifier
                 .background(HilingualTheme.colors.gray100)
-                .padding(
-                    horizontal = 16.dp,
-                    vertical = 12.dp
-                )
+                .padding(horizontal = 16.dp)
+                .padding(top = 12.dp, bottom = 16.dp)
         )
     }
 
