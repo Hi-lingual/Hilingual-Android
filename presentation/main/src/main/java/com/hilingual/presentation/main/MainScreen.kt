@@ -29,6 +29,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -38,11 +39,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
-import com.hilingual.core.common.event.provider.LocalSystemBarsColor
-import com.hilingual.core.common.event.trigger.LocalDialogTrigger
-import com.hilingual.core.common.event.trigger.LocalSnackbarTrigger
-import com.hilingual.core.common.event.trigger.LocalToastTrigger
-import com.hilingual.core.common.event.trigger.rememberDialogTrigger
+import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.provider.LocalSystemBarsColor
+import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.trigger.LocalSnackbarTrigger
+import com.hilingual.core.common.trigger.LocalToastTrigger
+import com.hilingual.core.common.trigger.rememberDialogTrigger
 import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
 import com.hilingual.core.designsystem.component.snackbar.DiarySnackbar
 import com.hilingual.core.designsystem.component.toast.TextToast
@@ -75,13 +77,15 @@ internal fun MainScreen(
 
     val systemBarsColor = LocalSystemBarsColor.current
     val activity = LocalActivity.current
-
     val coroutineScope = rememberCoroutineScope()
-    val snackBarHostState = remember { SnackbarHostState() }
-    val dialogEventProvider = rememberDialogTrigger(
+
+    val dialogTrigger = rememberDialogTrigger(
         show = appState.dialogStateHolder::showDialog,
         dismiss = appState.dialogStateHolder::dismissDialog
     )
+
+    val snackBarHostState = remember { SnackbarHostState() }
+    val snackbarOnClick = remember { mutableStateOf<() -> Unit>({}) }
 
     val onShowToast: (String) -> Unit = remember(coroutineScope, snackBarHostState) {
         { message ->
@@ -98,14 +102,15 @@ internal fun MainScreen(
             }
         }
     }
-
-    val onShowDiarySnackbar: () -> Unit = remember(coroutineScope, snackBarHostState) {
-        {
+    val onShowSnackbar: (SnackbarRequest) -> Unit = remember(coroutineScope, snackBarHostState) {
+        { request ->
+            snackbarOnClick.value = request.onClick
             coroutineScope.launch {
                 snackBarHostState.currentSnackbarData?.dismiss()
                 val job = launch {
                     snackBarHostState.showSnackbar(
-                        message = "일기가 게시되었어요!",
+                        message = request.message,
+                        actionLabel = request.buttonText,
                         withDismissAction = true
                     )
                 }
@@ -123,14 +128,14 @@ internal fun MainScreen(
 
     HandleBackPressToExit(
         onShowToast = {
-            onShowToast("버튼을 한번 더 누르면 앱이 종료됩니다!")
+            onShowToast("버튼을 한번 더 누르면 앱이 종료됩니다.")
         }
     )
 
     CompositionLocalProvider(
-        LocalDialogTrigger provides dialogEventProvider,
+        LocalDialogTrigger provides dialogTrigger,
         LocalToastTrigger provides onShowToast,
-        LocalSnackbarTrigger provides onShowDiarySnackbar
+        LocalSnackbarTrigger provides onShowSnackbar
     ) {
         Scaffold(
             snackbarHost = {
@@ -138,9 +143,9 @@ internal fun MainScreen(
                     if (data.visuals.withDismissAction) {
                         DiarySnackbar(
                             message = data.visuals.message,
+                            buttonText = data.visuals.actionLabel ?: "",
                             onClick = {
-                                // TODO: FeedScreen으로 이동하도록 변경 to.작은나현
-                                appState.navigateToHome()
+                                snackbarOnClick.value()
                                 data.dismiss()
                             },
                             modifier = Modifier
