@@ -180,7 +180,6 @@ private fun DiaryFeedbackScreen(
     }
 
     Column(
-        verticalArrangement = Arrangement.Top,
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
@@ -230,6 +229,7 @@ private fun DiaryFeedbackScreen(
             }
 
             HilingualFloatingButton(
+                isVisible = isFabVisible,
                 onClick = {
                     coroutineScope.launch {
                         when (pagerState.currentPage) {
@@ -238,7 +238,6 @@ private fun DiaryFeedbackScreen(
                         }
                     }
                 },
-                isVisible = isFabVisible,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(bottom = 24.dp, end = 16.dp)
