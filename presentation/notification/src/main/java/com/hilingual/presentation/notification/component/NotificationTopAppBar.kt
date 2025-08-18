@@ -13,7 +13,7 @@ import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppB
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-fun NotificationTopAppBar(
+internal fun NotificationTopAppBar(
     onBackClick: () -> Unit,
     onSettingClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -43,7 +43,7 @@ fun NotificationTopAppBar(
 @Preview
 @Composable
 private fun NotificationTopAppBarPreview() {
-    HilingualTheme{
+    HilingualTheme {
         NotificationTopAppBar(
             onBackClick = {},
             onSettingClick = {}

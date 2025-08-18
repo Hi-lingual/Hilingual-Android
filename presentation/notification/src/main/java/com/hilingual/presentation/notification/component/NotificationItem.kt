@@ -29,7 +29,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 private val BoldNameRegex = Regex("(\\S*님\\S*)")
 
 @Composable
-fun NotificationItem(
+internal fun NotificationItem(
     title: String,
     date: String,
     isRead: Boolean,
@@ -49,7 +49,7 @@ fun NotificationItem(
             .padding(vertical = 20.dp)
             .padding(start = 16.dp, end = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
             modifier = Modifier.weight(1f),
