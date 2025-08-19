@@ -95,7 +95,7 @@ private fun NotificationDetailContentPreview() {
                         2. `inline code`와 같은 코드 스니펫 작동합니다.
                         
                         감사합니다.
-                        """.trimIndent()
+            """.trimIndent()
         )
     }
 }
