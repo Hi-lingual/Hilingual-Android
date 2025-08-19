@@ -40,7 +40,6 @@ internal fun ReportBlockBottomSheet(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 private fun ReportBlockBottomSheetPreviewVisible() {
