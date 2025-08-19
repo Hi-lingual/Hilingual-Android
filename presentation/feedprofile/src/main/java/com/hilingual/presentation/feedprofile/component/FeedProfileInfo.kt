@@ -19,9 +19,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun FeedProfileInfo(
@@ -42,7 +42,6 @@ internal fun FeedProfileInfo(
     ) {
         NetworkImage(
             imageUrl = profileUrl,
-            shape = CircleShape,
             modifier = Modifier
                 .padding(vertical = 4.dp)
                 .size(60.dp)
@@ -72,7 +71,7 @@ internal fun FeedProfileInfo(
                     modifier = Modifier.padding(end = 2.dp)
                 )
                 Text(
-                    text = follower.toString(),
+                    text = "$follower",
                     style = HilingualTheme.typography.bodyB14,
                     color = HilingualTheme.colors.gray400,
                     modifier = Modifier.padding(end = 8.dp)
@@ -84,7 +83,7 @@ internal fun FeedProfileInfo(
                     modifier = Modifier.padding(end = 2.dp)
                 )
                 Text(
-                    text = following.toString(),
+                    text = "$following",
                     style = HilingualTheme.typography.bodyB14,
                     color = HilingualTheme.colors.gray400
                 )
@@ -93,7 +92,7 @@ internal fun FeedProfileInfo(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = DesignSystemR.drawable.ic_fire_16),
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_fire_16),
                     contentDescription = null,
                     tint = HilingualTheme.colors.hilingualOrange,
                     modifier = Modifier
@@ -101,7 +100,7 @@ internal fun FeedProfileInfo(
                         .size(16.dp)
                 )
                 Text(
-                    text = streak.toString() + "일 연속 작성중",
+                    text = "${streak}일 연속 작성중",
                     style = HilingualTheme.typography.bodyM14,
                     color = if (streak > 0) HilingualTheme.colors.hilingualOrange else HilingualTheme.colors.gray400
                 )

@@ -22,10 +22,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualBasicBottomSheet
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.designsystem.R as DesignSystemR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,25 +56,27 @@ internal fun BlockBottomSheet(
                 style = HilingualTheme.typography.headB18,
                 color = HilingualTheme.colors.black
             )
+
             Spacer(Modifier.height(8.dp))
+
             Text(
                 text = "차단 시 상대방은 차단 여부를 알 수 없으며,\n" +
                     "언제든 차단을 해제 할 수 있어요.",
                 style = HilingualTheme.typography.bodyM14,
                 color = HilingualTheme.colors.gray400
-
             )
+
             Spacer(Modifier.height(20.dp))
 
             checkTexts.forEach { text ->
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 5.5.dp)
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = DesignSystemR.drawable.ic_check_24),
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_check_24),
                         contentDescription = null,
                         tint = HilingualTheme.colors.black,
                         modifier = Modifier.size(20.dp)
@@ -89,7 +91,9 @@ internal fun BlockBottomSheet(
                     )
                 }
             }
+
             Spacer(Modifier.height(32.dp))
+
             HilingualButton(
                 text = "차단하기",
                 onClick = onBlockButtonClick
@@ -98,7 +102,6 @@ internal fun BlockBottomSheet(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 private fun BlockBottomSheetPreviewVisible() {

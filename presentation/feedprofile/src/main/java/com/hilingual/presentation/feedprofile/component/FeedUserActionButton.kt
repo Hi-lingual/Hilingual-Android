@@ -2,8 +2,6 @@ package com.hilingual.presentation.feedprofile.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -57,39 +57,33 @@ fun FeedUserActionButton(
     )
 }
 
+private data class FeedUserActionButtonPreviewData(
+    val isFilled: Boolean,
+    val buttonText: String
+)
+
+private class FeedUserActionButtonPreviewParameterProvider :
+    PreviewParameterProvider<FeedUserActionButtonPreviewData> {
+    override val values = sequenceOf(
+        FeedUserActionButtonPreviewData(isFilled = false, buttonText = "팔로우"),
+        FeedUserActionButtonPreviewData(isFilled = false, buttonText = "맞팔로우"),
+        FeedUserActionButtonPreviewData(isFilled = false, buttonText = "차단"),
+        FeedUserActionButtonPreviewData(isFilled = true, buttonText = "팔로잉"),
+        FeedUserActionButtonPreviewData(isFilled = true, buttonText = "차단 해제하기")
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
-private fun FeedUserActionButtonPreview() {
+private fun FeedUserActionButtonPreview(
+    @PreviewParameter(FeedUserActionButtonPreviewParameterProvider::class)
+    previewData: FeedUserActionButtonPreviewData
+) {
     HilingualTheme {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(vertical = 20.dp)
-        ) {
-            FeedUserActionButton(
-                isFilled = false,
-                buttonText = "팔로우",
-                onClick = {}
-            )
-            FeedUserActionButton(
-                isFilled = false,
-                buttonText = "맞팔로우",
-                onClick = {}
-            )
-            FeedUserActionButton(
-                isFilled = false,
-                buttonText = "차단",
-                onClick = {}
-            )
-            FeedUserActionButton(
-                isFilled = true,
-                buttonText = "팔로잉",
-                onClick = {}
-            )
-            FeedUserActionButton(
-                isFilled = true,
-                buttonText = "차단 해제하기",
-                onClick = {}
-            )
-        }
+        FeedUserActionButton(
+            isFilled = previewData.isFilled,
+            buttonText = previewData.buttonText,
+            onClick = {}
+        )
     }
 }

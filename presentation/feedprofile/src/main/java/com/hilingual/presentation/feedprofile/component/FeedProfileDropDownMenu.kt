@@ -12,14 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDialog
 import com.hilingual.core.designsystem.component.dropdown.HilingualBasicDropdownMenu
 import com.hilingual.core.designsystem.component.dropdown.HilingualDropdownMenuItem
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
-internal fun FeedReportDropDownMenu(
+internal fun FeedProfileDropDownMenu(
     isExpanded: Boolean,
     isMine: Boolean,
     onExpandedChange: (Boolean) -> Unit,
@@ -34,7 +34,7 @@ internal fun FeedReportDropDownMenu(
     ) {
         HilingualDropdownMenuItem(
             text = if (isMine) "비공개하기" else "신고하기",
-            iconResId = if (isMine) DesignSystemR.drawable.ic_hide_24 else DesignSystemR.drawable.ic_report_24,
+            iconResId = if (isMine) R.drawable.ic_hide_24 else R.drawable.ic_report_24,
             onClick = {
                 if (isMine) {
                     publishDialogVisible = true
@@ -46,21 +46,19 @@ internal fun FeedReportDropDownMenu(
         )
     }
 
-    if (publishDialogVisible && isMine) {
-        DiaryUnpublishDialog(
-            isVisible = true,
-            onDismiss = { publishDialogVisible = false },
-            onPrivateClick = {
-                onUnpublishClick()
-                publishDialogVisible = false
-            }
-        )
-    }
+    DiaryUnpublishDialog(
+        isVisible = publishDialogVisible,
+        onDismiss = { publishDialogVisible = false },
+        onPrivateClick = {
+            onUnpublishClick()
+            publishDialogVisible = false
+        }
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun FeedReportDropDownMenuPreview() {
+private fun FeedProfileDropDownMenuPreview() {
     HilingualTheme {
         var isExpanded by remember { mutableStateOf(true) }
         var isExpanded1 by remember { mutableStateOf(false) }
@@ -69,14 +67,14 @@ private fun FeedReportDropDownMenuPreview() {
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            FeedReportDropDownMenu(
+            FeedProfileDropDownMenu(
                 isExpanded = isExpanded,
                 isMine = true,
                 onExpandedChange = { isExpanded = it },
                 onUnpublishClick = {},
                 onReportClick = {}
             )
-            FeedReportDropDownMenu(
+            FeedProfileDropDownMenu(
                 isExpanded = isExpanded1,
                 isMine = false,
                 onExpandedChange = { isExpanded1 = it },

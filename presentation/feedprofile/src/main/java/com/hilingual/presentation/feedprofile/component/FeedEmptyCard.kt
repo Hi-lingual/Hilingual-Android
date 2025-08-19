@@ -15,8 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.designsystem.R as DesignSystemR
 
 internal enum class FeedEmptyCardType(
     val text: String
@@ -26,6 +26,12 @@ internal enum class FeedEmptyCardType(
     ),
     NOT_LIKED(
         text = "아직 공감한 일기가 없어요."
+    ),
+    NO_FOLLOWER(
+        text = "아직 팔로워가 없어요."
+    ),
+    NO_FOLLOWING(
+        text = "아직 팔로잉한 유저가 없어요."
     )
 }
 
@@ -43,7 +49,7 @@ internal fun FeedEmptyCard(
         Image(
             modifier = Modifier
                 .size(width = 200.dp, height = 100.dp),
-            painter = painterResource(id = DesignSystemR.drawable.img_diary_empty),
+            painter = painterResource(id = R.drawable.img_diary_empty),
             contentDescription = null
         )
         Text(

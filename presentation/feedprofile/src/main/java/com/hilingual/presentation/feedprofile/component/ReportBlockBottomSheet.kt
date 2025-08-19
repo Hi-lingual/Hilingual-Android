@@ -8,10 +8,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualMenuBottomSheet
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualMenuBottomSheetItem
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.designsystem.R as DesignSystemR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,12 +29,12 @@ internal fun ReportBlockBottomSheet(
     ) {
         HilingualMenuBottomSheetItem(
             text = "신고하기",
-            iconResId = DesignSystemR.drawable.ic_block_24_gray,
+            iconResId = R.drawable.ic_block_24_gray,
             onClick = onReportClick
         )
         HilingualMenuBottomSheetItem(
             text = "차단하기",
-            iconResId = DesignSystemR.drawable.ic_report_24,
+            iconResId = R.drawable.ic_report_24,
             onClick = onBlockClick
         )
     }
