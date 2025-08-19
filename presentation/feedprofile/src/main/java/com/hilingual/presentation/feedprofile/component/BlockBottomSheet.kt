@@ -111,8 +111,7 @@ private fun BlockBottomSheetPreviewVisible() {
             onBlockButtonClick = {
                 println("Block Button Clicked in Preview")
                 isSheetVisible = false
-            },
-            modifier = Modifier
+            }
         )
     }
 }
