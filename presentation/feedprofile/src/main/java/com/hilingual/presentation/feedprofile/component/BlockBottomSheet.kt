@@ -27,6 +27,11 @@ import com.hilingual.core.designsystem.component.bottomsheet.HilingualBasicBotto
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
+private val CHECK_TEXTS = listOf(
+    "상대의 모든 활동을 확인할 수 없어요.",
+    "상대는 나의 모든 활동을 확인할 수 없어요."
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun BlockBottomSheet(
@@ -35,11 +40,6 @@ internal fun BlockBottomSheet(
     onBlockButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val checkTexts = listOf(
-        "상대의 모든 활동을 확인할 수 없어요.",
-        "상대는 나의 모든 활동을 확인할 수 없어요."
-    )
-
     HilingualBasicBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
@@ -68,8 +68,7 @@ internal fun BlockBottomSheet(
 
             Spacer(Modifier.height(20.dp))
 
-            checkTexts.forEach { text ->
-
+            CHECK_TEXTS.forEach { text ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
