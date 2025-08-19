@@ -17,7 +17,6 @@ package com.hilingual.presentation.diaryfeedback
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -48,12 +47,13 @@ import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
-import com.hilingual.presentation.diaryfeedback.component.FeedbackReportBottomSheet
+import com.hilingual.presentation.diaryfeedback.component.FeedbackMenuBottomSheet
 import com.hilingual.presentation.diaryfeedback.component.FeedbackReportDialog
 import com.hilingual.presentation.diaryfeedback.tab.GrammarSpellingScreen
 import com.hilingual.presentation.diaryfeedback.tab.RecommendExpressionScreen
@@ -158,12 +158,16 @@ private fun DiaryFeedbackScreen(
         }
     }
 
-    FeedbackReportBottomSheet(
+    FeedbackMenuBottomSheet(
         isVisible = isReportBottomSheetVisible,
         onDismiss = { isReportBottomSheetVisible = false },
-        onReportClick = {
-            isReportDialogVisible = true
+        onDeleteClick = {
             isReportBottomSheetVisible = false
+            // TODO: 삭제 모달 띄우기
+        },
+        onReportClick = {
+            isReportBottomSheetVisible = false
+            isReportDialogVisible = true
         }
     )
 
@@ -174,33 +178,31 @@ private fun DiaryFeedbackScreen(
         )
     }
 
-    Box(
+    Column(
         modifier = modifier
             .fillMaxSize()
+            .background(HilingualTheme.colors.white)
             .padding(paddingValues)
     ) {
-        Column(
-            verticalArrangement = Arrangement.Top,
-            modifier = modifier
-                .fillMaxSize()
-                .background(HilingualTheme.colors.white)
-        ) {
-            BackAndMoreTopAppBar(
-                title = "일기장",
-                onBackClicked = onBackClick,
-                onMoreClicked = { isReportBottomSheetVisible = true }
-            )
+        BackAndMoreTopAppBar(
+            title = "일기장",
+            onBackClicked = onBackClick,
+            onMoreClicked = { isReportBottomSheetVisible = true }
+        )
 
-            HilingualBasicTabRow(
-                tabTitles = persistentListOf("문법·철자", "추천표현"),
-                tabIndex = pagerState.currentPage,
-                onTabSelected = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(it)
-                    }
+        HilingualBasicTabRow(
+            tabTitles = persistentListOf("문법·철자", "추천표현"),
+            tabIndex = pagerState.currentPage,
+            onTabSelected = {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(it)
                 }
-            )
+            }
+        )
 
+        Box(
+            modifier = Modifier.weight(1f)
+        ) {
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize()
@@ -224,20 +226,32 @@ private fun DiaryFeedbackScreen(
                     }
                 }
             }
-        }
-        HilingualFloatingButton(
-            onClick = {
-                coroutineScope.launch {
-                    when (pagerState.currentPage) {
-                        0 -> grammarListState.animateScrollToItem(0)
-                        else -> recommendListState.animateScrollToItem(0)
+
+            HilingualFloatingButton(
+                isVisible = isFabVisible,
+                onClick = {
+                    coroutineScope.launch {
+                        when (pagerState.currentPage) {
+                            0 -> grammarListState.animateScrollToItem(0)
+                            else -> recommendListState.animateScrollToItem(0)
+                        }
                     }
-                }
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = 24.dp, end = 16.dp)
+            )
+        }
+
+        HilingualButton(
+            text = "피드에 게시하기",
+            onClick = {
+                // TODO: 모달 띄우기
             },
-            isVisible = isFabVisible,
             modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(bottom = 24.dp, end = 16.dp)
+                .background(HilingualTheme.colors.gray100)
+                .padding(horizontal = 16.dp)
+                .padding(top = 12.dp, bottom = 16.dp)
         )
     }
 
