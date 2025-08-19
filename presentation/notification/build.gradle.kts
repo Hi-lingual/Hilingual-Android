@@ -22,3 +22,7 @@ plugins {
 android {
     setNamespace("presentation.notification")
 }
+
+dependencies {
+    implementation(libs.richeditor.compose)
+}
