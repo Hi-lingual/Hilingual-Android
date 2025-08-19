@@ -24,15 +24,13 @@ internal fun FeedReportDropDownMenu(
     isMine: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     onUnpublishClick: () -> Unit,
-    onReportClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onReportClick: () -> Unit
 ) {
     var publishDialogVisible by remember { mutableStateOf(false) }
 
     HilingualBasicDropdownMenu(
         isExpanded = isExpanded,
-        onExpandedChange = onExpandedChange,
-        modifier = modifier
+        onExpandedChange = onExpandedChange
     ) {
         HilingualDropdownMenuItem(
             text = if (isMine) "비공개하기" else "신고하기",
@@ -62,10 +60,10 @@ internal fun FeedReportDropDownMenu(
 
 @Preview(showBackground = true)
 @Composable
-fun FeedReportDropDownMenuPreview() {
-    var isExpanded by remember { mutableStateOf(false) }
-    var isExpanded1 by remember { mutableStateOf(false) }
+private fun FeedReportDropDownMenuPreview() {
     HilingualTheme {
+        var isExpanded by remember { mutableStateOf(true) }
+        var isExpanded1 by remember { mutableStateOf(false) }
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
