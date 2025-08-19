@@ -11,14 +11,13 @@ import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import kotlinx.collections.immutable.persistentListOf
 
+private val titles = persistentListOf("피드", "공지사항")
 @Composable
 internal fun NotificationTapRow(
     tabIndex: Int,
     onTabSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val titles = persistentListOf("피드", "공지사항")
-
     HilingualBasicTabRow(
         tabTitles = titles,
         tabIndex = tabIndex,
