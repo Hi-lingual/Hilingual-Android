@@ -12,6 +12,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import kotlinx.collections.immutable.persistentListOf
 
 private val titles = persistentListOf("피드", "공지사항")
+
 @Composable
 internal fun NotificationTapRow(
     tabIndex: Int,
