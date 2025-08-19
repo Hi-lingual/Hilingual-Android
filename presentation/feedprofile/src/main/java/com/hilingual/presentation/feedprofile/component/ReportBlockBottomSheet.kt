@@ -25,7 +25,7 @@ internal fun ReportBlockBottomSheet(
     HilingualMenuBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
-        modifier = modifier,
+        modifier = modifier
     ) {
         HilingualMenuBottomSheetItem(
             text = "신고하기",

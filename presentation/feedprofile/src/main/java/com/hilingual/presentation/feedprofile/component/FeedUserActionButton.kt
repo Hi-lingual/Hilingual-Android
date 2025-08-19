@@ -57,7 +57,6 @@ fun FeedUserActionButton(
     )
 }
 
-
 @Preview(showBackground = true)
 @Composable
 private fun FeedUserActionButtonPreview() {
