@@ -103,7 +103,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
 
     fun toggleIsPublished(isPublished: Boolean) {
         viewModelScope.launch {
-            //TODO: 게시/비공개 API 호출
+            // TODO: 게시/비공개 API 호출
             _uiState.update { currentState ->
                 val successState = currentState as UiState.Success
                 successState.copy(
@@ -141,8 +141,22 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                 .onLogFailure { }
         }
     }
+
+    fun showPublishSnackbar() {
+        viewModelScope.launch {
+            _sideEffect.emit(DiaryFeedbackSideEffect.ShowSnackbar(message = "일기가 게시되었어요!", actionLabel = "보러가기"))
+        }
+    }
+
+    fun showToast(message: String) {
+        viewModelScope.launch {
+            _sideEffect.emit(DiaryFeedbackSideEffect.ShowToast(message = message))
+        }
+    }
 }
 
 sealed interface DiaryFeedbackSideEffect {
     data class ShowRetryDialog(val onRetry: () -> Unit) : DiaryFeedbackSideEffect
+    data class ShowSnackbar(val message: String, val actionLabel: String) : DiaryFeedbackSideEffect
+    data class ShowToast(val message: String) : DiaryFeedbackSideEffect
 }

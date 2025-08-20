@@ -44,8 +44,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
+import com.hilingual.core.common.model.SnackbarRequest
 import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.trigger.LocalSnackbarTrigger
+import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -74,7 +77,10 @@ internal fun DiaryFeedbackRoute(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
     var isImageDetailVisible by remember { mutableStateOf(false) }
+
     val dialogTrigger = LocalDialogTrigger.current
+    val snackbarTrigger = LocalSnackbarTrigger.current
+    val toastTrigger = LocalToastTrigger.current
 
     BackHandler {
         if (isImageDetailVisible) {
@@ -95,6 +101,20 @@ internal fun DiaryFeedbackRoute(
             is DiaryFeedbackSideEffect.ShowRetryDialog -> {
                 dialogTrigger.show(it.onRetry)
             }
+
+            is DiaryFeedbackSideEffect.ShowSnackbar -> {
+                snackbarTrigger(
+                    SnackbarRequest(
+                        message = it.message,
+                        buttonText = it.actionLabel,
+                        onClick = { toastTrigger("${it.actionLabel} 클릭됨") }
+                    )
+                )
+            }
+
+            is DiaryFeedbackSideEffect.ShowToast -> {
+                toastTrigger(it.message)
+            }
         }
     }
 
@@ -106,7 +126,9 @@ internal fun DiaryFeedbackRoute(
         isImageDetailVisible = isImageDetailVisible,
         onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
         onToggleIsPublished = viewModel::toggleIsPublished,
-        onToggleBookmark = viewModel::toggleBookmark
+        onToggleBookmark = viewModel::toggleBookmark,
+        onShowSnackbar = viewModel::showPublishSnackbar,
+        onShowToast = viewModel::showToast
     )
 }
 
@@ -120,6 +142,8 @@ private fun DiaryFeedbackScreen(
     onChangeImageDetailVisible: () -> Unit,
     onToggleIsPublished: (Boolean) -> Unit,
     onToggleBookmark: (Long, Boolean) -> Unit,
+    onShowSnackbar: () -> Unit,
+    onShowToast: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isPublishDialogVisible by remember { mutableStateOf(false) }
@@ -262,6 +286,7 @@ private fun DiaryFeedbackScreen(
             onPrivateClick = {
                 onToggleIsPublished(false)
                 isPublishDialogVisible = false
+                onShowToast("일기가 비공개되었어요!")
             }
         )
     } else {
@@ -271,6 +296,7 @@ private fun DiaryFeedbackScreen(
             onPostClick = {
                 onToggleIsPublished(true)
                 isPublishDialogVisible = false
+                onShowSnackbar()
             }
         )
     }
@@ -280,6 +306,8 @@ private fun DiaryFeedbackScreen(
         onDismiss = { isDeleteDialogVisible = false },
         onDeleteClick = {
             isDeleteDialogVisible = false
+            // TODO: 삭제 후 홈으로 이동
+            onShowToast("삭제가 완료되었어요.")
         }
     )
 
@@ -321,7 +349,9 @@ private fun DiaryFeedbackScreenPreview() {
             onBackClick = {},
             onReportClick = {},
             onToggleBookmark = { _, _ -> {} },
-            onToggleIsPublished = { }
+            onToggleIsPublished = {},
+            onShowSnackbar = {},
+            onShowToast = {}
         )
     }
 }
