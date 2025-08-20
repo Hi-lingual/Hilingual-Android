@@ -53,7 +53,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.advancedImePadding
-import com.hilingual.core.common.provider.LocalSystemBarsColor
+import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualLongTextField
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
@@ -93,7 +93,6 @@ internal fun DiaryWriteRoute(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val feedbackState by viewModel.feedbackState.collectAsStateWithLifecycle()
-    val localSystemBarsColor = LocalSystemBarsColor.current
 
     var diaryTextImageUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -125,13 +124,6 @@ internal fun DiaryWriteRoute(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
         uri?.let { viewModel.extractTextFromImage(it) }
-    }
-
-    LaunchedEffect(Unit) {
-        localSystemBarsColor.setSystemBarColor(
-            systemBarsColor = white,
-            isDarkIcon = true
-        )
     }
 
     when (feedbackState) {
@@ -266,6 +258,7 @@ private fun DiaryWriteScreen(
 
     Column(
         modifier = Modifier
+            .statusBarColor(white)
             .background(HilingualTheme.colors.white)
             .fillMaxSize()
             .padding(top = paddingValues.calculateTopPadding())

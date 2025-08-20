@@ -20,8 +20,6 @@ plugins {
     alias(libs.plugins.hilingual.feature)
 }
 
-val properties = gradleLocalProperties(rootDir, providers)
-
 android {
     setNamespace("presentation.main")
 
@@ -42,7 +40,4 @@ dependencies {
     implementation(projects.presentation.mypage)
     implementation(projects.presentation.community)
     implementation(projects.presentation.otp)
-
-    // others
-    implementation(libs.accompanist.systemuicontroller)
 }
