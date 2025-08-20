@@ -26,8 +26,9 @@ import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualBasicBottomSheet
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import kotlinx.collections.immutable.persistentListOf
 
-private val CHECK_TEXTS = listOf(
+private val CHECK_TEXTS = persistentListOf(
     "상대의 모든 활동을 확인할 수 없어요.",
     "상대는 나의 모든 활동을 확인할 수 없어요."
 )
