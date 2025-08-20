@@ -175,78 +175,76 @@ private fun DiaryFeedbackScreen(
             }
         )
 
-        Box(
-            modifier = Modifier.weight(1f)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(HilingualTheme.colors.white)
-            ) {
-                when (uiState) {
-                    is UiState.Loading -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(HilingualTheme.colors.white),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
-
-                    is UiState.Success -> {
-                        val data = uiState.data
-                        HorizontalPager(
-                            state = pagerState,
-                            modifier = Modifier.fillMaxSize()
-                        ) { page ->
-                            when (page) {
-                                0 -> GrammarSpellingScreen(
-                                    listState = grammarListState,
-                                    writtenDate = data.writtenDate,
-                                    diaryContent = data.diaryContent,
-                                    feedbackList = data.feedbackList,
-                                    onImageClick = onChangeImageDetailVisible
-                                )
-                                1 -> RecommendExpressionScreen(
-                                    listState = recommendListState,
-                                    writtenDate = data.writtenDate,
-                                    recommendExpressionList = data.recommendExpressionList,
-                                    onBookmarkClick = onToggleBookmark
-                                )
-                            }
-                        }
-                    }
-
-                    else -> {}
+        when (uiState) {
+            is UiState.Loading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(HilingualTheme.colors.white),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
             }
 
-            HilingualFloatingButton(
-                onClick = {
-                    coroutineScope.launch {
-                        when (pagerState.currentPage) {
-                            0 -> grammarListState.animateScrollToItem(0)
-                            else -> recommendListState.animateScrollToItem(0)
+            is UiState.Success -> {
+                val data = uiState.data
+
+                Box(
+                    modifier = Modifier
+                        .background(HilingualTheme.colors.gray100)
+                        .weight(1f)
+                ) {
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.fillMaxSize()
+                    ) { page ->
+                        when (page) {
+                            0 -> GrammarSpellingScreen(
+                                listState = grammarListState,
+                                writtenDate = data.writtenDate,
+                                diaryContent = data.diaryContent,
+                                feedbackList = data.feedbackList,
+                                onImageClick = onChangeImageDetailVisible
+                            )
+
+                            1 -> RecommendExpressionScreen(
+                                listState = recommendListState,
+                                writtenDate = data.writtenDate,
+                                recommendExpressionList = data.recommendExpressionList,
+                                onBookmarkClick = onToggleBookmark
+                            )
                         }
                     }
-                },
-                isVisible = isFabVisible,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = 24.dp, end = 16.dp)
-            )
-        }
 
-        HilingualButton(
-            text = if (isPublished) "비공개하기" else "피드에 게시하기",,
-            onClick = { isPublishDialogVisible = true },
-            modifier = Modifier
-                .background(HilingualTheme.colors.gray100)
-                .padding(horizontal = 16.dp)
-                .padding(top = 12.dp, bottom = 16.dp)
-        )
+                    HilingualFloatingButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                when (pagerState.currentPage) {
+                                    0 -> grammarListState.animateScrollToItem(0)
+                                    else -> recommendListState.animateScrollToItem(0)
+                                }
+                            }
+                        },
+                        isVisible = isFabVisible,
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(bottom = 24.dp, end = 16.dp)
+                    )
+                }
+
+                HilingualButton(
+                    text = if (isPublished) "비공개하기" else "피드에 게시하기",
+                    onClick = { isPublishDialogVisible = true },
+                    modifier = Modifier
+                        .background(HilingualTheme.colors.gray100)
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 12.dp, bottom = 16.dp)
+                )
+            }
+
+            else -> {}
+        }
     }
 
     if (isImageDetailVisible && successData?.diaryContent?.imageUrl != null) {
