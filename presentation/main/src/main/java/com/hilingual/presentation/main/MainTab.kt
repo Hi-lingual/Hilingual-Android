@@ -18,7 +18,7 @@ package com.hilingual.presentation.main
 import androidx.annotation.DrawableRes
 import com.hilingual.core.navigation.MainTabRoute
 import com.hilingual.core.navigation.Route
-import com.hilingual.presentation.community.Community
+import com.hilingual.presentation.feed.navigation.Feed
 import com.hilingual.presentation.home.navigation.Home
 import com.hilingual.presentation.mypage.MyPage
 import com.hilingual.presentation.voca.navigation.Voca
@@ -38,11 +38,10 @@ internal enum class MainTab(
         route = Voca,
         label = "단어장"
     ),
-    //TODO: 피드로 변경
-    COMMUNITY(
+    FEED(
         iconRes = R.drawable.ic_community_24,
-        route = Community,
-        label = "커뮤니티"
+        route = Feed,
+        label = "피드"
     ),
     MY(
         iconRes = R.drawable.ic_my_24,

@@ -20,10 +20,10 @@ fun NavController.navigateToFeed(
     )
 }
 
-fun NavGraphBuilder.communityNavGraph(
+fun NavGraphBuilder.feedNavGraph(
     paddingValues: PaddingValues
 ) {
     composable<Feed> {
-//        Feed(paddingValues = paddingValues)
+//        FeedRoute(paddingValues = paddingValues)
     }
 }

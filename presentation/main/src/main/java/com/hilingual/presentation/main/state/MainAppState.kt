@@ -25,16 +25,16 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.hilingual.presentation.auth.navigation.navigateToAuth
-import com.hilingual.presentation.community.navigateToCommunity
 import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedback
 import com.hilingual.presentation.diarywrite.navigation.navigateToDiaryWrite
+import com.hilingual.presentation.feed.navigation.Feed
+import com.hilingual.presentation.feed.navigation.navigateToFeed
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.main.MainTab
 import com.hilingual.presentation.main.monitor.NetworkMonitor
 import com.hilingual.presentation.mypage.navigateToMyPage
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.otp.navigation.navigateToOtp
-import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.voca.navigation.navigateToVoca
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -50,7 +50,7 @@ internal class MainAppState(
     coroutineScope: CoroutineScope,
     networkMonitor: NetworkMonitor
 ) {
-    val startDestination = Splash
+    val startDestination = Feed
 
     val isOffline: StateFlow<Boolean> = networkMonitor.isOnline
         .map(Boolean::not)
@@ -114,7 +114,7 @@ internal class MainAppState(
         when (tab) {
             MainTab.HOME -> navController.navigateToHome(navOptions = navOptions)
             MainTab.VOCA -> navController.navigateToVoca(navOptions = vocaNavOptions)
-            MainTab.COMMUNITY -> navController.navigateToCommunity(navOptions = navOptions)
+            MainTab.FEED -> navController.navigateToFeed(navOptions = navOptions)
             MainTab.MY -> navController.navigateToMyPage(navOptions = navOptions)
         }
     }
