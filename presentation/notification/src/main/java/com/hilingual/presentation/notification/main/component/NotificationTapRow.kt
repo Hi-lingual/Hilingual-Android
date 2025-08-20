@@ -1,4 +1,4 @@
-package com.hilingual.presentation.notification.component
+package com.hilingual.presentation.notification.main.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue

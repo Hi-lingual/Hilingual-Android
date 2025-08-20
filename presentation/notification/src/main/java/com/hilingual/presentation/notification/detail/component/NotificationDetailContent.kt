@@ -1,4 +1,4 @@
-package com.hilingual.presentation.notification.component
+package com.hilingual.presentation.notification.detail.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
