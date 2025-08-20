@@ -3,7 +3,8 @@ package com.hilingual.presentation.notification.main.model
 import androidx.compose.runtime.Immutable
 
 @Immutable
-data class NotificationItemModel(
+data class FeedNotificationItemModel(
+    val id: Long,
     val title: String,
     val date: String,
     val isRead: Boolean,

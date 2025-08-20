@@ -20,7 +20,7 @@ internal fun NotificationDetailScreen(
     title: String,
     date: String,
     content: String,
-    modifier: Modifier = Modifier.Companion
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
