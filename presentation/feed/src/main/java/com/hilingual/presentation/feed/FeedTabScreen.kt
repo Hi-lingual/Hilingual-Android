@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,6 +25,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun FeedTabScreen(
+    listState: LazyListState,
     feedList: PersistentList<FeedPreviewUiModel>,
     onProfileClick: (Long) -> Unit,
     onMenuClick: (Long) -> Unit,
@@ -32,6 +35,7 @@ internal fun FeedTabScreen(
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
+        state = listState,
         contentPadding = PaddingValues(bottom = 48.dp),
         modifier = modifier
             .background(HilingualTheme.colors.white)
@@ -119,6 +123,7 @@ fun FeedPreviewListScreenPreview() {
 
     HilingualTheme {
         FeedTabScreen(
+            listState = rememberLazyListState(),
             feedList = sampleFeedList,
             onProfileClick = { },
             onMenuClick = { },
