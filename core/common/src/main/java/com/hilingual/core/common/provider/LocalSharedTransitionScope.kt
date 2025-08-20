@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.designsystem.event
+package com.hilingual.core.common.provider
 
-import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.runtime.compositionLocalOf
 
-val LocalDialogEventProvider = staticCompositionLocalOf<DialogEventProvider> {
-    error("No DialogEventProvider provided")
+@OptIn(ExperimentalSharedTransitionApi::class)
+val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope> {
+    error("No SharedTransitionScope provided")
 }

@@ -18,6 +18,8 @@ package com.hilingual.presentation.home.component.calendar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -30,8 +32,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.home.R
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
@@ -60,26 +62,34 @@ internal fun CalendarHeader(
             color = HilingualTheme.colors.black
         )
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_down_28),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_down_24_black),
             contentDescription = null,
             tint = Color.Unspecified,
             modifier = Modifier
+                .size(28.dp)
+                .padding(2.dp)
                 .noRippleClickable(onClick = onDownArrowClick)
         )
         Spacer(Modifier.weight(1f))
 
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_28),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_24),
             contentDescription = null,
             tint = Color.Unspecified,
-            modifier = Modifier.noRippleClickable(onClick = onLeftArrowClick)
+            modifier = Modifier
+                .size(28.dp)
+                .padding(2.dp)
+                .noRippleClickable(onClick = onLeftArrowClick)
         )
         Spacer(Modifier.width(8.dp))
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right_28),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right_24),
             contentDescription = null,
             tint = Color.Unspecified,
-            modifier = Modifier.noRippleClickable(onClick = onRightArrowClick)
+            modifier = Modifier
+                .size(28.dp)
+                .padding(2.dp)
+                .noRippleClickable(onClick = onRightArrowClick)
         )
     }
 }

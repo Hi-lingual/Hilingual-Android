@@ -46,8 +46,8 @@ import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectLatestSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.common.provider.LocalSharedTransitionScope
 import com.hilingual.core.common.provider.LocalSystemBarsColor
-import com.hilingual.core.designsystem.event.LocalSharedTransitionScope
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualOrange
 import com.hilingual.presentation.auth.component.GoogleSignButton

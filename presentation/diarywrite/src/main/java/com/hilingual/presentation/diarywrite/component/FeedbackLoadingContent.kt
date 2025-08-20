@@ -32,7 +32,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.diarywrite.R
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun FeedbackLoadingContent(
@@ -47,7 +47,7 @@ internal fun FeedbackLoadingContent(
     ) {
         Icon(
             modifier = Modifier.size(16.dp),
-            imageVector = ImageVector.vectorResource(R.drawable.ic_error_16),
+            imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_error_16),
             contentDescription = null,
             tint = HilingualTheme.colors.gray300
         )

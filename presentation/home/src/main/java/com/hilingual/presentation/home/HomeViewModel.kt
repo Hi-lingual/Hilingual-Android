@@ -23,6 +23,8 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.home.model.toState
+import com.hilingual.presentation.home.util.isDateWritable
+import com.hilingual.presentation.home.util.isDateWritten
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
@@ -125,8 +127,8 @@ class HomeViewModel @Inject constructor(
         val currentState = uiState.value
         if (currentState !is UiState.Success) return
 
-        val hasDiary = currentState.data.dateList.any { LocalDate.parse(it.date) == date }
-        val isWritable = !date.isAfter(LocalDate.now()) && date.isAfter(LocalDate.now().minusDays(2))
+        val hasDiary = isDateWritten(date, currentState.data.dateList)
+        val isWritable = isDateWritable(date)
 
         viewModelScope.launch {
             when {

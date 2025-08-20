@@ -36,7 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.diarywrite.R
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun TextScanButton(
@@ -59,7 +59,7 @@ internal fun TextScanButton(
     ) {
         Icon(
             modifier = Modifier.size(16.dp),
-            imageVector = ImageVector.vectorResource(R.drawable.ic_scan_16),
+            imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_scan_16),
             contentDescription = null,
             tint = HilingualTheme.colors.gray500
         )

@@ -35,7 +35,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,23 +47,28 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.provider.LocalSystemBarsColor
+import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.UiState
-import com.hilingual.core.designsystem.event.LocalDialogEventProvider
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.home.component.HomeHeader
 import com.hilingual.presentation.home.component.calendar.HilingualCalendar
-import com.hilingual.presentation.home.component.footer.DateTimeInfo
 import com.hilingual.presentation.home.component.footer.DiaryDateInfo
 import com.hilingual.presentation.home.component.footer.DiaryEmptyCard
 import com.hilingual.presentation.home.component.footer.DiaryEmptyCardType
 import com.hilingual.presentation.home.component.footer.DiaryPreviewCard
+import com.hilingual.presentation.home.component.footer.DiaryTimeInfo
+import com.hilingual.presentation.home.component.footer.HomeDropDownMenu
 import com.hilingual.presentation.home.component.footer.TodayTopic
 import com.hilingual.presentation.home.component.footer.WriteDiaryButton
 import com.hilingual.presentation.home.model.DateUiModel
 import com.hilingual.presentation.home.model.DiaryThumbnailUiModel
+import com.hilingual.presentation.home.model.TodayTopicUiModel
 import com.hilingual.presentation.home.model.UserProfileUiModel
+import com.hilingual.presentation.home.util.isDateFuture
+import com.hilingual.presentation.home.util.isDateWritable
+import com.hilingual.presentation.home.util.isDateWritten
 import kotlinx.collections.immutable.toPersistentList
 import java.time.LocalDate
 import java.time.YearMonth
@@ -75,12 +82,12 @@ internal fun HomeRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
-    val dialogEventProvider = LocalDialogEventProvider.current
+    val dialogTrigger = LocalDialogTrigger.current
 
-    viewModel.sideEffect.collectSideEffect {
-        when (it) {
+    viewModel.sideEffect.collectSideEffect { sideEffect ->
+        when (sideEffect) {
             is HomeSideEffect.ShowRetryDialog -> {
-                dialogEventProvider.show(it.onRetry)
+                dialogTrigger.show(sideEffect.onRetry)
             }
         }
     }
@@ -112,10 +119,14 @@ internal fun HomeRoute(
             HomeScreen(
                 paddingValues = paddingValues,
                 uiState = state.data,
+                onAlarmClick = { /* TODO: 알람 스크린으로 이동 by.angrypodo*/ },
                 onDateSelected = viewModel::onDateSelected,
                 onMonthChanged = viewModel::onMonthChanged,
                 onWriteDiaryClick = navigateToDiaryWrite,
-                onDiaryPreviewClick = navigateToDiaryFeedback
+                onDiaryPreviewClick = navigateToDiaryFeedback,
+                onDeleteClick = { /* TODO: 삭제 by.angrypodo*/ },
+                onPublishClick = { /* TODO: 게시 by.angrypodo*/ },
+                onUnpublishClick = { /* TODO: 비게시 by.angrypodo*/ }
             )
         }
 
@@ -127,20 +138,24 @@ internal fun HomeRoute(
 private fun HomeScreen(
     paddingValues: PaddingValues,
     uiState: HomeUiState,
+    onAlarmClick: () -> Unit,
     onDateSelected: (LocalDate) -> Unit,
     onMonthChanged: (YearMonth) -> Unit,
     onWriteDiaryClick: (LocalDate) -> Unit,
-    onDiaryPreviewClick: (diaryId: Long) -> Unit
+    onDiaryPreviewClick: (diaryId: Long) -> Unit,
+    onDeleteClick: () -> Unit,
+    onPublishClick: () -> Unit,
+    onUnpublishClick: () -> Unit
 ) {
     val date = uiState.selectedDate
-    val today = remember { LocalDate.now() }
-    val isWritten = remember(uiState.dateList, date) {
-        uiState.dateList.any { LocalDate.parse(it.date) == date }
-    }
-
-    val isFuture = remember(date, today) { date.isAfter(today) }
-    val isWritable = remember(isFuture, date, today) { !isFuture && date.isAfter(today.minusDays(2)) }
     val verticalScrollState = rememberScrollState()
+
+    val isWritten = remember(uiState.dateList, date) {
+        isDateWritten(date, uiState.dateList)
+    }
+    val isFuture = remember(date) { isDateFuture(date) }
+    val isWritable = remember(date) { isDateWritable(date) }
+    var isExpanded by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -155,6 +170,8 @@ private fun HomeScreen(
                 nickname = userProfile.nickname,
                 totalDiaries = userProfile.totalDiaries,
                 streak = userProfile.streak,
+                isNewAlarm = userProfile.isNewAlarm,
+                onAlarmClick = onAlarmClick,
                 modifier = Modifier
                     .background(hilingualBlack)
                     .padding(horizontal = 16.dp)
@@ -192,11 +209,21 @@ private fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 DiaryDateInfo(
-                    selectedDateProvider = { date },
-                    isWrittenProvider = { isWritten }
+                    selectedDate = date,
+                    isPublished = uiState.diaryThumbnail?.isPublished ?: false,
+                    isWritten = isWritten
                 )
-
-                if (isWritable) DateTimeInfo(remainingTime = uiState.todayTopic?.remainingTime)
+                when {
+                    isWritten -> HomeDropDownMenu(
+                        isExpanded = isExpanded,
+                        isPublished = uiState.diaryThumbnail?.isPublished ?: false,
+                        onExpandedChange = { isExpanded = it },
+                        onDeleteClick = onDeleteClick,
+                        onPublishClick = onPublishClick,
+                        onUnpublishClick = onUnpublishClick
+                    )
+                    isWritable -> DiaryTimeInfo(remainingTime = uiState.todayTopic?.remainingTime)
+                }
             }
 
             Spacer(Modifier.height(16.dp))
@@ -241,34 +268,85 @@ private fun HomeScreen(
     }
 }
 
-@Preview
+@Preview(showBackground = true, name = "Interactive HomeScreen Preview")
 @Composable
-private fun HomeScreenPreview() {
+private fun InteractiveHomeScreenPreview() {
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var writtenDiaries by remember {
+        mutableStateOf(
+            mapOf(
+                LocalDate.now() to DiaryThumbnailUiModel(
+                    diaryId = 1L,
+                    originalText = "Today's diary.",
+                    imageUrl = "",
+                    isPublished = false
+                ),
+                LocalDate.now().minusDays(2) to DiaryThumbnailUiModel(
+                    diaryId = 2L,
+                    originalText = "Diary from 2 days ago.",
+                    imageUrl = "",
+                    isPublished = true
+                ),
+                LocalDate.now().minusDays(3) to DiaryThumbnailUiModel(
+                    diaryId = 3L,
+                    originalText = "Diary from 3 days ago.",
+                    imageUrl = "",
+                    isPublished = false
+                )
+            )
+        )
+    }
+
+    val writtenDates = writtenDiaries.keys
+    val diaryForSelectedDate = writtenDiaries[selectedDate]
+    val isWritten = selectedDate in writtenDates
+    val isWritable = remember(selectedDate) { isDateWritable(selectedDate) }
+
     val uiState = HomeUiState(
         userProfile = UserProfileUiModel(
             profileImg = "",
-            nickname = "Hilingual",
-            totalDiaries = 10,
+            nickname = "Podo",
+            totalDiaries = writtenDates.size,
             streak = 5
         ),
-        selectedDate = LocalDate.now(),
-        diaryThumbnail = DiaryThumbnailUiModel(
-            diaryId = 1L,
-            originalText = "Today I went to the park\n and played with my dog.\n It was a lot of fun.",
-            imageUrl = ""
-        ),
-        dateList = List(10) {
-            DateUiModel(date = LocalDate.now().minusDays(it.toLong()).toString())
-        }.toPersistentList()
+        selectedDate = selectedDate,
+        dateList = writtenDates.map { DateUiModel(it.toString()) }.toPersistentList(),
+        diaryThumbnail = diaryForSelectedDate,
+        todayTopic = if (!isWritten && isWritable) {
+            TodayTopicUiModel(
+                topicKo = "인터랙티브 주제",
+                topicEn = "Interactive Topic",
+                remainingTime = 1000
+            )
+        } else {
+            null
+        }
     )
+
     HilingualTheme {
         HomeScreen(
             paddingValues = PaddingValues(0.dp),
             uiState = uiState,
-            onDateSelected = {},
+            onDateSelected = { newDate ->
+                selectedDate = newDate
+            },
             onMonthChanged = {},
             onWriteDiaryClick = {},
-            onDiaryPreviewClick = {}
+            onDiaryPreviewClick = {},
+            onAlarmClick = {},
+            onDeleteClick = {
+                writtenDiaries = writtenDiaries - selectedDate
+            },
+            onPublishClick = {
+                writtenDiaries[selectedDate]?.let {
+                    writtenDiaries = writtenDiaries + (selectedDate to it.copy(isPublished = true))
+                }
+            },
+            onUnpublishClick = {
+                writtenDiaries[selectedDate]?.let {
+                    writtenDiaries = writtenDiaries + (selectedDate to it.copy(isPublished = false))
+                }
+            }
         )
     }
 }

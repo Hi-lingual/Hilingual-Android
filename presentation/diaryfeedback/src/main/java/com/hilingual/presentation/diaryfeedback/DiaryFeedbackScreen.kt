@@ -17,7 +17,6 @@ package com.hilingual.presentation.diaryfeedback
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,7 +26,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -47,6 +45,7 @@ import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.provider.LocalSystemBarsColor
+import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -55,7 +54,6 @@ import com.hilingual.core.designsystem.component.dialog.diary.DiaryPublishDialog
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDialog
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
-import com.hilingual.core.designsystem.event.LocalDialogEventProvider
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.diaryfeedback.component.FeedbackMenuBottomSheet
@@ -76,7 +74,7 @@ internal fun DiaryFeedbackRoute(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val localSystemBarsColor = LocalSystemBarsColor.current
     var isImageDetailVisible by remember { mutableStateOf(false) }
-    val dialogEventProvider = LocalDialogEventProvider.current
+    val dialogTrigger = LocalDialogTrigger.current
 
     BackHandler {
         if (isImageDetailVisible) {
@@ -95,7 +93,7 @@ internal fun DiaryFeedbackRoute(
     viewModel.sideEffect.collectSideEffect {
         when (it) {
             is DiaryFeedbackSideEffect.ShowRetryDialog -> {
-                dialogEventProvider.show(it.onRetry)
+                dialogTrigger.show(it.onRetry)
             }
         }
     }
@@ -136,6 +134,7 @@ private fun DiaryFeedbackScreen(
     val recommendListState = rememberLazyListState()
 
     val successData = (uiState as? UiState.Success)?.data
+    val isPublished = successData?.isPublished ?: false
 
     val isFabVisible by remember {
         derivedStateOf {
@@ -155,15 +154,15 @@ private fun DiaryFeedbackScreen(
     }
 
     Column(
-        verticalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .fillMaxSize()
+            .background(HilingualTheme.colors.white)
             .padding(paddingValues)
     ) {
         BackAndMoreTopAppBar(
             title = "일기장",
             onBackClicked = onBackClick,
-            onMoreClicked = { isReportBottomSheetVisible = true },
+            onMoreClicked = { isReportBottomSheetVisible = true }
         )
 
         HilingualBasicTabRow(
@@ -180,7 +179,6 @@ private fun DiaryFeedbackScreen(
             modifier = Modifier.weight(1f)
         ) {
             Column(
-                verticalArrangement = Arrangement.Top,
                 modifier = Modifier
                     .fillMaxSize()
                     .background(HilingualTheme.colors.white)
@@ -241,23 +239,25 @@ private fun DiaryFeedbackScreen(
             )
         }
 
-        Surface(
-            color = HilingualTheme.colors.gray100,
-            modifier = Modifier.padding(
-                horizontal = 16.dp,
-                vertical = 12.dp
-            )
-        ) {
-            val isPublished = successData?.isPublished ?: false
-
-            HilingualButton(
-                text = if (isPublished) "비공개하기" else "피드에 게시하기",
-                onClick = { isPublishDialogVisible = true }
-            )
-        }
+        HilingualButton(
+            text = if (isPublished) "비공개하기" else "피드에 게시하기",,
+            onClick = { isPublishDialogVisible = true },
+            modifier = Modifier
+                .background(HilingualTheme.colors.gray100)
+                .padding(horizontal = 16.dp)
+                .padding(top = 12.dp, bottom = 16.dp)
+        )
     }
 
-    if (successData?.isPublished == true) {
+    if (isImageDetailVisible && successData?.diaryContent?.imageUrl != null) {
+        ModalImage(
+            imageUrl = successData.diaryContent.imageUrl,
+            onBackClick = onChangeImageDetailVisible,
+            modifier = modifier.padding(paddingValues)
+        )
+    }
+
+    if (isPublished) {
         DiaryUnpublishDialog(
             isVisible = isPublishDialogVisible,
             onDismiss = { isPublishDialogVisible = false },
@@ -303,14 +303,6 @@ private fun DiaryFeedbackScreen(
         onDismiss = { isReportDialogVisible = false },
         onReportClick = onReportClick
     )
-
-    if (isImageDetailVisible && successData?.diaryContent?.imageUrl != null) {
-        ModalImage(
-            imageUrl = successData.diaryContent.imageUrl,
-            onBackClick = onChangeImageDetailVisible,
-            modifier = modifier.padding(paddingValues)
-        )
-    }
 }
 
 @Preview(showBackground = true)
