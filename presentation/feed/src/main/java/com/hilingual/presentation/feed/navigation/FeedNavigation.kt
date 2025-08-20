@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.hilingual.core.navigation.MainTabRoute
+import com.hilingual.presentation.feed.FeedRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -24,6 +25,6 @@ fun NavGraphBuilder.feedNavGraph(
     paddingValues: PaddingValues
 ) {
     composable<Feed> {
-//        FeedRoute(paddingValues = paddingValues)
+        FeedRoute(paddingValues = paddingValues)
     }
 }
