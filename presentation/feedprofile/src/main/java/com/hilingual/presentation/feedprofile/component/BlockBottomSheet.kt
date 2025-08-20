@@ -1,5 +1,6 @@
 package com.hilingual.presentation.feedprofile.component
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -7,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -72,9 +72,9 @@ internal fun BlockBottomSheet(
             CHECK_TEXTS.forEach { text ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 4.dp)
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_check_24),
@@ -82,8 +82,6 @@ internal fun BlockBottomSheet(
                         tint = HilingualTheme.colors.gray850,
                         modifier = Modifier.size(20.dp)
                     )
-
-                    Spacer(modifier = Modifier.width(4.dp))
 
                     Text(
                         text = text,
