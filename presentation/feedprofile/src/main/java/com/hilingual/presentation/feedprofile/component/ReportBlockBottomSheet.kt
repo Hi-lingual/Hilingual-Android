@@ -28,14 +28,14 @@ internal fun ReportBlockBottomSheet(
         modifier = modifier
     ) {
         HilingualMenuBottomSheetItem(
-            text = "신고하기",
+            text = "계정 차단하기",
             iconResId = R.drawable.ic_block_24_gray,
-            onClick = onReportClick
+            onClick = onBlockClick
         )
         HilingualMenuBottomSheetItem(
-            text = "차단하기",
+            text = "게시글 신고하기",
             iconResId = R.drawable.ic_report_24,
-            onClick = onBlockClick
+            onClick = onReportClick
         )
     }
 }

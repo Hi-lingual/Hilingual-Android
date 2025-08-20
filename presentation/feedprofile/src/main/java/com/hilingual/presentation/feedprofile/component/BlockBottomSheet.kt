@@ -61,7 +61,7 @@ internal fun BlockBottomSheet(
 
             Text(
                 text = "차단 시 상대방은 차단 여부를 알 수 없으며,\n" +
-                    "언제든 차단을 해제 할 수 있어요.",
+                        "언제든 차단을 해제 할 수 있어요.",
                 style = HilingualTheme.typography.bodyM14,
                 color = HilingualTheme.colors.gray400
             )
@@ -73,11 +73,12 @@ internal fun BlockBottomSheet(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(vertical = 4.dp)
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_check_24),
                         contentDescription = null,
-                        tint = HilingualTheme.colors.black,
+                        tint = HilingualTheme.colors.gray850,
                         modifier = Modifier.size(20.dp)
                     )
 

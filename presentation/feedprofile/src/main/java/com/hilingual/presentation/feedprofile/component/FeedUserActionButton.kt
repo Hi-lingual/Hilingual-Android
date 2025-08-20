@@ -26,15 +26,15 @@ fun FeedUserActionButton(
 ) {
     val (buttonColor, textColor, borderColor) = if (isFilled) {
         Triple(
-            HilingualTheme.colors.white,
-            HilingualTheme.colors.gray500,
-            HilingualTheme.colors.gray200
-        )
-    } else {
-        Triple(
             HilingualTheme.colors.hilingualBlack,
             HilingualTheme.colors.white,
             HilingualTheme.colors.hilingualBlack
+        )
+    } else {
+        Triple(
+            HilingualTheme.colors.white,
+            HilingualTheme.colors.gray500,
+            HilingualTheme.colors.gray200
         )
     }
 
@@ -65,11 +65,11 @@ private data class FeedUserActionButtonPreviewData(
 private class FeedUserActionButtonPreviewParameterProvider :
     PreviewParameterProvider<FeedUserActionButtonPreviewData> {
     override val values = sequenceOf(
-        FeedUserActionButtonPreviewData(isFilled = false, buttonText = "팔로우"),
-        FeedUserActionButtonPreviewData(isFilled = false, buttonText = "맞팔로우"),
-        FeedUserActionButtonPreviewData(isFilled = false, buttonText = "차단"),
-        FeedUserActionButtonPreviewData(isFilled = true, buttonText = "팔로잉"),
-        FeedUserActionButtonPreviewData(isFilled = true, buttonText = "차단 해제하기")
+        FeedUserActionButtonPreviewData(isFilled = true, buttonText = "팔로우"),
+        FeedUserActionButtonPreviewData(isFilled = true, buttonText = "맞팔로우"),
+        FeedUserActionButtonPreviewData(isFilled = true, buttonText = "차단"),
+        FeedUserActionButtonPreviewData(isFilled = false, buttonText = "팔로잉"),
+        FeedUserActionButtonPreviewData(isFilled = false, buttonText = "차단 해제하기")
     )
 }
 
