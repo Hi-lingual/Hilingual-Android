@@ -38,6 +38,7 @@ internal enum class MainTab(
         route = Voca,
         label = "단어장"
     ),
+    //TODO: 피드로 변경
     COMMUNITY(
         iconRes = R.drawable.ic_community_24,
         route = Community,
