@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.hilingual.build_logic.setNamespace
 
 plugins {
