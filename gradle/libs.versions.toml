@@ -60,6 +60,7 @@ ktlint = "11.5.1"
 pebble = "0.1.0"
 phoenix = "3.0.0"
 balloonCompose = "1.6.13"
+richeditorCompose = "1.0.0-rc13"
 
 # ML Kit
 mlkitTextRecognition = "16.0.1"
@@ -144,6 +145,7 @@ lottie = { group = "com.airbnb.android", name = "lottie-compose", version.ref = 
 balloon-compose = { group = "com.github.skydoves", name = "balloon-compose", version.ref = "balloonCompose" }
 
 # Utilities
+richeditor-compose = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "richeditorCompose" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 jakewharton-process-phoenix = { group = "com.jakewharton", name = "process-phoenix", version.ref = "phoenix" }
 pebble = { group = "io.github.chattymin", name = "pebble", version.ref = "pebble" }
