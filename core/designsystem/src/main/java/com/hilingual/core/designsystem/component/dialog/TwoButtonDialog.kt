@@ -33,14 +33,14 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun TwoButtonDialog(
+    modifier: Modifier = Modifier,
     title: String,
-    description: String,
+    description: String? = null,
     cancelText: String,
     confirmText: String,
     onNegative: () -> Unit,
     onPositive: () -> Unit,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
     properties: DialogProperties = DialogProperties()
 ) {
     HilingualBasicDialog(
@@ -54,15 +54,17 @@ fun TwoButtonDialog(
             color = HilingualTheme.colors.gray850
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        if (description != null) {
+            Spacer(modifier = Modifier.height(8.dp))
 
-        Text(
-            text = description,
-            style = HilingualTheme.typography.captionM12,
-            color = HilingualTheme.colors.gray400,
-            maxLines = 2,
-            textAlign = TextAlign.Center
-        )
+            Text(
+                text = description,
+                style = HilingualTheme.typography.captionM12,
+                color = HilingualTheme.colors.gray400,
+                maxLines = 2,
+                textAlign = TextAlign.Center
+            )
+        }
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(13.dp),
