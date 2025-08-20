@@ -1,7 +1,9 @@
 package com.hilingual.presentation.feed
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,6 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.content.FeedContent
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.presentation.feed.component.FeedEmptyCard
+import com.hilingual.presentation.feed.component.FeedEmptyCardType
 import com.hilingual.presentation.feed.model.FeedPreviewUiModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
@@ -32,7 +36,8 @@ internal fun FeedTabScreen(
     onContentClick: (Long) -> Unit,
     onLikeClick: (Long) -> Unit,
     onMoreClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    hasFollowing: Boolean = true
 ) {
     LazyColumn(
         state = listState,
@@ -42,33 +47,47 @@ internal fun FeedTabScreen(
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        itemsIndexed(
-            items = feedList,
-            key = { _, feed -> feed.diaryId }
-        ) { index, feed ->
-            with(feed) {
-                FeedContent(
-                    profileUrl = profileUrl,
-                    onProfileClick = { onProfileClick(userId) },
-                    nickname = nickname,
-                    streak = streak,
-                    sharedDateInMinutes = sharedDateInMinutes,
-                    onMenuClick = { onMenuClick(diaryId) },
-                    content = content,
-                    onContentClick = { onContentClick(diaryId) },
-                    imageUrl = imageUrl,
-                    diaryId = diaryId,
-                    likeCount = likeCount,
-                    isLiked = isLiked,
-                    onLikeClick = { onLikeClick(diaryId) },
-                    onMoreClick = onMoreClick,
+        if (feedList.isEmpty()) {
+            item {
+                Column(
+                    modifier = Modifier.fillParentMaxSize()
+                ) {
+                    Spacer(Modifier.weight(16f))
+                    FeedEmptyCard(
+                        type = if (hasFollowing) FeedEmptyCardType.NOT_FEED else FeedEmptyCardType.NOT_FOLLOWING,
+                    )
+                    Spacer(Modifier.weight(30f))
+                }
+            }
+        } else {
+            itemsIndexed(
+                items = feedList,
+                key = { _, feed -> feed.diaryId }
+            ) { index, feed ->
+                with(feed) {
+                    FeedContent(
+                        profileUrl = profileUrl,
+                        onProfileClick = { onProfileClick(userId) },
+                        nickname = nickname,
+                        streak = streak,
+                        sharedDateInMinutes = sharedDateInMinutes,
+                        onMenuClick = { onMenuClick(diaryId) },
+                        content = content,
+                        onContentClick = { onContentClick(diaryId) },
+                        imageUrl = imageUrl,
+                        diaryId = diaryId,
+                        likeCount = likeCount,
+                        isLiked = isLiked,
+                        onLikeClick = { onLikeClick(diaryId) },
+                        onMoreClick = onMoreClick,
+                    )
+                }
+
+                if (index != feedList.lastIndex) HorizontalDivider(
+                    color = HilingualTheme.colors.gray100,
+                    thickness = 1.dp
                 )
             }
-
-            if (index != feedList.lastIndex) HorizontalDivider(
-                color = HilingualTheme.colors.gray100,
-                thickness = 1.dp
-            )
         }
     }
 }

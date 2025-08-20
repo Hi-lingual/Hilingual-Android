@@ -43,6 +43,7 @@ private fun FeedScreen(
     modifier: Modifier = Modifier,
     recommendFeeds: PersistentList<FeedPreviewUiModel> = persistentListOf(),
     followingFeeds: PersistentList<FeedPreviewUiModel> = persistentListOf(),
+    hasFollowing: Boolean = true
 ) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -114,7 +115,8 @@ private fun FeedScreen(
                         onMenuClick = {},
                         onContentClick = {},
                         onLikeClick = {},
-                        onMoreClick = {}
+                        onMoreClick = {},
+                        hasFollowing = hasFollowing
                     )
                 }
             }
@@ -183,20 +185,8 @@ private fun FeedScreenPreview() {
                     isLiked = false
                 )
             ),
-            followingFeeds = persistentListOf(
-                FeedPreviewUiModel(
-                    userId = 2,
-                    profileUrl = "",
-                    nickname = "FoodieCoder",
-                    streak = 3,
-                    sharedDateInMinutes = 60L * 2,
-                    content = "Trying out a new recipe tonight. It's a bit spicy but delicious! 🌶️",
-                    imageUrl = null,
-                    diaryId = 2,
-                    likeCount = 75,
-                    isLiked = true
-                ),
-            )
+            followingFeeds = persistentListOf(),
+            hasFollowing = false
         )
     }
 }
