@@ -127,8 +127,7 @@ internal fun DiaryFeedbackRoute(
         onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
         onToggleIsPublished = viewModel::toggleIsPublished,
         onToggleBookmark = viewModel::toggleBookmark,
-        onShowSnackbar = viewModel::showPublishSnackbar,
-        onShowToast = viewModel::showToast
+        onDeleteDiary = viewModel::deleteDiary
     )
 }
 
@@ -142,8 +141,7 @@ private fun DiaryFeedbackScreen(
     onChangeImageDetailVisible: () -> Unit,
     onToggleIsPublished: (Boolean) -> Unit,
     onToggleBookmark: (Long, Boolean) -> Unit,
-    onShowSnackbar: () -> Unit,
-    onShowToast: (String) -> Unit,
+    onDeleteDiary: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isPublishDialogVisible by remember { mutableStateOf(false) }
@@ -286,7 +284,6 @@ private fun DiaryFeedbackScreen(
             onPrivateClick = {
                 onToggleIsPublished(false)
                 isPublishDialogVisible = false
-                onShowToast("일기가 비공개되었어요!")
             }
         )
     } else {
@@ -296,7 +293,6 @@ private fun DiaryFeedbackScreen(
             onPostClick = {
                 onToggleIsPublished(true)
                 isPublishDialogVisible = false
-                onShowSnackbar()
             }
         )
     }
@@ -306,8 +302,7 @@ private fun DiaryFeedbackScreen(
         onDismiss = { isDeleteDialogVisible = false },
         onDeleteClick = {
             isDeleteDialogVisible = false
-            // TODO: 삭제 후 홈으로 이동
-            onShowToast("삭제가 완료되었어요.")
+            onDeleteDiary()
         }
     )
 
@@ -350,8 +345,7 @@ private fun DiaryFeedbackScreenPreview() {
             onReportClick = {},
             onToggleBookmark = { _, _ -> {} },
             onToggleIsPublished = {},
-            onShowSnackbar = {},
-            onShowToast = {}
+            onDeleteDiary = {}
         )
     }
 }
