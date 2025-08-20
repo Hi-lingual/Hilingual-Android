@@ -19,31 +19,44 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedTopAppBar
 import com.hilingual.presentation.feed.model.FeedPreviewUiModel
-import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun FeedRoute(
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    viewModel: FeedViewModel = hiltViewModel()
 ) {
-    FeedScreen(
-        paddingValues = paddingValues
-    )
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    when (state) {
+        is UiState.Loading -> {
+            //TODO: 로딩 처리
+        }
+
+        is UiState.Success -> {
+            FeedScreen(
+                paddingValues = paddingValues,
+                uiState = (state as UiState.Success<FeedUiState>).data
+            )
+        }
+        else -> {}
+    }
 }
 
 @Composable
 private fun FeedScreen(
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
-    recommendFeeds: PersistentList<FeedPreviewUiModel> = persistentListOf(),
-    followingFeeds: PersistentList<FeedPreviewUiModel> = persistentListOf(),
-    hasFollowing: Boolean = true
+    uiState: FeedUiState
 ) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -100,7 +113,7 @@ private fun FeedScreen(
                 when (page) {
                     0 -> FeedTabScreen(
                         listState = recommendListState,
-                        feedList = recommendFeeds,
+                        feedList = uiState.recommendFeedList,
                         onProfileClick = {},
                         onMenuClick = {},
                         onContentClick = {},
@@ -110,13 +123,13 @@ private fun FeedScreen(
 
                     1 -> FeedTabScreen(
                         listState = followingsListState,
-                        feedList = followingFeeds,
+                        feedList = uiState.followingFeedList,
                         onProfileClick = {},
                         onMenuClick = {},
                         onContentClick = {},
                         onLikeClick = {},
                         onMoreClick = {},
-                        hasFollowing = hasFollowing
+                        hasFollowing = uiState.hasFollowing
                     )
                 }
             }
@@ -145,48 +158,50 @@ private fun FeedScreenPreview() {
     HilingualTheme {
         FeedScreen(
             paddingValues = PaddingValues(),
-            recommendFeeds = persistentListOf(
-                FeedPreviewUiModel(
-                    userId = 1,
-                    profileUrl = "",
-                    nickname = "TravelExplorer",
-                    streak = 15,
-                    sharedDateInMinutes = 5L,
-                    content = "Just enjoyed a beautiful sunset over the mountains! #travel #nature",
-                    imageUrl = "",
-                    diaryId = 1,
-                    likeCount = 120,
-                    isLiked = false
+            uiState = FeedUiState(
+                recommendFeedList = persistentListOf(
+                    FeedPreviewUiModel(
+                        userId = 1,
+                        profileUrl = "",
+                        nickname = "작나",
+                        streak = 15,
+                        sharedDateInMinutes = 5L,
+                        content = "Just enjoyed a beautiful sunset over the mountains! #travel #nature",
+                        imageUrl = "",
+                        diaryId = 1,
+                        likeCount = 120,
+                        isLiked = false
+                    ),
+                    FeedPreviewUiModel(
+                        userId = 2,
+                        profileUrl = "",
+                        nickname = "한민돌",
+                        streak = 3,
+                        sharedDateInMinutes = 60L * 2,
+                        content = "Trying out a new recipe tonight. It's a bit spicy but delicious! 🌶️",
+                        imageUrl = null,
+                        diaryId = 2,
+                        likeCount = 75,
+                        isLiked = true
+                    ),
+                    FeedPreviewUiModel(
+                        userId = 3,
+                        profileUrl = "",
+                        nickname = "효비",
+                        streak = 99,
+                        sharedDateInMinutes = 60L * 24 * 3,
+                        content = "Finished an amazing novel. Highly recommend it to anyone who loves a good mystery. " +
+                                "The plot twists were incredible, and the characters were so well-developed. " +
+                                "I couldn't put it down until I reached the very last page!",
+                        imageUrl = "",
+                        diaryId = 3,
+                        likeCount = 210,
+                        isLiked = false
+                    )
                 ),
-                FeedPreviewUiModel(
-                    userId = 2,
-                    profileUrl = "",
-                    nickname = "FoodieCoder",
-                    streak = 3,
-                    sharedDateInMinutes = 60L * 2,
-                    content = "Trying out a new recipe tonight. It's a bit spicy but delicious! 🌶️",
-                    imageUrl = null,
-                    diaryId = 2,
-                    likeCount = 75,
-                    isLiked = true
-                ),
-                FeedPreviewUiModel(
-                    userId = 3,
-                    profileUrl = "",
-                    nickname = "BookwormReader",
-                    streak = 99,
-                    sharedDateInMinutes = 60L * 24 * 3,
-                    content = "Finished an amazing novel. Highly recommend it to anyone who loves a good mystery. " +
-                            "The plot twists were incredible, and the characters were so well-developed. " +
-                            "I couldn't put it down until I reached the very last page!",
-                    imageUrl = "",
-                    diaryId = 3,
-                    likeCount = 210,
-                    isLiked = false
-                )
-            ),
-            followingFeeds = persistentListOf(),
-            hasFollowing = false
+                followingFeedList = persistentListOf(),
+                hasFollowing = false
+            )
         )
     }
 }

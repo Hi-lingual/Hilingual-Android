@@ -24,13 +24,13 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedEmptyCard
 import com.hilingual.presentation.feed.component.FeedEmptyCardType
 import com.hilingual.presentation.feed.model.FeedPreviewUiModel
-import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun FeedTabScreen(
     listState: LazyListState,
-    feedList: PersistentList<FeedPreviewUiModel>,
+    feedList: ImmutableList<FeedPreviewUiModel>,
     onProfileClick: (Long) -> Unit,
     onMenuClick: (Long) -> Unit,
     onContentClick: (Long) -> Unit,
