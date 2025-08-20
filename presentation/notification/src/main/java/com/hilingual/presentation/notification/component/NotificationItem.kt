@@ -19,14 +19,13 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
-private val BoldNameRegex = Regex("(\\S*님\\S*)")
+private val BOLD_NAME_REGEX = Regex("(\\S+님)")
 
 @Composable
 internal fun NotificationItem(
@@ -57,16 +56,13 @@ internal fun NotificationItem(
         ) {
             Text(
                 text = buildAnnotatedString {
-                    val matchResult = BoldNameRegex.find(title)
-                    if (matchResult != null) {
-                        val range = matchResult.range
-                        append(title.substring(0, range.first))
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append(matchResult.value)
-                        }
-                        append(title.substring(range.last + 1))
-                    } else {
-                        append(title)
+                    append(title)
+                    BOLD_NAME_REGEX.find(title)?.let { matchResult ->
+                        addStyle(
+                            style = SpanStyle(fontWeight = FontWeight.Bold),
+                            start = matchResult.range.first,
+                            end = matchResult.range.last + 1
+                        )
                     }
                 },
                 style = typo.bodyM16,

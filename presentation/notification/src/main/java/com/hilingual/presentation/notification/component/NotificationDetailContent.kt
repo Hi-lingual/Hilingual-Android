@@ -63,7 +63,7 @@ internal fun NotificationDetailContent(
             state = textState,
             modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp),
             style = HilingualTheme.typography.bodyM14,
-            color = HilingualTheme.colors.black
+            color = HilingualTheme.colors.gray850
         )
     }
 }
