@@ -1,5 +1,6 @@
 package com.hilingual.presentation.notification.main.tab
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -18,7 +19,9 @@ internal fun NoticeScreen(
     if (notifications.isEmpty()) {
         EmptyImage()
     } else {
-        LazyColumn(modifier = modifier) {
+        LazyColumn(
+            modifier = modifier.fillMaxSize()
+        ) {
             items(
                 items = notifications,
                 key = { it.id }
