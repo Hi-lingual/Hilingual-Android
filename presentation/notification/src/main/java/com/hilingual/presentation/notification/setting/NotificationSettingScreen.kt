@@ -34,7 +34,7 @@ internal fun NotificationSettingScreen(
             .padding(paddingValues)
     ) {
         BackTopAppBar(
-            title = "알림설정",
+            title = "알림 설정",
             onBackClicked = onBackClick
         )
 
