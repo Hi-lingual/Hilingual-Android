@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -60,7 +59,7 @@ private fun FeedScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
-    // TODO: 탭 이동 시 이전 탭 스크롤 위치 유지
+
     val recommendListState = rememberLazyListState()
     val followingsListState = rememberLazyListState()
 
@@ -70,14 +69,6 @@ private fun FeedScreen(
                 0 -> recommendListState.firstVisibleItemScrollOffset > 5
                 else -> followingsListState.firstVisibleItemScrollOffset > 5
             }
-        }
-    }
-
-    LaunchedEffect(pagerState.currentPage) {
-        if (pagerState.currentPage == 0) {
-            recommendListState.scrollToItem(0)
-        } else {
-            followingsListState.scrollToItem(0)
         }
     }
 
