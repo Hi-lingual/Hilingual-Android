@@ -28,11 +28,11 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun MyInfoBox(
-    modifier: Modifier = Modifier,
     profileUrl: String,
     profileNickname: String,
-    onEditBtnClicked: () -> Unit,
-    onMyFeedBtnClicked: () -> Unit
+    onEditButtonClick: () -> Unit,
+    onMyFeedButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -64,7 +64,7 @@ internal fun MyInfoBox(
                 modifier = Modifier
                     .size(32.dp)
                     .padding(4.dp)
-                    .clickable { onEditBtnClicked },
+                    .clickable(onClick = onEditButtonClick),
                 imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_pen_24),
                 contentDescription = null,
                 tint = HilingualTheme.colors.gray400
@@ -76,7 +76,7 @@ internal fun MyInfoBox(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(4.dp))
                 .background(HilingualTheme.colors.black)
-                .clickable { onMyFeedBtnClicked }
+                .clickable(onClick = onMyFeedButtonClick)
                 .padding(vertical = 10.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -96,8 +96,8 @@ private fun MyInfoBoxPreview() {
         MyInfoBox(
             profileUrl = "",
             profileNickname = "내 닉네임",
-            onEditBtnClicked = { println("Block Button Clicked in Preview") },
-            onMyFeedBtnClicked = {}
+            onEditButtonClick = { println("Block Button Clicked in Preview") },
+            onMyFeedButtonClick = {}
         )
     }
 }

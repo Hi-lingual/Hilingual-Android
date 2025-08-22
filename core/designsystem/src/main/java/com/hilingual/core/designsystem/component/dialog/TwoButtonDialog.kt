@@ -33,14 +33,14 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun TwoButtonDialog(
-    modifier: Modifier = Modifier,
     title: String,
-    description: String? = null,
     cancelText: String,
     confirmText: String,
     onNegative: () -> Unit,
     onPositive: () -> Unit,
     onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+    description: String? = null,
     properties: DialogProperties = DialogProperties()
 ) {
     HilingualBasicDialog(

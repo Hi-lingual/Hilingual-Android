@@ -1,5 +1,6 @@
 package com.hilingual.presentation.mypage.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +26,7 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Immutable
 internal data class SettingItemData(
-    val iconRes: Int,
+    @DrawableRes val iconRes: Int,
     val title: String,
     val trailing: SettingTrailing,
     val onClick: (() -> Unit)?
@@ -43,7 +44,7 @@ internal fun SettingItem(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(enabled = data.onClick != null, onClick = data.onClick ?: {})
             .background(HilingualTheme.colors.white)
