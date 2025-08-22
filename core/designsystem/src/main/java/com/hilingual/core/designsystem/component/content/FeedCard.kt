@@ -40,7 +40,7 @@ fun FeedContent(
     profileUrl: String,
     onProfileClick: () -> Unit,
     nickname: String,
-    streak: Int,
+    streak: Int?,
     sharedDateInMinutes: Long,
     onMenuClick: () -> Unit,
     content: String,
@@ -121,7 +121,7 @@ fun FeedContent(
 @Composable
 private fun FeedHeader(
     nickname: String,
-    streak: Int,
+    streak: Int?,
     sharedDateInMinutes: Long,
     onMenuClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -140,27 +140,30 @@ private fun FeedHeader(
             color = HilingualTheme.colors.gray850
         )
 
-        Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_fire_16),
-            contentDescription = null,
-            tint = HilingualTheme.colors.hilingualOrange,
-            modifier = Modifier
-                .padding(start = 4.dp, end = 1.dp)
-                .size(16.dp)
-        )
+        if (streak != null) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_fire_16),
+                contentDescription = null,
+                tint = HilingualTheme.colors.hilingualOrange,
+                modifier = Modifier
+                    .padding(start = 4.dp, end = 1.dp)
+                    .size(16.dp)
+            )
 
-        Text(
-            text = streak.toString(),
-            style = HilingualTheme.typography.bodyM14,
-            color = HilingualTheme.colors.hilingualOrange,
-            modifier = Modifier.padding(end = 8.dp)
-        )
+            Text(
+                text = "$streak",
+                style = HilingualTheme.typography.bodyM14,
+                color = HilingualTheme.colors.hilingualOrange,
+            )
+        }
 
         Text(
             text = formattedDate,
             style = HilingualTheme.typography.captionM12,
             color = HilingualTheme.colors.gray400,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .weight(1f)
         )
 
         Icon(
@@ -245,6 +248,19 @@ private fun FeedHeaderPreview() {
 
 @Preview(showBackground = true)
 @Composable
+private fun FeedHeaderPreviewNoStreak() {
+    HilingualTheme {
+        FeedHeader(
+            nickname = "HilingualUser",
+            streak = null,
+            sharedDateInMinutes = 6000,
+            onMenuClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
 private fun FeedFooterPreview() {
     HilingualTheme {
         var isLikedPreview by remember { mutableStateOf(true) }
@@ -280,9 +296,9 @@ private fun FeedContentPreviewWithImage() {
             streak = 7,
             sharedDateInMinutes = 3,
             content = "Today was a busy but fulfilling day. I spent the morning working on my project and finally solved a problem that had been bothering me for days. " +
-                "In the afternoon, I met a friend for coffee and we talked about our future plans.\n" +
-                "The weather was warm and sunny, which made the walk back home really pleasant.\n" +
-                "I feel tired now, but also proud of how I spent my day.",
+                    "In the afternoon, I met a friend for coffee and we talked about our future plans.\n" +
+                    "The weather was warm and sunny, which made the walk back home really pleasant.\n" +
+                    "I feel tired now, but also proud of how I spent my day.",
             imageUrl = "https://picsum.photos/id/1060/800/600",
             likeCount = likeCount,
             isLiked = isLiked,
@@ -309,13 +325,13 @@ private fun FeedContentPreviewNoImage() {
         FeedContent(
             profileUrl = "",
             nickname = "User123",
-            streak = 32,
+            streak = null, // null인 경우 테스트
             sharedDateInMinutes = 24,
             content = "Today was a busy but fulfilling day.\n" +
-                "I spent the morning working on my project and finally solved a problem that had been bothering me for days.\n" +
-                "In the afternoon, I met a friend for coffee and we talked about our future plans.\n" +
-                "The weather was warm and sunny, which made the walk back home really pleasant.\n" +
-                "I feel tired now, but also proud of how I spent my day.",
+                    "I spent the morning working on my project and finally solved a problem that had been bothering me for days.\n" +
+                    "In the afternoon, I met a friend for coffee and we talked about our future plans.\n" +
+                    "The weather was warm and sunny, which made the walk back home really pleasant.\n" +
+                    "I feel tired now, but also proud of how I spent my day.",
             imageUrl = null,
             likeCount = likeCount,
             isLiked = isLiked,
