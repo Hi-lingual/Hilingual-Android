@@ -80,7 +80,7 @@ internal fun MainScreen(
     )
 
     val snackBarHostState = remember { SnackbarHostState() }
-    val snackbarOnClick = remember { mutableStateOf({}) }
+    var snackbarOnClick by remember { mutableStateOf({}) }
 
     val onShowToast: (String) -> Unit = remember(coroutineScope, snackBarHostState) {
         { message ->
@@ -99,7 +99,7 @@ internal fun MainScreen(
     }
     val onShowSnackbar: (SnackbarRequest) -> Unit = remember(coroutineScope, snackBarHostState) {
         { request ->
-            snackbarOnClick.value = request.onClick
+            snackbarOnClick = request.onClick
             coroutineScope.launch {
                 snackBarHostState.currentSnackbarData?.dismiss()
                 val job = launch {
@@ -108,6 +108,9 @@ internal fun MainScreen(
                         actionLabel = request.buttonText,
                         withDismissAction = true
                     )
+                }
+                job.invokeOnCompletion {
+                    snackbarOnClick = {}
                 }
                 delay(EXIT_MILLIS)
                 job.cancel()
@@ -140,7 +143,7 @@ internal fun MainScreen(
                             message = data.visuals.message,
                             buttonText = data.visuals.actionLabel ?: "",
                             onClick = {
-                                snackbarOnClick.value()
+                                snackbarOnClick()
                                 data.dismiss()
                             },
                             modifier = Modifier
