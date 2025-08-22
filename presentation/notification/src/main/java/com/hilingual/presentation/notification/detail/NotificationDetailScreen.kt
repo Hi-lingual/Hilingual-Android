@@ -1,3 +1,18 @@
+/*
+ * Copyright 2025 The Hilingual Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.hilingual.presentation.notification.detail
 
 import androidx.compose.foundation.background
@@ -50,7 +65,7 @@ private fun NotificationDetailScreenPreview() {
             title = "v 1.1.0 업데이트 알림",
             date = "2025.08.05",
             content = """
-            안녕하세요. 하이링구얼 입니다. 
+            안녕하세요. 하이링구얼 입니다.
 
             하이링구얼 앱이 v.1.1.1 로 업데이트 되었습니다!
 
@@ -58,10 +73,10 @@ private fun NotificationDetailScreenPreview() {
             앱 안정화를 위한 관련 수정
 
             앱 최신 버전을 설치하여 새로워진 하이링구얼 앱을 사용해 보세요.
-            
+
             감사합니다.
-            
-            [설치하러가기](https://youtu.be/tPbr41kRB-w?si=Cmlx2Up2rVvvrcA9)  
+
+            [설치하러가기](https://youtu.be/tPbr41kRB-w?si=Cmlx2Up2rVvvrcA9)
             """.trimIndent()
         )
     }
