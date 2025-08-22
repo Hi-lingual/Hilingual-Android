@@ -43,14 +43,11 @@ junit = "4.13.2"
 junitVersion = "1.3.0"
 mockk = "1.14.5"
 
-# Accompanist
-accompanistSystemuicontroller = "0.36.0"
-
 # Third Party
 okhttp = "5.1.0"
 retrofit = "3.0.0"
 kotlinxSerializationJson = "1.9.0"
-daggerHilt = "2.57"
+daggerHilt = "2.57.1"
 hiltNavigationCompose = "1.2.0"
 coil = "2.7.0"
 timber = "5.0.1"
@@ -116,9 +113,6 @@ coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-
 # Kotlin Serialization
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 kotlinx-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxImmutable" }
-
-# Accompanist
-accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 
 # Network
 okhttp-bom = { group = "com.squareup.okhttp3", name = "okhttp-bom", version.ref = "okhttp" }
@@ -227,3 +221,11 @@ hilt = [
 ]
 
 room = ["room-ktx", "room-runtime"]
+
+compose = [
+    "androidx-activity-compose",
+    "androidx-lifecycle-runtimeCompose",
+    "androidx-material3",
+    "androidx-ui",
+    "androidx-ui-tooling-preview",
+]

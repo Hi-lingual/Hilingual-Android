@@ -38,7 +38,4 @@ dependencies {
 
     // immutable
     implementation(libs.findLibrary("kotlinx-immutable").get())
-
-    // other
-    implementation(libs.findLibrary("accompanist-systemuicontroller").get())
 }
