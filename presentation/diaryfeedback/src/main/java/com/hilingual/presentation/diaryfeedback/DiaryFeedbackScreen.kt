@@ -44,7 +44,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
-import com.hilingual.core.common.provider.LocalSystemBarsColor
+import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
@@ -69,7 +69,6 @@ internal fun DiaryFeedbackRoute(
     val context = LocalContext.current
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val localSystemBarsColor = LocalSystemBarsColor.current
     var isImageDetailVisible by remember { mutableStateOf(false) }
     val dialogTrigger = LocalDialogTrigger.current
 
@@ -79,12 +78,6 @@ internal fun DiaryFeedbackRoute(
         } else {
             navigateUp()
         }
-    }
-
-    LaunchedEffect(Unit) {
-        localSystemBarsColor.setSystemBarColor(
-            systemBarsColor = white
-        )
     }
 
     viewModel.sideEffect.collectSideEffect {
@@ -181,6 +174,7 @@ private fun DiaryFeedbackScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .statusBarColor(white)
             .background(HilingualTheme.colors.white)
             .padding(paddingValues)
     ) {
