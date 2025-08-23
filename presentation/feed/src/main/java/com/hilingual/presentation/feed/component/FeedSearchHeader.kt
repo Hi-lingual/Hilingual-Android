@@ -32,6 +32,7 @@ internal fun FeedSearchHeader(
     onSearchTextChanged: (String) -> Unit,
     onClearClick: () -> Unit,
     onBackClick: () -> Unit,
+    onDone: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
@@ -66,7 +67,10 @@ internal fun FeedSearchHeader(
                 onClearClick()
                 focusManager.clearFocus()
             },
-            onSearchAction = { focusManager.clearFocus() }
+            onSearchAction = {
+                onDone()
+                focusManager.clearFocus()
+            }
         )
     }
 }
@@ -81,7 +85,8 @@ private fun FeedSearchHeaderPreview() {
             searchText = { searchText },
             onSearchTextChanged = { searchText = it },
             onClearClick = {},
-            onBackClick = {}
+            onBackClick = {},
+            onDone = {}
         )
     }
 }

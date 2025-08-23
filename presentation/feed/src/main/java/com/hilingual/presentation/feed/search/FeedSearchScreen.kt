@@ -8,27 +8,56 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.content.UserActionItem
+import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedSearchHeader
+import com.hilingual.presentation.feed.component.SearchEmptyCard
 import com.hilingual.presentation.feed.model.FollowState
 import com.hilingual.presentation.feed.model.UserSearchUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-internal fun FeedSearchScreen(
+internal fun FeedSearchRoute(
     paddingValues: PaddingValues,
-    userList: ImmutableList<UserSearchUiModel>
+    navigateUp: () -> Unit,
+    navigateToFeedProfile: (userId: Long) -> Unit,
+    viewModel: FeedSearchViewModel = hiltViewModel()
 ) {
-    var searchText by remember { mutableStateOf("") }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    FeedSearchScreen(
+        paddingValues = paddingValues,
+        onBackClick = navigateUp,
+        searchWord = uiState.searchKeyword,
+        onSearchWordClearClick = viewModel::clearSearchKeyword,
+        onSearchWordChanged = viewModel::updateSearchKeyword,
+        onSearchDone = viewModel::searchUser,
+        searchResultUserList = uiState.searchResultUserList,
+        onProfileClick = navigateToFeedProfile,
+        onFollowActionClick = viewModel::updateFollowingState
+    )
+}
+
+@Composable
+private fun FeedSearchScreen(
+    paddingValues: PaddingValues,
+    onBackClick: () -> Unit,
+    searchWord: String,
+    onSearchWordClearClick: () -> Unit,
+    onSearchWordChanged: (String) -> Unit,
+    onSearchDone: () -> Unit,
+    searchResultUserList: UiState<ImmutableList<UserSearchUiModel>>,
+    onProfileClick: (Long) -> Unit,
+    onFollowActionClick: (Long, Boolean) -> Unit
+) {
     LazyColumn(
         modifier = Modifier
             .background(HilingualTheme.colors.white)
@@ -37,24 +66,41 @@ internal fun FeedSearchScreen(
     ) {
         stickyHeader {
             FeedSearchHeader(
-                searchText = { searchText },
-                onSearchTextChanged = { searchText = it },
-                onClearClick = {},
-                onBackClick = {}
+                searchText = { searchWord },
+                onSearchTextChanged = onSearchWordChanged,
+                onClearClick = onSearchWordClearClick,
+                onBackClick = onBackClick,
+                onDone = onSearchDone
             )
         }
 
-        items(userList) {
-            UserActionItem(
-                userId = it.userId,
-                profileUrl = it.profileUrl,
-                nickname = it.nickname,
-                isFilled = it.followState.isFollowing,
-                buttonText = it.followState.actionText,
-                onProfileClick = {},
-                onButtonClick = {},
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+        when (searchResultUserList) {
+            is UiState.Loading -> item { HilingualLoadingIndicator() }
+
+            is UiState.Success -> {
+                with(searchResultUserList.data) {
+                    if (isEmpty()) {
+                        item {
+                            SearchEmptyCard()
+                        }
+                    } else {
+                        items(searchResultUserList.data) { user ->
+                            UserActionItem(
+                                userId = user.userId,
+                                profileUrl = user.profileUrl,
+                                nickname = user.nickname,
+                                isFilled = user.followState.isFollowing, // TODO: 로직 변경 필요
+                                buttonText = user.followState.actionText,
+                                onProfileClick = onProfileClick,
+                                onButtonClick = { onFollowActionClick(user.userId, user.followState.isFollowing) },
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
+                    }
+                }
+            }
+
+            else -> {}
         }
     }
 }
@@ -65,31 +111,40 @@ private fun FeedSearchScreenPreview() {
     HilingualTheme {
         FeedSearchScreen(
             paddingValues = PaddingValues(),
-            userList = persistentListOf(
-                UserSearchUiModel(
-                    userId = 1L,
-                    nickname = "작나",
-                    profileUrl = "",
-                    followState = FollowState.ONLY_FOLLOWING
-                ),
-                UserSearchUiModel(
-                    userId = 2L,
-                    nickname = "큰나",
-                    profileUrl = "",
-                    followState = FollowState.MUTUAL_FOLLOW
-                ),
-                UserSearchUiModel(
-                    userId = 3L,
-                    nickname = "Daljeong",
-                    profileUrl = "",
-                    followState = FollowState.NONE
-                ),
-                UserSearchUiModel(
-                    userId = 4L,
-                    nickname = "Makers",
-                    profileUrl = "",
-                    followState = FollowState.ONLY_FOLLOWED
-                ),
+            onBackClick = {},
+            searchWord = "",
+            onSearchWordClearClick = {},
+            onSearchWordChanged = { },
+            onSearchDone = {},
+            onFollowActionClick = { _, _ -> },
+            onProfileClick = {},
+            searchResultUserList = UiState.Success(
+                persistentListOf(
+                    UserSearchUiModel(
+                        userId = 1L,
+                        nickname = "작나",
+                        profileUrl = "",
+                        followState = FollowState.ONLY_FOLLOWING
+                    ),
+                    UserSearchUiModel(
+                        userId = 2L,
+                        nickname = "큰나",
+                        profileUrl = "",
+                        followState = FollowState.MUTUAL_FOLLOW
+                    ),
+                    UserSearchUiModel(
+                        userId = 3L,
+                        nickname = "Daljeong",
+                        profileUrl = "",
+                        followState = FollowState.NONE
+                    ),
+                    UserSearchUiModel(
+                        userId = 4L,
+                        nickname = "Makers",
+                        profileUrl = "",
+                        followState = FollowState.ONLY_FOLLOWED
+                    )
+                )
             )
         )
     }

@@ -34,7 +34,7 @@ enum class FollowState(
     );
 
     companion object {
-        fun getValueByFollowState(isFollowing: Boolean, isFollowed: Boolean) : FollowState? {
+        fun getValueByFollowState(isFollowing: Boolean, isFollowed: Boolean): FollowState? {
             return entries.find { it.isFollowing == isFollowing && it.isFollowed == isFollowed }
         }
     }
