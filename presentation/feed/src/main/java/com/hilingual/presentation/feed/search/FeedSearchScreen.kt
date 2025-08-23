@@ -1,7 +1,9 @@
 package com.hilingual.presentation.feed.search
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -58,43 +60,50 @@ private fun FeedSearchScreen(
     onProfileClick: (Long) -> Unit,
     onFollowActionClick: (Long, Boolean) -> Unit
 ) {
-    LazyColumn(
+    Column (
         modifier = Modifier
             .background(HilingualTheme.colors.white)
             .fillMaxSize()
             .padding(paddingValues)
     ) {
-        stickyHeader {
-            FeedSearchHeader(
-                searchText = { searchWord },
-                onSearchTextChanged = onSearchWordChanged,
-                onClearClick = onSearchWordClearClick,
-                onBackClick = onBackClick,
-                onDone = onSearchDone
-            )
-        }
+        FeedSearchHeader(
+            searchText = { searchWord },
+            onSearchTextChanged = onSearchWordChanged,
+            onClearClick = onSearchWordClearClick,
+            onBackClick = onBackClick,
+            onDone = onSearchDone
+        )
 
         when (searchResultUserList) {
-            is UiState.Loading -> item { HilingualLoadingIndicator() }
+            is UiState.Loading -> HilingualLoadingIndicator()
 
             is UiState.Success -> {
                 with(searchResultUserList.data) {
                     if (isEmpty()) {
-                        item {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Spacer(Modifier.weight(14f))
                             SearchEmptyCard()
+                            Spacer(Modifier.weight(34f))
                         }
                     } else {
-                        items(searchResultUserList.data) { user ->
-                            UserActionItem(
-                                userId = user.userId,
-                                profileUrl = user.profileUrl,
-                                nickname = user.nickname,
-                                isFilled = user.followState.isFollowing, // TODO: 로직 변경 필요
-                                buttonText = user.followState.actionText,
-                                onProfileClick = onProfileClick,
-                                onButtonClick = { onFollowActionClick(user.userId, user.followState.isFollowing) },
-                                modifier = Modifier.padding(horizontal = 16.dp)
-                            )
+                        LazyColumn {
+                            items(
+                                items = searchResultUserList.data,
+                                key = ({ user -> user.userId })
+                            ) { user ->
+                                UserActionItem(
+                                    userId = user.userId,
+                                    profileUrl = user.profileUrl,
+                                    nickname = user.nickname,
+                                    isFilled = user.followState.isFollowing, // TODO: 로직 변경 필요
+                                    buttonText = user.followState.actionText,
+                                    onProfileClick = onProfileClick,
+                                    onButtonClick = { onFollowActionClick(user.userId, user.followState.isFollowing) },
+                                    modifier = Modifier.padding(horizontal = 16.dp)
+                                )
+                            }
                         }
                     }
                 }
