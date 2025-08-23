@@ -274,39 +274,9 @@ private fun getSampleLikedDiaryData() = persistentListOf(
     )
 )
 
-
-@Preview(showBackground = true, name = "FeedProfileScreen - My Profile")
+@Preview(showBackground = true)
 @Composable
-private fun FeedProfileScreenPreviewMyProfile() {
-    HilingualTheme {
-        FeedProfileScreen(
-            onBackClick = { println("Preview: Back clicked") },
-            isMine = true,
-            profileUrl = "https://picsum.photos/id/237/200/300",
-            nickname = "MyOwnProfile",
-            follower = 155,
-            following = 70,
-            streak = 22,
-            isFollowing = false,
-            isFollowed = false,
-            isBlock = false,
-            sharedDiarys = getSampleSharedDiaryData(),
-            likedDiarys = getSampleLikedDiaryData(),
-            onProfileClick = { },
-            onLikeClick = { },
-            onFollowTypeClick = { },
-            onFollowButtonClick = { /* 내 프로필에서는 호출 안 됨 */ },
-            onFeedContentClick = { },
-            onMenuClick = { },
-            onReportClick = { },
-            onBlockClick = { }
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "FeedProfileScreen - Other's Profile (Not Following)")
-@Composable
-private fun FeedProfileScreenPreviewOthersNotFollowing() {
+private fun FeedProfileScreenPreview() {
     HilingualTheme {
         var isFollowingState by remember { mutableStateOf(false) }
         val isFollowedState by remember { mutableStateOf(false) }
@@ -329,40 +299,6 @@ private fun FeedProfileScreenPreviewOthersNotFollowing() {
             onFollowTypeClick = { },
             onFollowButtonClick = {
                 isFollowingState = !isFollowingState
-            },
-            onFeedContentClick = { },
-            onMenuClick = { },
-            onReportClick = { },
-            onBlockClick = { }
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "FeedProfileScreen - Other's Profile (They Follow Me)")
-@Composable
-private fun FeedProfileScreenPreviewOthersTheyFollow() {
-    HilingualTheme {
-        var isFollowingState by remember { mutableStateOf(false) }
-        val isFollowedState by remember { mutableStateOf(true) }
-
-        FeedProfileScreen(
-            onBackClick = { println("Preview: Back clicked") },
-            isMine = false,
-            profileUrl = "https://picsum.photos/id/240/200/300",
-            nickname = "ShouldFollowBack",
-            follower = 185,
-            following = 95,
-            streak = 7,
-            isFollowing = isFollowingState,
-            isFollowed = isFollowedState,
-            isBlock = true,
-            sharedDiarys = getSampleSharedDiaryData(),
-            likedDiarys = getSampleLikedDiaryData(),
-            onProfileClick = { },
-            onLikeClick = { },
-            onFollowTypeClick = { },
-            onFollowButtonClick = {
-                isFollowingState = true
             },
             onFeedContentClick = { },
             onMenuClick = { },
