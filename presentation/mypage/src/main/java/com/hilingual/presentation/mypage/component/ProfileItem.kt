@@ -1,10 +1,10 @@
 package com.hilingual.presentation.mypage.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,6 +30,7 @@ internal fun ProfileItem(
                 color = HilingualTheme.colors.gray200,
                 shape = RoundedCornerShape(8.dp)
             )
+            .background(HilingualTheme.colors.white, shape = RoundedCornerShape(8.dp))
             .padding(horizontal = 20.dp, vertical = 18.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -48,7 +49,7 @@ internal fun ProfileItem(
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun ProfileItemPreview() {
     HilingualTheme {
