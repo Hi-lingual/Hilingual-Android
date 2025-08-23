@@ -45,6 +45,7 @@ fun HilingualSearchTextField(
     onValueChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
     placeholder: String = "단어나 표현을 검색해 주세요",
+    backgroundColor: Color = HilingualTheme.colors.white,
     onSearchAction: () -> Unit = {},
     onTrailingIconClick: () -> Unit = {}
 ) {
@@ -57,7 +58,7 @@ fun HilingualSearchTextField(
         modifier = modifier,
         placeholderTextStyle = HilingualTheme.typography.bodyM16,
         inputTextStyle = HilingualTheme.typography.bodyM16,
-        backgroundColor = HilingualTheme.colors.white,
+        backgroundColor = backgroundColor,
         leadingIcon = {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_search_20),
