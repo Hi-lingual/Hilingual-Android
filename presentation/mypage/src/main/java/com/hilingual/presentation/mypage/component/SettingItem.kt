@@ -1,7 +1,7 @@
 package com.hilingual.presentation.mypage.component
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,12 +27,13 @@ internal fun SettingItem(
     @DrawableRes iconRes: Int,
     title: String,
     modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
     trailingContent: @Composable () -> Unit = {}
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(HilingualTheme.colors.white)
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
             .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -77,7 +78,8 @@ private fun SettingItemPreview() {
                         contentDescription = null,
                         tint = HilingualTheme.colors.gray400
                     )
-                }
+                },
+                onClick = { println("SettingItem Clicked in Preview") }
             )
             SettingItem(
                 iconRes = DesignSystemR.drawable.ic_info_24,
