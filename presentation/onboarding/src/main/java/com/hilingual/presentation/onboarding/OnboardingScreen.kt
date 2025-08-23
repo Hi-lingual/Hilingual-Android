@@ -44,7 +44,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
-import com.hilingual.core.common.provider.LocalSystemBarsColor
+import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualProfileImageBottomSheet
 import com.hilingual.core.designsystem.component.button.HilingualButton
@@ -63,7 +63,6 @@ internal fun OnboardingRoute(
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val localSystemBarsColor = LocalSystemBarsColor.current
     val dialogTrigger = LocalDialogTrigger.current
     val context = LocalContext.current
 
@@ -86,12 +85,6 @@ internal fun OnboardingRoute(
                 dialogTrigger.show(it.onRetry)
             }
         }
-    }
-
-    LaunchedEffect(Unit) {
-        localSystemBarsColor.setSystemBarColor(
-            systemBarsColor = white
-        )
     }
 
     OnboardingScreen(
@@ -138,6 +131,7 @@ private fun OnboardingScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .statusBarColor(white)
             .background(HilingualTheme.colors.white)
             .padding(paddingValues)
             .padding(horizontal = 16.dp)

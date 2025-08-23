@@ -45,7 +45,7 @@ import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.model.SnackbarRequest
-import com.hilingual.core.common.provider.LocalSystemBarsColor
+import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
@@ -75,7 +75,6 @@ internal fun DiaryFeedbackRoute(
     val context = LocalContext.current
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val localSystemBarsColor = LocalSystemBarsColor.current
     var isImageDetailVisible by remember { mutableStateOf(false) }
 
     val dialogTrigger = LocalDialogTrigger.current
@@ -88,12 +87,6 @@ internal fun DiaryFeedbackRoute(
         } else {
             navigateUp()
         }
-    }
-
-    LaunchedEffect(Unit) {
-        localSystemBarsColor.setSystemBarColor(
-            systemBarsColor = white
-        )
     }
 
     viewModel.sideEffect.collectSideEffect {
@@ -240,6 +233,7 @@ private fun DiaryFeedbackScreen(
                     }
 
                     HilingualFloatingButton(
+                        isVisible = isFabVisible,
                         onClick = {
                             coroutineScope.launch {
                                 when (pagerState.currentPage) {
@@ -248,7 +242,6 @@ private fun DiaryFeedbackScreen(
                                 }
                             }
                         },
-                        isVisible = isFabVisible,
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .padding(bottom = 24.dp, end = 16.dp)
@@ -276,54 +269,6 @@ private fun DiaryFeedbackScreen(
             modifier = modifier.padding(paddingValues)
         )
     }
-
-    if (isPublished) {
-        DiaryUnpublishDialog(
-            isVisible = isPublishDialogVisible,
-            onDismiss = { isPublishDialogVisible = false },
-            onPrivateClick = {
-                onToggleIsPublished(false)
-                isPublishDialogVisible = false
-            }
-        )
-    } else {
-        DiaryPublishDialog(
-            isVisible = isPublishDialogVisible,
-            onDismiss = { isPublishDialogVisible = false },
-            onPostClick = {
-                onToggleIsPublished(true)
-                isPublishDialogVisible = false
-            }
-        )
-    }
-
-    DiaryDeleteDialog(
-        isVisible = isDeleteDialogVisible,
-        onDismiss = { isDeleteDialogVisible = false },
-        onDeleteClick = {
-            isDeleteDialogVisible = false
-            onDeleteDiary()
-        }
-    )
-
-    FeedbackMenuBottomSheet(
-        isVisible = isReportBottomSheetVisible,
-        onDismiss = { isReportBottomSheetVisible = false },
-        onDeleteClick = {
-            isReportBottomSheetVisible = false
-            isDeleteDialogVisible = true
-        },
-        onReportClick = {
-            isReportBottomSheetVisible = false
-            isReportDialogVisible = true
-        }
-    )
-
-    FeedbackReportDialog(
-        isVisible = isReportDialogVisible,
-        onDismiss = { isReportDialogVisible = false },
-        onReportClick = onReportClick
-    )
 }
 
 @Preview(showBackground = true)
