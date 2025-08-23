@@ -1,3 +1,18 @@
+/*
+ * Copyright 2025 The Hilingual Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.hilingual.presentation.feed
 
 import androidx.compose.foundation.background
@@ -54,7 +69,7 @@ internal fun FeedTabScreen(
                 ) {
                     Spacer(Modifier.weight(16f))
                     FeedEmptyCard(
-                        type = if (hasFollowing) FeedEmptyCardType.NOT_FEED else FeedEmptyCardType.NOT_FOLLOWING,
+                        type = if (hasFollowing) FeedEmptyCardType.NOT_FEED else FeedEmptyCardType.NOT_FOLLOWING
                     )
                     Spacer(Modifier.weight(30f))
                 }
@@ -79,14 +94,16 @@ internal fun FeedTabScreen(
                         likeCount = likeCount,
                         isLiked = isLiked,
                         onLikeClick = { onLikeClick(diaryId) },
-                        onMoreClick = onMoreClick,
+                        onMoreClick = onMoreClick
                     )
                 }
 
-                if (index != feedList.lastIndex) HorizontalDivider(
-                    color = HilingualTheme.colors.gray100,
-                    thickness = 1.dp
-                )
+                if (index != feedList.lastIndex) {
+                    HorizontalDivider(
+                        color = HilingualTheme.colors.gray100,
+                        thickness = 1.dp
+                    )
+                }
             }
         }
     }
@@ -129,8 +146,8 @@ fun FeedPreviewListScreenPreview() {
                     streak = 99,
                     sharedDateInMinutes = 60L * 24 * 3,
                     content = "Finished an amazing novel. Highly recommend it to anyone who loves a good mystery. " +
-                            "The plot twists were incredible, and the characters were so well-developed. " +
-                            "I couldn't put it down until I reached the very last page!",
+                        "The plot twists were incredible, and the characters were so well-developed. " +
+                        "I couldn't put it down until I reached the very last page!",
                     imageUrl = "",
                     diaryId = 3,
                     likeCount = 210,
@@ -149,7 +166,7 @@ fun FeedPreviewListScreenPreview() {
             onContentClick = { },
             onLikeClick = { },
             onMoreClick = { },
-            modifier = Modifier.fillMaxSize() // 프리뷰 화면을 채우도록 Modifier 추가
+            modifier = Modifier.fillMaxSize()
         )
     }
 }

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2025 The Hilingual Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.hilingual.presentation.feed
 
 import androidx.compose.foundation.background
@@ -26,6 +41,7 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
+import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedTopAppBar
@@ -50,9 +66,7 @@ internal fun FeedRoute(
     }
 
     when (state) {
-        is UiState.Loading -> {
-            //TODO: 로딩 처리
-        }
+        is UiState.Loading -> HilingualLoadingIndicator()
 
         is UiState.Success -> {
             FeedScreen(
@@ -108,6 +122,7 @@ private fun FeedScreen(
     val latestReadAllFeed by rememberUpdatedState(newValue = readAllFeed)
 
     LaunchedEffect(isAtBottom, pagerState.currentPage) {
+        // TODO: 리스트 끌어당김 이벤트 감지
         if (isAtBottom) {
             latestReadAllFeed()
         }
@@ -196,12 +211,12 @@ private fun FeedScreenPreview() {
                 recommendFeedList = persistentListOf(
                     FeedPreviewUiModel(
                         userId = 1,
-                        profileUrl = "",
+                        profileUrl = "https://avatars.githubusercontent.com/u/101113025?v=4",
                         nickname = "작나",
                         streak = 15,
                         sharedDateInMinutes = 5L,
                         content = "Just enjoyed a beautiful sunset over the mountains! #travel #nature",
-                        imageUrl = "",
+                        imageUrl = "https://velog.velcdn.com/images/nahy-512/post/49cfbf3d-504f-4c2a-b0b9-458f287735e6/image.png",
                         diaryId = 1,
                         likeCount = 120,
                         isLiked = false
@@ -225,9 +240,9 @@ private fun FeedScreenPreview() {
                         streak = 99,
                         sharedDateInMinutes = 60L * 24 * 3,
                         content = "Finished an amazing novel. Highly recommend it to anyone who loves a good mystery. " +
-                                "The plot twists were incredible, and the characters were so well-developed. " +
-                                "I couldn't put it down until I reached the very last page!",
-                        imageUrl = "",
+                            "The plot twists were incredible, and the characters were so well-developed. " +
+                            "I couldn't put it down until I reached the very last page!",
+                        imageUrl = "https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                         diaryId = 3,
                         likeCount = 210,
                         isLiked = false
