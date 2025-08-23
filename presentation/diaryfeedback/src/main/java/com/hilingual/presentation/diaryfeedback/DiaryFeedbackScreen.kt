@@ -45,7 +45,6 @@ import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.model.SnackbarRequest
-import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
@@ -58,7 +57,6 @@ import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDial
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.diaryfeedback.component.FeedbackMenuBottomSheet
 import com.hilingual.presentation.diaryfeedback.component.FeedbackReportDialog
 import com.hilingual.presentation.diaryfeedback.tab.GrammarSpellingScreen
@@ -269,6 +267,54 @@ private fun DiaryFeedbackScreen(
             modifier = modifier.padding(paddingValues)
         )
     }
+
+    if (isPublished) {
+        DiaryUnpublishDialog(
+            isVisible = isPublishDialogVisible,
+            onDismiss = { isPublishDialogVisible = false },
+            onPrivateClick = {
+                onToggleIsPublished(false)
+                isPublishDialogVisible = false
+            }
+        )
+    } else {
+        DiaryPublishDialog(
+            isVisible = isPublishDialogVisible,
+            onDismiss = { isPublishDialogVisible = false },
+            onPostClick = {
+                onToggleIsPublished(true)
+                isPublishDialogVisible = false
+            }
+        )
+    }
+
+    DiaryDeleteDialog(
+        isVisible = isDeleteDialogVisible,
+        onDismiss = { isDeleteDialogVisible = false },
+        onDeleteClick = {
+            isDeleteDialogVisible = false
+            onDeleteDiary()
+        }
+    )
+
+    FeedbackMenuBottomSheet(
+        isVisible = isReportBottomSheetVisible,
+        onDismiss = { isReportBottomSheetVisible = false },
+        onDeleteClick = {
+            isReportBottomSheetVisible = false
+            isDeleteDialogVisible = true
+        },
+        onReportClick = {
+            isReportBottomSheetVisible = false
+            isReportDialogVisible = true
+        }
+    )
+
+    FeedbackReportDialog(
+        isVisible = isReportDialogVisible,
+        onDismiss = { isReportDialogVisible = false },
+        onReportClick = onReportClick
+    )
 }
 
 @Preview(showBackground = true)
