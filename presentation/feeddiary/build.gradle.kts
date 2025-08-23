@@ -20,24 +20,9 @@ plugins {
 }
 
 android {
-    setNamespace("presentation.main")
-
-    buildFeatures {
-        buildConfig = true
-    }
+    setNamespace("presentation.diaryfeedback")
 }
 
 dependencies {
-    // feature
-    implementation(projects.presentation.home)
-    implementation(projects.presentation.auth)
-    implementation(projects.presentation.diaryfeedback)
-    implementation(projects.presentation.diarywrite)
-    implementation(projects.presentation.voca)
-    implementation(projects.presentation.onboarding)
-    implementation(projects.presentation.splash)
-    implementation(projects.presentation.mypage)
-    implementation(projects.presentation.community)
-    implementation(projects.presentation.otp)
-    implementation(projects.presentation.feeddiary)
+    implementation(projects.data.diary)
 }
