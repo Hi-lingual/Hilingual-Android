@@ -16,9 +16,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDialog
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.presentation.feeddiary.component.DiaryBlockBottomSheet
 import com.hilingual.presentation.feeddiary.component.FeedDiaryProfile
 import com.hilingual.presentation.feeddiary.model.ProfileContentUiModel
 
@@ -46,9 +48,12 @@ internal fun FeedDiaryRoute(
             FeedDiaryScreen(
                 paddingValues = paddingValues,
                 uiState = (state as UiState.Success<FeedDiaryUiState>).data,
-                onBackClick = navigateUp
+                onBackClick = navigateUp,
+                onProfileClick = {},
+                onLikeClick = {},
             )
         }
+
         else -> {}
     }
 }
@@ -58,12 +63,15 @@ private fun FeedDiaryScreen(
     paddingValues: PaddingValues,
     uiState: FeedDiaryUiState,
     onBackClick: () -> Unit,
-    onProfileClick: () -> Unit = {},
-    onLikeClick: () -> Unit = {},
+    onProfileClick: () -> Unit,
+    onLikeClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
+    var isUnpublishBottomSheetVisible by remember { mutableStateOf(false) }
+    var isReportBottomSheetVisible by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
             .padding(paddingValues)
@@ -87,6 +95,30 @@ private fun FeedDiaryScreen(
             )
         }
     }
+
+    if (uiState.isMine) {
+        DiaryUnpublishDialog(
+            isVisible = isUnpublishBottomSheetVisible,
+            onDismiss = { isUnpublishBottomSheetVisible = false },
+            onPrivateClick = {
+                // TODO: 일기 비공개 API 호출
+                isUnpublishBottomSheetVisible = false
+            }
+        )
+    } else {
+        DiaryBlockBottomSheet(
+            isVisible = isReportBottomSheetVisible,
+            onDismiss = { isReportBottomSheetVisible = false },
+            onReportClick = {
+                isReportBottomSheetVisible = false
+                //TODO: 신고폼으로 이동
+            },
+            onBlockClick = {
+                isReportBottomSheetVisible = false
+                //TODO: 계정 차단 확인 모달 표시
+            },
+        )
+    }
 }
 
 @Preview(showBackground = true)
@@ -96,7 +128,10 @@ private fun FeedDiaryScreenPreview() {
         FeedDiaryScreen(
             paddingValues = PaddingValues(),
             onBackClick = {},
+            onProfileClick = {},
+            onLikeClick = {},
             uiState = FeedDiaryUiState(
+                writtenDate = "8월 23일 토요일",
                 profileContent = ProfileContentUiModel(
                     profileUrl = "",
                     nickname = "작나",

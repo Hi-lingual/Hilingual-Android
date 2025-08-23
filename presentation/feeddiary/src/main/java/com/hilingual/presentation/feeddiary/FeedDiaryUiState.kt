@@ -26,6 +26,7 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 internal data class FeedDiaryUiState(
     val writtenDate: String = "",
+    val isMine: Boolean = false,
     val profileContent: ProfileContentUiModel,
 //    val diaryContent: DiaryContentUiModel = DiaryContentUiModel(),
 //    val feedbackList: ImmutableList<FeedbackContentUiModel> = persistentListOf(),
