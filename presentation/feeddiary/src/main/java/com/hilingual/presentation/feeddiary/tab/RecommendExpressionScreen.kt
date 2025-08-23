@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.diaryfeedback.tab
+package com.hilingual.presentation.feeddiary.tab
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,7 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.content.RecommendExpressionCard
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.diaryfeedback.model.RecommendExpressionUiModel
+import com.hilingual.presentation.feeddiary.model.RecommendExpressionUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 

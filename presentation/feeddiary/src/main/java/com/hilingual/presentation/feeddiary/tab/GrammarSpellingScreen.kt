@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.diaryfeedback.tab
+package com.hilingual.presentation.feeddiary.tab
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -46,8 +46,8 @@ import com.hilingual.core.designsystem.component.content.DiaryViewModeToggle
 import com.hilingual.core.designsystem.component.content.FeedbackCard
 import com.hilingual.core.designsystem.component.content.FeedbackEmptyCard
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.diaryfeedback.model.DiaryContentUiModel
-import com.hilingual.presentation.diaryfeedback.model.FeedbackContentUiModel
+import com.hilingual.presentation.feeddiary.model.DiaryContentUiModel
+import com.hilingual.presentation.feeddiary.model.FeedbackContentUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 

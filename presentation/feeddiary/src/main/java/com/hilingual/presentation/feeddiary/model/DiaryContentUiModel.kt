@@ -13,22 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.feeddiary
+package com.hilingual.presentation.feeddiary.model
 
 import androidx.compose.runtime.Immutable
-import com.hilingual.presentation.feeddiary.model.DiaryContentUiModel
-import com.hilingual.presentation.feeddiary.model.FeedbackContentUiModel
-import com.hilingual.presentation.feeddiary.model.ProfileContentUiModel
-import com.hilingual.presentation.feeddiary.model.RecommendExpressionUiModel
+import com.hilingual.data.diary.model.DiaryContentModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 @Immutable
-internal data class FeedDiaryUiState(
-    val writtenDate: String = "",
-    val isMine: Boolean = false,
-    val profileContent: ProfileContentUiModel,
-    val diaryContent: DiaryContentUiModel = DiaryContentUiModel(),
-    val feedbackList: ImmutableList<FeedbackContentUiModel> = persistentListOf(),
-    val recommendExpressionList: ImmutableList<RecommendExpressionUiModel> = persistentListOf()
+internal data class DiaryContentUiModel(
+    val originalText: String = "",
+    val aiText: String = "",
+    val diffRanges: ImmutableList<Pair<Int, Int>> = persistentListOf(),
+    val imageUrl: String? = null
+)
+
+internal fun DiaryContentModel.toState() = DiaryContentUiModel(
+    originalText = this.originalText,
+    aiText = this.rewriteText,
+    diffRanges = this.diffRanges.map {
+        it.diffRange.first to it.diffRange.second
+    }.toImmutableList(),
+    imageUrl = this.imageUrl
 )
