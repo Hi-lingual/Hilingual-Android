@@ -282,7 +282,7 @@ private fun FeedProfileScreenPreview() {
         val isFollowedState by remember { mutableStateOf(false) }
 
         FeedProfileScreen(
-            onBackClick = {  },
+            onBackClick = { },
             isMine = false,
             profileUrl = "https://picsum.photos/id/238/200/300",
             nickname = "OtherUser123",
