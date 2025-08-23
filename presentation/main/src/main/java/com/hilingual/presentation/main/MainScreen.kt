@@ -17,7 +17,6 @@ package com.hilingual.presentation.main
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.padding
@@ -40,7 +39,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.hilingual.core.common.model.SnackbarRequest
-import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
@@ -74,9 +72,6 @@ internal fun MainScreen(
     val isOffline by appState.isOffline.collectAsStateWithLifecycle()
     val isBottomBarVisible by appState.isBottomBarVisible.collectAsStateWithLifecycle()
     val currentTab by appState.currentTab.collectAsStateWithLifecycle()
-
-    val systemBarsColor = LocalSystemBarsColor.current
-    val activity = LocalActivity.current
     val coroutineScope = rememberCoroutineScope()
 
     val dialogTrigger = rememberDialogTrigger(
@@ -85,7 +80,7 @@ internal fun MainScreen(
     )
 
     val snackBarHostState = remember { SnackbarHostState() }
-    val snackbarOnClick = remember { mutableStateOf({}) }
+    var snackbarOnClick by remember { mutableStateOf({}) }
 
     val onShowToast: (String) -> Unit = remember(coroutineScope, snackBarHostState) {
         { message ->
@@ -104,7 +99,7 @@ internal fun MainScreen(
     }
     val onShowSnackbar: (SnackbarRequest) -> Unit = remember(coroutineScope, snackBarHostState) {
         { request ->
-            snackbarOnClick.value = request.onClick
+            snackbarOnClick = request.onClick
             coroutineScope.launch {
                 snackBarHostState.currentSnackbarData?.dismiss()
                 val job = launch {
@@ -113,6 +108,9 @@ internal fun MainScreen(
                         actionLabel = request.buttonText,
                         withDismissAction = true
                     )
+                }
+                job.invokeOnCompletion {
+                    snackbarOnClick = {}
                 }
                 delay(EXIT_MILLIS)
                 job.cancel()
@@ -145,7 +143,7 @@ internal fun MainScreen(
                             message = data.visuals.message,
                             buttonText = data.visuals.actionLabel ?: "",
                             onClick = {
-                                snackbarOnClick.value()
+                                snackbarOnClick()
                                 data.dismiss()
                             },
                             modifier = Modifier
@@ -247,10 +245,6 @@ internal fun MainScreen(
                 onDismiss = appState.dialogStateHolder::dismissDialog
             )
         }
-    }
-
-    if (activity != null) {
-        systemBarsColor.Apply(activity)
     }
 }
 

@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -44,15 +43,20 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
-import com.hilingual.core.common.provider.LocalSystemBarsColor
+import com.hilingual.core.common.model.SnackbarRequest
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.trigger.LocalSnackbarTrigger
+import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
+import com.hilingual.core.designsystem.component.dialog.diary.DiaryDeleteDialog
+import com.hilingual.core.designsystem.component.dialog.diary.DiaryPublishDialog
+import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDialog
+import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.diaryfeedback.component.FeedbackMenuBottomSheet
 import com.hilingual.presentation.diaryfeedback.component.FeedbackReportDialog
 import com.hilingual.presentation.diaryfeedback.tab.GrammarSpellingScreen
@@ -69,9 +73,11 @@ internal fun DiaryFeedbackRoute(
     val context = LocalContext.current
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val localSystemBarsColor = LocalSystemBarsColor.current
     var isImageDetailVisible by remember { mutableStateOf(false) }
+
     val dialogTrigger = LocalDialogTrigger.current
+    val snackbarTrigger = LocalSnackbarTrigger.current
+    val toastTrigger = LocalToastTrigger.current
 
     BackHandler {
         if (isImageDetailVisible) {
@@ -81,65 +87,70 @@ internal fun DiaryFeedbackRoute(
         }
     }
 
-    LaunchedEffect(Unit) {
-        localSystemBarsColor.setSystemBarColor(
-            systemBarsColor = white
-        )
-    }
-
     viewModel.sideEffect.collectSideEffect {
         when (it) {
             is DiaryFeedbackSideEffect.ShowRetryDialog -> {
                 dialogTrigger.show(it.onRetry)
             }
-        }
-    }
 
-    when (state) {
-        is UiState.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(HilingualTheme.colors.white),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
+            is DiaryFeedbackSideEffect.ShowSnackbar -> {
+                snackbarTrigger(
+                    SnackbarRequest(
+                        message = it.message,
+                        buttonText = it.actionLabel,
+                        onClick = {
+                            // TODO: 피드 화면으로 이동
+                            toastTrigger("${it.actionLabel} 클릭됨")
+                        }
+                    )
+                )
+            }
+
+            is DiaryFeedbackSideEffect.ShowToast -> {
+                toastTrigger(it.message)
             }
         }
-
-        is UiState.Success -> {
-            DiaryFeedbackScreen(
-                paddingValues = paddingValues,
-                uiState = (state as UiState.Success<DiaryFeedbackUiState>).data,
-                onBackClick = navigateUp,
-                onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
-                isImageDetailVisible = isImageDetailVisible,
-                onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
-                onToggleBookmark = viewModel::toggleBookmark
-            )
-        }
-
-        else -> {}
     }
+
+    DiaryFeedbackScreen(
+        paddingValues = paddingValues,
+        uiState = state,
+        onBackClick = navigateUp,
+        onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
+        isImageDetailVisible = isImageDetailVisible,
+        onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
+        onToggleIsPublished = viewModel::toggleIsPublished,
+        onToggleBookmark = viewModel::toggleBookmark,
+        onDeleteDiary = viewModel::deleteDiary
+    )
 }
 
 @Composable
 private fun DiaryFeedbackScreen(
     paddingValues: PaddingValues,
-    uiState: DiaryFeedbackUiState,
+    uiState: UiState<DiaryFeedbackUiState>,
     onBackClick: () -> Unit,
     onReportClick: () -> Unit,
     isImageDetailVisible: Boolean,
     onChangeImageDetailVisible: () -> Unit,
+    onToggleIsPublished: (Boolean) -> Unit,
     onToggleBookmark: (Long, Boolean) -> Unit,
+    onDeleteDiary: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var isPublishDialogVisible by remember { mutableStateOf(false) }
+    var isDeleteDialogVisible by remember { mutableStateOf(false) }
+
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
     var isReportDialogVisible by remember { mutableStateOf(false) }
+
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
     val grammarListState = rememberLazyListState()
     val recommendListState = rememberLazyListState()
+
+    val successData = (uiState as? UiState.Success)?.data
+    val isPublished = successData?.isPublished ?: false
 
     val isFabVisible by remember {
         derivedStateOf {
@@ -156,26 +167,6 @@ private fun DiaryFeedbackScreen(
         } else {
             recommendListState.scrollToItem(0)
         }
-    }
-
-    FeedbackMenuBottomSheet(
-        isVisible = isReportBottomSheetVisible,
-        onDismiss = { isReportBottomSheetVisible = false },
-        onDeleteClick = {
-            isReportBottomSheetVisible = false
-            // TODO: 삭제 모달 띄우기
-        },
-        onReportClick = {
-            isReportBottomSheetVisible = false
-            isReportDialogVisible = true
-        }
-    )
-
-    if (isReportDialogVisible) {
-        FeedbackReportDialog(
-            onDismiss = { isReportDialogVisible = false },
-            onReportClick = onReportClick
-        )
     }
 
     Column(
@@ -200,68 +191,124 @@ private fun DiaryFeedbackScreen(
             }
         )
 
-        Box(
-            modifier = Modifier.weight(1f)
-        ) {
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier.fillMaxSize()
-            ) { page ->
-                with(uiState) {
-                    when (page) {
-                        0 -> GrammarSpellingScreen(
-                            listState = grammarListState,
-                            writtenDate = writtenDate,
-                            diaryContent = diaryContent,
-                            feedbackList = feedbackList,
-                            onImageClick = onChangeImageDetailVisible
-                        )
+        when (uiState) {
+            is UiState.Loading -> HilingualLoadingIndicator()
 
-                        1 -> RecommendExpressionScreen(
-                            listState = recommendListState,
-                            writtenDate = writtenDate,
-                            recommendExpressionList = recommendExpressionList,
-                            onBookmarkClick = onToggleBookmark
-                        )
-                    }
-                }
-            }
+            is UiState.Success -> {
+                val data = uiState.data
 
-            HilingualFloatingButton(
-                isVisible = isFabVisible,
-                onClick = {
-                    coroutineScope.launch {
-                        when (pagerState.currentPage) {
-                            0 -> grammarListState.animateScrollToItem(0)
-                            else -> recommendListState.animateScrollToItem(0)
+                Box(
+                    modifier = Modifier
+                        .background(HilingualTheme.colors.gray100)
+                        .weight(1f)
+                ) {
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.fillMaxSize()
+                    ) { page ->
+                        when (page) {
+                            0 -> GrammarSpellingScreen(
+                                listState = grammarListState,
+                                writtenDate = data.writtenDate,
+                                diaryContent = data.diaryContent,
+                                feedbackList = data.feedbackList,
+                                onImageClick = onChangeImageDetailVisible
+                            )
+
+                            1 -> RecommendExpressionScreen(
+                                listState = recommendListState,
+                                writtenDate = data.writtenDate,
+                                recommendExpressionList = data.recommendExpressionList,
+                                onBookmarkClick = onToggleBookmark
+                            )
                         }
                     }
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = 24.dp, end = 16.dp)
-            )
-        }
 
-        HilingualButton(
-            text = "피드에 게시하기",
-            onClick = {
-                // TODO: 모달 띄우기
-            },
-            modifier = Modifier
-                .background(HilingualTheme.colors.gray100)
-                .padding(horizontal = 16.dp)
-                .padding(top = 12.dp, bottom = 16.dp)
-        )
+                    HilingualFloatingButton(
+                        isVisible = isFabVisible,
+                        onClick = {
+                            coroutineScope.launch {
+                                when (pagerState.currentPage) {
+                                    0 -> grammarListState.animateScrollToItem(0)
+                                    else -> recommendListState.animateScrollToItem(0)
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(bottom = 24.dp, end = 16.dp)
+                    )
+                }
+
+                HilingualButton(
+                    text = if (isPublished) "비공개하기" else "피드에 게시하기",
+                    onClick = { isPublishDialogVisible = true },
+                    modifier = Modifier
+                        .background(HilingualTheme.colors.gray100)
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 12.dp, bottom = 16.dp)
+                )
+            }
+
+            else -> {}
+        }
     }
 
-    if (isImageDetailVisible && uiState.diaryContent.imageUrl != null) {
+    if (isImageDetailVisible && successData?.diaryContent?.imageUrl != null) {
         ModalImage(
-            imageUrl = uiState.diaryContent.imageUrl,
+            imageUrl = successData.diaryContent.imageUrl,
             onBackClick = onChangeImageDetailVisible,
             modifier = modifier.padding(paddingValues)
         )
     }
+
+    if (isPublished) {
+        DiaryUnpublishDialog(
+            isVisible = isPublishDialogVisible,
+            onDismiss = { isPublishDialogVisible = false },
+            onPrivateClick = {
+                onToggleIsPublished(false)
+                isPublishDialogVisible = false
+            }
+        )
+    } else {
+        DiaryPublishDialog(
+            isVisible = isPublishDialogVisible,
+            onDismiss = { isPublishDialogVisible = false },
+            onPostClick = {
+                onToggleIsPublished(true)
+                isPublishDialogVisible = false
+            }
+        )
+    }
+
+    DiaryDeleteDialog(
+        isVisible = isDeleteDialogVisible,
+        onDismiss = { isDeleteDialogVisible = false },
+        onDeleteClick = {
+            isDeleteDialogVisible = false
+            onDeleteDiary()
+        }
+    )
+
+    FeedbackMenuBottomSheet(
+        isVisible = isReportBottomSheetVisible,
+        onDismiss = { isReportBottomSheetVisible = false },
+        onDeleteClick = {
+            isReportBottomSheetVisible = false
+            isDeleteDialogVisible = true
+        },
+        onReportClick = {
+            isReportBottomSheetVisible = false
+            isReportDialogVisible = true
+        }
+    )
+
+    FeedbackReportDialog(
+        isVisible = isReportDialogVisible,
+        onDismiss = { isReportDialogVisible = false },
+        onReportClick = onReportClick
+    )
 }
 
 @Preview(showBackground = true)
@@ -270,16 +317,20 @@ private fun DiaryFeedbackScreenPreview() {
     HilingualTheme {
         DiaryFeedbackScreen(
             paddingValues = PaddingValues(),
-            uiState = DiaryFeedbackUiState(
-                writtenDate = "7월 11일 금요일",
-                feedbackList = persistentListOf(),
-                recommendExpressionList = persistentListOf()
+            uiState = UiState.Success(
+                DiaryFeedbackUiState(
+                    writtenDate = "7월 11일 금요일",
+                    feedbackList = persistentListOf(),
+                    recommendExpressionList = persistentListOf()
+                )
             ),
             isImageDetailVisible = false,
             onChangeImageDetailVisible = {},
             onBackClick = {},
             onReportClick = {},
-            onToggleBookmark = { _, _ -> {} }
+            onToggleBookmark = { _, _ -> {} },
+            onToggleIsPublished = {},
+            onDeleteDiary = {}
         )
     }
 }

@@ -62,8 +62,8 @@ internal fun CommunityScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(paddingValues)
-            .background(HilingualTheme.colors.gray100),
+            .background(HilingualTheme.colors.gray100)
+            .padding(paddingValues),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
