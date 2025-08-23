@@ -72,6 +72,12 @@ internal fun FeedRoute(
             FeedScreen(
                 paddingValues = paddingValues,
                 uiState = (state as UiState.Success<FeedUiState>).data,
+                onProfileClick = {
+                    // TODO: 피드 프로필 화면으로 이동
+                },
+                onSearchClick = {
+                    // TODO: 친구 검색 화면으로 이동
+                },
                 readAllFeed = viewModel::readAllFeed
             )
         }
@@ -83,6 +89,8 @@ internal fun FeedRoute(
 private fun FeedScreen(
     paddingValues: PaddingValues,
     uiState: FeedUiState,
+    onProfileClick: () -> Unit,
+    onSearchClick: () -> Unit,
     readAllFeed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -135,9 +143,9 @@ private fun FeedScreen(
             .padding(paddingValues)
     ) {
         FeedTopAppBar(
-            profileImageUrl = "",
-            onProfileClick = {},
-            onSearchClick = {}
+            profileImageUrl = uiState.myProfileUrl,
+            onProfileClick = onProfileClick,
+            onSearchClick = onSearchClick
         )
 
         HilingualBasicTabRow(
@@ -206,8 +214,11 @@ private fun FeedScreenPreview() {
     HilingualTheme {
         FeedScreen(
             paddingValues = PaddingValues(),
+            onProfileClick = {},
+            onSearchClick = {},
             readAllFeed = {},
             uiState = FeedUiState(
+                myProfileUrl = "https://avatars.githubusercontent.com/u/101113025?v=4",
                 recommendFeedList = persistentListOf(
                     FeedPreviewUiModel(
                         userId = 1,

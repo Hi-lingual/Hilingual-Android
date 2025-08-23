@@ -22,6 +22,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 internal data class FeedUiState(
+    val myProfileUrl: String = "",
     val recommendFeedList: ImmutableList<FeedPreviewUiModel> = persistentListOf(),
     val followingFeedList: ImmutableList<FeedPreviewUiModel> = persistentListOf(),
     val hasFollowing: Boolean = true
