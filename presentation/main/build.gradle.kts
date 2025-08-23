@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.hilingual.build_logic.setNamespace
 
 plugins {
     alias(libs.plugins.hilingual.feature)
 }
-
-val properties = gradleLocalProperties(rootDir, providers)
 
 android {
     setNamespace("presentation.main")
@@ -43,7 +40,4 @@ dependencies {
     implementation(projects.presentation.community)
     implementation(projects.presentation.otp)
     implementation(projects.presentation.feed)
-
-    // others
-    implementation(libs.accompanist.systemuicontroller)
 }

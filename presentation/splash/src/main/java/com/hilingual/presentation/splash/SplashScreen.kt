@@ -31,8 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.provider.LocalSharedTransitionScope
-import com.hilingual.core.common.provider.LocalSystemBarsColor
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualOrange
 import kotlinx.coroutines.delay
@@ -46,14 +46,7 @@ internal fun SplashRoute(
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: SplashViewModel = hiltViewModel()
 ) {
-    val localSystemBarsColor = LocalSystemBarsColor.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        localSystemBarsColor.setSystemBarColor(
-            systemBarsColor = hilingualOrange
-        )
-    }
 
     LaunchedEffect(Unit) {
         delay(1400)
@@ -78,6 +71,7 @@ private fun SplashScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
+            .statusBarColor(hilingualOrange)
             .background(HilingualTheme.colors.hilingualOrange)
     ) {
         Spacer(
