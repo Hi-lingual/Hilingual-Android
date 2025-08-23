@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.designsystem.component.bottomsheet.ReportBlockBottomSheet
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.content.ModalImage
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDialog
@@ -32,7 +33,6 @@ import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndic
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.feeddiary.component.DiaryBlockBottomSheet
 import com.hilingual.presentation.feeddiary.component.FeedDiaryProfile
 import com.hilingual.presentation.feeddiary.model.ProfileContentUiModel
 import com.hilingual.presentation.feeddiary.tab.GrammarSpellingScreen
@@ -122,7 +122,10 @@ private fun FeedDiaryScreen(
     ) {
         BackAndMoreTopAppBar(
             onBackClicked = onBackClick,
-            onMoreClicked = {},
+            onMoreClicked = {
+                if (uiState.isMine) isUnpublishBottomSheetVisible = true
+                else isReportBottomSheetVisible = true
+            },
             title = null
         )
 
@@ -211,7 +214,7 @@ private fun FeedDiaryScreen(
             }
         )
     } else {
-        DiaryBlockBottomSheet(
+        ReportBlockBottomSheet(
             isVisible = isReportBottomSheetVisible,
             onDismiss = { isReportBottomSheetVisible = false },
             onReportClick = {
