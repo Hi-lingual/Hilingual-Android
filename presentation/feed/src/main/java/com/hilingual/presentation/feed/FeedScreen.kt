@@ -1,6 +1,5 @@
 package com.hilingual.presentation.feed
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,13 +15,15 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
@@ -38,6 +39,15 @@ internal fun FeedRoute(
     viewModel: FeedViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val toastTrigger = LocalToastTrigger.current
+
+    viewModel.sideEffect.collectSideEffect {
+        when (it) {
+            is FeedSideEffect.ShowToast -> {
+                toastTrigger(it.message)
+            }
+        }
+    }
 
     when (state) {
         is UiState.Loading -> {
@@ -47,7 +57,8 @@ internal fun FeedRoute(
         is UiState.Success -> {
             FeedScreen(
                 paddingValues = paddingValues,
-                uiState = (state as UiState.Success<FeedUiState>).data
+                uiState = (state as UiState.Success<FeedUiState>).data,
+                readAllFeed = viewModel::readAllFeed
             )
         }
         else -> {}
@@ -57,10 +68,10 @@ internal fun FeedRoute(
 @Composable
 private fun FeedScreen(
     paddingValues: PaddingValues,
-    modifier: Modifier = Modifier,
-    uiState: FeedUiState
+    uiState: FeedUiState,
+    readAllFeed: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
 
@@ -78,27 +89,27 @@ private fun FeedScreen(
 
     val isAtBottom by remember {
         derivedStateOf {
-            val currentListState = when (pagerState.currentPage) {
-                0 -> recommendListState
-                else -> followingsListState
+            val (currentListState, feedCount) = when (pagerState.currentPage) {
+                0 -> recommendListState to uiState.recommendFeedList.size
+                else -> followingsListState to uiState.followingFeedList.size
             }
+
             val layoutInfo = currentListState.layoutInfo
-            val visibleItemsInfo = currentListState.layoutInfo.visibleItemsInfo
+            val visibleItemInfo = layoutInfo.visibleItemsInfo
 
-            if (layoutInfo.totalItemsCount == 0) {
-                false
-            } else {
-                val lastVisibleItem = visibleItemsInfo.last()
-                val viewportHeight = layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
+            if (feedCount == 0 || layoutInfo.totalItemsCount == 0) return@derivedStateOf false
 
-                (lastVisibleItem.index == layoutInfo.totalItemsCount - 1) && (lastVisibleItem.offset + lastVisibleItem.size <= viewportHeight)
-            }
+            val lastVisibleItem = visibleItemInfo.last()
+            val viewportHeight = layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
+            (lastVisibleItem.index == layoutInfo.totalItemsCount - 1) && (lastVisibleItem.offset + lastVisibleItem.size <= viewportHeight)
         }
     }
 
-    LaunchedEffect(isAtBottom) {
+    val latestReadAllFeed by rememberUpdatedState(newValue = readAllFeed)
+
+    LaunchedEffect(isAtBottom, pagerState.currentPage) {
         if (isAtBottom) {
-            Toast.makeText(context, "피드의 일기를 모두 확인했어요.", Toast.LENGTH_SHORT).show()
+            latestReadAllFeed()
         }
     }
 
@@ -180,6 +191,7 @@ private fun FeedScreenPreview() {
     HilingualTheme {
         FeedScreen(
             paddingValues = PaddingValues(),
+            readAllFeed = {},
             uiState = FeedUiState(
                 recommendFeedList = persistentListOf(
                     FeedPreviewUiModel(
