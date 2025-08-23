@@ -7,20 +7,22 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 internal fun WithdrawDialog(
+    isVisible: Boolean,
     onDismiss: () -> Unit,
-    onNoClick: () -> Unit,
-    onCancelClick: () -> Unit
+    onDeleteClick: () -> Unit
 ) {
-    TwoButtonDialog(
-        title = "정말 계정을 삭제하시겠어요?",
-        description = "회원 탈퇴 시 작성한 일기를 비롯한 계정 정보는 \n" +
-            "영원히 삭제돼요. 정말 삭제를 원하시나요?",
-        cancelText = "아니요",
-        confirmText = "삭제하기",
-        onNegative = onNoClick,
-        onPositive = onCancelClick,
-        onDismiss = onDismiss
-    )
+    if (!isVisible) {
+        TwoButtonDialog(
+            title = "정말 계정을 삭제하시겠어요?",
+            description = "회원 탈퇴 시 작성한 일기를 비롯한 계정 정보는 \n" +
+                    "영원히 삭제돼요. 정말 삭제를 원하시나요?",
+            cancelText = "아니요",
+            confirmText = "삭제하기",
+            onNegative = onDismiss,
+            onPositive = onDeleteClick,
+            onDismiss = onDismiss
+        )
+    }
 }
 
 @Preview
@@ -28,9 +30,9 @@ internal fun WithdrawDialog(
 private fun WithdrawDialogPreview() {
     HilingualTheme {
         WithdrawDialog(
+            isVisible = true,
             onDismiss = {},
-            onNoClick = {},
-            onCancelClick = {}
+            onDeleteClick = {}
         )
     }
 }

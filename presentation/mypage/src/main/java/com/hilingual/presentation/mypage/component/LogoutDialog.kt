@@ -7,18 +7,20 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 internal fun LogoutDialog(
+    isVisible: Boolean,
     onDismiss: () -> Unit,
-    onNoClick: () -> Unit,
-    onCancelClick: () -> Unit
+    onLogoutClick: () -> Unit
 ) {
-    TwoButtonDialog(
-        title = "하이링구얼에서 로그아웃 하시겠어요?",
-        cancelText = "아니요",
-        confirmText = "로그아웃",
-        onNegative = onNoClick,
-        onPositive = onCancelClick,
-        onDismiss = onDismiss
-    )
+    if (isVisible) {
+        TwoButtonDialog(
+            title = "하이링구얼에서 로그아웃 하시겠어요?",
+            cancelText = "아니요",
+            confirmText = "로그아웃",
+            onNegative = onDismiss,
+            onPositive = onLogoutClick,
+            onDismiss = onDismiss
+        )
+    }
 }
 
 @Preview
@@ -26,9 +28,9 @@ internal fun LogoutDialog(
 private fun LogoutDialogPreview() {
     HilingualTheme {
         LogoutDialog(
+            isVisible = true,
             onDismiss = {},
-            onNoClick = {},
-            onCancelClick = {}
+            onLogoutClick = {}
         )
     }
 }
