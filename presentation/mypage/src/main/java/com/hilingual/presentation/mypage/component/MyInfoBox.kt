@@ -35,7 +35,7 @@ internal fun MyInfoBox(
     profileNickname: String,
     onEditButtonClick: () -> Unit,
     onMyFeedButtonClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
