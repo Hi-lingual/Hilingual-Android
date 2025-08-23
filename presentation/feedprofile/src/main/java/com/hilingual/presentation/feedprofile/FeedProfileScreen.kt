@@ -19,11 +19,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.presentation.feedprofile.component.BlockBottomSheet
 import com.hilingual.presentation.feedprofile.component.FeedProfileInfo
 import com.hilingual.presentation.feedprofile.component.FeedProfileTabRow
 import com.hilingual.presentation.feedprofile.component.FeedUserActionButton
+import com.hilingual.presentation.feedprofile.component.ReportBlockBottomSheet
 import com.hilingual.presentation.feedprofile.model.LikeDiaryItemModel
 import com.hilingual.presentation.feedprofile.model.SharedDiaryItemModel
 import com.hilingual.presentation.feedprofile.tab.LikedDiaryScreen
@@ -51,20 +54,30 @@ internal fun FeedProfileScreen(
     onFollowButtonClick: () -> Unit,
     onFeedContentClick: () -> Unit,
     onMenuClick: () -> Unit,
+    onReportClick: () -> Unit,
+    onBlockClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
+    var isMenuBottomSheetVisible by remember { mutableStateOf(false) }
+    var isBlockBottomSheetVisible by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
     ) {
-        BackTopAppBar(
-            title = null,
-            onBackClicked = onBackClick
-        )
+        if (isMine)
+            BackTopAppBar(
+                title = null,
+                onBackClicked = onBackClick
+            ) else
+            BackAndMoreTopAppBar(
+                title = null,
+                onBackClicked = onBackClick,
+                onMoreClicked = { isMenuBottomSheetVisible = true }
+            )
 
         LazyColumn(
             modifier = Modifier.fillMaxSize()
@@ -151,6 +164,27 @@ internal fun FeedProfileScreen(
             }
         }
     }
+
+    ReportBlockBottomSheet(
+        isVisible = isMenuBottomSheetVisible,
+        onDismiss = { isMenuBottomSheetVisible = false },
+        onReportClick = {
+            isMenuBottomSheetVisible = false
+            onReportClick()
+        },
+        onBlockClick = {
+            isMenuBottomSheetVisible = false
+            isBlockBottomSheetVisible = true
+        }
+    )
+    BlockBottomSheet(
+        isVisible = isBlockBottomSheetVisible,
+        onDismiss = { isBlockBottomSheetVisible = false },
+        onBlockButtonClick = {
+            isBlockBottomSheetVisible = false
+            onBlockClick()
+        }
+    )
 }
 
 
@@ -283,7 +317,9 @@ private fun FeedProfileScreenPreviewMyProfile() {
             onFollowTypeClick = { },
             onFollowButtonClick = { /* 내 프로필에서는 호출 안 됨 */ },
             onFeedContentClick = {  },
-            onMenuClick = {  }
+            onMenuClick = {  },
+            onReportClick = {  },
+            onBlockClick = {  }
         )
     }
 }
@@ -314,7 +350,9 @@ private fun FeedProfileScreenPreviewOthersNotFollowing() {
                 isFollowingState = !isFollowingState
             },
             onFeedContentClick = {  },
-            onMenuClick = {  }
+            onMenuClick = {  },
+            onReportClick = {  },
+            onBlockClick = {  }
         )
     }
 }
@@ -345,7 +383,9 @@ private fun FeedProfileScreenPreviewOthersFollowing() {
                 isFollowingState = !isFollowingState
             },
             onFeedContentClick = {  },
-            onMenuClick = {  }
+            onMenuClick = {  },
+            onReportClick = {  },
+            onBlockClick = {  }
         )
     }
 }
@@ -376,7 +416,9 @@ private fun FeedProfileScreenPreviewOthersTheyFollow() {
                 isFollowingState = true
             },
             onFeedContentClick = {  },
-            onMenuClick = {  }
+            onMenuClick = {  },
+            onReportClick = {  },
+            onBlockClick = {  }
         )
     }
 }
