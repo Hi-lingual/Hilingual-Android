@@ -14,5 +14,5 @@ data class LikeDiaryItemModel(
     val likeCount: Int,
     val isLiked: Boolean,
     val diaryImgUrl: String?,
-    val originalText: String,
+    val originalText: String
 )

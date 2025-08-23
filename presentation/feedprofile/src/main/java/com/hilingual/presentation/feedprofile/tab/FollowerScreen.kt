@@ -52,7 +52,7 @@ internal fun FollowerScreen(
                         else -> "팔로우"
                     },
                     onProfileClick = onFollowerItemClick,
-                    onButtonClick = onButtonClick,
+                    onButtonClick = onButtonClick
                 )
             }
         }

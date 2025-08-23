@@ -10,13 +10,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
@@ -46,6 +49,7 @@ internal fun FeedProfileScreen(
     streak: Int,
     isFollowing: Boolean,
     isFollowed: Boolean,
+    isBlock: Boolean,
     sharedDiarys: ImmutableList<SharedDiaryItemModel>,
     likedDiarys: ImmutableList<LikeDiaryItemModel>,
     onProfileClick: () -> Unit,
@@ -68,16 +72,18 @@ internal fun FeedProfileScreen(
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
     ) {
-        if (isMine)
+        if (isMine) {
             BackTopAppBar(
                 title = null,
                 onBackClicked = onBackClick
-            ) else
+            )
+        } else {
             BackAndMoreTopAppBar(
                 title = null,
                 onBackClicked = onBackClick,
                 onMoreClicked = { isMenuBottomSheetVisible = true }
             )
+        }
 
         LazyColumn(
             modifier = Modifier.fillMaxSize()
@@ -102,6 +108,7 @@ internal fun FeedProfileScreen(
                     FeedUserActionButton(
                         isFilled = isFollowing,
                         buttonText = when {
+                            isBlock -> "차단 해제"
                             isFollowing -> "팔로잉"
                             isFollowed -> "맞팔로우"
                             else -> "팔로우"
@@ -115,50 +122,78 @@ internal fun FeedProfileScreen(
                 }
             }
 
-            stickyHeader {
-                FeedProfileTabRow(
-                    tabIndex = pagerState.currentPage,
-                    onTabSelected = { index ->
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(index)
+            if (isBlock) {
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(modifier = Modifier.height(140.dp))
+
+                        Text(
+                            text = "${nickname}님의 글을 확인할 수 없어요.",
+                            style = HilingualTheme.typography.headB18,
+                            color = HilingualTheme.colors.black,
+                            textAlign = TextAlign.Center
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "차단을 해제하면 글을 확인할 수 있어요.",
+                            style = HilingualTheme.typography.bodyM16,
+                            color = HilingualTheme.colors.gray400,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            } else {
+                stickyHeader {
+                    FeedProfileTabRow(
+                        tabIndex = pagerState.currentPage,
+                        onTabSelected = { index ->
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(index)
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(HilingualTheme.colors.white)
+                    )
+                }
+
+                item {
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .fillParentMaxHeight()
+
+                    ) { page ->
+                        when (page) {
+                            0 -> SharedDiaryScreen(
+                                sharedDiarys = sharedDiarys,
+                                onProfileClick = onProfileClick,
+                                onSharedDiaryClick = onFeedContentClick,
+                                onLikeClick = onLikeClick,
+                                onMenuClick = {
+                                    onMenuClick()
+                                },
+                                modifier = Modifier.fillMaxSize()
+                            )
+
+                            1 -> LikedDiaryScreen(
+                                likedDiarys = likedDiarys,
+                                onProfileClick = onProfileClick,
+                                onLikeDiaryClick = onFeedContentClick,
+                                onLikeClick = onLikeClick,
+                                onMenuClick = {
+                                    onMenuClick()
+                                },
+                                modifier = Modifier.fillMaxSize()
+                            )
                         }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(HilingualTheme.colors.white)
-                )
-            }
-
-            item {
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .fillParentMaxHeight()
-
-                ) { page ->
-                    when (page) {
-                        0 -> SharedDiaryScreen(
-                            sharedDiarys = sharedDiarys,
-                            onProfileClick = onProfileClick,
-                            onSharedDiaryClick = onFeedContentClick,
-                            onLikeClick = onLikeClick,
-                            onMenuClick = {
-                                onMenuClick()
-                            },
-                            modifier = Modifier.fillMaxSize()
-                        )
-
-                        1 -> LikedDiaryScreen(
-                            likedDiarys = likedDiarys,
-                            onProfileClick = onProfileClick,
-                            onLikeDiaryClick = onFeedContentClick,
-                            onLikeClick = onLikeClick,
-                            onMenuClick = {
-                                onMenuClick()
-                            },
-                            modifier = Modifier.fillMaxSize()
-                        )
                     }
                 }
             }
@@ -186,7 +221,6 @@ internal fun FeedProfileScreen(
         }
     )
 }
-
 
 private fun getSampleSharedDiaryData() = persistentListOf(
     SharedDiaryItemModel(
@@ -310,16 +344,17 @@ private fun FeedProfileScreenPreviewMyProfile() {
             streak = 22,
             isFollowing = false,
             isFollowed = false,
+            isBlock = false,
             sharedDiarys = getSampleSharedDiaryData(),
             likedDiarys = getSampleLikedDiaryData(),
             onProfileClick = { },
-            onLikeClick = {  },
+            onLikeClick = { },
             onFollowTypeClick = { },
             onFollowButtonClick = { /* 내 프로필에서는 호출 안 됨 */ },
-            onFeedContentClick = {  },
-            onMenuClick = {  },
-            onReportClick = {  },
-            onBlockClick = {  }
+            onFeedContentClick = { },
+            onMenuClick = { },
+            onReportClick = { },
+            onBlockClick = { }
         )
     }
 }
@@ -341,18 +376,19 @@ private fun FeedProfileScreenPreviewOthersNotFollowing() {
             streak = 11,
             isFollowing = isFollowingState,
             isFollowed = isFollowedState,
+            isBlock = false,
             sharedDiarys = getSampleSharedDiaryData(),
             likedDiarys = getSampleLikedDiaryData(),
-            onProfileClick = {  },
-            onLikeClick = {  },
-            onFollowTypeClick = {  },
+            onProfileClick = { },
+            onLikeClick = { },
+            onFollowTypeClick = { },
             onFollowButtonClick = {
                 isFollowingState = !isFollowingState
             },
-            onFeedContentClick = {  },
-            onMenuClick = {  },
-            onReportClick = {  },
-            onBlockClick = {  }
+            onFeedContentClick = { },
+            onMenuClick = { },
+            onReportClick = { },
+            onBlockClick = { }
         )
     }
 }
@@ -365,7 +401,7 @@ private fun FeedProfileScreenPreviewOthersFollowing() {
         val isFollowedState by remember { mutableStateOf(false) }
 
         FeedProfileScreen(
-            onBackClick = {  },
+            onBackClick = { },
             isMine = false,
             profileUrl = "https://picsum.photos/id/239/200/300",
             nickname = "AlreadyFollowing",
@@ -374,18 +410,19 @@ private fun FeedProfileScreenPreviewOthersFollowing() {
             streak = 35,
             isFollowing = isFollowingState,
             isFollowed = isFollowedState,
+            isBlock = false,
             sharedDiarys = getSampleSharedDiaryData(),
             likedDiarys = getSampleLikedDiaryData(),
-            onProfileClick = {  },
-            onLikeClick = {  },
-            onFollowTypeClick = {  },
+            onProfileClick = { },
+            onLikeClick = { },
+            onFollowTypeClick = { },
             onFollowButtonClick = {
                 isFollowingState = !isFollowingState
             },
-            onFeedContentClick = {  },
-            onMenuClick = {  },
-            onReportClick = {  },
-            onBlockClick = {  }
+            onFeedContentClick = { },
+            onMenuClick = { },
+            onReportClick = { },
+            onBlockClick = { }
         )
     }
 }
@@ -407,6 +444,7 @@ private fun FeedProfileScreenPreviewOthersTheyFollow() {
             streak = 7,
             isFollowing = isFollowingState,
             isFollowed = isFollowedState,
+            isBlock = true,
             sharedDiarys = getSampleSharedDiaryData(),
             likedDiarys = getSampleLikedDiaryData(),
             onProfileClick = { },
@@ -415,10 +453,10 @@ private fun FeedProfileScreenPreviewOthersTheyFollow() {
             onFollowButtonClick = {
                 isFollowingState = true
             },
-            onFeedContentClick = {  },
-            onMenuClick = {  },
-            onReportClick = {  },
-            onBlockClick = {  }
+            onFeedContentClick = { },
+            onMenuClick = { },
+            onReportClick = { },
+            onBlockClick = { }
         )
     }
 }

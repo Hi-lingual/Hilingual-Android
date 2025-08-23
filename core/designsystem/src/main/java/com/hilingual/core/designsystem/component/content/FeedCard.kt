@@ -153,7 +153,7 @@ private fun FeedHeader(
             Text(
                 text = "$streak",
                 style = HilingualTheme.typography.bodyM14,
-                color = HilingualTheme.colors.hilingualOrange,
+                color = HilingualTheme.colors.hilingualOrange
             )
         }
 
@@ -296,9 +296,9 @@ private fun FeedContentPreviewWithImage() {
             streak = 7,
             sharedDateInMinutes = 3,
             content = "Today was a busy but fulfilling day. I spent the morning working on my project and finally solved a problem that had been bothering me for days. " +
-                    "In the afternoon, I met a friend for coffee and we talked about our future plans.\n" +
-                    "The weather was warm and sunny, which made the walk back home really pleasant.\n" +
-                    "I feel tired now, but also proud of how I spent my day.",
+                "In the afternoon, I met a friend for coffee and we talked about our future plans.\n" +
+                "The weather was warm and sunny, which made the walk back home really pleasant.\n" +
+                "I feel tired now, but also proud of how I spent my day.",
             imageUrl = "https://picsum.photos/id/1060/800/600",
             likeCount = likeCount,
             isLiked = isLiked,
@@ -328,10 +328,10 @@ private fun FeedContentPreviewNoImage() {
             streak = null, // null인 경우 테스트
             sharedDateInMinutes = 24,
             content = "Today was a busy but fulfilling day.\n" +
-                    "I spent the morning working on my project and finally solved a problem that had been bothering me for days.\n" +
-                    "In the afternoon, I met a friend for coffee and we talked about our future plans.\n" +
-                    "The weather was warm and sunny, which made the walk back home really pleasant.\n" +
-                    "I feel tired now, but also proud of how I spent my day.",
+                "I spent the morning working on my project and finally solved a problem that had been bothering me for days.\n" +
+                "In the afternoon, I met a friend for coffee and we talked about our future plans.\n" +
+                "The weather was warm and sunny, which made the walk back home really pleasant.\n" +
+                "I feel tired now, but also proud of how I spent my day.",
             imageUrl = null,
             likeCount = likeCount,
             isLiked = isLiked,

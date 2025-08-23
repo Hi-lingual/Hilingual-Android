@@ -38,7 +38,7 @@ internal fun LikedDiaryScreen(
                 items = likedDiarys,
                 key = { it.diaryId }
             ) {
-                likedDiary ->
+                    likedDiary ->
                 FeedContent(
                     profileUrl = likedDiary.profileImageUrl,
                     onProfileClick = onProfileClick,
@@ -61,6 +61,5 @@ internal fun LikedDiaryScreen(
                 Spacer(modifier = Modifier.height(48.dp))
             }
         }
-
     }
 }

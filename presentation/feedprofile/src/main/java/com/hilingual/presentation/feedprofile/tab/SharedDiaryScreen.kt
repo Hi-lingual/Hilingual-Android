@@ -52,7 +52,7 @@ internal fun SharedDiaryScreen(
                     likeCount = sharedDiary.likeCount,
                     isLiked = sharedDiary.isLiked,
                     onLikeClick = onLikeClick,
-                    onMoreClick = onSharedDiaryClick,
+                    onMoreClick = onSharedDiaryClick
                 )
                 HorizontalDivider(thickness = 1.dp, color = HilingualTheme.colors.gray100)
             }
