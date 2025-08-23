@@ -41,10 +41,10 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.hilingual.core.designsystem.component.content.DiaryCard
-import com.hilingual.core.designsystem.component.content.DiaryViewModeToggle
-import com.hilingual.core.designsystem.component.content.FeedbackCard
-import com.hilingual.core.designsystem.component.content.FeedbackEmptyCard
+import com.hilingual.core.designsystem.component.content.diary.DiaryCard
+import com.hilingual.core.designsystem.component.content.diary.DiaryViewModeToggle
+import com.hilingual.core.designsystem.component.content.diary.FeedbackCard
+import com.hilingual.core.designsystem.component.content.diary.FeedbackEmptyCard
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.diaryfeedback.model.DiaryContentUiModel
 import com.hilingual.presentation.diaryfeedback.model.FeedbackContentUiModel

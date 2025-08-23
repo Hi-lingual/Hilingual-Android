@@ -27,7 +27,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.bottomsheet.ReportBlockBottomSheet
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
-import com.hilingual.core.designsystem.component.content.ModalImage
+import com.hilingual.core.designsystem.component.content.diary.DiaryTabRow
+import com.hilingual.core.designsystem.component.content.diary.ModalImage
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDialog
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
@@ -142,8 +143,7 @@ private fun FeedDiaryScreen(
             )
         }
 
-        HilingualBasicTabRow(
-            tabTitles = persistentListOf("문법·철자", "추천표현"),
+        DiaryTabRow(
             tabIndex = pagerState.currentPage,
             onTabSelected = {
                 coroutineScope.launch {

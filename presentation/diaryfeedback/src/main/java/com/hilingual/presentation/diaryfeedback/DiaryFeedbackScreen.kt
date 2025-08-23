@@ -50,7 +50,8 @@ import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
-import com.hilingual.core.designsystem.component.content.ModalImage
+import com.hilingual.core.designsystem.component.content.diary.DiaryTabRow
+import com.hilingual.core.designsystem.component.content.diary.ModalImage
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryDeleteDialog
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryPublishDialog
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDialog
@@ -182,8 +183,7 @@ private fun DiaryFeedbackScreen(
             onMoreClicked = { isReportBottomSheetVisible = true }
         )
 
-        HilingualBasicTabRow(
-            tabTitles = persistentListOf("문법·철자", "추천표현"),
+        DiaryTabRow(
             tabIndex = pagerState.currentPage,
             onTabSelected = {
                 coroutineScope.launch {
