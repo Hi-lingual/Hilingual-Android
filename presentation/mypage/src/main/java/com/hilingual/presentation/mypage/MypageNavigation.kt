@@ -39,6 +39,17 @@ fun NavGraphBuilder.myPageNavGraph(
     paddingValues: PaddingValues
 ) {
     composable<MyPage> {
-        MypageScreen(paddingValues = paddingValues)
+        MypageScreen(
+            paddingValues = PaddingValues(),
+            profileUrl = "",
+            profileNickname = "하링이",
+            onProfileEditButtonClick = {},
+            onMyFeedButtonClick = {},
+            onAlarmClick = {},
+            onBlockClick = {},
+            onCustomerCenterClick = {},
+            onTermsClick = {},
+            onLogoutClick = {}
+        )
     }
 }

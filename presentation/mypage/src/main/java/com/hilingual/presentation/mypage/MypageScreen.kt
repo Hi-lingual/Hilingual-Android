@@ -15,36 +15,174 @@
  */
 package com.hilingual.presentation.mypage
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.designsystem.component.topappbar.TitleLeftAlignedTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.presentation.mypage.component.LogoutDialog
+import com.hilingual.presentation.mypage.component.MyInfoBox
+import com.hilingual.presentation.mypage.component.SettingItem
 import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun MypageScreen(
     paddingValues: PaddingValues,
+    profileUrl: String,
+    profileNickname: String,
+    onProfileEditButtonClick: () -> Unit,
+    onMyFeedButtonClick: () -> Unit,
+    onAlarmClick: () -> Unit,
+    onBlockClick: () -> Unit,
+    onCustomerCenterClick: () -> Unit,
+    onTermsClick: () -> Unit,
+    onLogoutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var logoutDialogVisible by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(paddingValues)
-            .background(HilingualTheme.colors.gray100),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .statusBarColor(HilingualTheme.colors.gray100)
+            .background(HilingualTheme.colors.gray100)
+            .padding(paddingValues),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Image(
-            painter = painterResource(DesignSystemR.drawable.img_prototype),
-            contentDescription = null
+        TitleLeftAlignedTopAppBar(
+            title = "마이페이지",
+            textColor = HilingualTheme.colors.black
+        )
+
+        MyInfoBox(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            profileUrl = profileUrl,
+            profileNickname = profileNickname,
+            onEditButtonClick = onProfileEditButtonClick,
+            onMyFeedButtonClick = onMyFeedButtonClick
+        )
+
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(HilingualTheme.colors.white)
+                .padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            SettingItem(
+                iconRes = DesignSystemR.drawable.ic_alarm_28,
+                title = "알림 설정",
+                onClick = onAlarmClick,
+                trailingContent = { ArrowIcon() }
+            )
+
+            SettingItem(
+                iconRes = DesignSystemR.drawable.ic_block_24_black,
+                title = "차단한 유저",
+                onClick = onBlockClick,
+                trailingContent = { ArrowIcon() }
+            )
+
+            SettingItem(
+                iconRes = DesignSystemR.drawable.ic_customer_24,
+                title = "고객센터",
+                onClick = onCustomerCenterClick,
+                trailingContent = { ArrowIcon() }
+            )
+
+            SettingItem(
+                iconRes = DesignSystemR.drawable.ic_document_24,
+                title = "개인정보 처리방침 및 이용약관",
+                onClick = onTermsClick,
+                trailingContent = { ArrowIcon() }
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 28.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            SettingItem(
+                iconRes = DesignSystemR.drawable.ic_info_24,
+                title = "버전 정보",
+                trailingContent = {
+                    Text(
+                        text = "1.01.01",
+                        color = HilingualTheme.colors.gray400,
+                        style = HilingualTheme.typography.captionR14,
+                        modifier = Modifier.padding(end = 4.dp)
+                    )
+                }
+            )
+
+            SettingItem(
+                iconRes = DesignSystemR.drawable.ic_logout_24,
+                title = "로그아웃",
+                onClick = { logoutDialogVisible = true }
+            )
+        }
+    }
+
+    LogoutDialog(
+        isVisible = logoutDialogVisible,
+        onDismiss = { logoutDialogVisible = false },
+        onLogoutClick = onLogoutClick
+    )
+}
+
+@Composable
+private fun ArrowIcon() {
+    Icon(
+        modifier = Modifier
+            .size(24.dp)
+            .padding(4.dp),
+        imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_arrow_right_16_bold),
+        contentDescription = null,
+        tint = HilingualTheme.colors.gray400
+    )
+}
+
+@Preview
+@Composable
+private fun MypageScreenPreview() {
+    HilingualTheme {
+        MypageScreen(
+            paddingValues = PaddingValues(),
+            profileUrl = "",
+            profileNickname = "하링이",
+            onProfileEditButtonClick = {},
+            onMyFeedButtonClick = {},
+            onAlarmClick = {},
+            onBlockClick = {},
+            onCustomerCenterClick = {},
+            onTermsClick = {},
+            onLogoutClick = {}
         )
     }
 }
