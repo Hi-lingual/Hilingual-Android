@@ -85,7 +85,7 @@ internal fun MyInfoBox(
             color = HilingualTheme.colors.white,
             style = HilingualTheme.typography.bodySB14,
             textAlign = TextAlign.Center,
-            modifier = modifier
+            modifier = Modifier
                 .noRippleClickable(onClick = onMyFeedButtonClick)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(4.dp))
