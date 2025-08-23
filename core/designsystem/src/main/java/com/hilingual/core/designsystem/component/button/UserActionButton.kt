@@ -41,15 +41,15 @@ fun UserActionButton(
 ) {
     val (buttonColor, textColor, borderColor) = if (isFilled) {
         Triple(
-            HilingualTheme.colors.white,
-            HilingualTheme.colors.gray500,
-            HilingualTheme.colors.gray200
-        )
-    } else {
-        Triple(
             HilingualTheme.colors.hilingualBlack,
             HilingualTheme.colors.white,
             HilingualTheme.colors.hilingualBlack
+        )
+    } else {
+        Triple(
+            HilingualTheme.colors.white,
+            HilingualTheme.colors.gray500,
+            HilingualTheme.colors.gray200
         )
     }
 

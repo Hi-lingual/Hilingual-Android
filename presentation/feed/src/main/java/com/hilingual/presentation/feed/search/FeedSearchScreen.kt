@@ -60,7 +60,7 @@ private fun FeedSearchScreen(
     onProfileClick: (Long) -> Unit,
     onFollowActionClick: (Long, Boolean) -> Unit
 ) {
-    Column (
+    Column(
         modifier = Modifier
             .background(HilingualTheme.colors.white)
             .fillMaxSize()
@@ -97,7 +97,7 @@ private fun FeedSearchScreen(
                                     userId = user.userId,
                                     profileUrl = user.profileUrl,
                                     nickname = user.nickname,
-                                    isFilled = user.followState.isFollowing, // TODO: 로직 변경 필요
+                                    isFilled = !user.followState.isFollowing,
                                     buttonText = user.followState.actionText,
                                     onProfileClick = onProfileClick,
                                     onButtonClick = { onFollowActionClick(user.userId, user.followState.isFollowing) },
