@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
-import com.hilingual.core.common.provider.LocalSystemBarsColor
+import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -81,7 +81,6 @@ internal fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val localSystemBarsColor = LocalSystemBarsColor.current
     val dialogTrigger = LocalDialogTrigger.current
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
@@ -94,13 +93,6 @@ internal fun HomeRoute(
 
     LaunchedEffect(Unit) {
         viewModel.loadInitialData()
-    }
-
-    LaunchedEffect(Unit) {
-        localSystemBarsColor.setSystemBarColor(
-            systemBarsColor = hilingualBlack,
-            isDarkIcon = false
-        )
     }
 
     when (val state = uiState) {
@@ -159,6 +151,7 @@ private fun HomeScreen(
 
     Column(
         modifier = Modifier
+            .statusBarColor(hilingualBlack)
             .background(HilingualTheme.colors.white)
             .fillMaxSize()
             .padding(paddingValues)

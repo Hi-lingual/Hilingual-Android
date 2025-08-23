@@ -13,10 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.common.trigger
+package com.hilingual.presentation.notification.main.model
 
-import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.Immutable
 
-val LocalToastTrigger = staticCompositionLocalOf<(message: String) -> Unit> {
-    error("No Toast provided")
-}
+@Immutable
+data class NoticeNotificationItemModel(
+    val id: Long,
+    val title: String,
+    val date: String,
+    val isRead: Boolean
+)
