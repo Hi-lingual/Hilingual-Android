@@ -9,7 +9,7 @@ private val TITLES = persistentListOf("문법·철자", "추천표현")
 @Composable
 fun DiaryTabRow(
     tabIndex: Int,
-    onTabSelected: (Int) -> Unit,
+    onTabSelected: (Int) -> Unit
 ) {
     HilingualBasicTabRow(
         tabTitles = TITLES,

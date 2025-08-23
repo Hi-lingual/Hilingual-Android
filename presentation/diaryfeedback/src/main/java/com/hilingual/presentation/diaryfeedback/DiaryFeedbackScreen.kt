@@ -56,7 +56,6 @@ import com.hilingual.core.designsystem.component.dialog.diary.DiaryDeleteDialog
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryPublishDialog
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDialog
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
-import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.diaryfeedback.component.FeedbackMenuBottomSheet

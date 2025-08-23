@@ -31,14 +31,12 @@ import com.hilingual.core.designsystem.component.content.diary.DiaryTabRow
 import com.hilingual.core.designsystem.component.content.diary.ModalImage
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDialog
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
-import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feeddiary.component.FeedDiaryProfile
 import com.hilingual.presentation.feeddiary.model.ProfileContentUiModel
 import com.hilingual.presentation.feeddiary.tab.GrammarSpellingScreen
 import com.hilingual.presentation.feeddiary.tab.RecommendExpressionScreen
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
 @Composable
@@ -124,8 +122,11 @@ private fun FeedDiaryScreen(
         BackAndMoreTopAppBar(
             onBackClicked = onBackClick,
             onMoreClicked = {
-                if (uiState.isMine) isUnpublishBottomSheetVisible = true
-                else isReportBottomSheetVisible = true
+                if (uiState.isMine) {
+                    isUnpublishBottomSheetVisible = true
+                } else {
+                    isReportBottomSheetVisible = true
+                }
             },
             title = null
         )
