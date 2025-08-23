@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.diaryfeedback.component
+package com.hilingual.core.designsystem.component.content
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,11 +34,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
-internal fun FeedbackEmptyCard(
+fun FeedbackEmptyCard(
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -48,7 +48,7 @@ internal fun FeedbackEmptyCard(
             .padding(12.dp)
     ) {
         Image(
-            painterResource(DesignSystemR.drawable.img_feedback_wow_grey),
+            painterResource(R.drawable.img_feedback_wow_grey),
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)

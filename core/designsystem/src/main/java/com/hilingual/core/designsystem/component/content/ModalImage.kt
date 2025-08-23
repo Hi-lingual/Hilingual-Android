@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.diaryfeedback
+package com.hilingual.core.designsystem.component.content
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -30,9 +30,8 @@ import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.component.topappbar.CloseOnlyTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
-// TODO: sharedTransition 사용
 @Composable
-internal fun ModalImage(
+fun ModalImage(
     imageUrl: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier

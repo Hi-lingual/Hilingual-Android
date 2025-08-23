@@ -42,10 +42,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.diaryfeedback.component.DiaryCard
-import com.hilingual.presentation.diaryfeedback.component.DiaryViewModeToggle
-import com.hilingual.presentation.diaryfeedback.component.FeedbackCard
-import com.hilingual.presentation.diaryfeedback.component.FeedbackEmptyCard
+import com.hilingual.core.designsystem.component.content.DiaryCard
+import com.hilingual.core.designsystem.component.content.DiaryViewModeToggle
+import com.hilingual.core.designsystem.component.content.FeedbackCard
+import com.hilingual.core.designsystem.component.content.FeedbackEmptyCard
 import com.hilingual.presentation.diaryfeedback.model.DiaryContentUiModel
 import com.hilingual.presentation.diaryfeedback.model.FeedbackContentUiModel
 import kotlinx.collections.immutable.ImmutableList

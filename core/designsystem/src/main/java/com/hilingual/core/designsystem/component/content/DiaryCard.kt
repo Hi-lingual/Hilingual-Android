@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.diaryfeedback.component
+package com.hilingual.core.designsystem.component.content
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -44,7 +44,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-internal fun DiaryCard(
+fun DiaryCard(
     isAIWritten: Boolean,
     diaryContent: String,
     modifier: Modifier = Modifier,

@@ -50,6 +50,7 @@ import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
+import com.hilingual.core.designsystem.component.content.ModalImage
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryDeleteDialog
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryPublishDialog
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDialog

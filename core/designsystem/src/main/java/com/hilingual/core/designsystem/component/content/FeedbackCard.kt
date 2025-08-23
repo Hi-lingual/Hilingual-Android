@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.diaryfeedback.component
+package com.hilingual.core.designsystem.component.content
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,11 +35,11 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
-internal fun FeedbackCard(
+fun FeedbackCard(
     originalText: String,
     feedbackText: String,
     explain: String,
@@ -98,13 +98,13 @@ private fun FeedbackSentence(
 ) {
     val (iconRes, color, style) = if (isFeedback) {
         Triple(
-            DesignSystemR.drawable.chip_feedback_card_ai,
+            R.drawable.chip_feedback_card_ai,
             HilingualTheme.colors.hilingualOrange,
             HilingualTheme.typography.bodyM16
         )
     } else {
         Triple(
-            DesignSystemR.drawable.chip_feedback_card_me,
+            R.drawable.chip_feedback_card_me,
             HilingualTheme.colors.gray700,
             HilingualTheme.typography.bodyR16
         )

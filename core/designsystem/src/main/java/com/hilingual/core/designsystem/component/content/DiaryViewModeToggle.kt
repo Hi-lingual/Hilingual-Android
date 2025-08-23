@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.diaryfeedback.component
+package com.hilingual.core.designsystem.component.content
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -31,7 +31,7 @@ import com.hilingual.core.designsystem.component.toggle.HilingualBasicToggleSwit
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-internal fun DiaryViewModeToggle(
+fun DiaryViewModeToggle(
     isAIWritten: Boolean,
     onToggle: (Boolean) -> Unit,
     modifier: Modifier = Modifier
