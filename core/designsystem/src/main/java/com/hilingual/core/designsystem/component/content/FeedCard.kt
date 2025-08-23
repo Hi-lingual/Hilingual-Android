@@ -325,7 +325,7 @@ private fun FeedContentPreviewNoImage() {
         FeedContent(
             profileUrl = "",
             nickname = "User123",
-            streak = null, // null인 경우 테스트
+            streak = null,
             sharedDateInMinutes = 24,
             content = "Today was a busy but fulfilling day.\n" +
                 "I spent the morning working on my project and finally solved a problem that had been bothering me for days.\n" +
