@@ -101,6 +101,29 @@ internal class DiaryFeedbackViewModel @Inject constructor(
         }
     }
 
+    fun toggleIsPublished(isPublished: Boolean) {
+        viewModelScope.launch {
+            // TODO: 게시/비공개 API 호출
+            _uiState.update { currentState ->
+                val successState = currentState as UiState.Success
+                successState.copy(
+                    data = successState.data.copy(isPublished = isPublished)
+                )
+            }
+            // TODO: API 호출 성공 후 표시
+            if (isPublished) {
+                showPublishSnackbar()
+            } else {
+                showToast("일기가 비공개되었어요!")
+            }
+        }
+    }
+
+    fun deleteDiary() {
+        // TODO: API 호출 성공 후 홈으로 이동 + 스낵바 표시
+        showToast("삭제가 완료되었어요.")
+    }
+
     fun toggleBookmark(phraseId: Long, isMarked: Boolean) {
         viewModelScope.launch {
             diaryRepository.patchPhraseBookmark(
@@ -129,8 +152,23 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                 .onLogFailure { }
         }
     }
+
+    private fun showPublishSnackbar() {
+        viewModelScope.launch {
+            // TODO: 보러가기 버튼 클릭 이벤트 설정 (피드로 이동)
+            _sideEffect.emit(DiaryFeedbackSideEffect.ShowSnackbar(message = "일기가 게시되었어요!", actionLabel = "보러가기"))
+        }
+    }
+
+    private fun showToast(message: String) {
+        viewModelScope.launch {
+            _sideEffect.emit(DiaryFeedbackSideEffect.ShowToast(message = message))
+        }
+    }
 }
 
 sealed interface DiaryFeedbackSideEffect {
     data class ShowRetryDialog(val onRetry: () -> Unit) : DiaryFeedbackSideEffect
+    data class ShowSnackbar(val message: String, val actionLabel: String) : DiaryFeedbackSideEffect
+    data class ShowToast(val message: String) : DiaryFeedbackSideEffect
 }
