@@ -228,50 +228,20 @@ private fun getSampleSharedDiaryData() = persistentListOf(
         diaryId = 1L,
         sharedDate = 30L,
         diaryImgUrl = "https://picsum.photos/id/1015/800/600",
-        originalText = "오늘은 새로운 언어를 배우기 시작했어요! 처음엔 어려웠지만 점점 재미있어지고 있어요. 매일 조금씩이라도 꾸준히 해보려고 합니다.",
-        nickname = "언어러버",
+        originalText = "I started learning a new language today! It felt difficult at first, but it’s becoming more fun little by little. I’ll try to practice every day, even just a bit.",
+        nickname = "LanguageLover",
         likeCount = 24,
         isLiked = false
     ),
     SharedDiaryItemModel(
-        profileImageUrl = "https://picsum.photos/id/91/100/100",
+        profileImageUrl = "https://picsum.photos/id/213/100/100",
         diaryId = 2L,
         sharedDate = 120L,
-        diaryImgUrl = null,
-        originalText = "카페에서 공부하다가 만난 새로운 친구와 대화를 나눴어요. 서로 다른 문화에 대해 이야기하면서 많은 것을 배웠습니다.",
-        nickname = "카페탐험가",
-        likeCount = 18,
-        isLiked = true
-    ),
-    SharedDiaryItemModel(
-        profileImageUrl = "https://picsum.photos/id/177/100/100",
-        diaryId = 3L,
-        sharedDate = 360L,
-        diaryImgUrl = "https://picsum.photos/id/119/800/600",
-        originalText = "드디어 첫 번째 언어교환 세션을 완료했어요! 떨렸지만 정말 유익한 시간이었습니다. 다음 세션이 벌써 기대돼요.",
-        nickname = "초보학습자",
-        likeCount = 42,
-        isLiked = false
-    ),
-    SharedDiaryItemModel(
-        profileImageUrl = "https://picsum.photos/id/213/100/100",
-        diaryId = 4L,
-        sharedDate = 480L,
         diaryImgUrl = "https://picsum.photos/id/201/800/600",
-        originalText = "주말에 외국인 친구들과 함께한 파티! 영어로만 대화해야 하는 상황이었는데 생각보다 잘 통했어요. 자신감이 많이 생겼습니다.",
-        nickname = "파티러버",
+        originalText = "Weekend party with international friends! I had to speak only in English, and surprisingly it went well. I feel much more confident now.",
+        nickname = "PartyLover",
         likeCount = 67,
         isLiked = true
-    ),
-    SharedDiaryItemModel(
-        profileImageUrl = "https://picsum.photos/id/245/100/100",
-        diaryId = 5L,
-        sharedDate = 720L,
-        diaryImgUrl = null,
-        originalText = "매일 일기 쓰기 도전 7일째! 처음엔 한 줄도 쓰기 어려웠는데 이제는 생각이 술술 나와요. 꾸준함의 힘을 느끼고 있어요.",
-        nickname = "꾸준이",
-        likeCount = 35,
-        isLiked = false
     )
 )
 
@@ -280,55 +250,30 @@ private fun getSampleLikedDiaryData() = persistentListOf(
         userId = 101L,
         isMine = false,
         profileImageUrl = "https://picsum.photos/id/319/100/100",
-        nickname = "문법마스터",
+        nickname = "GrammarMaster",
         streak = 45,
         diaryId = 201L,
         sharedDate = 60L,
         likeCount = 89,
         isLiked = true,
         diaryImgUrl = "https://picsum.photos/id/311/800/600",
-        originalText = "문법책만 보다가 실제 대화를 해보니 완전히 다른 세계더라고요. 책으로만 배우는 것의 한계를 깨달았어요."
-    ),
-    LikeDiaryItemModel(
-        userId = 102L,
-        isMine = false,
-        profileImageUrl = "https://picsum.photos/id/342/100/100",
-        nickname = "길잡이",
-        streak = 9,
-        diaryId = 202L,
-        sharedDate = 180L,
-        likeCount = 56,
-        isLiked = true,
-        diaryImgUrl = null,
-        originalText = "오늘 처음으로 외국인에게 길을 알려줬어요! 설명이 잘 통했을 때의 그 뿌듯함이란... 정말 짜릿했습니다."
-    ),
-    LikeDiaryItemModel(
-        userId = 103L,
-        isMine = false,
-        profileImageUrl = "https://picsum.photos/id/375/100/100",
-        nickname = "앱러버",
-        streak = 12,
-        diaryId = 203L,
-        sharedDate = 300L,
-        likeCount = 31,
-        isLiked = true,
-        diaryImgUrl = "https://picsum.photos/id/367/800/600",
-        originalText = "언어 학습 앱으로 새로운 단어들을 배우고 있어요. 게임처럼 재미있게 할 수 있어서 중독성이 있네요!"
+        originalText = "After studying grammar books for so long, I finally had a real conversation. It felt like stepping into a whole new world!"
     ),
     LikeDiaryItemModel(
         userId = 104L,
         isMine = false,
         profileImageUrl = "https://picsum.photos/id/399/100/100",
-        nickname = "드라마매니아",
+        nickname = "DramaFan",
         streak = 21,
-        diaryId = 204L,
-        sharedDate = 540L,
+        diaryId = 202L,
+        sharedDate = 180L,
         likeCount = 73,
         isLiked = true,
         diaryImgUrl = null,
-        originalText = "드라마를 자막 없이 보는 게 목표였는데, 드디어 한 편을 완주했어요! 모든 걸 이해하지는 못했지만 성취감이 엄청나요."
+        originalText = "My goal was to watch a drama without subtitles, and I finally finished one episode! I didn’t understand everything, but the sense of achievement was amazing."
     )
 )
+
 
 @Preview(showBackground = true, name = "FeedProfileScreen - My Profile")
 @Composable
@@ -367,47 +312,13 @@ private fun FeedProfileScreenPreviewOthersNotFollowing() {
         val isFollowedState by remember { mutableStateOf(false) }
 
         FeedProfileScreen(
-            onBackClick = { println("Preview: Back clicked") },
+            onBackClick = {  },
             isMine = false,
             profileUrl = "https://picsum.photos/id/238/200/300",
             nickname = "OtherUser123",
             follower = 101,
             following = 52,
             streak = 11,
-            isFollowing = isFollowingState,
-            isFollowed = isFollowedState,
-            isBlock = false,
-            sharedDiarys = getSampleSharedDiaryData(),
-            likedDiarys = getSampleLikedDiaryData(),
-            onProfileClick = { },
-            onLikeClick = { },
-            onFollowTypeClick = { },
-            onFollowButtonClick = {
-                isFollowingState = !isFollowingState
-            },
-            onFeedContentClick = { },
-            onMenuClick = { },
-            onReportClick = { },
-            onBlockClick = { }
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "FeedProfileScreen - Other's Profile (Following)")
-@Composable
-private fun FeedProfileScreenPreviewOthersFollowing() {
-    HilingualTheme {
-        var isFollowingState by remember { mutableStateOf(true) }
-        val isFollowedState by remember { mutableStateOf(false) }
-
-        FeedProfileScreen(
-            onBackClick = { },
-            isMine = false,
-            profileUrl = "https://picsum.photos/id/239/200/300",
-            nickname = "AlreadyFollowing",
-            follower = 205,
-            following = 125,
-            streak = 35,
             isFollowing = isFollowingState,
             isFollowed = isFollowedState,
             isBlock = false,
