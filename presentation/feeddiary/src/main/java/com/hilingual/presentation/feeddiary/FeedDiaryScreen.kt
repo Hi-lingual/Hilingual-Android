@@ -20,11 +20,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.constant.UrlConstant
+import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.designsystem.component.bottomsheet.BlockBottomSheet
 import com.hilingual.core.designsystem.component.bottomsheet.ReportBlockBottomSheet
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.content.diary.DiaryTabRow
@@ -46,6 +50,8 @@ internal fun FeedDiaryRoute(
     navigateUp: () -> Unit,
     viewModel: FeedDiaryViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var isImageDetailVisible by remember { mutableStateOf(false) }
 
@@ -68,6 +74,8 @@ internal fun FeedDiaryRoute(
                 onProfileClick = {},
                 onLikeClick = {},
                 onPrivateClick = {},
+                onBlockClick = {},
+                onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 isImageDetailVisible = isImageDetailVisible,
                 onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
                 onToggleBookmark = viewModel::toggleBookmark
@@ -86,6 +94,8 @@ private fun FeedDiaryScreen(
     onProfileClick: () -> Unit,
     onLikeClick: () -> Unit,
     onPrivateClick: () -> Unit,
+    onReportClick: () -> Unit,
+    onBlockClick: () -> Unit,
     isImageDetailVisible: Boolean,
     onChangeImageDetailVisible: () -> Unit,
     onToggleBookmark: (Long, Boolean) -> Unit,
@@ -95,6 +105,7 @@ private fun FeedDiaryScreen(
     var isUnpublishDialogVisible by remember { mutableStateOf(false) }
 
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
+    var isBlockConfirmBottomSheetVisible by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -225,11 +236,11 @@ private fun FeedDiaryScreen(
             onDismiss = { isReportBottomSheetVisible = false },
             onReportClick = {
                 isReportBottomSheetVisible = false
-                // TODO: 신고폼으로 이동
+                onReportClick()
             },
             onBlockClick = {
                 isReportBottomSheetVisible = false
-                // TODO: 계정 차단 확인 모달 표시
+                isBlockConfirmBottomSheetVisible = true
             }
         )
     }
@@ -241,6 +252,15 @@ private fun FeedDiaryScreen(
             isUnpublishDialogVisible = false
             onPrivateClick()
             // TODO: 비공개 후 이전 화면으로 이동, 토스트 표시
+        }
+    )
+
+    BlockBottomSheet(
+        isVisible = isBlockConfirmBottomSheetVisible,
+        onDismiss = { isBlockConfirmBottomSheetVisible = false },
+        onBlockButtonClick = {
+            isBlockConfirmBottomSheetVisible = false
+            onBlockClick()
         }
     )
 }
@@ -260,8 +280,10 @@ private fun FeedDiaryScreenPreview() {
             onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
             onToggleBookmark = { _, _ -> },
             onPrivateClick = {},
+            onReportClick = {},
+            onBlockClick = {},
             uiState = FeedDiaryUiState(
-                isMine = true,
+                isMine = false,
                 writtenDate = "8월 23일 토요일",
                 profileContent = ProfileContentUiModel(
                     profileUrl = "",
