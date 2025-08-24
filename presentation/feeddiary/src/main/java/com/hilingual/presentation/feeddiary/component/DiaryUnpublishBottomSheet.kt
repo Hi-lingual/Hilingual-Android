@@ -42,7 +42,7 @@ internal fun DiaryUnpublishBottomSheet(
         modifier = modifier
     ) {
         HilingualMenuBottomSheetItem(
-            text = "일기 비공개 하기",
+            text = "비공개하기",
             iconResId = R.drawable.ic_hide_24,
             onClick = onPrivateClick
         )

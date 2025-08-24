@@ -33,6 +33,7 @@ import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDial
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.presentation.feeddiary.component.DiaryUnpublishBottomSheet
 import com.hilingual.presentation.feeddiary.component.FeedDiaryProfile
 import com.hilingual.presentation.feeddiary.model.ProfileContentUiModel
 import com.hilingual.presentation.feeddiary.tab.GrammarSpellingScreen
@@ -66,6 +67,7 @@ internal fun FeedDiaryRoute(
                 onBackClick = navigateUp,
                 onProfileClick = {},
                 onLikeClick = {},
+                onPrivateClick = {},
                 isImageDetailVisible = isImageDetailVisible,
                 onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
                 onToggleBookmark = viewModel::toggleBookmark
@@ -83,12 +85,15 @@ private fun FeedDiaryScreen(
     onBackClick: () -> Unit,
     onProfileClick: () -> Unit,
     onLikeClick: () -> Unit,
+    onPrivateClick: () -> Unit,
     isImageDetailVisible: Boolean,
     onChangeImageDetailVisible: () -> Unit,
     onToggleBookmark: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isUnpublishBottomSheetVisible by remember { mutableStateOf(false) }
+    var isUnpublishDialogVisible by remember { mutableStateOf(false) }
+
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
@@ -206,12 +211,12 @@ private fun FeedDiaryScreen(
     }
 
     if (uiState.isMine) {
-        DiaryUnpublishDialog(
+        DiaryUnpublishBottomSheet(
             isVisible = isUnpublishBottomSheetVisible,
             onDismiss = { isUnpublishBottomSheetVisible = false },
             onPrivateClick = {
-                // TODO: 일기 비공개 API 호출
                 isUnpublishBottomSheetVisible = false
+                isUnpublishDialogVisible = true
             }
         )
     } else {
@@ -228,6 +233,16 @@ private fun FeedDiaryScreen(
             }
         )
     }
+
+    DiaryUnpublishDialog(
+        isVisible = isUnpublishDialogVisible,
+        onDismiss = { isUnpublishDialogVisible = false },
+        onPrivateClick = {
+            isUnpublishDialogVisible = false
+            onPrivateClick()
+            // TODO: 비공개 후 이전 화면으로 이동, 토스트 표시
+        }
+    )
 }
 
 @Preview(showBackground = true)
@@ -244,7 +259,9 @@ private fun FeedDiaryScreenPreview() {
             isImageDetailVisible = isImageDetailVisible,
             onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
             onToggleBookmark = { _, _ -> },
+            onPrivateClick = {},
             uiState = FeedDiaryUiState(
+                isMine = true,
                 writtenDate = "8월 23일 토요일",
                 profileContent = ProfileContentUiModel(
                     profileUrl = "",
