@@ -138,20 +138,6 @@ private fun FeedPreviewListScreenPreview() {
                     diaryId = 2,
                     likeCount = 75,
                     isLiked = true
-                ),
-                FeedListItemUiModel(
-                    userId = 3,
-                    profileUrl = "",
-                    nickname = "BookwormReader",
-                    streak = 99,
-                    sharedDateInMinutes = 60L * 24 * 3,
-                    content = "Finished an amazing novel. Highly recommend it to anyone who loves a good mystery. " +
-                        "The plot twists were incredible, and the characters were so well-developed. " +
-                        "I couldn't put it down until I reached the very last page!",
-                    imageUrl = "",
-                    diaryId = 3,
-                    likeCount = 210,
-                    isLiked = false
                 )
             )
         )
