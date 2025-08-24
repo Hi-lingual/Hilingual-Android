@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
@@ -100,18 +101,20 @@ private fun FeedScreen(
     val recommendListState = rememberLazyListState()
     val followingsListState = rememberLazyListState()
 
-    val (currentListState, feedList) = when (pagerState.currentPage) {
-        0 -> recommendListState to uiState.recommendFeedList
-        else -> followingsListState to uiState.followingFeedList
+    val (currentListState, feedList) = remember(pagerState.currentPage) {
+        when (pagerState.currentPage) {
+            0 -> recommendListState to uiState.recommendFeedList
+            else -> followingsListState to uiState.followingFeedList
+        }
     }
 
-    val isFabVisible by remember {
+    val isFabVisible by remember(pagerState.currentPage) {
         derivedStateOf {
             currentListState.firstVisibleItemScrollOffset > 5
         }
     }
 
-    val isAtBottom by remember {
+    val isAtBottom by remember(pagerState.currentPage) {
         derivedStateOf {
             val layoutInfo = currentListState.layoutInfo
             val visibleItemsInfo = layoutInfo.visibleItemsInfo
