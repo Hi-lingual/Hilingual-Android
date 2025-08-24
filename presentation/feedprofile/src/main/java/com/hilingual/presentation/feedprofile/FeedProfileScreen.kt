@@ -72,7 +72,7 @@ internal fun FeedProfileScreen(
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
     ) {
-        if (isMine) {
+        if (isMine || isBlock) {
             BackTopAppBar(
                 title = null,
                 onBackClicked = onBackClick
