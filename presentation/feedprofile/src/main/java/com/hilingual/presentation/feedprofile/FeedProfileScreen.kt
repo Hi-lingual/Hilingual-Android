@@ -149,51 +149,67 @@ internal fun FeedProfileScreen(
                     }
                 }
             } else {
-                stickyHeader {
-                    FeedProfileTabRow(
-                        tabIndex = pagerState.currentPage,
-                        onTabSelected = { index ->
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(index)
+                if (isMine) {
+                    stickyHeader {
+                        FeedProfileTabRow(
+                            tabIndex = pagerState.currentPage,
+                            onTabSelected = { index ->
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(index)
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(HilingualTheme.colors.white)
+                        )
+                    }
+
+                    item {
+                        HorizontalPager(
+                            state = pagerState,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .fillParentMaxHeight()
+                        ) { page ->
+                            when (page) {
+                                0 -> SharedDiaryScreen(
+                                    sharedDiarys = sharedDiarys,
+                                    onProfileClick = onProfileClick,
+                                    onSharedDiaryClick = onFeedContentClick,
+                                    onLikeClick = onLikeClick,
+                                    onMenuClick = {
+                                        onMenuClick()
+                                    },
+                                    modifier = Modifier.fillMaxSize()
+                                )
+
+                                1 -> LikedDiaryScreen(
+                                    likedDiarys = likedDiarys,
+                                    onProfileClick = onProfileClick,
+                                    onLikeDiaryClick = onFeedContentClick,
+                                    onLikeClick = onLikeClick,
+                                    onMenuClick = {
+                                        onMenuClick()
+                                    },
+                                    modifier = Modifier.fillMaxSize()
+                                )
                             }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(HilingualTheme.colors.white)
-                    )
-                }
-
-                item {
-                    HorizontalPager(
-                        state = pagerState,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .fillParentMaxHeight()
-
-                    ) { page ->
-                        when (page) {
-                            0 -> SharedDiaryScreen(
-                                sharedDiarys = sharedDiarys,
-                                onProfileClick = onProfileClick,
-                                onSharedDiaryClick = onFeedContentClick,
-                                onLikeClick = onLikeClick,
-                                onMenuClick = {
-                                    onMenuClick()
-                                },
-                                modifier = Modifier.fillMaxSize()
-                            )
-
-                            1 -> LikedDiaryScreen(
-                                likedDiarys = likedDiarys,
-                                onProfileClick = onProfileClick,
-                                onLikeDiaryClick = onFeedContentClick,
-                                onLikeClick = onLikeClick,
-                                onMenuClick = {
-                                    onMenuClick()
-                                },
-                                modifier = Modifier.fillMaxSize()
-                            )
                         }
+                    }
+                } else {
+                    item {
+                        SharedDiaryScreen(
+                            sharedDiarys = sharedDiarys,
+                            onProfileClick = onProfileClick,
+                            onSharedDiaryClick = onFeedContentClick,
+                            onLikeClick = onLikeClick,
+                            onMenuClick = {
+                                onMenuClick()
+                            },
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .fillParentMaxHeight()
+                        )
                     }
                 }
             }
