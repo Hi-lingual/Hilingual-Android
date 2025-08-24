@@ -52,7 +52,7 @@ internal fun FeedDiaryRoute(
 ) {
     val context = LocalContext.current
 
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var isImageDetailVisible by remember { mutableStateOf(false) }
 
     BackHandler {
@@ -63,13 +63,13 @@ internal fun FeedDiaryRoute(
         }
     }
 
-    when (state) {
+    when (val state = uiState) {
         is UiState.Loading -> HilingualLoadingIndicator()
 
         is UiState.Success -> {
             FeedDiaryScreen(
                 paddingValues = paddingValues,
-                uiState = (state as UiState.Success<FeedDiaryUiState>).data,
+                uiState = state.data,
                 onBackClick = navigateUp,
                 onProfileClick = {},
                 onLikeClick = {},
