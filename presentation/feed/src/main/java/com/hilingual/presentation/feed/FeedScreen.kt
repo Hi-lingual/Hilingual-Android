@@ -100,28 +100,25 @@ private fun FeedScreen(
     val recommendListState = rememberLazyListState()
     val followingsListState = rememberLazyListState()
 
+    val (currentListState, feedList) = when (pagerState.currentPage) {
+        0 -> recommendListState to uiState.recommendFeedList
+        else -> followingsListState to uiState.followingFeedList
+    }
+
     val isFabVisible by remember {
         derivedStateOf {
-            when (pagerState.currentPage) {
-                0 -> recommendListState.firstVisibleItemScrollOffset > 5
-                else -> followingsListState.firstVisibleItemScrollOffset > 5
-            }
+            currentListState.firstVisibleItemScrollOffset > 5
         }
     }
 
     val isAtBottom by remember {
         derivedStateOf {
-            val (currentListState, feedCount) = when (pagerState.currentPage) {
-                0 -> recommendListState to uiState.recommendFeedList.size
-                else -> followingsListState to uiState.followingFeedList.size
-            }
-
             val layoutInfo = currentListState.layoutInfo
-            val visibleItemInfo = layoutInfo.visibleItemsInfo
+            val visibleItemsInfo = layoutInfo.visibleItemsInfo
 
-            if (feedCount == 0 || layoutInfo.totalItemsCount == 0) return@derivedStateOf false
+            if (feedList.isEmpty() || layoutInfo.totalItemsCount == 0) return@derivedStateOf false
 
-            val lastVisibleItem = visibleItemInfo.last()
+            val lastVisibleItem = visibleItemsInfo.last()
             val viewportHeight = layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
             (lastVisibleItem.index == layoutInfo.totalItemsCount - 1) && (lastVisibleItem.offset + lastVisibleItem.size <= viewportHeight)
         }
@@ -166,38 +163,23 @@ private fun FeedScreen(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize()
             ) { page ->
-                when (page) {
-                    0 -> FeedTabScreen(
-                        listState = recommendListState,
-                        feedList = uiState.recommendFeedList,
-                        onProfileClick = {},
-                        onMenuClick = {},
-                        onContentClick = {},
-                        onLikeClick = {},
-                        onMoreClick = {}
-                    )
-
-                    1 -> FeedTabScreen(
-                        listState = followingsListState,
-                        feedList = uiState.followingFeedList,
-                        onProfileClick = {},
-                        onMenuClick = {},
-                        onContentClick = {},
-                        onLikeClick = {},
-                        onMoreClick = {},
-                        hasFollowing = uiState.hasFollowing
-                    )
-                }
+                FeedTabScreen(
+                    listState = currentListState,
+                    feedList = feedList,
+                    onProfileClick = {},
+                    onMenuClick = {},
+                    onContentClick = {},
+                    onLikeClick = {},
+                    onMoreClick = {},
+                    hasFollowing = if (page == 1) uiState.hasFollowing else false
+                )
             }
 
             HilingualFloatingButton(
                 isVisible = isFabVisible,
                 onClick = {
                     coroutineScope.launch {
-                        when (pagerState.currentPage) {
-                            0 -> recommendListState.animateScrollToItem(0)
-                            else -> followingsListState.animateScrollToItem(0)
-                        }
+                        currentListState.animateScrollToItem(0)
                     }
                 },
                 modifier = Modifier
