@@ -61,7 +61,6 @@ fun FeedContent(
     content: String,
     onContentClick: () -> Unit,
     imageUrl: String?,
-    diaryId: Long,
     likeCount: Int,
     isLiked: Boolean,
     onLikeClick: () -> Unit,
@@ -123,7 +122,6 @@ fun FeedContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             FeedFooter(
-                diaryId = diaryId,
                 likeCount = likeCount,
                 isLiked = isLiked,
                 onLikeClick = onLikeClick,
@@ -194,7 +192,6 @@ private fun FeedHeader(
 
 @Composable
 private fun FeedFooter(
-    diaryId: Long,
     isLiked: Boolean,
     onLikeClick: () -> Unit,
     likeCount: Int,
@@ -292,8 +289,7 @@ private fun FeedFooterPreview() {
                     likeCountPreview--
                 }
             },
-            onMoreClick = {},
-            diaryId = 0L
+            onMoreClick = {}
         )
     }
 }
@@ -324,8 +320,7 @@ private fun FeedContentPreviewWithImage() {
                 isLiked = !isLiked
                 if (isLiked) likeCount++ else likeCount--
             },
-            onMoreClick = { /* 상세보기 클릭 로직 */ },
-            diaryId = 0L
+            onMoreClick = { /* 상세보기 클릭 로직 */ }
         )
     }
 }
@@ -357,8 +352,7 @@ private fun FeedContentPreviewNoImage() {
                 isLiked = !isLiked
                 if (isLiked) likeCount++ else likeCount--
             },
-            onMoreClick = { /* 상세보기 클릭 로직 */ },
-            diaryId = 0L
+            onMoreClick = { /* 상세보기 클릭 로직 */ }
         )
     }
 }

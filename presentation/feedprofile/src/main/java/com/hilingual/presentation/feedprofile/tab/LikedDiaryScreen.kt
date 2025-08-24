@@ -20,10 +20,11 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 internal fun LikedDiaryScreen(
     likedDiarys: ImmutableList<LikeDiaryItemModel>,
-    onProfileClick: () -> Unit,
-    onLikeDiaryClick: () -> Unit,
-    onLikeClick: () -> Unit,
-    onMenuClick: () -> Unit,
+    onProfileClick: (Long) -> Unit,
+    onContentClick: (Long) -> Unit,
+    onLikeClick: (Long) -> Unit,
+    onMenuClick: (Long) -> Unit,
+    onMoreClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (likedDiarys.isEmpty()) {
@@ -37,24 +38,24 @@ internal fun LikedDiaryScreen(
             items(
                 items = likedDiarys,
                 key = { it.diaryId }
-            ) {
-                    likedDiary ->
-                FeedContent(
-                    profileUrl = likedDiary.profileImageUrl,
-                    onProfileClick = onProfileClick,
-                    nickname = likedDiary.nickname,
-                    streak = likedDiary.streak,
-                    sharedDateInMinutes = likedDiary.sharedDate,
-                    onMenuClick = onMenuClick,
-                    content = likedDiary.originalText,
-                    onContentClick = onLikeDiaryClick,
-                    imageUrl = likedDiary.diaryImgUrl,
-                    diaryId = likedDiary.diaryId,
-                    likeCount = likedDiary.likeCount,
-                    isLiked = likedDiary.isLiked,
-                    onLikeClick = onLikeClick,
-                    onMoreClick = onLikeDiaryClick
-                )
+            ) { likedDiary ->
+                with(likedDiary) {
+                    FeedContent(
+                        profileUrl = profileImageUrl,
+                        onProfileClick = { onProfileClick(userId) },
+                        nickname = nickname,
+                        streak = streak,
+                        sharedDateInMinutes = sharedDate,
+                        onMenuClick = { onMenuClick(diaryId) },
+                        content = originalText,
+                        onContentClick = { onContentClick(diaryId) },
+                        imageUrl = diaryImgUrl,
+                        likeCount = likeCount,
+                        isLiked = isLiked,
+                        onLikeClick = { onLikeClick(diaryId) },
+                        onMoreClick = onMoreClick
+                    )
+                }
                 HorizontalDivider(thickness = 1.dp, color = HilingualTheme.colors.gray100)
             }
             item {

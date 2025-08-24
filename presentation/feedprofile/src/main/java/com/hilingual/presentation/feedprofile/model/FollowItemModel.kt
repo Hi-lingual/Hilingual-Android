@@ -3,7 +3,7 @@ package com.hilingual.presentation.feedprofile.model
 import androidx.compose.runtime.Immutable
 
 @Immutable
-data class FollowingItemModel(
+data class FollowItemModel(
     val userId: Long,
     val profileImgUrl: String,
     val nickname: String,

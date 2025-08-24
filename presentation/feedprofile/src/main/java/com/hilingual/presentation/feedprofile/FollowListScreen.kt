@@ -12,21 +12,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feedprofile.component.FollowTabRow
-import com.hilingual.presentation.feedprofile.model.FollowerItemModel
-import com.hilingual.presentation.feedprofile.model.FollowingItemModel
-import com.hilingual.presentation.feedprofile.tab.FollowerScreen
-import com.hilingual.presentation.feedprofile.tab.FollowingScreen
+import com.hilingual.presentation.feedprofile.model.FollowItemModel
+import com.hilingual.presentation.feedprofile.tab.FollowScreen
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun FollowScreen(
-    followings: ImmutableList<FollowingItemModel>,
-    followers: ImmutableList<FollowerItemModel>,
+internal fun FollowListScreen(
+    followings: ImmutableList<FollowItemModel>,
+    followers: ImmutableList<FollowItemModel>,
     onBackClick: () -> Unit,
-    onFollowingItemClick: (Long) -> Unit,
-    onFollowerItemClick: (Long) -> Unit,
+    onProfileClick: (Long) -> Unit,
     onButtonClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -55,15 +52,17 @@ internal fun FollowScreen(
             modifier = Modifier.fillMaxSize()
         ) { page ->
             when (page) {
-                0 -> FollowerScreen(
-                    followers = followers,
-                    onFollowerItemClick = onFollowerItemClick,
-                    onButtonClick = onButtonClick
-                )
+                0 -> {
+                    FollowScreen(
+                        follow = followers,
+                        onProfileClick = onProfileClick,
+                        onButtonClick = onButtonClick
+                    )
+                }
 
-                1 -> FollowingScreen(
-                    followings = followings,
-                    onFollowingItemClick = onFollowingItemClick,
+                1 -> FollowScreen(
+                    follow = followings,
+                    onProfileClick = onProfileClick,
                     onButtonClick = onButtonClick
                 )
             }
@@ -75,23 +74,23 @@ internal fun FollowScreen(
 @Composable
 private fun FollowScreenPreview() {
     HilingualTheme {
-        FollowScreen(
+        FollowListScreen(
             followings = persistentListOf(
-                FollowingItemModel(
+                FollowItemModel(
                     userId = 1L,
                     profileImgUrl = "",
                     nickname = "큰나",
                     isFollowing = true,
                     isFollowed = true
                 ),
-                FollowingItemModel(
+                FollowItemModel(
                     userId = 2L,
                     profileImgUrl = "",
                     nickname = "작나",
                     isFollowing = false,
                     isFollowed = true
                 ),
-                FollowingItemModel(
+                FollowItemModel(
                     userId = 3L,
                     profileImgUrl = "",
                     nickname = "지영",
@@ -100,14 +99,14 @@ private fun FollowScreenPreview() {
                 )
             ),
             followers = persistentListOf(
-                FollowerItemModel(
+                FollowItemModel(
                     userId = 4L,
                     profileImgUrl = "",
                     nickname = "효빈",
                     isFollowing = true,
                     isFollowed = true
                 ),
-                FollowerItemModel(
+                FollowItemModel(
                     userId = 5L,
                     profileImgUrl = "",
                     nickname = "민재",
@@ -116,8 +115,7 @@ private fun FollowScreenPreview() {
                 )
             ),
             onBackClick = {},
-            onFollowingItemClick = {},
-            onFollowerItemClick = {},
+            onProfileClick = {},
             onButtonClick = {}
         )
     }

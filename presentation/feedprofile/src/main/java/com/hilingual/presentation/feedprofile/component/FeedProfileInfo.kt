@@ -20,7 +20,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -46,106 +48,144 @@ internal fun FeedProfileInfo(
     following: Int,
     onFollowTypeClick: () -> Unit,
     streak: Int,
+    isMine: Boolean,
+    isFollowing: Boolean,
+    isFollowed: Boolean,
+    isBlock: Boolean,
+    onFollowButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        verticalAlignment = Alignment.CenterVertically,
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .background(HilingualTheme.colors.white)
     ) {
-        NetworkImage(
-            imageUrl = profileUrl,
-            modifier = Modifier
-                .padding(vertical = 4.dp)
-                .size(60.dp)
-                .border(
-                    width = 1.dp,
-                    color = HilingualTheme.colors.gray200,
-                    shape = CircleShape
-                )
-        )
-        Column {
-            Text(
-                text = nickname,
-                style = HilingualTheme.typography.headB18,
-                color = HilingualTheme.colors.gray850,
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            NetworkImage(
+                imageUrl = profileUrl,
                 modifier = Modifier
-                    .noRippleClickable(onClick = onFollowTypeClick)
-                    .padding(bottom = 8.dp)
-            ) {
+                    .padding(vertical = 4.dp)
+                    .size(60.dp)
+                    .border(
+                        width = 1.dp,
+                        color = HilingualTheme.colors.gray200,
+                        shape = CircleShape
+                    )
+            )
+            Column {
                 Text(
-                    text = "팔로워",
-                    style = HilingualTheme.typography.captionR14,
-                    color = HilingualTheme.colors.gray400,
-                    modifier = Modifier.padding(end = 2.dp)
+                    text = nickname,
+                    style = HilingualTheme.typography.headB18,
+                    color = HilingualTheme.colors.gray850,
+                    modifier = Modifier.padding(bottom = 4.dp)
                 )
-                Text(
-                    text = "$follower",
-                    style = HilingualTheme.typography.bodyB14,
-                    color = HilingualTheme.colors.gray400,
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-                Text(
-                    text = "팔로잉",
-                    style = HilingualTheme.typography.captionR14,
-                    color = HilingualTheme.colors.gray400,
-                    modifier = Modifier.padding(end = 2.dp)
-                )
-                Text(
-                    text = "$following",
-                    style = HilingualTheme.typography.bodyB14,
-                    color = HilingualTheme.colors.gray400
-                )
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_fire_16),
-                    contentDescription = null,
-                    tint = HilingualTheme.colors.hilingualOrange,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .padding(end = 1.dp)
-                        .size(16.dp)
-                )
-                Text(
-                    text = "${streak}일 연속 작성중",
-                    style = HilingualTheme.typography.bodyM14,
-                    color = if (streak > 0) HilingualTheme.colors.hilingualOrange else HilingualTheme.colors.gray400
-                )
+                        .noRippleClickable(onClick = onFollowTypeClick)
+                        .padding(bottom = 8.dp)
+                ) {
+                    Text(
+                        text = "팔로워",
+                        style = HilingualTheme.typography.captionR14,
+                        color = HilingualTheme.colors.gray400,
+                        modifier = Modifier.padding(end = 2.dp)
+                    )
+                    Text(
+                        text = "$follower",
+                        style = HilingualTheme.typography.bodyB14,
+                        color = HilingualTheme.colors.gray400,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text(
+                        text = "팔로잉",
+                        style = HilingualTheme.typography.captionR14,
+                        color = HilingualTheme.colors.gray400,
+                        modifier = Modifier.padding(end = 2.dp)
+                    )
+                    Text(
+                        text = "$following",
+                        style = HilingualTheme.typography.bodyB14,
+                        color = HilingualTheme.colors.gray400
+                    )
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_fire_16),
+                        contentDescription = null,
+                        tint = HilingualTheme.colors.hilingualOrange,
+                        modifier = Modifier
+                            .padding(end = 1.dp)
+                            .size(16.dp)
+                    )
+                    Text(
+                        text = "${streak}일 연속 작성중",
+                        style = HilingualTheme.typography.bodyM14,
+                        color = if (streak > 0) HilingualTheme.colors.hilingualOrange else HilingualTheme.colors.gray400
+                    )
+                }
             }
+        }
+
+        if (!isMine) {
+            FeedUserActionButton(
+                isFilled = isFollowing,
+                buttonText = when {
+                    isBlock -> "차단 해제"
+                    isFollowing -> "팔로잉"
+                    isFollowed -> "맞팔로우"
+                    else -> "팔로우"
+                },
+                onClick = onFollowButtonClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp, bottom = 8.dp)
+
+            )
+        } else {
+            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }
 
-@Preview()
+@Preview
 @Composable
 private fun FeedProfileInfoPreview() {
     HilingualTheme {
         Column(
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             FeedProfileInfo(
                 profileUrl = "",
                 nickname = "하이링",
                 follower = 123,
-                following = 123,
+                following = 456,
+                streak = 7,
+                isMine = false,
+                isFollowing = true,
+                isFollowed = true,
+                isBlock = false,
                 onFollowTypeClick = {},
-                streak = 7
+                onFollowButtonClick = {}
             )
             FeedProfileInfo(
                 profileUrl = "",
-                nickname = "하이링",
-                follower = 123,
-                following = 123,
+                nickname = "내 계정",
+                follower = 99,
+                following = 77,
+                streak = 0,
+                isMine = true,
+                isFollowing = false,
+                isFollowed = false,
+                isBlock = false,
                 onFollowTypeClick = {},
-                streak = 0
+                onFollowButtonClick = {}
             )
         }
     }

@@ -10,42 +10,45 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.content.UserActionItem
 import com.hilingual.presentation.feedprofile.component.FeedEmptyCard
 import com.hilingual.presentation.feedprofile.component.FeedEmptyCardType
-import com.hilingual.presentation.feedprofile.model.FollowerItemModel
+import com.hilingual.presentation.feedprofile.model.FollowItemModel
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-internal fun FollowerScreen(
-    followers: ImmutableList<FollowerItemModel>,
-    onFollowerItemClick: (Long) -> Unit,
+internal fun FollowScreen(
+    follow: ImmutableList<FollowItemModel>,
+    onProfileClick: (Long) -> Unit,
     onButtonClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (followers.isEmpty()) {
+    if (follow.isEmpty()) {
         FeedEmptyCard(
             type = FeedEmptyCardType.NO_FOLLOWER
         )
     } else {
         LazyColumn(
-            modifier = modifier.fillMaxSize()
+            modifier = modifier
+                .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
             items(
-                items = followers,
+                items = follow,
                 key = { it.userId }
             ) { follower ->
-                UserActionItem(
-                    userId = follower.userId,
-                    profileUrl = follower.profileImgUrl,
-                    nickname = follower.nickname,
-                    isFilled = follower.isFollowing,
-                    buttonText = when {
-                        follower.isFollowing -> "팔로잉"
-                        follower.isFollowed -> "맞팔로우"
-                        else -> "팔로우"
-                    },
-                    onProfileClick = onFollowerItemClick,
-                    onButtonClick = onButtonClick
-                )
+                with(follower) {
+                    UserActionItem(
+                        userId = userId,
+                        profileUrl = profileImgUrl,
+                        nickname = nickname,
+                        isFilled = isFollowing,
+                        buttonText = when {
+                            isFollowing -> "팔로잉"
+                            isFollowed -> "맞팔로우"
+                            else -> "팔로우"
+                        },
+                        onProfileClick = onProfileClick,
+                        onButtonClick = onButtonClick
+                    )
+                }
             }
         }
     }
