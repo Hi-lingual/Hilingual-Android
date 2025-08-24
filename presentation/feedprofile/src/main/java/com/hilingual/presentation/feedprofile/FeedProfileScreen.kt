@@ -1,6 +1,7 @@
 package com.hilingual.presentation.feedprofile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,10 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -67,6 +71,14 @@ internal fun FeedProfileScreen(
     var isMenuBottomSheetVisible by remember { mutableStateOf(false) }
     var isBlockBottomSheetVisible by remember { mutableStateOf(false) }
 
+    val profileListState = rememberLazyListState()
+
+    val isFabVisible by remember {
+        derivedStateOf {
+            profileListState.firstVisibleItemIndex > 0 || profileListState.firstVisibleItemScrollOffset > 0
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -86,6 +98,7 @@ internal fun FeedProfileScreen(
         }
 
         LazyColumn(
+            state = profileListState,
             modifier = Modifier.fillMaxSize()
         ) {
             item {
@@ -165,35 +178,51 @@ internal fun FeedProfileScreen(
                     }
 
                     item {
-                        HorizontalPager(
-                            state = pagerState,
+                        Box(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .fillParentMaxHeight()
-                        ) { page ->
-                            when (page) {
-                                0 -> SharedDiaryScreen(
-                                    sharedDiarys = sharedDiarys,
-                                    onProfileClick = onProfileClick,
-                                    onSharedDiaryClick = onFeedContentClick,
-                                    onLikeClick = onLikeClick,
-                                    onMenuClick = {
-                                        onMenuClick()
-                                    },
-                                    modifier = Modifier.fillMaxSize()
-                                )
+                        ) {
+                            HorizontalPager(
+                                state = pagerState,
+                                modifier = Modifier.fillMaxSize()
+                            ) { page ->
+                                when (page) {
+                                    0 -> SharedDiaryScreen(
+                                        sharedDiarys = sharedDiarys,
+                                        onProfileClick = onProfileClick,
+                                        onSharedDiaryClick = onFeedContentClick,
+                                        onLikeClick = onLikeClick,
+                                        onMenuClick = {
+                                            onMenuClick()
+                                        },
+                                        modifier = Modifier.fillMaxSize()
+                                    )
 
-                                1 -> LikedDiaryScreen(
-                                    likedDiarys = likedDiarys,
-                                    onProfileClick = onProfileClick,
-                                    onLikeDiaryClick = onFeedContentClick,
-                                    onLikeClick = onLikeClick,
-                                    onMenuClick = {
-                                        onMenuClick()
-                                    },
-                                    modifier = Modifier.fillMaxSize()
-                                )
+                                    1 -> LikedDiaryScreen(
+                                        likedDiarys = likedDiarys,
+                                        onProfileClick = onProfileClick,
+                                        onLikeDiaryClick = onFeedContentClick,
+                                        onLikeClick = onLikeClick,
+                                        onMenuClick = {
+                                            onMenuClick()
+                                        },
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                }
                             }
+
+                            HilingualFloatingButton(
+                                isVisible = isFabVisible,
+                                onClick = {
+                                    coroutineScope.launch {
+                                        profileListState.animateScrollToItem(0)
+                                    }
+                                },
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .padding(bottom = 24.dp, end = 16.dp)
+                            )
                         }
                     }
                 } else {
@@ -215,7 +244,6 @@ internal fun FeedProfileScreen(
             }
         }
     }
-
     ReportBlockBottomSheet(
         isVisible = isMenuBottomSheetVisible,
         onDismiss = { isMenuBottomSheetVisible = false },
