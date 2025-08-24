@@ -48,8 +48,8 @@ internal fun FeedTopAppBar(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .padding(vertical = 9.dp, horizontal = 16.dp)
             .fillMaxWidth()
+            .padding(vertical = 9.dp, horizontal = 16.dp)
     ) {
         Text(
             text = "피드",

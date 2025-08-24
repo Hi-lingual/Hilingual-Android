@@ -45,7 +45,7 @@ import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndic
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedTopAppBar
-import com.hilingual.presentation.feed.model.FeedPreviewUiModel
+import com.hilingual.presentation.feed.model.FeedListItemUiModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
@@ -54,7 +54,7 @@ internal fun FeedRoute(
     paddingValues: PaddingValues,
     viewModel: FeedViewModel = hiltViewModel()
 ) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val toastTrigger = LocalToastTrigger.current
 
     viewModel.sideEffect.collectSideEffect {
@@ -65,13 +65,13 @@ internal fun FeedRoute(
         }
     }
 
-    when (state) {
+    when (val state = uiState) {
         is UiState.Loading -> HilingualLoadingIndicator()
 
         is UiState.Success -> {
             FeedScreen(
                 paddingValues = paddingValues,
-                uiState = (state as UiState.Success<FeedUiState>).data,
+                uiState = state.data,
                 onProfileClick = {
                     // TODO: 피드 프로필 화면으로 이동
                 },
@@ -220,7 +220,7 @@ private fun FeedScreenPreview() {
             uiState = FeedUiState(
                 myProfileUrl = "https://avatars.githubusercontent.com/u/101113025?v=4",
                 recommendFeedList = persistentListOf(
-                    FeedPreviewUiModel(
+                    FeedListItemUiModel(
                         userId = 1,
                         profileUrl = "https://avatars.githubusercontent.com/u/101113025?v=4",
                         nickname = "작나",
@@ -232,7 +232,7 @@ private fun FeedScreenPreview() {
                         likeCount = 120,
                         isLiked = false
                     ),
-                    FeedPreviewUiModel(
+                    FeedListItemUiModel(
                         userId = 2,
                         profileUrl = "",
                         nickname = "한민돌",
@@ -244,7 +244,7 @@ private fun FeedScreenPreview() {
                         likeCount = 75,
                         isLiked = true
                     ),
-                    FeedPreviewUiModel(
+                    FeedListItemUiModel(
                         userId = 3,
                         profileUrl = "",
                         nickname = "효비",

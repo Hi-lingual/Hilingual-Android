@@ -38,14 +38,14 @@ import com.hilingual.core.designsystem.component.content.FeedContent
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedEmptyCard
 import com.hilingual.presentation.feed.component.FeedEmptyCardType
-import com.hilingual.presentation.feed.model.FeedPreviewUiModel
+import com.hilingual.presentation.feed.model.FeedListItemUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun FeedTabScreen(
     listState: LazyListState,
-    feedList: ImmutableList<FeedPreviewUiModel>,
+    feedList: ImmutableList<FeedListItemUiModel>,
     onProfileClick: (Long) -> Unit,
     onMenuClick: (Long) -> Unit,
     onContentClick: (Long) -> Unit,
@@ -109,13 +109,13 @@ internal fun FeedTabScreen(
     }
 }
 
-@Preview(showBackground = true, name = "Feed List Preview")
+@Preview(showBackground = true)
 @Composable
-fun FeedPreviewListScreenPreview() {
+private fun FeedPreviewListScreenPreview() {
     var sampleFeedList by remember {
         mutableStateOf(
             persistentListOf(
-                FeedPreviewUiModel(
+                FeedListItemUiModel(
                     userId = 1,
                     profileUrl = "",
                     nickname = "TravelExplorer",
@@ -127,7 +127,7 @@ fun FeedPreviewListScreenPreview() {
                     likeCount = 120,
                     isLiked = false
                 ),
-                FeedPreviewUiModel(
+                FeedListItemUiModel(
                     userId = 2,
                     profileUrl = "",
                     nickname = "FoodieCoder",
@@ -139,7 +139,7 @@ fun FeedPreviewListScreenPreview() {
                     likeCount = 75,
                     isLiked = true
                 ),
-                FeedPreviewUiModel(
+                FeedListItemUiModel(
                     userId = 3,
                     profileUrl = "",
                     nickname = "BookwormReader",
