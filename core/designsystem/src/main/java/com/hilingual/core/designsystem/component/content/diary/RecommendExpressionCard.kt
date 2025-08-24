@@ -48,7 +48,6 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun RecommendExpressionCard(
-    phraseId: Long,
     phraseType: ImmutableList<String>,
     phrase: String,
     explanation: String,
@@ -145,7 +144,6 @@ private fun RecommendExpressionCardPreview() {
         var isBookmarked by remember { mutableStateOf(false) }
 
         RecommendExpressionCard(
-            phraseId = 0L,
             phraseType = persistentListOf("동사", "숙어"),
             phrase = "come across as",
             explanation = "~처럼 보이다, ~한 인상을 주다",

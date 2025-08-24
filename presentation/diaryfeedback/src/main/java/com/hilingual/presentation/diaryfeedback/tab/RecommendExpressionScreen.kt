@@ -69,7 +69,6 @@ internal fun RecommendExpressionScreen(
             key = { it.phraseId }
         ) {
             RecommendExpressionCard(
-                phraseId = it.phraseId,
                 phraseType = it.phraseType,
                 phrase = it.phrase,
                 explanation = it.explanation,

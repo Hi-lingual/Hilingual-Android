@@ -47,8 +47,8 @@ import kotlinx.collections.immutable.persistentListOf
 fun DiaryCard(
     isAIWritten: Boolean,
     diaryContent: String,
-    modifier: Modifier = Modifier,
     onImageClick: () -> Unit,
+    modifier: Modifier = Modifier,
     diffRanges: ImmutableList<Pair<Int, Int>> = persistentListOf(),
     imageUrl: String? = null
 ) {
