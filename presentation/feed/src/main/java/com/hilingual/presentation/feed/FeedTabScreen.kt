@@ -38,19 +38,19 @@ import com.hilingual.core.designsystem.component.content.FeedContent
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedEmptyCard
 import com.hilingual.presentation.feed.component.FeedEmptyCardType
-import com.hilingual.presentation.feed.model.FeedPreviewUiModel
+import com.hilingual.presentation.feed.model.FeedListItemUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun FeedTabScreen(
     listState: LazyListState,
-    feedList: ImmutableList<FeedPreviewUiModel>,
+    feedList: ImmutableList<FeedListItemUiModel>,
     onProfileClick: (Long) -> Unit,
     onMenuClick: (Long) -> Unit,
     onContentClick: (Long) -> Unit,
     onLikeClick: (Long) -> Unit,
-    onMoreClick: () -> Unit,
+    onMoreClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
     hasFollowing: Boolean = true
 ) {
@@ -94,7 +94,7 @@ internal fun FeedTabScreen(
                         likeCount = likeCount,
                         isLiked = isLiked,
                         onLikeClick = { onLikeClick(diaryId) },
-                        onMoreClick = onMoreClick
+                        onMoreClick = { onMoreClick(diaryId) }
                     )
                 }
 
@@ -109,13 +109,13 @@ internal fun FeedTabScreen(
     }
 }
 
-@Preview(showBackground = true, name = "Feed List Preview")
+@Preview(showBackground = true)
 @Composable
-fun FeedPreviewListScreenPreview() {
+private fun FeedTabScreenPreview() {
     var sampleFeedList by remember {
         mutableStateOf(
             persistentListOf(
-                FeedPreviewUiModel(
+                FeedListItemUiModel(
                     userId = 1,
                     profileUrl = "",
                     nickname = "TravelExplorer",
@@ -127,7 +127,7 @@ fun FeedPreviewListScreenPreview() {
                     likeCount = 120,
                     isLiked = false
                 ),
-                FeedPreviewUiModel(
+                FeedListItemUiModel(
                     userId = 2,
                     profileUrl = "",
                     nickname = "FoodieCoder",
@@ -138,20 +138,6 @@ fun FeedPreviewListScreenPreview() {
                     diaryId = 2,
                     likeCount = 75,
                     isLiked = true
-                ),
-                FeedPreviewUiModel(
-                    userId = 3,
-                    profileUrl = "",
-                    nickname = "BookwormReader",
-                    streak = 99,
-                    sharedDateInMinutes = 60L * 24 * 3,
-                    content = "Finished an amazing novel. Highly recommend it to anyone who loves a good mystery. " +
-                        "The plot twists were incredible, and the characters were so well-developed. " +
-                        "I couldn't put it down until I reached the very last page!",
-                    imageUrl = "",
-                    diaryId = 3,
-                    likeCount = 210,
-                    isLiked = false
                 )
             )
         )

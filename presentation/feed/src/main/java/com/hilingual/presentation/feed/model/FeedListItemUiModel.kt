@@ -13,12 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.hilingual.build_logic.setNamespace
+package com.hilingual.presentation.feed.model
 
-plugins {
-    alias(libs.plugins.hilingual.feature)
-}
+import androidx.compose.runtime.Immutable
 
-android {
-    setNamespace("presentation.community")
-}
+@Immutable
+internal data class FeedListItemUiModel(
+    val userId: Long,
+    val profileUrl: String,
+    val nickname: String,
+    val streak: Int,
+    val sharedDateInMinutes: Long,
+    val content: String,
+    val imageUrl: String?,
+    val diaryId: Long,
+    val likeCount: Int,
+    val isLiked: Boolean
+)

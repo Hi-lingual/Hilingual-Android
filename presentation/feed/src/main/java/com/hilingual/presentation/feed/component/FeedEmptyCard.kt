@@ -71,7 +71,7 @@ internal fun FeedEmptyCard(
 
 @Preview(showBackground = true)
 @Composable
-private fun FeedbackEmptyCardPreview() {
+private fun FeedEmptyCardPreview() {
     HilingualTheme {
         Column {
             FeedEmptyCard(
