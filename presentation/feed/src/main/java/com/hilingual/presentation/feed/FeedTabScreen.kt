@@ -50,7 +50,7 @@ internal fun FeedTabScreen(
     onMenuClick: (Long) -> Unit,
     onContentClick: (Long) -> Unit,
     onLikeClick: (Long) -> Unit,
-    onMoreClick: () -> Unit,
+    onMoreClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
     hasFollowing: Boolean = true
 ) {
@@ -94,7 +94,7 @@ internal fun FeedTabScreen(
                         likeCount = likeCount,
                         isLiked = isLiked,
                         onLikeClick = { onLikeClick(diaryId) },
-                        onMoreClick = onMoreClick
+                        onMoreClick = { onMoreClick(diaryId) }
                     )
                 }
 
@@ -111,7 +111,7 @@ internal fun FeedTabScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun FeedPreviewListScreenPreview() {
+private fun FeedTabScreenPreview() {
     var sampleFeedList by remember {
         mutableStateOf(
             persistentListOf(

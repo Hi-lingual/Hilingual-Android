@@ -16,7 +16,6 @@
 package com.hilingual.presentation.feed.component
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -59,22 +58,15 @@ internal fun FeedTopAppBar(
 
         Spacer(Modifier.weight(1f))
 
-        Box(
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_search_20),
+            contentDescription = null,
+            tint = HilingualTheme.colors.gray400,
             modifier = Modifier
+                .size(36.dp)
                 .noRippleClickable(onClick = onSearchClick)
                 .padding(6.dp)
-                .size(36.dp)
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_search_20),
-                contentDescription = null,
-                tint = HilingualTheme.colors.gray400,
-                modifier = Modifier
-                    .noRippleClickable(onClick = onSearchClick)
-                    .size(24.dp)
-                    .align(Alignment.Center)
-            )
-        }
+        )
 
         Spacer(Modifier.width(8.dp))
 
