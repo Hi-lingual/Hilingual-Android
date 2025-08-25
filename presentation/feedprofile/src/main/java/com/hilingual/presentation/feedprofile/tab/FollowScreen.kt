@@ -11,13 +11,14 @@ import com.hilingual.core.designsystem.component.content.UserActionItem
 import com.hilingual.presentation.feedprofile.component.FeedEmptyCard
 import com.hilingual.presentation.feedprofile.component.FeedEmptyCardType
 import com.hilingual.presentation.feedprofile.model.FollowItemModel
+import com.hilingual.presentation.feedprofile.model.FollowState
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun FollowScreen(
     follow: ImmutableList<FollowItemModel>,
     onProfileClick: (Long) -> Unit,
-    onButtonClick: (Long) -> Unit,
+    onButtonClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (follow.isEmpty()) {
@@ -33,20 +34,21 @@ internal fun FollowScreen(
             items(
                 items = follow,
                 key = { it.userId }
-            ) { follower ->
-                with(follower) {
+            ) { follow ->
+                with(follow) {
+                    val followState = FollowState.getValueByFollowState(
+                        isFollowing = isFollowing,
+                        isFollowed = isFollowed
+                    ) ?: FollowState.NONE
+
                     UserActionItem(
                         userId = userId,
                         profileUrl = profileImgUrl,
                         nickname = nickname,
-                        isFilled = isFollowing,
-                        buttonText = when {
-                            isFollowing -> "팔로잉"
-                            isFollowed -> "맞팔로우"
-                            else -> "팔로우"
-                        },
+                        isFilled = followState.isFollowing,
+                        buttonText = followState.actionText,
                         onProfileClick = onProfileClick,
-                        onButtonClick = onButtonClick
+                        onButtonClick = { onButtonClick(userId, followState.isFollowing) }
                     )
                 }
             }

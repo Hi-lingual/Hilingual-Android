@@ -62,6 +62,7 @@ internal fun FeedProfileRoute(
             FeedProfileScreen(
                 uiState = state.data,
                 onBackClick = { },
+                onActionButtonClick = { _, _ -> },
                 onReportClick = { },
                 onBlockClick = { }
             )
@@ -75,6 +76,7 @@ internal fun FeedProfileRoute(
 internal fun FeedProfileScreen(
     uiState: FeedProfileUiState,
     onBackClick: () -> Unit,
+    onActionButtonClick: (Long, Boolean) -> Unit,
     onReportClick: () -> Unit,
     onBlockClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -134,7 +136,7 @@ internal fun FeedProfileScreen(
                             isFollowing = isFollowing,
                             isFollowed = isFollowed,
                             isBlock = isBlock,
-                            onFollowButtonClick = { },
+                            onActionButtonClick = { onActionButtonClick },
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
                         )
@@ -319,6 +321,7 @@ private fun FeedProfileScreenPreview() {
                 )
             ),
             onBackClick = {},
+            onActionButtonClick = { _, _ -> },
             onReportClick = {},
             onBlockClick = {}
         )

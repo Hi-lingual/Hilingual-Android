@@ -52,7 +52,7 @@ internal fun FeedProfileInfo(
     isFollowing: Boolean,
     isFollowed: Boolean,
     isBlock: Boolean,
-    onFollowButtonClick: () -> Unit,
+    onActionButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -142,7 +142,7 @@ internal fun FeedProfileInfo(
                     isFollowed -> "맞팔로우"
                     else -> "팔로우"
                 },
-                onClick = onFollowButtonClick,
+                onClick = onActionButtonClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 20.dp, bottom = 8.dp)
@@ -172,7 +172,7 @@ private fun FeedProfileInfoPreview() {
                 isFollowed = true,
                 isBlock = false,
                 onFollowTypeClick = {},
-                onFollowButtonClick = {}
+                onActionButtonClick = {}
             )
             FeedProfileInfo(
                 profileUrl = "",
@@ -185,7 +185,7 @@ private fun FeedProfileInfoPreview() {
                 isFollowed = false,
                 isBlock = false,
                 onFollowTypeClick = {},
-                onFollowButtonClick = {}
+                onActionButtonClick = {}
             )
         }
     }

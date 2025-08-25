@@ -2,13 +2,19 @@ package com.hilingual.presentation.feedprofile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.util.UiState
+import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feedprofile.component.FollowTabRow
@@ -19,12 +25,24 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
 @Composable
+internal fun FollowListRoute(
+    paddingValues: PaddingValues,
+    viewModel: FollowListViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    FollowListScreen(
+        followers = uiState.followerList,
+        followings = uiState.followingList,
+        onBackClick = { }
+    )
+}
+
+@Composable
 internal fun FollowListScreen(
-    followings: ImmutableList<FollowItemModel>,
-    followers: ImmutableList<FollowItemModel>,
+    followers: UiState<ImmutableList<FollowItemModel>>,
+    followings: UiState<ImmutableList<FollowItemModel>>,
     onBackClick: () -> Unit,
-    onProfileClick: (Long) -> Unit,
-    onButtonClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -53,18 +71,31 @@ internal fun FollowListScreen(
         ) { page ->
             when (page) {
                 0 -> {
-                    FollowScreen(
-                        follow = followers,
-                        onProfileClick = onProfileClick,
-                        onButtonClick = onButtonClick
-                    )
+                    when (followers) {
+                        is UiState.Loading -> HilingualLoadingIndicator()
+                        is UiState.Success -> {
+                            FollowScreen(
+                                follow = followers.data,
+                                onProfileClick = { },
+                                onButtonClick = { _, _ -> }
+                            )
+                        }
+                        else -> {}
+                    }
                 }
-
-                1 -> FollowScreen(
-                    follow = followings,
-                    onProfileClick = onProfileClick,
-                    onButtonClick = onButtonClick
-                )
+                1 -> {
+                    when (followings) {
+                        is UiState.Loading -> HilingualLoadingIndicator()
+                        is UiState.Success -> {
+                            FollowScreen(
+                                follow = followings.data,
+                                onProfileClick = { },
+                                onButtonClick = { _, _ -> }
+                            )
+                        }
+                        else -> {}
+                    }
+                }
             }
         }
     }
@@ -72,51 +103,53 @@ internal fun FollowListScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun FollowScreenPreview() {
+private fun FollowListScreenPreview() {
     HilingualTheme {
         FollowListScreen(
-            followings = persistentListOf(
-                FollowItemModel(
-                    userId = 1L,
-                    profileImgUrl = "",
-                    nickname = "큰나",
-                    isFollowing = true,
-                    isFollowed = true
-                ),
-                FollowItemModel(
-                    userId = 2L,
-                    profileImgUrl = "",
-                    nickname = "작나",
-                    isFollowing = false,
-                    isFollowed = true
-                ),
-                FollowItemModel(
-                    userId = 3L,
-                    profileImgUrl = "",
-                    nickname = "지영",
-                    isFollowing = false,
-                    isFollowed = false
+            followers = UiState.Success(
+                persistentListOf(
+                    FollowItemModel(
+                        userId = 1L,
+                        profileImgUrl = "",
+                        nickname = "효빈",
+                        isFollowing = true,
+                        isFollowed = true
+                    ),
+                    FollowItemModel(
+                        userId = 2L,
+                        profileImgUrl = "",
+                        nickname = "민재",
+                        isFollowing = false,
+                        isFollowed = true
+                    )
                 )
             ),
-            followers = persistentListOf(
-                FollowItemModel(
-                    userId = 4L,
-                    profileImgUrl = "",
-                    nickname = "효빈",
-                    isFollowing = true,
-                    isFollowed = true
-                ),
-                FollowItemModel(
-                    userId = 5L,
-                    profileImgUrl = "",
-                    nickname = "민재",
-                    isFollowing = false,
-                    isFollowed = false
+            followings = UiState.Success(
+                persistentListOf(
+                    FollowItemModel(
+                        userId = 4L,
+                        profileImgUrl = "",
+                        nickname = "큰나",
+                        isFollowing = true,
+                        isFollowed = true
+                    ),
+                    FollowItemModel(
+                        userId = 5L,
+                        profileImgUrl = "",
+                        nickname = "작나",
+                        isFollowing = true,
+                        isFollowed = false
+                    ),
+                    FollowItemModel(
+                        userId = 6L,
+                        profileImgUrl = "",
+                        nickname = "지영",
+                        isFollowing = false,
+                        isFollowed = true
+                    )
                 )
             ),
-            onBackClick = {},
-            onProfileClick = {},
-            onButtonClick = {}
+            onBackClick = {}
         )
     }
 }
