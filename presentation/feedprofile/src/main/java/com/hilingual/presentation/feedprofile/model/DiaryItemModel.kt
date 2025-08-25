@@ -9,7 +9,7 @@ internal interface DiaryItem {
     val sharedDate: Long
     val likeCount: Int
     val isLiked: Boolean
-    val diaryImgUrl: String?
+    val diaryImageUrl: String?
     val originalText: String
 }
 
@@ -21,7 +21,7 @@ data class SharedDiaryItemModel(
     override val sharedDate: Long,
     override val likeCount: Int,
     override val isLiked: Boolean,
-    override val diaryImgUrl: String?,
+    override val diaryImageUrl: String?,
     override val originalText: String
 ) : DiaryItem
 
@@ -35,6 +35,6 @@ data class LikeDiaryItemModel(
     override val sharedDate: Long,
     override val likeCount: Int,
     override val isLiked: Boolean,
-    override val diaryImgUrl: String?,
+    override val diaryImageUrl: String?,
     override val originalText: String
 ) : DiaryItem

@@ -54,7 +54,7 @@ internal fun DiaryListScreen(
                         onMenuClick = { onMenuClick(diaryId) },
                         content = originalText,
                         onContentClick = { onContentClick(diaryId) },
-                        imageUrl = diaryImgUrl,
+                        imageUrl = diaryImageUrl,
                         likeCount = likeCount,
                         isLiked = isLiked,
                         onLikeClick = { onLikeClick(diaryId) },

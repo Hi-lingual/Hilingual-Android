@@ -142,7 +142,7 @@ private fun FeedProfileScreen(
 
                     with(profile) {
                         FeedProfileInfo(
-                            profileUrl = profileUrl,
+                            profileImageUrl = profileImageUrl,
                             nickname = nickname,
                             streak = streak,
                             follower = follower,
@@ -291,7 +291,7 @@ private fun FeedProfileScreenPreview() {
             uiState = FeedProfileUiState(
                 feedProfileInfo = UiState.Success(
                     FeedProfileInfoModel(
-                        profileUrl = "",
+                        profileImageUrl = "",
                         nickname = "하이링",
                         streak = 5,
                         follower = 120,
@@ -310,7 +310,7 @@ private fun FeedProfileScreenPreview() {
                         sharedDate = 1720000000L,
                         likeCount = 12,
                         isLiked = true,
-                        diaryImgUrl = null,
+                        diaryImageUrl = null,
                         originalText = "오늘은 새로운 언어를 배웠다!"
                     )
                 ),
@@ -324,7 +324,7 @@ private fun FeedProfileScreenPreview() {
                         sharedDate = 1720000500L,
                         likeCount = 30,
                         isLiked = false,
-                        diaryImgUrl = null,
+                        diaryImageUrl = null,
                         originalText = "이건 내가 좋아요한 일기!"
                     )
                 )

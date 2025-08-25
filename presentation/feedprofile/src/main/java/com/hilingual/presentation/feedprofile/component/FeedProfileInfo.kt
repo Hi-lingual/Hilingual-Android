@@ -42,7 +42,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 internal fun FeedProfileInfo(
-    profileUrl: String,
+    profileImageUrl: String,
     nickname: String,
     follower: Int,
     following: Int,
@@ -66,7 +66,7 @@ internal fun FeedProfileInfo(
             modifier = Modifier.fillMaxWidth()
         ) {
             NetworkImage(
-                imageUrl = profileUrl,
+                imageUrl = profileImageUrl,
                 modifier = Modifier
                     .padding(vertical = 4.dp)
                     .size(60.dp)
@@ -161,7 +161,7 @@ private fun FeedProfileInfoPreview() {
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             FeedProfileInfo(
-                profileUrl = "",
+                profileImageUrl = "",
                 nickname = "하이링",
                 follower = 123,
                 following = 456,
@@ -174,7 +174,7 @@ private fun FeedProfileInfoPreview() {
                 onActionButtonClick = {}
             )
             FeedProfileInfo(
-                profileUrl = "",
+                profileImageUrl = "",
                 nickname = "내 계정",
                 follower = 99,
                 following = 77,

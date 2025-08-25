@@ -5,7 +5,7 @@ import androidx.compose.runtime.Immutable
 @Immutable
 data class FeedProfileInfoModel(
     val isMine: Boolean,
-    val profileUrl: String,
+    val profileImageUrl: String,
     val nickname: String,
     val follower: Int,
     val following: Int,
