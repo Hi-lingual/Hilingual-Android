@@ -133,6 +133,8 @@ internal fun FeedProfileInfo(
             }
         }
 
+        Spacer(modifier = Modifier.height(20.dp))
+
         if (!isMine) {
             FeedUserActionButton(
                 isFilled = isFollowing,
@@ -145,11 +147,8 @@ internal fun FeedProfileInfo(
                 onClick = onActionButtonClick,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 20.dp, bottom = 8.dp)
-
+                    .padding(bottom = 8.dp)
             )
-        } else {
-            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }

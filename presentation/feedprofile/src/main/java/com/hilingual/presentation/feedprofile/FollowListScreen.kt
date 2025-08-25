@@ -39,7 +39,7 @@ internal fun FollowListRoute(
 }
 
 @Composable
-internal fun FollowListScreen(
+private fun FollowListScreen(
     followers: UiState<ImmutableList<FollowItemModel>>,
     followings: UiState<ImmutableList<FollowItemModel>>,
     onBackClick: () -> Unit,

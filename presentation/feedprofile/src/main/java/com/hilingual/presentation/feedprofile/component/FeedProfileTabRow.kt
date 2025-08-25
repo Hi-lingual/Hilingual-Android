@@ -22,7 +22,8 @@ internal fun FeedProfileTabRow(
     HilingualBasicTabRow(
         tabTitles = TITLES,
         tabIndex = tabIndex,
-        onTabSelected = onTabSelected
+        onTabSelected = onTabSelected,
+        modifier = modifier
     )
 }
 

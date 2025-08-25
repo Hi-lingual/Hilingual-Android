@@ -60,6 +60,7 @@ internal fun FeedProfileRoute(
 
         is UiState.Success -> {
             FeedProfileScreen(
+                paddingValues = paddingValues,
                 uiState = state.data,
                 onBackClick = { },
                 onActionButtonClick = { _, _ -> },
@@ -73,7 +74,8 @@ internal fun FeedProfileRoute(
 }
 
 @Composable
-internal fun FeedProfileScreen(
+private fun FeedProfileScreen(
+    paddingValues: PaddingValues,
     uiState: FeedProfileUiState,
     onBackClick: () -> Unit,
     onActionButtonClick: (Long, Boolean) -> Unit,
@@ -103,6 +105,7 @@ internal fun FeedProfileScreen(
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
+                .padding(paddingValues)
         ) {
             if (profile.isMine || profile.isBlock) {
                 BackTopAppBar(
@@ -137,8 +140,7 @@ internal fun FeedProfileScreen(
                             isFollowed = isFollowed,
                             isBlock = isBlock,
                             onActionButtonClick = { onActionButtonClick },
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp)
+                            modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }
                 }
@@ -272,6 +274,7 @@ internal fun FeedProfileScreen(
 private fun FeedProfileScreenPreview() {
     HilingualTheme {
         FeedProfileScreen(
+            paddingValues = PaddingValues(0.dp),
             uiState = FeedProfileUiState(
                 feedProfileInfo = UiState.Success(
                     FeedProfileInfoModel(

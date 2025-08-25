@@ -1,6 +1,7 @@
 package com.hilingual.presentation.feedprofile.tab
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,11 +24,12 @@ internal fun FollowScreen(
 ) {
     if (follow.isEmpty()) {
         FeedEmptyCard(
-            type = FeedEmptyCardType.NO_FOLLOWER
+            type = FeedEmptyCardType.NO_FOLLOWER,
+            modifier = modifier.fillMaxWidth()
         )
     } else {
         LazyColumn(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
