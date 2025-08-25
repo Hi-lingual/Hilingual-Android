@@ -41,24 +41,26 @@ internal fun DiaryListScreen(
                 items = diaries,
                 key = { _, diary -> diary.diaryId }
             ) { index, diary ->
-                val streak = (diary as? LikeDiaryItemModel)?.streak
-                val userId = (diary as? LikeDiaryItemModel)?.userId ?: 0L
+                with(diary) {
+                    val streak = (this as? LikeDiaryItemModel)?.streak
+                    val userId = (this as? LikeDiaryItemModel)?.userId ?: 0L
 
-                FeedContent(
-                    profileUrl = diary.profileImageUrl,
-                    onProfileClick = { onProfileClick(userId) },
-                    nickname = diary.nickname,
-                    streak = streak,
-                    sharedDateInMinutes = diary.sharedDate,
-                    onMenuClick = { onMenuClick(diary.diaryId) },
-                    content = diary.originalText,
-                    onContentClick = { onContentClick(diary.diaryId) },
-                    imageUrl = diary.diaryImgUrl,
-                    likeCount = diary.likeCount,
-                    isLiked = diary.isLiked,
-                    onLikeClick = { onLikeClick(diary.diaryId) },
-                    onMoreClick = { onMoreClick }
-                )
+                    FeedContent(
+                        profileUrl = profileImageUrl,
+                        onProfileClick = { onProfileClick(userId) },
+                        nickname = nickname,
+                        streak = streak,
+                        sharedDateInMinutes = sharedDate,
+                        onMenuClick = { onMenuClick(diaryId) },
+                        content = originalText,
+                        onContentClick = { onContentClick(diaryId) },
+                        imageUrl = diaryImgUrl,
+                        likeCount = likeCount,
+                        isLiked = isLiked,
+                        onLikeClick = { onLikeClick(diaryId) },
+                        onMoreClick = { onMoreClick(diaryId) }
+                    )
+                }
 
                 if (index < diaries.lastIndex) {
                     HorizontalDivider(

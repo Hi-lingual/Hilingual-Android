@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
@@ -11,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.util.UiState
@@ -32,17 +34,23 @@ internal fun FollowListRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     FollowListScreen(
+        paddingValues = paddingValues,
         followers = uiState.followerList,
         followings = uiState.followingList,
-        onBackClick = { }
+        onBackClick = { },
+        onProfileClick = { },
+        onActionButtonClick = { _, _ -> }
     )
 }
 
 @Composable
 private fun FollowListScreen(
+    paddingValues: PaddingValues,
     followers: UiState<ImmutableList<FollowItemModel>>,
     followings: UiState<ImmutableList<FollowItemModel>>,
     onBackClick: () -> Unit,
+    onProfileClick: () -> Unit,
+    onActionButtonClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -52,6 +60,7 @@ private fun FollowListScreen(
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
+            .padding(paddingValues)
     ) {
         BackTopAppBar(
             title = "팔로우",
@@ -69,33 +78,21 @@ private fun FollowListScreen(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
         ) { page ->
-            when (page) {
-                0 -> {
-                    when (followers) {
-                        is UiState.Loading -> HilingualLoadingIndicator()
-                        is UiState.Success -> {
-                            FollowScreen(
-                                follow = followers.data,
-                                onProfileClick = { },
-                                onButtonClick = { _, _ -> }
-                            )
-                        }
-                        else -> {}
-                    }
+            val followState = when (page) {
+                0 -> followers
+                else -> followings
+            }
+
+            when (followState) {
+                is UiState.Loading -> HilingualLoadingIndicator()
+                is UiState.Success -> {
+                    FollowScreen(
+                        follow = followState.data,
+                        onProfileClick = { onProfileClick },
+                        onButtonClick = onActionButtonClick
+                    )
                 }
-                1 -> {
-                    when (followings) {
-                        is UiState.Loading -> HilingualLoadingIndicator()
-                        is UiState.Success -> {
-                            FollowScreen(
-                                follow = followings.data,
-                                onProfileClick = { },
-                                onButtonClick = { _, _ -> }
-                            )
-                        }
-                        else -> {}
-                    }
-                }
+                else -> {}
             }
         }
     }
@@ -106,6 +103,7 @@ private fun FollowListScreen(
 private fun FollowListScreenPreview() {
     HilingualTheme {
         FollowListScreen(
+            paddingValues = PaddingValues(0.dp),
             followers = UiState.Success(
                 persistentListOf(
                     FollowItemModel(
@@ -149,7 +147,9 @@ private fun FollowListScreenPreview() {
                     )
                 )
             ),
-            onBackClick = {}
+            onBackClick = {},
+            onProfileClick = {},
+            onActionButtonClick = { _, _ -> }
         )
     }
 }

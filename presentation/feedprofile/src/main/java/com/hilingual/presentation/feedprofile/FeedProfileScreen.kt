@@ -63,7 +63,13 @@ internal fun FeedProfileRoute(
                 paddingValues = paddingValues,
                 uiState = state.data,
                 onBackClick = { },
+                onFollowTypeClick = { },
                 onActionButtonClick = { _, _ -> },
+                onProfileClick = { },
+                onContentClick = { },
+                onLikeClick = { },
+                onMoreClick = { },
+                onMenuClick = { },
                 onReportClick = { },
                 onBlockClick = { }
             )
@@ -78,7 +84,13 @@ private fun FeedProfileScreen(
     paddingValues: PaddingValues,
     uiState: FeedProfileUiState,
     onBackClick: () -> Unit,
+    onFollowTypeClick: () -> Unit,
     onActionButtonClick: (Long, Boolean) -> Unit,
+    onProfileClick: () -> Unit,
+    onContentClick: () -> Unit,
+    onLikeClick: () -> Unit,
+    onMoreClick: () -> Unit,
+    onMenuClick: () -> Unit,
     onReportClick: () -> Unit,
     onBlockClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -104,7 +116,8 @@ private fun FeedProfileScreen(
             .background(HilingualTheme.colors.white)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(paddingValues)
         ) {
             if (profile.isMine || profile.isBlock) {
@@ -134,7 +147,7 @@ private fun FeedProfileScreen(
                             streak = streak,
                             follower = follower,
                             following = following,
-                            onFollowTypeClick = { },
+                            onFollowTypeClick = onFollowTypeClick,
                             isMine = isMine,
                             isFollowing = isFollowing,
                             isFollowed = isFollowed,
@@ -174,11 +187,11 @@ private fun FeedProfileScreen(
                                 DiaryListScreen(
                                     diaries = diaries,
                                     emptyCardType = emptyCardType,
-                                    onProfileClick = { },
-                                    onContentClick = { },
-                                    onLikeClick = { },
-                                    onMoreClick = { },
-                                    onMenuClick = { },
+                                    onProfileClick = { onProfileClick },
+                                    onContentClick = { onContentClick },
+                                    onLikeClick = { onLikeClick },
+                                    onMoreClick = { onMoreClick },
+                                    onMenuClick = { onMenuClick },
                                     modifier = Modifier.fillMaxSize()
                                 )
                             }
@@ -218,11 +231,11 @@ private fun FeedProfileScreen(
                             DiaryListScreen(
                                 diaries = uiState.sharedDiarys,
                                 emptyCardType = FeedEmptyCardType.NOT_SHARED,
-                                onProfileClick = { },
-                                onContentClick = { },
-                                onLikeClick = { },
-                                onMenuClick = { },
-                                onMoreClick = { },
+                                onProfileClick = { onProfileClick },
+                                onContentClick = { onContentClick },
+                                onLikeClick = { onLikeClick },
+                                onMenuClick = { onMenuClick },
+                                onMoreClick = { onMoreClick },
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .fillParentMaxHeight()
@@ -319,7 +332,13 @@ private fun FeedProfileScreenPreview() {
             onBackClick = {},
             onActionButtonClick = { _, _ -> },
             onReportClick = {},
-            onBlockClick = {}
+            onBlockClick = {},
+            onFollowTypeClick = {},
+            onProfileClick = {},
+            onContentClick = {},
+            onLikeClick = {},
+            onMoreClick = {},
+            onMenuClick = {}
         )
     }
 }
