@@ -35,14 +35,14 @@ import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feedprofile.component.BlockBottomSheet
+import com.hilingual.presentation.feedprofile.component.FeedEmptyCardType
 import com.hilingual.presentation.feedprofile.component.FeedProfileInfo
 import com.hilingual.presentation.feedprofile.component.FeedProfileTabRow
 import com.hilingual.presentation.feedprofile.component.ReportBlockBottomSheet
 import com.hilingual.presentation.feedprofile.model.FeedProfileInfoModel
 import com.hilingual.presentation.feedprofile.model.LikeDiaryItemModel
 import com.hilingual.presentation.feedprofile.model.SharedDiaryItemModel
-import com.hilingual.presentation.feedprofile.tab.LikedDiaryScreen
-import com.hilingual.presentation.feedprofile.tab.SharedDiaryScreen
+import com.hilingual.presentation.feedprofile.tab.DiaryListScreen
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
@@ -162,31 +162,23 @@ internal fun FeedProfileScreen(
                         item {
                             HorizontalPager(
                                 state = pagerState,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .fillParentMaxHeight()
+                                modifier = Modifier.fillMaxSize()
                             ) { page ->
-                                when (page) {
-                                    0 -> SharedDiaryScreen(
-                                        sharedDiarys = uiState.sharedDiarys,
-                                        onProfileClick = { },
-                                        onContentClick = { },
-                                        onLikeClick = { },
-                                        onMenuClick = { },
-                                        onMoreClick = { },
-                                        modifier = Modifier.fillMaxSize()
-                                    )
-
-                                    1 -> LikedDiaryScreen(
-                                        likedDiarys = uiState.likedDiarys,
-                                        onProfileClick = { },
-                                        onContentClick = { },
-                                        onLikeClick = { },
-                                        onMenuClick = { },
-                                        onMoreClick = { },
-                                        modifier = Modifier.fillMaxSize()
-                                    )
+                                val (diaries, emptyCardType) = when (page) {
+                                    0 -> uiState.sharedDiarys to FeedEmptyCardType.NOT_SHARED
+                                    else -> uiState.likedDiarys to FeedEmptyCardType.NOT_LIKED
                                 }
+
+                                DiaryListScreen(
+                                    diaries = diaries,
+                                    emptyCardType = emptyCardType,
+                                    onProfileClick = { },
+                                    onContentClick = { },
+                                    onLikeClick = { },
+                                    onMoreClick = { },
+                                    onMenuClick = { },
+                                    modifier = Modifier.fillMaxSize()
+                                )
                             }
                         }
                     }
@@ -221,8 +213,9 @@ internal fun FeedProfileScreen(
 
                     else -> {
                         item {
-                            SharedDiaryScreen(
-                                sharedDiarys = uiState.sharedDiarys,
+                            DiaryListScreen(
+                                diaries = uiState.sharedDiarys,
+                                emptyCardType = FeedEmptyCardType.NOT_SHARED,
                                 onProfileClick = { },
                                 onContentClick = { },
                                 onLikeClick = { },
