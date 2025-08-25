@@ -13,12 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.hilingual.build_logic.setNamespace
+package com.hilingual.presentation.feed
 
-plugins {
-    alias(libs.plugins.hilingual.feature)
-}
+import androidx.compose.runtime.Immutable
+import com.hilingual.presentation.feed.model.FeedListItemUiModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
-android {
-    setNamespace("presentation.community")
-}
+@Immutable
+internal data class FeedUiState(
+    val myProfileUrl: String = "",
+    val recommendFeedList: ImmutableList<FeedListItemUiModel> = persistentListOf(),
+    val followingFeedList: ImmutableList<FeedListItemUiModel> = persistentListOf(),
+    val hasFollowing: Boolean = true
+)

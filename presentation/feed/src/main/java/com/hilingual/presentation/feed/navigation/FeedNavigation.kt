@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.community
+package com.hilingual.presentation.feed.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
@@ -21,24 +21,25 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.hilingual.core.navigation.MainTabRoute
+import com.hilingual.presentation.feed.FeedRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object Community : MainTabRoute
+data object Feed : MainTabRoute
 
-fun NavController.navigateToCommunity(
+fun NavController.navigateToFeed(
     navOptions: NavOptions? = null
 ) {
     navigate(
-        route = Community,
+        route = Feed,
         navOptions = navOptions
     )
 }
 
-fun NavGraphBuilder.communityNavGraph(
+fun NavGraphBuilder.feedNavGraph(
     paddingValues: PaddingValues
 ) {
-    composable<Community> {
-        CommunityScreen(paddingValues = paddingValues)
+    composable<Feed> {
+        FeedRoute(paddingValues = paddingValues)
     }
 }
