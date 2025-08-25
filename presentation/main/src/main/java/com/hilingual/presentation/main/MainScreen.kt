@@ -47,10 +47,10 @@ import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
 import com.hilingual.core.designsystem.component.snackbar.DiarySnackbar
 import com.hilingual.core.designsystem.component.toast.TextToast
 import com.hilingual.presentation.auth.navigation.authNavGraph
-import com.hilingual.presentation.community.communityNavGraph
 import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import com.hilingual.presentation.diarywrite.navigation.diaryWriteNavGraph
+import com.hilingual.presentation.feed.navigation.feedNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.main.state.MainAppState
@@ -231,7 +231,7 @@ internal fun MainScreen(
                     navigateUp = appState::navigateUp
                 )
 
-                communityNavGraph(
+                feedNavGraph(
                     paddingValues = innerPadding
                 )
 
