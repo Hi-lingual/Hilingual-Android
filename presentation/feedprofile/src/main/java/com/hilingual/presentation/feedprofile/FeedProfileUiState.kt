@@ -10,7 +10,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 data class FeedProfileUiState(
-    val feedProfileInfo: UiState<FeedProfileInfoModel> = UiState.Loading,
+    val feedProfileInfo: FeedProfileInfoModel,
     val sharedDiarys: ImmutableList<SharedDiaryItemModel> = persistentListOf(),
     val likedDiarys: ImmutableList<LikeDiaryItemModel> = persistentListOf()
 )

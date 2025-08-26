@@ -108,7 +108,7 @@ private fun FeedProfileScreen(
         }
     }
 
-    val profile = (uiState.feedProfileInfo as UiState.Success).data
+    val profile = uiState.feedProfileInfo
 
     Box(
         modifier = modifier
@@ -192,7 +192,7 @@ private fun FeedProfileScreen(
                                     onLikeClick = { onLikeClick },
                                     onMoreClick = { onMoreClick },
                                     onMenuClick = { onMenuClick },
-                                    modifier = Modifier.fillMaxSize()
+                                    modifier = Modifier.fillParentMaxSize()
                                 )
                             }
                         }
@@ -236,9 +236,7 @@ private fun FeedProfileScreen(
                                 onLikeClick = { onLikeClick },
                                 onMenuClick = { onMenuClick },
                                 onMoreClick = { onMoreClick },
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .fillParentMaxHeight()
+                                modifier = Modifier.fillParentMaxSize()
                             )
                         }
                     }
@@ -289,19 +287,18 @@ private fun FeedProfileScreenPreview() {
         FeedProfileScreen(
             paddingValues = PaddingValues(0.dp),
             uiState = FeedProfileUiState(
-                feedProfileInfo = UiState.Success(
+                feedProfileInfo =
                     FeedProfileInfoModel(
                         profileImageUrl = "",
                         nickname = "하이링",
                         streak = 5,
                         follower = 120,
                         following = 98,
-                        isMine = false,
+                        isMine = true,
                         isFollowing = true,
                         isFollowed = true,
                         isBlock = false
-                    )
-                ),
+                    ),
                 sharedDiarys = persistentListOf(
                     SharedDiaryItemModel(
                         profileImageUrl = "",
@@ -312,6 +309,36 @@ private fun FeedProfileScreenPreview() {
                         isLiked = true,
                         diaryImageUrl = null,
                         originalText = "오늘은 새로운 언어를 배웠다!"
+                    ),
+                    SharedDiaryItemModel(
+                        profileImageUrl = "",
+                        nickname = "하이링",
+                        diaryId = 2L,
+                        sharedDate = 1720000000L,
+                        likeCount = 12,
+                        isLiked = true,
+                        diaryImageUrl = null,
+                        originalText = "오늘은 새로운 언어를 배웠다!"
+                    ),
+                    SharedDiaryItemModel(
+                        profileImageUrl = "",
+                        nickname = "하이링",
+                        diaryId = 3L,
+                        sharedDate = 1720000000L,
+                        likeCount = 12,
+                        isLiked = true,
+                        diaryImageUrl = null,
+                        originalText = "오늘은 새로운 언어를 배웠다!"
+                    ),
+                    SharedDiaryItemModel(
+                        profileImageUrl = "",
+                        nickname = "하이링",
+                        diaryId = 4L,
+                        sharedDate = 1720000000L,
+                        likeCount = 12,
+                        isLiked = true,
+                        diaryImageUrl = "",
+                        originalText = "오늘은 새로운 언어를 배웠다!"
                     )
                 ),
                 likedDiarys = persistentListOf(
@@ -320,7 +347,7 @@ private fun FeedProfileScreenPreview() {
                         streak = 7,
                         profileImageUrl = "",
                         nickname = "링구",
-                        diaryId = 2L,
+                        diaryId = 8L,
                         sharedDate = 1720000500L,
                         likeCount = 30,
                         isLiked = false,

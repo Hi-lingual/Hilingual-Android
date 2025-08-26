@@ -17,12 +17,12 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun FollowScreen(
-    follow: ImmutableList<FollowItemModel>,
+    follows: ImmutableList<FollowItemModel>,
     onProfileClick: (Long) -> Unit,
-    onButtonClick: (Long, Boolean) -> Unit,
+    onActionButtonClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (follow.isEmpty()) {
+    if (follows.isEmpty()) {
         FeedEmptyCard(
             type = FeedEmptyCardType.NO_FOLLOWER,
             modifier = modifier.fillMaxWidth()
@@ -34,7 +34,7 @@ internal fun FollowScreen(
                 .padding(horizontal = 16.dp)
         ) {
             items(
-                items = follow,
+                items = follows,
                 key = { it.userId }
             ) { follow ->
                 with(follow) {
@@ -50,7 +50,7 @@ internal fun FollowScreen(
                         isFilled = followState.isFollowing,
                         buttonText = followState.actionText,
                         onProfileClick = onProfileClick,
-                        onButtonClick = { onButtonClick(userId, followState.isFollowing) }
+                        onButtonClick = { onActionButtonClick(userId, followState.isFollowing) }
                     )
                 }
             }

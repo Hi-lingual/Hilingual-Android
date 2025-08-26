@@ -21,11 +21,11 @@ import kotlinx.collections.immutable.ImmutableList
 internal fun DiaryListScreen(
     diaries: ImmutableList<DiaryItem>,
     emptyCardType: FeedEmptyCardType,
-    onProfileClick: (Long) -> Unit,
-    onContentClick: (Long) -> Unit,
-    onLikeClick: (Long) -> Unit,
-    onMoreClick: (Long) -> Unit,
-    onMenuClick: (Long) -> Unit,
+    onProfileClick: (userId: Long) -> Unit,
+    onContentClick: (diaryId: Long) -> Unit,
+    onLikeClick: (diaryId: Long) -> Unit,
+    onMoreClick: (diaryId: Long) -> Unit,
+    onMenuClick: (diaryId: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (diaries.isEmpty()) {

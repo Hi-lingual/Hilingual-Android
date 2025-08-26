@@ -87,9 +87,9 @@ private fun FollowListScreen(
                 is UiState.Loading -> HilingualLoadingIndicator()
                 is UiState.Success -> {
                     FollowScreen(
-                        follow = followState.data,
-                        onProfileClick = { onProfileClick },
-                        onButtonClick = onActionButtonClick
+                        follows = followState.data,
+                        onProfileClick = { onProfileClick() },
+                        onActionButtonClick = onActionButtonClick
                     )
                 }
                 else -> {}
