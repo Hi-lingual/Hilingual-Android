@@ -287,17 +287,17 @@ private fun FeedProfileScreenPreview() {
             paddingValues = PaddingValues(0.dp),
             uiState = FeedProfileUiState(
                 feedProfileInfo =
-                    FeedProfileInfoModel(
-                        profileImageUrl = "",
-                        nickname = "하이링",
-                        streak = 5,
-                        follower = 120,
-                        following = 98,
-                        isMine = true,
-                        isFollowing = true,
-                        isFollowed = true,
-                        isBlock = false
-                    ),
+                FeedProfileInfoModel(
+                    profileImageUrl = "",
+                    nickname = "하이링",
+                    streak = 5,
+                    follower = 120,
+                    following = 98,
+                    isMine = true,
+                    isFollowing = true,
+                    isFollowed = true,
+                    isBlock = false
+                ),
                 sharedDiarys = persistentListOf(
                     SharedDiaryItemModel(
                         profileImageUrl = "",

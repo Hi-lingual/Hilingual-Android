@@ -9,10 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.content.UserActionItem
-import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCard
-import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType
 import com.hilingual.presentation.feedprofile.follow.model.FollowItemModel
 import com.hilingual.presentation.feedprofile.follow.model.FollowState
+import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCard
+import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
