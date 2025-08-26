@@ -75,7 +75,7 @@ fun HilingualShortTextField(
                 onDoneAction()
                 keyboardController?.hide()
             },
-            verticalPadding = PaddingValues(vertical = 16.dp)
+            paddingValues = PaddingValues(vertical = 16.dp, horizontal = 12.dp)
         )
         Row {
             Text(
