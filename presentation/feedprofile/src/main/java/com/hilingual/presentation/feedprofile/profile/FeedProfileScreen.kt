@@ -1,4 +1,4 @@
-package com.hilingual.presentation.feedprofile
+package com.hilingual.presentation.feedprofile.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -34,15 +34,14 @@ import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndic
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.feedprofile.component.BlockBottomSheet
-import com.hilingual.presentation.feedprofile.component.FeedEmptyCardType
-import com.hilingual.presentation.feedprofile.component.FeedProfileInfo
-import com.hilingual.presentation.feedprofile.component.FeedProfileTabRow
-import com.hilingual.presentation.feedprofile.component.ReportBlockBottomSheet
-import com.hilingual.presentation.feedprofile.model.FeedProfileInfoModel
-import com.hilingual.presentation.feedprofile.model.LikeDiaryItemModel
-import com.hilingual.presentation.feedprofile.model.SharedDiaryItemModel
-import com.hilingual.presentation.feedprofile.tab.DiaryListScreen
+import com.hilingual.presentation.feedprofile.profile.component.BlockBottomSheet
+import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType
+import com.hilingual.presentation.feedprofile.profile.component.FeedProfileInfo
+import com.hilingual.presentation.feedprofile.profile.component.FeedProfileTabRow
+import com.hilingual.presentation.feedprofile.profile.component.ReportBlockBottomSheet
+import com.hilingual.presentation.feedprofile.profile.model.FeedProfileInfoModel
+import com.hilingual.presentation.feedprofile.profile.model.LikeDiaryItemModel
+import com.hilingual.presentation.feedprofile.profile.model.SharedDiaryItemModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
@@ -288,17 +287,17 @@ private fun FeedProfileScreenPreview() {
             paddingValues = PaddingValues(0.dp),
             uiState = FeedProfileUiState(
                 feedProfileInfo =
-                FeedProfileInfoModel(
-                    profileImageUrl = "",
-                    nickname = "하이링",
-                    streak = 5,
-                    follower = 120,
-                    following = 98,
-                    isMine = true,
-                    isFollowing = true,
-                    isFollowed = true,
-                    isBlock = false
-                ),
+                    FeedProfileInfoModel(
+                        profileImageUrl = "",
+                        nickname = "하이링",
+                        streak = 5,
+                        follower = 120,
+                        following = 98,
+                        isMine = true,
+                        isFollowing = true,
+                        isFollowed = true,
+                        isBlock = false
+                    ),
                 sharedDiarys = persistentListOf(
                     SharedDiaryItemModel(
                         profileImageUrl = "",

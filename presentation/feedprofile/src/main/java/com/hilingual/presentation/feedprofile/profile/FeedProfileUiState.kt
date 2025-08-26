@@ -1,9 +1,9 @@
-package com.hilingual.presentation.feedprofile
+package com.hilingual.presentation.feedprofile.profile
 
 import androidx.compose.runtime.Immutable
-import com.hilingual.presentation.feedprofile.model.FeedProfileInfoModel
-import com.hilingual.presentation.feedprofile.model.LikeDiaryItemModel
-import com.hilingual.presentation.feedprofile.model.SharedDiaryItemModel
+import com.hilingual.presentation.feedprofile.profile.model.FeedProfileInfoModel
+import com.hilingual.presentation.feedprofile.profile.model.LikeDiaryItemModel
+import com.hilingual.presentation.feedprofile.profile.model.SharedDiaryItemModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 

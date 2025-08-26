@@ -1,4 +1,4 @@
-package com.hilingual.presentation.feedprofile
+package com.hilingual.presentation.feedprofile.follow
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

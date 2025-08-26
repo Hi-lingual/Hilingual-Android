@@ -1,4 +1,4 @@
-package com.hilingual.presentation.feedprofile
+package com.hilingual.presentation.feedprofile.profile
 
 import androidx.lifecycle.ViewModel
 import com.hilingual.core.common.util.UiState

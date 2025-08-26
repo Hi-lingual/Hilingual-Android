@@ -1,4 +1,4 @@
-package com.hilingual.presentation.feedprofile
+package com.hilingual.presentation.feedprofile.follow
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -19,9 +19,8 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.feedprofile.component.FollowTabRow
-import com.hilingual.presentation.feedprofile.model.FollowItemModel
-import com.hilingual.presentation.feedprofile.tab.FollowScreen
+import com.hilingual.presentation.feedprofile.follow.component.FollowTabRow
+import com.hilingual.presentation.feedprofile.follow.model.FollowItemModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch

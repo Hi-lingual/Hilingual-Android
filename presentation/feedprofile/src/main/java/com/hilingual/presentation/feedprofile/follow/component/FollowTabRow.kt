@@ -1,4 +1,4 @@
-package com.hilingual.presentation.feedprofile.component
+package com.hilingual.presentation.feedprofile.follow.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -11,10 +11,10 @@ import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import kotlinx.collections.immutable.persistentListOf
 
-private val TITLES = persistentListOf("공유한 일기", "공감한 일기")
+private val TITLES = persistentListOf("팔로워", "팔로잉")
 
 @Composable
-internal fun FeedProfileTabRow(
+internal fun FollowTabRow(
     tabIndex: Int,
     onTabSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
@@ -29,10 +29,10 @@ internal fun FeedProfileTabRow(
 
 @Preview(showBackground = true)
 @Composable
-private fun FeedProfileTapRowPreview() {
+private fun FollowTapRowPreview() {
     HilingualTheme {
         var selectedTabIndex by remember { mutableIntStateOf(0) }
-        FeedProfileTabRow(
+        FollowTabRow(
             tabIndex = selectedTabIndex,
             onTabSelected = { selectedTabIndex = it }
         )

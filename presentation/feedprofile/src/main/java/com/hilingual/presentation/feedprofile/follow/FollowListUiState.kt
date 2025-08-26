@@ -1,8 +1,8 @@
-package com.hilingual.presentation.feedprofile
+package com.hilingual.presentation.feedprofile.follow
 
 import androidx.compose.runtime.Immutable
 import com.hilingual.core.common.util.UiState
-import com.hilingual.presentation.feedprofile.model.FollowItemModel
+import com.hilingual.presentation.feedprofile.follow.model.FollowItemModel
 import kotlinx.collections.immutable.ImmutableList
 
 @Immutable

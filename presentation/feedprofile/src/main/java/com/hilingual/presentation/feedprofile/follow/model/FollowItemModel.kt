@@ -1,4 +1,4 @@
-package com.hilingual.presentation.feedprofile.model
+package com.hilingual.presentation.feedprofile.follow.model
 
 import androidx.compose.runtime.Immutable
 

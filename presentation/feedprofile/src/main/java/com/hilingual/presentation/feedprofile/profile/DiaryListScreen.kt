@@ -1,4 +1,4 @@
-package com.hilingual.presentation.feedprofile.tab
+package com.hilingual.presentation.feedprofile.profile
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,10 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.content.FeedContent
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.feedprofile.component.FeedEmptyCard
-import com.hilingual.presentation.feedprofile.component.FeedEmptyCardType
-import com.hilingual.presentation.feedprofile.model.DiaryItem
-import com.hilingual.presentation.feedprofile.model.LikeDiaryItemModel
+import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCard
+import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType
+import com.hilingual.presentation.feedprofile.profile.model.DiaryItem
+import com.hilingual.presentation.feedprofile.profile.model.LikeDiaryItemModel
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
