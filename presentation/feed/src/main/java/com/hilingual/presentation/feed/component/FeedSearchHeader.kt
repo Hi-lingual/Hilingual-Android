@@ -28,11 +28,11 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 internal fun FeedSearchHeader(
-    searchText: () -> String,
-    onSearchTextChanged: (String) -> Unit,
+    searchWord: () -> String,
+    onSearchWordChanged: (String) -> Unit,
     onClearClick: () -> Unit,
     onBackClick: () -> Unit,
-    onDone: () -> Unit,
+    onSearchAction: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
@@ -56,8 +56,8 @@ internal fun FeedSearchHeader(
         Spacer(Modifier.width(8.dp))
 
         HilingualSearchTextField(
-            value = searchText(),
-            onValueChanged = onSearchTextChanged,
+            value = searchWord(),
+            onValueChanged = onSearchWordChanged,
             placeholder = "닉네임을 입력해주세요.",
             backgroundColor = HilingualTheme.colors.gray100,
             modifier = Modifier
@@ -68,7 +68,7 @@ internal fun FeedSearchHeader(
                 focusManager.clearFocus()
             },
             onSearchAction = {
-                onDone()
+                onSearchAction()
                 focusManager.clearFocus()
             }
         )
@@ -82,11 +82,11 @@ private fun FeedSearchHeaderPreview() {
         var searchText by remember { mutableStateOf("") }
 
         FeedSearchHeader(
-            searchText = { searchText },
-            onSearchTextChanged = { searchText = it },
+            searchWord = { searchText },
+            onSearchWordChanged = { searchText = it },
             onClearClick = {},
             onBackClick = {},
-            onDone = {}
+            onSearchAction = {}
         )
     }
 }

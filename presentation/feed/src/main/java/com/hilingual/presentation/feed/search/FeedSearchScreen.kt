@@ -38,9 +38,9 @@ internal fun FeedSearchRoute(
     FeedSearchScreen(
         paddingValues = paddingValues,
         onBackClick = navigateUp,
-        searchWord = uiState.searchKeyword,
-        onSearchWordClearClick = viewModel::clearSearchKeyword,
-        onSearchWordChanged = viewModel::updateSearchKeyword,
+        searchWord = uiState.searchWord,
+        onSearchWordClearClick = viewModel::clearSearchWord,
+        onSearchWordChanged = viewModel::updateSearchWord,
         onSearchDone = viewModel::searchUser,
         searchResultUserList = uiState.searchResultUserList,
         onProfileClick = navigateToFeedProfile,
@@ -67,11 +67,11 @@ private fun FeedSearchScreen(
             .padding(paddingValues)
     ) {
         FeedSearchHeader(
-            searchText = { searchWord },
-            onSearchTextChanged = onSearchWordChanged,
+            searchWord = { searchWord },
+            onSearchWordChanged = onSearchWordChanged,
             onClearClick = onSearchWordClearClick,
             onBackClick = onBackClick,
-            onDone = onSearchDone
+            onSearchAction = onSearchDone
         )
 
         when (searchResultUserList) {

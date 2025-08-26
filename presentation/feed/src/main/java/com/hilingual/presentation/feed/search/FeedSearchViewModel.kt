@@ -18,22 +18,22 @@ internal class FeedSearchViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow(FeedSearchUiState())
     val uiState: StateFlow<FeedSearchUiState> = _uiState.asStateFlow()
 
-    fun updateSearchKeyword(searchKeyword: String) {
-        _uiState.update { it.copy(searchKeyword = searchKeyword) }
+    fun updateSearchWord(searchWord: String) {
+        _uiState.update { it.copy(searchWord = searchWord) }
     }
 
     fun searchUser() {
         // TODO: API 호출
         _uiState.value = _uiState.value.copy(
             searchResultUserList = UiState.Success(
-                tempSearch(_uiState.value.searchKeyword).toImmutableList()
+                tempSearch(_uiState.value.searchWord).toImmutableList()
             )
         )
     }
 
-    fun clearSearchKeyword() {
+    fun clearSearchWord() {
         _uiState.update {
-            it.copy(searchKeyword = "")
+            it.copy(searchWord = "")
         }
     }
 
