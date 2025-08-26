@@ -13,20 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.feeddiary.model
+package com.hilingual.core.designsystem.model
 
 import androidx.compose.runtime.Immutable
-import com.hilingual.data.diary.model.DiaryFeedbackModel
 
 @Immutable
-internal data class FeedbackContentUiModel(
+data class FeedbackContent(
     val originalText: String,
     val feedbackText: String,
     val explain: String
-)
-
-internal fun DiaryFeedbackModel.toState() = FeedbackContentUiModel(
-    originalText = this.originalText,
-    feedbackText = this.rewriteText,
-    explain = this.explain
 )

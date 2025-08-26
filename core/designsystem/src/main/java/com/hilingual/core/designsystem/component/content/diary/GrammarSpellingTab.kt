@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.diaryfeedback.tab
+package com.hilingual.core.designsystem.component.content.diary
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -41,22 +41,18 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.hilingual.core.designsystem.component.content.diary.DiaryCard
-import com.hilingual.core.designsystem.component.content.diary.DiaryViewModeToggle
-import com.hilingual.core.designsystem.component.content.diary.FeedbackCard
-import com.hilingual.core.designsystem.component.content.diary.FeedbackEmptyCard
+import com.hilingual.core.designsystem.model.DiaryContent
+import com.hilingual.core.designsystem.model.FeedbackContent
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.diaryfeedback.model.DiaryContentUiModel
-import com.hilingual.presentation.diaryfeedback.model.FeedbackContentUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-internal fun GrammarSpellingScreen(
+fun GrammarSpellingTab(
     listState: LazyListState,
     writtenDate: String,
-    diaryContent: DiaryContentUiModel,
-    feedbackList: ImmutableList<FeedbackContentUiModel>,
+    diaryContent: DiaryContent,
+    feedbackList: ImmutableList<FeedbackContent>,
     onImageClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -82,7 +78,7 @@ internal fun GrammarSpellingScreen(
                 )
                 DiaryViewModeToggle(
                     isAIWritten = isAIWrittenDiary,
-                    onToggle = { isAIWrittenDiary = !isAIWrittenDiary }
+                    onToggle = { isAIWrittenDiary = it }
                 )
             }
             Spacer(Modifier.height(12.dp))
@@ -148,12 +144,12 @@ private fun getFeedbackTitleAnnotatedString(
 
 @Preview(showBackground = true)
 @Composable
-private fun GrammarSpellingScreenPreview() {
+private fun GrammarSpellingTabPreview() {
     HilingualTheme {
-        GrammarSpellingScreen(
+        GrammarSpellingTab(
             listState = rememberLazyListState(),
             writtenDate = "7월 11일 금요일",
-            diaryContent = DiaryContentUiModel(),
+            diaryContent = DiaryContent(),
             feedbackList = persistentListOf(),
             onImageClick = {}
         )

@@ -16,10 +16,10 @@
 package com.hilingual.presentation.feeddiary
 
 import androidx.compose.runtime.Immutable
-import com.hilingual.presentation.feeddiary.model.DiaryContentUiModel
-import com.hilingual.presentation.feeddiary.model.FeedbackContentUiModel
+import com.hilingual.core.designsystem.model.DiaryContent
+import com.hilingual.core.designsystem.model.FeedbackContent
+import com.hilingual.core.designsystem.model.RecommendExpression
 import com.hilingual.presentation.feeddiary.model.ProfileContentUiModel
-import com.hilingual.presentation.feeddiary.model.RecommendExpressionUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -28,7 +28,7 @@ internal data class FeedDiaryUiState(
     val writtenDate: String = "",
     val isMine: Boolean = false,
     val profileContent: ProfileContentUiModel,
-    val diaryContent: DiaryContentUiModel = DiaryContentUiModel(),
-    val feedbackList: ImmutableList<FeedbackContentUiModel> = persistentListOf(),
-    val recommendExpressionList: ImmutableList<RecommendExpressionUiModel> = persistentListOf()
+    val diaryContent: DiaryContent = DiaryContent(),
+    val feedbackList: ImmutableList<FeedbackContent> = persistentListOf(),
+    val recommendExpressionList: ImmutableList<RecommendExpression> = persistentListOf()
 )

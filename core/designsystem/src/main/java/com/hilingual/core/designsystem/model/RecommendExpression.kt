@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.diaryfeedback.model
+package com.hilingual.core.designsystem.model
 
 import androidx.compose.runtime.Immutable
-import com.hilingual.data.diary.model.DiaryFeedbackModel
+import kotlinx.collections.immutable.ImmutableList
 
 @Immutable
-internal data class FeedbackContentUiModel(
-    val originalText: String,
-    val feedbackText: String,
-    val explain: String
-)
-
-internal fun DiaryFeedbackModel.toState() = FeedbackContentUiModel(
-    originalText = this.originalText,
-    feedbackText = this.rewriteText,
-    explain = this.explain
+data class RecommendExpression(
+    val phraseId: Long,
+    val phraseType: ImmutableList<String>,
+    val phrase: String,
+    val explanation: String,
+    val reason: String,
+    val isMarked: Boolean = false
 )

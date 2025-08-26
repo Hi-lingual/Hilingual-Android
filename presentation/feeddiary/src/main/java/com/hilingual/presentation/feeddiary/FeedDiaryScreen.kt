@@ -32,7 +32,9 @@ import com.hilingual.core.designsystem.component.bottomsheet.BlockBottomSheet
 import com.hilingual.core.designsystem.component.bottomsheet.ReportBlockBottomSheet
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.content.diary.DiaryTabRow
+import com.hilingual.core.designsystem.component.content.diary.GrammarSpellingTab
 import com.hilingual.core.designsystem.component.content.diary.ModalImage
+import com.hilingual.core.designsystem.component.content.diary.RecommendExpressionTab
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDialog
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
@@ -40,8 +42,6 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feeddiary.component.DiaryUnpublishBottomSheet
 import com.hilingual.presentation.feeddiary.component.FeedDiaryProfile
 import com.hilingual.presentation.feeddiary.model.ProfileContentUiModel
-import com.hilingual.presentation.feeddiary.tab.GrammarSpellingScreen
-import com.hilingual.presentation.feeddiary.tab.RecommendExpressionScreen
 import kotlinx.coroutines.launch
 
 @Composable
@@ -179,7 +179,7 @@ private fun FeedDiaryScreen(
             ) { page ->
                 with(uiState) {
                     when (page) {
-                        0 -> GrammarSpellingScreen(
+                        0 -> GrammarSpellingTab(
                             listState = grammarListState,
                             writtenDate = writtenDate,
                             diaryContent = diaryContent,
@@ -187,7 +187,7 @@ private fun FeedDiaryScreen(
                             onImageClick = onChangeImageDetailVisible
                         )
 
-                        1 -> RecommendExpressionScreen(
+                        1 -> RecommendExpressionTab(
                             listState = recommendListState,
                             writtenDate = writtenDate,
                             recommendExpressionList = recommendExpressionList,
@@ -216,7 +216,7 @@ private fun FeedDiaryScreen(
 
     if (isImageDetailVisible && uiState.diaryContent.imageUrl != null) {
         ModalImage(
-            imageUrl = uiState.diaryContent.imageUrl,
+            imageUrl = uiState.diaryContent.imageUrl ?: "",
             onBackClick = onChangeImageDetailVisible,
             modifier = Modifier.padding(paddingValues)
         )
