@@ -181,6 +181,7 @@ private fun FeedScreen(
                 isVisible = isFabVisible,
                 onClick = {
                     coroutineScope.launch {
+                        currentListState.animateScrollToItem(0)
                     }
                 },
                 modifier = Modifier
