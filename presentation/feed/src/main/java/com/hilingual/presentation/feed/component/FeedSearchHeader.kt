@@ -60,9 +60,7 @@ internal fun FeedSearchHeader(
             onValueChanged = onSearchWordChanged,
             placeholder = "닉네임을 입력해주세요.",
             backgroundColor = HilingualTheme.colors.gray100,
-            modifier = Modifier
-                .weight(1f)
-                .addFocusCleaner(focusManager),
+            modifier = Modifier.weight(1f),
             onTrailingIconClick = {
                 onClearClick()
                 focusManager.clearFocus()

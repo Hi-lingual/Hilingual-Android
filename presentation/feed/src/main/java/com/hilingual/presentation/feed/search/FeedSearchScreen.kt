@@ -10,6 +10,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -92,17 +95,19 @@ private fun FeedSearchScreen(
                             items(
                                 items = searchResultUserList.data,
                                 key = ({ user -> user.userId })
-                            ) { user ->
-                                UserActionItem(
-                                    userId = user.userId,
-                                    profileUrl = user.profileUrl,
-                                    nickname = user.nickname,
-                                    isFilled = !user.followState.isFollowing,
-                                    buttonText = user.followState.actionText,
-                                    onProfileClick = onProfileClick,
-                                    onButtonClick = { onFollowActionClick(user.userId, user.followState.isFollowing) },
-                                    modifier = Modifier.padding(horizontal = 16.dp)
-                                )
+                            ) {
+                                with(it) {
+                                    UserActionItem(
+                                        userId = userId,
+                                        profileUrl = profileUrl,
+                                        nickname = nickname,
+                                        isFilled = !followState.isFollowing,
+                                        buttonText = followState.actionText,
+                                        onProfileClick = onProfileClick,
+                                        onButtonClick = { onFollowActionClick(userId, followState.isFollowing) },
+                                        modifier = Modifier.padding(horizontal = 16.dp)
+                                    )
+                                }
                             }
                         }
                     }
@@ -118,12 +123,14 @@ private fun FeedSearchScreen(
 @Composable
 private fun FeedSearchScreenPreview() {
     HilingualTheme {
+        var searchWord by remember { mutableStateOf("") }
+
         FeedSearchScreen(
             paddingValues = PaddingValues(),
             onBackClick = {},
-            searchWord = "",
-            onSearchWordClearClick = {},
-            onSearchWordChanged = { },
+            searchWord = searchWord,
+            onSearchWordClearClick = { searchWord = "" },
+            onSearchWordChanged = { searchWord = it },
             onSearchDone = {},
             onFollowActionClick = { _, _ -> },
             onProfileClick = {},
