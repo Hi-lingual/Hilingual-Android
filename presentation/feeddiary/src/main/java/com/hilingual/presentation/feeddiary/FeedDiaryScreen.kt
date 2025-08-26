@@ -98,8 +98,7 @@ private fun FeedDiaryScreen(
     onBlockClick: () -> Unit,
     isImageDetailVisible: Boolean,
     onChangeImageDetailVisible: () -> Unit,
-    onToggleBookmark: (Long, Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    onToggleBookmark: (Long, Boolean) -> Unit
 ) {
     var isUnpublishBottomSheetVisible by remember { mutableStateOf(false) }
     var isUnpublishDialogVisible by remember { mutableStateOf(false) }
@@ -130,7 +129,7 @@ private fun FeedDiaryScreen(
     }
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
             .padding(paddingValues)
@@ -178,21 +177,23 @@ private fun FeedDiaryScreen(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize()
             ) { page ->
-                when (page) {
-                    0 -> GrammarSpellingScreen(
-                        listState = grammarListState,
-                        writtenDate = uiState.writtenDate,
-                        diaryContent = uiState.diaryContent,
-                        feedbackList = uiState.feedbackList,
-                        onImageClick = onChangeImageDetailVisible
-                    )
+                with(uiState) {
+                    when (page) {
+                        0 -> GrammarSpellingScreen(
+                            listState = grammarListState,
+                            writtenDate = writtenDate,
+                            diaryContent = diaryContent,
+                            feedbackList = feedbackList,
+                            onImageClick = onChangeImageDetailVisible
+                        )
 
-                    1 -> RecommendExpressionScreen(
-                        listState = recommendListState,
-                        writtenDate = uiState.writtenDate,
-                        recommendExpressionList = uiState.recommendExpressionList,
-                        onBookmarkClick = onToggleBookmark
-                    )
+                        1 -> RecommendExpressionScreen(
+                            listState = recommendListState,
+                            writtenDate = writtenDate,
+                            recommendExpressionList = recommendExpressionList,
+                            onBookmarkClick = onToggleBookmark
+                        )
+                    }
                 }
             }
 

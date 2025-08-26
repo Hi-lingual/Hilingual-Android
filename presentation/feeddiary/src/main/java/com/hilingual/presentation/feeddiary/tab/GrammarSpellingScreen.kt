@@ -82,7 +82,7 @@ internal fun GrammarSpellingScreen(
                 )
                 DiaryViewModeToggle(
                     isAIWritten = isAIWrittenDiary,
-                    onToggle = { isAIWrittenDiary = !isAIWrittenDiary }
+                    onToggle = { isAIWrittenDiary = it }
                 )
             }
             Spacer(Modifier.height(12.dp))
