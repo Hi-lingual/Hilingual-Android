@@ -1,6 +1,7 @@
 package com.hilingual.presentation.feed.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,7 +21,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.textfield.HilingualSearchTextField
@@ -68,7 +68,8 @@ internal fun FeedSearchHeader(
             onSearchAction = {
                 onSearchAction()
                 focusManager.clearFocus()
-            }
+            },
+            paddingValues = PaddingValues(8.dp)
         )
     }
 }

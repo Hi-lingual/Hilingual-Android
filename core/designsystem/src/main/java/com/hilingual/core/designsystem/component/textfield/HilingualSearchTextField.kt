@@ -16,6 +16,7 @@
 package com.hilingual.core.designsystem.component.textfield
 
 import android.widget.Toast
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -47,7 +48,8 @@ fun HilingualSearchTextField(
     placeholder: String = "단어나 표현을 검색해 주세요",
     backgroundColor: Color = HilingualTheme.colors.white,
     onSearchAction: () -> Unit = {},
-    onTrailingIconClick: () -> Unit = {}
+    onTrailingIconClick: () -> Unit = {},
+    paddingValues: PaddingValues = PaddingValues(12.dp)
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -85,7 +87,8 @@ fun HilingualSearchTextField(
             onSearchAction()
             keyboardController?.hide()
         },
-        hintLocales = LocaleList(Locale("en"))
+        hintLocales = LocaleList(Locale("en")),
+        paddingValues = paddingValues
     )
 }
 
