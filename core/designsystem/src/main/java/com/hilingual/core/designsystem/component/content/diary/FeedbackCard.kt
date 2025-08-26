@@ -39,7 +39,7 @@ import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-fun FeedbackCard(
+internal fun FeedbackCard(
     originalText: String,
     feedbackText: String,
     explain: String,

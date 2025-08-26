@@ -31,7 +31,7 @@ import com.hilingual.core.designsystem.component.toggle.HilingualBasicToggleSwit
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-fun DiaryViewModeToggle(
+internal fun DiaryViewModeToggle(
     isAIWritten: Boolean,
     onToggle: (Boolean) -> Unit,
     modifier: Modifier = Modifier

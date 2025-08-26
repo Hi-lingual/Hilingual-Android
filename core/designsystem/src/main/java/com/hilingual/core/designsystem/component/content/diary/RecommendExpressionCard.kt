@@ -47,7 +47,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-fun RecommendExpressionCard(
+internal fun RecommendExpressionCard(
     phraseType: ImmutableList<String>,
     phrase: String,
     explanation: String,

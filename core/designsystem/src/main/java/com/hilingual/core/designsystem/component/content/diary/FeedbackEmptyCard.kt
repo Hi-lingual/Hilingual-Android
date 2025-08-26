@@ -38,7 +38,7 @@ import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-fun FeedbackEmptyCard(
+internal fun FeedbackEmptyCard(
     modifier: Modifier = Modifier
 ) {
     Column(

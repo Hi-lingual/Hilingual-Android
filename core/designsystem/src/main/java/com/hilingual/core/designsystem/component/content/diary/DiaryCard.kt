@@ -44,7 +44,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-fun DiaryCard(
+internal fun DiaryCard(
     isAIWritten: Boolean,
     diaryContent: String,
     onImageClick: () -> Unit,
