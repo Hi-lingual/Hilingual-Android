@@ -28,6 +28,7 @@ import com.hilingual.presentation.auth.navigation.navigateToAuth
 import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedback
 import com.hilingual.presentation.diarywrite.navigation.navigateToDiaryWrite
 import com.hilingual.presentation.feed.navigation.Feed
+import com.hilingual.presentation.feed.navigation.FeedSearch
 import com.hilingual.presentation.feed.navigation.navigateToFeed
 import com.hilingual.presentation.feedprofile.profile.navigation.navigateToFeedProfile
 import com.hilingual.presentation.home.navigation.navigateToHome
@@ -52,7 +53,7 @@ internal class MainAppState(
     coroutineScope: CoroutineScope,
     networkMonitor: NetworkMonitor
 ) {
-    val startDestination = Feed
+    val startDestination = FeedSearch
 
     val isOffline: StateFlow<Boolean> = networkMonitor.isOnline
         .map(Boolean::not)
