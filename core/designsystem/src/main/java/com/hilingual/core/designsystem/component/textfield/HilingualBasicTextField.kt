@@ -78,7 +78,7 @@ fun HilingualBasicTextField(
     onFocusChanged: (Boolean) -> Unit = {},
     backgroundColor: Color = HilingualTheme.colors.gray100,
     borderColor: Color = Color.Unspecified,
-    verticalPadding: PaddingValues = PaddingValues(vertical = 12.dp),
+    paddingValues: PaddingValues = PaddingValues(12.dp),
     decorationBoxHeight: Dp = 22.dp,
     leadingIcon: @Composable () -> Unit = {},
     trailingIcon: @Composable () -> Unit = {}
@@ -98,7 +98,7 @@ fun HilingualBasicTextField(
                 color = borderColor,
                 shape = RoundedCornerShape(8.dp)
             )
-            .padding(horizontal = 12.dp)
+            .padding(paddingValues)
             .focusRequester(focusRequester)
             .onFocusChanged { focusState ->
                 onFocusChanged(focusState.isFocused)
@@ -124,9 +124,7 @@ fun HilingualBasicTextField(
                 leadingIcon()
 
                 Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(verticalPadding)
+                    modifier = Modifier.weight(1f)
                 ) {
                     Column(
                         modifier = Modifier.height(decorationBoxHeight)
@@ -197,7 +195,7 @@ private fun HilingualBasicTextFieldPadding16Preview() {
             value = text,
             onValueChanged = { text = it },
             placeholder = "Enter text",
-            verticalPadding = PaddingValues(vertical = 16.dp)
+            paddingValues = PaddingValues(vertical = 16.dp, horizontal = 12.dp)
         )
     }
 }
