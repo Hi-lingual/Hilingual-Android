@@ -4,7 +4,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualProfileImageBottomSheet
 import com.hilingual.core.designsystem.component.picker.ProfileImagePicker
@@ -34,14 +34,13 @@ import com.hilingual.presentation.mypage.component.WithdrawDialog
 @Composable
 internal fun ProfileEditScreen(
     paddingValues: PaddingValues,
-    profileUrl: String,
+    profileImageUrl: String,
     profileNickname: String,
-    onWithdrawClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onWithdrawClick: () -> Unit
 ) {
-    var imageUri by remember { mutableStateOf<String?>(profileUrl) }
+    var imageUri by remember { mutableStateOf<String?>(profileImageUrl) }
     var isImageSheetVisible by remember { mutableStateOf(false) }
-    var withdrawDialogVisible by remember { mutableStateOf(false) }
+    var isWithdrawDialogVisible by remember { mutableStateOf(false) }
 
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
@@ -51,7 +50,7 @@ internal fun ProfileEditScreen(
     )
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .statusBarColor(HilingualTheme.colors.white)
             .background(HilingualTheme.colors.white)
@@ -88,7 +87,7 @@ internal fun ProfileEditScreen(
             textDecoration = TextDecoration.Underline,
             modifier = Modifier
                 .padding(vertical = 4.dp)
-                .clickable(onClick = { withdrawDialogVisible = true })
+                .noRippleClickable(onClick = { isWithdrawDialogVisible = true })
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -112,8 +111,8 @@ internal fun ProfileEditScreen(
     )
 
     WithdrawDialog(
-        isVisible = withdrawDialogVisible,
-        onDismiss = { withdrawDialogVisible = false },
+        isVisible = isWithdrawDialogVisible,
+        onDismiss = { isWithdrawDialogVisible = false },
         onDeleteClick = onWithdrawClick
     )
 }
@@ -124,7 +123,7 @@ private fun ProfileEditScreenPreview() {
     HilingualTheme {
         ProfileEditScreen(
             paddingValues = PaddingValues(),
-            profileUrl = "",
+            profileImageUrl = "",
             profileNickname = "하링이",
             onWithdrawClick = {}
         )

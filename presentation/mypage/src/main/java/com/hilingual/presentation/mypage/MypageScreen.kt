@@ -38,31 +38,30 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.topappbar.TitleLeftAlignedTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.mypage.component.LogoutDialog
 import com.hilingual.presentation.mypage.component.MyInfoBox
 import com.hilingual.presentation.mypage.component.SettingItem
-import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun MypageScreen(
     paddingValues: PaddingValues,
-    profileUrl: String,
+    profileImageUrl: String,
     profileNickname: String,
-    onProfileEditButtonClick: () -> Unit,
-    onMyFeedButtonClick: () -> Unit,
+    onProfileEditClick: () -> Unit,
+    onMyFeedClick: () -> Unit,
     onAlarmClick: () -> Unit,
     onBlockClick: () -> Unit,
     onCustomerCenterClick: () -> Unit,
     onTermsClick: () -> Unit,
-    onLogoutClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onLogoutClick: () -> Unit
 ) {
-    var logoutDialogVisible by remember { mutableStateOf(false) }
+    var isLogoutDialogVisible by remember { mutableStateOf(false) }
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .statusBarColor(HilingualTheme.colors.gray100)
             .background(HilingualTheme.colors.gray100)
@@ -78,10 +77,10 @@ internal fun MypageScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            profileUrl = profileUrl,
+            profileUrl = profileImageUrl,
             profileNickname = profileNickname,
-            onEditButtonClick = onProfileEditButtonClick,
-            onMyFeedButtonClick = onMyFeedButtonClick
+            onEditButtonClick = onProfileEditClick,
+            onMyFeedButtonClick = onMyFeedClick
         )
 
         Column(
@@ -94,28 +93,28 @@ internal fun MypageScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             SettingItem(
-                iconRes = DesignSystemR.drawable.ic_alarm_28,
+                iconRes = R.drawable.ic_alarm_28,
                 title = "알림 설정",
                 onClick = onAlarmClick,
                 trailingContent = { ArrowIcon() }
             )
 
             SettingItem(
-                iconRes = DesignSystemR.drawable.ic_block_24_black,
+                iconRes = R.drawable.ic_block_24_black,
                 title = "차단한 유저",
                 onClick = onBlockClick,
                 trailingContent = { ArrowIcon() }
             )
 
             SettingItem(
-                iconRes = DesignSystemR.drawable.ic_customer_24,
+                iconRes = R.drawable.ic_customer_24,
                 title = "고객센터",
                 onClick = onCustomerCenterClick,
                 trailingContent = { ArrowIcon() }
             )
 
             SettingItem(
-                iconRes = DesignSystemR.drawable.ic_document_24,
+                iconRes = R.drawable.ic_document_24,
                 title = "개인정보 처리방침 및 이용약관",
                 onClick = onTermsClick,
                 trailingContent = { ArrowIcon() }
@@ -129,11 +128,11 @@ internal fun MypageScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             SettingItem(
-                iconRes = DesignSystemR.drawable.ic_info_24,
+                iconRes = R.drawable.ic_info_24,
                 title = "버전 정보",
                 trailingContent = {
                     Text(
-                        text = "1.01.01",
+                        text = "1.01.01", // TODO: 버전 정보 가져오기 by 지영
                         color = HilingualTheme.colors.gray400,
                         style = HilingualTheme.typography.captionR14,
                         modifier = Modifier.padding(end = 4.dp)
@@ -142,16 +141,16 @@ internal fun MypageScreen(
             )
 
             SettingItem(
-                iconRes = DesignSystemR.drawable.ic_logout_24,
+                iconRes = R.drawable.ic_logout_24,
                 title = "로그아웃",
-                onClick = { logoutDialogVisible = true }
+                onClick = { isLogoutDialogVisible = true }
             )
         }
     }
 
     LogoutDialog(
-        isVisible = logoutDialogVisible,
-        onDismiss = { logoutDialogVisible = false },
+        isVisible = isLogoutDialogVisible,
+        onDismiss = { isLogoutDialogVisible = false },
         onLogoutClick = onLogoutClick
     )
 }
@@ -162,7 +161,7 @@ private fun ArrowIcon() {
         modifier = Modifier
             .size(24.dp)
             .padding(4.dp),
-        imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_arrow_right_16_bold),
+        imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right_16_bold),
         contentDescription = null,
         tint = HilingualTheme.colors.gray400
     )
@@ -174,10 +173,10 @@ private fun MypageScreenPreview() {
     HilingualTheme {
         MypageScreen(
             paddingValues = PaddingValues(),
-            profileUrl = "",
+            profileImageUrl = "",
             profileNickname = "하링이",
-            onProfileEditButtonClick = {},
-            onMyFeedButtonClick = {},
+            onProfileEditClick = {},
+            onMyFeedClick = {},
             onAlarmClick = {},
             onBlockClick = {},
             onCustomerCenterClick = {},

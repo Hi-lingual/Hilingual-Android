@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,25 +34,16 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 
-@Immutable
-data class BlockedUserData(
-    val userId: Long,
-    val profileImgUrl: String,
-    val nickname: String,
-    val isBlocked: Boolean = true
-)
-
 @Composable
 internal fun BlockedUserScreen(
     paddingValues: PaddingValues,
-    onBackClicked: () -> Unit,
-    blockedUserList: ImmutableList<BlockedUserData>,
+    onBackClick: () -> Unit,
+    blockedUserList: ImmutableList<BlockedUserUiState>,
     onUserProfileClick: (Long) -> Unit,
-    onButtonClick: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    onButtonClick: (Long) -> Unit
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .statusBarColor(HilingualTheme.colors.white)
             .background(HilingualTheme.colors.white)
@@ -61,14 +51,14 @@ internal fun BlockedUserScreen(
     ) {
         BackTopAppBar(
             title = "차단한 유저",
-            onBackClicked = onBackClicked
+            onBackClicked = onBackClick
         )
 
         if (blockedUserList.isEmpty()) {
             Spacer(modifier = Modifier.height(140.dp))
 
             Column(
-                modifier = modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
 
@@ -96,15 +86,17 @@ internal fun BlockedUserScreen(
                     items = blockedUserList,
                     key = { it.userId }
                 ) { blockedUser ->
-                    UserActionItem(
-                        userId = blockedUser.userId,
-                        profileUrl = blockedUser.profileImgUrl,
-                        nickname = blockedUser.nickname,
-                        isFilled = blockedUser.isBlocked,
-                        buttonText = if (blockedUser.isBlocked) "차단 해제" else "차단",
-                        onProfileClick = onUserProfileClick,
-                        onButtonClick = onButtonClick
-                    )
+                    with(blockedUser) {
+                        UserActionItem(
+                            userId = userId,
+                            profileUrl = profileImageUrl,
+                            nickname = nickname,
+                            isFilled = isBlocked,
+                            buttonText = if (isBlocked) "차단 해제" else "차단",
+                            onProfileClick = onUserProfileClick,
+                            onButtonClick = onButtonClick
+                        )
+                    }
                 }
             }
         }
@@ -117,7 +109,7 @@ private fun BlockedUserScreenEmptyPreview() {
     HilingualTheme {
         BlockedUserScreen(
             paddingValues = PaddingValues(),
-            onBackClicked = {},
+            onBackClick = {},
             blockedUserList = persistentListOf(),
             onUserProfileClick = {},
             onButtonClick = {}
@@ -132,29 +124,29 @@ private fun BlockedUserScreenWithDataPreview() {
         var sampleBlockedUsers by remember {
             mutableStateOf(
                 persistentListOf(
-                    BlockedUserData(
+                    BlockedUserUiState(
                         userId = 1L,
-                        profileImgUrl = "",
+                        profileImageUrl = "",
                         nickname = "사과"
                     ),
-                    BlockedUserData(
+                    BlockedUserUiState(
                         userId = 2L,
-                        profileImgUrl = "",
+                        profileImageUrl = "",
                         nickname = "바나나"
                     ),
-                    BlockedUserData(
+                    BlockedUserUiState(
                         userId = 3L,
-                        profileImgUrl = "",
+                        profileImageUrl = "",
                         nickname = "오렌지"
                     ),
-                    BlockedUserData(
+                    BlockedUserUiState(
                         userId = 4L,
-                        profileImgUrl = "https://picsum.photos/42/42?random=1",
+                        profileImageUrl = "https://picsum.photos/42/42?random=1",
                         nickname = "딸기"
                     ),
-                    BlockedUserData(
+                    BlockedUserUiState(
                         userId = 5L,
-                        profileImgUrl = "",
+                        profileImageUrl = "",
                         nickname = "포도"
                     )
                 )
@@ -163,7 +155,7 @@ private fun BlockedUserScreenWithDataPreview() {
 
         BlockedUserScreen(
             paddingValues = PaddingValues(),
-            onBackClicked = {},
+            onBackClick = {},
             blockedUserList = sampleBlockedUsers,
             onUserProfileClick = {},
             onButtonClick = { userId ->
