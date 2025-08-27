@@ -13,27 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.diaryfeedback.model
+package com.hilingual.presentation.feeddiary
 
 import androidx.compose.runtime.Immutable
-import com.hilingual.data.diary.model.DiaryContentModel
+import com.hilingual.core.designsystem.model.DiaryContent
+import com.hilingual.core.designsystem.model.FeedbackContent
+import com.hilingual.core.designsystem.model.RecommendExpression
+import com.hilingual.presentation.feeddiary.model.ProfileContentUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 
 @Immutable
-internal data class DiaryContentUiModel(
-    val originalText: String = "",
-    val aiText: String = "",
-    val diffRanges: ImmutableList<Pair<Int, Int>> = persistentListOf(),
-    val imageUrl: String? = null
-)
-
-internal fun DiaryContentModel.toState() = DiaryContentUiModel(
-    originalText = this.originalText,
-    aiText = this.rewriteText,
-    diffRanges = this.diffRanges.map {
-        it.diffRange.first to it.diffRange.second
-    }.toImmutableList(),
-    imageUrl = this.imageUrl
+internal data class FeedDiaryUiState(
+    val writtenDate: String = "",
+    val isMine: Boolean = false,
+    val profileContent: ProfileContentUiModel,
+    val diaryContent: DiaryContent = DiaryContent(),
+    val feedbackList: ImmutableList<FeedbackContent> = persistentListOf(),
+    val recommendExpressionList: ImmutableList<RecommendExpression> = persistentListOf()
 )

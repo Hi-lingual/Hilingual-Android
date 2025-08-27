@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.diaryfeedback.component
+package com.hilingual.core.designsystem.component.content.diary
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -40,15 +40,14 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.tag.WordPhraseTypeTag
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun RecommendExpressionCard(
-    phraseId: Long,
     phraseType: ImmutableList<String>,
     phrase: String,
     explanation: String,
@@ -83,7 +82,7 @@ internal fun RecommendExpressionCard(
         }
         Icon(
             imageVector = ImageVector.vectorResource(
-                if (isMarked) DesignSystemR.drawable.ic_save_28_filled else DesignSystemR.drawable.ic_save_28_empty
+                if (isMarked) R.drawable.ic_save_28_filled else R.drawable.ic_save_28_empty
             ),
             contentDescription = null,
             tint = Color.Unspecified,
@@ -145,7 +144,6 @@ private fun RecommendExpressionCardPreview() {
         var isBookmarked by remember { mutableStateOf(false) }
 
         RecommendExpressionCard(
-            phraseId = 0L,
             phraseType = persistentListOf("동사", "숙어"),
             phrase = "come across as",
             explanation = "~처럼 보이다, ~한 인상을 주다",

@@ -23,7 +23,6 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
-import com.hilingual.presentation.diaryfeedback.model.toState
 import com.hilingual.presentation.diaryfeedback.navigation.DiaryFeedback
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList

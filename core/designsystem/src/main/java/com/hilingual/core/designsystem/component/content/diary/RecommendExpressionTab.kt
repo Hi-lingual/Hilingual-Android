@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.diaryfeedback.tab
+package com.hilingual.core.designsystem.component.content.diary
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -31,17 +31,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.designsystem.model.RecommendExpression
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.diaryfeedback.component.RecommendExpressionCard
-import com.hilingual.presentation.diaryfeedback.model.RecommendExpressionUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-internal fun RecommendExpressionScreen(
+fun RecommendExpressionTab(
     listState: LazyListState,
     writtenDate: String,
-    recommendExpressionList: ImmutableList<RecommendExpressionUiModel>,
+    recommendExpressionList: ImmutableList<RecommendExpression>,
     onBookmarkClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -69,7 +68,6 @@ internal fun RecommendExpressionScreen(
             key = { it.phraseId }
         ) {
             RecommendExpressionCard(
-                phraseId = it.phraseId,
                 phraseType = it.phraseType,
                 phrase = it.phrase,
                 explanation = it.explanation,
@@ -83,9 +81,9 @@ internal fun RecommendExpressionScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun GrammarSpellingScreenPreview() {
+private fun RecommendExpressionTabPreview() {
     HilingualTheme {
-        RecommendExpressionScreen(
+        RecommendExpressionTab(
             listState = rememberLazyListState(),
             writtenDate = "7월 11일 금요일",
             recommendExpressionList = persistentListOf(),
