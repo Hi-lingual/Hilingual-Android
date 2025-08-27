@@ -69,6 +69,8 @@ import kotlinx.coroutines.launch
 internal fun DiaryFeedbackRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
+    navigateToHome: () -> Unit,
+    navigateToFeed: () -> Unit,
     viewModel: DiaryFeedbackViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -99,10 +101,7 @@ internal fun DiaryFeedbackRoute(
                     SnackbarRequest(
                         message = it.message,
                         buttonText = it.actionLabel,
-                        onClick = {
-                            // TODO: 피드 화면으로 이동
-                            toastTrigger("${it.actionLabel} 클릭됨")
-                        }
+                        onClick = navigateToFeed
                     )
                 )
             }
@@ -110,6 +109,8 @@ internal fun DiaryFeedbackRoute(
             is DiaryFeedbackSideEffect.ShowToast -> {
                 toastTrigger(it.message)
             }
+
+            is DiaryFeedbackSideEffect.NavigateToHome -> navigateToHome()
         }
     }
 

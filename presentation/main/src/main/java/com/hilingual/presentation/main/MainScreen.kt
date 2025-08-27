@@ -228,7 +228,9 @@ internal fun MainScreen(
 
                 diaryFeedbackNavGraph(
                     paddingValues = innerPadding,
-                    navigateUp = appState::navigateUp
+                    navigateUp = appState::navigateUp,
+                    navigateToHome = appState::navigateToHome,
+                    navigateToFeed = appState::navigateToFeed
                 )
 
                 feedNavGraph(

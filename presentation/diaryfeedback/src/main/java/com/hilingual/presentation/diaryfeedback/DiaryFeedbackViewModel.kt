@@ -53,7 +53,8 @@ internal class DiaryFeedbackViewModel @Inject constructor(
     val sideEffect: SharedFlow<DiaryFeedbackSideEffect> = _sideEffect.asSharedFlow()
 
     init {
-        loadInitialData()
+        _uiState.value = UiState.Success(DiaryFeedbackUiState())
+//        loadInitialData()
     }
 
     private suspend fun requestDiaryFeedbackData() {
@@ -119,8 +120,11 @@ internal class DiaryFeedbackViewModel @Inject constructor(
     }
 
     fun deleteDiary() {
-        // TODO: API 호출 성공 후 홈으로 이동 + 스낵바 표시
-        showToast("삭제가 완료되었어요.")
+        // TODO: API 호출 성공 후 표시
+        viewModelScope.launch {
+            showToast("삭제가 완료되었어요.")
+            _sideEffect.emit(DiaryFeedbackSideEffect.NavigateToHome)
+        }
     }
 
     fun toggleBookmark(phraseId: Long, isMarked: Boolean) {
@@ -154,7 +158,6 @@ internal class DiaryFeedbackViewModel @Inject constructor(
 
     private fun showPublishSnackbar() {
         viewModelScope.launch {
-            // TODO: 보러가기 버튼 클릭 이벤트 설정 (피드로 이동)
             _sideEffect.emit(DiaryFeedbackSideEffect.ShowSnackbar(message = "일기가 게시되었어요!", actionLabel = "보러가기"))
         }
     }
@@ -167,6 +170,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
 }
 
 sealed interface DiaryFeedbackSideEffect {
+    data object NavigateToHome : DiaryFeedbackSideEffect
     data class ShowRetryDialog(val onRetry: () -> Unit) : DiaryFeedbackSideEffect
     data class ShowSnackbar(val message: String, val actionLabel: String) : DiaryFeedbackSideEffect
     data class ShowToast(val message: String) : DiaryFeedbackSideEffect

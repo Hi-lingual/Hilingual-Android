@@ -157,6 +157,10 @@ internal class MainAppState(
         navController.navigateToDiaryWrite(selectedDate, navOptions)
     }
 
+    fun navigateToFeed(navOptions: NavOptions? = clearStackNavOptions) {
+        navController.navigateToFeed(navOptions)
+    }
+
     fun navigateUp() {
         navController.navigateUp()
     }
