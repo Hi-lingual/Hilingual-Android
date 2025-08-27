@@ -18,10 +18,12 @@ package com.hilingual.presentation.feeddiary
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
+import com.hilingual.presentation.feeddiary.navigation.FeedDiary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,7 +41,7 @@ internal class FeedDiaryViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val diaryRepository: DiaryRepository
 ) : ViewModel() {
-    //    val diaryId = savedStateHandle.toRoute<FeedDiary>().diaryId
+    val diaryId = savedStateHandle.toRoute<FeedDiary>().diaryId
 
     private val _uiState = MutableStateFlow<UiState<FeedDiaryUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<FeedDiaryUiState>> = _uiState.asStateFlow()

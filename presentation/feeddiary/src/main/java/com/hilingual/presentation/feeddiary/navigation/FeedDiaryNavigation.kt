@@ -25,20 +25,23 @@ import com.hilingual.presentation.feeddiary.FeedDiaryRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object FeedDiary : Route
+data class FeedDiary(
+    val diaryId: Long
+) : Route
 
 fun NavController.navigateToFeedDiary(
+    diaryId: Long,
     navOptions: NavOptions? = null
 ) {
     navigate(
-        route = FeedDiary,
+        route = FeedDiary(diaryId),
         navOptions = navOptions
     )
 }
 
 fun NavGraphBuilder.feedDiaryNavGraph(
     paddingValues: PaddingValues,
-    navigateUp: () -> Unit,
+    navigateUp: () -> Unit
 ) {
     composable<FeedDiary> {
         FeedDiaryRoute(

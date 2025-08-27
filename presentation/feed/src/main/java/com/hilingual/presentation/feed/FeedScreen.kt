@@ -52,6 +52,7 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun FeedRoute(
     paddingValues: PaddingValues,
+    navigateToFeedDiary: (Long) -> Unit,
     viewModel: FeedViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -78,6 +79,7 @@ internal fun FeedRoute(
                 onSearchClick = {
                     // TODO: 친구 검색 화면으로 이동
                 },
+                onFeedItemClick = navigateToFeedDiary,
                 readAllFeed = viewModel::readAllFeed
             )
         }
@@ -91,6 +93,7 @@ private fun FeedScreen(
     uiState: FeedUiState,
     onProfileClick: () -> Unit,
     onSearchClick: () -> Unit,
+    onFeedItemClick: (Long) -> Unit,
     readAllFeed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -170,9 +173,9 @@ private fun FeedScreen(
                     feedList = feedList,
                     onProfileClick = {},
                     onMenuClick = {},
-                    onContentClick = {},
+                    onContentClick = onFeedItemClick,
                     onLikeClick = {},
-                    onMoreClick = {},
+                    onMoreClick = onFeedItemClick,
                     hasFollowing = if (page == 1) uiState.hasFollowing else false
                 )
             }
@@ -200,6 +203,7 @@ private fun FeedScreenPreview() {
             paddingValues = PaddingValues(),
             onProfileClick = {},
             onSearchClick = {},
+            onFeedItemClick = {},
             readAllFeed = {},
             uiState = FeedUiState(
                 myProfileUrl = "https://avatars.githubusercontent.com/u/101113025?v=4",

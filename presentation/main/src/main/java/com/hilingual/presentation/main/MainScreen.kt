@@ -235,7 +235,8 @@ internal fun MainScreen(
                 )
 
                 feedNavGraph(
-                    paddingValues = innerPadding
+                    paddingValues = innerPadding,
+                    navigateToFeedDiary = appState::navigateToFeedDiary
                 )
 
                 feedDiaryNavGraph(
