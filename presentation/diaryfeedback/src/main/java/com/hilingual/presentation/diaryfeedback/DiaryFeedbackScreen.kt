@@ -50,17 +50,18 @@ import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
+import com.hilingual.core.designsystem.component.content.diary.DiaryTabRow
+import com.hilingual.core.designsystem.component.content.diary.GrammarSpellingTab
+import com.hilingual.core.designsystem.component.content.diary.ModalImage
+import com.hilingual.core.designsystem.component.content.diary.RecommendExpressionTab
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryDeleteDialog
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryPublishDialog
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDialog
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
-import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.diaryfeedback.component.FeedbackMenuBottomSheet
 import com.hilingual.presentation.diaryfeedback.component.FeedbackReportDialog
-import com.hilingual.presentation.diaryfeedback.tab.GrammarSpellingScreen
-import com.hilingual.presentation.diaryfeedback.tab.RecommendExpressionScreen
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
@@ -181,8 +182,7 @@ private fun DiaryFeedbackScreen(
             onMoreClicked = { isReportBottomSheetVisible = true }
         )
 
-        HilingualBasicTabRow(
-            tabTitles = persistentListOf("문법·철자", "추천표현"),
+        DiaryTabRow(
             tabIndex = pagerState.currentPage,
             onTabSelected = {
                 coroutineScope.launch {
@@ -207,7 +207,7 @@ private fun DiaryFeedbackScreen(
                         modifier = Modifier.fillMaxSize()
                     ) { page ->
                         when (page) {
-                            0 -> GrammarSpellingScreen(
+                            0 -> GrammarSpellingTab(
                                 listState = grammarListState,
                                 writtenDate = data.writtenDate,
                                 diaryContent = data.diaryContent,
@@ -215,7 +215,7 @@ private fun DiaryFeedbackScreen(
                                 onImageClick = onChangeImageDetailVisible
                             )
 
-                            1 -> RecommendExpressionScreen(
+                            1 -> RecommendExpressionTab(
                                 listState = recommendListState,
                                 writtenDate = data.writtenDate,
                                 recommendExpressionList = data.recommendExpressionList,
@@ -256,7 +256,7 @@ private fun DiaryFeedbackScreen(
 
     if (isImageDetailVisible && successData?.diaryContent?.imageUrl != null) {
         ModalImage(
-            imageUrl = successData.diaryContent.imageUrl,
+            imageUrl = successData.diaryContent.imageUrl ?: "",
             onBackClick = onChangeImageDetailVisible,
             modifier = modifier.padding(paddingValues)
         )

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.feedprofile.component
+package com.hilingual.core.designsystem.component.bottomsheet
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -24,13 +24,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.hilingual.core.designsystem.R
-import com.hilingual.core.designsystem.component.bottomsheet.HilingualMenuBottomSheet
-import com.hilingual.core.designsystem.component.bottomsheet.HilingualMenuBottomSheetItem
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun ReportBlockBottomSheet(
+fun ReportBlockBottomSheet(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     onReportClick: () -> Unit,

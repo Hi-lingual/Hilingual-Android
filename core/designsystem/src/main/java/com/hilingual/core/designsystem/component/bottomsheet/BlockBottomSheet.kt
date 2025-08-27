@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.feedprofile.component
+package com.hilingual.core.designsystem.component.bottomsheet
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,7 +38,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.R
-import com.hilingual.core.designsystem.component.bottomsheet.HilingualBasicBottomSheet
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import kotlinx.collections.immutable.persistentListOf
@@ -50,7 +49,7 @@ private val CHECK_TEXTS = persistentListOf(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun BlockBottomSheet(
+fun BlockBottomSheet(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     onBlockButtonClick: () -> Unit,
