@@ -53,8 +53,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
     val sideEffect: SharedFlow<DiaryFeedbackSideEffect> = _sideEffect.asSharedFlow()
 
     init {
-        _uiState.value = UiState.Success(DiaryFeedbackUiState())
-//        loadInitialData()
+        loadInitialData()
     }
 
     private suspend fun requestDiaryFeedbackData() {

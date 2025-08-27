@@ -26,7 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
+import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
+import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.bottomsheet.BlockBottomSheet
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -55,11 +57,25 @@ internal fun FeedDiaryRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var isImageDetailVisible by remember { mutableStateOf(false) }
 
+    val toastTrigger = LocalToastTrigger.current
+
     BackHandler {
         if (isImageDetailVisible) {
             isImageDetailVisible = false
         } else {
             navigateUp()
+        }
+    }
+
+    viewModel.sideEffect.collectSideEffect {
+        when (it) {
+            is FeedDiarySideEffect.NavigateToUp -> navigateUp()
+
+            is FeedDiarySideEffect.ShowSnackbar -> {}
+
+            is FeedDiarySideEffect.ShowToast -> {
+                toastTrigger(it.message)
+            }
         }
     }
 
@@ -73,7 +89,7 @@ internal fun FeedDiaryRoute(
                 onBackClick = navigateUp,
                 onProfileClick = {},
                 onLikeClick = {},
-                onPrivateClick = {},
+                onPrivateClick = viewModel::diaryUnpublish,
                 onBlockClick = {},
                 onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 isImageDetailVisible = isImageDetailVisible,
