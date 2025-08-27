@@ -15,7 +15,6 @@
  */
 package com.hilingual.presentation.feedprofile.profile.component
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,7 +27,6 @@ import com.hilingual.core.designsystem.component.bottomsheet.HilingualMenuBottom
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualMenuBottomSheetItem
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ReportBlockBottomSheet(
     isVisible: Boolean,
@@ -48,7 +46,7 @@ internal fun ReportBlockBottomSheet(
             onClick = onBlockClick
         )
         HilingualMenuBottomSheetItem(
-            text = "게시글 신고하기",
+            text = "계정 신고하기",
             iconResId = R.drawable.ic_report_24,
             onClick = onReportClick
         )

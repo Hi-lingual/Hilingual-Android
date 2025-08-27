@@ -241,7 +241,7 @@ private fun DiaryFeedbackScreen(
                 }
 
                 HilingualButton(
-                    text = if (isPublished) "비공개하기" else "피드에 게시하기",
+                    text = if (isPublished) "비공개하기" else "게시하기",
                     onClick = { isPublishDialogVisible = true },
                     modifier = Modifier
                         .background(HilingualTheme.colors.gray100)
