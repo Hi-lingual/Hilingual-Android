@@ -31,7 +31,9 @@ import com.hilingual.presentation.feed.navigation.navigateToFeed
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.main.MainTab
 import com.hilingual.presentation.main.monitor.NetworkMonitor
-import com.hilingual.presentation.mypage.navigateToMyPage
+import com.hilingual.presentation.mypage.navigation.MyPage
+import com.hilingual.presentation.mypage.navigation.navigateToMyPage
+import com.hilingual.presentation.mypage.navigation.navigateToProfileEdit
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.otp.navigation.navigateToOtp
 import com.hilingual.presentation.splash.navigation.Splash
@@ -155,6 +157,12 @@ internal class MainAppState(
         }
     ) {
         navController.navigateToDiaryWrite(selectedDate, navOptions)
+    }
+
+    fun navigateToProfileEdit(
+        navOptions: NavOptions? = null
+    ) {
+        navController.navigateToProfileEdit(navOptions)
     }
 
     fun navigateUp() {

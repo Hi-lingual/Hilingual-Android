@@ -55,6 +55,7 @@ import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.main.state.MainAppState
 import com.hilingual.presentation.mypage.navigation.myPageNavGraph
+import com.hilingual.presentation.mypage.navigation.profileEditNavGraph
 import com.hilingual.presentation.onboarding.navigation.onboardingGraph
 import com.hilingual.presentation.otp.navigation.otpNavGraph
 import com.hilingual.presentation.splash.navigation.splashNavGraph
@@ -237,10 +238,15 @@ internal fun MainScreen(
 
                 myPageNavGraph(
                     paddingValues = innerPadding,
-                    navigateToProfileEdit = { /* TODO: 프로필 작성 화면으로 이동 */ },
+                    navigateToProfileEdit = appState::navigateToProfileEdit,
                     navigateToMyFeed = { /* TODO: 내 피드 화면으로 이동 */ },
                     navigateToAlarm = { /* TODO: 알림 설정 화면으로 이동 */ },
                     navigateToBlock = { /* TODO: 차단한 유저 화면으로 이동 */ },
+                    navigateToSplash = { /* TODO: splash 화면으로 이동 */ }
+                )
+
+                profileEditNavGraph(
+                    paddingValues = innerPadding,
                     navigateToSplash = { /* TODO: splash 화면으로 이동 */ }
                 )
             }
