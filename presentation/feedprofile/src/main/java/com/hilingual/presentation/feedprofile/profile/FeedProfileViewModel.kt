@@ -5,6 +5,7 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.presentation.feedprofile.profile.model.FeedProfileInfoModel
 import com.hilingual.presentation.feedprofile.profile.model.SharedDiaryItemModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,7 +30,7 @@ internal class FeedProfileViewModel @Inject constructor() : ViewModel() {
                     isFollowed = false,
                     isBlock = false
                 ),
-                sharedDiarys = kotlinx.collections.immutable.persistentListOf(
+                sharedDiarys = persistentListOf(
                     SharedDiaryItemModel(
                         profileImageUrl = "",
                         nickname = "가짜프로필",
@@ -41,7 +42,7 @@ internal class FeedProfileViewModel @Inject constructor() : ViewModel() {
                         originalText = "가짜 사용자의 일기 내용입니다."
                     )
                 ),
-                likedDiarys = kotlinx.collections.immutable.persistentListOf()
+                likedDiarys = persistentListOf()
             )
         )
     }

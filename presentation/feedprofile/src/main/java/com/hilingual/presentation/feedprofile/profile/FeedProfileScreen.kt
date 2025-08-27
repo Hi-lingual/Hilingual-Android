@@ -50,6 +50,7 @@ internal fun FeedProfileRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToFeedProfile: (Long) -> Unit,
+    navigateToFollowList: () -> Unit,
     viewModel: FeedProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -64,7 +65,7 @@ internal fun FeedProfileRoute(
                 paddingValues = paddingValues,
                 uiState = state.data,
                 onBackClick = navigateUp,
-                onFollowTypeClick = { },
+                onFollowClick = navigateToFollowList,
                 onActionButtonClick = { },
                 onProfileClick = navigateToFeedProfile,
                 onContentClick = { },
@@ -85,7 +86,7 @@ private fun FeedProfileScreen(
     paddingValues: PaddingValues,
     uiState: FeedProfileUiState,
     onBackClick: () -> Unit,
-    onFollowTypeClick: () -> Unit,
+    onFollowClick: () -> Unit,
     onActionButtonClick: (Boolean) -> Unit,
     onProfileClick: (Long) -> Unit,
     onContentClick: (Long) -> Unit,
@@ -148,7 +149,7 @@ private fun FeedProfileScreen(
                             streak = streak,
                             follower = follower,
                             following = following,
-                            onFollowTypeClick = onFollowTypeClick,
+                            onFollowClick = onFollowClick,
                             isMine = isMine,
                             isFollowing = isFollowing,
                             isFollowed = isFollowed,
@@ -361,7 +362,7 @@ private fun FeedProfileScreenPreview() {
             onActionButtonClick = {},
             onReportClick = {},
             onBlockClick = {},
-            onFollowTypeClick = {},
+            onFollowClick = {},
             onProfileClick = {},
             onContentClick = {},
             onLikeClick = {},
