@@ -55,13 +55,12 @@ fun FeedContent(
     profileUrl: String,
     onProfileClick: () -> Unit,
     nickname: String,
-    streak: Int,
+    streak: Int?,
     sharedDateInMinutes: Long,
     onMenuClick: () -> Unit,
     content: String,
     onContentClick: () -> Unit,
     imageUrl: String?,
-    diaryId: Long,
     likeCount: Int,
     isLiked: Boolean,
     onLikeClick: () -> Unit,
@@ -123,7 +122,6 @@ fun FeedContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             FeedFooter(
-                diaryId = diaryId,
                 likeCount = likeCount,
                 isLiked = isLiked,
                 onLikeClick = onLikeClick,
@@ -136,7 +134,7 @@ fun FeedContent(
 @Composable
 private fun FeedHeader(
     nickname: String,
-    streak: Int,
+    streak: Int?,
     sharedDateInMinutes: Long,
     onMenuClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -155,27 +153,30 @@ private fun FeedHeader(
             color = HilingualTheme.colors.gray850
         )
 
-        Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_fire_16),
-            contentDescription = null,
-            tint = HilingualTheme.colors.hilingualOrange,
-            modifier = Modifier
-                .padding(start = 4.dp, end = 1.dp)
-                .size(16.dp)
-        )
+        if (streak != null) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_fire_16),
+                contentDescription = null,
+                tint = HilingualTheme.colors.hilingualOrange,
+                modifier = Modifier
+                    .padding(start = 4.dp, end = 1.dp)
+                    .size(16.dp)
+            )
 
-        Text(
-            text = streak.toString(),
-            style = HilingualTheme.typography.bodyM14,
-            color = HilingualTheme.colors.hilingualOrange,
-            modifier = Modifier.padding(end = 8.dp)
-        )
+            Text(
+                text = "$streak",
+                style = HilingualTheme.typography.bodyM14,
+                color = HilingualTheme.colors.hilingualOrange
+            )
+        }
 
         Text(
             text = formattedDate,
             style = HilingualTheme.typography.captionM12,
             color = HilingualTheme.colors.gray400,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .weight(1f)
         )
 
         Icon(
@@ -191,7 +192,6 @@ private fun FeedHeader(
 
 @Composable
 private fun FeedFooter(
-    diaryId: Long,
     isLiked: Boolean,
     onLikeClick: () -> Unit,
     likeCount: Int,
@@ -260,6 +260,19 @@ private fun FeedHeaderPreview() {
 
 @Preview(showBackground = true)
 @Composable
+private fun FeedHeaderPreviewNoStreak() {
+    HilingualTheme {
+        FeedHeader(
+            nickname = "HilingualUser",
+            streak = null,
+            sharedDateInMinutes = 6000,
+            onMenuClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
 private fun FeedFooterPreview() {
     HilingualTheme {
         var isLikedPreview by remember { mutableStateOf(true) }
@@ -276,8 +289,7 @@ private fun FeedFooterPreview() {
                     likeCountPreview--
                 }
             },
-            onMoreClick = {},
-            diaryId = 0L
+            onMoreClick = {}
         )
     }
 }
@@ -308,8 +320,7 @@ private fun FeedContentPreviewWithImage() {
                 isLiked = !isLiked
                 if (isLiked) likeCount++ else likeCount--
             },
-            onMoreClick = { /* 상세보기 클릭 로직 */ },
-            diaryId = 0L
+            onMoreClick = { /* 상세보기 클릭 로직 */ }
         )
     }
 }
@@ -324,7 +335,7 @@ private fun FeedContentPreviewNoImage() {
         FeedContent(
             profileUrl = "",
             nickname = "User123",
-            streak = 32,
+            streak = null,
             sharedDateInMinutes = 24,
             content = "Today was a busy but fulfilling day.\n" +
                 "I spent the morning working on my project and finally solved a problem that had been bothering me for days.\n" +
@@ -341,8 +352,7 @@ private fun FeedContentPreviewNoImage() {
                 isLiked = !isLiked
                 if (isLiked) likeCount++ else likeCount--
             },
-            onMoreClick = { /* 상세보기 클릭 로직 */ },
-            diaryId = 0L
+            onMoreClick = { /* 상세보기 클릭 로직 */ }
         )
     }
 }
