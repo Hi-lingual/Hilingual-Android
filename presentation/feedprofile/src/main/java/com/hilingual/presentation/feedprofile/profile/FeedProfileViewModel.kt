@@ -13,37 +13,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class FeedProfileViewModel @Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<FeedProfileUiState>>(UiState.Loading)
+    private val _uiState = MutableStateFlow<UiState<FeedProfileUiState>>(UiState.Success(FeedProfileUiState.Fake))
     val uiState: StateFlow<UiState<FeedProfileUiState>> = _uiState.asStateFlow()
-
-    init {
-        _uiState.value = UiState.Success(
-            FeedProfileUiState(
-                feedProfileInfo = FeedProfileInfoModel(
-                    profileImageUrl = "",
-                    nickname = "가짜프로필",
-                    streak = 3,
-                    follower = 10,
-                    following = 5,
-                    isMine = true,
-                    isFollowing = false,
-                    isFollowed = false,
-                    isBlock = false
-                ),
-                sharedDiarys = persistentListOf(
-                    SharedDiaryItemModel(
-                        profileImageUrl = "",
-                        nickname = "가짜프로필",
-                        diaryId = 1L,
-                        sharedDate = 1720000000L,
-                        likeCount = 12,
-                        isLiked = false,
-                        diaryImageUrl = null,
-                        originalText = "가짜 사용자의 일기 내용입니다."
-                    )
-                ),
-                likedDiarys = persistentListOf()
-            )
-        )
-    }
 }

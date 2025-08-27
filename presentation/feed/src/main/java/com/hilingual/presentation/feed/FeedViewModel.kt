@@ -31,35 +31,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class FeedViewModel @Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<FeedUiState>>(UiState.Loading)
+    private val _uiState = MutableStateFlow<UiState<FeedUiState>>(UiState.Success(FeedUiState.Fake))
     val uiState: StateFlow<UiState<FeedUiState>> = _uiState.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<FeedSideEffect>()
     val sideEffect: SharedFlow<FeedSideEffect> = _sideEffect.asSharedFlow()
 
-    init {
-        _uiState.value = UiState.Success(
-            FeedUiState(
-                myProfileUrl = "https://avatars.githubusercontent.com/u/101113025?v=4",
-                recommendFeedList = kotlinx.collections.immutable.persistentListOf(
-                    FeedListItemUiModel(
-                        userId = 101L,
-                        profileUrl = "https://avatars.githubusercontent.com/u/101113025?v=4",
-                        nickname = "가짜유저",
-                        streak = 7,
-                        sharedDateInMinutes = 20,
-                        content = "가짜 피드에서 온 데이터!",
-                        imageUrl = null,
-                        diaryId = 1L,
-                        likeCount = 5,
-                        isLiked = false
-                    )
-                ),
-                followingFeedList = kotlinx.collections.immutable.persistentListOf(),
-                hasFollowing = false
-            )
-        )
-    }
 
     fun readAllFeed() {
         viewModelScope.launch {
