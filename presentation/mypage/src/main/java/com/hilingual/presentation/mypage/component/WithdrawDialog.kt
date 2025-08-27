@@ -11,7 +11,7 @@ internal fun WithdrawDialog(
     onDismiss: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
-    if (!isVisible) {
+    if (isVisible) {
         TwoButtonDialog(
             title = "정말 계정을 삭제하시겠어요?",
             description = "회원 탈퇴 시 작성한 일기를 비롯한 계정 정보는 \n" +

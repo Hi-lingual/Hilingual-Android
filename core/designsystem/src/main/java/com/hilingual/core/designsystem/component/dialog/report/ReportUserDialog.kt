@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.designsystem.component.dialog.diary
+package com.hilingual.core.designsystem.component.dialog.report
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,22 +22,22 @@ import com.hilingual.core.designsystem.component.dialog.TwoButtonDialog
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-fun DiaryUnpublishDialog(
+fun ReportUserDialog(
     isVisible: Boolean,
     onDismiss: () -> Unit,
-    onPrivateClick: () -> Unit,
+    onReportClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (isVisible) {
         TwoButtonDialog(
             modifier = modifier,
-            title = "영어 일기를 비공개 하시겠어요?",
-            description = "비공개로 전환 시, \n" +
-                "해당 일기의 피드 활동 내역은 모두 사라져요.",
+            title = "계정을 신고하시겠어요?",
+            description = "신고된 계정은 확인 후\n" +
+                "서비스의 운영원칙에 따라 처리돼요.",
             cancelText = "아니요",
-            confirmText = "비공개하기",
+            confirmText = "신고하기",
             onNegative = onDismiss,
-            onPositive = onPrivateClick,
+            onPositive = onReportClick,
             onDismiss = onDismiss
         )
     }
@@ -45,12 +45,12 @@ fun DiaryUnpublishDialog(
 
 @Preview(showBackground = true)
 @Composable
-private fun DiaryUnpublishPreview() {
+private fun ReportUserDialogPreview() {
     HilingualTheme {
-        DiaryUnpublishDialog(
+        ReportUserDialog(
             isVisible = true,
             onDismiss = {},
-            onPrivateClick = { }
+            onReportClick = {}
         )
     }
 }
