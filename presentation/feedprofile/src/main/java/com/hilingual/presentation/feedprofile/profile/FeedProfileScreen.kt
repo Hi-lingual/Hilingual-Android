@@ -49,6 +49,7 @@ import kotlinx.coroutines.launch
 internal fun FeedProfileRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
+    navigateToFeedProfile: (Long) -> Unit,
     viewModel: FeedProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -65,7 +66,7 @@ internal fun FeedProfileRoute(
                 onBackClick = navigateUp,
                 onFollowTypeClick = { },
                 onActionButtonClick = { },
-                onProfileClick = { },
+                onProfileClick = navigateToFeedProfile,
                 onContentClick = { },
                 onLikeClick = { },
                 onMoreClick = { },

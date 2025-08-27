@@ -245,7 +245,10 @@ internal fun MainScreen(
 
                 feedProfileNavGraph(
                     paddingValues = innerPadding,
-                    navigateUp = appState::navigateUp
+                    navigateUp = appState::navigateUp,
+                    navigateToFeedProfile = { userId ->
+                        appState.navigateToFeedProfile(userId)
+                    }
                 )
             }
 
