@@ -73,9 +73,7 @@ internal fun FeedRoute(
             FeedScreen(
                 paddingValues = paddingValues,
                 uiState = state.data,
-                onProfileClick = {
-                    // TODO: 피드 프로필 화면으로 이동
-                },
+                onProfileClick = navigateToFeedProfile,
                 onSearchClick = {
                     // TODO: 친구 검색 화면으로 이동
                 },
@@ -91,7 +89,7 @@ internal fun FeedRoute(
 private fun FeedScreen(
     paddingValues: PaddingValues,
     uiState: FeedUiState,
-    onProfileClick: () -> Unit,
+    onProfileClick: (Long) -> Unit,
     onSearchClick: () -> Unit,
     onFeedProfileClick: (Long) -> Unit,
     readAllFeed: () -> Unit,
@@ -146,7 +144,7 @@ private fun FeedScreen(
     ) {
         FeedTopAppBar(
             profileImageUrl = uiState.myProfileUrl,
-            onProfileClick = onProfileClick,
+            onProfileClick = { onProfileClick(0L) },
             onSearchClick = onSearchClick
         )
 
