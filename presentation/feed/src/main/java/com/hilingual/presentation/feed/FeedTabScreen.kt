@@ -90,7 +90,6 @@ internal fun FeedTabScreen(
                         content = content,
                         onContentClick = { onContentClick(diaryId) },
                         imageUrl = imageUrl,
-                        diaryId = diaryId,
                         likeCount = likeCount,
                         isLiked = isLiked,
                         onLikeClick = { onLikeClick(diaryId) },
