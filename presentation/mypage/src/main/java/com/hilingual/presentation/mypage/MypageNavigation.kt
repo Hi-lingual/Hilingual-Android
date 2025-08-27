@@ -36,20 +36,21 @@ fun NavController.navigateToMyPage(
 }
 
 fun NavGraphBuilder.myPageNavGraph(
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    navigateToProfileEdit: () -> Unit,
+    navigateToMyFeed: () -> Unit,
+    navigateToAlarm: () -> Unit,
+    navigateToBlock: () -> Unit,
+    navigateToSplash: () -> Unit
 ) {
     composable<MyPage> {
-        MypageScreen(
+        MypageRoute(
             paddingValues = paddingValues,
-            profileImageUrl = "",
-            profileNickname = "하링이",
-            onProfileEditClick = {},
-            onMyFeedClick = {},
-            onAlarmClick = {},
-            onBlockClick = {},
-            onCustomerCenterClick = {},
-            onTermsClick = {},
-            onLogoutClick = {}
+            navigateToProfileEdit = navigateToProfileEdit,
+            navigateToMyFeed = navigateToMyFeed,
+            navigateToAlarm = navigateToAlarm,
+            navigateToBlock = navigateToBlock,
+            navigateToSplash = navigateToSplash
         )
     }
 }

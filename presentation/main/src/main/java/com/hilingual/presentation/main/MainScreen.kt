@@ -236,7 +236,12 @@ internal fun MainScreen(
                 )
 
                 myPageNavGraph(
-                    paddingValues = innerPadding
+                    paddingValues = innerPadding,
+                    navigateToProfileEdit = { /* TODO: 프로필 작성 화면으로 이동 */ },
+                    navigateToMyFeed = { /* TODO: 내 피드 화면으로 이동 */ },
+                    navigateToAlarm = { /* TODO: 알림 설정 화면으로 이동 */ },
+                    navigateToBlock = { /* TODO: 차단한 유저 화면으로 이동 */ },
+                    navigateToSplash = { /* TODO: splash 화면으로 이동 */ }
                 )
             }
 

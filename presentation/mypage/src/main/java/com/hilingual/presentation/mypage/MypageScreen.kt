@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,13 +38,63 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.topappbar.TitleLeftAlignedTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.mypage.component.LogoutDialog
 import com.hilingual.presentation.mypage.component.MyInfoBox
 import com.hilingual.presentation.mypage.component.SettingItem
+
+@Composable
+internal fun MypageRoute(
+    paddingValues: PaddingValues,
+    navigateToProfileEdit: () -> Unit,
+    navigateToMyFeed: () -> Unit,
+    navigateToAlarm: () -> Unit,
+    navigateToBlock: () -> Unit,
+    navigateToSplash: () -> Unit,
+    viewModel: MypageViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val dialogTrigger = LocalDialogTrigger.current
+
+    viewModel.sideEffect.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is MypageSideEffect.ShowRetryDialog -> {
+                dialogTrigger.show(sideEffect.onRetry)
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadInitialData()
+    }
+
+    when (val state = uiState) {
+        is UiState.Success -> {
+            MypageScreen(
+                paddingValues = paddingValues,
+                profileImageUrl = state.data.profileImageUrl,
+                profileNickname = state.data.profileNickname,
+                onProfileEditClick = navigateToProfileEdit,
+                onMyFeedClick = navigateToMyFeed,
+                onAlarmClick = navigateToAlarm,
+                onBlockClick = navigateToBlock,
+                onCustomerCenterClick = { /* TODO: 고객센터 URL로 연결 */ },
+                onTermsClick = { /* TODO: 약관 URL로 연결 */ },
+                onLogoutClick = navigateToSplash
+            )
+        }
+
+        else -> {}
+    }
+}
 
 @Composable
 internal fun MypageScreen(
