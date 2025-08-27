@@ -29,7 +29,6 @@ import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.bottomsheet.BlockBottomSheet
-import com.hilingual.presentation.feeddiary.component.ReportBlockBottomSheet
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.content.diary.DiaryTabRow
 import com.hilingual.core.designsystem.component.content.diary.GrammarSpellingTab
@@ -41,6 +40,7 @@ import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feeddiary.component.DiaryUnpublishBottomSheet
 import com.hilingual.presentation.feeddiary.component.FeedDiaryProfile
+import com.hilingual.presentation.feeddiary.component.ReportBlockBottomSheet
 import com.hilingual.presentation.feeddiary.model.ProfileContentUiModel
 import kotlinx.coroutines.launch
 

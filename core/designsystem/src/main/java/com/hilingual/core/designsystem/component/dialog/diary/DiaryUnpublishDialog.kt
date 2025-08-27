@@ -33,7 +33,7 @@ fun DiaryUnpublishDialog(
             modifier = modifier,
             title = "영어 일기를 비공개 하시겠어요?",
             description = "비공개로 전환 시, \n" +
-                    "해당 일기의 피드 활동 내역은 모두 사라져요.",
+                "해당 일기의 피드 활동 내역은 모두 사라져요.",
             cancelText = "아니요",
             confirmText = "비공개하기",
             onNegative = onDismiss,
