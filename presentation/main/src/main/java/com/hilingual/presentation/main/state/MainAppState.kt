@@ -28,7 +28,6 @@ import com.hilingual.presentation.auth.navigation.navigateToAuth
 import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedback
 import com.hilingual.presentation.diarywrite.navigation.navigateToDiaryWrite
 import com.hilingual.presentation.feed.navigation.Feed
-import com.hilingual.presentation.feed.navigation.FeedSearch
 import com.hilingual.presentation.feed.navigation.navigateToFeed
 import com.hilingual.presentation.feedprofile.profile.navigation.navigateToFeedProfileGraph
 import com.hilingual.presentation.home.navigation.navigateToHome
@@ -159,12 +158,13 @@ internal class MainAppState(
         navController.navigateToDiaryWrite(selectedDate, navOptions)
     }
 
-    fun navigateToFeedProfileGraph(userId: Long,
+    fun navigateToFeedProfileGraph(
+        userId: Long,
         navOptions: NavOptions = navOptions {
             launchSingleTop = true
         }
     ) {
-        navController.navigateToFeedProfileGraph(userId,navOptions)
+        navController.navigateToFeedProfileGraph(userId, navOptions)
     }
 
     fun navigateUp() {

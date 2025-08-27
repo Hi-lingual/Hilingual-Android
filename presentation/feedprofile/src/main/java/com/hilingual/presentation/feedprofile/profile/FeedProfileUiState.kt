@@ -1,7 +1,6 @@
 package com.hilingual.presentation.feedprofile.profile
 
 import androidx.compose.runtime.Immutable
-import com.hilingual.core.common.util.UiState
 import com.hilingual.presentation.feedprofile.profile.model.FeedProfileInfoModel
 import com.hilingual.presentation.feedprofile.profile.model.LikeDiaryItemModel
 import com.hilingual.presentation.feedprofile.profile.model.SharedDiaryItemModel

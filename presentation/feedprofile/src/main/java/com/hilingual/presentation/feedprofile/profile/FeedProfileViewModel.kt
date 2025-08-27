@@ -2,10 +2,7 @@ package com.hilingual.presentation.feedprofile.profile
 
 import androidx.lifecycle.ViewModel
 import com.hilingual.core.common.util.UiState
-import com.hilingual.presentation.feedprofile.profile.model.FeedProfileInfoModel
-import com.hilingual.presentation.feedprofile.profile.model.SharedDiaryItemModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

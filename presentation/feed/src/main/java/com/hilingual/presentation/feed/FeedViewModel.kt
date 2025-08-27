@@ -18,7 +18,6 @@ package com.hilingual.presentation.feed
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.util.UiState
-import com.hilingual.presentation.feed.model.FeedListItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +35,6 @@ internal class FeedViewModel @Inject constructor() : ViewModel() {
 
     private val _sideEffect = MutableSharedFlow<FeedSideEffect>()
     val sideEffect: SharedFlow<FeedSideEffect> = _sideEffect.asSharedFlow()
-
 
     fun readAllFeed() {
         viewModelScope.launch {

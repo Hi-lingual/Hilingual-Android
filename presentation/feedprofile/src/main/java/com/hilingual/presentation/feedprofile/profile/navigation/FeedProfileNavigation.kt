@@ -44,7 +44,7 @@ fun NavGraphBuilder.feedProfileNavGraph(
         enterTransition = enterTransition,
         exitTransition = { ExitTransition.None },
         popEnterTransition = { EnterTransition.None },
-        popExitTransition = popExitTransition,
+        popExitTransition = popExitTransition
     ) {
         composable<FeedProfile> { entry ->
             entry.toRoute<FeedProfile>().userId
@@ -59,7 +59,7 @@ fun NavGraphBuilder.feedProfileNavGraph(
             enterTransition = enterTransition,
             exitTransition = { ExitTransition.None },
             popEnterTransition = { EnterTransition.None },
-            popExitTransition = popExitTransition,
+            popExitTransition = popExitTransition
         ) {
             FollowListRoute(
                 paddingValues = paddingValues,

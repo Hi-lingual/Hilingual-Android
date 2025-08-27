@@ -235,7 +235,7 @@ internal fun MainScreen(
 
                 feedNavGraph(
                     paddingValues = innerPadding,
-                    navigateToFeedProfile = appState::navigateToFeedProfileGraph,
+                    navigateToFeedProfile = appState::navigateToFeedProfileGraph
                 )
 
                 myPageNavGraph(
@@ -252,7 +252,7 @@ internal fun MainScreen(
                 feedSearchNavGraph(
                     paddingValues = innerPadding,
                     navigateUp = appState::navigateUp,
-                    navigateToFeedProfile = appState::navigateToFeedProfileGraph,
+                    navigateToFeedProfile = appState::navigateToFeedProfileGraph
                 )
             }
 
