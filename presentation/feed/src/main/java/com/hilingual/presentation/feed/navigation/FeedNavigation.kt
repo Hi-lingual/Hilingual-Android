@@ -37,9 +37,13 @@ fun NavController.navigateToFeed(
 }
 
 fun NavGraphBuilder.feedNavGraph(
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    navigateToFeedProfile: (userId: Long) -> Unit
 ) {
     composable<Feed> {
-        FeedRoute(paddingValues = paddingValues)
+        FeedRoute(
+            paddingValues = paddingValues,
+            navigateToFeedProfile = navigateToFeedProfile
+        )
     }
 }

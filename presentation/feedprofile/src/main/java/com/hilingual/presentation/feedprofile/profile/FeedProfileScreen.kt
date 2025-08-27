@@ -48,6 +48,7 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun FeedProfileRoute(
     paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
     viewModel: FeedProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -61,7 +62,7 @@ internal fun FeedProfileRoute(
             FeedProfileScreen(
                 paddingValues = paddingValues,
                 uiState = state.data,
-                onBackClick = { },
+                onBackClick = navigateUp,
                 onFollowTypeClick = { },
                 onActionButtonClick = { },
                 onProfileClick = { },

@@ -27,7 +27,9 @@ import androidx.navigation.navOptions
 import com.hilingual.presentation.auth.navigation.navigateToAuth
 import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedback
 import com.hilingual.presentation.diarywrite.navigation.navigateToDiaryWrite
+import com.hilingual.presentation.feed.navigation.Feed
 import com.hilingual.presentation.feed.navigation.navigateToFeed
+import com.hilingual.presentation.feedprofile.profile.navigation.navigateToFeedProfile
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.main.MainTab
 import com.hilingual.presentation.main.monitor.NetworkMonitor
@@ -50,7 +52,7 @@ internal class MainAppState(
     coroutineScope: CoroutineScope,
     networkMonitor: NetworkMonitor
 ) {
-    val startDestination = Splash
+    val startDestination = Feed
 
     val isOffline: StateFlow<Boolean> = networkMonitor.isOnline
         .map(Boolean::not)
@@ -155,6 +157,13 @@ internal class MainAppState(
         }
     ) {
         navController.navigateToDiaryWrite(selectedDate, navOptions)
+    }
+
+    fun navigateToFeedProfile(
+        userId: Long,
+        navOptions: NavOptions? = null
+    ) {
+        navController.navigateToFeedProfile(userId, navOptions)
     }
 
     fun navigateUp() {
