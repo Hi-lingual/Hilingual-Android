@@ -35,12 +35,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.UiState
@@ -61,6 +64,7 @@ internal fun MypageRoute(
     navigateToSplash: () -> Unit,
     viewModel: MypageViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
 
@@ -86,8 +90,8 @@ internal fun MypageRoute(
                 onMyFeedClick = navigateToMyFeed,
                 onAlarmClick = navigateToAlarm,
                 onBlockClick = navigateToBlock,
-                onCustomerCenterClick = { /* TODO: 고객센터 URL로 연결 */ },
-                onTermsClick = { /* TODO: 약관 URL로 연결 */ },
+                onCustomerCenterClick = { context.launchCustomTabs(UrlConstant.KAKAOTALK_CHANNEL) },
+                onTermsClick = { context.launchCustomTabs(UrlConstant.PRIVACY_POLICY) },
                 onLogoutClick = navigateToSplash
             )
         }
