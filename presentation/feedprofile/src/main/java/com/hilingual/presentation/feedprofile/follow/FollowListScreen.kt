@@ -48,7 +48,7 @@ private fun FollowListScreen(
     followers: UiState<ImmutableList<FollowItemModel>>,
     followings: UiState<ImmutableList<FollowItemModel>>,
     onBackClick: () -> Unit,
-    onProfileClick: () -> Unit,
+    onProfileClick: (Long) -> Unit,
     onActionButtonClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -87,7 +87,7 @@ private fun FollowListScreen(
                 is UiState.Success -> {
                     FollowScreen(
                         follows = followState.data,
-                        onProfileClick = { onProfileClick() },
+                        onProfileClick = onProfileClick,
                         onActionButtonClick = onActionButtonClick
                     )
                 }

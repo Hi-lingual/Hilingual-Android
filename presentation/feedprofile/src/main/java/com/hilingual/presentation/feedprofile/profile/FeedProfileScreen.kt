@@ -63,7 +63,7 @@ internal fun FeedProfileRoute(
                 uiState = state.data,
                 onBackClick = { },
                 onFollowTypeClick = { },
-                onActionButtonClick = { _, _ -> },
+                onActionButtonClick = { },
                 onProfileClick = { },
                 onContentClick = { },
                 onLikeClick = { },
@@ -84,12 +84,12 @@ private fun FeedProfileScreen(
     uiState: FeedProfileUiState,
     onBackClick: () -> Unit,
     onFollowTypeClick: () -> Unit,
-    onActionButtonClick: (Long, Boolean) -> Unit,
-    onProfileClick: () -> Unit,
-    onContentClick: () -> Unit,
-    onLikeClick: () -> Unit,
-    onMoreClick: () -> Unit,
-    onMenuClick: () -> Unit,
+    onActionButtonClick: (Boolean) -> Unit,
+    onProfileClick: (Long) -> Unit,
+    onContentClick: (Long) -> Unit,
+    onLikeClick: (Long) -> Unit,
+    onMoreClick: (Long) -> Unit,
+    onMenuClick: (Long) -> Unit,
     onReportClick: () -> Unit,
     onBlockClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -151,7 +151,7 @@ private fun FeedProfileScreen(
                             isFollowing = isFollowing,
                             isFollowed = isFollowed,
                             isBlock = isBlock,
-                            onActionButtonClick = { onActionButtonClick },
+                            onActionButtonClick = { onActionButtonClick(isFollowing) },
                             modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }
@@ -186,11 +186,11 @@ private fun FeedProfileScreen(
                                 DiaryListScreen(
                                     diaries = diaries,
                                     emptyCardType = emptyCardType,
-                                    onProfileClick = { onProfileClick },
-                                    onContentClick = { onContentClick },
-                                    onLikeClick = { onLikeClick },
-                                    onMoreClick = { onMoreClick },
-                                    onMenuClick = { onMenuClick },
+                                    onProfileClick = onProfileClick,
+                                    onContentClick = onContentClick,
+                                    onLikeClick = onLikeClick,
+                                    onMoreClick = onMoreClick,
+                                    onMenuClick = onMenuClick,
                                     modifier = Modifier.fillParentMaxSize()
                                 )
                             }
@@ -230,11 +230,11 @@ private fun FeedProfileScreen(
                             DiaryListScreen(
                                 diaries = uiState.sharedDiarys,
                                 emptyCardType = FeedEmptyCardType.NOT_SHARED,
-                                onProfileClick = { onProfileClick },
-                                onContentClick = { onContentClick },
-                                onLikeClick = { onLikeClick },
-                                onMenuClick = { onMenuClick },
-                                onMoreClick = { onMoreClick },
+                                onProfileClick = onProfileClick,
+                                onContentClick = onContentClick,
+                                onLikeClick = onLikeClick,
+                                onMenuClick = onMenuClick,
+                                onMoreClick = onMoreClick,
                                 modifier = Modifier.fillParentMaxSize()
                             )
                         }
@@ -356,7 +356,7 @@ private fun FeedProfileScreenPreview() {
                 )
             ),
             onBackClick = {},
-            onActionButtonClick = { _, _ -> },
+            onActionButtonClick = {},
             onReportClick = {},
             onBlockClick = {},
             onFollowTypeClick = {},
