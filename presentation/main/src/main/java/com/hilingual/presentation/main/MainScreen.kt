@@ -54,6 +54,7 @@ import com.hilingual.presentation.feed.navigation.feedNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.main.state.MainAppState
+import com.hilingual.presentation.mypage.navigation.blockedUserNavGraph
 import com.hilingual.presentation.mypage.navigation.myPageNavGraph
 import com.hilingual.presentation.mypage.navigation.profileEditNavGraph
 import com.hilingual.presentation.onboarding.navigation.onboardingGraph
@@ -241,13 +242,19 @@ internal fun MainScreen(
                     navigateToProfileEdit = appState::navigateToProfileEdit,
                     navigateToMyFeed = { /* TODO: 내 피드 화면으로 이동 */ },
                     navigateToAlarm = { /* TODO: 알림 설정 화면으로 이동 */ },
-                    navigateToBlock = { /* TODO: 차단한 유저 화면으로 이동 */ },
+                    navigateToBlock = appState::navigateToBlockedUser,
                     navigateToSplash = { /* TODO: splash 화면으로 이동 */ }
                 )
 
                 profileEditNavGraph(
                     paddingValues = innerPadding,
                     navigateToSplash = { /* TODO: splash 화면으로 이동 */ }
+                )
+
+                blockedUserNavGraph(
+                    paddingValues = innerPadding,
+                    navigateUp = appState::navigateUp,
+                    navigateToProfile = { /* TODO: 유저 프로필 화면으로 이동 */ }
                 )
             }
 

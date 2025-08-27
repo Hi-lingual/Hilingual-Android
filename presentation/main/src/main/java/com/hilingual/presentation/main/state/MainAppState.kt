@@ -32,6 +32,7 @@ import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.main.MainTab
 import com.hilingual.presentation.main.monitor.NetworkMonitor
 import com.hilingual.presentation.mypage.navigation.MyPage
+import com.hilingual.presentation.mypage.navigation.navigateToBlockedUser
 import com.hilingual.presentation.mypage.navigation.navigateToMyPage
 import com.hilingual.presentation.mypage.navigation.navigateToProfileEdit
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
@@ -163,6 +164,12 @@ internal class MainAppState(
         navOptions: NavOptions? = null
     ) {
         navController.navigateToProfileEdit(navOptions)
+    }
+
+    fun navigateToBlockedUser(
+        navOptions: NavOptions? = null
+    ) {
+        navController.navigateToBlockedUser(navOptions)
     }
 
     fun navigateUp() {

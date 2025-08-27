@@ -35,6 +35,21 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 
 @Composable
+internal fun BlockedUserRoute(
+    paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
+    navigateToProfile: (Long) -> Unit
+) {
+    BlockedUserScreen(
+        paddingValues = paddingValues,
+        onBackClick = navigateUp,
+        blockedUserList = persistentListOf(), // TODO: 임시로 빈 리스트 넣어둔 거라 수정 필요
+        onUserProfileClick = navigateToProfile,
+        onButtonClick = { /* TODO: 차단/차단 해제 액션 */ }
+    )
+}
+
+@Composable
 internal fun BlockedUserScreen(
     paddingValues: PaddingValues,
     onBackClick: () -> Unit,
