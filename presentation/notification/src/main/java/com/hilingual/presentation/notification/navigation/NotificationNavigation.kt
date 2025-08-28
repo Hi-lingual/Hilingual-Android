@@ -19,7 +19,7 @@ import kotlinx.serialization.Serializable
 private const val ANIMATION_DURATION = 300
 
 @Serializable
-internal data object NotificationGraph : Route
+internal data object NotificationGraph
 
 @Serializable
 internal data object NotificationMain : Route
@@ -36,7 +36,7 @@ fun NavController.navigateToNotificationGraph(navOptions: NavOptions? = null) =
 fun NavController.navigateToNotificationSetting(navOptions: NavOptions? = null) =
     navigate(NotificationSetting, navOptions)
 
-fun NavController.navigateToNotificationDetail(
+private fun NavController.navigateToNotificationDetail(
     noticeId: Long,
     navOptions: NavOptions? = null
 ) = navigate(NotificationDetail(noticeId), navOptions)
