@@ -43,7 +43,7 @@ internal class FeedDiaryViewModel @Inject constructor(
 ) : ViewModel() {
     val diaryId = savedStateHandle.toRoute<FeedDiary>().diaryId
 
-    private val _uiState = MutableStateFlow<UiState<FeedDiaryUiState>>(UiState.Loading)
+    private val _uiState = MutableStateFlow<UiState<FeedDiaryUiState>>(UiState.Success(FeedDiaryUiState.Fake))
     val uiState: StateFlow<UiState<FeedDiaryUiState>> = _uiState.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<FeedDiarySideEffect>()

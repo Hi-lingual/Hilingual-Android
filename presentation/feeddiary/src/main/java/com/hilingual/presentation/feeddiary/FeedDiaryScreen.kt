@@ -43,7 +43,6 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feeddiary.component.DiaryUnpublishBottomSheet
 import com.hilingual.presentation.feeddiary.component.FeedDiaryProfile
 import com.hilingual.presentation.feeddiary.component.ReportBlockBottomSheet
-import com.hilingual.presentation.feeddiary.model.ProfileContentUiModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -299,18 +298,7 @@ private fun FeedDiaryScreenPreview() {
             onPrivateClick = {},
             onReportClick = {},
             onBlockClick = {},
-            uiState = FeedDiaryUiState(
-                isMine = false,
-                writtenDate = "8월 23일 토요일",
-                profileContent = ProfileContentUiModel(
-                    profileUrl = "",
-                    nickname = "작나",
-                    streak = 2,
-                    isLiked = true,
-                    likeCount = 112,
-                    sharedDateInMinutes = 3
-                )
-            )
+            uiState = FeedDiaryUiState.Fake
         )
     }
 }

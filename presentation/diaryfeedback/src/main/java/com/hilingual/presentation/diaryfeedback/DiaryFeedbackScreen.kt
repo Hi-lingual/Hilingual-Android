@@ -62,7 +62,6 @@ import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.diaryfeedback.component.FeedbackMenuBottomSheet
 import com.hilingual.presentation.diaryfeedback.component.FeedbackReportDialog
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
 @Composable
@@ -319,11 +318,7 @@ private fun DiaryFeedbackScreenPreview() {
         DiaryFeedbackScreen(
             paddingValues = PaddingValues(),
             uiState = UiState.Success(
-                DiaryFeedbackUiState(
-                    writtenDate = "7월 11일 금요일",
-                    feedbackList = persistentListOf(),
-                    recommendExpressionList = persistentListOf()
-                )
+                DiaryFeedbackUiState.Fake
             ),
             isImageDetailVisible = false,
             onChangeImageDetailVisible = {},
