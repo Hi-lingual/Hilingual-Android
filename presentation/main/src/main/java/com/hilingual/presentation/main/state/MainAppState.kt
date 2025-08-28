@@ -32,7 +32,7 @@ import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.main.MainTab
 import com.hilingual.presentation.main.monitor.NetworkMonitor
 import com.hilingual.presentation.mypage.navigateToMyPage
-import com.hilingual.presentation.notification.navigation.navigateToNotificationGraph
+import com.hilingual.presentation.notification.navigation.navigateToNotification
 import com.hilingual.presentation.notification.navigation.navigateToNotificationSetting
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.otp.navigation.navigateToOtp
@@ -159,12 +159,12 @@ internal class MainAppState(
         navController.navigateToDiaryWrite(selectedDate, navOptions)
     }
 
-    fun navigateToNotificationGraph(
+    fun navigateToNotification(
         navOptions: NavOptions = navOptions {
             launchSingleTop = true
         }
     ) {
-        navController.navigateToNotificationGraph(navOptions)
+        navController.navigateToNotification(navOptions)
     }
 
     // TODO: 추후 마이페이지의 스택관리로 변경해주세요 to.지영

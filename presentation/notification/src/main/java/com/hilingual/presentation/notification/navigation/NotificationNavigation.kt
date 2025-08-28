@@ -22,7 +22,7 @@ private const val ANIMATION_DURATION = 300
 internal data object NotificationGraph
 
 @Serializable
-internal data object NotificationMain : Route
+internal data object Notification : Route
 
 @Serializable
 internal data class NotificationDetail(val noticeId: Long) : Route
@@ -30,7 +30,7 @@ internal data class NotificationDetail(val noticeId: Long) : Route
 @Serializable
 internal data object NotificationSetting : Route
 
-fun NavController.navigateToNotificationGraph(navOptions: NavOptions? = null) =
+fun NavController.navigateToNotification(navOptions: NavOptions? = null) =
     navigate(NotificationGraph, navOptions)
 
 fun NavController.navigateToNotificationSetting(navOptions: NavOptions? = null) =
@@ -48,13 +48,13 @@ fun NavGraphBuilder.notificationNavGraph(
     navigateToFeedNotificationDetail: (String) -> Unit
 ) {
     navigation<NotificationGraph>(
-        startDestination = NotificationMain,
+        startDestination = Notification,
         enterTransition = enterTransition,
         exitTransition = { ExitTransition.None },
         popEnterTransition = { EnterTransition.None },
         popExitTransition = popExitTransition
     ) {
-        composable<NotificationMain> {
+        composable<Notification> {
             NotificationMainRoute(
                 paddingValues = paddingValues,
                 navigateUp = navigateUp,
