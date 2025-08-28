@@ -58,7 +58,7 @@ internal fun BlockedUserRoute(
                 onBackClick = navigateUp,
                 blockedUserList = state.data,
                 onUserProfileClick = navigateToProfile,
-                onButtonClick = { /* TODO: 차단/차단 해제 액션 */ }
+                onButtonClick = viewModel::onUnblockStatusChanged
             )
         }
 
