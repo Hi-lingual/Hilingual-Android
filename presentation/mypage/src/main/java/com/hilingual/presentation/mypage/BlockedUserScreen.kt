@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,7 +26,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.content.UserActionItem
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
@@ -38,15 +42,28 @@ import kotlinx.collections.immutable.toPersistentList
 internal fun BlockedUserRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
-    navigateToProfile: (Long) -> Unit
+    navigateToProfile: (Long) -> Unit,
+    viewModel: BlockedUserViewModel = hiltViewModel()
 ) {
-    BlockedUserScreen(
-        paddingValues = paddingValues,
-        onBackClick = navigateUp,
-        blockedUserList = persistentListOf(), // TODO: 임시로 빈 리스트 넣어둔 거라 수정 필요
-        onUserProfileClick = navigateToProfile,
-        onButtonClick = { /* TODO: 차단/차단 해제 액션 */ }
-    )
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadInitialData()
+    }
+
+    when (val state = uiState) {
+        is UiState.Success -> {
+            BlockedUserScreen(
+                paddingValues = paddingValues,
+                onBackClick = navigateUp,
+                blockedUserList = state.data,
+                onUserProfileClick = navigateToProfile,
+                onButtonClick = { /* TODO: 차단/차단 해제 액션 */ }
+            )
+        }
+
+        else -> {}
+    }
 }
 
 @Composable
