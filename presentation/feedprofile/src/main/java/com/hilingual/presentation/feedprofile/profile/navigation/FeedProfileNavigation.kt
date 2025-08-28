@@ -30,6 +30,9 @@ internal data object FollowList : Route
 fun NavController.navigateToFeedProfileGraph(userId: Long, navOptions: NavOptions? = null) =
     navigate(FeedProfileGraph(userId), navOptions)
 
+fun NavController.navigateToMyFeedProfileGraph(navOptions: NavOptions? = null) =
+    navigate(FeedProfileGraph(0), navOptions)
+
 private fun NavController.navigateToFollowList(navOptions: NavOptions? = null) =
     navigate(FollowList, navOptions)
 
@@ -37,14 +40,13 @@ fun NavGraphBuilder.feedProfileNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
     navigateUp: () -> Unit,
-    navigateToFeedProfile: (Long) -> Unit
+    navigateToFeedProfile: (Long) -> Unit,
 ) {
     navigation<FeedProfileGraph>(
         startDestination = FeedProfile::class,
         enterTransition = enterTransition,
         exitTransition = { ExitTransition.None },
         popEnterTransition = { EnterTransition.None },
-        popExitTransition = popExitTransition
     ) {
         composable<FeedProfile> { entry ->
             entry.toRoute<FeedProfile>().userId

@@ -235,6 +235,7 @@ internal fun MainScreen(
 
                 feedNavGraph(
                     paddingValues = innerPadding,
+                    navigateToMyFeedProfile = appState::navigateToMyFeedProfileGraph,
                     navigateToFeedProfile = appState::navigateToFeedProfileGraph
                 )
 

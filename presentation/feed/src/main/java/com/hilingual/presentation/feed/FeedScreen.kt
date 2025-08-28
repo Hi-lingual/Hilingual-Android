@@ -52,6 +52,7 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun FeedRoute(
     paddingValues: PaddingValues,
+    navigateToMyFeedProfile: () -> Unit,
     navigateToFeedProfile: (userId: Long) -> Unit,
     viewModel: FeedViewModel = hiltViewModel()
 ) {
@@ -73,7 +74,7 @@ internal fun FeedRoute(
             FeedScreen(
                 paddingValues = paddingValues,
                 uiState = state.data,
-                onProfileClick = navigateToFeedProfile,
+                onProfileClick = navigateToMyFeedProfile,
                 onSearchClick = {
                     // TODO: 친구 검색 화면으로 이동
                 },
@@ -89,7 +90,7 @@ internal fun FeedRoute(
 private fun FeedScreen(
     paddingValues: PaddingValues,
     uiState: FeedUiState,
-    onProfileClick: (Long) -> Unit,
+    onProfileClick: () -> Unit,
     onSearchClick: () -> Unit,
     onFeedProfileClick: (Long) -> Unit,
     readAllFeed: () -> Unit,
@@ -144,7 +145,7 @@ private fun FeedScreen(
     ) {
         FeedTopAppBar(
             profileImageUrl = uiState.myProfileUrl,
-            onProfileClick = { onProfileClick(0L) },
+            onProfileClick = onProfileClick,
             onSearchClick = onSearchClick
         )
 

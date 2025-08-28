@@ -27,8 +27,10 @@ import androidx.navigation.navOptions
 import com.hilingual.presentation.auth.navigation.navigateToAuth
 import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedback
 import com.hilingual.presentation.diarywrite.navigation.navigateToDiaryWrite
+import com.hilingual.presentation.feed.navigation.Feed
 import com.hilingual.presentation.feed.navigation.navigateToFeed
 import com.hilingual.presentation.feedprofile.profile.navigation.navigateToFeedProfileGraph
+import com.hilingual.presentation.feedprofile.profile.navigation.navigateToMyFeedProfileGraph
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.main.MainTab
 import com.hilingual.presentation.main.monitor.NetworkMonitor
@@ -51,7 +53,7 @@ internal class MainAppState(
     coroutineScope: CoroutineScope,
     networkMonitor: NetworkMonitor
 ) {
-    val startDestination = Splash
+    val startDestination = Feed
 
     val isOffline: StateFlow<Boolean> = networkMonitor.isOnline
         .map(Boolean::not)
@@ -165,6 +167,14 @@ internal class MainAppState(
         }
     ) {
         navController.navigateToFeedProfileGraph(userId, navOptions)
+    }
+
+    fun navigateToMyFeedProfileGraph(
+        navOptions: NavOptions = navOptions {
+            launchSingleTop = true
+        }
+    ) {
+        navController.navigateToMyFeedProfileGraph(navOptions)
     }
 
     fun navigateUp() {
