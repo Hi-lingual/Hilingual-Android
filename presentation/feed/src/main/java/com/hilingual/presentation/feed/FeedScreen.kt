@@ -52,8 +52,8 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun FeedRoute(
     paddingValues: PaddingValues,
-    viewModel: FeedViewModel = hiltViewModel(),
-    navigateToFeedProfile: (userId: Long) -> Unit
+    navigateToFeedProfile: (userId: Long) -> Unit,
+    viewModel: FeedViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val toastTrigger = LocalToastTrigger.current

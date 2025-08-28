@@ -30,7 +30,7 @@ internal data object FollowList : Route
 fun NavController.navigateToFeedProfileGraph(userId: Long, navOptions: NavOptions? = null) =
     navigate(FeedProfileGraph(userId), navOptions)
 
-fun NavController.navigateToFollowList(navOptions: NavOptions? = null) =
+private fun NavController.navigateToFollowList(navOptions: NavOptions? = null) =
     navigate(FollowList, navOptions)
 
 fun NavGraphBuilder.feedProfileNavGraph(
