@@ -20,7 +20,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.content.UserActionItem
-import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedSearchHeader
 import com.hilingual.presentation.feed.component.SearchEmptyCard
@@ -78,7 +77,7 @@ private fun FeedSearchScreen(
         )
 
         when (searchResultUserList) {
-            is UiState.Loading -> HilingualLoadingIndicator()
+            is UiState.Loading -> {}
 
             is UiState.Success -> {
                 with(searchResultUserList.data) {
