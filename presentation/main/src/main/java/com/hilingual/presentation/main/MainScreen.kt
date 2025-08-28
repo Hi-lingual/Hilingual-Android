@@ -243,12 +243,12 @@ internal fun MainScreen(
                     navigateToMyFeed = { /* TODO: 내 피드 화면으로 이동 */ },
                     navigateToAlarm = { /* TODO: 알림 설정 화면으로 이동 */ },
                     navigateToBlock = appState::navigateToBlockedUser,
-                    navigateToSplash = { /* TODO: splash 화면으로 이동 */ }
+                    navigateToSplash = appState::navigateToSplash
                 )
 
                 profileEditNavGraph(
                     paddingValues = innerPadding,
-                    navigateToSplash = { /* TODO: splash 화면으로 이동 */ }
+                    navigateToSplash = appState::navigateToSplash
                 )
 
                 blockedUserNavGraph(

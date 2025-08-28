@@ -37,7 +37,7 @@ import com.hilingual.presentation.mypage.navigation.navigateToMyPage
 import com.hilingual.presentation.mypage.navigation.navigateToProfileEdit
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.otp.navigation.navigateToOtp
-import com.hilingual.presentation.splash.navigation.Splash
+import com.hilingual.presentation.splash.navigation.navigateToSplash
 import com.hilingual.presentation.voca.navigation.navigateToVoca
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -126,6 +126,10 @@ internal class MainAppState(
             inclusive = true
         }
         launchSingleTop = true
+    }
+
+    fun navigateToSplash() {
+        navController.navigateToSplash()
     }
 
     fun navigateToOtp(navOptions: NavOptions? = clearStackNavOptions) {
