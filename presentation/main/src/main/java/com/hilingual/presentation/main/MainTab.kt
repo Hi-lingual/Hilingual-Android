@@ -18,7 +18,7 @@ package com.hilingual.presentation.main
 import androidx.annotation.DrawableRes
 import com.hilingual.core.navigation.MainTabRoute
 import com.hilingual.core.navigation.Route
-import com.hilingual.presentation.feed.navigation.FeedGraph
+import com.hilingual.presentation.feed.navigation.Feed
 import com.hilingual.presentation.home.navigation.Home
 import com.hilingual.presentation.mypage.MyPage
 import com.hilingual.presentation.voca.navigation.Voca
@@ -40,7 +40,7 @@ internal enum class MainTab(
     ),
     FEED(
         iconRes = R.drawable.ic_community_24,
-        route = FeedGraph,
+        route = Feed,
         label = "피드"
     ),
     MY(
