@@ -15,17 +15,36 @@
  */
 package com.hilingual.presentation.mypage.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import com.hilingual.core.navigation.MainTabRoute
+import com.hilingual.core.navigation.Route
+import com.hilingual.presentation.mypage.BlockedUserRoute
 import com.hilingual.presentation.mypage.MypageRoute
+import com.hilingual.presentation.mypage.ProfileEditRoute
 import kotlinx.serialization.Serializable
+
+private const val ANIMATION_DURATION = 300
 
 @Serializable
 data object MyPage : MainTabRoute
+
+@Serializable
+internal data object MypageMain : Route
+
+@Serializable
+internal data object ProfileEdit : Route
+
+@Serializable
+internal data object BlockedUser : Route
 
 fun NavController.navigateToMyPage(
     navOptions: NavOptions? = null
@@ -36,22 +55,88 @@ fun NavController.navigateToMyPage(
     )
 }
 
-fun NavGraphBuilder.myPageNavGraph(
+fun NavController.navigateToProfileEdit(
+    navOptions: NavOptions? = null
+) {
+    navigate(
+        route = ProfileEdit,
+        navOptions = navOptions
+    )
+}
+
+fun NavController.navigateToBlockedUser(
+    navOptions: NavOptions? = null
+) {
+    navigate(
+        route = BlockedUser,
+        navOptions = navOptions
+    )
+}
+
+fun NavGraphBuilder.mypageNavGraph(
     paddingValues: PaddingValues,
-    navigateToProfileEdit: () -> Unit,
+    navController: NavController,
+    navigateUp: () -> Unit,
     navigateToMyFeed: () -> Unit,
+    navigateToFeedProfile: (Long) -> Unit,
     navigateToAlarm: () -> Unit,
-    navigateToBlock: () -> Unit,
     navigateToSplash: () -> Unit
 ) {
-    composable<MyPage> {
-        MypageRoute(
-            paddingValues = paddingValues,
-            navigateToProfileEdit = navigateToProfileEdit,
-            navigateToMyFeed = navigateToMyFeed,
-            navigateToAlarm = navigateToAlarm,
-            navigateToBlock = navigateToBlock,
-            navigateToSplash = navigateToSplash
-        )
+    navigation<MyPage>(
+        startDestination = MypageMain,
+        enterTransition = enterTransition,
+        exitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = popExitTransition
+    ) {
+        composable<MypageMain> {
+            MypageRoute(
+                paddingValues = paddingValues,
+                navigateToProfileEdit = { navController.navigateToProfileEdit() },
+                navigateToMyFeed = navigateToMyFeed,
+                navigateToAlarm = navigateToAlarm,
+                navigateToBlock = { navController.navigateToBlockedUser() },
+                navigateToSplash = navigateToSplash
+            )
+        }
+
+        composable<ProfileEdit>(
+            enterTransition = enterTransition,
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = popExitTransition
+        ) {
+            ProfileEditRoute(
+                paddingValues = paddingValues,
+                navigateToSplash = navigateToSplash
+            )
+        }
+
+        composable<BlockedUser>(
+            enterTransition = enterTransition,
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = popExitTransition
+        ) {
+            BlockedUserRoute(
+                paddingValues = paddingValues,
+                navigateUp = navigateUp,
+                navigateToProfile = navigateToFeedProfile
+            )
+        }
     }
+}
+
+private val enterTransition: AnimatedContentTransitionScope<*>.() -> EnterTransition = {
+    slideIntoContainer(
+        AnimatedContentTransitionScope.SlideDirection.Left,
+        tween(ANIMATION_DURATION)
+    )
+}
+
+private val popExitTransition: AnimatedContentTransitionScope<*>.() -> ExitTransition = {
+    slideOutOfContainer(
+        AnimatedContentTransitionScope.SlideDirection.Right,
+        tween(ANIMATION_DURATION)
+    )
 }

@@ -54,9 +54,7 @@ import com.hilingual.presentation.feed.navigation.feedNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.main.state.MainAppState
-import com.hilingual.presentation.mypage.navigation.blockedUserNavGraph
-import com.hilingual.presentation.mypage.navigation.myPageNavGraph
-import com.hilingual.presentation.mypage.navigation.profileEditNavGraph
+import com.hilingual.presentation.mypage.navigation.mypageNavGraph
 import com.hilingual.presentation.onboarding.navigation.onboardingGraph
 import com.hilingual.presentation.otp.navigation.otpNavGraph
 import com.hilingual.presentation.splash.navigation.splashNavGraph
@@ -237,24 +235,14 @@ internal fun MainScreen(
                     paddingValues = innerPadding
                 )
 
-                myPageNavGraph(
+                mypageNavGraph(
                     paddingValues = innerPadding,
-                    navigateToProfileEdit = appState::navigateToProfileEdit,
-                    navigateToMyFeed = { /* TODO: 내 피드 화면으로 이동 */ },
-                    navigateToAlarm = { /* TODO: 알림 설정 화면으로 이동 */ },
-                    navigateToBlock = appState::navigateToBlockedUser,
-                    navigateToSplash = appState::navigateToSplash
-                )
-
-                profileEditNavGraph(
-                    paddingValues = innerPadding,
-                    navigateToSplash = appState::navigateToSplash
-                )
-
-                blockedUserNavGraph(
-                    paddingValues = innerPadding,
+                    navController = appState.navController,
                     navigateUp = appState::navigateUp,
-                    navigateToProfile = { /* TODO: 유저 프로필 화면으로 이동 */ }
+                    navigateToMyFeed = { /* TODO: 내 피드 화면으로 이동 */ },
+                    navigateToFeedProfile = { /* TODO: 유저 프로필 화면으로 이동 */ },
+                    navigateToAlarm = { /* TODO: 알림 설정 화면으로 이동 */ },
+                    navigateToSplash = appState::navigateToSplash
                 )
             }
 
