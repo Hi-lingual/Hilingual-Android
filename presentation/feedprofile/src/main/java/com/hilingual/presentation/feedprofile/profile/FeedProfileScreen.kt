@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
+import com.hilingual.core.designsystem.component.dialog.report.ReportUserDialog
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
@@ -69,7 +70,7 @@ internal fun FeedProfileRoute(
                 onLikeClick = { },
                 onMoreClick = { },
                 onMenuClick = { },
-                onReportClick = { },
+                onReportUserClick = { },
                 onBlockClick = { }
             )
         }
@@ -90,7 +91,7 @@ private fun FeedProfileScreen(
     onLikeClick: (Long) -> Unit,
     onMoreClick: (Long) -> Unit,
     onMenuClick: (Long) -> Unit,
-    onReportClick: () -> Unit,
+    onReportUserClick: () -> Unit,
     onBlockClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -98,6 +99,7 @@ private fun FeedProfileScreen(
     val coroutineScope = rememberCoroutineScope()
     var isMenuBottomSheetVisible by remember { mutableStateOf(false) }
     var isBlockBottomSheetVisible by remember { mutableStateOf(false) }
+    var isReportUserDialogVisible by remember { mutableStateOf(false) }
 
     val profileListState = rememberLazyListState()
 
@@ -261,7 +263,7 @@ private fun FeedProfileScreen(
         onDismiss = { isMenuBottomSheetVisible = false },
         onReportClick = {
             isMenuBottomSheetVisible = false
-            onReportClick()
+            isReportUserDialogVisible = true
         },
         onBlockClick = {
             isMenuBottomSheetVisible = false
@@ -275,6 +277,15 @@ private fun FeedProfileScreen(
         onBlockButtonClick = {
             isBlockBottomSheetVisible = false
             onBlockClick()
+        }
+    )
+
+    ReportUserDialog(
+        isVisible = isReportUserDialogVisible,
+        onDismiss = { isReportUserDialogVisible = false },
+        onReportClick = {
+            isReportUserDialogVisible = false
+            onReportUserClick()
         }
     )
 }
@@ -293,7 +304,7 @@ private fun FeedProfileScreenPreview() {
                     streak = 5,
                     follower = 120,
                     following = 98,
-                    isMine = true,
+                    isMine = false,
                     isFollowing = true,
                     isFollowed = true,
                     isBlock = false
@@ -357,7 +368,7 @@ private fun FeedProfileScreenPreview() {
             ),
             onBackClick = {},
             onActionButtonClick = {},
-            onReportClick = {},
+            onReportUserClick = {},
             onBlockClick = {},
             onFollowTypeClick = {},
             onProfileClick = {},
