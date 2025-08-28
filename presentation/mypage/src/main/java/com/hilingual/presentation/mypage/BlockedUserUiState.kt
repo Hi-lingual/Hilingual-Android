@@ -7,5 +7,5 @@ data class BlockedUserUiState(
     val userId: Long,
     val profileImageUrl: String,
     val nickname: String,
-    val isBlocked: Boolean = true
+    val isUnblocked: Boolean = false
 )

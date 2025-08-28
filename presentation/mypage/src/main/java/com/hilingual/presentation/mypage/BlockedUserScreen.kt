@@ -123,8 +123,8 @@ internal fun BlockedUserScreen(
                             userId = userId,
                             profileUrl = profileImageUrl,
                             nickname = nickname,
-                            isFilled = isBlocked,
-                            buttonText = if (isBlocked) "차단 해제" else "차단",
+                            isFilled = isUnblocked,
+                            buttonText = if (isUnblocked) "차단" else "차단 해제",
                             onProfileClick = onUserProfileClick,
                             onButtonClick = onButtonClick
                         )
@@ -192,7 +192,7 @@ private fun BlockedUserScreenWithDataPreview() {
             onUserProfileClick = {},
             onButtonClick = { userId ->
                 sampleBlockedUsers = sampleBlockedUsers.map { user ->
-                    if (user.userId == userId) user.copy(isBlocked = !user.isBlocked) else user
+                    if (user.userId == userId) user.copy(isUnblocked = !user.isUnblocked) else user
                 }.toPersistentList()
             }
         )
