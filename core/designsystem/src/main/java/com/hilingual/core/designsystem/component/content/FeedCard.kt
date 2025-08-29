@@ -62,12 +62,11 @@ fun FeedContent(
     streak: Int?,
     sharedDateInMinutes: Long,
     content: String,
-    onContentClick: () -> Unit,
+    onContentDetailClick: () -> Unit,
     imageUrl: String?,
     likeCount: Int,
     isLiked: Boolean,
     onLikeClick: () -> Unit,
-    onMoreClick: () -> Unit,
     isMine: Boolean,
     onUnpublishClick: () -> Unit,
     onReportClick: () -> Unit,
@@ -108,7 +107,7 @@ fun FeedContent(
             Spacer(modifier = Modifier.height(4.dp))
 
             Column(
-                modifier = Modifier.noRippleClickable(onClick = onContentClick)
+                modifier = Modifier.noRippleClickable(onClick = onContentDetailClick)
             ) {
                 Text(
                     text = content,
@@ -137,7 +136,7 @@ fun FeedContent(
                 likeCount = likeCount,
                 isLiked = isLiked,
                 onLikeClick = onLikeClick,
-                onMoreClick = onMoreClick
+                onMoreClick = onContentDetailClick
             )
         }
     }
@@ -385,12 +384,11 @@ private fun FeedContentPreviewWithImage() {
             likeCount = likeCount,
             isLiked = isLiked,
             onProfileClick = { /*프로필 클릭 로직*/ },
-            onContentClick = { /* 상세보기 클릭 로직 */ },
+            onContentDetailClick = { /* 상세보기 클릭 로직 */ },
             onLikeClick = {
                 isLiked = !isLiked
                 if (isLiked) likeCount++ else likeCount--
             },
-            onMoreClick = { /* 상세보기 클릭 로직 */ },
             isMine = true,
             onUnpublishClick = { TODO() },
             onReportClick = { TODO() }
@@ -419,12 +417,11 @@ private fun FeedContentPreviewNoImage() {
             likeCount = likeCount,
             isLiked = isLiked,
             onProfileClick = { /*프로필 클릭 로직*/ },
-            onContentClick = { /* 상세보기 클릭 로직 */ },
+            onContentDetailClick = { /* 상세보기 클릭 로직 */ },
             onLikeClick = {
                 isLiked = !isLiked
                 if (isLiked) likeCount++ else likeCount--
             },
-            onMoreClick = { /* 상세보기 클릭 로직 */ },
             isMine = true,
             onUnpublishClick = { TODO() },
             onReportClick = { TODO() }

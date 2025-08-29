@@ -66,7 +66,7 @@ internal fun FeedProfileRoute(
                 onFollowTypeClick = { },
                 onActionButtonClick = { },
                 onProfileClick = { },
-                onContentClick = { },
+                onContentDetailClick = { },
                 onLikeClick = { },
                 onMoreClick = { },
                 onMenuClick = { },
@@ -87,7 +87,7 @@ private fun FeedProfileScreen(
     onFollowTypeClick: () -> Unit,
     onActionButtonClick: (Boolean) -> Unit,
     onProfileClick: (Long) -> Unit,
-    onContentClick: (Long) -> Unit,
+    onContentDetailClick: (Long) -> Unit,
     onLikeClick: (Long) -> Unit,
     onMoreClick: (Long) -> Unit,
     onMenuClick: (Long) -> Unit,
@@ -189,9 +189,8 @@ private fun FeedProfileScreen(
                                     diaries = diaries,
                                     emptyCardType = emptyCardType,
                                     onProfileClick = onProfileClick,
-                                    onContentClick = onContentClick,
+                                    onContentDetailClick = onContentDetailClick,
                                     onLikeClick = onLikeClick,
-                                    onMoreClick = onMoreClick,
                                     onUnpublishClick = { diaryId ->
                                     },
                                     onReportClick = { diaryId ->
@@ -237,9 +236,8 @@ private fun FeedProfileScreen(
                                 diaries = uiState.sharedDiarys,
                                 emptyCardType = FeedEmptyCardType.NOT_SHARED,
                                 onProfileClick = onProfileClick,
-                                onContentClick = onContentClick,
+                                onContentDetailClick = onContentDetailClick,
                                 onLikeClick = onLikeClick,
-                                onMoreClick = onMoreClick,
                                 onUnpublishClick = { diaryId ->
                                 },
                                 onReportClick = { diaryId ->
@@ -380,7 +378,7 @@ private fun FeedProfileScreenPreview() {
             onBlockClick = {},
             onFollowTypeClick = {},
             onProfileClick = {},
-            onContentClick = {},
+            onContentDetailClick = {},
             onLikeClick = {},
             onMoreClick = {},
             onMenuClick = {}

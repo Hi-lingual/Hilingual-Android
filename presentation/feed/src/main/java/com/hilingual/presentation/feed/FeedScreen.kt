@@ -169,9 +169,8 @@ private fun FeedScreen(
                     listState = currentListState,
                     feedList = feedList,
                     onProfileClick = {},
-                    onContentClick = {},
+                    onContentDetailClick = {},
                     onLikeClick = {},
-                    onMoreClick = {},
                     hasFollowing = if (page == 1) uiState.hasFollowing else false,
                     onUnpublishClick = {},
                     onReportClick = {}
