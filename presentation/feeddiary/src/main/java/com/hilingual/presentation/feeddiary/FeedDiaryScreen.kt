@@ -49,6 +49,7 @@ import kotlinx.coroutines.launch
 internal fun FeedDiaryRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
+    navigateToFeedProfile: () -> Unit,
     viewModel: FeedDiaryViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -86,7 +87,7 @@ internal fun FeedDiaryRoute(
                 paddingValues = paddingValues,
                 uiState = state.data,
                 onBackClick = navigateUp,
-                onProfileClick = {},
+                onProfileClick = navigateToFeedProfile,
                 onLikeClick = {},
                 onPrivateClick = viewModel::diaryUnpublish,
                 onBlockClick = {},
