@@ -26,6 +26,8 @@ internal fun DiaryListScreen(
     onLikeClick: (diaryId: Long) -> Unit,
     onMoreClick: (diaryId: Long) -> Unit,
     onMenuClick: (diaryId: Long) -> Unit,
+    onUnpublishClick: (diaryId: Long) -> Unit,
+    onReportClick: (diaryId: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (diaries.isEmpty()) {
@@ -44,6 +46,7 @@ internal fun DiaryListScreen(
                 with(diary) {
                     val streak = (this as? LikeDiaryItemModel)?.streak
                     val userId = (this as? LikeDiaryItemModel)?.userId ?: 0L
+                    val isMine = (this as? LikeDiaryItemModel)?.isMine ?: true
 
                     FeedContent(
                         profileUrl = profileImageUrl,
@@ -58,7 +61,10 @@ internal fun DiaryListScreen(
                         likeCount = likeCount,
                         isLiked = isLiked,
                         onLikeClick = { onLikeClick(diaryId) },
-                        onMoreClick = { onMoreClick(diaryId) }
+                        onMoreClick = { onMoreClick(diaryId) },
+                        isMine = isMine,
+                        onUnpublishClick = { onUnpublishClick(diaryId) },
+                        onReportClick = { onReportClick(diaryId) }
                     )
                 }
 
