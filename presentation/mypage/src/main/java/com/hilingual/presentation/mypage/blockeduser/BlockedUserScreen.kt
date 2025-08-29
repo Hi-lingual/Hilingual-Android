@@ -1,4 +1,4 @@
-package com.hilingual.presentation.mypage
+package com.hilingual.presentation.mypage.blockeduser
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,7 +34,6 @@ import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.content.UserActionItem
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.mypage.model.BlockedUserUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList

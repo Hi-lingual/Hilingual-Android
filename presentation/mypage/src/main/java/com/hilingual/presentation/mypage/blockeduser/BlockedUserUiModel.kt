@@ -1,4 +1,4 @@
-package com.hilingual.presentation.mypage.model
+package com.hilingual.presentation.mypage.blockeduser
 
 import androidx.compose.runtime.Immutable
 

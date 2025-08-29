@@ -1,4 +1,4 @@
-package com.hilingual.presentation.mypage
+package com.hilingual.presentation.mypage.profileedit
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -34,6 +34,8 @@ import com.hilingual.core.designsystem.component.bottomsheet.HilingualProfileIma
 import com.hilingual.core.designsystem.component.picker.ProfileImagePicker
 import com.hilingual.core.designsystem.component.topappbar.TitleCenterAlignedTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.presentation.mypage.MyPageSideEffect
+import com.hilingual.presentation.mypage.MyPageViewModel
 import com.hilingual.presentation.mypage.component.ProfileItem
 import com.hilingual.presentation.mypage.component.WithdrawDialog
 

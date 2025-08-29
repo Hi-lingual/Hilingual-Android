@@ -27,9 +27,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.hilingual.core.navigation.MainTabRoute
 import com.hilingual.core.navigation.Route
-import com.hilingual.presentation.mypage.BlockedUserRoute
+import com.hilingual.presentation.mypage.blockeduser.BlockedUserRoute
 import com.hilingual.presentation.mypage.MyPageRoute
-import com.hilingual.presentation.mypage.ProfileEditRoute
+import com.hilingual.presentation.mypage.profileedit.ProfileEditRoute
 import kotlinx.serialization.Serializable
 
 private const val ANIMATION_DURATION = 300

@@ -1,9 +1,8 @@
-package com.hilingual.presentation.mypage
+package com.hilingual.presentation.mypage.blockeduser
 
 import androidx.lifecycle.ViewModel
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
-import com.hilingual.presentation.mypage.model.BlockedUserUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
