@@ -74,7 +74,7 @@ internal fun FeedRoute(
             FeedScreen(
                 paddingValues = paddingValues,
                 uiState = state.data,
-                onProfileClick = navigateToMyFeedProfile,
+                onMyProfileClick = navigateToMyFeedProfile,
                 onSearchClick = {
                     // TODO: 친구 검색 화면으로 이동
                 },
@@ -90,7 +90,7 @@ internal fun FeedRoute(
 private fun FeedScreen(
     paddingValues: PaddingValues,
     uiState: FeedUiState,
-    onProfileClick: () -> Unit,
+    onMyProfileClick: () -> Unit,
     onSearchClick: () -> Unit,
     onFeedProfileClick: (Long) -> Unit,
     readAllFeed: () -> Unit,
@@ -145,7 +145,7 @@ private fun FeedScreen(
     ) {
         FeedTopAppBar(
             profileImageUrl = uiState.myProfileUrl,
-            onProfileClick = onProfileClick,
+            onProfileClick = onMyProfileClick,
             onSearchClick = onSearchClick
         )
 
@@ -200,7 +200,7 @@ private fun FeedScreenPreview() {
     HilingualTheme {
         FeedScreen(
             paddingValues = PaddingValues(),
-            onProfileClick = {},
+            onMyProfileClick = {},
             onSearchClick = {},
             onFeedProfileClick = {},
             readAllFeed = {},
