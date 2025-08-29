@@ -67,7 +67,7 @@ fun NavGraphBuilder.feedNavGraph(
             FeedRoute(
                 paddingValues = paddingValues,
                 navigateToFeedDiary = navigateToFeedDiary,
-                navigateToSearch = navController::navigateToFeedSearch
+                navigateToFeedSearch = navController::navigateToFeedSearch
             )
         }
 

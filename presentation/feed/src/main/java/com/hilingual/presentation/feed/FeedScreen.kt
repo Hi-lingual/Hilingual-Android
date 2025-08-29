@@ -52,7 +52,7 @@ import kotlinx.coroutines.launch
 internal fun FeedRoute(
     paddingValues: PaddingValues,
     navigateToFeedDiary: (Long) -> Unit,
-    navigateToSearch: () -> Unit,
+    navigateToFeedSearch: () -> Unit,
     viewModel: FeedViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -76,7 +76,7 @@ internal fun FeedRoute(
                 onProfileClick = {
                     // TODO: 피드 프로필 화면으로 이동
                 },
-                onSearchClick = navigateToSearch,
+                onSearchClick = navigateToFeedSearch,
                 onFeedItemClick = navigateToFeedDiary,
                 readAllFeed = viewModel::readAllFeed
             )
