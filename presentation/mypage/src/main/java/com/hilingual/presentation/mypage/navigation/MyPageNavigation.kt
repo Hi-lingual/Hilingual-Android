@@ -28,7 +28,7 @@ import androidx.navigation.compose.navigation
 import com.hilingual.core.navigation.MainTabRoute
 import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.mypage.BlockedUserRoute
-import com.hilingual.presentation.mypage.MypageRoute
+import com.hilingual.presentation.mypage.MyPageRoute
 import com.hilingual.presentation.mypage.ProfileEditRoute
 import kotlinx.serialization.Serializable
 
@@ -38,7 +38,7 @@ private const val ANIMATION_DURATION = 300
 data object MyPage : MainTabRoute
 
 @Serializable
-internal data object MypageMain : Route
+internal data object MyPageMain : Route
 
 @Serializable
 internal data object ProfileEdit : Route
@@ -73,7 +73,7 @@ fun NavController.navigateToBlockedUser(
     )
 }
 
-fun NavGraphBuilder.mypageNavGraph(
+fun NavGraphBuilder.myPageNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
     navigateUp: () -> Unit,
@@ -83,14 +83,14 @@ fun NavGraphBuilder.mypageNavGraph(
     navigateToSplash: () -> Unit
 ) {
     navigation<MyPage>(
-        startDestination = MypageMain,
+        startDestination = MyPageMain,
         enterTransition = enterTransition,
         exitTransition = { ExitTransition.None },
         popEnterTransition = { EnterTransition.None },
         popExitTransition = popExitTransition
     ) {
-        composable<MypageMain> {
-            MypageRoute(
+        composable<MyPageMain> {
+            MyPageRoute(
                 paddingValues = paddingValues,
                 navigateToProfileEdit = { navController.navigateToProfileEdit() },
                 navigateToMyFeed = navigateToMyFeed,

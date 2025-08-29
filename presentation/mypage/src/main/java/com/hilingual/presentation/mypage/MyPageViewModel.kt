@@ -12,16 +12,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-internal class MypageViewModel @Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<MypageUiState>>(UiState.Loading)
-    val uiState: StateFlow<UiState<MypageUiState>> = _uiState.asStateFlow()
+internal class MyPageViewModel @Inject constructor() : ViewModel() {
+    private val _uiState = MutableStateFlow<UiState<MyPageUiState>>(UiState.Loading)
+    val uiState: StateFlow<UiState<MyPageUiState>> = _uiState.asStateFlow()
 
-    private val _sideEffect = MutableSharedFlow<MypageSideEffect>()
-    val sideEffect: SharedFlow<MypageSideEffect> = _sideEffect.asSharedFlow()
+    private val _sideEffect = MutableSharedFlow<MyPageSideEffect>()
+    val sideEffect: SharedFlow<MyPageSideEffect> = _sideEffect.asSharedFlow()
 
     fun loadInitialData() {
         _uiState.value = UiState.Success(
-            MypageUiState(
+            MyPageUiState(
                 profileImageUrl = "",
                 profileNickname = "임시 닉네임"
             )
@@ -29,6 +29,6 @@ internal class MypageViewModel @Inject constructor() : ViewModel() {
     }
 }
 
-sealed interface MypageSideEffect {
-    data class ShowRetryDialog(val onRetry: () -> Unit) : MypageSideEffect
+sealed interface MyPageSideEffect {
+    data class ShowRetryDialog(val onRetry: () -> Unit) : MyPageSideEffect
 }

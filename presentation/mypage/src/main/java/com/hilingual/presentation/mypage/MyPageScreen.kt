@@ -55,14 +55,14 @@ import com.hilingual.presentation.mypage.component.MyInfoBox
 import com.hilingual.presentation.mypage.component.SettingItem
 
 @Composable
-internal fun MypageRoute(
+internal fun MyPageRoute(
     paddingValues: PaddingValues,
     navigateToProfileEdit: () -> Unit,
     navigateToMyFeed: () -> Unit,
     navigateToAlarm: () -> Unit,
     navigateToBlock: () -> Unit,
     navigateToSplash: () -> Unit,
-    viewModel: MypageViewModel = hiltViewModel()
+    viewModel: MyPageViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -70,7 +70,7 @@ internal fun MypageRoute(
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is MypageSideEffect.ShowRetryDialog -> {
+            is MyPageSideEffect.ShowRetryDialog -> {
                 dialogTrigger.show(sideEffect.onRetry)
             }
         }
@@ -82,7 +82,7 @@ internal fun MypageRoute(
 
     when (val state = uiState) {
         is UiState.Success -> {
-            MypageScreen(
+            MyPageScreen(
                 paddingValues = paddingValues,
                 profileImageUrl = state.data.profileImageUrl,
                 profileNickname = state.data.profileNickname,
@@ -101,7 +101,7 @@ internal fun MypageRoute(
 }
 
 @Composable
-internal fun MypageScreen(
+internal fun MyPageScreen(
     paddingValues: PaddingValues,
     profileImageUrl: String,
     profileNickname: String,
@@ -224,9 +224,9 @@ private fun ArrowIcon() {
 
 @Preview
 @Composable
-private fun MypageScreenPreview() {
+private fun MyPageScreenPreview() {
     HilingualTheme {
-        MypageScreen(
+        MyPageScreen(
             paddingValues = PaddingValues(),
             profileImageUrl = "",
             profileNickname = "하링이",

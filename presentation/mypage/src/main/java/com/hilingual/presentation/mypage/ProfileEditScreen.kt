@@ -41,14 +41,14 @@ import com.hilingual.presentation.mypage.component.WithdrawDialog
 internal fun ProfileEditRoute(
     paddingValues: PaddingValues,
     navigateToSplash: () -> Unit,
-    viewModel: MypageViewModel = hiltViewModel()
+    viewModel: MyPageViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is MypageSideEffect.ShowRetryDialog -> {
+            is MyPageSideEffect.ShowRetryDialog -> {
                 dialogTrigger.show(sideEffect.onRetry)
             }
         }
