@@ -13,53 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.diaryfeedback.navigation
+package com.hilingual.presentation.feeddiary.navigation
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.hilingual.core.navigation.Route
-import com.hilingual.presentation.diaryfeedback.DiaryFeedbackRoute
+import com.hilingual.presentation.feeddiary.FeedDiaryRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DiaryFeedback(
+data class FeedDiary(
     val diaryId: Long
 ) : Route
 
-fun NavController.navigateToDiaryFeedback(
+fun NavController.navigateToFeedDiary(
     diaryId: Long,
     navOptions: NavOptions? = null
 ) {
     navigate(
-        route = DiaryFeedback(diaryId),
+        route = FeedDiary(diaryId),
         navOptions = navOptions
     )
 }
 
-fun NavGraphBuilder.diaryFeedbackNavGraph(
+fun NavGraphBuilder.feedDiaryNavGraph(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
-    navigateToHome: () -> Unit,
-    navigateToFeed: () -> Unit
+    navigateToFeedProfile: () -> Unit
 ) {
-    composable<DiaryFeedback>(
-        enterTransition = {
-            slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(500)
-            )
-        }
-    ) {
-        DiaryFeedbackRoute(
+    composable<FeedDiary> {
+        FeedDiaryRoute(
             paddingValues = paddingValues,
             navigateUp = navigateUp,
-            navigateToHome = navigateToHome,
-            navigateToFeed = navigateToFeed
+            navigateToFeedProfile = navigateToFeedProfile
         )
     }
 }
