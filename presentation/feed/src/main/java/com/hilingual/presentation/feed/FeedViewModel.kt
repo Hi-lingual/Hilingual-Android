@@ -30,7 +30,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class FeedViewModel @Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<FeedUiState>>(UiState.Loading)
+    private val _uiState = MutableStateFlow<UiState<FeedUiState>>(UiState.Success(FeedUiState.Fake))
     val uiState: StateFlow<UiState<FeedUiState>> = _uiState.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<FeedSideEffect>()

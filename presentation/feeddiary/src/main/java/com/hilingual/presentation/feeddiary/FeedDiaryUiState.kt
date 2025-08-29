@@ -31,4 +31,65 @@ internal data class FeedDiaryUiState(
     val diaryContent: DiaryContent = DiaryContent(),
     val feedbackList: ImmutableList<FeedbackContent> = persistentListOf(),
     val recommendExpressionList: ImmutableList<RecommendExpression> = persistentListOf()
-)
+) {
+    companion object {
+        val Fake = FeedDiaryUiState(
+            isMine = true,
+            writtenDate = "8월 28일 목요일",
+            profileContent = ProfileContentUiModel(
+                profileUrl = "",
+                nickname = "작나",
+                streak = 2,
+                isLiked = true,
+                likeCount = 112,
+                sharedDateInMinutes = 3
+            ),
+            feedbackList = persistentListOf(
+                FeedbackContent(
+                    originalText = "Today my friend called to me.",
+                    feedbackText = "Today my friend called me.",
+                    explain = "'call'은 전화하다라는 의미일 때 'to' 없이 바로 목적어를 씁니다. 'called to me'는 '나를 불렀다'라는 의미가 되어 전화 상황에서는 어색합니다."
+                )
+            ),
+            diaryContent = DiaryContent(
+                originalText = "Today my friend called to me. She sent message a few days ago, but I forgot to replying her. I apolozied to her. We promissed to playing when our university exams are all done. I hope that it’s be done fastly.",
+                aiText = "Today my friend called me. She sent a message a few days ago, but I forgot to reply to her. I apologized to her. We promised to play when our university exams are all done. I hope that it’s done quickly.",
+                diffRanges = persistentListOf(
+                    Pair(36, 37),
+                    Pair(75, 83),
+                    Pair(94, 104),
+                    Pair(116, 124),
+                    Pair(128, 132),
+                    Pair(195, 203)
+                ),
+                imageUrl = "https://avatars.githubusercontent.com/u/101113025?v=4"
+            ),
+            recommendExpressionList = persistentListOf(
+                RecommendExpression(
+                    phraseId = 0,
+                    phraseType = persistentListOf("명사"),
+                    phrase = "a few days ago",
+                    explanation = "며칠 전에",
+                    reason = "과거 시점을 간단히 나타낼 수 있는 일상적인 표현으로, 대화와 글 모두에서 자주 쓰입니다.",
+                    isMarked = false
+                ),
+                RecommendExpression(
+                    phraseId = 1,
+                    phraseType = persistentListOf("동사", "숙어"),
+                    phrase = "reply to",
+                    explanation = "…에게 답장하다",
+                    reason = "편지나 메시지에 답변할 때 쓰이며, 'I forgot to reply to her.'처럼 정확한 상황을 전달하는 데 적합합니다.",
+                    isMarked = true
+                ),
+                RecommendExpression(
+                    phraseId = 2,
+                    phraseType = persistentListOf("전치사", "구"),
+                    phrase = "all done",
+                    explanation = "완전히 끝난",
+                    reason = "작업이나 시험이 모두 끝났음을 간단하게 표현하는 구어체 표현입니다.",
+                    isMarked = false
+                )
+            )
+        )
+    }
+}
