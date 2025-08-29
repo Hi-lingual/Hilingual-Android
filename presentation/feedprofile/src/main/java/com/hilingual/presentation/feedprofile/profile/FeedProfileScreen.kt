@@ -51,6 +51,7 @@ internal fun FeedProfileRoute(
     navigateUp: () -> Unit,
     navigateToFeedProfile: (Long) -> Unit,
     navigateToFollowList: () -> Unit,
+    navigateToFeedDiary: (Long) -> Unit,
     viewModel: FeedProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -68,9 +69,9 @@ internal fun FeedProfileRoute(
                 onFollowClick = navigateToFollowList,
                 onActionButtonClick = { },
                 onProfileClick = navigateToFeedProfile,
-                onContentClick = { },
+                onContentClick = navigateToFeedDiary,
                 onLikeClick = { },
-                onMoreClick = { },
+                onMoreClick = navigateToFeedDiary,
                 onMenuClick = { },
                 onReportClick = { },
                 onBlockClick = { }

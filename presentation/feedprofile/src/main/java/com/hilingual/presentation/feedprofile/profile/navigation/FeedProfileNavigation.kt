@@ -42,7 +42,8 @@ fun NavGraphBuilder.feedProfileNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
     navigateUp: () -> Unit,
-    navigateToFeedProfile: (Long) -> Unit
+    navigateToFeedProfile: (Long) -> Unit,
+    navigateToFeedDiary: (Long) -> Unit
 ) {
     navigation<FeedProfileGraph>(
         startDestination = FeedProfile::class,
@@ -60,7 +61,8 @@ fun NavGraphBuilder.feedProfileNavGraph(
                 paddingValues = paddingValues,
                 navigateUp = navigateUp,
                 navigateToFollowList = { navController.navigateToFollowList() },
-                navigateToFeedProfile = navigateToFeedProfile
+                navigateToFeedProfile = navigateToFeedProfile,
+                navigateToFeedDiary = navigateToFeedDiary
             )
         }
         composable<FollowList>(
