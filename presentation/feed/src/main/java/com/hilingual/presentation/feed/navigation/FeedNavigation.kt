@@ -28,7 +28,7 @@ import com.hilingual.presentation.feed.search.FeedSearchRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object FeedGraph
+internal data object FeedGraph
 
 @Serializable
 data object Feed : MainTabRoute
@@ -36,7 +36,7 @@ data object Feed : MainTabRoute
 @Serializable
 internal data object FeedSearch : Route
 
-fun NavController.navigateToFeedGraph(
+fun NavController.navigateToFeed(
     navOptions: NavOptions? = null
 ) {
     navigate(
@@ -45,7 +45,7 @@ fun NavController.navigateToFeedGraph(
     )
 }
 
-internal fun NavController.navigateToFeedSearch(
+private fun NavController.navigateToFeedSearch(
     navOptions: NavOptions? = null
 ) {
     navigate(
@@ -57,7 +57,8 @@ internal fun NavController.navigateToFeedSearch(
 fun NavGraphBuilder.feedNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
-    navigateToFeedDiary: (Long) -> Unit
+    navigateToFeedDiary: (Long) -> Unit,
+    navigateToFeedProfile: (Long) -> Unit
 ) {
     navigation<FeedGraph>(
         startDestination = Feed
@@ -74,7 +75,7 @@ fun NavGraphBuilder.feedNavGraph(
             FeedSearchRoute(
                 paddingValues = paddingValues,
                 navigateUp = navController::navigateUp,
-                navigateToFeedProfile = {}
+                navigateToFeedProfile = navigateToFeedProfile
             )
         }
     }

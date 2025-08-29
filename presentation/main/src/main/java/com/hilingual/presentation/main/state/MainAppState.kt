@@ -27,7 +27,7 @@ import androidx.navigation.navOptions
 import com.hilingual.presentation.auth.navigation.navigateToAuth
 import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedback
 import com.hilingual.presentation.diarywrite.navigation.navigateToDiaryWrite
-import com.hilingual.presentation.feed.navigation.navigateToFeedGraph
+import com.hilingual.presentation.feed.navigation.navigateToFeed
 import com.hilingual.presentation.feeddiary.navigation.navigateToFeedDiary
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.main.MainTab
@@ -115,7 +115,7 @@ internal class MainAppState(
         when (tab) {
             MainTab.HOME -> navController.navigateToHome(navOptions = navOptions)
             MainTab.VOCA -> navController.navigateToVoca(navOptions = vocaNavOptions)
-            MainTab.FEED -> navController.navigateToFeedGraph(navOptions = navOptions)
+            MainTab.FEED -> navController.navigateToFeed(navOptions = navOptions)
             MainTab.MY -> navController.navigateToMyPage(navOptions = navOptions)
         }
     }
@@ -159,7 +159,7 @@ internal class MainAppState(
     }
 
     fun navigateToFeed(navOptions: NavOptions? = clearStackNavOptions) {
-        navController.navigateToFeedGraph(navOptions)
+        navController.navigateToFeed(navOptions)
     }
 
     fun navigateToFeedDiary(

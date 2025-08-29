@@ -44,11 +44,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val diaryRepository: DiaryRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<DiaryFeedbackUiState>>(
-        UiState.Success(
-            DiaryFeedbackUiState.Fake
-        )
-    )
+    private val _uiState = MutableStateFlow<UiState<DiaryFeedbackUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<DiaryFeedbackUiState>> = _uiState.asStateFlow()
 
     val diaryId = savedStateHandle.toRoute<DiaryFeedback>().diaryId

@@ -91,9 +91,7 @@ internal fun DiaryFeedbackRoute(
 
     viewModel.sideEffect.collectSideEffect {
         when (it) {
-            is DiaryFeedbackSideEffect.ShowRetryDialog -> {
-                dialogTrigger.show(it.onRetry)
-            }
+            is DiaryFeedbackSideEffect.ShowRetryDialog -> dialogTrigger.show(it.onRetry)
 
             is DiaryFeedbackSideEffect.ShowSnackbar -> {
                 snackbarTrigger(
@@ -105,9 +103,7 @@ internal fun DiaryFeedbackRoute(
                 )
             }
 
-            is DiaryFeedbackSideEffect.ShowToast -> {
-                toastTrigger(it.message)
-            }
+            is DiaryFeedbackSideEffect.ShowToast -> toastTrigger(it.message)
 
             is DiaryFeedbackSideEffect.NavigateToHome -> navigateToHome()
         }
