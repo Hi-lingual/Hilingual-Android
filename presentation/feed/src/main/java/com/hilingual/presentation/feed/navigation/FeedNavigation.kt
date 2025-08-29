@@ -66,14 +66,14 @@ fun NavGraphBuilder.feedNavGraph(
             FeedRoute(
                 paddingValues = paddingValues,
                 navigateToFeedDiary = navigateToFeedDiary,
-                navigateToSearch = { navController.navigateToFeedSearch() }
+                navigateToSearch = navController::navigateToFeedSearch
             )
         }
 
         composable<FeedSearch> {
             FeedSearchRoute(
                 paddingValues = paddingValues,
-                navigateUp = { navController.popBackStack() },
+                navigateUp = navController::navigateUp,
                 navigateToFeedProfile = {}
             )
         }
