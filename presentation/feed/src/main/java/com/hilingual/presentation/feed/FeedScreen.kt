@@ -169,11 +169,12 @@ private fun FeedScreen(
                     listState = currentListState,
                     feedList = feedList,
                     onProfileClick = {},
-                    onMenuClick = {},
                     onContentClick = {},
                     onLikeClick = {},
                     onMoreClick = {},
-                    hasFollowing = if (page == 1) uiState.hasFollowing else false
+                    hasFollowing = if (page == 1) uiState.hasFollowing else false,
+                    onUnpublishClick = {},
+                    onReportClick = {}
                 )
             }
 
@@ -214,7 +215,8 @@ private fun FeedScreenPreview() {
                         imageUrl = "https://velog.velcdn.com/images/nahy-512/post/49cfbf3d-504f-4c2a-b0b9-458f287735e6/image.png",
                         diaryId = 1,
                         likeCount = 120,
-                        isLiked = false
+                        isLiked = false,
+                        isMine = true
                     ),
                     FeedListItemUiModel(
                         userId = 2,
@@ -226,7 +228,8 @@ private fun FeedScreenPreview() {
                         imageUrl = null,
                         diaryId = 2,
                         likeCount = 75,
-                        isLiked = true
+                        isLiked = true,
+                        isMine = false
                     ),
                     FeedListItemUiModel(
                         userId = 3,
@@ -240,7 +243,8 @@ private fun FeedScreenPreview() {
                         imageUrl = "https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                         diaryId = 3,
                         likeCount = 210,
-                        isLiked = false
+                        isLiked = false,
+                        isMine = true
                     )
                 ),
                 followingFeedList = persistentListOf(),

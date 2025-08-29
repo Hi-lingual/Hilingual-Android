@@ -192,7 +192,6 @@ private fun FeedProfileScreen(
                                     onContentClick = onContentClick,
                                     onLikeClick = onLikeClick,
                                     onMoreClick = onMoreClick,
-                                    onMenuClick = onMenuClick,
                                     onUnpublishClick = { diaryId ->
                                     },
                                     onReportClick = { diaryId ->
@@ -240,7 +239,6 @@ private fun FeedProfileScreen(
                                 onProfileClick = onProfileClick,
                                 onContentClick = onContentClick,
                                 onLikeClick = onLikeClick,
-                                onMenuClick = onMenuClick,
                                 onMoreClick = onMoreClick,
                                 onUnpublishClick = { diaryId ->
                                 },
@@ -313,7 +311,7 @@ private fun FeedProfileScreenPreview() {
                     streak = 5,
                     follower = 120,
                     following = 98,
-                    isMine = false,
+                    isMine = true,
                     isFollowing = true,
                     isFollowed = true,
                     isBlock = false
@@ -372,7 +370,7 @@ private fun FeedProfileScreenPreview() {
                         isLiked = false,
                         diaryImageUrl = null,
                         originalText = "이건 내가 좋아요한 일기!",
-                        isMine = true
+                        isMine = false
                     )
                 )
             ),

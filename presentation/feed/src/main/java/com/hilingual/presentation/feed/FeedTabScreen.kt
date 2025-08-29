@@ -47,10 +47,11 @@ internal fun FeedTabScreen(
     listState: LazyListState,
     feedList: ImmutableList<FeedListItemUiModel>,
     onProfileClick: (Long) -> Unit,
-    onMenuClick: (Long) -> Unit,
     onContentClick: (Long) -> Unit,
     onLikeClick: (Long) -> Unit,
     onMoreClick: (Long) -> Unit,
+    onUnpublishClick: (diaryId: Long) -> Unit,
+    onReportClick: () -> Unit,
     modifier: Modifier = Modifier,
     hasFollowing: Boolean = true
 ) {
@@ -86,14 +87,16 @@ internal fun FeedTabScreen(
                         nickname = nickname,
                         streak = streak,
                         sharedDateInMinutes = sharedDateInMinutes,
-                        onMenuClick = { onMenuClick(diaryId) },
                         content = content,
                         onContentClick = { onContentClick(diaryId) },
                         imageUrl = imageUrl,
                         likeCount = likeCount,
                         isLiked = isLiked,
                         onLikeClick = { onLikeClick(diaryId) },
-                        onMoreClick = { onMoreClick(diaryId) }
+                        onMoreClick = { onMoreClick(diaryId) },
+                        isMine = isMine,
+                        onUnpublishClick = { onUnpublishClick(diaryId) },
+                        onReportClick = onReportClick
                     )
                 }
 
@@ -124,7 +127,8 @@ private fun FeedTabScreenPreview() {
                     imageUrl = "",
                     diaryId = 1,
                     likeCount = 120,
-                    isLiked = false
+                    isLiked = false,
+                    isMine = true
                 ),
                 FeedListItemUiModel(
                     userId = 2,
@@ -136,7 +140,8 @@ private fun FeedTabScreenPreview() {
                     imageUrl = null,
                     diaryId = 2,
                     likeCount = 75,
-                    isLiked = true
+                    isLiked = true,
+                    isMine = false
                 )
             )
         )
@@ -147,10 +152,12 @@ private fun FeedTabScreenPreview() {
             listState = rememberLazyListState(),
             feedList = sampleFeedList,
             onProfileClick = { },
-            onMenuClick = { },
             onContentClick = { },
             onLikeClick = { },
             onMoreClick = { },
+            onUnpublishClick = { },
+            onReportClick = { },
+            hasFollowing = true,
             modifier = Modifier.fillMaxSize()
         )
     }

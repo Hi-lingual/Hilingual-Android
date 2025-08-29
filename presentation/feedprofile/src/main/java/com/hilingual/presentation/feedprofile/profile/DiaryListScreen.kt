@@ -25,7 +25,6 @@ internal fun DiaryListScreen(
     onContentClick: (diaryId: Long) -> Unit,
     onLikeClick: (diaryId: Long) -> Unit,
     onMoreClick: (diaryId: Long) -> Unit,
-    onMenuClick: (diaryId: Long) -> Unit,
     onUnpublishClick: (diaryId: Long) -> Unit,
     onReportClick: (diaryId: Long) -> Unit,
     modifier: Modifier = Modifier
@@ -54,7 +53,6 @@ internal fun DiaryListScreen(
                         nickname = nickname,
                         streak = streak,
                         sharedDateInMinutes = sharedDate,
-                        onMenuClick = { onMenuClick(diaryId) },
                         content = originalText,
                         onContentClick = { onContentClick(diaryId) },
                         imageUrl = diaryImageUrl,
