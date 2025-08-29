@@ -41,7 +41,7 @@ class AuthViewModel @Inject constructor(
     val navigationEvent = _navigationEvent.asSharedFlow()
 
     // TODO: OTP 완료 여부를 확인하는 로직 필요
-    private val isOtpVerified = false
+    private val isOtpVerified = true
 
     fun onGoogleSignClick(context: Context) {
         viewModelScope.launch {
@@ -59,12 +59,20 @@ class AuthViewModel @Inject constructor(
                         }
                         .onLogFailure {
                             // TODO: QA용 임시로직입니다.
-                            _navigationEvent.tryEmit(AuthSideEffect.NavigateToOtp)
+                            val sideEffect = when {
+                                isOtpVerified -> AuthSideEffect.NavigateToOnboarding
+                                else -> AuthSideEffect.NavigateToOtp
+                            }
+                            _navigationEvent.tryEmit(sideEffect)
                         }
                 }
                 .onLogFailure {
                     // TODO: QA용 임시로직입니다.
-                    _navigationEvent.tryEmit(AuthSideEffect.NavigateToOtp)
+                    val sideEffect = when {
+                        isOtpVerified -> AuthSideEffect.NavigateToOnboarding
+                        else -> AuthSideEffect.NavigateToOtp
+                    }
+                    _navigationEvent.tryEmit(sideEffect)
                 }
         }
     }
