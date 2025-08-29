@@ -15,6 +15,8 @@
  */
 package com.hilingual.presentation.otp.component
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -39,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -94,6 +97,12 @@ private fun OtpChar(
 ) {
     val isFilled = char != null
 
+    val scale by animateFloatAsState(
+        targetValue = if (isFilled) 1f else 0f,
+        animationSpec = spring(),
+        label = "OtpCharScale"
+    )
+
     val borderColor = when {
         isError -> HilingualTheme.colors.alertRed
         isFilled -> HilingualTheme.colors.hilingualBlack
@@ -123,7 +132,11 @@ private fun OtpChar(
             text = char?.toString() ?: "",
             style = HilingualTheme.typography.headSB20,
             color = textColor,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            modifier = Modifier.graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
         )
     }
 }

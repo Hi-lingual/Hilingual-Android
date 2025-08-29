@@ -30,13 +30,11 @@ fun NavController.navigateToOtp(
 
 fun NavGraphBuilder.otpNavGraph(
     paddingValues: PaddingValues,
-    navigateUp: () -> Unit,
     navigateToOnboarding: () -> Unit
 ) {
     composable<Otp> {
         OtpRoute(
             paddingValues = paddingValues,
-            navigateUp = navigateUp,
             navigateToOnboarding = navigateToOnboarding
         )
     }
