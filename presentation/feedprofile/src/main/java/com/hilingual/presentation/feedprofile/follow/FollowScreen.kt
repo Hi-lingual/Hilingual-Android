@@ -3,6 +3,7 @@ package com.hilingual.presentation.feedprofile.follow
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,10 +39,8 @@ internal fun FollowScreen(
                 Column(
                     modifier = Modifier.fillParentMaxSize()
                 ) {
-                    FeedEmptyCard(
-                        type = emptyCardType,
-                        modifier = Modifier.padding(top = 140.dp)
-                    )
+                    Spacer(Modifier.weight(16f))
+                    FeedEmptyCard(type = emptyCardType)
                 }
             }
         } else {

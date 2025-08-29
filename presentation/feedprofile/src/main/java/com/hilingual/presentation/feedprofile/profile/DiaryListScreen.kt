@@ -3,6 +3,7 @@ package com.hilingual.presentation.feedprofile.profile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -42,10 +43,8 @@ internal fun DiaryListScreen(
                 Column(
                     modifier = Modifier.fillParentMaxSize()
                 ) {
-                    FeedEmptyCard(
-                        type = emptyCardType,
-                        modifier = Modifier.padding(top = 140.dp)
-                    )
+                    Spacer(Modifier.weight(14f))
+                    FeedEmptyCard(type = emptyCardType)
                 }
             }
         } else {
