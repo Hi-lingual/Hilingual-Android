@@ -49,7 +49,7 @@ import kotlinx.coroutines.launch
 internal fun FeedDiaryRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
-    navigateToFeedProfile: () -> Unit,
+    navigateToFeedProfile: (Long) -> Unit,
     viewModel: FeedDiaryViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -107,7 +107,7 @@ private fun FeedDiaryScreen(
     paddingValues: PaddingValues,
     uiState: FeedDiaryUiState,
     onBackClick: () -> Unit,
-    onProfileClick: () -> Unit,
+    onProfileClick: (Long) -> Unit,
     onLikeClick: () -> Unit,
     onPrivateClick: () -> Unit,
     onReportClick: () -> Unit,
@@ -170,7 +170,7 @@ private fun FeedDiaryScreen(
                 isLiked = isLiked,
                 likeCount = likeCount,
                 sharedDateInMinutes = sharedDateInMinutes,
-                onProfileClick = onProfileClick,
+                onProfileClick = { onProfileClick(userId) },
                 onLikeClick = onLikeClick
             )
         }

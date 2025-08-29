@@ -42,7 +42,7 @@ fun NavController.navigateToFeedDiary(
 fun NavGraphBuilder.feedDiaryNavGraph(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
-    navigateToFeedProfile: () -> Unit
+    navigateToFeedProfile: (userId: Long) -> Unit
 ) {
     composable<FeedDiary> {
         FeedDiaryRoute(

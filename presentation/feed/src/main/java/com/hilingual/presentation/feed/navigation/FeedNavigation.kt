@@ -58,8 +58,8 @@ fun NavGraphBuilder.feedNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
     navigateToFeedDiary: (Long) -> Unit,
-    navigateToFeedProfile: (Long) -> Unit
     navigateToMyFeedProfile: () -> Unit,
+    navigateToFeedProfile: (Long) -> Unit
 ) {
     navigation<FeedGraph>(
         startDestination = Feed

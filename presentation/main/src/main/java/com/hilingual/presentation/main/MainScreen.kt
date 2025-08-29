@@ -246,7 +246,7 @@ internal fun MainScreen(
                 feedDiaryNavGraph(
                     paddingValues = innerPadding,
                     navigateUp = appState::navigateUp,
-                    navigateToFeedProfile = {} // TODO: 피드 프로필로 이동시켜주세요 (to. @nhyeonii)
+                    navigateToFeedProfile = appState::navigateToFeedProfileGraph
                 )
 
                 myPageNavGraph(
