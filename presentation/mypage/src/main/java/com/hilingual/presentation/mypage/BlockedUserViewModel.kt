@@ -52,7 +52,7 @@ internal class BlockedUserViewModel @Inject constructor() : ViewModel() {
     fun onUnblockStatusChanged(userId: Long) {
         _uiState.updateSuccess { list ->
             list.map { user ->
-                if (user.userId == userId) user.copy(isUnblocked = !user.isUnblocked) else user
+                if (user.userId == userId) user.copy(isBlocked = !user.isBlocked) else user
             }.toPersistentList()
         }
     }
