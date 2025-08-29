@@ -176,7 +176,7 @@ internal class MainAppState(
     ) {
         navController.navigateToNotificationSetting(navOptions)
     }
-    
+
     fun navigateToFeed(navOptions: NavOptions? = clearStackNavOptions) {
         navController.navigateToFeed(navOptions)
     }
