@@ -29,8 +29,9 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun TitleLeftAlignedTopAppBar(
+    title: String,
     modifier: Modifier = Modifier,
-    title: String
+    textColor: Color = HilingualTheme.colors.white
 ) {
     Text(
         modifier = modifier
@@ -39,7 +40,7 @@ fun TitleLeftAlignedTopAppBar(
             .padding(start = 16.dp, top = 15.dp, end = 16.dp, bottom = 14.dp),
         textAlign = TextAlign.Start,
         text = title,
-        color = HilingualTheme.colors.white,
+        color = textColor,
         style = HilingualTheme.typography.headM18
     )
 }

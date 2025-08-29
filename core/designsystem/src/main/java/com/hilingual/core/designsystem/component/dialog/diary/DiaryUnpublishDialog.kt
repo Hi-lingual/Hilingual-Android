@@ -32,7 +32,8 @@ fun DiaryUnpublishDialog(
         TwoButtonDialog(
             modifier = modifier,
             title = "영어 일기를 비공개 하시겠어요?",
-            description = "비공개로 전환 시, 해당 일기는\n피드 활동에서 확인할 수 없어요.",
+            description = "비공개로 전환 시, \n" +
+                "해당 일기의 피드 활동 내역은 모두 사라져요.",
             cancelText = "아니요",
             confirmText = "비공개하기",
             onNegative = onDismiss,
