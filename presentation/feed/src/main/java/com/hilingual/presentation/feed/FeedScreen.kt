@@ -45,7 +45,6 @@ import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndic
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedTopAppBar
-import com.hilingual.presentation.feed.model.FeedListItemUiModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
@@ -78,7 +77,7 @@ internal fun FeedRoute(
                     // TODO: 피드 프로필 화면으로 이동
                 },
                 onSearchClick = navigateToFeedSearch,
-                onFeedItemClick = navigateToFeedDiary,
+                onContentDetailClick = navigateToFeedDiary,
                 readAllFeed = viewModel::readAllFeed
             )
         }
@@ -92,7 +91,7 @@ private fun FeedScreen(
     uiState: FeedUiState,
     onProfileClick: () -> Unit,
     onSearchClick: () -> Unit,
-    onFeedItemClick: (Long) -> Unit,
+    onContentDetailClick: (Long) -> Unit,
     readAllFeed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -171,7 +170,7 @@ private fun FeedScreen(
                     listState = currentListState,
                     feedList = feedList,
                     onProfileClick = {},
-                    onContentDetailClick = {},
+                    onContentDetailClick = onContentDetailClick,
                     onLikeClick = {},
                     hasFollowing = if (page == 1) uiState.hasFollowing else false,
                     onUnpublishClick = {},
@@ -202,6 +201,7 @@ private fun FeedScreenPreview() {
             paddingValues = PaddingValues(),
             onProfileClick = {},
             onSearchClick = {},
+            onContentDetailClick = {},
             readAllFeed = {},
             uiState = FeedUiState.Fake
         )
