@@ -52,6 +52,8 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun FeedRoute(
     paddingValues: PaddingValues,
+    navigateToFeedDiary: (Long) -> Unit,
+    navigateToFeedSearch: () -> Unit,
     viewModel: FeedViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -75,9 +77,8 @@ internal fun FeedRoute(
                 onProfileClick = {
                     // TODO: 피드 프로필 화면으로 이동
                 },
-                onSearchClick = {
-                    // TODO: 친구 검색 화면으로 이동
-                },
+                onSearchClick = navigateToFeedSearch,
+                onFeedItemClick = navigateToFeedDiary,
                 readAllFeed = viewModel::readAllFeed
             )
         }
@@ -91,6 +92,7 @@ private fun FeedScreen(
     uiState: FeedUiState,
     onProfileClick: () -> Unit,
     onSearchClick: () -> Unit,
+    onFeedItemClick: (Long) -> Unit,
     readAllFeed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -201,54 +203,7 @@ private fun FeedScreenPreview() {
             onProfileClick = {},
             onSearchClick = {},
             readAllFeed = {},
-            uiState = FeedUiState(
-                myProfileUrl = "https://avatars.githubusercontent.com/u/101113025?v=4",
-                recommendFeedList = persistentListOf(
-                    FeedListItemUiModel(
-                        userId = 1,
-                        profileUrl = "https://avatars.githubusercontent.com/u/101113025?v=4",
-                        nickname = "작나",
-                        streak = 15,
-                        sharedDateInMinutes = 5L,
-                        content = "Just enjoyed a beautiful sunset over the mountains! #travel #nature",
-                        imageUrl = "https://velog.velcdn.com/images/nahy-512/post/49cfbf3d-504f-4c2a-b0b9-458f287735e6/image.png",
-                        diaryId = 1,
-                        likeCount = 120,
-                        isLiked = false,
-                        isMine = true
-                    ),
-                    FeedListItemUiModel(
-                        userId = 2,
-                        profileUrl = "",
-                        nickname = "한민돌",
-                        streak = 3,
-                        sharedDateInMinutes = 60L * 2,
-                        content = "Trying out a new recipe tonight. It's a bit spicy but delicious! 🌶️",
-                        imageUrl = null,
-                        diaryId = 2,
-                        likeCount = 75,
-                        isLiked = true,
-                        isMine = false
-                    ),
-                    FeedListItemUiModel(
-                        userId = 3,
-                        profileUrl = "",
-                        nickname = "효비",
-                        streak = 99,
-                        sharedDateInMinutes = 60L * 24 * 3,
-                        content = "Finished an amazing novel. Highly recommend it to anyone who loves a good mystery. " +
-                            "The plot twists were incredible, and the characters were so well-developed. " +
-                            "I couldn't put it down until I reached the very last page!",
-                        imageUrl = "https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                        diaryId = 3,
-                        likeCount = 210,
-                        isLiked = false,
-                        isMine = true
-                    )
-                ),
-                followingFeedList = persistentListOf(),
-                hasFollowing = false
-            )
+            uiState = FeedUiState.Fake
         )
     }
 }

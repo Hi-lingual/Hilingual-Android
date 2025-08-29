@@ -1,6 +1,9 @@
 package com.hilingual.presentation.feedprofile.profile
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,15 +31,23 @@ internal fun DiaryListScreen(
     onReportClick: (diaryId: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (diaries.isEmpty()) {
-        FeedEmptyCard(type = emptyCardType)
-    } else {
-        LazyColumn(
-            contentPadding = PaddingValues(bottom = 48.dp),
-            modifier = modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-        ) {
+    LazyColumn(
+        contentPadding = PaddingValues(bottom = 48.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .background(HilingualTheme.colors.white)
+            .padding(horizontal = 16.dp)
+    ) {
+        if (diaries.isEmpty()) {
+            item {
+                Column(
+                    modifier = Modifier.fillParentMaxSize()
+                ) {
+                    Spacer(Modifier.weight(14f))
+                    FeedEmptyCard(type = emptyCardType)
+                }
+            }
+        } else {
             itemsIndexed(
                 items = diaries,
                 key = { _, diary -> diary.diaryId }
