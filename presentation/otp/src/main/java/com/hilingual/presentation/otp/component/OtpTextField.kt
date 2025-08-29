@@ -43,7 +43,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
@@ -51,6 +54,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
@@ -62,35 +66,41 @@ fun OtpTextField(
 ) {
     val otpValue = otpText()
     val focusManager = LocalFocusManager.current
-    BasicTextField(
-        modifier = modifier,
-        value = otpValue,
-        onValueChange = {
-            if (it.length <= 6 && it.all { char -> char.isDigit() }) {
-                onOtpTextChange(it)
-            }
-        },
-        keyboardActions = KeyboardActions(
-            onDone = { focusManager.clearFocus() }
-        ),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.NumberPassword,
-            imeAction = ImeAction.Done
-        ),
-        decorationBox = {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                repeat(6) { index ->
-                    OtpChar(
-                        char = otpValue.getOrNull(index),
-                        isError = isError
-                    )
-                }
+    val focusRequester = remember { FocusRequester() }
+
+    Box(modifier = modifier) {
+        BasicTextField(
+            value = otpValue,
+            onValueChange = { newValue ->
+                val filteredValue = newValue
+                    .filter { it.isDigit() }
+                    .take(6)
+                onOtpTextChange(filteredValue)
+            },
+            modifier = Modifier.focusRequester(focusRequester),
+            keyboardActions = KeyboardActions(
+                onDone = { focusManager.clearFocus() }
+            ),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.NumberPassword,
+                imeAction = ImeAction.Done
+            ),
+            singleLine = true,
+            cursorBrush = SolidColor(Color.Transparent)
+        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.noRippleClickable { focusRequester.requestFocus() }
+        ) {
+            repeat(6) { index ->
+                OtpChar(
+                    char = otpValue.getOrNull(index),
+                    isError = isError
+                )
             }
         }
-    )
+    }
 }
 
 @Composable

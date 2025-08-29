@@ -40,7 +40,7 @@ fun NavGraphBuilder.authNavGraph(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
     navigateToOnboarding: () -> Unit,
-    navigateToOtp:() -> Unit
+    navigateToOtp: () -> Unit
 ) {
     composable<Auth> {
         AuthRoute(

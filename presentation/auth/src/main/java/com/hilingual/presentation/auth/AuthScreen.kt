@@ -61,7 +61,7 @@ internal fun AuthRoute(
     navigateToOnboarding: () -> Unit,
     navigateToOtp: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: AuthViewModel = hiltViewModel(),
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
 
