@@ -62,13 +62,14 @@ import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.diaryfeedback.component.FeedbackMenuBottomSheet
 import com.hilingual.presentation.diaryfeedback.component.FeedbackReportDialog
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun DiaryFeedbackRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
+    navigateToHome: () -> Unit,
+    navigateToFeed: () -> Unit,
     viewModel: DiaryFeedbackViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -90,26 +91,21 @@ internal fun DiaryFeedbackRoute(
 
     viewModel.sideEffect.collectSideEffect {
         when (it) {
-            is DiaryFeedbackSideEffect.ShowRetryDialog -> {
-                dialogTrigger.show(it.onRetry)
-            }
+            is DiaryFeedbackSideEffect.ShowRetryDialog -> dialogTrigger.show(it.onRetry)
 
             is DiaryFeedbackSideEffect.ShowSnackbar -> {
                 snackbarTrigger(
                     SnackbarRequest(
                         message = it.message,
                         buttonText = it.actionLabel,
-                        onClick = {
-                            // TODO: 피드 화면으로 이동
-                            toastTrigger("${it.actionLabel} 클릭됨")
-                        }
+                        onClick = navigateToFeed
                     )
                 )
             }
 
-            is DiaryFeedbackSideEffect.ShowToast -> {
-                toastTrigger(it.message)
-            }
+            is DiaryFeedbackSideEffect.ShowToast -> toastTrigger(it.message)
+
+            is DiaryFeedbackSideEffect.NavigateToHome -> navigateToHome()
         }
     }
 
@@ -318,11 +314,7 @@ private fun DiaryFeedbackScreenPreview() {
         DiaryFeedbackScreen(
             paddingValues = PaddingValues(),
             uiState = UiState.Success(
-                DiaryFeedbackUiState(
-                    writtenDate = "7월 11일 금요일",
-                    feedbackList = persistentListOf(),
-                    recommendExpressionList = persistentListOf()
-                )
+                DiaryFeedbackUiState.Fake
             ),
             isImageDetailVisible = false,
             onChangeImageDetailVisible = {},

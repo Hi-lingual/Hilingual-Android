@@ -52,6 +52,7 @@ import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import com.hilingual.presentation.diarywrite.navigation.diaryWriteNavGraph
 import com.hilingual.presentation.feed.navigation.feedNavGraph
 import com.hilingual.presentation.feedprofile.profile.navigation.feedProfileNavGraph
+import com.hilingual.presentation.feeddiary.navigation.feedDiaryNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.main.state.MainAppState
@@ -229,13 +230,23 @@ internal fun MainScreen(
 
                 diaryFeedbackNavGraph(
                     paddingValues = innerPadding,
-                    navigateUp = appState::navigateUp
+                    navigateUp = appState::navigateUp,
+                    navigateToHome = appState::navigateToHome,
+                    navigateToFeed = appState::navigateToFeed
                 )
 
                 feedNavGraph(
                     paddingValues = innerPadding,
+                    navController = appState.navController,
+                    navigateToFeedDiary = appState::navigateToFeedDiary,
                     navigateToMyFeedProfile = appState::navigateToMyFeedProfileGraph,
                     navigateToFeedProfile = appState::navigateToFeedProfileGraph
+                )
+
+                feedDiaryNavGraph(
+                    paddingValues = innerPadding,
+                    navigateUp = appState::navigateUp,
+                    navigateToFeedProfile = {} // TODO: 피드 프로필로 이동시켜주세요 (to. @nhyeonii)
                 )
 
                 myPageNavGraph(

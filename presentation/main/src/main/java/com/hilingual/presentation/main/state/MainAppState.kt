@@ -28,6 +28,7 @@ import com.hilingual.presentation.auth.navigation.navigateToAuth
 import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedback
 import com.hilingual.presentation.diarywrite.navigation.navigateToDiaryWrite
 import com.hilingual.presentation.feed.navigation.navigateToFeed
+import com.hilingual.presentation.feeddiary.navigation.navigateToFeedDiary
 import com.hilingual.presentation.feedprofile.profile.navigation.navigateToFeedProfileGraph
 import com.hilingual.presentation.feedprofile.profile.navigation.navigateToMyFeedProfileGraph
 import com.hilingual.presentation.home.navigation.navigateToHome
@@ -157,6 +158,17 @@ internal class MainAppState(
         }
     ) {
         navController.navigateToDiaryWrite(selectedDate, navOptions)
+    }
+
+    fun navigateToFeed(navOptions: NavOptions? = clearStackNavOptions) {
+        navController.navigateToFeed(navOptions)
+    }
+
+    fun navigateToFeedDiary(
+        diaryId: Long,
+        navOptions: NavOptions? = null
+    ) {
+        navController.navigateToFeedDiary(diaryId, navOptions)
     }
 
     fun navigateToFeedProfileGraph(
