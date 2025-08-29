@@ -21,6 +21,7 @@ import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feedprofile.follow.component.FollowTabRow
 import com.hilingual.presentation.feedprofile.follow.model.FollowItemModel
+import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
@@ -77,9 +78,9 @@ private fun FollowListScreen(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
         ) { page ->
-            val followState = when (page) {
-                0 -> followers
-                else -> followings
+            val (followState, emptyCardType) = when (page) {
+                0 -> followers to FeedEmptyCardType.NO_FOLLOWER
+                else -> followings to FeedEmptyCardType.NO_FOLLOWING
             }
 
             when (followState) {
@@ -87,10 +88,12 @@ private fun FollowListScreen(
                 is UiState.Success -> {
                     FollowScreen(
                         follows = followState.data,
+                        emptyCardType = emptyCardType,
                         onProfileClick = onProfileClick,
                         onActionButtonClick = onActionButtonClick
                     )
                 }
+
                 else -> {}
             }
         }
