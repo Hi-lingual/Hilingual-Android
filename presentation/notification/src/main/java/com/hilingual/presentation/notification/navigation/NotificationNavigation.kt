@@ -10,6 +10,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navOptions
 import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.notification.detail.NotificationDetailRoute
 import com.hilingual.presentation.notification.main.NotificationMainRoute
@@ -36,7 +37,7 @@ fun NavController.navigateToNotification(navOptions: NavOptions? = null) =
 fun NavController.navigateToNotificationSetting(navOptions: NavOptions? = null) =
     navigate(NotificationSetting, navOptions)
 
-private fun NavController.navigateToNotificationDetail(
+private fun NavController.navigateToNoticeDetail(
     noticeId: Long,
     navOptions: NavOptions? = null
 ) = navigate(NotificationDetail(noticeId), navOptions)
@@ -58,10 +59,17 @@ fun NavGraphBuilder.notificationNavGraph(
             NotificationMainRoute(
                 paddingValues = paddingValues,
                 navigateUp = navigateUp,
-                navigateToSetting = { navController.navigateToNotificationSetting() },
+                navigateToSetting = {
+                    navController.navigateToNotificationSetting(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
+                },
                 navigateToFeedNotificationDetail = navigateToFeedNotificationDetail,
                 navigateToNoticeDetail = { noticeId ->
-                    navController.navigateToNotificationDetail(noticeId)
+                    navController.navigateToNoticeDetail(
+                        noticeId = noticeId,
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
                 }
             )
         }
@@ -93,9 +101,15 @@ fun NavGraphBuilder.notificationNavGraph(
 }
 
 private val enterTransition: AnimatedContentTransitionScope<*>.() -> EnterTransition = {
-    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(ANIMATION_DURATION))
+    slideIntoContainer(
+        AnimatedContentTransitionScope.SlideDirection.Left,
+        tween(ANIMATION_DURATION)
+    )
 }
 
 private val popExitTransition: AnimatedContentTransitionScope<*>.() -> ExitTransition = {
-    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(ANIMATION_DURATION))
+    slideOutOfContainer(
+        AnimatedContentTransitionScope.SlideDirection.Right,
+        tween(ANIMATION_DURATION)
+    )
 }
