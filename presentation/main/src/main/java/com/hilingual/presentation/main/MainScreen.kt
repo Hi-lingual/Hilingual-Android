@@ -258,7 +258,7 @@ internal fun MainScreen(
                     navigateUp = appState::navigateUp,
                     navigateToFeedProfile = appState::navigateToFeedProfileGraph,
                     navController = appState.navController,
-                    navigateToFeedDiary = { } //TODO: 피드 다이어리 상세로 이동해주세요 !! to.짝나
+                    navigateToFeedDiary = { } // TODO: 피드 다이어리 상세로 이동해주세요 !! to.짝나
                 )
             }
 
