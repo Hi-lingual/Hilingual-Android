@@ -3,6 +3,7 @@ package com.hilingual.presentation.mypage
 import androidx.lifecycle.ViewModel
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
+import com.hilingual.presentation.mypage.model.BlockedUserUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -15,32 +16,32 @@ import javax.inject.Inject
 @HiltViewModel
 internal class BlockedUserViewModel @Inject constructor() : ViewModel() {
     private val _uiState =
-        MutableStateFlow<UiState<ImmutableList<BlockedUserUiState>>>(UiState.Loading)
-    val uiState: StateFlow<UiState<ImmutableList<BlockedUserUiState>>> = _uiState.asStateFlow()
+        MutableStateFlow<UiState<ImmutableList<BlockedUserUiModel>>>(UiState.Loading)
+    val uiState: StateFlow<UiState<ImmutableList<BlockedUserUiModel>>> = _uiState.asStateFlow()
 
     fun loadInitialData() {
         val dummy = persistentListOf(
-            BlockedUserUiState(
+            BlockedUserUiModel(
                 userId = 1L,
                 profileImageUrl = "",
                 nickname = "사과"
             ),
-            BlockedUserUiState(
+            BlockedUserUiModel(
                 userId = 2L,
                 profileImageUrl = "",
                 nickname = "바나나"
             ),
-            BlockedUserUiState(
+            BlockedUserUiModel(
                 userId = 3L,
                 profileImageUrl = "",
                 nickname = "오렌지"
             ),
-            BlockedUserUiState(
+            BlockedUserUiModel(
                 userId = 4L,
                 profileImageUrl = "https://picsum.photos/42/42?random=1",
                 nickname = "딸기"
             ),
-            BlockedUserUiState(
+            BlockedUserUiModel(
                 userId = 5L,
                 profileImageUrl = "",
                 nickname = "포도"

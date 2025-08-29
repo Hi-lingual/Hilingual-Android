@@ -34,6 +34,7 @@ import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.content.UserActionItem
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.presentation.mypage.model.BlockedUserUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -67,10 +68,10 @@ internal fun BlockedUserRoute(
 }
 
 @Composable
-internal fun BlockedUserScreen(
+private fun BlockedUserScreen(
     paddingValues: PaddingValues,
     onBackClick: () -> Unit,
-    blockedUserList: ImmutableList<BlockedUserUiState>,
+    blockedUserList: ImmutableList<BlockedUserUiModel>,
     onUserProfileClick: (Long) -> Unit,
     onButtonClick: (Long) -> Unit
 ) {
@@ -156,27 +157,27 @@ private fun BlockedUserScreenWithDataPreview() {
         var sampleBlockedUsers by remember {
             mutableStateOf(
                 persistentListOf(
-                    BlockedUserUiState(
+                    BlockedUserUiModel(
                         userId = 1L,
                         profileImageUrl = "",
                         nickname = "사과"
                     ),
-                    BlockedUserUiState(
+                    BlockedUserUiModel(
                         userId = 2L,
                         profileImageUrl = "",
                         nickname = "바나나"
                     ),
-                    BlockedUserUiState(
+                    BlockedUserUiModel(
                         userId = 3L,
                         profileImageUrl = "",
                         nickname = "오렌지"
                     ),
-                    BlockedUserUiState(
+                    BlockedUserUiModel(
                         userId = 4L,
                         profileImageUrl = "https://picsum.photos/42/42?random=1",
                         nickname = "딸기"
                     ),
-                    BlockedUserUiState(
+                    BlockedUserUiModel(
                         userId = 5L,
                         profileImageUrl = "",
                         nickname = "포도"

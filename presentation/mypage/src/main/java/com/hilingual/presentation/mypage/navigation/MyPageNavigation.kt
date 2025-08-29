@@ -55,7 +55,7 @@ fun NavController.navigateToMyPage(
     )
 }
 
-fun NavController.navigateToProfileEdit(
+private fun NavController.navigateToProfileEdit(
     navOptions: NavOptions? = null
 ) {
     navigate(
@@ -64,7 +64,7 @@ fun NavController.navigateToProfileEdit(
     )
 }
 
-fun NavController.navigateToBlockedUser(
+private fun NavController.navigateToBlockedUser(
     navOptions: NavOptions? = null
 ) {
     navigate(
@@ -77,7 +77,7 @@ fun NavGraphBuilder.myPageNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
     navigateUp: () -> Unit,
-    navigateToMyFeed: () -> Unit,
+    navigateToMyFeedProfile: () -> Unit,
     navigateToFeedProfile: (Long) -> Unit,
     navigateToAlarm: () -> Unit,
     navigateToSplash: () -> Unit
@@ -92,10 +92,10 @@ fun NavGraphBuilder.myPageNavGraph(
         composable<MyPageMain> {
             MyPageRoute(
                 paddingValues = paddingValues,
-                navigateToProfileEdit = { navController.navigateToProfileEdit() },
-                navigateToMyFeed = navigateToMyFeed,
+                navigateToProfileEdit = navController::navigateToProfileEdit,
+                navigateToMyFeedProfile = navigateToMyFeedProfile,
                 navigateToAlarm = navigateToAlarm,
-                navigateToBlock = { navController.navigateToBlockedUser() },
+                navigateToBlock = navController::navigateToBlockedUser,
                 navigateToSplash = navigateToSplash
             )
         }

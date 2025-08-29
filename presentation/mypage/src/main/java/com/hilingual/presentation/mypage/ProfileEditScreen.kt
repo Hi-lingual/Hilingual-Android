@@ -73,7 +73,7 @@ internal fun ProfileEditRoute(
 }
 
 @Composable
-internal fun ProfileEditScreen(
+private fun ProfileEditScreen(
     paddingValues: PaddingValues,
     profileImageUrl: String,
     profileNickname: String,

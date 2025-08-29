@@ -58,7 +58,7 @@ import com.hilingual.presentation.mypage.component.SettingItem
 internal fun MyPageRoute(
     paddingValues: PaddingValues,
     navigateToProfileEdit: () -> Unit,
-    navigateToMyFeed: () -> Unit,
+    navigateToMyFeedProfile: () -> Unit,
     navigateToAlarm: () -> Unit,
     navigateToBlock: () -> Unit,
     navigateToSplash: () -> Unit,
@@ -87,7 +87,7 @@ internal fun MyPageRoute(
                 profileImageUrl = state.data.profileImageUrl,
                 profileNickname = state.data.profileNickname,
                 onProfileEditClick = navigateToProfileEdit,
-                onMyFeedClick = navigateToMyFeed,
+                onMyFeedClick = navigateToMyFeedProfile,
                 onAlarmClick = navigateToAlarm,
                 onBlockClick = navigateToBlock,
                 onCustomerCenterClick = { context.launchCustomTabs(UrlConstant.KAKAOTALK_CHANNEL) },
@@ -101,7 +101,7 @@ internal fun MyPageRoute(
 }
 
 @Composable
-internal fun MyPageScreen(
+private fun MyPageScreen(
     paddingValues: PaddingValues,
     profileImageUrl: String,
     profileNickname: String,
