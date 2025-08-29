@@ -51,7 +51,7 @@ internal fun BlockedUserRoute(
         viewModel.loadInitialData()
     }
 
-    when (val state = uiState) {
+    when (val state = uiState.blockedUserList) {
         is UiState.Success -> {
             BlockedUserScreen(
                 paddingValues = paddingValues,

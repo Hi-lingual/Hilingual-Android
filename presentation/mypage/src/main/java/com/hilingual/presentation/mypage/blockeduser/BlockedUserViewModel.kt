@@ -1,22 +1,20 @@
 package com.hilingual.presentation.mypage.blockeduser
 
 import androidx.lifecycle.ViewModel
-import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
 internal class BlockedUserViewModel @Inject constructor() : ViewModel() {
-    private val _uiState =
-        MutableStateFlow<UiState<ImmutableList<BlockedUserUiModel>>>(UiState.Loading)
-    val uiState: StateFlow<UiState<ImmutableList<BlockedUserUiModel>>> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(BlockedUserUiState())
+    val uiState: StateFlow<BlockedUserUiState> = _uiState.asStateFlow()
 
     fun loadInitialData() {
         val dummy = persistentListOf(
@@ -46,14 +44,21 @@ internal class BlockedUserViewModel @Inject constructor() : ViewModel() {
                 nickname = "포도"
             )
         )
-        _uiState.value = UiState.Success(data = dummy)
+        _uiState.update { it.copy(blockedUserList = UiState.Success(data = dummy)) }
     }
 
     fun onUnblockStatusChanged(userId: Long) {
-        _uiState.updateSuccess { list ->
-            list.map { user ->
-                if (user.userId == userId) user.copy(isBlocked = !user.isBlocked) else user
-            }.toPersistentList()
+        _uiState.update { currentList ->
+            when (val listState = currentList.blockedUserList) {
+                is UiState.Success -> {
+                    val updatedList = listState.data.map { user ->
+                        if (user.userId == userId) user.copy(isBlocked = !user.isBlocked) else user
+                    }.toPersistentList()
+                    currentList.copy(blockedUserList = UiState.Success(data = updatedList))
+                }
+
+                else -> currentList
+            }
         }
     }
 }
