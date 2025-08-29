@@ -51,7 +51,6 @@ import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import com.hilingual.presentation.diarywrite.navigation.diaryWriteNavGraph
 import com.hilingual.presentation.feed.navigation.feedNavGraph
-import com.hilingual.presentation.feed.navigation.feedSearchNavGraph
 import com.hilingual.presentation.feedprofile.profile.navigation.feedProfileNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
@@ -248,12 +247,6 @@ internal fun MainScreen(
                     navigateUp = appState::navigateUp,
                     navigateToFeedProfile = appState::navigateToFeedProfileGraph,
                     navController = appState.navController
-                )
-
-                feedSearchNavGraph(
-                    paddingValues = innerPadding,
-                    navigateUp = appState::navigateUp,
-                    navigateToFeedProfile = appState::navigateToFeedProfileGraph
                 )
             }
 

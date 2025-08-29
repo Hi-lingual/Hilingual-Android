@@ -5,15 +5,17 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import androidx.navigation.toRoute
 import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.feedprofile.follow.FollowListRoute
 import com.hilingual.presentation.feedprofile.profile.FeedProfileRoute
+import com.hilingual.presentation.feedprofile.profile.FeedProfileViewModel
 import kotlinx.serialization.Serializable
 
 private const val ANIMATION_DURATION = 300
@@ -22,7 +24,7 @@ private const val ANIMATION_DURATION = 300
 internal data class FeedProfileGraph(val userId: Long)
 
 @Serializable
-internal data class FeedProfile(val userId: Long) : Route
+internal data object FeedProfile : Route
 
 @Serializable
 internal data object FollowList : Route
@@ -48,9 +50,13 @@ fun NavGraphBuilder.feedProfileNavGraph(
         exitTransition = { ExitTransition.None },
         popEnterTransition = { EnterTransition.None }
     ) {
-        composable<FeedProfile> { entry ->
-            entry.toRoute<FeedProfile>().userId
+        composable<FeedProfile> { backStackEntry ->
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(FeedProfileGraph::class)
+            }
+            val viewModel: FeedProfileViewModel = hiltViewModel(parentEntry)
             FeedProfileRoute(
+                viewModel = viewModel,
                 paddingValues = paddingValues,
                 navigateUp = navigateUp,
                 navigateToFollowList = { navController.navigateToFollowList() },

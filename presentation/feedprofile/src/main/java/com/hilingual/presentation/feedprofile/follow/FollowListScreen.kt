@@ -40,7 +40,7 @@ internal fun FollowListRoute(
         followings = uiState.followingList,
         onBackClick = navigateUp,
         onProfileClick = navigateToFeedProfile,
-        onActionButtonClick = { userId, isFollowing ->
+        onActionButtonClick = { _, _ ->
         }
     )
 }
