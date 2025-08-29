@@ -43,7 +43,6 @@ internal class SplashViewModel @Inject constructor(
             val isProfileCompleted = tokenManager.isProfileCompleted()
 
             _uiState.value = when {
-                // TODO: Otp 통과 여부 로컬에 저장후 이동시키는 로직 필요.
                 accessToken.isNullOrEmpty() || refreshToken.isNullOrEmpty() -> SplashUiState.NotLoggedIn
                 isProfileCompleted.not() -> SplashUiState.OnboardingRequired
                 else -> SplashUiState.LoggedIn
