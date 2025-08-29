@@ -15,8 +15,10 @@
  */
 package com.hilingual.presentation.otp.component
 
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +35,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -96,12 +99,28 @@ private fun OtpChar(
     isError: Boolean
 ) {
     val isFilled = char != null
+    val scale = remember { Animatable(if (isFilled) 1f else 0f) }
 
-    val scale by animateFloatAsState(
-        targetValue = if (isFilled) 1f else 0f,
-        animationSpec = spring(),
-        label = "OtpCharScale"
-    )
+    LaunchedEffect(isFilled) {
+        if (isFilled) {
+            scale.animateTo(
+                targetValue = 1.5f,
+                animationSpec = tween(durationMillis = 150)
+            )
+            scale.animateTo(
+                targetValue = 1f,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessLow
+                )
+            )
+        } else {
+            scale.animateTo(
+                targetValue = 0f,
+                animationSpec = tween(durationMillis = 100)
+            )
+        }
+    }
 
     val borderColor = when {
         isError -> HilingualTheme.colors.alertRed
@@ -134,8 +153,8 @@ private fun OtpChar(
             color = textColor,
             textAlign = TextAlign.Center,
             modifier = Modifier.graphicsLayer {
-                scaleX = scale
-                scaleY = scale
+                scaleX = scale.value
+                scaleY = scale.value
             }
         )
     }
