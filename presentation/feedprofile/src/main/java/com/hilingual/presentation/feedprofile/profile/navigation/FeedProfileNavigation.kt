@@ -19,7 +19,7 @@ import kotlinx.serialization.Serializable
 private const val ANIMATION_DURATION = 300
 
 @Serializable
-internal data class FeedProfileGraph(val userId: Long) : Route
+internal data class FeedProfileGraph(val userId: Long)
 
 @Serializable
 internal data class FeedProfile(val userId: Long) : Route
@@ -40,13 +40,13 @@ fun NavGraphBuilder.feedProfileNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
     navigateUp: () -> Unit,
-    navigateToFeedProfile: (Long) -> Unit,
+    navigateToFeedProfile: (Long) -> Unit
 ) {
     navigation<FeedProfileGraph>(
         startDestination = FeedProfile::class,
         enterTransition = enterTransition,
         exitTransition = { ExitTransition.None },
-        popEnterTransition = { EnterTransition.None },
+        popEnterTransition = { EnterTransition.None }
     ) {
         composable<FeedProfile> { entry ->
             entry.toRoute<FeedProfile>().userId

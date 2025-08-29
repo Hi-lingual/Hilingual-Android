@@ -36,6 +36,16 @@ data class FeedProfileUiState(
                     isLiked = false,
                     diaryImageUrl = null,
                     originalText = "가짜 사용자의 일기 내용입니다."
+                ),
+                SharedDiaryItemModel(
+                    profileImageUrl = "",
+                    nickname = "가짜프로필",
+                    diaryId = 3L,
+                    sharedDate = 1720000000L,
+                    likeCount = 12,
+                    isLiked = false,
+                    diaryImageUrl = null,
+                    originalText = "가짜 사용자의 일기 내용입니다."
                 )
             ),
             likedDiarys = persistentListOf()
