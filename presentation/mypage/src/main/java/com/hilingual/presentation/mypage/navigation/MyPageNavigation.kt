@@ -27,8 +27,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.hilingual.core.navigation.MainTabRoute
 import com.hilingual.core.navigation.Route
-import com.hilingual.presentation.mypage.blockeduser.BlockedUserRoute
 import com.hilingual.presentation.mypage.MyPageRoute
+import com.hilingual.presentation.mypage.blockeduser.BlockedUserRoute
 import com.hilingual.presentation.mypage.profileedit.ProfileEditRoute
 import kotlinx.serialization.Serializable
 
@@ -50,7 +50,7 @@ fun NavController.navigateToMyPage(
     navOptions: NavOptions? = null
 ) {
     navigate(
-        route = MyPage,
+        route = MyPageGraph,
         navOptions = navOptions
     )
 }
