@@ -51,6 +51,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.mypage.component.LogoutDialog
 import com.hilingual.presentation.mypage.component.MyInfoBox
 import com.hilingual.presentation.mypage.component.SettingItem
+import com.jakewharton.processphoenix.ProcessPhoenix
 
 @Composable
 internal fun MyPageRoute(
@@ -59,7 +60,6 @@ internal fun MyPageRoute(
     navigateToMyFeedProfile: () -> Unit,
     navigateToAlarm: () -> Unit,
     navigateToBlock: () -> Unit,
-    navigateToSplash: () -> Unit,
     viewModel: MyPageViewModel
 ) {
     val context = LocalContext.current
@@ -70,6 +70,10 @@ internal fun MyPageRoute(
         when (sideEffect) {
             is MyPageSideEffect.ShowRetryDialog -> {
                 dialogTrigger.show(sideEffect.onRetry)
+            }
+
+            MyPageSideEffect.RestartApp -> {
+                ProcessPhoenix.triggerRebirth(context)
             }
         }
     }
@@ -86,7 +90,7 @@ internal fun MyPageRoute(
                 onBlockClick = navigateToBlock,
                 onCustomerCenterClick = { context.launchCustomTabs(UrlConstant.KAKAOTALK_CHANNEL) },
                 onTermsClick = { context.launchCustomTabs(UrlConstant.PRIVACY_POLICY) },
-                onLogoutClick = navigateToSplash
+                onLogoutClick = viewModel::logout
             )
         }
 

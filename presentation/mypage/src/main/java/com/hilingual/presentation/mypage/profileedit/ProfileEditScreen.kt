@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,13 +38,14 @@ import com.hilingual.presentation.mypage.MyPageSideEffect
 import com.hilingual.presentation.mypage.MyPageViewModel
 import com.hilingual.presentation.mypage.component.ProfileItem
 import com.hilingual.presentation.mypage.component.WithdrawDialog
+import com.jakewharton.processphoenix.ProcessPhoenix
 
 @Composable
 internal fun ProfileEditRoute(
     paddingValues: PaddingValues,
-    navigateToSplash: () -> Unit,
     viewModel: MyPageViewModel
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
 
@@ -51,6 +53,10 @@ internal fun ProfileEditRoute(
         when (sideEffect) {
             is MyPageSideEffect.ShowRetryDialog -> {
                 dialogTrigger.show(sideEffect.onRetry)
+            }
+
+            MyPageSideEffect.RestartApp -> {
+                ProcessPhoenix.triggerRebirth(context)
             }
         }
     }
@@ -62,7 +68,7 @@ internal fun ProfileEditRoute(
                 profileImageUrl = state.data.profileImageUrl,
                 onProfileImageUriChanged = viewModel::patchProfileImage,
                 profileNickname = state.data.profileNickname,
-                onWithdrawClick = navigateToSplash
+                onWithdrawClick = viewModel::withdraw
             )
         }
 

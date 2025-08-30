@@ -41,7 +41,7 @@ import kotlinx.serialization.Serializable
 private const val ANIMATION_DURATION = 300
 
 @Serializable
-data object MyPageGraph
+internal data object MyPageGraph
 
 @Serializable
 data object MyPage : MainTabRoute
@@ -85,8 +85,7 @@ fun NavGraphBuilder.myPageNavGraph(
     navigateUp: () -> Unit,
     navigateToMyFeedProfile: () -> Unit,
     navigateToFeedProfile: (Long) -> Unit,
-    navigateToAlarm: () -> Unit,
-    navigateToSplash: () -> Unit
+    navigateToAlarm: () -> Unit
 ) {
     navigation<MyPageGraph>(
         startDestination = MyPage,
@@ -104,7 +103,6 @@ fun NavGraphBuilder.myPageNavGraph(
                 navigateToMyFeedProfile = navigateToMyFeedProfile,
                 navigateToAlarm = navigateToAlarm,
                 navigateToBlock = navController::navigateToBlockedUser,
-                navigateToSplash = navigateToSplash,
                 viewModel = vm
             )
         }
@@ -119,7 +117,6 @@ fun NavGraphBuilder.myPageNavGraph(
 
             ProfileEditRoute(
                 paddingValues = paddingValues,
-                navigateToSplash = navigateToSplash,
                 viewModel = vm
             )
         }

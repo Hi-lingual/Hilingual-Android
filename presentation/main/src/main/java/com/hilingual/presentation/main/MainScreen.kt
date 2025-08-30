@@ -241,8 +241,7 @@ internal fun MainScreen(
                     navigateUp = appState::navigateUp,
                     navigateToMyFeedProfile = { /* TODO: 내 피드 화면으로 이동 */ },
                     navigateToFeedProfile = { /* TODO: 유저 프로필 화면으로 이동 */ },
-                    navigateToAlarm = { /* TODO: 알림 설정 화면으로 이동 */ },
-                    navigateToSplash = appState::navigateToSplash
+                    navigateToAlarm = { /* TODO: 알림 설정 화면으로 이동 */ }
                 )
             }
 

@@ -2,6 +2,7 @@ package com.hilingual.presentation.mypage
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.util.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,7 +31,7 @@ internal class MyPageViewModel @Inject constructor() : ViewModel() {
         _uiState.value = UiState.Success(
             MyPageUiState(
                 profileImageUrl = "",
-                profileNickname = "임시 닉네임이지롱"
+                profileNickname = "임시 닉네임"
             )
         )
     }
@@ -42,8 +44,23 @@ internal class MyPageViewModel @Inject constructor() : ViewModel() {
             current.copy(profileImageUrl = newImageUri?.toString().orEmpty())
         )
     }
+
+    fun logout() {
+        // TODO: 로그아웃 POST API 연결 by 지영
+        viewModelScope.launch {
+            _sideEffect.emit(MyPageSideEffect.RestartApp)
+        }
+    }
+
+    fun withdraw() {
+        // TODO: 회원탈퇴 DELETE API 연결 by 지영
+        viewModelScope.launch {
+            _sideEffect.emit(MyPageSideEffect.RestartApp)
+        }
+    }
 }
 
 sealed interface MyPageSideEffect {
     data class ShowRetryDialog(val onRetry: () -> Unit) : MyPageSideEffect
+    data object RestartApp : MyPageSideEffect
 }
