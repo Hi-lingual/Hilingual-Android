@@ -77,7 +77,9 @@ internal fun FeedProfileRoute(
                 onContentDetailClick = navigateToFeedDiary,
                 onLikeClick = { },
                 onReportUserClick = { },
-                onBlockClick = { }
+                onBlockClick = { },
+                onReportDiaryClick = { },
+                onUnpublishClick = { }
             )
         }
 
@@ -97,6 +99,8 @@ private fun FeedProfileScreen(
     onLikeClick: (Long) -> Unit,
     onReportUserClick: () -> Unit,
     onBlockClick: () -> Unit,
+    onUnpublishClick: (diaryId: Long) -> Unit,
+    onReportDiaryClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -196,11 +200,9 @@ private fun FeedProfileScreen(
                                     onContentDetailClick = onContentDetailClick,
                                     onLikeClick = onLikeClick,
                                     onUnpublishClick = { diaryId ->
-                                        onBlockClick()
+                                        onUnpublishClick(diaryId)
                                     },
-                                    onReportClick = { diaryId ->
-                                        onReportUserClick()
-                                    },
+                                    onReportClick = onReportDiaryClick,
                                     modifier = Modifier.fillParentMaxSize()
                                 )
                             }
@@ -244,9 +246,9 @@ private fun FeedProfileScreen(
                                 onContentDetailClick = onContentDetailClick,
                                 onLikeClick = onLikeClick,
                                 onUnpublishClick = { diaryId ->
+                                    onUnpublishClick(diaryId)
                                 },
-                                onReportClick = { diaryId ->
-                                },
+                                onReportClick = onReportDiaryClick,
                                 modifier = Modifier.fillParentMaxSize()
                             )
                         }
@@ -308,17 +310,17 @@ private fun FeedProfileScreenPreview() {
             paddingValues = PaddingValues(0.dp),
             uiState = FeedProfileUiState(
                 feedProfileInfo =
-                FeedProfileInfoModel(
-                    profileImageUrl = "",
-                    nickname = "하이링",
-                    streak = 5,
-                    follower = 120,
-                    following = 98,
-                    isMine = true,
-                    isFollowing = true,
-                    isFollowed = true,
-                    isBlock = false
-                ),
+                    FeedProfileInfoModel(
+                        profileImageUrl = "",
+                        nickname = "하이링",
+                        streak = 5,
+                        follower = 120,
+                        following = 98,
+                        isMine = true,
+                        isFollowing = true,
+                        isFollowed = true,
+                        isBlock = false
+                    ),
                 sharedDiarys = persistentListOf(
                     SharedDiaryItemModel(
                         profileImageUrl = "",
@@ -384,7 +386,9 @@ private fun FeedProfileScreenPreview() {
             onFollowClick = {},
             onProfileClick = {},
             onContentDetailClick = {},
-            onLikeClick = {}
+            onLikeClick = {},
+            onUnpublishClick = {},
+            onReportDiaryClick = {}
         )
     }
 }

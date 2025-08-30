@@ -28,7 +28,7 @@ internal fun DiaryListScreen(
     onContentDetailClick: (diaryId: Long) -> Unit,
     onLikeClick: (diaryId: Long) -> Unit,
     onUnpublishClick: (diaryId: Long) -> Unit,
-    onReportClick: (diaryId: Long) -> Unit,
+    onReportClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -71,7 +71,7 @@ internal fun DiaryListScreen(
                         onLikeClick = { onLikeClick(diaryId) },
                         isMine = isMine,
                         onUnpublishClick = { onUnpublishClick(diaryId) },
-                        onReportClick = { onReportClick(diaryId) }
+                        onReportClick = onReportClick
                     )
                 }
 

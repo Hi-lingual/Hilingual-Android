@@ -79,6 +79,8 @@ internal fun FeedRoute(
                 onMyProfileClick = navigateToMyFeedProfile,
                 onFeedProfileClick = navigateToFeedProfile,
                 onContentDetailClick = navigateToFeedDiary,
+                onUnPublishClick = {},
+                onReportClick = {},
                 readAllFeed = viewModel::readAllFeed
             )
         }
@@ -94,6 +96,8 @@ private fun FeedScreen(
     onSearchClick: () -> Unit,
     onFeedProfileClick: (Long) -> Unit,
     onContentDetailClick: (Long) -> Unit,
+    onUnPublishClick: (Long) -> Unit,
+    onReportClick: () -> Unit,
     readAllFeed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -175,8 +179,8 @@ private fun FeedScreen(
                     onContentDetailClick = onContentDetailClick,
                     onLikeClick = {},
                     hasFollowing = if (page == 1) uiState.hasFollowing else false,
-                    onUnpublishClick = {},
-                    onReportClick = {}
+                    onUnpublishClick = onUnPublishClick,
+                    onReportClick = onReportClick
                 )
             }
 
@@ -206,6 +210,8 @@ private fun FeedScreenPreview() {
             onFeedProfileClick = {},
             onContentDetailClick = {},
             readAllFeed = {},
+            onUnPublishClick = {},
+            onReportClick = {},
             uiState = FeedUiState.Fake
         )
     }
