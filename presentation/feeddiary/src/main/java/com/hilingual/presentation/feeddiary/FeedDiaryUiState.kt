@@ -37,6 +37,7 @@ internal data class FeedDiaryUiState(
             isMine = true,
             writtenDate = "8월 28일 목요일",
             profileContent = ProfileContentUiModel(
+                userId = 0,
                 profileUrl = "",
                 nickname = "작나",
                 streak = 2,

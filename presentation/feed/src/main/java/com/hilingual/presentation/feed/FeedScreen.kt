@@ -51,6 +51,8 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun FeedRoute(
     paddingValues: PaddingValues,
+    navigateToMyFeedProfile: () -> Unit,
+    navigateToFeedProfile: (userId: Long) -> Unit,
     navigateToFeedDiary: (Long) -> Unit,
     navigateToFeedSearch: () -> Unit,
     viewModel: FeedViewModel = hiltViewModel()
@@ -73,11 +75,10 @@ internal fun FeedRoute(
             FeedScreen(
                 paddingValues = paddingValues,
                 uiState = state.data,
-                onProfileClick = {
-                    // TODO: 피드 프로필 화면으로 이동
-                },
                 onSearchClick = navigateToFeedSearch,
                 onFeedItemClick = navigateToFeedDiary,
+                onMyProfileClick = navigateToMyFeedProfile,
+                onFeedProfileClick = navigateToFeedProfile,
                 readAllFeed = viewModel::readAllFeed
             )
         }
@@ -89,8 +90,9 @@ internal fun FeedRoute(
 private fun FeedScreen(
     paddingValues: PaddingValues,
     uiState: FeedUiState,
-    onProfileClick: () -> Unit,
+    onMyProfileClick: () -> Unit,
     onSearchClick: () -> Unit,
+    onFeedProfileClick: (Long) -> Unit,
     onFeedItemClick: (Long) -> Unit,
     readAllFeed: () -> Unit,
     modifier: Modifier = Modifier
@@ -144,7 +146,7 @@ private fun FeedScreen(
     ) {
         FeedTopAppBar(
             profileImageUrl = uiState.myProfileUrl,
-            onProfileClick = onProfileClick,
+            onProfileClick = onMyProfileClick,
             onSearchClick = onSearchClick
         )
 
@@ -169,7 +171,7 @@ private fun FeedScreen(
                 FeedTabScreen(
                     listState = currentListState,
                     feedList = feedList,
-                    onProfileClick = {},
+                    onProfileClick = onFeedProfileClick,
                     onMenuClick = {},
                     onContentClick = onFeedItemClick,
                     onLikeClick = {},
@@ -199,8 +201,9 @@ private fun FeedScreenPreview() {
     HilingualTheme {
         FeedScreen(
             paddingValues = PaddingValues(),
-            onProfileClick = {},
+            onMyProfileClick = {},
             onSearchClick = {},
+            onFeedProfileClick = {},
             onFeedItemClick = {},
             readAllFeed = {},
             uiState = FeedUiState.Fake

@@ -10,6 +10,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class FeedProfileViewModel @Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<FeedProfileUiState>>(UiState.Loading)
+    private val _uiState = MutableStateFlow<UiState<FeedProfileUiState>>(UiState.Success(FeedProfileUiState.Fake))
     val uiState: StateFlow<UiState<FeedProfileUiState>> = _uiState.asStateFlow()
 }
