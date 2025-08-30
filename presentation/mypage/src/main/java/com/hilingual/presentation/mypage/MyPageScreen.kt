@@ -34,19 +34,72 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.constant.UrlConstant
+import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.topappbar.TitleLeftAlignedTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.mypage.component.LogoutDialog
 import com.hilingual.presentation.mypage.component.MyInfoBox
 import com.hilingual.presentation.mypage.component.SettingItem
+import com.jakewharton.processphoenix.ProcessPhoenix
 
 @Composable
-internal fun MypageScreen(
+internal fun MyPageRoute(
+    paddingValues: PaddingValues,
+    navigateToProfileEdit: () -> Unit,
+    navigateToMyFeedProfile: () -> Unit,
+    navigateToAlarm: () -> Unit,
+    navigateToBlock: () -> Unit,
+    viewModel: MyPageViewModel
+) {
+    val context = LocalContext.current
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val dialogTrigger = LocalDialogTrigger.current
+
+    viewModel.sideEffect.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is MyPageSideEffect.ShowRetryDialog -> {
+                dialogTrigger.show(sideEffect.onRetry)
+            }
+
+            MyPageSideEffect.RestartApp -> {
+                ProcessPhoenix.triggerRebirth(context)
+            }
+        }
+    }
+
+    when (val state = uiState) {
+        is UiState.Success -> {
+            MyPageScreen(
+                paddingValues = paddingValues,
+                profileImageUrl = state.data.profileImageUrl,
+                profileNickname = state.data.profileNickname,
+                onProfileEditClick = navigateToProfileEdit,
+                onMyFeedClick = navigateToMyFeedProfile,
+                onAlarmClick = navigateToAlarm,
+                onBlockClick = navigateToBlock,
+                onCustomerCenterClick = { context.launchCustomTabs(UrlConstant.KAKAOTALK_CHANNEL) },
+                onTermsClick = { context.launchCustomTabs(UrlConstant.PRIVACY_POLICY) },
+                onLogoutClick = viewModel::logout
+            )
+        }
+
+        else -> {}
+    }
+}
+
+@Composable
+private fun MyPageScreen(
     paddingValues: PaddingValues,
     profileImageUrl: String,
     profileNickname: String,
@@ -169,9 +222,9 @@ private fun ArrowIcon() {
 
 @Preview
 @Composable
-private fun MypageScreenPreview() {
+private fun MyPageScreenPreview() {
     HilingualTheme {
-        MypageScreen(
+        MyPageScreen(
             paddingValues = PaddingValues(),
             profileImageUrl = "",
             profileNickname = "하링이",

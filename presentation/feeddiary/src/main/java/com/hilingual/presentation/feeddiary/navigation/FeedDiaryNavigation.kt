@@ -13,43 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.mypage
+package com.hilingual.presentation.feeddiary.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.hilingual.core.navigation.MainTabRoute
+import com.hilingual.core.navigation.Route
+import com.hilingual.presentation.feeddiary.FeedDiaryRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object MyPage : MainTabRoute
+data class FeedDiary(
+    val diaryId: Long
+) : Route
 
-fun NavController.navigateToMyPage(
+fun NavController.navigateToFeedDiary(
+    diaryId: Long,
     navOptions: NavOptions? = null
 ) {
     navigate(
-        route = MyPage,
+        route = FeedDiary(diaryId),
         navOptions = navOptions
     )
 }
 
-fun NavGraphBuilder.myPageNavGraph(
-    paddingValues: PaddingValues
+fun NavGraphBuilder.feedDiaryNavGraph(
+    paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
+    navigateToMyFeedProfile: () -> Unit,
+    navigateToFeedProfile: (userId: Long) -> Unit
 ) {
-    composable<MyPage> {
-        MypageScreen(
+    composable<FeedDiary> {
+        FeedDiaryRoute(
             paddingValues = paddingValues,
-            profileImageUrl = "",
-            profileNickname = "하링이",
-            onProfileEditClick = {},
-            onMyFeedClick = {},
-            onAlarmClick = {},
-            onBlockClick = {},
-            onCustomerCenterClick = {},
-            onTermsClick = {},
-            onLogoutClick = {}
+            navigateUp = navigateUp,
+            navigateToMyFeedProfile = navigateToMyFeedProfile,
+            navigateToFeedProfile = navigateToFeedProfile
         )
     }
 }

@@ -18,14 +18,19 @@ package com.hilingual.presentation.feeddiary
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
+import com.hilingual.presentation.feeddiary.navigation.FeedDiary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -36,10 +41,13 @@ internal class FeedDiaryViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val diaryRepository: DiaryRepository
 ) : ViewModel() {
-    //    val diaryId = savedStateHandle.toRoute<FeedDiary>().diaryId
+    val diaryId = savedStateHandle.toRoute<FeedDiary>().diaryId
 
-    private val _uiState = MutableStateFlow<UiState<FeedDiaryUiState>>(UiState.Loading)
+    private val _uiState = MutableStateFlow<UiState<FeedDiaryUiState>>(UiState.Success(FeedDiaryUiState.Fake))
     val uiState: StateFlow<UiState<FeedDiaryUiState>> = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<FeedDiarySideEffect>()
+    val sideEffect: SharedFlow<FeedDiarySideEffect> = _sideEffect.asSharedFlow()
 
     fun toggleBookmark(phraseId: Long, isMarked: Boolean) {
         viewModelScope.launch {
@@ -69,4 +77,18 @@ internal class FeedDiaryViewModel @Inject constructor(
                 .onLogFailure { }
         }
     }
+
+    fun diaryUnpublish() {
+        // TODO: API 호출 성공 후 표시
+        viewModelScope.launch {
+            _sideEffect.emit(FeedDiarySideEffect.ShowToast(message = "일기가 비공개 되었어요."))
+            _sideEffect.emit(FeedDiarySideEffect.NavigateToUp)
+        }
+    }
+}
+
+sealed interface FeedDiarySideEffect {
+    data object NavigateToUp : FeedDiarySideEffect
+    data class ShowSnackbar(val message: String, val actionLabel: String) : FeedDiarySideEffect
+    data class ShowToast(val message: String) : FeedDiarySideEffect
 }

@@ -8,5 +8,5 @@ import kotlinx.collections.immutable.ImmutableList
 @Immutable
 internal data class FeedSearchUiState(
     val searchWord: String = "",
-    val searchResultUserList: UiState<ImmutableList<UserSearchUiModel>> = UiState.Loading
+    val searchResultUserList: UiState<ImmutableList<UserSearchUiModel>> = UiState.Empty
 )

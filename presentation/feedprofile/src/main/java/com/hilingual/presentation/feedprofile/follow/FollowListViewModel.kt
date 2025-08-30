@@ -9,6 +9,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class FollowListViewModel @Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow(FollowListUiState())
+    private val _uiState = MutableStateFlow(FollowListUiState.Fake)
     val uiState: StateFlow<FollowListUiState> = _uiState.asStateFlow()
 }

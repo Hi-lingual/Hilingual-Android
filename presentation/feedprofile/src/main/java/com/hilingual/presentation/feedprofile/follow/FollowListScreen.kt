@@ -21,13 +21,15 @@ import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feedprofile.follow.component.FollowTabRow
 import com.hilingual.presentation.feedprofile.follow.model.FollowItemModel
+import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun FollowListRoute(
     paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
+    navigateToFeedProfile: (Long) -> Unit,
     viewModel: FollowListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -36,9 +38,10 @@ internal fun FollowListRoute(
         paddingValues = paddingValues,
         followers = uiState.followerList,
         followings = uiState.followingList,
-        onBackClick = { },
-        onProfileClick = { },
-        onActionButtonClick = { _, _ -> }
+        onBackClick = navigateUp,
+        onProfileClick = navigateToFeedProfile,
+        onActionButtonClick = { _, _ ->
+        }
     )
 }
 
@@ -77,9 +80,9 @@ private fun FollowListScreen(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
         ) { page ->
-            val followState = when (page) {
-                0 -> followers
-                else -> followings
+            val (followState, emptyCardType) = when (page) {
+                0 -> followers to FeedEmptyCardType.NO_FOLLOWER
+                else -> followings to FeedEmptyCardType.NO_FOLLOWING
             }
 
             when (followState) {
@@ -87,10 +90,12 @@ private fun FollowListScreen(
                 is UiState.Success -> {
                     FollowScreen(
                         follows = followState.data,
+                        emptyCardType = emptyCardType,
                         onProfileClick = onProfileClick,
                         onActionButtonClick = onActionButtonClick
                     )
                 }
+
                 else -> {}
             }
         }
@@ -103,49 +108,8 @@ private fun FollowListScreenPreview() {
     HilingualTheme {
         FollowListScreen(
             paddingValues = PaddingValues(0.dp),
-            followers = UiState.Success(
-                persistentListOf(
-                    FollowItemModel(
-                        userId = 1L,
-                        profileImgUrl = "",
-                        nickname = "효빈",
-                        isFollowing = true,
-                        isFollowed = true
-                    ),
-                    FollowItemModel(
-                        userId = 2L,
-                        profileImgUrl = "",
-                        nickname = "민재",
-                        isFollowing = false,
-                        isFollowed = true
-                    )
-                )
-            ),
-            followings = UiState.Success(
-                persistentListOf(
-                    FollowItemModel(
-                        userId = 4L,
-                        profileImgUrl = "",
-                        nickname = "큰나",
-                        isFollowing = true,
-                        isFollowed = true
-                    ),
-                    FollowItemModel(
-                        userId = 5L,
-                        profileImgUrl = "",
-                        nickname = "작나",
-                        isFollowing = true,
-                        isFollowed = false
-                    ),
-                    FollowItemModel(
-                        userId = 6L,
-                        profileImgUrl = "",
-                        nickname = "지영",
-                        isFollowing = false,
-                        isFollowed = true
-                    )
-                )
-            ),
+            followers = FollowListUiState.Fake.followerList,
+            followings = FollowListUiState.Fake.followingList,
             onBackClick = {},
             onProfileClick = {},
             onActionButtonClick = { _, _ -> }

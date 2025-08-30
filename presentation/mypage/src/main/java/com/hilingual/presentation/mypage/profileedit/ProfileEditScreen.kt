@@ -1,5 +1,6 @@
-package com.hilingual.presentation.mypage
+package com.hilingual.presentation.mypage.profileedit
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,22 +20,67 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualProfileImageBottomSheet
 import com.hilingual.core.designsystem.component.picker.ProfileImagePicker
 import com.hilingual.core.designsystem.component.topappbar.TitleCenterAlignedTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.presentation.mypage.MyPageSideEffect
+import com.hilingual.presentation.mypage.MyPageViewModel
 import com.hilingual.presentation.mypage.component.ProfileItem
 import com.hilingual.presentation.mypage.component.WithdrawDialog
+import com.jakewharton.processphoenix.ProcessPhoenix
 
 @Composable
-internal fun ProfileEditScreen(
+internal fun ProfileEditRoute(
+    paddingValues: PaddingValues,
+    viewModel: MyPageViewModel
+) {
+    val context = LocalContext.current
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val dialogTrigger = LocalDialogTrigger.current
+
+    viewModel.sideEffect.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is MyPageSideEffect.ShowRetryDialog -> {
+                dialogTrigger.show(sideEffect.onRetry)
+            }
+
+            MyPageSideEffect.RestartApp -> {
+                ProcessPhoenix.triggerRebirth(context)
+            }
+        }
+    }
+
+    when (val state = uiState) {
+        is UiState.Success -> {
+            ProfileEditScreen(
+                paddingValues = paddingValues,
+                profileImageUrl = state.data.profileImageUrl,
+                onProfileImageUriChanged = viewModel::patchProfileImage,
+                profileNickname = state.data.profileNickname,
+                onWithdrawClick = viewModel::withdraw
+            )
+        }
+
+        else -> {}
+    }
+}
+
+@Composable
+private fun ProfileEditScreen(
     paddingValues: PaddingValues,
     profileImageUrl: String,
+    onProfileImageUriChanged: (Uri?) -> Unit,
     profileNickname: String,
     onWithdrawClick: () -> Unit
 ) {
@@ -46,6 +92,7 @@ internal fun ProfileEditScreen(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
             imageUri = uri.toString()
+            onProfileImageUriChanged(uri)
         }
     )
 
@@ -65,7 +112,7 @@ internal fun ProfileEditScreen(
 
         ProfileImagePicker(
             onClick = { isImageSheetVisible = true },
-            imageUrl = imageUri
+            imageUrl = imageUri.toString()
         )
 
         Spacer(modifier = Modifier.height(48.dp))
@@ -99,6 +146,7 @@ internal fun ProfileEditScreen(
         onDefaultImageClick = {
             isImageSheetVisible = false
             imageUri = null
+            onProfileImageUriChanged(null)
         },
         onGalleryImageClick = {
             isImageSheetVisible = false
@@ -124,6 +172,7 @@ private fun ProfileEditScreenPreview() {
         ProfileEditScreen(
             paddingValues = PaddingValues(),
             profileImageUrl = "",
+            onProfileImageUriChanged = {},
             profileNickname = "하링이",
             onWithdrawClick = {}
         )
