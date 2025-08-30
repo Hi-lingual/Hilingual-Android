@@ -239,14 +239,15 @@ internal fun MainScreen(
                     paddingValues = innerPadding,
                     navController = appState.navController,
                     navigateToFeedDiary = appState::navigateToFeedDiary,
-                    navigateToMyFeedProfile = appState::navigateToMyFeedProfileGraph,
-                    navigateToFeedProfile = appState::navigateToFeedProfileGraph
+                    navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
+                    navigateToFeedProfile = appState::navigateToFeedProfile
                 )
 
                 feedDiaryNavGraph(
                     paddingValues = innerPadding,
                     navigateUp = appState::navigateUp,
-                    navigateToFeedProfile = appState::navigateToFeedProfileGraph
+                    navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
+                    navigateToFeedProfile = appState::navigateToFeedProfile
                 )
 
                 myPageNavGraph(
@@ -256,7 +257,7 @@ internal fun MainScreen(
                 feedProfileNavGraph(
                     paddingValues = innerPadding,
                     navigateUp = appState::navigateUp,
-                    navigateToFeedProfile = appState::navigateToFeedProfileGraph,
+                    navigateToFeedProfile = appState::navigateToFeedProfile,
                     navController = appState.navController,
                     navigateToFeedDiary = { } // TODO: 피드 다이어리 상세로 이동해주세요 !! to.짝나
                 )

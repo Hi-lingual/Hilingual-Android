@@ -29,10 +29,10 @@ internal data object FeedProfile : Route
 @Serializable
 internal data object FollowList : Route
 
-fun NavController.navigateToFeedProfileGraph(userId: Long, navOptions: NavOptions? = null) =
+fun NavController.navigateToFeedProfile(userId: Long, navOptions: NavOptions? = null) =
     navigate(FeedProfileGraph(userId), navOptions)
 
-fun NavController.navigateToMyFeedProfileGraph(navOptions: NavOptions? = null) =
+fun NavController.navigateToMyFeedProfile(navOptions: NavOptions? = null) =
     navigate(FeedProfileGraph(0), navOptions)
 
 private fun NavController.navigateToFollowList(navOptions: NavOptions? = null) =

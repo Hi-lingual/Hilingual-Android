@@ -29,8 +29,8 @@ import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedba
 import com.hilingual.presentation.diarywrite.navigation.navigateToDiaryWrite
 import com.hilingual.presentation.feed.navigation.navigateToFeed
 import com.hilingual.presentation.feeddiary.navigation.navigateToFeedDiary
-import com.hilingual.presentation.feedprofile.profile.navigation.navigateToFeedProfileGraph
-import com.hilingual.presentation.feedprofile.profile.navigation.navigateToMyFeedProfileGraph
+import com.hilingual.presentation.feedprofile.profile.navigation.navigateToFeedProfile
+import com.hilingual.presentation.feedprofile.profile.navigation.navigateToMyFeedProfile
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.main.MainTab
 import com.hilingual.presentation.main.monitor.NetworkMonitor
@@ -171,15 +171,15 @@ internal class MainAppState(
         navController.navigateToFeedDiary(diaryId, navOptions)
     }
 
-    fun navigateToFeedProfileGraph(
+    fun navigateToFeedProfile(
         userId: Long,
         navOptions: NavOptions? = null
     ) {
-        navController.navigateToFeedProfileGraph(userId, navOptions)
+        navController.navigateToFeedProfile(userId, navOptions)
     }
 
-    fun navigateToMyFeedProfileGraph(navOptions: NavOptions? = null) {
-        navController.navigateToMyFeedProfileGraph(navOptions)
+    fun navigateToMyFeedProfile(navOptions: NavOptions? = null) {
+        navController.navigateToMyFeedProfile(navOptions)
     }
 
     fun navigateUp() {
