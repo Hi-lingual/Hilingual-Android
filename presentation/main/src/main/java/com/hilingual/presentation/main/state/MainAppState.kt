@@ -29,9 +29,12 @@ import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedba
 import com.hilingual.presentation.diarywrite.navigation.navigateToDiaryWrite
 import com.hilingual.presentation.feed.navigation.navigateToFeed
 import com.hilingual.presentation.feeddiary.navigation.navigateToFeedDiary
+import com.hilingual.presentation.feedprofile.profile.navigation.navigateToFeedProfile
+import com.hilingual.presentation.feedprofile.profile.navigation.navigateToMyFeedProfile
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.main.MainTab
 import com.hilingual.presentation.main.monitor.NetworkMonitor
+import com.hilingual.presentation.mypage.navigation.navigateToMyPage
 import com.hilingual.presentation.mypage.navigateToMyPage
 import com.hilingual.presentation.notification.navigation.navigateToNotification
 import com.hilingual.presentation.notification.navigation.navigateToNotificationSetting
@@ -121,6 +124,7 @@ internal class MainAppState(
             MainTab.MY -> navController.navigateToMyPage(navOptions = navOptions)
         }
     }
+
     private val clearStackNavOptions = navOptions {
         popUpTo(0) {
             inclusive = true
@@ -186,6 +190,17 @@ internal class MainAppState(
         navOptions: NavOptions? = null
     ) {
         navController.navigateToFeedDiary(diaryId, navOptions)
+    }
+
+    fun navigateToFeedProfile(
+        userId: Long,
+        navOptions: NavOptions? = null
+    ) {
+        navController.navigateToFeedProfile(userId, navOptions)
+    }
+
+    fun navigateToMyFeedProfile(navOptions: NavOptions? = null) {
+        navController.navigateToMyFeedProfile(navOptions)
     }
 
     fun navigateUp() {

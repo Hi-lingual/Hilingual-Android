@@ -46,7 +46,7 @@ internal fun FeedProfileInfo(
     nickname: String,
     follower: Int,
     following: Int,
-    onFollowTypeClick: () -> Unit,
+    onFollowClick: () -> Unit,
     streak: Int,
     isMine: Boolean,
     isFollowing: Boolean,
@@ -86,7 +86,7 @@ internal fun FeedProfileInfo(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .noRippleClickable(onClick = onFollowTypeClick)
+                        .noRippleClickable(onClick = onFollowClick)
                         .padding(bottom = 8.dp)
                 ) {
                     Text(
@@ -170,7 +170,7 @@ private fun FeedProfileInfoPreview() {
                 isFollowing = true,
                 isFollowed = true,
                 isBlock = false,
-                onFollowTypeClick = {},
+                onFollowClick = {},
                 onActionButtonClick = {}
             )
             FeedProfileInfo(
@@ -183,7 +183,7 @@ private fun FeedProfileInfoPreview() {
                 isFollowing = false,
                 isFollowed = false,
                 isBlock = false,
-                onFollowTypeClick = {},
+                onFollowClick = {},
                 onActionButtonClick = {}
             )
         }
