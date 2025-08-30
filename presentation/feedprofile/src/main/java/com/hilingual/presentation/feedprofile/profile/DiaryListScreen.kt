@@ -12,7 +12,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.hilingual.core.designsystem.component.content.FeedContent
+import com.hilingual.core.designsystem.component.content.FeedCard
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCard
 import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType
@@ -57,7 +57,7 @@ internal fun DiaryListScreen(
                     val userId = (this as? LikeDiaryItemModel)?.userId ?: 0L
                     val isMine = (this as? LikeDiaryItemModel)?.isMine ?: true
 
-                    FeedContent(
+                    FeedCard(
                         profileUrl = profileImageUrl,
                         onProfileClick = { onProfileClick(userId) },
                         nickname = nickname,

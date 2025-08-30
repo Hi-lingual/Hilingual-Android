@@ -55,7 +55,7 @@ import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-fun FeedContent(
+fun FeedCard(
     profileUrl: String,
     onProfileClick: () -> Unit,
     nickname: String,
@@ -371,7 +371,7 @@ private fun FeedContentPreviewWithImage() {
         var isLiked by remember { mutableStateOf(false) }
         var likeCount by remember { mutableStateOf(25) }
 
-        FeedContent(
+        FeedCard(
             profileUrl = "https://picsum.photos/id/237/200/200",
             nickname = "HilingualDev",
             streak = 7,
@@ -403,7 +403,7 @@ private fun FeedContentPreviewNoImage() {
         var isLiked by remember { mutableStateOf(true) }
         var likeCount by remember { mutableStateOf(102) }
 
-        FeedContent(
+        FeedCard(
             profileUrl = "",
             nickname = "User123",
             streak = null,

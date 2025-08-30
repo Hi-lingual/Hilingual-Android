@@ -34,7 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.hilingual.core.designsystem.component.content.FeedContent
+import com.hilingual.core.designsystem.component.content.FeedCard
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedEmptyCard
 import com.hilingual.presentation.feed.component.FeedEmptyCardType
@@ -80,7 +80,7 @@ internal fun FeedTabScreen(
                 key = { _, feed -> feed.diaryId }
             ) { index, feed ->
                 with(feed) {
-                    FeedContent(
+                    FeedCard(
                         profileUrl = profileUrl,
                         onProfileClick = { onProfileClick(userId) },
                         nickname = nickname,
