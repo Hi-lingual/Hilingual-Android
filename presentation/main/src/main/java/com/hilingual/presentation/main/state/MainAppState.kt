@@ -38,7 +38,6 @@ import com.hilingual.presentation.mypage.navigation.navigateToMyPage
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.otp.navigation.navigateToOtp
 import com.hilingual.presentation.splash.navigation.Splash
-import com.hilingual.presentation.splash.navigation.navigateToSplash
 import com.hilingual.presentation.voca.navigation.navigateToVoca
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
