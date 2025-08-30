@@ -34,7 +34,7 @@ import com.hilingual.presentation.feedprofile.profile.navigation.navigateToMyFee
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.main.MainTab
 import com.hilingual.presentation.main.monitor.NetworkMonitor
-import com.hilingual.presentation.mypage.navigateToMyPage
+import com.hilingual.presentation.mypage.navigation.navigateToMyPage
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.otp.navigation.navigateToOtp
 import com.hilingual.presentation.splash.navigation.Splash
@@ -121,6 +121,7 @@ internal class MainAppState(
             MainTab.MY -> navController.navigateToMyPage(navOptions = navOptions)
         }
     }
+
     private val clearStackNavOptions = navOptions {
         popUpTo(0) {
             inclusive = true
