@@ -95,7 +95,7 @@ fun NavGraphBuilder.myPageNavGraph(
         popExitTransition = popExitTransition
     ) {
         composable<MyPage> {
-            val vm = sharedMyPageViewModel(navController)
+            val viewModel = sharedMyPageViewModel(navController)
 
             MyPageRoute(
                 paddingValues = paddingValues,
@@ -103,7 +103,7 @@ fun NavGraphBuilder.myPageNavGraph(
                 navigateToMyFeedProfile = navigateToMyFeedProfile,
                 navigateToAlarm = navigateToAlarm,
                 navigateToBlock = navController::navigateToBlockedUser,
-                viewModel = vm
+                viewModel = viewModel
             )
         }
 
@@ -113,11 +113,11 @@ fun NavGraphBuilder.myPageNavGraph(
             popEnterTransition = { EnterTransition.None },
             popExitTransition = popExitTransition
         ) {
-            val vm = sharedMyPageViewModel(navController)
+            val viewModel = sharedMyPageViewModel(navController)
 
             ProfileEditRoute(
                 paddingValues = paddingValues,
-                viewModel = vm
+                viewModel = viewModel
             )
         }
 
