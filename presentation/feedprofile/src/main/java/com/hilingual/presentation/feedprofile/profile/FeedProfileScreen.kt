@@ -66,7 +66,11 @@ internal fun FeedProfileRoute(
                 paddingValues = paddingValues,
                 uiState = state.data,
                 onBackClick = navigateUp,
-                onFollowClick = navigateToFollowList,
+                onFollowClick = { isMine ->
+                    if (isMine) {
+                        navigateToFollowList()
+                    }
+                },
                 onActionButtonClick = { },
                 onProfileClick = navigateToFeedProfile,
                 onContentClick = navigateToFeedDiary,
@@ -87,7 +91,7 @@ private fun FeedProfileScreen(
     paddingValues: PaddingValues,
     uiState: FeedProfileUiState,
     onBackClick: () -> Unit,
-    onFollowClick: () -> Unit,
+    onFollowClick: (Boolean) -> Unit,
     onActionButtonClick: (Boolean) -> Unit,
     onProfileClick: (Long) -> Unit,
     onContentClick: (Long) -> Unit,
@@ -150,7 +154,7 @@ private fun FeedProfileScreen(
                             streak = streak,
                             follower = follower,
                             following = following,
-                            onFollowClick = onFollowClick,
+                            onFollowClick = { onFollowClick(isMine) },
                             isMine = isMine,
                             isFollowing = isFollowing,
                             isFollowed = isFollowed,
