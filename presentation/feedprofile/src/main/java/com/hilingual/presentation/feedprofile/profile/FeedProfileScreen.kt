@@ -70,7 +70,6 @@ internal fun FeedProfileRoute(
                 },
                 onActionButtonClick = { },
                 onProfileClick = navigateToFeedProfile,
-                onContentClick = navigateToFeedDiary,
                 onContentDetailClick = navigateToFeedDiary,
                 onReportUserClick = { },
                 onLikeClick = { },
@@ -196,9 +195,7 @@ private fun FeedProfileScreen(
                                     onProfileClick = onProfileClick,
                                     onContentDetailClick = onContentDetailClick,
                                     onLikeClick = onLikeClick,
-                                    onUnpublishClick = { diaryId ->
-                                        onUnpublishClick(diaryId)
-                                    },
+                                    onUnpublishClick = onUnpublishClick,
                                     onReportClick = onReportDiaryClick,
                                     modifier = Modifier.fillParentMaxSize()
                                 )
@@ -242,9 +239,7 @@ private fun FeedProfileScreen(
                                 onProfileClick = onProfileClick,
                                 onContentDetailClick = onContentDetailClick,
                                 onLikeClick = onLikeClick,
-                                onUnpublishClick = { diaryId ->
-                                    onUnpublishClick(diaryId)
-                                },
+                                onUnpublishClick = onUnpublishClick,
                                 onReportClick = onReportDiaryClick,
                                 modifier = Modifier.fillParentMaxSize()
                             )
