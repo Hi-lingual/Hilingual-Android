@@ -23,6 +23,7 @@ output.json
 *.iml
 .idea/*
 !.idea/codeInsightSettings.xml
+!.idea/icon.svg
 misc.xml
 deploymentTargetDropDown.xml
 render.experimental.xml
