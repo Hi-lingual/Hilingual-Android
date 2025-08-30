@@ -56,9 +56,8 @@ import com.hilingual.presentation.feedprofile.profile.navigation.feedProfileNavG
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.main.state.MainAppState
-import com.hilingual.presentation.mypage.myPageNavGraph
-import com.hilingual.presentation.notification.navigation.notificationNavGraph
 import com.hilingual.presentation.mypage.navigation.myPageNavGraph
+import com.hilingual.presentation.notification.navigation.notificationNavGraph
 import com.hilingual.presentation.onboarding.navigation.onboardingGraph
 import com.hilingual.presentation.otp.navigation.otpNavGraph
 import com.hilingual.presentation.splash.navigation.splashNavGraph
@@ -266,7 +265,7 @@ internal fun MainScreen(
                     navigateUp = appState::navigateUp,
                     navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
                     navigateToFeedProfile = appState::navigateToFeedProfile,
-                    navigateToAlarm = { /* TODO: 알림 설정 화면으로 이동 */ }
+                    navigateToAlarm = appState::navigateToNotificationSetting
                 )
 
                 feedProfileNavGraph(

@@ -35,7 +35,6 @@ import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.main.MainTab
 import com.hilingual.presentation.main.monitor.NetworkMonitor
 import com.hilingual.presentation.mypage.navigation.navigateToMyPage
-import com.hilingual.presentation.mypage.navigateToMyPage
 import com.hilingual.presentation.notification.navigation.navigateToNotification
 import com.hilingual.presentation.notification.navigation.navigateToNotificationSetting
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
