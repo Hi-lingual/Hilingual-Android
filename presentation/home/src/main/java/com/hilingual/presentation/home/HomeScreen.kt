@@ -78,6 +78,7 @@ internal fun HomeRoute(
     paddingValues: PaddingValues,
     navigateToDiaryWrite: (selectedDate: LocalDate) -> Unit,
     navigateToDiaryFeedback: (diaryId: Long) -> Unit,
+    navigateToNotification: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -111,7 +112,7 @@ internal fun HomeRoute(
             HomeScreen(
                 paddingValues = paddingValues,
                 uiState = state.data,
-                onAlarmClick = { /* TODO: 알람 스크린으로 이동 by.angrypodo*/ },
+                onAlarmClick = navigateToNotification,
                 onDateSelected = viewModel::onDateSelected,
                 onMonthChanged = viewModel::onMonthChanged,
                 onWriteDiaryClick = navigateToDiaryWrite,
@@ -151,8 +152,8 @@ private fun HomeScreen(
 
     Column(
         modifier = Modifier
-            .statusBarColor(hilingualBlack)
             .background(HilingualTheme.colors.white)
+            .statusBarColor(hilingualBlack)
             .fillMaxSize()
             .padding(paddingValues)
             .verticalScroll(verticalScrollState)

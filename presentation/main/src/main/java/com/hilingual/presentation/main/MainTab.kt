@@ -20,7 +20,7 @@ import com.hilingual.core.navigation.MainTabRoute
 import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.feed.navigation.Feed
 import com.hilingual.presentation.home.navigation.Home
-import com.hilingual.presentation.mypage.MyPage
+import com.hilingual.presentation.mypage.navigation.MyPage
 import com.hilingual.presentation.voca.navigation.Voca
 
 internal enum class MainTab(

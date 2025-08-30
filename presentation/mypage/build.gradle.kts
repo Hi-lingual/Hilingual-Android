@@ -22,3 +22,7 @@ plugins {
 android {
     setNamespace("presentation.mypage")
 }
+
+dependencies {
+    implementation(libs.jakewharton.process.phoenix)
+}
