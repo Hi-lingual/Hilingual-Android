@@ -254,8 +254,8 @@ internal fun MainScreen(
                     paddingValues = innerPadding,
                     navController = appState.navController,
                     navigateUp = appState::navigateUp,
-                    navigateToMyFeedProfile = { /* TODO: 내 피드 화면으로 이동 */ },
-                    navigateToFeedProfile = { /* TODO: 유저 프로필 화면으로 이동 */ },
+                    navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
+                    navigateToFeedProfile = appState::navigateToFeedProfile,
                     navigateToAlarm = { /* TODO: 알림 설정 화면으로 이동 */ }
                 )
 
