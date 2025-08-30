@@ -49,6 +49,10 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun FeedProfileRoute(
     paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
+    navigateToFeedProfile: (Long) -> Unit,
+    navigateToFollowList: () -> Unit,
+    navigateToFeedDiary: (Long) -> Unit,
     viewModel: FeedProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -62,11 +66,15 @@ internal fun FeedProfileRoute(
             FeedProfileScreen(
                 paddingValues = paddingValues,
                 uiState = state.data,
-                onBackClick = { },
-                onFollowTypeClick = { },
+                onBackClick = navigateUp,
+                onFollowClick = { isMine ->
+                    if (isMine) {
+                        navigateToFollowList()
+                    }
+                },
                 onActionButtonClick = { },
-                onProfileClick = { },
-                onContentDetailClick = { },
+                onProfileClick = navigateToFeedProfile,
+                onContentDetailClick = navigateToFeedDiary,
                 onLikeClick = { },
                 onReportUserClick = { },
                 onBlockClick = { }
@@ -82,7 +90,7 @@ private fun FeedProfileScreen(
     paddingValues: PaddingValues,
     uiState: FeedProfileUiState,
     onBackClick: () -> Unit,
-    onFollowTypeClick: () -> Unit,
+    onFollowClick: (Boolean) -> Unit,
     onActionButtonClick: (Boolean) -> Unit,
     onProfileClick: (Long) -> Unit,
     onContentDetailClick: (Long) -> Unit,
@@ -144,7 +152,7 @@ private fun FeedProfileScreen(
                             streak = streak,
                             follower = follower,
                             following = following,
-                            onFollowTypeClick = onFollowTypeClick,
+                            onFollowClick = { onFollowClick(isMine) },
                             isMine = isMine,
                             isFollowing = isFollowing,
                             isFollowed = isFollowed,
@@ -373,7 +381,7 @@ private fun FeedProfileScreenPreview() {
             onActionButtonClick = {},
             onReportUserClick = {},
             onBlockClick = {},
-            onFollowTypeClick = {},
+            onFollowClick = {},
             onProfileClick = {},
             onContentDetailClick = {},
             onLikeClick = {}

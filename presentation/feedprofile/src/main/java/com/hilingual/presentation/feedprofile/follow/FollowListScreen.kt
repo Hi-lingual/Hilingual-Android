@@ -29,6 +29,8 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun FollowListRoute(
     paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
+    navigateToFeedProfile: (Long) -> Unit,
     viewModel: FollowListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -37,9 +39,10 @@ internal fun FollowListRoute(
         paddingValues = paddingValues,
         followers = uiState.followerList,
         followings = uiState.followingList,
-        onBackClick = { },
-        onProfileClick = { },
-        onActionButtonClick = { _, _ -> }
+        onBackClick = navigateUp,
+        onProfileClick = navigateToFeedProfile,
+        onActionButtonClick = { _, _ ->
+        }
     )
 }
 
