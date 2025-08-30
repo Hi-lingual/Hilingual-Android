@@ -15,7 +15,6 @@
  */
 package com.hilingual.presentation.notification.main
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,10 +23,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.notification.main.component.NotificationTapRow
 import com.hilingual.presentation.notification.main.component.NotificationTopAppBar
@@ -39,9 +41,30 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun NotificationMainScreen(
+internal fun NotificationMainRoute(
+    paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
+    navigateToSetting: () -> Unit,
+    navigateToFeedNotificationDetail: (deeplink: String) -> Unit,
+    navigateToNoticeDetail: (Long) -> Unit,
+    viewModel: NotificationMainViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    NotificationMainScreen(
+        feedNotifications = uiState.feedNotifications,
+        noticeNotifications = uiState.noticeNotifications,
+        onBackClick = navigateUp,
+        onSettingClick = navigateToSetting,
+        onFeedNotificationClick = navigateToFeedNotificationDetail,
+        onNoticeNotificationClick = navigateToNoticeDetail,
+        paddingValues = paddingValues
+    )
+}
+
+@Composable
+private fun NotificationMainScreen(
     feedNotifications: ImmutableList<FeedNotificationItemModel>,
     noticeNotifications: ImmutableList<NoticeNotificationItemModel>,
     onBackClick: () -> Unit,

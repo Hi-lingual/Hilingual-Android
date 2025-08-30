@@ -21,15 +21,35 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.notification.detail.component.NotificationDetailContent
 
 @Composable
-internal fun NotificationDetailScreen(
+internal fun NotificationDetailRoute(
+    paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
+    viewModel: NotificationDetailViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    NotificationDetailScreen(
+        paddingValues = paddingValues,
+        onBackClick = navigateUp,
+        title = uiState.noticeDetailTitle,
+        date = uiState.noticeDetailDate,
+        content = uiState.noticeDetailContent
+    )
+}
+
+@Composable
+private fun NotificationDetailScreen(
     paddingValues: PaddingValues,
     onBackClick: () -> Unit,
     title: String,

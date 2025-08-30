@@ -31,4 +31,34 @@ data class HomeUiState(
     val diaryThumbnail: DiaryThumbnailUiModel? = null,
     val dateList: ImmutableList<DateUiModel> = persistentListOf(),
     val todayTopic: TodayTopicUiModel? = null
-)
+) {
+    companion object {
+        val Fake = HomeUiState(
+            userProfile = UserProfileUiModel(
+                nickname = "포도",
+                profileImg = "",
+                totalDiaries = 12,
+                streak = 5,
+                isNewAlarm = true
+            ),
+            selectedDate = LocalDate.now(),
+            diaryThumbnail = DiaryThumbnailUiModel(
+                diaryId = 1L,
+                imageUrl = null,
+                originalText = "오늘 날씨가 정말 좋았다. 그래서 산책을 나갔다.",
+                isPublished = false
+            ),
+            dateList = persistentListOf(
+                DateUiModel(date = "2025-08-01"),
+                DateUiModel(date = "2025-08-05"),
+                DateUiModel(date = "2025-08-12"),
+                DateUiModel(date = "2025-08-23")
+            ),
+            todayTopic = TodayTopicUiModel(
+                topicKo = "가장 좋아하는 계절은 무엇인가요?",
+                topicEn = "What is your favorite season?",
+                remainingTime = 3
+            )
+        )
+    }
+}
