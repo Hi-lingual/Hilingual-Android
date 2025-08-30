@@ -281,7 +281,6 @@ private fun FeedDropDownMenu(
             text = if (isMine) "비공개하기" else "신고하기",
             iconResId = if (isMine) R.drawable.ic_hide_24 else R.drawable.ic_report_24,
             onClick = {
-                onActionClick()
                 isDialogVisible = true
                 onExpandedChange(false)
             }
@@ -294,6 +293,7 @@ private fun FeedDropDownMenu(
             onDismiss = { isDialogVisible = false },
             onPrivateClick = {
                 isDialogVisible = false
+                onActionClick()
             }
         )
     } else {
@@ -302,6 +302,7 @@ private fun FeedDropDownMenu(
             onDismiss = { isDialogVisible = false },
             onReportClick = {
                 isDialogVisible = false
+                onActionClick()
             }
         )
     }

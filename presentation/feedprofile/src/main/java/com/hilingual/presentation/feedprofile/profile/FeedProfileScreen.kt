@@ -68,8 +68,6 @@ internal fun FeedProfileRoute(
                 onProfileClick = { },
                 onContentDetailClick = { },
                 onLikeClick = { },
-                onMoreClick = { },
-                onMenuClick = { },
                 onReportUserClick = { },
                 onBlockClick = { }
             )
@@ -89,8 +87,6 @@ private fun FeedProfileScreen(
     onProfileClick: (Long) -> Unit,
     onContentDetailClick: (Long) -> Unit,
     onLikeClick: (Long) -> Unit,
-    onMoreClick: (Long) -> Unit,
-    onMenuClick: (Long) -> Unit,
     onReportUserClick: () -> Unit,
     onBlockClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -192,6 +188,7 @@ private fun FeedProfileScreen(
                                     onContentDetailClick = onContentDetailClick,
                                     onLikeClick = onLikeClick,
                                     onUnpublishClick = { diaryId ->
+                                        onBlockClick()
                                     },
                                     onReportClick = { diaryId ->
                                         onReportUserClick()
@@ -379,9 +376,7 @@ private fun FeedProfileScreenPreview() {
             onFollowTypeClick = {},
             onProfileClick = {},
             onContentDetailClick = {},
-            onLikeClick = {},
-            onMoreClick = {},
-            onMenuClick = {}
+            onLikeClick = {}
         )
     }
 }
