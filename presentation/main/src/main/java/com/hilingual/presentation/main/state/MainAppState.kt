@@ -130,10 +130,6 @@ internal class MainAppState(
         launchSingleTop = true
     }
 
-    fun navigateToSplash() {
-        navController.navigateToSplash()
-    }
-
     fun navigateToOtp(navOptions: NavOptions? = clearStackNavOptions) {
         navController.navigateToOtp(navOptions)
     }
