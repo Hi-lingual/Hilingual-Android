@@ -1,5 +1,6 @@
 package com.hilingual.presentation.mypage.profileedit
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
@@ -43,7 +42,7 @@ import com.hilingual.presentation.mypage.component.WithdrawDialog
 internal fun ProfileEditRoute(
     paddingValues: PaddingValues,
     navigateToSplash: () -> Unit,
-    viewModel: MyPageViewModel = hiltViewModel()
+    viewModel: MyPageViewModel
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
@@ -56,15 +55,12 @@ internal fun ProfileEditRoute(
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.loadInitialData()
-    }
-
     when (val state = uiState) {
         is UiState.Success -> {
             ProfileEditScreen(
                 paddingValues = paddingValues,
                 profileImageUrl = state.data.profileImageUrl,
+                onProfileImageUriChanged = viewModel::patchProfileImage,
                 profileNickname = state.data.profileNickname,
                 onWithdrawClick = navigateToSplash
             )
@@ -78,6 +74,7 @@ internal fun ProfileEditRoute(
 private fun ProfileEditScreen(
     paddingValues: PaddingValues,
     profileImageUrl: String,
+    onProfileImageUriChanged: (Uri?) -> Unit,
     profileNickname: String,
     onWithdrawClick: () -> Unit
 ) {
@@ -89,6 +86,7 @@ private fun ProfileEditScreen(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
             imageUri = uri.toString()
+            onProfileImageUriChanged(uri)
         }
     )
 
@@ -108,7 +106,7 @@ private fun ProfileEditScreen(
 
         ProfileImagePicker(
             onClick = { isImageSheetVisible = true },
-            imageUrl = imageUri
+            imageUrl = imageUri.toString()
         )
 
         Spacer(modifier = Modifier.height(48.dp))
@@ -142,6 +140,7 @@ private fun ProfileEditScreen(
         onDefaultImageClick = {
             isImageSheetVisible = false
             imageUri = null
+            onProfileImageUriChanged(null)
         },
         onGalleryImageClick = {
             isImageSheetVisible = false
@@ -167,6 +166,7 @@ private fun ProfileEditScreenPreview() {
         ProfileEditScreen(
             paddingValues = PaddingValues(),
             profileImageUrl = "",
+            onProfileImageUriChanged = {},
             profileNickname = "하링이",
             onWithdrawClick = {}
         )

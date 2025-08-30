@@ -20,14 +20,20 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import com.hilingual.core.navigation.MainTabRoute
 import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.mypage.MyPageRoute
+import com.hilingual.presentation.mypage.MyPageViewModel
 import com.hilingual.presentation.mypage.blockeduser.BlockedUserRoute
 import com.hilingual.presentation.mypage.profileedit.ProfileEditRoute
 import kotlinx.serialization.Serializable
@@ -90,13 +96,16 @@ fun NavGraphBuilder.myPageNavGraph(
         popExitTransition = popExitTransition
     ) {
         composable<MyPage> {
+            val vm = sharedMyPageViewModel(navController)
+
             MyPageRoute(
                 paddingValues = paddingValues,
                 navigateToProfileEdit = navController::navigateToProfileEdit,
                 navigateToMyFeedProfile = navigateToMyFeedProfile,
                 navigateToAlarm = navigateToAlarm,
                 navigateToBlock = navController::navigateToBlockedUser,
-                navigateToSplash = navigateToSplash
+                navigateToSplash = navigateToSplash,
+                viewModel = vm
             )
         }
 
@@ -106,9 +115,12 @@ fun NavGraphBuilder.myPageNavGraph(
             popEnterTransition = { EnterTransition.None },
             popExitTransition = popExitTransition
         ) {
+            val vm = sharedMyPageViewModel(navController)
+
             ProfileEditRoute(
                 paddingValues = paddingValues,
-                navigateToSplash = navigateToSplash
+                navigateToSplash = navigateToSplash,
+                viewModel = vm
             )
         }
 
@@ -125,6 +137,16 @@ fun NavGraphBuilder.myPageNavGraph(
             )
         }
     }
+}
+
+@Composable
+private fun sharedMyPageViewModel(navController: NavController): MyPageViewModel {
+    val currentEntry by navController.currentBackStackEntryAsState()
+
+    val parentEntry = remember(currentEntry) {
+        navController.getBackStackEntry(MyPageGraph)
+    }
+    return hiltViewModel(parentEntry)
 }
 
 private val enterTransition: AnimatedContentTransitionScope<*>.() -> EnterTransition = {
