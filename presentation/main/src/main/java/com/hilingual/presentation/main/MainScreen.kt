@@ -51,10 +51,13 @@ import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import com.hilingual.presentation.diarywrite.navigation.diaryWriteNavGraph
 import com.hilingual.presentation.feed.navigation.feedNavGraph
+import com.hilingual.presentation.feeddiary.navigation.feedDiaryNavGraph
+import com.hilingual.presentation.feedprofile.profile.navigation.feedProfileNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.main.state.MainAppState
-import com.hilingual.presentation.mypage.myPageNavGraph
+import com.hilingual.presentation.mypage.navigation.myPageNavGraph
+import com.hilingual.presentation.notification.navigation.notificationNavGraph
 import com.hilingual.presentation.onboarding.navigation.onboardingGraph
 import com.hilingual.presentation.otp.navigation.otpNavGraph
 import com.hilingual.presentation.splash.navigation.splashNavGraph
@@ -202,7 +205,15 @@ internal fun MainScreen(
                 homeNavGraph(
                     paddingValues = innerPadding,
                     navigateToDiaryFeedback = appState::navigateToDiaryFeedback,
-                    navigateToDiaryWrite = appState::navigateToDiaryWrite
+                    navigateToDiaryWrite = appState::navigateToDiaryWrite,
+                    navigateToNotification = appState::navigateToNotification
+                )
+
+                notificationNavGraph(
+                    paddingValues = innerPadding,
+                    navController = appState.navController,
+                    navigateUp = appState::navigateUp,
+                    navigateToFeedNotificationDetail = {}
                 )
 
                 diaryWriteNavGraph(
@@ -228,15 +239,41 @@ internal fun MainScreen(
 
                 diaryFeedbackNavGraph(
                     paddingValues = innerPadding,
-                    navigateUp = appState::navigateUp
+                    navigateUp = appState::navigateUp,
+                    navigateToHome = appState::navigateToHome,
+                    navigateToFeed = appState::navigateToFeed
                 )
 
                 feedNavGraph(
-                    paddingValues = innerPadding
+                    paddingValues = innerPadding,
+                    navController = appState.navController,
+                    navigateToFeedDiary = appState::navigateToFeedDiary,
+                    navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
+                    navigateToFeedProfile = appState::navigateToFeedProfile
+                )
+
+                feedDiaryNavGraph(
+                    paddingValues = innerPadding,
+                    navigateUp = appState::navigateUp,
+                    navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
+                    navigateToFeedProfile = appState::navigateToFeedProfile
                 )
 
                 myPageNavGraph(
-                    paddingValues = innerPadding
+                    paddingValues = innerPadding,
+                    navController = appState.navController,
+                    navigateUp = appState::navigateUp,
+                    navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
+                    navigateToFeedProfile = appState::navigateToFeedProfile,
+                    navigateToAlarm = appState::navigateToNotificationSetting
+                )
+
+                feedProfileNavGraph(
+                    paddingValues = innerPadding,
+                    navigateUp = appState::navigateUp,
+                    navigateToFeedProfile = appState::navigateToFeedProfile,
+                    navController = appState.navController,
+                    navigateToFeedDiary = appState::navigateToFeedDiary
                 )
             }
 

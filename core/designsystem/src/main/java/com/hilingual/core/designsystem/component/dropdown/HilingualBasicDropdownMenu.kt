@@ -72,6 +72,7 @@ fun HilingualBasicDropdownMenu(
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_more_24),
             contentDescription = null,
+            tint = Color.Unspecified,
             modifier = Modifier
                 .onGloballyPositioned { coordinates ->
                     iconHeight = coordinates.size.height

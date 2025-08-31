@@ -29,6 +29,7 @@ data class SharedDiaryItemModel(
 data class LikeDiaryItemModel(
     val userId: Long,
     val streak: Int,
+    val isMine: Boolean,
     override val profileImageUrl: String,
     override val nickname: String,
     override val diaryId: Long,

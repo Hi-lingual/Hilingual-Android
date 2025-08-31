@@ -34,7 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.hilingual.core.designsystem.component.content.FeedContent
+import com.hilingual.core.designsystem.component.content.FeedCard
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedEmptyCard
 import com.hilingual.presentation.feed.component.FeedEmptyCardType
@@ -47,10 +47,10 @@ internal fun FeedTabScreen(
     listState: LazyListState,
     feedList: ImmutableList<FeedListItemUiModel>,
     onProfileClick: (Long) -> Unit,
-    onMenuClick: (Long) -> Unit,
-    onContentClick: (Long) -> Unit,
+    onContentDetailClick: (Long) -> Unit,
     onLikeClick: (Long) -> Unit,
-    onMoreClick: (Long) -> Unit,
+    onUnpublishClick: (diaryId: Long) -> Unit,
+    onReportClick: () -> Unit,
     modifier: Modifier = Modifier,
     hasFollowing: Boolean = true
 ) {
@@ -80,20 +80,21 @@ internal fun FeedTabScreen(
                 key = { _, feed -> feed.diaryId }
             ) { index, feed ->
                 with(feed) {
-                    FeedContent(
+                    FeedCard(
                         profileUrl = profileUrl,
                         onProfileClick = { onProfileClick(userId) },
                         nickname = nickname,
                         streak = streak,
                         sharedDateInMinutes = sharedDateInMinutes,
-                        onMenuClick = { onMenuClick(diaryId) },
                         content = content,
-                        onContentClick = { onContentClick(diaryId) },
+                        onContentDetailClick = { onContentDetailClick(diaryId) },
                         imageUrl = imageUrl,
                         likeCount = likeCount,
                         isLiked = isLiked,
                         onLikeClick = { onLikeClick(diaryId) },
-                        onMoreClick = { onMoreClick(diaryId) }
+                        isMine = isMine,
+                        onUnpublishClick = { onUnpublishClick(diaryId) },
+                        onReportClick = onReportClick
                     )
                 }
 
@@ -124,7 +125,8 @@ private fun FeedTabScreenPreview() {
                     imageUrl = "",
                     diaryId = 1,
                     likeCount = 120,
-                    isLiked = false
+                    isLiked = false,
+                    isMine = true
                 ),
                 FeedListItemUiModel(
                     userId = 2,
@@ -136,7 +138,8 @@ private fun FeedTabScreenPreview() {
                     imageUrl = null,
                     diaryId = 2,
                     likeCount = 75,
-                    isLiked = true
+                    isLiked = true,
+                    isMine = false
                 )
             )
         )
@@ -147,10 +150,11 @@ private fun FeedTabScreenPreview() {
             listState = rememberLazyListState(),
             feedList = sampleFeedList,
             onProfileClick = { },
-            onMenuClick = { },
-            onContentClick = { },
+            onContentDetailClick = { },
             onLikeClick = { },
-            onMoreClick = { },
+            onUnpublishClick = { },
+            onReportClick = { },
+            hasFollowing = true,
             modifier = Modifier.fillMaxSize()
         )
     }

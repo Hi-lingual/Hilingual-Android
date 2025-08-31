@@ -40,15 +40,15 @@ import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardTyp
 import com.hilingual.presentation.feedprofile.profile.component.FeedProfileInfo
 import com.hilingual.presentation.feedprofile.profile.component.FeedProfileTabRow
 import com.hilingual.presentation.feedprofile.profile.component.ReportBlockBottomSheet
-import com.hilingual.presentation.feedprofile.profile.model.FeedProfileInfoModel
-import com.hilingual.presentation.feedprofile.profile.model.LikeDiaryItemModel
-import com.hilingual.presentation.feedprofile.profile.model.SharedDiaryItemModel
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun FeedProfileRoute(
     paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
+    navigateToFeedProfile: (Long) -> Unit,
+    navigateToFollowList: () -> Unit,
+    navigateToFeedDiary: (Long) -> Unit,
     viewModel: FeedProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -62,16 +62,20 @@ internal fun FeedProfileRoute(
             FeedProfileScreen(
                 paddingValues = paddingValues,
                 uiState = state.data,
-                onBackClick = { },
-                onFollowTypeClick = { },
+                onBackClick = navigateUp,
+                onFollowClick = { isMine ->
+                    if (isMine) {
+                        navigateToFollowList()
+                    }
+                },
                 onActionButtonClick = { },
-                onProfileClick = { },
-                onContentClick = { },
-                onLikeClick = { },
-                onMoreClick = { },
-                onMenuClick = { },
+                onProfileClick = navigateToFeedProfile,
+                onContentDetailClick = navigateToFeedDiary,
                 onReportUserClick = { },
-                onBlockClick = { }
+                onLikeClick = { },
+                onBlockClick = { },
+                onReportDiaryClick = { },
+                onUnpublishClick = { }
             )
         }
 
@@ -84,15 +88,15 @@ private fun FeedProfileScreen(
     paddingValues: PaddingValues,
     uiState: FeedProfileUiState,
     onBackClick: () -> Unit,
-    onFollowTypeClick: () -> Unit,
+    onFollowClick: (Boolean) -> Unit,
     onActionButtonClick: (Boolean) -> Unit,
     onProfileClick: (Long) -> Unit,
-    onContentClick: (Long) -> Unit,
+    onContentDetailClick: (Long) -> Unit,
     onLikeClick: (Long) -> Unit,
-    onMoreClick: (Long) -> Unit,
-    onMenuClick: (Long) -> Unit,
     onReportUserClick: () -> Unit,
     onBlockClick: () -> Unit,
+    onUnpublishClick: (diaryId: Long) -> Unit,
+    onReportDiaryClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -148,7 +152,7 @@ private fun FeedProfileScreen(
                             streak = streak,
                             follower = follower,
                             following = following,
-                            onFollowTypeClick = onFollowTypeClick,
+                            onFollowClick = { onFollowClick(isMine) },
                             isMine = isMine,
                             isFollowing = isFollowing,
                             isFollowed = isFollowed,
@@ -189,10 +193,10 @@ private fun FeedProfileScreen(
                                     diaries = diaries,
                                     emptyCardType = emptyCardType,
                                     onProfileClick = onProfileClick,
-                                    onContentClick = onContentClick,
+                                    onContentDetailClick = onContentDetailClick,
                                     onLikeClick = onLikeClick,
-                                    onMoreClick = onMoreClick,
-                                    onMenuClick = onMenuClick,
+                                    onUnpublishClick = onUnpublishClick,
+                                    onReportClick = onReportDiaryClick,
                                     modifier = Modifier.fillParentMaxSize()
                                 )
                             }
@@ -233,10 +237,10 @@ private fun FeedProfileScreen(
                                 diaries = uiState.sharedDiarys,
                                 emptyCardType = FeedEmptyCardType.NOT_SHARED,
                                 onProfileClick = onProfileClick,
-                                onContentClick = onContentClick,
+                                onContentDetailClick = onContentDetailClick,
                                 onLikeClick = onLikeClick,
-                                onMenuClick = onMenuClick,
-                                onMoreClick = onMoreClick,
+                                onUnpublishClick = onUnpublishClick,
+                                onReportClick = onReportDiaryClick,
                                 modifier = Modifier.fillParentMaxSize()
                             )
                         }
@@ -296,86 +300,17 @@ private fun FeedProfileScreenPreview() {
     HilingualTheme {
         FeedProfileScreen(
             paddingValues = PaddingValues(0.dp),
-            uiState = FeedProfileUiState(
-                feedProfileInfo =
-                FeedProfileInfoModel(
-                    profileImageUrl = "",
-                    nickname = "하이링",
-                    streak = 5,
-                    follower = 120,
-                    following = 98,
-                    isMine = false,
-                    isFollowing = true,
-                    isFollowed = true,
-                    isBlock = false
-                ),
-                sharedDiarys = persistentListOf(
-                    SharedDiaryItemModel(
-                        profileImageUrl = "",
-                        nickname = "하이링",
-                        diaryId = 1L,
-                        sharedDate = 1720000000L,
-                        likeCount = 12,
-                        isLiked = true,
-                        diaryImageUrl = null,
-                        originalText = "오늘은 새로운 언어를 배웠다!"
-                    ),
-                    SharedDiaryItemModel(
-                        profileImageUrl = "",
-                        nickname = "하이링",
-                        diaryId = 2L,
-                        sharedDate = 1720000000L,
-                        likeCount = 12,
-                        isLiked = true,
-                        diaryImageUrl = null,
-                        originalText = "오늘은 새로운 언어를 배웠다!"
-                    ),
-                    SharedDiaryItemModel(
-                        profileImageUrl = "",
-                        nickname = "하이링",
-                        diaryId = 3L,
-                        sharedDate = 1720000000L,
-                        likeCount = 12,
-                        isLiked = true,
-                        diaryImageUrl = null,
-                        originalText = "오늘은 새로운 언어를 배웠다!"
-                    ),
-                    SharedDiaryItemModel(
-                        profileImageUrl = "",
-                        nickname = "하이링",
-                        diaryId = 4L,
-                        sharedDate = 1720000000L,
-                        likeCount = 12,
-                        isLiked = true,
-                        diaryImageUrl = "",
-                        originalText = "오늘은 새로운 언어를 배웠다!"
-                    )
-                ),
-                likedDiarys = persistentListOf(
-                    LikeDiaryItemModel(
-                        userId = 1L,
-                        streak = 7,
-                        profileImageUrl = "",
-                        nickname = "링구",
-                        diaryId = 8L,
-                        sharedDate = 1720000500L,
-                        likeCount = 30,
-                        isLiked = false,
-                        diaryImageUrl = null,
-                        originalText = "이건 내가 좋아요한 일기!"
-                    )
-                )
-            ),
+            uiState = FeedProfileUiState.Fake,
             onBackClick = {},
             onActionButtonClick = {},
             onReportUserClick = {},
             onBlockClick = {},
-            onFollowTypeClick = {},
+            onFollowClick = {},
             onProfileClick = {},
-            onContentClick = {},
+            onContentDetailClick = {},
             onLikeClick = {},
-            onMoreClick = {},
-            onMenuClick = {}
+            onUnpublishClick = {},
+            onReportDiaryClick = {}
         )
     }
 }

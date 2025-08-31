@@ -28,10 +28,15 @@ import com.hilingual.presentation.auth.navigation.navigateToAuth
 import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedback
 import com.hilingual.presentation.diarywrite.navigation.navigateToDiaryWrite
 import com.hilingual.presentation.feed.navigation.navigateToFeed
+import com.hilingual.presentation.feeddiary.navigation.navigateToFeedDiary
+import com.hilingual.presentation.feedprofile.profile.navigation.navigateToFeedProfile
+import com.hilingual.presentation.feedprofile.profile.navigation.navigateToMyFeedProfile
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.main.MainTab
 import com.hilingual.presentation.main.monitor.NetworkMonitor
-import com.hilingual.presentation.mypage.navigateToMyPage
+import com.hilingual.presentation.mypage.navigation.navigateToMyPage
+import com.hilingual.presentation.notification.navigation.navigateToNotification
+import com.hilingual.presentation.notification.navigation.navigateToNotificationSetting
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.otp.navigation.navigateToOtp
 import com.hilingual.presentation.splash.navigation.Splash
@@ -118,6 +123,7 @@ internal class MainAppState(
             MainTab.MY -> navController.navigateToMyPage(navOptions = navOptions)
         }
     }
+
     private val clearStackNavOptions = navOptions {
         popUpTo(0) {
             inclusive = true
@@ -155,6 +161,45 @@ internal class MainAppState(
         }
     ) {
         navController.navigateToDiaryWrite(selectedDate, navOptions)
+    }
+
+    fun navigateToNotification(
+        navOptions: NavOptions = navOptions {
+            launchSingleTop = true
+        }
+    ) {
+        navController.navigateToNotification(navOptions)
+    }
+
+    // TODO: 추후 마이페이지의 스택관리로 변경해주세요 to.지영
+    fun navigateToNotificationSetting(
+        navOptions: NavOptions = navOptions {
+            launchSingleTop = true
+        }
+    ) {
+        navController.navigateToNotificationSetting(navOptions)
+    }
+
+    fun navigateToFeed(navOptions: NavOptions? = clearStackNavOptions) {
+        navController.navigateToFeed(navOptions)
+    }
+
+    fun navigateToFeedDiary(
+        diaryId: Long,
+        navOptions: NavOptions? = null
+    ) {
+        navController.navigateToFeedDiary(diaryId, navOptions)
+    }
+
+    fun navigateToFeedProfile(
+        userId: Long,
+        navOptions: NavOptions? = null
+    ) {
+        navController.navigateToFeedProfile(userId, navOptions)
+    }
+
+    fun navigateToMyFeedProfile(navOptions: NavOptions? = null) {
+        navController.navigateToMyFeedProfile(navOptions)
     }
 
     fun navigateUp() {

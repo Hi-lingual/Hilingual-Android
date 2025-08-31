@@ -1,4 +1,4 @@
-package com.hilingual.presentation.mypage
+package com.hilingual.presentation.mypage.blockeduser
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,7 +26,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.content.UserActionItem
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
@@ -35,10 +39,38 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 
 @Composable
-internal fun BlockedUserScreen(
+internal fun BlockedUserRoute(
+    paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
+    navigateToProfile: (Long) -> Unit,
+    viewModel: BlockedUserViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadInitialData()
+    }
+
+    when (val state = uiState.blockedUserList) {
+        is UiState.Success -> {
+            BlockedUserScreen(
+                paddingValues = paddingValues,
+                onBackClick = navigateUp,
+                blockedUserList = state.data,
+                onUserProfileClick = navigateToProfile,
+                onButtonClick = viewModel::onUnblockStatusChanged
+            )
+        }
+
+        else -> {}
+    }
+}
+
+@Composable
+private fun BlockedUserScreen(
     paddingValues: PaddingValues,
     onBackClick: () -> Unit,
-    blockedUserList: ImmutableList<BlockedUserUiState>,
+    blockedUserList: ImmutableList<BlockedUserUiModel>,
     onUserProfileClick: (Long) -> Unit,
     onButtonClick: (Long) -> Unit
 ) {
@@ -91,7 +123,7 @@ internal fun BlockedUserScreen(
                             userId = userId,
                             profileUrl = profileImageUrl,
                             nickname = nickname,
-                            isFilled = isBlocked,
+                            isFilled = !isBlocked,
                             buttonText = if (isBlocked) "차단 해제" else "차단",
                             onProfileClick = onUserProfileClick,
                             onButtonClick = onButtonClick
@@ -124,27 +156,27 @@ private fun BlockedUserScreenWithDataPreview() {
         var sampleBlockedUsers by remember {
             mutableStateOf(
                 persistentListOf(
-                    BlockedUserUiState(
+                    BlockedUserUiModel(
                         userId = 1L,
                         profileImageUrl = "",
                         nickname = "사과"
                     ),
-                    BlockedUserUiState(
+                    BlockedUserUiModel(
                         userId = 2L,
                         profileImageUrl = "",
                         nickname = "바나나"
                     ),
-                    BlockedUserUiState(
+                    BlockedUserUiModel(
                         userId = 3L,
                         profileImageUrl = "",
                         nickname = "오렌지"
                     ),
-                    BlockedUserUiState(
+                    BlockedUserUiModel(
                         userId = 4L,
                         profileImageUrl = "https://picsum.photos/42/42?random=1",
                         nickname = "딸기"
                     ),
-                    BlockedUserUiState(
+                    BlockedUserUiModel(
                         userId = 5L,
                         profileImageUrl = "",
                         nickname = "포도"

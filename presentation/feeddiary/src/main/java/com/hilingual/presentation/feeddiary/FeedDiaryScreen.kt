@@ -26,7 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
+import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
+import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.bottomsheet.BlockBottomSheet
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -41,13 +43,14 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feeddiary.component.DiaryUnpublishBottomSheet
 import com.hilingual.presentation.feeddiary.component.FeedDiaryProfile
 import com.hilingual.presentation.feeddiary.component.ReportBlockBottomSheet
-import com.hilingual.presentation.feeddiary.model.ProfileContentUiModel
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun FeedDiaryRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
+    navigateToMyFeedProfile: () -> Unit,
+    navigateToFeedProfile: (Long) -> Unit,
     viewModel: FeedDiaryViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -55,11 +58,25 @@ internal fun FeedDiaryRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var isImageDetailVisible by remember { mutableStateOf(false) }
 
+    val toastTrigger = LocalToastTrigger.current
+
     BackHandler {
         if (isImageDetailVisible) {
             isImageDetailVisible = false
         } else {
             navigateUp()
+        }
+    }
+
+    viewModel.sideEffect.collectSideEffect {
+        when (it) {
+            is FeedDiarySideEffect.NavigateToUp -> navigateUp()
+
+            is FeedDiarySideEffect.ShowSnackbar -> {}
+
+            is FeedDiarySideEffect.ShowToast -> {
+                toastTrigger(it.message)
+            }
         }
     }
 
@@ -71,9 +88,10 @@ internal fun FeedDiaryRoute(
                 paddingValues = paddingValues,
                 uiState = state.data,
                 onBackClick = navigateUp,
-                onProfileClick = {},
+                onMyProfileClick = navigateToMyFeedProfile,
+                onProfileClick = navigateToFeedProfile,
                 onLikeClick = {},
-                onPrivateClick = {},
+                onPrivateClick = viewModel::diaryUnpublish,
                 onBlockClick = {},
                 onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 isImageDetailVisible = isImageDetailVisible,
@@ -91,7 +109,8 @@ private fun FeedDiaryScreen(
     paddingValues: PaddingValues,
     uiState: FeedDiaryUiState,
     onBackClick: () -> Unit,
-    onProfileClick: () -> Unit,
+    onMyProfileClick: () -> Unit,
+    onProfileClick: (Long) -> Unit,
     onLikeClick: () -> Unit,
     onPrivateClick: () -> Unit,
     onReportClick: () -> Unit,
@@ -154,7 +173,13 @@ private fun FeedDiaryScreen(
                 isLiked = isLiked,
                 likeCount = likeCount,
                 sharedDateInMinutes = sharedDateInMinutes,
-                onProfileClick = onProfileClick,
+                onProfileClick = {
+                    if (uiState.isMine) {
+                        onMyProfileClick()
+                    } else {
+                        onProfileClick(userId)
+                    }
+                },
                 onLikeClick = onLikeClick
             )
         }
@@ -275,6 +300,7 @@ private fun FeedDiaryScreenPreview() {
         FeedDiaryScreen(
             paddingValues = PaddingValues(),
             onBackClick = {},
+            onMyProfileClick = {},
             onProfileClick = {},
             onLikeClick = {},
             isImageDetailVisible = isImageDetailVisible,
@@ -283,18 +309,7 @@ private fun FeedDiaryScreenPreview() {
             onPrivateClick = {},
             onReportClick = {},
             onBlockClick = {},
-            uiState = FeedDiaryUiState(
-                isMine = false,
-                writtenDate = "8월 23일 토요일",
-                profileContent = ProfileContentUiModel(
-                    profileUrl = "",
-                    nickname = "작나",
-                    streak = 2,
-                    isLiked = true,
-                    likeCount = 112,
-                    sharedDateInMinutes = 3
-                )
-            )
+            uiState = FeedDiaryUiState.Fake
         )
     }
 }
