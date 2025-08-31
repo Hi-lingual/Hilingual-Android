@@ -48,7 +48,7 @@ import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndic
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedTopAppBar
-import kotlinx.collections.immutable.persistentListOf
+import com.hilingual.presentation.feed.model.FeedTabType
 import kotlinx.coroutines.launch
 
 @Composable
@@ -83,6 +83,7 @@ internal fun FeedRoute(
                 onSearchClick = navigateToFeedSearch,
                 onMyProfileClick = navigateToMyFeedProfile,
                 onFeedProfileClick = navigateToFeedProfile,
+                onLikeClick = viewModel::toggleIsLiked,
                 onContentDetailClick = navigateToFeedDiary,
                 onUnPublishClick = {},
                 onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
@@ -100,6 +101,7 @@ private fun FeedScreen(
     onMyProfileClick: () -> Unit,
     onSearchClick: () -> Unit,
     onFeedProfileClick: (Long) -> Unit,
+    onLikeClick: (FeedTabType, Long, Boolean) -> Unit,
     onContentDetailClick: (Long) -> Unit,
     onUnPublishClick: (Long) -> Unit,
     onReportClick: () -> Unit,
@@ -112,11 +114,16 @@ private fun FeedScreen(
     val recommendListState = rememberLazyListState()
     val followingsListState = rememberLazyListState()
 
-    val (currentListState, feedList) = remember(pagerState.currentPage) {
+    val currentListState = remember(pagerState.currentPage) {
         when (pagerState.currentPage) {
-            0 -> recommendListState to uiState.recommendFeedList
-            else -> followingsListState to uiState.followingFeedList
+            0 -> recommendListState
+            else -> followingsListState
         }
+    }
+
+    val feedList = when (pagerState.currentPage) {
+        0 -> uiState.recommendFeedList
+        else -> uiState.followingFeedList
     }
 
     val isFabVisible by remember(pagerState.currentPage) {
@@ -160,7 +167,7 @@ private fun FeedScreen(
         )
 
         HilingualBasicTabRow(
-            tabTitles = persistentListOf("추천", "팔로잉"),
+            tabTitles = FeedTabType.tabTitles,
             tabIndex = pagerState.currentPage,
             onTabSelected = {
                 coroutineScope.launch {
@@ -178,11 +185,12 @@ private fun FeedScreen(
                 modifier = Modifier.fillMaxSize()
             ) { page ->
                 FeedTabScreen(
+                    tabType = FeedTabType.getTabType(pagerState.currentPage),
                     listState = currentListState,
                     feedList = feedList,
                     onProfileClick = onFeedProfileClick,
                     onContentDetailClick = onContentDetailClick,
-                    onLikeClick = {},
+                    onLikeClick = onLikeClick,
                     hasFollowing = if (page == 1) uiState.hasFollowing else false,
                     onUnpublishClick = onUnPublishClick,
                     onReportClick = onReportClick
@@ -214,6 +222,7 @@ private fun FeedScreenPreview() {
             onSearchClick = {},
             onFeedProfileClick = {},
             onContentDetailClick = {},
+            onLikeClick = { _, _, _ -> },
             readAllFeed = {},
             onUnPublishClick = {},
             onReportClick = {},

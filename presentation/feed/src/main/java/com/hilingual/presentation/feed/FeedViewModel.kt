@@ -18,13 +18,17 @@ package com.hilingual.presentation.feed
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.util.UiState
+import com.hilingual.presentation.feed.model.FeedListItemUiModel
+import com.hilingual.presentation.feed.model.FeedTabType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,6 +43,47 @@ internal class FeedViewModel @Inject constructor() : ViewModel() {
     fun readAllFeed() {
         viewModelScope.launch {
             _sideEffect.emit(FeedSideEffect.ShowToast("피드의 일기를 모두 확인했어요."))
+        }
+    }
+
+    fun toggleIsLiked(feedTabType: FeedTabType, diaryId: Long, isLiked: Boolean) {
+        viewModelScope.launch {
+            // TODO: API 성공 후 좋아요 수 증가
+            _uiState.update { currentState ->
+                val successState = currentState as UiState.Success
+
+                fun updateFeedItem(item: FeedListItemUiModel): FeedListItemUiModel {
+                    return if (item.diaryId == diaryId) {
+                        item.copy(
+                            isLiked = isLiked,
+                            likeCount = item.likeCount + if (isLiked) 1 else -1
+                        )
+                    } else {
+                        item
+                    }
+                }
+
+                when (feedTabType) {
+                    FeedTabType.RECOMMEND -> {
+                        successState.copy(
+                            data = successState.data.copy(
+                                recommendFeedList = successState.data.recommendFeedList
+                                    .map(::updateFeedItem)
+                                    .toImmutableList()
+                            )
+                        )
+                    }
+                    FeedTabType.FOLLOWING -> {
+                        successState.copy(
+                            data = successState.data.copy(
+                                followingFeedList = successState.data.followingFeedList
+                                    .map(::updateFeedItem)
+                                    .toImmutableList()
+                            )
+                        )
+                    }
+                }
+            }
         }
     }
 }
