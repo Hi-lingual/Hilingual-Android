@@ -86,6 +86,13 @@ internal class FeedViewModel @Inject constructor() : ViewModel() {
             }
         }
     }
+
+    fun diaryUnpublish(diaryId: Long) {
+        // TODO: API 호출 성공 후 표시
+        viewModelScope.launch {
+            _sideEffect.emit(FeedSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
+        }
+    }
 }
 
 sealed interface FeedSideEffect {

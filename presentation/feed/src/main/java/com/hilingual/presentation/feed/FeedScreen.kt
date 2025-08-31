@@ -85,7 +85,7 @@ internal fun FeedRoute(
                 onFeedProfileClick = navigateToFeedProfile,
                 onLikeClick = viewModel::toggleIsLiked,
                 onContentDetailClick = navigateToFeedDiary,
-                onUnPublishClick = {},
+                onUnpublishClick = viewModel::diaryUnpublish,
                 onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 readAllFeed = viewModel::readAllFeed
             )
@@ -103,7 +103,7 @@ private fun FeedScreen(
     onFeedProfileClick: (Long) -> Unit,
     onLikeClick: (FeedTabType, Long, Boolean) -> Unit,
     onContentDetailClick: (Long) -> Unit,
-    onUnPublishClick: (Long) -> Unit,
+    onUnpublishClick: (Long) -> Unit,
     onReportClick: () -> Unit,
     readAllFeed: () -> Unit,
     modifier: Modifier = Modifier
@@ -192,7 +192,7 @@ private fun FeedScreen(
                     onContentDetailClick = onContentDetailClick,
                     onLikeClick = onLikeClick,
                     hasFollowing = if (page == 1) uiState.hasFollowing else false,
-                    onUnpublishClick = onUnPublishClick,
+                    onUnpublishClick = onUnpublishClick,
                     onReportClick = onReportClick
                 )
             }
@@ -224,7 +224,7 @@ private fun FeedScreenPreview() {
             onContentDetailClick = {},
             onLikeClick = { _, _, _ -> },
             readAllFeed = {},
-            onUnPublishClick = {},
+            onUnpublishClick = {},
             onReportClick = {},
             uiState = FeedUiState.Fake
         )
