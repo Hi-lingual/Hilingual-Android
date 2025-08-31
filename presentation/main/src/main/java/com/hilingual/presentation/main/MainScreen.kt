@@ -275,14 +275,6 @@ internal fun MainScreen(
                     navController = appState.navController,
                     navigateToFeedDiary = appState::navigateToFeedDiary
                 )
-
-                feedProfileNavGraph(
-                    paddingValues = innerPadding,
-                    navigateUp = appState::navigateUp,
-                    navigateToFeedProfile = appState::navigateToFeedProfile,
-                    navController = appState.navController,
-                    navigateToFeedDiary = appState::navigateToFeedDiary
-                )
             }
 
             HilingualErrorDialog(
