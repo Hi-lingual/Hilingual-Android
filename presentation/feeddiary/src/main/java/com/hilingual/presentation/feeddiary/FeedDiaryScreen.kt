@@ -37,6 +37,7 @@ import com.hilingual.core.designsystem.component.content.diary.GrammarSpellingTa
 import com.hilingual.core.designsystem.component.content.diary.ModalImage
 import com.hilingual.core.designsystem.component.content.diary.RecommendExpressionTab
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDialog
+import com.hilingual.core.designsystem.component.dialog.report.ReportPostDialog
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -123,6 +124,7 @@ private fun FeedDiaryScreen(
     var isUnpublishDialogVisible by remember { mutableStateOf(false) }
 
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
+    var isReportConfirmDialog by remember { mutableStateOf(false) }
     var isBlockConfirmBottomSheetVisible by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
@@ -262,7 +264,7 @@ private fun FeedDiaryScreen(
             onDismiss = { isReportBottomSheetVisible = false },
             onReportClick = {
                 isReportBottomSheetVisible = false
-                onReportClick()
+                isReportConfirmDialog = true
             },
             onBlockClick = {
                 isReportBottomSheetVisible = false
@@ -287,6 +289,15 @@ private fun FeedDiaryScreen(
         onBlockButtonClick = {
             isBlockConfirmBottomSheetVisible = false
             onBlockClick()
+        }
+    )
+
+    ReportPostDialog(
+        isVisible = isReportConfirmDialog,
+        onDismiss = { isReportConfirmDialog = false },
+        onReportClick = {
+            isReportConfirmDialog = false
+            onReportClick()
         }
     )
 }
