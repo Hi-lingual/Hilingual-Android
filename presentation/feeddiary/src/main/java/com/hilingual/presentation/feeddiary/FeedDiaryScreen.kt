@@ -93,7 +93,7 @@ internal fun FeedDiaryRoute(
                 onProfileClick = navigateToFeedProfile,
                 onLikeClick = viewModel::toggleIsLiked,
                 onPrivateClick = viewModel::diaryUnpublish,
-                onBlockClick = {},
+                onBlockClick = viewModel::blockUser,
                 onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 isImageDetailVisible = isImageDetailVisible,
                 onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
@@ -279,7 +279,6 @@ private fun FeedDiaryScreen(
         onPrivateClick = {
             isUnpublishDialogVisible = false
             onPrivateClick()
-            // TODO: 비공개 후 이전 화면으로 이동, 토스트 표시
         }
     )
 

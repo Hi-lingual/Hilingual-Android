@@ -66,6 +66,10 @@ internal class FeedDiaryViewModel @Inject constructor(
         }
     }
 
+    fun blockUser() {
+        // TODO: 유저 차단하기 API 연동 (profileContent.userId)
+    }
+
     fun toggleBookmark(phraseId: Long, isMarked: Boolean) {
         viewModelScope.launch {
             diaryRepository.patchPhraseBookmark(
