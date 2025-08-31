@@ -33,11 +33,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -57,6 +60,8 @@ internal fun FeedRoute(
     navigateToFeedSearch: () -> Unit,
     viewModel: FeedViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val toastTrigger = LocalToastTrigger.current
 
@@ -80,7 +85,7 @@ internal fun FeedRoute(
                 onFeedProfileClick = navigateToFeedProfile,
                 onContentDetailClick = navigateToFeedDiary,
                 onUnPublishClick = {},
-                onReportClick = {},
+                onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 readAllFeed = viewModel::readAllFeed
             )
         }
