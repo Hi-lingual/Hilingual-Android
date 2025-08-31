@@ -10,8 +10,8 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 data class FeedProfileUiState(
     val feedProfileInfo: FeedProfileInfoModel,
-    val sharedDiarys: ImmutableList<SharedDiaryItemModel> = persistentListOf(),
-    val likedDiarys: ImmutableList<LikeDiaryItemModel> = persistentListOf()
+    val sharedDiaries: ImmutableList<SharedDiaryItemModel> = persistentListOf(),
+    val likedDiaries: ImmutableList<LikeDiaryItemModel> = persistentListOf()
 ) {
     companion object {
         val Fake = FeedProfileUiState(
@@ -21,12 +21,12 @@ data class FeedProfileUiState(
                 streak = 3,
                 follower = 10,
                 following = 5,
-                isMine = true,
+                isMine = false,
                 isFollowing = false,
                 isFollowed = false,
                 isBlock = false
             ),
-            sharedDiarys = persistentListOf(
+            sharedDiaries = persistentListOf(
                 SharedDiaryItemModel(
                     profileImageUrl = "",
                     nickname = "가짜프로필",
@@ -48,7 +48,34 @@ data class FeedProfileUiState(
                     originalText = "가짜 사용자의 일기 내용입니다."
                 )
             ),
-            likedDiarys = persistentListOf()
+            likedDiaries = persistentListOf(
+                LikeDiaryItemModel(
+                    userId = 100L,
+                    streak = 7,
+                    isMine = false,
+                    profileImageUrl = "",
+                    nickname = "좋아요한유저",
+                    diaryId = 10L,
+                    sharedDate = 1720005000L,
+                    likeCount = 34,
+                    isLiked = true,
+                    diaryImageUrl = null,
+                    originalText = "좋아요한 사용자의 일기 내용입니다."
+                ),
+                LikeDiaryItemModel(
+                    userId = 200L,
+                    streak = 15,
+                    isMine = false,
+                    profileImageUrl = "",
+                    nickname = "다른유저",
+                    diaryId = 11L,
+                    sharedDate = 1720008000L,
+                    likeCount = 8,
+                    isLiked = true,
+                    diaryImageUrl = null,
+                    originalText = "또 다른 사용자의 일기 내용입니다."
+                )
+            )
         )
     }
 }

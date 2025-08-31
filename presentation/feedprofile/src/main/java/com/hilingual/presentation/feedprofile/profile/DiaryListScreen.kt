@@ -26,7 +26,7 @@ internal fun DiaryListScreen(
     emptyCardType: FeedEmptyCardType,
     onProfileClick: (userId: Long) -> Unit,
     onContentDetailClick: (diaryId: Long) -> Unit,
-    onLikeClick: (diaryId: Long) -> Unit,
+    onLikeClick: (diaryId: Long, isLiked: Boolean) -> Unit,
     onUnpublishClick: (diaryId: Long) -> Unit,
     onReportClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -68,7 +68,7 @@ internal fun DiaryListScreen(
                         imageUrl = diaryImageUrl,
                         likeCount = likeCount,
                         isLiked = isLiked,
-                        onLikeClick = { onLikeClick(diaryId) },
+                        onLikeClick = { onLikeClick(diaryId, !isLiked) },
                         isMine = isMine,
                         onUnpublishClick = { onUnpublishClick(diaryId) },
                         onReportClick = onReportClick
