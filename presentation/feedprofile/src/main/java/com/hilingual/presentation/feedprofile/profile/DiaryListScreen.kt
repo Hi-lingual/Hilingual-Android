@@ -12,7 +12,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.hilingual.core.designsystem.component.content.FeedContent
+import com.hilingual.core.designsystem.component.content.FeedCard
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCard
 import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType
@@ -25,10 +25,10 @@ internal fun DiaryListScreen(
     diaries: ImmutableList<DiaryItem>,
     emptyCardType: FeedEmptyCardType,
     onProfileClick: (userId: Long) -> Unit,
-    onContentClick: (diaryId: Long) -> Unit,
+    onContentDetailClick: (diaryId: Long) -> Unit,
     onLikeClick: (diaryId: Long) -> Unit,
-    onMoreClick: (diaryId: Long) -> Unit,
-    onMenuClick: (diaryId: Long) -> Unit,
+    onUnpublishClick: (diaryId: Long) -> Unit,
+    onReportClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -55,21 +55,23 @@ internal fun DiaryListScreen(
                 with(diary) {
                     val streak = (this as? LikeDiaryItemModel)?.streak
                     val userId = (this as? LikeDiaryItemModel)?.userId ?: 0L
+                    val isMine = (this as? LikeDiaryItemModel)?.isMine ?: true
 
-                    FeedContent(
+                    FeedCard(
                         profileUrl = profileImageUrl,
                         onProfileClick = { onProfileClick(userId) },
                         nickname = nickname,
                         streak = streak,
                         sharedDateInMinutes = sharedDate,
-                        onMenuClick = { onMenuClick(diaryId) },
                         content = originalText,
-                        onContentClick = { onContentClick(diaryId) },
+                        onContentDetailClick = { onContentDetailClick(diaryId) },
                         imageUrl = diaryImageUrl,
                         likeCount = likeCount,
                         isLiked = isLiked,
                         onLikeClick = { onLikeClick(diaryId) },
-                        onMoreClick = { onMoreClick(diaryId) }
+                        isMine = isMine,
+                        onUnpublishClick = { onUnpublishClick(diaryId) },
+                        onReportClick = onReportClick
                     )
                 }
 

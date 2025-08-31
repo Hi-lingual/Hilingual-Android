@@ -46,27 +46,34 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.util.formatRelativeTime
 import com.hilingual.core.designsystem.R
+import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDialog
+import com.hilingual.core.designsystem.component.dialog.report.ReportPostDialog
+import com.hilingual.core.designsystem.component.dropdown.HilingualBasicDropdownMenu
+import com.hilingual.core.designsystem.component.dropdown.HilingualDropdownMenuItem
 import com.hilingual.core.designsystem.component.image.ErrorImageSize
 import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-fun FeedContent(
+fun FeedCard(
     profileUrl: String,
     onProfileClick: () -> Unit,
     nickname: String,
     streak: Int?,
     sharedDateInMinutes: Long,
-    onMenuClick: () -> Unit,
     content: String,
-    onContentClick: () -> Unit,
+    onContentDetailClick: () -> Unit,
     imageUrl: String?,
     likeCount: Int,
     isLiked: Boolean,
     onLikeClick: () -> Unit,
-    onMoreClick: () -> Unit,
+    isMine: Boolean,
+    onUnpublishClick: () -> Unit,
+    onReportClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var isDropdownExpanded by remember { mutableStateOf(false) }
+
     Row(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         modifier = modifier
@@ -90,13 +97,17 @@ fun FeedContent(
                 nickname = nickname,
                 streak = streak,
                 sharedDateInMinutes = sharedDateInMinutes,
-                onMenuClick = onMenuClick
+                isDropdownExpanded = isDropdownExpanded,
+                onDropdownExpandedChange = { isDropdownExpanded = it },
+                isMine = isMine,
+                onUnpublishClick = onUnpublishClick,
+                onReportClick = onReportClick
             )
 
             Spacer(modifier = Modifier.height(4.dp))
 
             Column(
-                modifier = Modifier.noRippleClickable(onClick = onContentClick)
+                modifier = Modifier.noRippleClickable(onClick = onContentDetailClick)
             ) {
                 Text(
                     text = content,
@@ -125,7 +136,7 @@ fun FeedContent(
                 likeCount = likeCount,
                 isLiked = isLiked,
                 onLikeClick = onLikeClick,
-                onMoreClick = onMoreClick
+                onMoreClick = onContentDetailClick
             )
         }
     }
@@ -136,7 +147,11 @@ private fun FeedHeader(
     nickname: String,
     streak: Int?,
     sharedDateInMinutes: Long,
-    onMenuClick: () -> Unit,
+    isDropdownExpanded: Boolean,
+    onDropdownExpandedChange: (Boolean) -> Unit,
+    isMine: Boolean,
+    onUnpublishClick: () -> Unit,
+    onReportClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val formattedDate = remember(sharedDateInMinutes) { formatRelativeTime(sharedDateInMinutes) }
@@ -179,13 +194,17 @@ private fun FeedHeader(
                 .weight(1f)
         )
 
-        Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_more_24),
-            contentDescription = null,
-            tint = HilingualTheme.colors.gray400,
-            modifier = Modifier
-                .size(24.dp)
-                .noRippleClickable(onClick = onMenuClick)
+        FeedDropDownMenu(
+            isExpanded = isDropdownExpanded,
+            isMine = isMine,
+            onExpandedChange = onDropdownExpandedChange,
+            onActionClick = {
+                if (isMine) {
+                    onUnpublishClick()
+                } else {
+                    onReportClick()
+                }
+            }
         )
     }
 }
@@ -245,6 +264,50 @@ private fun FeedFooter(
     }
 }
 
+@Composable
+private fun FeedDropDownMenu(
+    isExpanded: Boolean,
+    isMine: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+    onActionClick: () -> Unit
+) {
+    var isDialogVisible by remember { mutableStateOf(false) }
+
+    HilingualBasicDropdownMenu(
+        isExpanded = isExpanded,
+        onExpandedChange = onExpandedChange
+    ) {
+        HilingualDropdownMenuItem(
+            text = if (isMine) "비공개하기" else "신고하기",
+            iconResId = if (isMine) R.drawable.ic_hide_24 else R.drawable.ic_report_24,
+            onClick = {
+                isDialogVisible = true
+                onExpandedChange(false)
+            }
+        )
+    }
+
+    if (isMine) {
+        DiaryUnpublishDialog(
+            isVisible = isDialogVisible,
+            onDismiss = { isDialogVisible = false },
+            onPrivateClick = {
+                isDialogVisible = false
+                onActionClick()
+            }
+        )
+    } else {
+        ReportPostDialog(
+            isVisible = isDialogVisible,
+            onDismiss = { isDialogVisible = false },
+            onReportClick = {
+                isDialogVisible = false
+                onActionClick()
+            }
+        )
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun FeedHeaderPreview() {
@@ -253,7 +316,11 @@ private fun FeedHeaderPreview() {
             nickname = "HilingualUser",
             streak = 10,
             sharedDateInMinutes = 6000,
-            onMenuClick = {}
+            isDropdownExpanded = false,
+            onDropdownExpandedChange = {},
+            isMine = true,
+            onUnpublishClick = {},
+            onReportClick = {}
         )
     }
 }
@@ -266,7 +333,11 @@ private fun FeedHeaderPreviewNoStreak() {
             nickname = "HilingualUser",
             streak = null,
             sharedDateInMinutes = 6000,
-            onMenuClick = {}
+            isDropdownExpanded = false,
+            onDropdownExpandedChange = {},
+            isMine = true,
+            onUnpublishClick = {},
+            onReportClick = {}
         )
     }
 }
@@ -301,7 +372,7 @@ private fun FeedContentPreviewWithImage() {
         var isLiked by remember { mutableStateOf(false) }
         var likeCount by remember { mutableStateOf(25) }
 
-        FeedContent(
+        FeedCard(
             profileUrl = "https://picsum.photos/id/237/200/200",
             nickname = "HilingualDev",
             streak = 7,
@@ -314,13 +385,14 @@ private fun FeedContentPreviewWithImage() {
             likeCount = likeCount,
             isLiked = isLiked,
             onProfileClick = { /*프로필 클릭 로직*/ },
-            onContentClick = { /* 상세보기 클릭 로직 */ },
-            onMenuClick = { /* 메뉴 클릭 로직 */ },
+            onContentDetailClick = { /* 상세보기 클릭 로직 */ },
             onLikeClick = {
                 isLiked = !isLiked
                 if (isLiked) likeCount++ else likeCount--
             },
-            onMoreClick = { /* 상세보기 클릭 로직 */ }
+            isMine = true,
+            onUnpublishClick = { TODO() },
+            onReportClick = { TODO() }
         )
     }
 }
@@ -332,7 +404,7 @@ private fun FeedContentPreviewNoImage() {
         var isLiked by remember { mutableStateOf(true) }
         var likeCount by remember { mutableStateOf(102) }
 
-        FeedContent(
+        FeedCard(
             profileUrl = "",
             nickname = "User123",
             streak = null,
@@ -346,13 +418,14 @@ private fun FeedContentPreviewNoImage() {
             likeCount = likeCount,
             isLiked = isLiked,
             onProfileClick = { /*프로필 클릭 로직*/ },
-            onContentClick = { /* 상세보기 클릭 로직 */ },
-            onMenuClick = { /* 메뉴 클릭 로직 */ },
+            onContentDetailClick = { /* 상세보기 클릭 로직 */ },
             onLikeClick = {
                 isLiked = !isLiked
                 if (isLiked) likeCount++ else likeCount--
             },
-            onMoreClick = { /* 상세보기 클릭 로직 */ }
+            isMine = true,
+            onUnpublishClick = { TODO() },
+            onReportClick = { TODO() }
         )
     }
 }

@@ -76,9 +76,11 @@ internal fun FeedRoute(
                 paddingValues = paddingValues,
                 uiState = state.data,
                 onSearchClick = navigateToFeedSearch,
-                onFeedItemClick = navigateToFeedDiary,
                 onMyProfileClick = navigateToMyFeedProfile,
                 onFeedProfileClick = navigateToFeedProfile,
+                onContentDetailClick = navigateToFeedDiary,
+                onUnPublishClick = {},
+                onReportClick = {},
                 readAllFeed = viewModel::readAllFeed
             )
         }
@@ -93,7 +95,9 @@ private fun FeedScreen(
     onMyProfileClick: () -> Unit,
     onSearchClick: () -> Unit,
     onFeedProfileClick: (Long) -> Unit,
-    onFeedItemClick: (Long) -> Unit,
+    onContentDetailClick: (Long) -> Unit,
+    onUnPublishClick: (Long) -> Unit,
+    onReportClick: () -> Unit,
     readAllFeed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -172,11 +176,11 @@ private fun FeedScreen(
                     listState = currentListState,
                     feedList = feedList,
                     onProfileClick = onFeedProfileClick,
-                    onMenuClick = {},
-                    onContentClick = onFeedItemClick,
+                    onContentDetailClick = onContentDetailClick,
                     onLikeClick = {},
-                    onMoreClick = onFeedItemClick,
-                    hasFollowing = if (page == 1) uiState.hasFollowing else false
+                    hasFollowing = if (page == 1) uiState.hasFollowing else false,
+                    onUnpublishClick = onUnPublishClick,
+                    onReportClick = onReportClick
                 )
             }
 
@@ -204,8 +208,10 @@ private fun FeedScreenPreview() {
             onMyProfileClick = {},
             onSearchClick = {},
             onFeedProfileClick = {},
-            onFeedItemClick = {},
+            onContentDetailClick = {},
             readAllFeed = {},
+            onUnPublishClick = {},
+            onReportClick = {},
             uiState = FeedUiState.Fake
         )
     }

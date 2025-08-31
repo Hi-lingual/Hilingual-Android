@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
+import com.hilingual.core.designsystem.component.dialog.report.ReportUserDialog
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
@@ -69,12 +70,12 @@ internal fun FeedProfileRoute(
                 },
                 onActionButtonClick = { },
                 onProfileClick = navigateToFeedProfile,
-                onContentClick = navigateToFeedDiary,
+                onContentDetailClick = navigateToFeedDiary,
+                onReportUserClick = { },
                 onLikeClick = { },
-                onMoreClick = navigateToFeedDiary,
-                onMenuClick = { },
-                onReportClick = { },
-                onBlockClick = { }
+                onBlockClick = { },
+                onReportDiaryClick = { },
+                onUnpublishClick = { }
             )
         }
 
@@ -90,18 +91,19 @@ private fun FeedProfileScreen(
     onFollowClick: (Boolean) -> Unit,
     onActionButtonClick: (Boolean) -> Unit,
     onProfileClick: (Long) -> Unit,
-    onContentClick: (Long) -> Unit,
+    onContentDetailClick: (Long) -> Unit,
     onLikeClick: (Long) -> Unit,
-    onMoreClick: (Long) -> Unit,
-    onMenuClick: (Long) -> Unit,
-    onReportClick: () -> Unit,
+    onReportUserClick: () -> Unit,
     onBlockClick: () -> Unit,
+    onUnpublishClick: (diaryId: Long) -> Unit,
+    onReportDiaryClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
     var isMenuBottomSheetVisible by remember { mutableStateOf(false) }
     var isBlockBottomSheetVisible by remember { mutableStateOf(false) }
+    var isReportUserDialogVisible by remember { mutableStateOf(false) }
 
     val profileListState = rememberLazyListState()
 
@@ -191,10 +193,10 @@ private fun FeedProfileScreen(
                                     diaries = diaries,
                                     emptyCardType = emptyCardType,
                                     onProfileClick = onProfileClick,
-                                    onContentClick = onContentClick,
+                                    onContentDetailClick = onContentDetailClick,
                                     onLikeClick = onLikeClick,
-                                    onMoreClick = onMoreClick,
-                                    onMenuClick = onMenuClick,
+                                    onUnpublishClick = onUnpublishClick,
+                                    onReportClick = onReportDiaryClick,
                                     modifier = Modifier.fillParentMaxSize()
                                 )
                             }
@@ -235,10 +237,10 @@ private fun FeedProfileScreen(
                                 diaries = uiState.sharedDiarys,
                                 emptyCardType = FeedEmptyCardType.NOT_SHARED,
                                 onProfileClick = onProfileClick,
-                                onContentClick = onContentClick,
+                                onContentDetailClick = onContentDetailClick,
                                 onLikeClick = onLikeClick,
-                                onMenuClick = onMenuClick,
-                                onMoreClick = onMoreClick,
+                                onUnpublishClick = onUnpublishClick,
+                                onReportClick = onReportDiaryClick,
                                 modifier = Modifier.fillParentMaxSize()
                             )
                         }
@@ -265,7 +267,7 @@ private fun FeedProfileScreen(
         onDismiss = { isMenuBottomSheetVisible = false },
         onReportClick = {
             isMenuBottomSheetVisible = false
-            onReportClick()
+            isReportUserDialogVisible = true
         },
         onBlockClick = {
             isMenuBottomSheetVisible = false
@@ -281,6 +283,15 @@ private fun FeedProfileScreen(
             onBlockClick()
         }
     )
+
+    ReportUserDialog(
+        isVisible = isReportUserDialogVisible,
+        onDismiss = { isReportUserDialogVisible = false },
+        onReportClick = {
+            isReportUserDialogVisible = false
+            onReportUserClick()
+        }
+    )
 }
 
 @Preview(showBackground = true)
@@ -292,14 +303,14 @@ private fun FeedProfileScreenPreview() {
             uiState = FeedProfileUiState.Fake,
             onBackClick = {},
             onActionButtonClick = {},
-            onReportClick = {},
+            onReportUserClick = {},
             onBlockClick = {},
             onFollowClick = {},
             onProfileClick = {},
-            onContentClick = {},
+            onContentDetailClick = {},
             onLikeClick = {},
-            onMoreClick = {},
-            onMenuClick = {}
+            onUnpublishClick = {},
+            onReportDiaryClick = {}
         )
     }
 }
