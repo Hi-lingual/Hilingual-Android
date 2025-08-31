@@ -49,6 +49,23 @@ internal class FeedDiaryViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<FeedDiarySideEffect>()
     val sideEffect: SharedFlow<FeedDiarySideEffect> = _sideEffect.asSharedFlow()
 
+    fun toggleIsLiked(isLiked: Boolean) {
+        viewModelScope.launch {
+            // TODO: API 성공 후 좋아요 수 증가
+            _uiState.update { currentState ->
+                val successState = currentState as UiState.Success
+                successState.copy(
+                    data = successState.data.copy(
+                        profileContent = successState.data.profileContent.copy(
+                            isLiked = isLiked,
+                            likeCount = successState.data.profileContent.likeCount + if (isLiked) 1 else -1
+                        )
+                    )
+                )
+            }
+        }
+    }
+
     fun toggleBookmark(phraseId: Long, isMarked: Boolean) {
         viewModelScope.launch {
             diaryRepository.patchPhraseBookmark(

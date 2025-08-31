@@ -91,7 +91,7 @@ internal fun FeedDiaryRoute(
                 onBackClick = navigateUp,
                 onMyProfileClick = navigateToMyFeedProfile,
                 onProfileClick = navigateToFeedProfile,
-                onLikeClick = {},
+                onLikeClick = viewModel::toggleIsLiked,
                 onPrivateClick = viewModel::diaryUnpublish,
                 onBlockClick = {},
                 onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
@@ -112,7 +112,7 @@ private fun FeedDiaryScreen(
     onBackClick: () -> Unit,
     onMyProfileClick: () -> Unit,
     onProfileClick: (Long) -> Unit,
-    onLikeClick: () -> Unit,
+    onLikeClick: (Boolean) -> Unit,
     onPrivateClick: () -> Unit,
     onReportClick: () -> Unit,
     onBlockClick: () -> Unit,
@@ -182,7 +182,7 @@ private fun FeedDiaryScreen(
                         onProfileClick(userId)
                     }
                 },
-                onLikeClick = onLikeClick
+                onLikeClick = { onLikeClick(!isLiked) }
             )
         }
 
