@@ -59,7 +59,9 @@ internal class FeedSearchViewModel @Inject constructor() : ViewModel() {
                             isFollowed = user.followState.isFollowed
                         ) ?: user.followState
                         user.copy(followState = newState)
-                    } else user
+                    } else {
+                        user
+                    }
                 }.toImmutableList()
 
                 currentState.copy(
