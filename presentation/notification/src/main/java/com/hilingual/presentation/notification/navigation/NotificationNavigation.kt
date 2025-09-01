@@ -13,7 +13,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navOptions
 import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.notification.detail.NotificationDetailRoute
-import com.hilingual.presentation.notification.main.NotificationMainRoute
+import com.hilingual.presentation.notification.main.NotificationRoute
 import com.hilingual.presentation.notification.setting.NotificationSettingRoute
 import kotlinx.serialization.Serializable
 
@@ -46,7 +46,8 @@ fun NavGraphBuilder.notificationNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
     navigateUp: () -> Unit,
-    navigateToFeedNotificationDetail: (String) -> Unit
+    navigateToFeedDiary: (Long) -> Unit,
+    navigateToFeedProfile: (Long) -> Unit,
 ) {
     navigation<NotificationGraph>(
         startDestination = Notification,
@@ -56,15 +57,16 @@ fun NavGraphBuilder.notificationNavGraph(
         popExitTransition = popExitTransition
     ) {
         composable<Notification> {
-            NotificationMainRoute(
+            NotificationRoute(
                 paddingValues = paddingValues,
                 navigateUp = navigateUp,
+                navigateToFeedDiary = navigateToFeedDiary,
+                navigateToFeedProfile = navigateToFeedProfile,
                 navigateToSetting = {
                     navController.navigateToNotificationSetting(
                         navOptions = navOptions { launchSingleTop = true }
                     )
                 },
-                navigateToFeedNotificationDetail = navigateToFeedNotificationDetail,
                 navigateToNoticeDetail = { noticeId ->
                     navController.navigateToNoticeDetail(
                         noticeId = noticeId,

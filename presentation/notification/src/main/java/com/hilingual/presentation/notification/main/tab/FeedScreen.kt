@@ -23,12 +23,13 @@ import androidx.compose.ui.Modifier
 import com.hilingual.presentation.notification.main.component.EmptyImage
 import com.hilingual.presentation.notification.main.component.NotificationItem
 import com.hilingual.presentation.notification.main.model.FeedNotificationItemModel
+import com.hilingual.presentation.notification.main.model.FeedNotificationType
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun FeedScreen(
     notifications: ImmutableList<FeedNotificationItemModel>,
-    onNotificationClick: (String) -> Unit,
+    onNotificationClick: (FeedNotificationItemModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (notifications.isEmpty()) {
@@ -39,13 +40,13 @@ internal fun FeedScreen(
         ) {
             items(
                 items = notifications,
-                key = { it.id }
+                key = { it.noticeId }
             ) { notification ->
                 NotificationItem(
                     title = notification.title,
                     date = notification.date,
                     isRead = notification.isRead,
-                    onClick = { onNotificationClick(notification.deepLink) }
+                    onClick = { onNotificationClick(notification) }
                 )
             }
         }

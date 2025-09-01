@@ -194,7 +194,8 @@ internal fun MainScreen(
                     paddingValues = innerPadding,
                     navController = appState.navController,
                     navigateUp = appState::navigateUp,
-                    navigateToFeedNotificationDetail = {}
+                    navigateToFeedDiary = appState::navigateToFeedDiary,
+                    navigateToFeedProfile = appState::navigateToFeedProfile
                 )
 
                 diaryWriteNavGraph(
