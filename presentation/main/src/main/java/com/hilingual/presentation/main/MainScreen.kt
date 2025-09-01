@@ -19,6 +19,9 @@ import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -32,6 +35,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -139,28 +143,6 @@ internal fun MainScreen(
         LocalSnackbarTrigger provides onShowSnackbar
     ) {
         Scaffold(
-            snackbarHost = {
-                SnackbarHost(hostState = snackBarHostState) { data ->
-                    if (data.visuals.withDismissAction) {
-                        DiarySnackbar(
-                            message = data.visuals.message,
-                            buttonText = data.visuals.actionLabel ?: "",
-                            onClick = {
-                                snackbarOnClick()
-                                data.dismiss()
-                            },
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp)
-                                .padding(bottom = 23.dp)
-                        )
-                    } else {
-                        TextToast(
-                            text = data.visuals.message,
-                            modifier = Modifier.padding(bottom = 23.dp)
-                        )
-                    }
-                }
-            },
             bottomBar = {
                 MainBottomBar(
                     visible = isBottomBarVisible,
@@ -280,6 +262,30 @@ internal fun MainScreen(
                 state = appState.dialogStateHolder.dialogState,
                 onDismiss = appState.dialogStateHolder::dismissDialog
             )
+
+            Box(
+                contentAlignment = Alignment.BottomCenter,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .navigationBarsPadding()
+                    .padding(bottom = 82.dp)
+            ) {
+                SnackbarHost(hostState = snackBarHostState) { data ->
+                    if (data.visuals.withDismissAction) {
+                        DiarySnackbar(
+                            message = data.visuals.message,
+                            buttonText = data.visuals.actionLabel ?: "",
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            onClick = {
+                                snackbarOnClick()
+                                data.dismiss()
+                            }
+                        )
+                    } else {
+                        TextToast(text = data.visuals.message)
+                    }
+                }
+            }
         }
     }
 }
