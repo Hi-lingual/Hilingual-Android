@@ -15,6 +15,10 @@
  */
 package com.hilingual.presentation.otp.component
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -31,6 +35,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,13 +43,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
@@ -56,35 +66,43 @@ fun OtpTextField(
 ) {
     val otpValue = otpText()
     val focusManager = LocalFocusManager.current
-    BasicTextField(
-        modifier = modifier,
-        value = otpValue,
-        onValueChange = {
-            if (it.length <= 6 && it.all { char -> char.isDigit() }) {
-                onOtpTextChange(it)
-            }
-        },
-        keyboardActions = KeyboardActions(
-            onDone = { focusManager.clearFocus() }
-        ),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.NumberPassword,
-            imeAction = ImeAction.Done
-        ),
-        decorationBox = {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                repeat(6) { index ->
-                    OtpChar(
-                        char = otpValue.getOrNull(index),
-                        isError = isError
-                    )
-                }
+    val focusRequester = remember { FocusRequester() }
+
+    Box(modifier = modifier) {
+        BasicTextField(
+            value = otpValue,
+            onValueChange = { newValue ->
+                val filteredValue = newValue
+                    .filter { it.isDigit() }
+                    .take(6)
+                onOtpTextChange(filteredValue)
+            },
+            modifier = Modifier
+                .size(1.dp)
+                .focusRequester(focusRequester),
+            keyboardActions = KeyboardActions(
+                onDone = { focusManager.clearFocus() }
+            ),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.NumberPassword,
+                imeAction = ImeAction.Done
+            ),
+            singleLine = true,
+            cursorBrush = SolidColor(Color.Transparent)
+        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.noRippleClickable { focusRequester.requestFocus() }
+        ) {
+            repeat(6) { index ->
+                OtpChar(
+                    char = otpValue.getOrNull(index),
+                    isError = isError
+                )
             }
         }
-    )
+    }
 }
 
 @Composable
@@ -93,6 +111,28 @@ private fun OtpChar(
     isError: Boolean
 ) {
     val isFilled = char != null
+    val scale = remember { Animatable(if (isFilled) 1f else 0f) }
+
+    LaunchedEffect(isFilled) {
+        if (isFilled) {
+            scale.animateTo(
+                targetValue = 1.5f,
+                animationSpec = tween(durationMillis = 150)
+            )
+            scale.animateTo(
+                targetValue = 1f,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessLow
+                )
+            )
+        } else {
+            scale.animateTo(
+                targetValue = 0f,
+                animationSpec = tween(durationMillis = 100)
+            )
+        }
+    }
 
     val borderColor = when {
         isError -> HilingualTheme.colors.alertRed
@@ -123,7 +163,11 @@ private fun OtpChar(
             text = char?.toString() ?: "",
             style = HilingualTheme.typography.headSB20,
             color = textColor,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            modifier = Modifier.graphicsLayer {
+                scaleX = scale.value
+                scaleY = scale.value
+            }
         )
     }
 }

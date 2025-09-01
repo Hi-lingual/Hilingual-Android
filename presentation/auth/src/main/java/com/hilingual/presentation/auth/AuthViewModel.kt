@@ -40,6 +40,9 @@ class AuthViewModel @Inject constructor(
     )
     val navigationEvent = _navigationEvent.asSharedFlow()
 
+    // TODO: OTP 완료 여부를 확인하는 로직 필요
+    private val isOtpVerified = false
+
     fun onGoogleSignClick(context: Context) {
         viewModelScope.launch {
             authRepository.signInWithGoogle(context)
@@ -47,15 +50,30 @@ class AuthViewModel @Inject constructor(
                     Timber.d("Google ID Token: $idToken")
                     authRepository.login(idToken, "GOOGLE")
                         .onSuccess { authResult ->
-                            if (authResult.isProfileCompleted) {
-                                _navigationEvent.tryEmit(AuthSideEffect.NavigateToHome)
-                            } else {
-                                _navigationEvent.tryEmit(AuthSideEffect.NavigateToOnboarding)
+                            val sideEffect = when {
+                                authResult.isProfileCompleted -> AuthSideEffect.NavigateToHome
+                                isOtpVerified -> AuthSideEffect.NavigateToOnboarding
+                                else -> AuthSideEffect.NavigateToOtp
                             }
+                            _navigationEvent.tryEmit(sideEffect)
                         }
-                        .onLogFailure { }
+                        .onLogFailure {
+                            // TODO: QA용 임시로직입니다.
+                            val sideEffect = when {
+                                isOtpVerified -> AuthSideEffect.NavigateToOnboarding
+                                else -> AuthSideEffect.NavigateToOtp
+                            }
+                            _navigationEvent.tryEmit(sideEffect)
+                        }
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    // TODO: QA용 임시로직입니다.
+                    val sideEffect = when {
+                        isOtpVerified -> AuthSideEffect.NavigateToOnboarding
+                        else -> AuthSideEffect.NavigateToOtp
+                    }
+                    _navigationEvent.tryEmit(sideEffect)
+                }
         }
     }
 }
@@ -63,4 +81,5 @@ class AuthViewModel @Inject constructor(
 sealed interface AuthSideEffect {
     data object NavigateToHome : AuthSideEffect
     data object NavigateToOnboarding : AuthSideEffect
+    data object NavigateToOtp : AuthSideEffect
 }

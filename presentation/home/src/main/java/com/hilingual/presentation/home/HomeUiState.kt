@@ -49,10 +49,10 @@ data class HomeUiState(
                 isPublished = false
             ),
             dateList = persistentListOf(
-                DateUiModel(date = "2025-08-01"),
-                DateUiModel(date = "2025-08-05"),
-                DateUiModel(date = "2025-08-12"),
-                DateUiModel(date = "2025-08-23")
+                DateUiModel(date = "2025-09-01"),
+                DateUiModel(date = "2025-09-05"),
+                DateUiModel(date = "2025-09-12"),
+                DateUiModel(date = "2025-09-23")
             ),
             todayTopic = TodayTopicUiModel(
                 topicKo = "가장 좋아하는 계절은 무엇인가요?",

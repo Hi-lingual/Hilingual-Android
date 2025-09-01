@@ -21,14 +21,13 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import com.hilingual.core.navigation.MainTabRoute
 import com.hilingual.core.navigation.Route
@@ -88,14 +87,10 @@ fun NavGraphBuilder.myPageNavGraph(
     navigateToAlarm: () -> Unit
 ) {
     navigation<MyPageGraph>(
-        startDestination = MyPage,
-        enterTransition = enterTransition,
-        exitTransition = { ExitTransition.None },
-        popEnterTransition = { EnterTransition.None },
-        popExitTransition = popExitTransition
+        startDestination = MyPage
     ) {
-        composable<MyPage> {
-            val viewModel = sharedMyPageViewModel(navController)
+        composable<MyPage> { backStackEntry ->
+            val viewModel = sharedMyPageViewModel(navController, backStackEntry)
 
             MyPageRoute(
                 paddingValues = paddingValues,
@@ -112,8 +107,8 @@ fun NavGraphBuilder.myPageNavGraph(
             exitTransition = { ExitTransition.None },
             popEnterTransition = { EnterTransition.None },
             popExitTransition = popExitTransition
-        ) {
-            val viewModel = sharedMyPageViewModel(navController)
+        ) { backStackEntry ->
+            val viewModel = sharedMyPageViewModel(navController, backStackEntry)
 
             ProfileEditRoute(
                 paddingValues = paddingValues,
@@ -137,10 +132,11 @@ fun NavGraphBuilder.myPageNavGraph(
 }
 
 @Composable
-private fun sharedMyPageViewModel(navController: NavController): MyPageViewModel {
-    val currentEntry by navController.currentBackStackEntryAsState()
-
-    val parentEntry = remember(currentEntry) {
+private fun sharedMyPageViewModel(
+    navController: NavController,
+    backStackEntry: NavBackStackEntry
+): MyPageViewModel {
+    val parentEntry = remember(backStackEntry) {
         navController.getBackStackEntry(MyPageGraph)
     }
     return hiltViewModel(parentEntry)

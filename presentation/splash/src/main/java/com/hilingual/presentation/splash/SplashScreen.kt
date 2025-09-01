@@ -24,36 +24,28 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.extension.collectLatestSideEffect
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.provider.LocalSharedTransitionScope
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualOrange
-import kotlinx.coroutines.delay
 import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun SplashRoute(
     navigateToAuth: () -> Unit,
     navigateToHome: () -> Unit,
-    navigateToOnboarding: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: SplashViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        delay(1400)
-        when (uiState) {
-            SplashUiState.LoggedIn -> navigateToHome()
-            SplashUiState.NotLoggedIn -> navigateToAuth()
-            SplashUiState.OnboardingRequired -> navigateToOnboarding()
+    viewModel.sideEffect.collectLatestSideEffect { event ->
+        when (event) {
+            is SplashSideEffect.NavigateToHome -> navigateToHome()
+            is SplashSideEffect.NavigateToAuth -> navigateToAuth()
         }
     }
 

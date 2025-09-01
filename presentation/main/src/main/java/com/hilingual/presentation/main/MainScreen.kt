@@ -181,19 +181,18 @@ internal fun MainScreen(
             ) {
                 splashNavGraph(
                     navigateToAuth = appState::navigateToAuth,
-                    navigateToHome = appState::navigateToHome,
-                    navigateToOnboarding = appState::navigateToOtp
-                )
-
-                otpNavGraph(
-                    paddingValues = innerPadding,
-                    navigateUp = appState::navigateUp,
-                    navigateToOnboarding = appState::navigateToOnboarding
+                    navigateToHome = appState::navigateToHome
                 )
 
                 authNavGraph(
                     paddingValues = innerPadding,
                     navigateToHome = appState::navigateToHome,
+                    navigateToOnboarding = appState::navigateToOnboarding,
+                    navigateToOtp = appState::navigateToOtp
+                )
+
+                otpNavGraph(
+                    paddingValues = innerPadding,
                     navigateToOnboarding = appState::navigateToOnboarding
                 )
 

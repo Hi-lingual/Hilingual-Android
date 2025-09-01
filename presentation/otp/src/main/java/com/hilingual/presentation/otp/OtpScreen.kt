@@ -45,14 +45,13 @@ import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.dialog.TwoButtonDialog
-import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
+import com.hilingual.core.designsystem.component.topappbar.TitleCenterAlignedTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.otp.component.OtpTextField
 
 @Composable
 fun OtpRoute(
     paddingValues: PaddingValues,
-    navigateUp: () -> Unit,
     navigateToOnboarding: () -> Unit
 ) {
     val context = LocalContext.current
@@ -69,7 +68,6 @@ fun OtpRoute(
         },
         isOtpInvalidProvider = { isOtpInvalid },
         authFailureCountProvider = { authFailureCount },
-        onBackClicked = navigateUp,
         onNotReceivedCodeClick = { context.launchCustomTabs(UrlConstant.KAKAOTALK_CHANNEL) },
         onAuthClick = {
             if (otpCode == "123456") {
@@ -91,7 +89,6 @@ private fun OtpScreen(
     onOtpCodeChange: (String) -> Unit,
     isOtpInvalidProvider: () -> Boolean,
     authFailureCountProvider: () -> Int,
-    onBackClicked: () -> Unit,
     onNotReceivedCodeClick: () -> Unit,
     onAuthClick: () -> Unit,
     onContactClick: () -> Unit,
@@ -99,6 +96,7 @@ private fun OtpScreen(
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
+    val isOtpInvalid = isOtpInvalidProvider()
 
     Column(
         modifier = modifier
@@ -108,10 +106,7 @@ private fun OtpScreen(
             .padding(paddingValues),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        BackTopAppBar(
-            title = "인증 번호 입력",
-            onBackClicked = onBackClicked
-        )
+        TitleCenterAlignedTopAppBar(title = "인증 번호 입력")
 
         Spacer(Modifier.height(32.dp))
 
@@ -123,7 +118,6 @@ private fun OtpScreen(
 
         Spacer(Modifier.height(12.dp))
 
-        val isOtpInvalid = isOtpInvalidProvider()
         Text(
             text = if (isOtpInvalid) "유효하지 않은 인증코드입니다. [실패 횟수 ${authFailureCountProvider()}/5]" else "",
             style = HilingualTheme.typography.captionR12,
@@ -164,8 +158,8 @@ private fun OtpScreen(
             color = HilingualTheme.colors.gray500,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .fillMaxWidth()
                 .noRippleClickable(onClick = onNotReceivedCodeClick)
+                .align(Alignment.Start)
         )
 
         Spacer(Modifier.weight(1f))
