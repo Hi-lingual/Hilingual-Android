@@ -80,6 +80,19 @@ internal class FeedViewModel @Inject constructor() : ViewModel() {
         // TODO: API 호출 성공 후 표시
         viewModelScope.launch {
             _sideEffect.emit(FeedSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
+            _uiState.update { currentState ->
+                val successState = currentState as UiState.Success
+                successState.copy(
+                    data = successState.data.copy(
+                        recommendFeedList = successState.data.recommendFeedList
+                            .filter { it.diaryId != diaryId }
+                            .toImmutableList(),
+                        followingFeedList = successState.data.followingFeedList
+                            .filter { it.diaryId != diaryId }
+                            .toImmutableList()
+                    )
+                )
+            }
         }
     }
 }
