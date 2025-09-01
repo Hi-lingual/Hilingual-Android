@@ -34,7 +34,6 @@ internal fun DiaryListScreen(
     LazyColumn(
         contentPadding = PaddingValues(bottom = 48.dp),
         modifier = modifier
-            .fillMaxSize()
             .background(HilingualTheme.colors.white)
             .padding(horizontal = 16.dp)
     ) {
@@ -43,8 +42,9 @@ internal fun DiaryListScreen(
                 Column(
                     modifier = Modifier.fillParentMaxSize()
                 ) {
-                    Spacer(Modifier.weight(14f))
+                    Spacer(modifier = Modifier.weight(140f))
                     FeedEmptyCard(type = emptyCardType)
+                    Spacer(modifier = Modifier.weight(243f))
                 }
             }
         } else {
