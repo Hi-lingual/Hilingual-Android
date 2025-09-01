@@ -106,14 +106,17 @@ private fun FeedProfileScreen(
     var isReportUserDialogVisible by remember { mutableStateOf(false) }
 
     val profileListState = rememberLazyListState()
+    var shouldEnableScroll by remember { mutableStateOf(true) }
+
+    val profile = uiState.feedProfileInfo
+    val finalScrollEnabled = if (profile.isBlock) false else shouldEnableScroll
 
     val isFabVisible by remember {
         derivedStateOf {
-            profileListState.firstVisibleItemIndex > 0 || profileListState.firstVisibleItemScrollOffset > 0
+            finalScrollEnabled && (profileListState.firstVisibleItemIndex > 0 ||
+                    profileListState.firstVisibleItemScrollOffset > 0)
         }
     }
-
-    val profile = uiState.feedProfileInfo
 
     Box(
         modifier = modifier
@@ -140,6 +143,7 @@ private fun FeedProfileScreen(
 
             LazyColumn(
                 state = profileListState,
+                userScrollEnabled = finalScrollEnabled,
                 modifier = Modifier.fillMaxSize()
             ) {
                 item {
@@ -197,6 +201,9 @@ private fun FeedProfileScreen(
                                     onLikeClick = onLikeClick,
                                     onUnpublishClick = onUnpublishClick,
                                     onReportClick = onReportDiaryClick,
+                                    onScrollStateChanged = { isScrollable ->
+                                        shouldEnableScroll = isScrollable
+                                    },
                                     modifier = Modifier.fillParentMaxSize()
                                 )
                             }
@@ -206,8 +213,7 @@ private fun FeedProfileScreen(
                     profile.isBlock -> {
                         item {
                             Column(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth(),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Spacer(modifier = Modifier.height(140.dp))
@@ -241,6 +247,9 @@ private fun FeedProfileScreen(
                                 onLikeClick = onLikeClick,
                                 onUnpublishClick = onUnpublishClick,
                                 onReportClick = onReportDiaryClick,
+                                onScrollStateChanged = { isScrollable ->
+                                    shouldEnableScroll = isScrollable
+                                },
                                 modifier = Modifier.fillParentMaxSize()
                             )
                         }
