@@ -45,6 +45,7 @@ import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardTyp
 import com.hilingual.presentation.feedprofile.profile.component.FeedProfileInfo
 import com.hilingual.presentation.feedprofile.profile.component.FeedProfileTabRow
 import com.hilingual.presentation.feedprofile.profile.component.ReportBlockBottomSheet
+import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
 import kotlinx.coroutines.launch
 
 @Composable
@@ -107,7 +108,7 @@ private fun FeedProfileScreen(
     onActionButtonClick: (Boolean) -> Unit,
     onProfileClick: (Long) -> Unit,
     onContentDetailClick: (Long) -> Unit,
-    onLikeClick: (Long, Boolean) -> Unit,
+    onLikeClick: (Long, Boolean, DiaryTabType) -> Unit,
     onReportUserClick: () -> Unit,
     onBlockClick: () -> Unit,
     onUnpublishClick: (diaryId: Long) -> Unit,
@@ -199,9 +200,9 @@ private fun FeedProfileScreen(
                                 state = pagerState,
                                 modifier = Modifier.fillMaxSize()
                             ) { page ->
-                                val (diaries, emptyCardType) = when (page) {
-                                    0 -> uiState.sharedDiaries to FeedEmptyCardType.NOT_SHARED
-                                    else -> uiState.likedDiaries to FeedEmptyCardType.NOT_LIKED
+                                val (diaries, emptyCardType, tabType) = when (page) {
+                                    0 -> Triple(uiState.sharedDiaries, FeedEmptyCardType.NOT_SHARED, DiaryTabType.SHARED)
+                                    else -> Triple(uiState.likedDiaries, FeedEmptyCardType.NOT_LIKED, DiaryTabType.LIKED)
                                 }
 
                                 DiaryListScreen(
@@ -209,7 +210,7 @@ private fun FeedProfileScreen(
                                     emptyCardType = emptyCardType,
                                     onProfileClick = onProfileClick,
                                     onContentDetailClick = onContentDetailClick,
-                                    onLikeClick = onLikeClick,
+                                    onLikeClick = { diaryId, isLiked -> onLikeClick(diaryId, isLiked, tabType) },
                                     onUnpublishClick = onUnpublishClick,
                                     onReportClick = onReportDiaryClick,
                                     modifier = Modifier.fillParentMaxSize()
@@ -253,7 +254,7 @@ private fun FeedProfileScreen(
                                 emptyCardType = FeedEmptyCardType.NOT_SHARED,
                                 onProfileClick = onProfileClick,
                                 onContentDetailClick = onContentDetailClick,
-                                onLikeClick = onLikeClick,
+                                onLikeClick = { diaryId, isLiked -> onLikeClick(diaryId, isLiked, DiaryTabType.SHARED) },
                                 onUnpublishClick = onUnpublishClick,
                                 onReportClick = onReportDiaryClick,
                                 modifier = Modifier.fillParentMaxSize()
@@ -323,7 +324,7 @@ private fun FeedProfileScreenPreview() {
             onFollowClick = {},
             onProfileClick = {},
             onContentDetailClick = {},
-            onLikeClick = { _, _ -> },
+            onLikeClick = { _, _, _ -> },
             onUnpublishClick = {},
             onReportDiaryClick = {}
         )
