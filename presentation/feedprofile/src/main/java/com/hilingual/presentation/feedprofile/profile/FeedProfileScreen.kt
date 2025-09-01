@@ -130,12 +130,12 @@ private fun FeedProfileScreen(
         ) {
             if (profile.isMine || profile.isBlock) {
                 BackTopAppBar(
-                    title = null,
+                    title = "피드",
                     onBackClicked = onBackClick
                 )
             } else {
                 BackAndMoreTopAppBar(
-                    title = null,
+                    title = "피드",
                     onBackClicked = onBackClick,
                     onMoreClicked = { isMenuBottomSheetVisible = true }
                 )
