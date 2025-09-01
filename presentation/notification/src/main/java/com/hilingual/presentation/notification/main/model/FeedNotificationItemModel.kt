@@ -21,6 +21,7 @@ enum class FeedNotificationType {
     LIKE_DIARY,
     FOLLOW_USER
 }
+
 @Immutable
 data class FeedNotificationItemModel(
     val noticeId: Long,

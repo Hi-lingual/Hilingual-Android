@@ -47,7 +47,7 @@ fun NavGraphBuilder.notificationNavGraph(
     navController: NavController,
     navigateUp: () -> Unit,
     navigateToFeedDiary: (Long) -> Unit,
-    navigateToFeedProfile: (Long) -> Unit,
+    navigateToFeedProfile: (Long) -> Unit
 ) {
     navigation<NotificationGraph>(
         startDestination = Notification,

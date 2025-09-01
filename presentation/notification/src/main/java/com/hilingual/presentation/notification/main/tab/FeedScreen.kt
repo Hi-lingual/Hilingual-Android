@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import com.hilingual.presentation.notification.main.component.EmptyImage
 import com.hilingual.presentation.notification.main.component.NotificationItem
 import com.hilingual.presentation.notification.main.model.FeedNotificationItemModel
-import com.hilingual.presentation.notification.main.model.FeedNotificationType
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
