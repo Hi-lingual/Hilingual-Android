@@ -46,7 +46,9 @@ fun HilingualErrorDialog(
             onDismiss = onDismiss,
             properties = DialogProperties(
                 dismissOnBackPress = false,
-                dismissOnClickOutside = false
+                dismissOnClickOutside = false,
+                usePlatformDefaultWidth = false,
+                decorFitsSystemWindows = false
             ),
             modifier = modifier
         ) {
