@@ -62,7 +62,7 @@ fun TwoButtonDialog(
 
             Text(
                 text = description,
-                style = HilingualTheme.typography.captionM12,
+                style = HilingualTheme.typography.captionR14,
                 color = HilingualTheme.colors.gray400,
                 maxLines = 2,
                 textAlign = TextAlign.Center
