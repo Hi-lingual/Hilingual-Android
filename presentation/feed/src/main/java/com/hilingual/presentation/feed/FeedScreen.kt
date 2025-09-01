@@ -121,11 +121,6 @@ private fun FeedScreen(
         }
     }
 
-    val feedList = when (pagerState.currentPage) {
-        0 -> uiState.recommendFeedList
-        else -> uiState.followingFeedList
-    }
-
     val isFabVisible by remember(pagerState.currentPage) {
         derivedStateOf {
             currentListState.firstVisibleItemScrollOffset > 5
@@ -134,6 +129,10 @@ private fun FeedScreen(
 
     val isAtBottom by remember(pagerState.currentPage) {
         derivedStateOf {
+            val feedList = when (pagerState.currentPage) {
+                0 -> uiState.recommendFeedList
+                else -> uiState.followingFeedList
+            }
             val layoutInfo = currentListState.layoutInfo
             val visibleItemsInfo = layoutInfo.visibleItemsInfo
 
@@ -184,16 +183,28 @@ private fun FeedScreen(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize()
             ) { page ->
-                FeedTabScreen(
-                    listState = currentListState,
-                    feedList = feedList,
-                    onProfileClick = onFeedProfileClick,
-                    onContentDetailClick = onContentDetailClick,
-                    onLikeClick = onLikeClick,
-                    hasFollowing = if (page == 1) uiState.hasFollowing else false,
-                    onUnpublishClick = onUnpublishClick,
-                    onReportClick = onReportClick
-                )
+                when (page) {
+                    0 -> FeedTabScreen(
+                        listState = recommendListState,
+                        feedList = uiState.recommendFeedList,
+                        onProfileClick = onFeedProfileClick,
+                        onContentDetailClick = onContentDetailClick,
+                        onLikeClick = onLikeClick,
+                        hasFollowing = false,
+                        onUnpublishClick = onUnpublishClick,
+                        onReportClick = onReportClick
+                    )
+                    1 -> FeedTabScreen(
+                        listState = followingsListState,
+                        feedList = uiState.followingFeedList,
+                        onProfileClick = onFeedProfileClick,
+                        onContentDetailClick = onContentDetailClick,
+                        onLikeClick = onLikeClick,
+                        hasFollowing = uiState.hasFollowing,
+                        onUnpublishClick = onUnpublishClick,
+                        onReportClick = onReportClick
+                    )
+                }
             }
 
             HilingualFloatingButton(
