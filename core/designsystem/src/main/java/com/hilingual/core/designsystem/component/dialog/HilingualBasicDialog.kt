@@ -17,9 +17,11 @@ package com.hilingual.core.designsystem.component.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -40,24 +42,35 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 fun HilingualBasicDialog(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    properties: DialogProperties = DialogProperties(),
+    properties: DialogProperties = DialogProperties(
+        usePlatformDefaultWidth = false,
+        decorFitsSystemWindows = false
+    ),
     content: @Composable () -> Unit
 ) {
     Dialog(
         onDismissRequest = onDismiss,
         properties = properties
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = modifier
-                .fillMaxWidth()
-                .background(
-                    color = HilingualTheme.colors.white,
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .padding(top = 34.dp, start = 24.dp, end = 24.dp, bottom = 24.dp)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(HilingualTheme.colors.dim2)
+                .padding(horizontal = 16.dp),
+            contentAlignment = Alignment.Center
         ) {
-            content()
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = HilingualTheme.colors.white,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .padding(top = 34.dp, start = 24.dp, end = 24.dp, bottom = 24.dp)
+            ) {
+                content()
+            }
         }
     }
 }

@@ -41,7 +41,10 @@ fun TwoButtonDialog(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     description: String? = null,
-    properties: DialogProperties = DialogProperties()
+    properties: DialogProperties = DialogProperties(
+        usePlatformDefaultWidth = false,
+        decorFitsSystemWindows = false
+    )
 ) {
     HilingualBasicDialog(
         onDismiss = onDismiss,
