@@ -61,6 +61,7 @@ fun HilingualBasicDropdownMenu(
     onExpandedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     offsetY: Dp = 4.dp,
+    iconSize: Dp = 24.dp,
     content: @Composable () -> Unit
 ) {
     var iconHeight by remember { mutableIntStateOf(0) }
@@ -74,6 +75,7 @@ fun HilingualBasicDropdownMenu(
             contentDescription = null,
             tint = Color.Unspecified,
             modifier = Modifier
+                .size(iconSize)
                 .onGloballyPositioned { coordinates ->
                     iconHeight = coordinates.size.height
                 }
