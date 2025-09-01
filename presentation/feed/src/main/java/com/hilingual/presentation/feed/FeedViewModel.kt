@@ -20,7 +20,10 @@ import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.util.UiState
 import com.hilingual.presentation.feed.model.FeedListItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -51,25 +54,30 @@ internal class FeedViewModel @Inject constructor() : ViewModel() {
             _uiState.update { currentState ->
                 val successState = currentState as UiState.Success
 
-                fun updateFeedItem(item: FeedListItemUiModel): FeedListItemUiModel {
-                    return if (item.diaryId == diaryId) {
-                        item.copy(
-                            isLiked = isLiked,
-                            likeCount = item.likeCount + if (isLiked) 1 else -1
-                        )
-                    } else {
-                        item
-                    }
+                val updatedRecommendList = updateSingleItem(
+                    list = successState.data.recommendFeedList.toPersistentList(),
+                    diaryId = diaryId
+                ) { item ->
+                    item.copy(
+                        isLiked = isLiked,
+                        likeCount = item.likeCount + if (isLiked) 1 else -1
+                    )
+                }
+
+                val updatedFollowingList = updateSingleItem(
+                    list = successState.data.followingFeedList.toPersistentList(),
+                    diaryId = diaryId
+                ) { item ->
+                    item.copy(
+                        isLiked = isLiked,
+                        likeCount = item.likeCount + if (isLiked) 1 else -1
+                    )
                 }
 
                 successState.copy(
                     data = successState.data.copy(
-                        recommendFeedList = successState.data.recommendFeedList
-                            .map(::updateFeedItem)
-                            .toImmutableList(),
-                        followingFeedList = successState.data.followingFeedList
-                            .map(::updateFeedItem)
-                            .toImmutableList()
+                        recommendFeedList = updatedRecommendList,
+                        followingFeedList = updatedFollowingList
                     )
                 )
             }
@@ -84,15 +92,43 @@ internal class FeedViewModel @Inject constructor() : ViewModel() {
                 val successState = currentState as UiState.Success
                 successState.copy(
                     data = successState.data.copy(
-                        recommendFeedList = successState.data.recommendFeedList
-                            .filter { it.diaryId != diaryId }
-                            .toImmutableList(),
-                        followingFeedList = successState.data.followingFeedList
-                            .filter { it.diaryId != diaryId }
-                            .toImmutableList()
+                        recommendFeedList = removeSingleItem(
+                            list = successState.data.recommendFeedList.toPersistentList(),
+                            diaryId = diaryId
+                        ),
+                        followingFeedList = removeSingleItem(
+                            list = successState.data.followingFeedList.toPersistentList(),
+                            diaryId = diaryId
+                        )
                     )
                 )
             }
+        }
+    }
+
+    private fun updateSingleItem(
+        list: PersistentList<FeedListItemUiModel>,
+        diaryId: Long,
+        transform: (FeedListItemUiModel) -> FeedListItemUiModel
+    ): ImmutableList<FeedListItemUiModel> {
+        val index = list.indexOfFirst { it.diaryId == diaryId }
+        return if (index != -1) {
+            val updatedItem = transform(list[index])
+            list.set(index, updatedItem)
+        } else {
+            list
+        }
+    }
+
+    private fun removeSingleItem(
+        list: PersistentList<FeedListItemUiModel>,
+        diaryId: Long
+    ): ImmutableList<FeedListItemUiModel> {
+        val index = list.indexOfFirst { it.diaryId == diaryId }
+        return if (index != -1) {
+            list.removeAt(index)
+        } else {
+            list
         }
     }
 }
