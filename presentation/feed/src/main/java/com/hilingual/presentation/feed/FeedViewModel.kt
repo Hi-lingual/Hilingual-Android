@@ -19,7 +19,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.util.UiState
 import com.hilingual.presentation.feed.model.FeedListItemUiModel
-import com.hilingual.presentation.feed.model.FeedTabType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -46,7 +45,7 @@ internal class FeedViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun toggleIsLiked(feedTabType: FeedTabType, diaryId: Long, isLiked: Boolean) {
+    fun toggleIsLiked(diaryId: Long, isLiked: Boolean) {
         viewModelScope.launch {
             // TODO: API 성공 후 좋아요 수 증가
             _uiState.update { currentState ->
@@ -63,26 +62,16 @@ internal class FeedViewModel @Inject constructor() : ViewModel() {
                     }
                 }
 
-                when (feedTabType) {
-                    FeedTabType.RECOMMEND -> {
-                        successState.copy(
-                            data = successState.data.copy(
-                                recommendFeedList = successState.data.recommendFeedList
-                                    .map(::updateFeedItem)
-                                    .toImmutableList()
-                            )
-                        )
-                    }
-                    FeedTabType.FOLLOWING -> {
-                        successState.copy(
-                            data = successState.data.copy(
-                                followingFeedList = successState.data.followingFeedList
-                                    .map(::updateFeedItem)
-                                    .toImmutableList()
-                            )
-                        )
-                    }
-                }
+                successState.copy(
+                    data = successState.data.copy(
+                        recommendFeedList = successState.data.recommendFeedList
+                            .map(::updateFeedItem)
+                            .toImmutableList(),
+                        followingFeedList = successState.data.followingFeedList
+                            .map(::updateFeedItem)
+                            .toImmutableList()
+                    )
+                )
             }
         }
     }

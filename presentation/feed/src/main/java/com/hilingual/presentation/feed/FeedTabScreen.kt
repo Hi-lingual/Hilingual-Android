@@ -39,18 +39,16 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedEmptyCard
 import com.hilingual.presentation.feed.component.FeedEmptyCardType
 import com.hilingual.presentation.feed.model.FeedListItemUiModel
-import com.hilingual.presentation.feed.model.FeedTabType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun FeedTabScreen(
-    tabType: FeedTabType,
     listState: LazyListState,
     feedList: ImmutableList<FeedListItemUiModel>,
     onProfileClick: (Long) -> Unit,
     onContentDetailClick: (Long) -> Unit,
-    onLikeClick: (FeedTabType, Long, Boolean) -> Unit,
+    onLikeClick: (Long, Boolean) -> Unit,
     onUnpublishClick: (diaryId: Long) -> Unit,
     onReportClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -93,7 +91,7 @@ internal fun FeedTabScreen(
                         imageUrl = imageUrl,
                         likeCount = likeCount,
                         isLiked = isLiked,
-                        onLikeClick = { onLikeClick(tabType, diaryId, !isLiked) },
+                        onLikeClick = { onLikeClick(diaryId, !isLiked) },
                         isMine = isMine,
                         onUnpublishClick = { onUnpublishClick(diaryId) },
                         onReportClick = onReportClick
@@ -149,12 +147,11 @@ private fun FeedTabScreenPreview() {
 
     HilingualTheme {
         FeedTabScreen(
-            tabType = FeedTabType.RECOMMEND,
             listState = rememberLazyListState(),
             feedList = sampleFeedList,
             onProfileClick = { },
             onContentDetailClick = { },
-            onLikeClick = { _, _, _ -> },
+            onLikeClick = { _, _ -> },
             onUnpublishClick = { },
             onReportClick = { },
             hasFollowing = true,

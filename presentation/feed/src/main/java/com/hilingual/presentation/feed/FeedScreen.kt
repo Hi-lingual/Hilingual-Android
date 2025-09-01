@@ -48,7 +48,7 @@ import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndic
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedTopAppBar
-import com.hilingual.presentation.feed.model.FeedTabType
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
 @Composable
@@ -101,7 +101,7 @@ private fun FeedScreen(
     onMyProfileClick: () -> Unit,
     onSearchClick: () -> Unit,
     onFeedProfileClick: (Long) -> Unit,
-    onLikeClick: (FeedTabType, Long, Boolean) -> Unit,
+    onLikeClick: (Long, Boolean) -> Unit,
     onContentDetailClick: (Long) -> Unit,
     onUnpublishClick: (Long) -> Unit,
     onReportClick: () -> Unit,
@@ -167,7 +167,7 @@ private fun FeedScreen(
         )
 
         HilingualBasicTabRow(
-            tabTitles = FeedTabType.tabTitles,
+            tabTitles = persistentListOf("추천", "팔로잉"),
             tabIndex = pagerState.currentPage,
             onTabSelected = {
                 coroutineScope.launch {
@@ -185,7 +185,6 @@ private fun FeedScreen(
                 modifier = Modifier.fillMaxSize()
             ) { page ->
                 FeedTabScreen(
-                    tabType = FeedTabType.getTabType(pagerState.currentPage),
                     listState = currentListState,
                     feedList = feedList,
                     onProfileClick = onFeedProfileClick,
@@ -222,7 +221,7 @@ private fun FeedScreenPreview() {
             onSearchClick = {},
             onFeedProfileClick = {},
             onContentDetailClick = {},
-            onLikeClick = { _, _, _ -> },
+            onLikeClick = { _, _ -> },
             readAllFeed = {},
             onUnpublishClick = {},
             onReportClick = {},
