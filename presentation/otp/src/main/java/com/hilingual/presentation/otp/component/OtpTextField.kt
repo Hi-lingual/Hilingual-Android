@@ -78,7 +78,7 @@ fun OtpTextField(
                 onOtpTextChange(filteredValue)
             },
             modifier = Modifier
-                .size(0.dp)
+                .size(1.dp)
                 .focusRequester(focusRequester),
             keyboardActions = KeyboardActions(
                 onDone = { focusManager.clearFocus() }

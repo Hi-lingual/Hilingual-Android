@@ -158,8 +158,8 @@ private fun OtpScreen(
             color = HilingualTheme.colors.gray500,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .fillMaxWidth()
                 .noRippleClickable(onClick = onNotReceivedCodeClick)
+                .align(Alignment.Start)
         )
 
         Spacer(Modifier.weight(1f))
