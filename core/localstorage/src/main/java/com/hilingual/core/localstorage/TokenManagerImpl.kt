@@ -16,7 +16,6 @@
 package com.hilingual.core.localstorage
 
 import android.content.Context
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -38,7 +37,6 @@ class TokenManagerImpl @Inject constructor(
     private object PreferencesKeys {
         val ACCESS_TOKEN = stringPreferencesKey("access_token")
         val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
-        val IS_PROFILE_COMPLETED = booleanPreferencesKey("is_profile_completed")
     }
 
     override suspend fun saveAccessToken(token: String) {
@@ -54,12 +52,11 @@ class TokenManagerImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveTokens(accessToken: String, refreshToken: String, isProfileCompleted: Boolean) {
+    override suspend fun saveTokens(accessToken: String, refreshToken: String) {
         cachedAccessToken = accessToken
         context.dataStore.edit {
             it[PreferencesKeys.ACCESS_TOKEN] = accessToken
             it[PreferencesKeys.REFRESH_TOKEN] = refreshToken
-            it[PreferencesKeys.IS_PROFILE_COMPLETED] = isProfileCompleted
         }
     }
 
@@ -73,22 +70,11 @@ class TokenManagerImpl @Inject constructor(
         return context.dataStore.data.first()[PreferencesKeys.REFRESH_TOKEN]
     }
 
-    override suspend fun isProfileCompleted(): Boolean {
-        return context.dataStore.data.first()[PreferencesKeys.IS_PROFILE_COMPLETED] ?: false
-    }
-
     override suspend fun clearTokens() {
         cachedAccessToken = null
         context.dataStore.edit { preferences ->
             preferences.remove(PreferencesKeys.ACCESS_TOKEN)
             preferences.remove(PreferencesKeys.REFRESH_TOKEN)
-            preferences.remove(PreferencesKeys.IS_PROFILE_COMPLETED)
-        }
-    }
-
-    override suspend fun completeOnboarding() {
-        context.dataStore.edit {
-            it[PreferencesKeys.IS_PROFILE_COMPLETED] = true
         }
     }
 }

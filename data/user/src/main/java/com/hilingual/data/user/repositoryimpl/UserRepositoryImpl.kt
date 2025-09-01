@@ -16,6 +16,7 @@
 package com.hilingual.data.user.repositoryimpl
 
 import com.hilingual.core.common.util.suspendRunCatching
+import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.data.user.datasource.UserRemoteDataSource
 import com.hilingual.data.user.model.NicknameValidationResult
 import com.hilingual.data.user.model.UserInfoModel
@@ -26,7 +27,8 @@ import com.hilingual.data.user.repository.UserRepository
 import jakarta.inject.Inject
 
 internal class UserRepositoryImpl @Inject constructor(
-    private val userRemoteDataSource: UserRemoteDataSource
+    private val userRemoteDataSource: UserRemoteDataSource,
+    private val userInfoManager: UserInfoManager
 ) : UserRepository {
     override suspend fun getNicknameAvailability(nickname: String): Result<NicknameValidationResult> =
         suspendRunCatching {
@@ -48,4 +50,20 @@ internal class UserRepositoryImpl @Inject constructor(
         suspendRunCatching {
             userRemoteDataSource.getUserInfo().data!!.toModel()
         }
+
+    override suspend fun saveRegisterStatus(isCompleted: Boolean) {
+        userInfoManager.saveRegisterStatus(isCompleted)
+    }
+
+    override suspend fun getRegisterStatus(): Boolean {
+        return userInfoManager.getRegisterStatus()
+    }
+
+    override suspend fun saveOtpVerified(isVerified: Boolean) {
+        userInfoManager.saveOtpVerified(isVerified)
+    }
+
+    override suspend fun isOtpVerified(): Boolean {
+        return userInfoManager.isOtpVerified()
+    }
 }

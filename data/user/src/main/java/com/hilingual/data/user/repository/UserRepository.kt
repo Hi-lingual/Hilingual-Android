@@ -29,4 +29,12 @@ interface UserRepository {
     ): Result<Unit>
 
     suspend fun getUserInfo(): Result<UserInfoModel>
+
+    suspend fun saveRegisterStatus(isCompleted: Boolean)
+
+    suspend fun getRegisterStatus(): Boolean
+
+    suspend fun saveOtpVerified(isVerified: Boolean)
+
+    suspend fun isOtpVerified(): Boolean
 }
