@@ -43,8 +43,8 @@ internal fun DiaryListScreen(
             val canScrollDown = listState.canScrollForward
             val firstVisibleItem = visibleItemsInfo.first()
             val isContentFitsScreen = !canScrollDown &&
-                    firstVisibleItem.index == 0 &&
-                    firstVisibleItem.offset == 0
+                firstVisibleItem.index == 0 &&
+                firstVisibleItem.offset == 0
 
             onScrollStateChanged(!isContentFitsScreen)
         }

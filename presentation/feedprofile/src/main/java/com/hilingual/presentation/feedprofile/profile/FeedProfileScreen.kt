@@ -113,8 +113,10 @@ private fun FeedProfileScreen(
 
     val isFabVisible by remember {
         derivedStateOf {
-            finalScrollEnabled && (profileListState.firstVisibleItemIndex > 0 ||
-                    profileListState.firstVisibleItemScrollOffset > 0)
+            finalScrollEnabled && (
+                profileListState.firstVisibleItemIndex > 0 ||
+                    profileListState.firstVisibleItemScrollOffset > 0
+                )
         }
     }
 
