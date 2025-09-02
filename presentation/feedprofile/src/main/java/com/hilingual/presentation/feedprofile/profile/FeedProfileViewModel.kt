@@ -45,23 +45,12 @@ internal class FeedProfileViewModel @Inject constructor() : ViewModel() {
                 val updatedData = when (type) {
                     DiaryTabType.SHARED -> {
                         successState.data.copy(
-                            sharedDiaries = successState.data.sharedDiaries.updateLikeState(diaryId, isLiked),
-                            likedDiaries = successState.data.likedDiaries.find { it.diaryId == diaryId }
-                                ?.let {
-                                    successState.data.likedDiaries.updateLikeState(diaryId, isLiked)
-                                }
-                                ?: successState.data.likedDiaries
+                            sharedDiaries = successState.data.sharedDiaries.updateLikeState(diaryId, isLiked)
                         )
                     }
-
                     DiaryTabType.LIKED -> {
                         successState.data.copy(
-                            likedDiaries = successState.data.likedDiaries.updateLikeState(diaryId, isLiked),
-                            sharedDiaries = successState.data.sharedDiaries.find { it.diaryId == diaryId }
-                                ?.let {
-                                    successState.data.sharedDiaries.updateLikeState(diaryId, isLiked)
-                                }
-                                ?: successState.data.sharedDiaries
+                            likedDiaries = successState.data.likedDiaries.updateLikeState(diaryId, isLiked)
                         )
                     }
                 }
@@ -69,21 +58,6 @@ internal class FeedProfileViewModel @Inject constructor() : ViewModel() {
             }
         }
     }
-
-    /*fun toggleIsLiked(diaryId: Long, isLiked: Boolean, type: DiaryTabType) {
-        viewModelScope.launch {
-            _uiState.update { currentState ->
-                val successState = currentState as? UiState.Success ?: return@update currentState
-
-                val updatedData = successState.data.copy(
-                    sharedDiaries = successState.data.sharedDiaries.updateLikeState(diaryId, isLiked),
-                    likedDiaries = successState.data.likedDiaries.updateLikeState(diaryId, isLiked)
-                )
-
-                successState.copy(data = updatedData)
-            }
-        }
-    }*/
 
     private fun ImmutableList<FeedDiaryUIModel>.updateLikeState(diaryId: Long, isLiked: Boolean): ImmutableList<FeedDiaryUIModel> {
         return this.map { item ->
