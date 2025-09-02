@@ -162,7 +162,7 @@ private fun FeedDiaryScreen(
                     isReportBottomSheetVisible = true
                 }
             },
-            title = null
+            title = "피드"
         )
 
         with(uiState.profileContent) {
