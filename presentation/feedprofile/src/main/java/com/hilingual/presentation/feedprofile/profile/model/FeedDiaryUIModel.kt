@@ -8,7 +8,7 @@ data class FeedDiaryUIModel(
     val authorUserId: Long,
     val authorNickname: String,
     val authorProfileImageUrl: String,
-    val authorStreak: Int,
+    val authorStreak: Int?,
     val sharedDate: Long,
     val originalText: String,
     val diaryImageUrl: String?,

@@ -20,7 +20,7 @@ data class FeedProfileUiState(
                 streak = 3,
                 follower = 10,
                 following = 5,
-                isMine = false,
+                isMine = true,
                 isFollowing = false,
                 isFollowed = false,
                 isBlock = false
@@ -31,7 +31,7 @@ data class FeedProfileUiState(
                     authorUserId = 0L,
                     authorNickname = "가짜프로필",
                     authorProfileImageUrl = "",
-                    authorStreak = 3,
+                    authorStreak = null,
                     sharedDate = 1720000000L,
                     likeCount = 12,
                     isLiked = false,
@@ -44,7 +44,7 @@ data class FeedProfileUiState(
                     authorUserId = 0L,
                     authorNickname = "가짜프로필",
                     authorProfileImageUrl = "",
-                    authorStreak = 3,
+                    authorStreak = null,
                     sharedDate = 1720000000L,
                     likeCount = 12,
                     isLiked = false,
@@ -54,6 +54,19 @@ data class FeedProfileUiState(
                 )
             ),
             likedDiaries = persistentListOf(
+                FeedDiaryUIModel(
+                    diaryId = 1L,
+                    authorUserId = 0L,
+                    authorNickname = "가짜프로필",
+                    authorProfileImageUrl = "",
+                    authorStreak = null,
+                    sharedDate = 1720000000L,
+                    likeCount = 12,
+                    isLiked = false,
+                    diaryImageUrl = null,
+                    originalText = "가짜 사용자의 일기 내용입니다.",
+                    isMine = true
+                ),
                 FeedDiaryUIModel(
                     diaryId = 10L,
                     authorUserId = 100L,
