@@ -19,10 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,7 +28,6 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.textfield.HilingualSearchTextField
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import kotlinx.coroutines.delay
 
 @Composable
 internal fun FeedSearchHeader(
@@ -42,11 +39,9 @@ internal fun FeedSearchHeader(
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
-    val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
-        delay(200)
         focusRequester.requestFocus()
     }
 
@@ -75,12 +70,7 @@ internal fun FeedSearchHeader(
             backgroundColor = HilingualTheme.colors.gray100,
             modifier = Modifier
                 .weight(1f)
-                .focusRequester(focusRequester)
-                .onFocusChanged {
-                    if (it.isFocused) {
-                        keyboardController?.show()
-                    }
-                },
+                .focusRequester(focusRequester),
             onTrailingIconClick = {
                 onClearClick()
                 focusManager.clearFocus()
