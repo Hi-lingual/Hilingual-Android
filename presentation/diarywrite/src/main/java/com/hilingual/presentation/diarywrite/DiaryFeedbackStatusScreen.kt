@@ -132,8 +132,8 @@ private fun DiaryFeedbackCompleteStatusScreenPreview() {
         DiaryFeedbackStatusScreen(
             paddingValues = PaddingValues(0.dp),
             uiData = FeedbackUIData(
-                title = "AI 피드백 완료!",
-                description = "틀린 부분을 고치고,\n더 나은 표현으로 수정했어요!",
+                title = "일기 저장 완료!",
+                description = "펜펜이가 틀린 부분을 고치고,\n더 나은 표현으로 수정했어요!",
                 media = FeedbackMedia.Lottie(
                     resId = R.raw.lottie_feedback_complete,
                     heightDp = 180.dp
