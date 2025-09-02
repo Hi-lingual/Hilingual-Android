@@ -125,7 +125,7 @@ internal fun FeedProfileInfo(
                             .size(16.dp)
                     )
                     Text(
-                        text = "${streak}일 연속 작성중",
+                        text = "${streak}일 연속 작성 중",
                         style = HilingualTheme.typography.bodyM14,
                         color = if (streak > 0) HilingualTheme.colors.hilingualOrange else HilingualTheme.colors.gray400
                     )
