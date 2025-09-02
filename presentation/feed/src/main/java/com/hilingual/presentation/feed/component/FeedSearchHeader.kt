@@ -10,14 +10,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,6 +30,7 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.textfield.HilingualSearchTextField
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import kotlinx.coroutines.delay
 
 @Composable
 internal fun FeedSearchHeader(
@@ -36,6 +42,13 @@ internal fun FeedSearchHeader(
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        delay(200)
+        focusRequester.requestFocus()
+    }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -60,7 +73,14 @@ internal fun FeedSearchHeader(
             onValueChanged = onSearchWordChanged,
             placeholder = "닉네임을 입력해주세요.",
             backgroundColor = HilingualTheme.colors.gray100,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .focusRequester(focusRequester)
+                .onFocusChanged {
+                    if (it.isFocused) {
+                        keyboardController?.show()
+                    }
+                },
             onTrailingIconClick = {
                 onClearClick()
                 focusManager.clearFocus()
