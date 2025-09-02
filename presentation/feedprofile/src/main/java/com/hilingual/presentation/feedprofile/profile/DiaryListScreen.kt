@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -30,30 +31,39 @@ internal fun DiaryListScreen(
     onLikeClick: (diaryId: Long) -> Unit,
     onUnpublishClick: (diaryId: Long) -> Unit,
     onReportClick: () -> Unit,
-    onScrollStateChanged: (Boolean) -> Unit,
+    onScrollStateChanged: ((Boolean) -> Unit)? = null,
+    isNestedScroll: Boolean = false,
+    canParentScroll: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
 
-    LaunchedEffect(listState.layoutInfo) {
+    LaunchedEffect(listState.layoutInfo, diaries.size) {
         val layoutInfo = listState.layoutInfo
-        val visibleItemsInfo = layoutInfo.visibleItemsInfo
 
-        if (visibleItemsInfo.isNotEmpty()) {
-            val canScrollDown = listState.canScrollForward
-            val firstVisibleItem = visibleItemsInfo.first()
-            val isContentFitsScreen = !canScrollDown &&
-                firstVisibleItem.index == 0 &&
-                firstVisibleItem.offset == 0
-
-            onScrollStateChanged(!isContentFitsScreen)
+        if (diaries.isEmpty()) {
+            onScrollStateChanged?.invoke(false)
+            return@LaunchedEffect
         }
+
+        if (layoutInfo.visibleItemsInfo.isEmpty()) {
+            onScrollStateChanged?.invoke(false)
+            return@LaunchedEffect
+        }
+
+        val canScrollDown = listState.canScrollForward
+        val canScrollUp = listState.canScrollBackward
+        val needsScroll = canScrollDown || canScrollUp
+
+        onScrollStateChanged?.invoke(needsScroll)
     }
 
     LazyColumn(
         state = listState,
         contentPadding = PaddingValues(bottom = 48.dp),
+        userScrollEnabled = if (isNestedScroll) canParentScroll else true,
         modifier = modifier
+            .fillMaxSize()
             .background(HilingualTheme.colors.white)
             .padding(horizontal = 16.dp)
     ) {

@@ -24,6 +24,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -109,6 +113,18 @@ private fun FeedProfileScreen(
     val profileListState = rememberLazyListState()
     var shouldEnableScroll by remember { mutableStateOf(true) }
 
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                return if (!shouldEnableScroll || profileListState.firstVisibleItemIndex < 2) {
+                    Offset.Zero
+                } else {
+                    Offset.Zero
+                }
+            }
+        }
+    }
+
     val profile = uiState.feedProfileInfo
     val finalScrollEnabled = if (profile.isBlock) false else shouldEnableScroll
 
@@ -125,6 +141,7 @@ private fun FeedProfileScreen(
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
+            .nestedScroll(nestedScrollConnection)
     ) {
         Column(
             modifier = Modifier
@@ -189,7 +206,7 @@ private fun FeedProfileScreen(
                         item {
                             HorizontalPager(
                                 state = pagerState,
-                                modifier = Modifier.fillMaxSize()
+                                modifier = Modifier.fillParentMaxSize()
                             ) { page ->
                                 val (diaries, emptyCardType) = when (page) {
                                     0 -> uiState.sharedDiarys to FeedEmptyCardType.NOT_SHARED
@@ -207,6 +224,8 @@ private fun FeedProfileScreen(
                                     onScrollStateChanged = { isScrollable ->
                                         shouldEnableScroll = isScrollable
                                     },
+                                    isNestedScroll = true,
+                                    canParentScroll = profileListState.firstVisibleItemIndex >= 2,
                                     modifier = Modifier.fillParentMaxSize()
                                 )
                             }
@@ -253,6 +272,8 @@ private fun FeedProfileScreen(
                                 onScrollStateChanged = { isScrollable ->
                                     shouldEnableScroll = isScrollable
                                 },
+                                isNestedScroll = true,
+                                canParentScroll = profileListState.firstVisibleItemIndex >= 1,
                                 modifier = Modifier.fillParentMaxSize()
                             )
                         }
