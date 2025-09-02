@@ -17,6 +17,7 @@ package com.hilingual.core.designsystem.component.content.diary
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -99,7 +100,9 @@ internal fun DiaryCard(
             style = HilingualTheme.typography.captionR12,
             color = HilingualTheme.colors.gray400,
             textAlign = TextAlign.End,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .padding(top = 12.dp)
+                .fillMaxWidth()
         )
     }
 }
