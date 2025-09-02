@@ -53,7 +53,7 @@ fun HilingualBasicDialog(
         properties = properties
     ) {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .background(HilingualTheme.colors.dim2)
                 .padding(horizontal = 16.dp),
@@ -61,7 +61,7 @@ fun HilingualBasicDialog(
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .background(
                         color = HilingualTheme.colors.white,
