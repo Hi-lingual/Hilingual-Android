@@ -2,7 +2,6 @@ package com.hilingual.presentation.mypage.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -57,11 +56,13 @@ internal fun MyInfoBox(
                         color = HilingualTheme.colors.gray200,
                         shape = CircleShape
                     )
+                    .noRippleClickable(onClick = onEditButtonClick)
             )
 
             Spacer(modifier = Modifier.width(10.dp))
 
             Text(
+                modifier = Modifier.noRippleClickable(onClick = onEditButtonClick),
                 text = profileNickname,
                 color = HilingualTheme.colors.gray850,
                 style = HilingualTheme.typography.headB18
@@ -72,7 +73,7 @@ internal fun MyInfoBox(
             Icon(
                 modifier = Modifier
                     .size(32.dp)
-                    .clickable(onClick = onEditButtonClick)
+                    .noRippleClickable(onClick = onEditButtonClick)
                     .padding(4.dp),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_pen_24),
                 contentDescription = null,
