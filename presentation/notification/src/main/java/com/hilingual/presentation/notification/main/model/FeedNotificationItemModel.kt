@@ -17,11 +17,17 @@ package com.hilingual.presentation.notification.main.model
 
 import androidx.compose.runtime.Immutable
 
+enum class FeedNotificationType {
+    LIKE_DIARY,
+    FOLLOW_USER
+}
+
 @Immutable
 data class FeedNotificationItemModel(
-    val id: Long,
+    val noticeId: Long,
+    val type: FeedNotificationType,
     val title: String,
+    val targetId: Long,
     val date: String,
-    val isRead: Boolean,
-    val deepLink: String
+    val isRead: Boolean
 )
