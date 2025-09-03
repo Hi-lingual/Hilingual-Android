@@ -37,6 +37,7 @@ import com.hilingual.core.designsystem.component.content.diary.GrammarSpellingTa
 import com.hilingual.core.designsystem.component.content.diary.ModalImage
 import com.hilingual.core.designsystem.component.content.diary.RecommendExpressionTab
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDialog
+import com.hilingual.core.designsystem.component.dialog.report.ReportPostDialog
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -90,9 +91,9 @@ internal fun FeedDiaryRoute(
                 onBackClick = navigateUp,
                 onMyProfileClick = navigateToMyFeedProfile,
                 onProfileClick = navigateToFeedProfile,
-                onLikeClick = {},
+                onLikeClick = viewModel::toggleIsLiked,
                 onPrivateClick = viewModel::diaryUnpublish,
-                onBlockClick = {},
+                onBlockClick = viewModel::blockUser,
                 onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 isImageDetailVisible = isImageDetailVisible,
                 onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
@@ -111,7 +112,7 @@ private fun FeedDiaryScreen(
     onBackClick: () -> Unit,
     onMyProfileClick: () -> Unit,
     onProfileClick: (Long) -> Unit,
-    onLikeClick: () -> Unit,
+    onLikeClick: (Boolean) -> Unit,
     onPrivateClick: () -> Unit,
     onReportClick: () -> Unit,
     onBlockClick: () -> Unit,
@@ -123,6 +124,7 @@ private fun FeedDiaryScreen(
     var isUnpublishDialogVisible by remember { mutableStateOf(false) }
 
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
+    var isReportConfirmDialogVisible by remember { mutableStateOf(false) }
     var isBlockConfirmBottomSheetVisible by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
@@ -180,7 +182,7 @@ private fun FeedDiaryScreen(
                         onProfileClick(userId)
                     }
                 },
-                onLikeClick = onLikeClick
+                onLikeClick = { onLikeClick(!isLiked) }
             )
         }
 
@@ -262,7 +264,7 @@ private fun FeedDiaryScreen(
             onDismiss = { isReportBottomSheetVisible = false },
             onReportClick = {
                 isReportBottomSheetVisible = false
-                onReportClick()
+                isReportConfirmDialogVisible = true
             },
             onBlockClick = {
                 isReportBottomSheetVisible = false
@@ -277,7 +279,6 @@ private fun FeedDiaryScreen(
         onPrivateClick = {
             isUnpublishDialogVisible = false
             onPrivateClick()
-            // TODO: 비공개 후 이전 화면으로 이동, 토스트 표시
         }
     )
 
@@ -287,6 +288,15 @@ private fun FeedDiaryScreen(
         onBlockButtonClick = {
             isBlockConfirmBottomSheetVisible = false
             onBlockClick()
+        }
+    )
+
+    ReportPostDialog(
+        isVisible = isReportConfirmDialogVisible,
+        onDismiss = { isReportConfirmDialogVisible = false },
+        onReportClick = {
+            isReportConfirmDialogVisible = false
+            onReportClick()
         }
     )
 }

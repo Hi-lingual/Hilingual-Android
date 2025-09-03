@@ -41,9 +41,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:common"))
-    implementation(project(":core:network"))
-
     // Google Auth
     api(libs.androidx.credentials)
     api(libs.googleid)

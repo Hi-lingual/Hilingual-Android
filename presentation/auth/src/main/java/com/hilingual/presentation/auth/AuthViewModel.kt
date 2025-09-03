@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.auth.repository.AuthRepository
+import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,7 +31,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _navigationEvent = MutableSharedFlow<AuthSideEffect>(
@@ -40,40 +42,24 @@ class AuthViewModel @Inject constructor(
     )
     val navigationEvent = _navigationEvent.asSharedFlow()
 
-    // TODO: OTP 완료 여부를 확인하는 로직 필요
-    private val isOtpVerified = false
-
     fun onGoogleSignClick(context: Context) {
         viewModelScope.launch {
             authRepository.signInWithGoogle(context)
                 .onSuccess { idToken ->
                     Timber.d("Google ID Token: $idToken")
-                    authRepository.login(idToken, "GOOGLE")
+                    authRepository.login(idToken)
                         .onSuccess { authResult ->
+                            val isOtpVerified = userRepository.isOtpVerified()
                             val sideEffect = when {
-                                authResult.isProfileCompleted -> AuthSideEffect.NavigateToHome
+                                authResult.registerStatus -> AuthSideEffect.NavigateToHome
                                 isOtpVerified -> AuthSideEffect.NavigateToOnboarding
                                 else -> AuthSideEffect.NavigateToOtp
                             }
                             _navigationEvent.tryEmit(sideEffect)
                         }
-                        .onLogFailure {
-                            // TODO: QA용 임시로직입니다.
-                            val sideEffect = when {
-                                isOtpVerified -> AuthSideEffect.NavigateToOnboarding
-                                else -> AuthSideEffect.NavigateToOtp
-                            }
-                            _navigationEvent.tryEmit(sideEffect)
-                        }
+                        .onLogFailure { }
                 }
-                .onLogFailure {
-                    // TODO: QA용 임시로직입니다.
-                    val sideEffect = when {
-                        isOtpVerified -> AuthSideEffect.NavigateToOnboarding
-                        else -> AuthSideEffect.NavigateToOtp
-                    }
-                    _navigationEvent.tryEmit(sideEffect)
-                }
+                .onLogFailure { }
         }
     }
 }

@@ -78,7 +78,7 @@ private val terms = persistentListOf(
         link = UrlConstant.ONBOARDING_PRIVACY_POLICY
     ),
     Term(
-        text = "광고성 정보 수신 동의 (선택)",
+        text = "앱 내 광고성 정보 수신 동의 (선택)",
         type = TermType.MARKETING
     )
 )

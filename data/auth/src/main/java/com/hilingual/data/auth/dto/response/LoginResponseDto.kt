@@ -24,6 +24,6 @@ data class LoginResponseDto(
     val accessToken: String,
     @SerialName("refreshToken")
     val refreshToken: String,
-    @SerialName("isProfileCompleted")
-    val isProfileCompleted: Boolean
+    @SerialName("registerStatus")
+    val registerStatus: Boolean
 )

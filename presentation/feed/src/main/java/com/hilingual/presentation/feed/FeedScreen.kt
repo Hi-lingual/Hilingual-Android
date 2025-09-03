@@ -33,11 +33,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -57,6 +60,8 @@ internal fun FeedRoute(
     navigateToFeedSearch: () -> Unit,
     viewModel: FeedViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val toastTrigger = LocalToastTrigger.current
 
@@ -78,9 +83,10 @@ internal fun FeedRoute(
                 onSearchClick = navigateToFeedSearch,
                 onMyProfileClick = navigateToMyFeedProfile,
                 onFeedProfileClick = navigateToFeedProfile,
+                onLikeClick = viewModel::toggleIsLiked,
                 onContentDetailClick = navigateToFeedDiary,
-                onUnPublishClick = {},
-                onReportClick = {},
+                onUnpublishClick = viewModel::diaryUnpublish,
+                onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 readAllFeed = viewModel::readAllFeed
             )
         }
@@ -95,8 +101,9 @@ private fun FeedScreen(
     onMyProfileClick: () -> Unit,
     onSearchClick: () -> Unit,
     onFeedProfileClick: (Long) -> Unit,
+    onLikeClick: (Long, Boolean) -> Unit,
     onContentDetailClick: (Long) -> Unit,
-    onUnPublishClick: (Long) -> Unit,
+    onUnpublishClick: (Long) -> Unit,
     onReportClick: () -> Unit,
     readAllFeed: () -> Unit,
     modifier: Modifier = Modifier
@@ -107,10 +114,10 @@ private fun FeedScreen(
     val recommendListState = rememberLazyListState()
     val followingsListState = rememberLazyListState()
 
-    val (currentListState, feedList) = remember(pagerState.currentPage) {
+    val currentListState = remember(pagerState.currentPage) {
         when (pagerState.currentPage) {
-            0 -> recommendListState to uiState.recommendFeedList
-            else -> followingsListState to uiState.followingFeedList
+            0 -> recommendListState
+            else -> followingsListState
         }
     }
 
@@ -122,6 +129,10 @@ private fun FeedScreen(
 
     val isAtBottom by remember(pagerState.currentPage) {
         derivedStateOf {
+            val feedList = when (pagerState.currentPage) {
+                0 -> uiState.recommendFeedList
+                else -> uiState.followingFeedList
+            }
             val layoutInfo = currentListState.layoutInfo
             val visibleItemsInfo = layoutInfo.visibleItemsInfo
 
@@ -172,16 +183,28 @@ private fun FeedScreen(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize()
             ) { page ->
-                FeedTabScreen(
-                    listState = currentListState,
-                    feedList = feedList,
-                    onProfileClick = onFeedProfileClick,
-                    onContentDetailClick = onContentDetailClick,
-                    onLikeClick = {},
-                    hasFollowing = if (page == 1) uiState.hasFollowing else false,
-                    onUnpublishClick = onUnPublishClick,
-                    onReportClick = onReportClick
-                )
+                when (page) {
+                    0 -> FeedTabScreen(
+                        listState = recommendListState,
+                        feedList = uiState.recommendFeedList,
+                        onProfileClick = onFeedProfileClick,
+                        onContentDetailClick = onContentDetailClick,
+                        onLikeClick = onLikeClick,
+                        hasFollowing = false,
+                        onUnpublishClick = onUnpublishClick,
+                        onReportClick = onReportClick
+                    )
+                    1 -> FeedTabScreen(
+                        listState = followingsListState,
+                        feedList = uiState.followingFeedList,
+                        onProfileClick = onFeedProfileClick,
+                        onContentDetailClick = onContentDetailClick,
+                        onLikeClick = onLikeClick,
+                        hasFollowing = uiState.hasFollowing,
+                        onUnpublishClick = onUnpublishClick,
+                        onReportClick = onReportClick
+                    )
+                }
             }
 
             HilingualFloatingButton(
@@ -209,8 +232,9 @@ private fun FeedScreenPreview() {
             onSearchClick = {},
             onFeedProfileClick = {},
             onContentDetailClick = {},
+            onLikeClick = { _, _ -> },
             readAllFeed = {},
-            onUnPublishClick = {},
+            onUnpublishClick = {},
             onReportClick = {},
             uiState = FeedUiState.Fake
         )
