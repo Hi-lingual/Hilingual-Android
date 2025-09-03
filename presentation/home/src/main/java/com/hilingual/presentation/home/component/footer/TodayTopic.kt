@@ -49,7 +49,7 @@ internal fun TodayTopic(
     enTopic: String,
     modifier: Modifier = Modifier
 ) {
-    var isKo by remember { mutableStateOf(false) }
+    var isKo by remember(koTopic) { mutableStateOf(false) }
 
     Column(
         modifier = modifier
