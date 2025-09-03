@@ -113,6 +113,14 @@ private fun FeedProfileScreen(
     val profileListState = rememberLazyListState()
     var shouldEnableScroll by remember { mutableStateOf(true) }
 
+    val canParentScrollForOthers by remember {
+        derivedStateOf { profileListState.firstVisibleItemIndex >= 1 }
+    }
+
+    val canParentScrollForMine by remember {
+        derivedStateOf { profileListState.firstVisibleItemIndex >= 2 }
+    }
+
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
@@ -225,7 +233,7 @@ private fun FeedProfileScreen(
                                         shouldEnableScroll = isScrollable
                                     },
                                     isNestedScroll = true,
-                                    canParentScroll = profileListState.firstVisibleItemIndex >= 2,
+                                    canParentScroll = canParentScrollForMine,
                                     modifier = Modifier.fillParentMaxSize()
                                 )
                             }
@@ -273,7 +281,7 @@ private fun FeedProfileScreen(
                                     shouldEnableScroll = isScrollable
                                 },
                                 isNestedScroll = true,
-                                canParentScroll = profileListState.firstVisibleItemIndex >= 1,
+                                canParentScroll = canParentScrollForOthers,
                                 modifier = Modifier.fillParentMaxSize()
                             )
                         }

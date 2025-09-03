@@ -31,10 +31,10 @@ internal fun DiaryListScreen(
     onLikeClick: (diaryId: Long) -> Unit,
     onUnpublishClick: (diaryId: Long) -> Unit,
     onReportClick: () -> Unit,
+    modifier: Modifier = Modifier,
     onScrollStateChanged: ((Boolean) -> Unit)? = null,
     isNestedScroll: Boolean = false,
-    canParentScroll: Boolean = true,
-    modifier: Modifier = Modifier
+    canParentScroll: Boolean = true
 ) {
     val listState = rememberLazyListState()
 
