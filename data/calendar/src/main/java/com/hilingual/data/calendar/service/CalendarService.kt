@@ -30,7 +30,7 @@ interface CalendarService {
         @Query("month") month: Int
     ): BaseResponse<CalendarResponseDto>
 
-    @GET("/api/v1/calendar/{date}")
+    @GET("/api/v1/home/calendar/{date}")
     suspend fun getDiaryThumbnail(
         @Path("date") date: String
     ): BaseResponse<DiaryThumbnailResponseDto>

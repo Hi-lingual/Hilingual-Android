@@ -20,11 +20,13 @@ import com.hilingual.data.calendar.dto.response.DiaryThumbnailResponseDto
 data class DiaryThumbnailModel(
     val diaryId: Long,
     val imageUrl: String?,
-    val originalText: String
+    val originalText: String,
+    val isPublished: Boolean
 )
 
 internal fun DiaryThumbnailResponseDto.toModel() = DiaryThumbnailModel(
     diaryId = this.diaryId,
     imageUrl = this.imageUrl,
-    originalText = this.originalText
+    originalText = this.originalText,
+    isPublished =  this.isPublished
 )
