@@ -15,9 +15,14 @@
  */
 package com.hilingual.presentation.notification.main.tab
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.hilingual.presentation.notification.main.component.EmptyImage
@@ -25,28 +30,42 @@ import com.hilingual.presentation.notification.main.component.NotificationItem
 import com.hilingual.presentation.notification.main.model.NoticeNotificationItemModel
 import kotlinx.collections.immutable.ImmutableList
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun NoticeScreen(
     notifications: ImmutableList<NoticeNotificationItemModel>,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
     onNotificationClick: (Long) -> Unit,
+    listState: LazyListState = rememberLazyListState(),
     modifier: Modifier = Modifier
 ) {
-    if (notifications.isEmpty()) {
-        EmptyImage()
-    } else {
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = modifier.fillMaxSize()
+    ) {
         LazyColumn(
-            modifier = modifier.fillMaxSize()
+            state = listState,
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = if (notifications.isEmpty()) Arrangement.Center else Arrangement.Top
         ) {
-            items(
-                items = notifications,
-                key = { it.id }
-            ) { notification ->
-                NotificationItem(
-                    title = notification.title,
-                    date = notification.date,
-                    isRead = notification.isRead,
-                    onClick = { onNotificationClick(notification.id) }
-                )
+            if (notifications.isEmpty()) {
+                item {
+                    EmptyImage(modifier = Modifier.fillParentMaxSize())
+                }
+            } else {
+                items(
+                    items = notifications,
+                    key = { it.id }
+                ) { notification ->
+                    NotificationItem(
+                        title = notification.title,
+                        date = notification.date,
+                        isRead = notification.isRead,
+                        onClick = { onNotificationClick(notification.id) }
+                    )
+                }
             }
         }
     }

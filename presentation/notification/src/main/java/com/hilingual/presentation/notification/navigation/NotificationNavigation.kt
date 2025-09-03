@@ -20,7 +20,7 @@ import kotlinx.serialization.Serializable
 private const val ANIMATION_DURATION = 300
 
 @Serializable
-internal data object NotificationGraph
+data object NotificationGraph
 
 @Serializable
 internal data object Notification : Route

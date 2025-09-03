@@ -3,6 +3,7 @@ package com.hilingual.presentation.notification.main
 import androidx.compose.runtime.Immutable
 import com.hilingual.presentation.notification.main.model.FeedNotificationItemModel
 import com.hilingual.presentation.notification.main.model.FeedNotificationType
+import com.hilingual.presentation.notification.main.model.NoticeCategoryType
 import com.hilingual.presentation.notification.main.model.NoticeNotificationItemModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -10,7 +11,10 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 internal data class NotificationUiState(
     val feedNotifications: ImmutableList<FeedNotificationItemModel> = persistentListOf(),
-    val noticeNotifications: ImmutableList<NoticeNotificationItemModel> = persistentListOf()
+    val noticeNotifications: ImmutableList<NoticeNotificationItemModel> = persistentListOf(),
+    val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
+    val selectedTab: Int = 0
 ) {
     companion object {
         val Fake = NotificationUiState(
@@ -35,12 +39,14 @@ internal data class NotificationUiState(
             noticeNotifications = persistentListOf(
                 NoticeNotificationItemModel(
                     id = 0,
+                    category = NoticeCategoryType.NOTIFICATION,
                     title = "v.1.1.0 업데이트 알림",
                     date = "2025.08.15",
                     isRead = false
                 ),
                 NoticeNotificationItemModel(
                     id = 1,
+                    category = NoticeCategoryType.MARKETING,
                     title = "시스템 점검에 따른 사용 중단 안내",
                     date = "2025.08.15",
                     isRead = true

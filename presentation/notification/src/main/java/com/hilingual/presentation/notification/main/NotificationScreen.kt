@@ -20,9 +20,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -35,10 +37,8 @@ import com.hilingual.presentation.notification.main.component.NotificationTapRow
 import com.hilingual.presentation.notification.main.component.NotificationTopAppBar
 import com.hilingual.presentation.notification.main.model.FeedNotificationItemModel
 import com.hilingual.presentation.notification.main.model.FeedNotificationType
-import com.hilingual.presentation.notification.main.model.NoticeNotificationItemModel
 import com.hilingual.presentation.notification.main.tab.FeedScreen
 import com.hilingual.presentation.notification.main.tab.NoticeScreen
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 
 @Composable
@@ -54,34 +54,56 @@ internal fun NotificationRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     NotificationScreen(
-        feedNotifications = uiState.feedNotifications,
-        noticeNotifications = uiState.noticeNotifications,
+        uiState = uiState,
         onBackClick = navigateUp,
         onSettingClick = navigateToSetting,
         onFeedNotificationClick = { notification ->
+            viewModel.readFeedNotification(notification.noticeId)
             when (notification.type) {
                 FeedNotificationType.LIKE_DIARY -> navigateToFeedDiary(notification.targetId)
                 FeedNotificationType.FOLLOW_USER -> navigateToFeedProfile(notification.targetId)
             }
         },
         onNoticeNotificationClick = navigateToNoticeDetail,
+        onFeedRefresh = viewModel::refreshFeed,
+        onNoticeRefresh = viewModel::refreshNotice,
+        onFeedLoad = viewModel::loadFeed,
+        onNoticeLoad = viewModel::loadNotice,
         paddingValues = paddingValues
     )
 }
 
 @Composable
 private fun NotificationScreen(
-    feedNotifications: ImmutableList<FeedNotificationItemModel>,
-    noticeNotifications: ImmutableList<NoticeNotificationItemModel>,
+    uiState: NotificationUiState,
     onBackClick: () -> Unit,
     onSettingClick: () -> Unit,
     onFeedNotificationClick: (FeedNotificationItemModel) -> Unit,
     onNoticeNotificationClick: (Long) -> Unit,
+    onFeedRefresh: () -> Unit,
+    onNoticeRefresh: () -> Unit,
+    onFeedLoad: () -> Unit,
+    onNoticeLoad: () -> Unit,
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier
 ) {
+    val feedListState = rememberLazyListState()
+    val noticeListState = rememberLazyListState()
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(pagerState.currentPage) {
+        when (pagerState.currentPage) {
+            0 -> {
+                onFeedLoad()
+                feedListState.animateScrollToItem(0)
+            }
+            1 -> {
+                onNoticeLoad()
+                noticeListState.animateScrollToItem(0)
+            }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -107,31 +129,21 @@ private fun NotificationScreen(
         ) { page ->
             when (page) {
                 0 -> FeedScreen(
-                    notifications = feedNotifications,
-                    onNotificationClick = onFeedNotificationClick
+                    notifications = uiState.feedNotifications,
+                    onNotificationClick = onFeedNotificationClick,
+                    isRefreshing = uiState.isRefreshing,
+                    onRefresh = onFeedRefresh,
+                    listState = feedListState
                 )
 
                 1 -> NoticeScreen(
-                    notifications = noticeNotifications,
-                    onNotificationClick = onNoticeNotificationClick
+                    notifications = uiState.noticeNotifications,
+                    onNotificationClick = onNoticeNotificationClick,
+                    isRefreshing = uiState.isRefreshing,
+                    onRefresh = onNoticeRefresh,
+                    listState = noticeListState
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun NotificationMainScreenPreview() {
-    HilingualTheme {
-        NotificationScreen(
-            feedNotifications = NotificationUiState.Fake.feedNotifications,
-            noticeNotifications = NotificationUiState.Fake.noticeNotifications,
-            onBackClick = {},
-            onSettingClick = {},
-            onFeedNotificationClick = {},
-            onNoticeNotificationClick = {},
-            paddingValues = PaddingValues(0.dp)
-        )
     }
 }

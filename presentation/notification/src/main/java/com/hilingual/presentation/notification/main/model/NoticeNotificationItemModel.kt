@@ -16,11 +16,28 @@
 package com.hilingual.presentation.notification.main.model
 
 import androidx.compose.runtime.Immutable
+import com.hilingual.data.user.model.NoticeNotificationModel
+
+enum class NoticeCategoryType {
+    NOTIFICATION,
+    MARKETING
+}
 
 @Immutable
-data class NoticeNotificationItemModel(
+internal data class NoticeNotificationItemModel(
     val id: Long,
+    val category: NoticeCategoryType,
     val title: String,
     val date: String,
     val isRead: Boolean
 )
+
+internal fun NoticeNotificationModel.toUiModel(): NoticeNotificationItemModel {
+    return NoticeNotificationItemModel(
+        id = this.noticeId,
+        category = NoticeCategoryType.valueOf(this.category.name),
+        title = this.title,
+        date = this.publishedAt,
+        isRead = this.isRead
+    )
+}

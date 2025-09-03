@@ -16,6 +16,7 @@
 package com.hilingual.presentation.notification.main.model
 
 import androidx.compose.runtime.Immutable
+import com.hilingual.data.user.model.FeedNotificationModel
 
 enum class FeedNotificationType {
     LIKE_DIARY,
@@ -31,3 +32,14 @@ data class FeedNotificationItemModel(
     val date: String,
     val isRead: Boolean
 )
+
+internal fun FeedNotificationModel.toUiModel(): FeedNotificationItemModel {
+    return FeedNotificationItemModel(
+        noticeId = this.noticeId,
+        type = FeedNotificationType.valueOf(this.type.name),
+        title = this.title,
+        targetId = this.targetId.toLongOrNull() ?: 0L,
+        date = this.publishedAt,
+        isRead = this.isRead
+    )
+}

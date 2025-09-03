@@ -15,7 +15,10 @@
  */
 package com.hilingual.data.user.repository
 
+import com.hilingual.data.user.model.FeedNotificationModel
 import com.hilingual.data.user.model.NicknameValidationResult
+import com.hilingual.data.user.model.NoticeNotificationModel
+import com.hilingual.data.user.model.NotificationDetailModel
 import com.hilingual.data.user.model.UserInfoModel
 import com.hilingual.data.user.model.UserProfileModel
 
@@ -29,6 +32,14 @@ interface UserRepository {
     ): Result<Unit>
 
     suspend fun getUserInfo(): Result<UserInfoModel>
+
+    suspend fun getFeedNotifications(): Result<List<FeedNotificationModel>>
+
+    suspend fun getNoticeNotifications(): Result<List<NoticeNotificationModel>>
+
+    suspend fun getNotificationDetail(noticeId: Long): Result<NotificationDetailModel>
+
+    suspend fun readNotification(noticeId: Long): Result<Unit>
 
     suspend fun saveRegisterStatus(isCompleted: Boolean)
 
