@@ -32,7 +32,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import java.time.YearMonth
 
-private val YEAR_RANGE = (2000..2100).map { "${it}년" }.toImmutableList()
+private val YEAR_RANGE = (2025..2100).map { "${it}년" }.toImmutableList()
 private val MONTH_RANGE = (1..12).map { "${it}월" }.toImmutableList()
 
 @Composable
