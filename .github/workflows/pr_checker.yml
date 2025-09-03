@@ -19,7 +19,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('''**/*.gradle*''', '''**/gradle-wrapper.properties*''') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
@@ -32,13 +32,16 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Create local.properties from secrets
+      - name: Create local.properties from secret
+        env:
+          LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
         run: |
-          echo "dev.google.client.id=\"${{ secrets.DEV_GOOGLE_CLIENT_ID }}\"" > local.properties
-          echo "prod.google.client.id=\"${{ secrets.PROD_GOOGLE_CLIENT_ID }}\"" >> local.properties
-          echo "dev.base.url=\"${{ secrets.DEV_BASE_URL }}\"" >> local.properties
-          echo "prod.base.url=\"${{ secrets.PROD_BASE_URL }}\"" >> local.properties
-          echo "sdk.dir=$ANDROID_SDK_ROOT" >> local.properties
+          if [ -n "$LOCAL_PROPERTIES" ]; then
+            echo "${LOCAL_PROPERTIES}" > local.properties
+            echo "sdk.dir=$ANDROID_SDK_ROOT" >> local.properties
+          else
+            echo "LOCAL_PROPERTIES secret not found. Skipping."
+          fi
 
       - name: Grant permission to gradlew
         run: chmod +x ./gradlew
@@ -59,7 +62,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('''**/*.gradle*''', '''**/gradle-wrapper.properties*''') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
@@ -72,13 +75,16 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Create local.properties from secrets
+      - name: Create local.properties from secret
+        env:
+          LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
         run: |
-          echo "dev.google.client.id=\"${{ secrets.DEV_GOOGLE_CLIENT_ID }}\"" > local.properties
-          echo "prod.google.client.id=\"${{ secrets.PROD_GOOGLE_CLIENT_ID }}\"" >> local.properties
-          echo "dev.base.url=\"${{ secrets.DEV_BASE_URL }}\"" >> local.properties
-          echo "prod.base.url=\"${{ secrets.PROD_BASE_URL }}\"" >> local.properties
-          echo "sdk.dir=$ANDROID_SDK_ROOT" >> local.properties
+          if [ -n "$LOCAL_PROPERTIES" ]; then
+            echo "${LOCAL_PROPERTIES}" > local.properties
+            echo "sdk.dir=$ANDROID_SDK_ROOT" >> local.properties
+          else
+            echo "LOCAL_PROPERTIES secret not found. Skipping."
+          fi
 
       - name: Decode and install debug keystore
         env:
