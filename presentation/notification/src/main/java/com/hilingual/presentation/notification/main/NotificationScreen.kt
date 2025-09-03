@@ -34,42 +34,48 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.notification.main.component.NotificationTapRow
 import com.hilingual.presentation.notification.main.component.NotificationTopAppBar
 import com.hilingual.presentation.notification.main.model.FeedNotificationItemModel
+import com.hilingual.presentation.notification.main.model.FeedNotificationType
 import com.hilingual.presentation.notification.main.model.NoticeNotificationItemModel
 import com.hilingual.presentation.notification.main.tab.FeedScreen
 import com.hilingual.presentation.notification.main.tab.NoticeScreen
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun NotificationMainRoute(
+internal fun NotificationRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToSetting: () -> Unit,
-    navigateToFeedNotificationDetail: (deeplink: String) -> Unit,
+    navigateToFeedDiary: (Long) -> Unit,
+    navigateToFeedProfile: (Long) -> Unit,
     navigateToNoticeDetail: (Long) -> Unit,
-    viewModel: NotificationMainViewModel = hiltViewModel()
+    viewModel: NotificationViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    NotificationMainScreen(
+    NotificationScreen(
         feedNotifications = uiState.feedNotifications,
         noticeNotifications = uiState.noticeNotifications,
         onBackClick = navigateUp,
         onSettingClick = navigateToSetting,
-        onFeedNotificationClick = navigateToFeedNotificationDetail,
+        onFeedNotificationClick = { notification ->
+            when (notification.type) {
+                FeedNotificationType.LIKE_DIARY -> navigateToFeedDiary(notification.targetId)
+                FeedNotificationType.FOLLOW_USER -> navigateToFeedProfile(notification.targetId)
+            }
+        },
         onNoticeNotificationClick = navigateToNoticeDetail,
         paddingValues = paddingValues
     )
 }
 
 @Composable
-private fun NotificationMainScreen(
+private fun NotificationScreen(
     feedNotifications: ImmutableList<FeedNotificationItemModel>,
     noticeNotifications: ImmutableList<NoticeNotificationItemModel>,
     onBackClick: () -> Unit,
     onSettingClick: () -> Unit,
-    onFeedNotificationClick: (String) -> Unit,
+    onFeedNotificationClick: (FeedNotificationItemModel) -> Unit,
     onNoticeNotificationClick: (Long) -> Unit,
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier
@@ -117,35 +123,10 @@ private fun NotificationMainScreen(
 @Preview(showBackground = true)
 @Composable
 private fun NotificationMainScreenPreview() {
-    val feedNotifications = persistentListOf(
-        FeedNotificationItemModel(
-            id = 0,
-            title = "v 1.1.0 업데이트 알림",
-            date = "2025.08.05",
-            isRead = true,
-            deepLink = ""
-        ),
-        FeedNotificationItemModel(
-            id = 2,
-            title = "v 1.1.0 업데이트 알림",
-            date = "2025.08.05",
-            isRead = true,
-            deepLink = ""
-        )
-    )
-    val noticeNotifications = persistentListOf(
-        NoticeNotificationItemModel(
-            id = 0,
-            title = "v 1.1.0 업데이트 알림",
-            date = "2025.08.05",
-            isRead = true
-        )
-    )
-
     HilingualTheme {
-        NotificationMainScreen(
-            feedNotifications = feedNotifications,
-            noticeNotifications = noticeNotifications,
+        NotificationScreen(
+            feedNotifications = NotificationUiState.Fake.feedNotifications,
+            noticeNotifications = NotificationUiState.Fake.noticeNotifications,
             onBackClick = {},
             onSettingClick = {},
             onFeedNotificationClick = {},

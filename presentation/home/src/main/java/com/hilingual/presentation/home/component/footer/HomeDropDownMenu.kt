@@ -53,6 +53,7 @@ internal fun HomeDropDownMenu(
     HilingualBasicDropdownMenu(
         isExpanded = isExpanded,
         modifier = modifier,
+        iconSize = 20.dp,
         onExpandedChange = onExpandedChange
     ) {
         HilingualDropdownMenuItem(
