@@ -24,7 +24,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface CalendarService {
-    @GET("/api/v1/calendar/month")
+    @GET("/api/v1/home/calendar/month")
     suspend fun getCalendar(
         @Query("year") year: Int,
         @Query("month") month: Int
