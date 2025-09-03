@@ -36,6 +36,8 @@ jobs:
         run: |
           echo "dev.google.client.id=${{ secrets.DEV_GOOGLE_CLIENT_ID }}" > local.properties
           echo "prod.google.client.id=${{ secrets.PROD_GOOGLE_CLIENT_ID }}" >> local.properties
+          echo "dev.base.url=${{ secrets.DEV_BASE_URL }}" >> local.properties
+          echo "prod.base.url=${{ secrets.PROD_BASE_URL }}" >> local.properties
           echo "sdk.dir=$ANDROID_SDK_ROOT" >> local.properties
 
       - name: Grant permission to gradlew
@@ -74,6 +76,8 @@ jobs:
         run: |
           echo "dev.google.client.id=${{ secrets.DEV_GOOGLE_CLIENT_ID }}" > local.properties
           echo "prod.google.client.id=${{ secrets.PROD_GOOGLE_CLIENT_ID }}" >> local.properties
+          echo "dev.base.url=${{ secrets.DEV_BASE_URL }}" >> local.properties
+          echo "prod.base.url=${{ secrets.PROD_BASE_URL }}" >> local.properties
           echo "sdk.dir=$ANDROID_SDK_ROOT" >> local.properties
 
       - name: Decode and install debug keystore
