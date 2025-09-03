@@ -21,5 +21,17 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LoginRequestDto(
     @SerialName("provider")
-    val provider: String
+    val provider: String,
+    @SerialName("role")
+    val role: String,
+    @SerialName("deviceName")
+    val deviceName: String,
+    @SerialName("deviceType")
+    val deviceType: String,
+    @SerialName("osType")
+    val osType: String,
+    @SerialName("osVersion")
+    val osVersion: String,
+    @SerialName("appVersion")
+    val appVersion: String
 )

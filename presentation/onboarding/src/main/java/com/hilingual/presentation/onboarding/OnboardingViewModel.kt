@@ -19,7 +19,6 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
-import com.hilingual.core.localstorage.TokenManager
 import com.hilingual.data.user.model.NicknameValidationResult
 import com.hilingual.data.user.model.UserProfileModel
 import com.hilingual.data.user.repository.UserRepository
@@ -44,8 +43,7 @@ private val specialCharRegex = Regex("[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]")
 
 @HiltViewModel
 internal class OnboardingViewModel @Inject constructor(
-    private val userRepository: UserRepository,
-    private val tokenManager: TokenManager
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OnboardingUiState())
@@ -82,7 +80,7 @@ internal class OnboardingViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.postUserProfile(UserProfileModel(profileImg = "", nickname = nickname))
                 .onSuccess {
-                    tokenManager.completeOnboarding()
+                    userRepository.saveRegisterStatus(true)
                     _sideEffect.emit(OnboardingSideEffect.NavigateToHome)
                 }
                 .onLogFailure {

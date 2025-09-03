@@ -25,6 +25,9 @@ import javax.inject.Inject
 internal class AuthRemoteDataSourceImpl @Inject constructor(
     private val loginService: LoginService
 ) : AuthRemoteDataSource {
-    override suspend fun login(providerToken: String, provider: String): BaseResponse<LoginResponseDto> =
-        loginService.login(providerToken, LoginRequestDto(provider))
+    override suspend fun login(
+        providerToken: String,
+        loginRequestDto: LoginRequestDto
+    ): BaseResponse<LoginResponseDto> =
+        loginService.login(providerToken, loginRequestDto)
 }
