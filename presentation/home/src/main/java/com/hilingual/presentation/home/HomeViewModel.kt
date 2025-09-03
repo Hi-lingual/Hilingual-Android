@@ -152,11 +152,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun emitRetrySideEffect(onRetry: () -> Unit) {
-        viewModelScope.launch {
-            _sideEffect.emit(HomeSideEffect.ShowRetryDialog(onRetry = onRetry))
-        }
-    }
+    private suspend fun emitRetrySideEffect(onRetry: () -> Unit) =
+        _sideEffect.emit(HomeSideEffect.ShowRetryDialog(onRetry = onRetry))
+
 }
 
 sealed interface HomeSideEffect {
