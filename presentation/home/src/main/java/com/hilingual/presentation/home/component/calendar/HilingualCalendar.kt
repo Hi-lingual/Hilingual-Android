@@ -53,8 +53,8 @@ internal fun HilingualCalendar(
     modifier: Modifier = Modifier
 ) {
     val currentMonth = remember { YearMonth.now() }
-    val startMonth = remember { YearMonth.of(2000,1) }
-    val endMonth = remember { YearMonth.of(2100,12) }
+    val startMonth = remember { YearMonth.of(2000, 1) }
+    val endMonth = remember { YearMonth.of(2100, 12) }
     val daysOfWeek = remember { daysOfWeek().toImmutableList() }
     val coroutineScope = rememberCoroutineScope()
     var isBottomSheetVisible by remember { mutableStateOf(false) }

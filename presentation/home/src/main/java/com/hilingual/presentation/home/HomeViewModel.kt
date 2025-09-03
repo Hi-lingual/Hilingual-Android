@@ -147,14 +147,12 @@ class HomeViewModel @Inject constructor(
                         .getOrNull()
                     _uiState.updateSuccess { it.copy(todayTopic = topic) }
                 }
-
             }
         }
     }
 
     private suspend fun emitRetrySideEffect(onRetry: () -> Unit) =
         _sideEffect.emit(HomeSideEffect.ShowRetryDialog(onRetry = onRetry))
-
 }
 
 sealed interface HomeSideEffect {

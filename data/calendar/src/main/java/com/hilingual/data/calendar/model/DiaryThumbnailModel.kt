@@ -28,5 +28,5 @@ internal fun DiaryThumbnailResponseDto.toModel() = DiaryThumbnailModel(
     diaryId = this.diaryId,
     imageUrl = this.imageUrl,
     originalText = this.originalText,
-    isPublished =  this.isPublished
+    isPublished = this.isPublished
 )
