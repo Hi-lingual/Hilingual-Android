@@ -124,7 +124,7 @@ private fun FeedDiaryScreen(
     var isUnpublishDialogVisible by remember { mutableStateOf(false) }
 
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
-    var isReportConfirmDialog by remember { mutableStateOf(false) }
+    var isReportConfirmDialogVisible by remember { mutableStateOf(false) }
     var isBlockConfirmBottomSheetVisible by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
@@ -264,7 +264,7 @@ private fun FeedDiaryScreen(
             onDismiss = { isReportBottomSheetVisible = false },
             onReportClick = {
                 isReportBottomSheetVisible = false
-                isReportConfirmDialog = true
+                isReportConfirmDialogVisible = true
             },
             onBlockClick = {
                 isReportBottomSheetVisible = false
@@ -292,10 +292,10 @@ private fun FeedDiaryScreen(
     )
 
     ReportPostDialog(
-        isVisible = isReportConfirmDialog,
-        onDismiss = { isReportConfirmDialog = false },
+        isVisible = isReportConfirmDialogVisible,
+        onDismiss = { isReportConfirmDialogVisible = false },
         onReportClick = {
-            isReportConfirmDialog = false
+            isReportConfirmDialogVisible = false
             onReportClick()
         }
     )
