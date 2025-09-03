@@ -60,15 +60,17 @@ internal class FeedProfileViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun ImmutableList<FeedDiaryUIModel>.updateLikeState(diaryId: Long, isLiked: Boolean): ImmutableList<FeedDiaryUIModel> {
-        return this.map { item ->
-            if (item.diaryId == diaryId) {
-                item.copy(
-                    isLiked = isLiked,
-                    likeCount = item.likeCount + if (isLiked) 1 else -1
-                )
-            } else {
-                item
-            }
+        val targetIndex = this.indexOfFirst { it.diaryId == diaryId }
+        if (targetIndex == -1) return this
+
+        val targetItem = this[targetIndex]
+        val updatedItem = targetItem.copy(
+            isLiked = isLiked,
+            likeCount = targetItem.likeCount + if (isLiked) 1 else -1
+        )
+
+        return this.toMutableList().apply {
+            set(targetIndex, updatedItem)
         }.toImmutableList()
     }
 
