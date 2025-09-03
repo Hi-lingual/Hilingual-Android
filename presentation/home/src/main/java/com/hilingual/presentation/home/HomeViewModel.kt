@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -54,18 +55,25 @@ class HomeViewModel @Inject constructor(
 
     fun loadInitialData() {
         viewModelScope.launch {
-            _uiState.value = UiState.Loading
+            _uiState.update { UiState.Loading }
             val today = LocalDate.now()
 
-            val userInfoDeferred = async { userRepository.getUserInfo() }
-            val calendarDeferred = async { calendarRepository.getCalendar(today.year, today.monthValue) }
+            val userInfoResult = async {
+                userRepository.getUserInfo()
+            }.await()
 
-            val userInfoResult = userInfoDeferred.await()
-            val calendarResult = calendarDeferred.await()
+            val calendarResult = async {
+                calendarRepository.getCalendar(today.year, today.monthValue)
+            }.await()
+
             delay(200)
-            userInfoResult.onSuccess { userInfo ->
-                calendarResult.onSuccess { calendarData ->
-                    _uiState.value = UiState.Success(
+
+            val userInfo = userInfoResult.getOrNull()
+            val calendarData = calendarResult.getOrNull()
+
+            if (userInfo != null && calendarData != null) {
+                _uiState.update {
+                    UiState.Success(
                         HomeUiState(
                             userProfile = userInfo.toState(),
                             dateList = calendarData.dateList.map { it.toState() }.toImmutableList(),
@@ -74,11 +82,9 @@ class HomeViewModel @Inject constructor(
                             todayTopic = null
                         )
                     )
-                    updateContentForDate(today)
-                }.onLogFailure {
-                    emitRetrySideEffect { loadInitialData() }
                 }
-            }.onLogFailure {
+                updateContentForDate(today)
+            } else {
                 emitRetrySideEffect { loadInitialData() }
             }
         }
@@ -89,11 +95,7 @@ class HomeViewModel @Inject constructor(
         if (currentState !is UiState.Success || currentState.data.selectedDate == date) return
 
         _uiState.updateSuccess {
-            it.copy(
-                selectedDate = date,
-                diaryThumbnail = null,
-                todayTopic = null
-            )
+            it.copy(selectedDate = date)
         }
         updateContentForDate(date)
     }
@@ -133,28 +135,19 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             when {
                 hasDiary -> {
-                    calendarRepository.getDiaryThumbnail(date.toString())
-                        .onSuccess { thumbnail ->
-                            _uiState.updateSuccess { it.copy(diaryThumbnail = thumbnail.toState()) }
-                        }
-                        .onLogFailure {
-                            _uiState.updateSuccess { it.copy(diaryThumbnail = null) }
-                        }
+                    val thumbnail = calendarRepository.getDiaryThumbnail(date.toString())
+                        .map { it.toState() }
+                        .getOrNull()
+                    _uiState.updateSuccess { it.copy(diaryThumbnail = thumbnail) }
                 }
+
                 isWritable -> {
-                    calendarRepository.getTopic(date.toString())
-                        .onSuccess { topic ->
-                            _uiState.updateSuccess { it.copy(todayTopic = topic.toState()) }
-                        }
-                        .onLogFailure {
-                            _uiState.updateSuccess { it.copy(todayTopic = null) }
-                        }
+                    val topic = calendarRepository.getTopic(date.toString())
+                        .map { it.toState() }
+                        .getOrNull()
+                    _uiState.updateSuccess { it.copy(todayTopic = topic) }
                 }
-                else -> {
-                    _uiState.updateSuccess {
-                        it.copy(diaryThumbnail = null, todayTopic = null)
-                    }
-                }
+
             }
         }
     }

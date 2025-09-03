@@ -31,5 +31,6 @@ internal fun UserInfoModel.toState() = UserProfileUiModel(
     nickname = this.nickname,
     profileImg = this.profileImg,
     totalDiaries = this.totalDiaries,
-    streak = this.streak
+    streak = this.streak,
+    isNewAlarm = this.newAlarm
 )
