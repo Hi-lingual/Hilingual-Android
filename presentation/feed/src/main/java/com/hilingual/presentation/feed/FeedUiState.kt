@@ -71,6 +71,21 @@ internal data class FeedUiState(
                     isLiked = false,
                     isMine = false
                 )
+            ),
+            followingFeedList = persistentListOf(
+                FeedListItemUiModel(
+                    userId = 2,
+                    profileUrl = "",
+                    nickname = "한민돌",
+                    streak = 3,
+                    sharedDateInMinutes = 60L * 2,
+                    content = "Trying out a new recipe tonight. It's a bit spicy but delicious! 🌶️",
+                    imageUrl = null,
+                    diaryId = 2,
+                    likeCount = 75,
+                    isLiked = true,
+                    isMine = false
+                )
             )
         )
     }
