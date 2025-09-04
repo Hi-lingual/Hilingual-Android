@@ -17,7 +17,8 @@ package com.hilingual.presentation.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hilingual.core.localstorage.TokenManager
+import com.hilingual.data.auth.repository.AuthRepository
+import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
@@ -28,7 +29,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class SplashViewModel @Inject constructor(
-    private val tokenManager: TokenManager
+    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _sideEffect = MutableSharedFlow<SplashSideEffect>(
@@ -44,11 +46,11 @@ internal class SplashViewModel @Inject constructor(
 
     private fun checkLoginStatus() {
         viewModelScope.launch {
-            val accessToken = tokenManager.getAccessToken()
-            val refreshToken = tokenManager.getRefreshToken()
-            val isProfileCompleted = tokenManager.isProfileCompleted()
+            val accessToken = authRepository.getAccessToken()
+            val refreshToken = authRepository.getRefreshToken()
+            val isRegistered = userRepository.getRegisterStatus()
 
-            val isLoggedIn = !accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty() && isProfileCompleted
+            val isLoggedIn = !accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty() && isRegistered
             val effect = if (isLoggedIn) SplashSideEffect.NavigateToHome else SplashSideEffect.NavigateToAuth
 
             delay(1400L)

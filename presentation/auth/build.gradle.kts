@@ -25,4 +25,5 @@ android {
 
 dependencies {
     implementation(projects.data.auth)
+    implementation(projects.data.user)
 }

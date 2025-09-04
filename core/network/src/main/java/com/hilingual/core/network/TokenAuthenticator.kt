@@ -71,8 +71,7 @@ class TokenAuthenticator @Inject constructor(
 
         return if (result.isSuccess) {
             val (newAccessToken, newRefreshToken) = result.getOrThrow()
-            val isProfileCompleted = tokenManager.isProfileCompleted()
-            tokenManager.saveTokens(newAccessToken, newRefreshToken, isProfileCompleted)
+            tokenManager.saveTokens(newAccessToken, newRefreshToken)
             Timber.d("토큰 재발급 성공. 요청 재시도.")
             response.request.newBuilder()
                 .header(AUTHORIZATION, "$BEARER $newAccessToken")

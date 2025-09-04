@@ -24,5 +24,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.localstorage)
+    implementation(projects.data.auth)
+    implementation(projects.data.user)
 }
