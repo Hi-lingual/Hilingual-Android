@@ -21,6 +21,7 @@ import com.hilingual.data.auth.model.LoginModel
 interface AuthRepository {
     suspend fun signInWithGoogle(context: Context): Result<String>
     suspend fun login(providerToken: String): Result<LoginModel>
+    suspend fun verifyCode(code: String): Result<Unit>
     suspend fun getAccessToken(): String?
     suspend fun getRefreshToken(): String?
 }

@@ -28,10 +28,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -39,8 +35,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.addFocusCleaner
+import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.button.HilingualButton
@@ -52,31 +51,24 @@ import com.hilingual.presentation.otp.component.OtpTextField
 @Composable
 fun OtpRoute(
     paddingValues: PaddingValues,
-    navigateToOnboarding: () -> Unit
+    navigateToOnboarding: () -> Unit,
+    viewModel: OtpViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    var otpCode by remember { mutableStateOf("") }
-    var authFailureCount by remember { mutableIntStateOf(0) }
-    var isOtpInvalid by remember { mutableStateOf(false) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    viewModel.sideEffect.collectSideEffect {
+        when (it) {
+            is OtpSideEffect.NavigateToOnboarding -> navigateToOnboarding()
+        }
+    }
 
     OtpScreen(
         paddingValues = paddingValues,
-        otpCodeProvider = { otpCode },
-        onOtpCodeChange = {
-            isOtpInvalid = false
-            otpCode = it
-        },
-        isOtpInvalidProvider = { isOtpInvalid },
-        authFailureCountProvider = { authFailureCount },
+        uiState = uiState,
+        onOtpCodeChange = viewModel::updateCode,
         onNotReceivedCodeClick = { context.launchCustomTabs(UrlConstant.KAKAOTALK_CHANNEL) },
-        onAuthClick = {
-            if (otpCode == "123456") {
-                navigateToOnboarding()
-            } else {
-                isOtpInvalid = true
-                authFailureCount++
-            }
-        },
+        onAuthClick = viewModel::verifyCode,
         onContactClick = { context.launchCustomTabs(UrlConstant.KAKAOTALK_CHANNEL) },
         onExitClick = { (context as? Activity)?.finishAffinity() }
     )
@@ -85,10 +77,8 @@ fun OtpRoute(
 @Composable
 private fun OtpScreen(
     paddingValues: PaddingValues,
-    otpCodeProvider: () -> String,
+    uiState: OtpUiState,
     onOtpCodeChange: (String) -> Unit,
-    isOtpInvalidProvider: () -> Boolean,
-    authFailureCountProvider: () -> Int,
     onNotReceivedCodeClick: () -> Unit,
     onAuthClick: () -> Unit,
     onContactClick: () -> Unit,
@@ -96,7 +86,6 @@ private fun OtpScreen(
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
-    val isOtpInvalid = isOtpInvalidProvider()
 
     Column(
         modifier = modifier
@@ -111,15 +100,15 @@ private fun OtpScreen(
         Spacer(Modifier.height(32.dp))
 
         OtpTextField(
-            otpText = otpCodeProvider,
+            otpText = { uiState.code },
             onOtpTextChange = onOtpCodeChange,
-            isError = isOtpInvalidProvider()
+            isError = uiState.errorMessage.isNotEmpty()
         )
 
         Spacer(Modifier.height(12.dp))
 
         Text(
-            text = if (isOtpInvalid) "유효하지 않은 인증코드입니다. [실패 횟수 ${authFailureCountProvider()}/5]" else "",
+            text = uiState.errorMessage,
             style = HilingualTheme.typography.captionR12,
             color = HilingualTheme.colors.alertRed,
             modifier = Modifier
@@ -167,13 +156,13 @@ private fun OtpScreen(
         HilingualButton(
             text = "인증하기",
             onClick = onAuthClick,
-            enableProvider = { otpCodeProvider().length == 6 },
+            enableProvider = { uiState.code.length == 6 && !uiState.isLoading },
             modifier = Modifier.padding(16.dp)
         )
     }
 
     OtpFailureDialog(
-        isVisible = authFailureCountProvider() >= 5,
+        isVisible = uiState.failureCount >= 5,
         onContactClick = onContactClick,
         onExitClick = onExitClick
     )
