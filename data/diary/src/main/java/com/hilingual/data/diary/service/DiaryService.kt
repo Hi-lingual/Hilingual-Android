@@ -60,4 +60,14 @@ internal interface DiaryService {
         @Part("date") date: RequestBody,
         @Part imageFile: MultipartBody.Part? = null
     ): BaseResponse<DiaryFeedbackCreateResponseDto>
+
+    @PATCH("/api/v1/diaries/{diaryId}/publish")
+    suspend fun patchDiaryPublish(
+        @Path("diaryId") diaryId: Long
+    ): BaseResponse<Unit>
+
+    @PATCH("/api/v1/diaries/{diaryId}/unpublish")
+    suspend fun patchDiaryUnpublish(
+        @Path("diaryId") diaryId: Long
+    ): BaseResponse<Unit>
 }

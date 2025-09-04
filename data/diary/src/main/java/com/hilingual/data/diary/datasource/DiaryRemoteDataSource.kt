@@ -47,4 +47,12 @@ interface DiaryRemoteDataSource {
         date: RequestBody,
         imageFile: MultipartBody.Part? = null
     ): BaseResponse<DiaryFeedbackCreateResponseDto>
+
+    suspend fun patchDiaryPublish(
+        diaryId: Long
+    ): BaseResponse<Unit>
+
+    suspend fun patchDiaryUnpublish(
+        diaryId: Long
+    ): BaseResponse<Unit>
 }

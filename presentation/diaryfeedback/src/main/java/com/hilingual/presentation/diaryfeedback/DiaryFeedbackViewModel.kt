@@ -102,21 +102,34 @@ internal class DiaryFeedbackViewModel @Inject constructor(
 
     fun toggleIsPublished(isPublished: Boolean) {
         viewModelScope.launch {
-            // TODO: 게시/비공개 API 호출
-            _uiState.update { currentState ->
-                val successState = currentState as UiState.Success
-                successState.copy(
-                    data = successState.data.copy(isPublished = isPublished)
-                )
-            }
-            // TODO: API 호출 성공 후 표시
-            if (isPublished) {
-                showPublishSnackbar()
+            val result = if (isPublished) {
+                diaryRepository.patchDiaryPublish(diaryId)
             } else {
-                showToast("일기가 비공개되었어요!")
+                diaryRepository.patchDiaryUnpublish(diaryId)
+            }
+
+            result.onSuccess {
+                _uiState.update { currentState ->
+                    val successState = currentState as UiState.Success
+                    successState.copy(
+                        data = successState.data.copy(isPublished = isPublished)
+                    )
+                }
+
+                if (isPublished) {
+                    showPublishSnackbar()
+                } else {
+                    showToast("일기가 비공개되었어요!")
+                }
+            }.onFailure { exception ->
+                _uiState.value = UiState.Failure
+                _sideEffect.emit(
+                    DiaryFeedbackSideEffect.ShowRetryDialog { loadInitialData() }
+                )
             }
         }
     }
+
 
     fun deleteDiary() {
         // TODO: API 호출 성공 후 표시
