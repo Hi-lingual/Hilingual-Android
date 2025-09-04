@@ -22,9 +22,9 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.content.UserActionItem
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.data.feed.model.FollowState
 import com.hilingual.presentation.feed.component.FeedSearchHeader
 import com.hilingual.presentation.feed.component.SearchEmptyCard
-import com.hilingual.presentation.feed.model.FollowState
 import com.hilingual.presentation.feed.model.UserSearchUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -102,7 +102,7 @@ private fun FeedSearchScreen(
                                         profileUrl = profileUrl,
                                         nickname = nickname,
                                         isFilled = !followState.isFollowing,
-                                        buttonText = followState.actionText,
+                                        buttonText = followState.label,
                                         onProfileClick = onProfileClick,
                                         onButtonClick = { onFollowActionClick(userId, followState.isFollowing) },
                                         modifier = Modifier.padding(horizontal = 16.dp)
@@ -150,7 +150,7 @@ private fun FeedSearchScreenPreview() {
                     ),
                     UserSearchUiModel(
                         userId = 3L,
-                        nickname = "Daljeong",
+                        nickname = "Daljyeong",
                         profileUrl = "",
                         followState = FollowState.NONE
                     ),
