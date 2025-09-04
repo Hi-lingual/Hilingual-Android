@@ -8,4 +8,3 @@ internal data class UserSearchUiModel(
     val profileUrl: String,
     val followState: FollowState
 )
-

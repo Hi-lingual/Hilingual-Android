@@ -26,4 +26,3 @@ android {
 dependencies {
     implementation(projects.data.feed)
 }
-
