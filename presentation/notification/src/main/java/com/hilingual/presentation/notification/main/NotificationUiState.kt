@@ -12,7 +12,6 @@ import kotlinx.collections.immutable.persistentListOf
 internal data class NotificationUiState(
     val feedNotifications: ImmutableList<FeedNotificationItemModel> = persistentListOf(),
     val noticeNotifications: ImmutableList<NoticeNotificationItemModel> = persistentListOf(),
-    val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val selectedTab: Int = 0
 ) {

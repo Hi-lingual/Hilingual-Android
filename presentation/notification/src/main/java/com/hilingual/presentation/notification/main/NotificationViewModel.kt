@@ -20,67 +20,31 @@ internal class NotificationViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(NotificationUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun refreshFeed() {
+    fun fetchFeedNotifications() {
         viewModelScope.launch {
             _uiState.update { it.copy(isRefreshing = true) }
             userRepository.getFeedNotifications()
                 .onSuccess { notifications ->
-                    val uiModels = notifications.map { it.toUiModel() }.toImmutableList()
                     _uiState.update {
-                        it.copy(feedNotifications = uiModels, isRefreshing = false)
+                        it.copy(feedNotifications = notifications.map { it.toUiModel() }.toImmutableList())
                     }
                 }
-                .onLogFailure {
-                    _uiState.update { it.copy(isRefreshing = false) }
-                }
+                .onLogFailure { }
+            _uiState.update { it.copy(isRefreshing = false) }
         }
     }
 
-    fun loadFeed() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            userRepository.getFeedNotifications()
-                .onSuccess { notifications ->
-                    val uiModels = notifications.map { it.toUiModel() }.toImmutableList()
-                    _uiState.update {
-                        it.copy(feedNotifications = uiModels, isLoading = false)
-                    }
-                }
-                .onLogFailure {
-                    _uiState.update { it.copy(isLoading = false) }
-                }
-        }
-    }
-
-    fun refreshNotice() {
+    fun fetchNoticeNotifications() {
         viewModelScope.launch {
             _uiState.update { it.copy(isRefreshing = true) }
             userRepository.getNoticeNotifications()
                 .onSuccess { notifications ->
-                    val uiModels = notifications.map { it.toUiModel() }.toImmutableList()
                     _uiState.update {
-                        it.copy(noticeNotifications = uiModels, isRefreshing = false)
+                        it.copy(noticeNotifications = notifications.map { it.toUiModel() }.toImmutableList())
                     }
                 }
-                .onLogFailure {
-                    _uiState.update { it.copy(isRefreshing = false) }
-                }
-        }
-    }
-
-    fun loadNotice() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            userRepository.getNoticeNotifications()
-                .onSuccess { notifications ->
-                    val uiModels = notifications.map { it.toUiModel() }.toImmutableList()
-                    _uiState.update {
-                        it.copy(noticeNotifications = uiModels, isLoading = false)
-                    }
-                }
-                .onLogFailure {
-                    _uiState.update { it.copy(isLoading = false) }
-                }
+                .onLogFailure { }
+            _uiState.update { it.copy(isRefreshing = false) }
         }
     }
 
@@ -93,8 +57,7 @@ internal class NotificationViewModel @Inject constructor(
                     }.toImmutableList()
                     _uiState.update { it.copy(feedNotifications = updatedFeeds) }
                 }
-                .onLogFailure {
-                }
+                .onLogFailure { }
         }
     }
 }

@@ -28,8 +28,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -55,6 +53,7 @@ internal fun NotificationRoute(
 
     NotificationScreen(
         uiState = uiState,
+        paddingValues = paddingValues,
         onBackClick = navigateUp,
         onSettingClick = navigateToSetting,
         onFeedNotificationClick = { notification ->
@@ -65,26 +64,21 @@ internal fun NotificationRoute(
             }
         },
         onNoticeNotificationClick = navigateToNoticeDetail,
-        onFeedRefresh = viewModel::refreshFeed,
-        onNoticeRefresh = viewModel::refreshNotice,
-        onFeedLoad = viewModel::loadFeed,
-        onNoticeLoad = viewModel::loadNotice,
-        paddingValues = paddingValues
+        fetchFeedNotifications = viewModel::fetchFeedNotifications,
+        fetchNoticeNotifications = viewModel::fetchNoticeNotifications
     )
 }
 
 @Composable
 private fun NotificationScreen(
     uiState: NotificationUiState,
+    paddingValues: PaddingValues,
     onBackClick: () -> Unit,
     onSettingClick: () -> Unit,
     onFeedNotificationClick: (FeedNotificationItemModel) -> Unit,
     onNoticeNotificationClick: (Long) -> Unit,
-    onFeedRefresh: () -> Unit,
-    onNoticeRefresh: () -> Unit,
-    onFeedLoad: () -> Unit,
-    onNoticeLoad: () -> Unit,
-    paddingValues: PaddingValues,
+    fetchFeedNotifications: () -> Unit,
+    fetchNoticeNotifications: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val feedListState = rememberLazyListState()
@@ -95,11 +89,11 @@ private fun NotificationScreen(
     LaunchedEffect(pagerState.currentPage) {
         when (pagerState.currentPage) {
             0 -> {
-                onFeedLoad()
+                fetchFeedNotifications()
                 feedListState.animateScrollToItem(0)
             }
             1 -> {
-                onNoticeLoad()
+                fetchNoticeNotifications()
                 noticeListState.animateScrollToItem(0)
             }
         }
@@ -132,7 +126,7 @@ private fun NotificationScreen(
                     notifications = uiState.feedNotifications,
                     onNotificationClick = onFeedNotificationClick,
                     isRefreshing = uiState.isRefreshing,
-                    onRefresh = onFeedRefresh,
+                    onRefresh = fetchFeedNotifications,
                     listState = feedListState
                 )
 
@@ -140,7 +134,7 @@ private fun NotificationScreen(
                     notifications = uiState.noticeNotifications,
                     onNotificationClick = onNoticeNotificationClick,
                     isRefreshing = uiState.isRefreshing,
-                    onRefresh = onNoticeRefresh,
+                    onRefresh = fetchNoticeNotifications,
                     listState = noticeListState
                 )
             }
