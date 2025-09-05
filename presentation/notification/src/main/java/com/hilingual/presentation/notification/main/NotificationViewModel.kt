@@ -4,7 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.user.repository.UserRepository
-import com.hilingual.presentation.notification.main.model.toUiModel
+import com.hilingual.presentation.notification.main.model.toFeedUiModel
+import com.hilingual.presentation.notification.main.model.toNoticeUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,44 +21,55 @@ internal class NotificationViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(NotificationUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun fetchFeedNotifications() {
+    fun onTabSelected(tab: NotificationTab) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isRefreshing = true) }
-            userRepository.getFeedNotifications()
-                .onSuccess { notifications ->
-                    _uiState.update {
-                        it.copy(feedNotifications = notifications.map { it.toUiModel() }.toImmutableList())
-                    }
-                }
-                .onLogFailure { }
-            _uiState.update { it.copy(isRefreshing = false) }
+            loadTab(tab)
         }
     }
 
-    fun fetchNoticeNotifications() {
+    fun refresh(tab: NotificationTab) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isRefreshing = true) }
-            userRepository.getNoticeNotifications()
-                .onSuccess { notifications ->
-                    _uiState.update {
-                        it.copy(noticeNotifications = notifications.map { it.toUiModel() }.toImmutableList())
-                    }
-                }
-                .onLogFailure { }
-            _uiState.update { it.copy(isRefreshing = false) }
+            setRefreshing(tab, isRefreshing = true)
+            loadTab(tab)
+            setRefreshing(tab, isRefreshing = false)
         }
     }
 
-    fun readFeedNotification(noticeId: Long) {
+    private suspend fun loadTab(tab: NotificationTab) {
+        userRepository.getNotifications(tab.name)
+            .onSuccess { notifications ->
+                _uiState.update {
+                    when (tab) {
+                        NotificationTab.FEED -> it.copy(feedNotifications = notifications.map { item -> item.toFeedUiModel() }
+                            .toImmutableList())
+
+                        NotificationTab.NOTIFICATION -> it.copy(noticeNotifications = notifications.map { item -> item.toNoticeUiModel() }
+                            .toImmutableList())
+                    }
+                }
+            }
+            .onLogFailure { /* TODO: 에러 처리 */ }
+    }
+
+    fun readNotification(noticeId: Long) {
         viewModelScope.launch {
             userRepository.readNotification(noticeId)
                 .onSuccess {
                     val updatedFeeds = _uiState.value.feedNotifications.map {
-                        if (it.noticeId == noticeId) it.copy(isRead = true) else it
+                        if (it.id == noticeId) it.copy(isRead = true) else it
                     }.toImmutableList()
                     _uiState.update { it.copy(feedNotifications = updatedFeeds) }
                 }
-                .onLogFailure { }
+                .onLogFailure { /* TODO: 에러 처리 */ }
+        }
+    }
+
+    private fun setRefreshing(tab: NotificationTab, isRefreshing: Boolean) {
+        _uiState.update {
+            when (tab) {
+                NotificationTab.FEED -> it.copy(isFeedRefreshing = isRefreshing)
+                NotificationTab.NOTIFICATION -> it.copy(isNoticeRefreshing = isRefreshing)
+            }
         }
     }
 }

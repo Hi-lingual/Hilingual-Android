@@ -33,8 +33,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.notification.main.component.NotificationTapRow
 import com.hilingual.presentation.notification.main.component.NotificationTopAppBar
-import com.hilingual.presentation.notification.main.model.FeedNotificationItemModel
+import com.hilingual.presentation.notification.main.model.FeedNotificationItemUiModel
 import com.hilingual.presentation.notification.main.model.FeedNotificationType
+import com.hilingual.presentation.notification.main.model.NoticeNotificationItemUiModel
 import com.hilingual.presentation.notification.main.tab.FeedScreen
 import com.hilingual.presentation.notification.main.tab.NoticeScreen
 import kotlinx.coroutines.launch
@@ -57,15 +58,15 @@ internal fun NotificationRoute(
         onBackClick = navigateUp,
         onSettingClick = navigateToSetting,
         onFeedNotificationClick = { notification ->
-            viewModel.readFeedNotification(notification.noticeId)
-            when (notification.type) {
-                FeedNotificationType.LIKE_DIARY -> navigateToFeedDiary(notification.targetId)
-                FeedNotificationType.FOLLOW_USER -> navigateToFeedProfile(notification.targetId)
+            viewModel.readNotification(notification.id)
+            when (notification.feedType) {
+                FeedNotificationType.LIKE_DIARY -> navigateToFeedDiary(notification.targetId.toLong())
+                FeedNotificationType.FOLLOW_USER -> navigateToFeedProfile(notification.targetId.toLong())
             }
         },
-        onNoticeNotificationClick = navigateToNoticeDetail,
-        fetchFeedNotifications = viewModel::fetchFeedNotifications,
-        fetchNoticeNotifications = viewModel::fetchNoticeNotifications
+        onNoticeNotificationClick = { notification -> navigateToNoticeDetail(notification.id) },
+        onTabSelected = viewModel::onTabSelected,
+        onRefresh = viewModel::refresh
     )
 }
 
@@ -75,10 +76,10 @@ private fun NotificationScreen(
     paddingValues: PaddingValues,
     onBackClick: () -> Unit,
     onSettingClick: () -> Unit,
-    onFeedNotificationClick: (FeedNotificationItemModel) -> Unit,
-    onNoticeNotificationClick: (Long) -> Unit,
-    fetchFeedNotifications: () -> Unit,
-    fetchNoticeNotifications: () -> Unit,
+    onFeedNotificationClick: (FeedNotificationItemUiModel) -> Unit,
+    onNoticeNotificationClick: (NoticeNotificationItemUiModel) -> Unit,
+    onTabSelected: (NotificationTab) -> Unit,
+    onRefresh: (NotificationTab) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val feedListState = rememberLazyListState()
@@ -87,16 +88,12 @@ private fun NotificationScreen(
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(pagerState.currentPage) {
-        when (pagerState.currentPage) {
-            0 -> {
-                fetchFeedNotifications()
-                feedListState.animateScrollToItem(0)
-            }
-            1 -> {
-                fetchNoticeNotifications()
-                noticeListState.animateScrollToItem(0)
-            }
+        val tab = NotificationTab.entries[pagerState.currentPage]
+        when (tab) {
+            NotificationTab.FEED -> feedListState.animateScrollToItem(0)
+            NotificationTab.NOTIFICATION -> noticeListState.animateScrollToItem(0)
         }
+        onTabSelected(tab)
     }
 
     Column(
@@ -121,21 +118,21 @@ private fun NotificationScreen(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
         ) { page ->
-            when (page) {
-                0 -> FeedScreen(
+            when (val tab = NotificationTab.entries[page]) {
+                NotificationTab.FEED -> FeedScreen(
                     notifications = uiState.feedNotifications,
                     onNotificationClick = onFeedNotificationClick,
-                    isRefreshing = uiState.isRefreshing,
-                    onRefresh = fetchFeedNotifications,
-                    listState = feedListState
+                    isRefreshing = uiState.isFeedRefreshing,
+                    listState = feedListState,
+                    onRefresh = { onRefresh(tab) }
                 )
 
-                1 -> NoticeScreen(
+                NotificationTab.NOTIFICATION -> NoticeScreen(
                     notifications = uiState.noticeNotifications,
                     onNotificationClick = onNoticeNotificationClick,
-                    isRefreshing = uiState.isRefreshing,
-                    onRefresh = fetchNoticeNotifications,
-                    listState = noticeListState
+                    isRefreshing = uiState.isNoticeRefreshing,
+                    listState = noticeListState,
+                    onRefresh = { onRefresh(tab) }
                 )
             }
         }

@@ -16,10 +16,9 @@
 package com.hilingual.data.user.datasource
 
 import com.hilingual.core.network.BaseResponse
-import com.hilingual.data.user.dto.reponse.FeedNotificationResponseDto
 import com.hilingual.data.user.dto.reponse.NicknameResponseDto
-import com.hilingual.data.user.dto.reponse.NoticeNotificationResponseDto
 import com.hilingual.data.user.dto.reponse.NotificationDetailResponseDto
+import com.hilingual.data.user.dto.reponse.NotificationResponseDto
 import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
 import com.hilingual.data.user.dto.request.UserProfileRequestDto
 
@@ -30,9 +29,7 @@ interface UserRemoteDataSource {
 
     suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto>
 
-    suspend fun getFeedNotifications(): BaseResponse<List<FeedNotificationResponseDto>>
-
-    suspend fun getNoticeNotifications(): BaseResponse<List<NoticeNotificationResponseDto>>
+    suspend fun getNotifications(tab: String): BaseResponse<List<NotificationResponseDto>>
 
     suspend fun getNotificationDetail(noticeId: Long): BaseResponse<NotificationDetailResponseDto>
 

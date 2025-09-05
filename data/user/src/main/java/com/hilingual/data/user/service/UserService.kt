@@ -16,17 +16,12 @@
 package com.hilingual.data.user.service
 
 import com.hilingual.core.network.BaseResponse
-import com.hilingual.data.user.dto.reponse.FeedNotificationResponseDto
 import com.hilingual.data.user.dto.reponse.NicknameResponseDto
-import com.hilingual.data.user.dto.reponse.NoticeNotificationResponseDto
-import com.hilingual.data.user.dto.reponse.NotificationDetailResponseDto
 import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
 import com.hilingual.data.user.dto.request.UserProfileRequestDto
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.PATCH
 import retrofit2.http.POST
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 internal interface UserService {
@@ -42,20 +37,4 @@ internal interface UserService {
 
     @GET("/api/v1/users/home/info")
     suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto>
-
-    @GET("/api/v1/users/notifications?tab=FEED")
-    suspend fun getFeedNotifications(): BaseResponse<List<FeedNotificationResponseDto>>
-
-    @GET("/api/v1/users/notifications?tab=NOTIFICATION")
-    suspend fun getNoticeNotifications(): BaseResponse<List<NoticeNotificationResponseDto>>
-
-    @GET("/api/v1/users/notifications/{noticeId}")
-    suspend fun getNotificationDetail(
-        @Path("noticeId") noticeId: Long
-    ): BaseResponse<NotificationDetailResponseDto>
-
-    @PATCH("/api/v1/users/notifications/{noticeId}/read")
-    suspend fun readNotification(
-        @Path("noticeId") noticeId: Long
-    ): BaseResponse<Unit>
 }

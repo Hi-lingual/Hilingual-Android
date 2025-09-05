@@ -140,7 +140,9 @@ class HomeViewModel @Inject constructor(
                         .onSuccess { thumbnail ->
                             _uiState.updateSuccess { it.copy(diaryThumbnail = thumbnail.toState()) }
                         }
-                        .onLogFailure { }
+                        .onLogFailure {
+                            _uiState.updateSuccess { it.copy(diaryThumbnail = null) }
+                        }
                 }
 
                 isWritable -> {
@@ -149,6 +151,9 @@ class HomeViewModel @Inject constructor(
                             _uiState.updateSuccess { it.copy(todayTopic = topic.toState()) }
                         }
                         .onLogFailure { }
+                }
+                else -> {
+                    _uiState.updateSuccess { it.copy(diaryThumbnail = null, todayTopic = null) }
                 }
             }
         }

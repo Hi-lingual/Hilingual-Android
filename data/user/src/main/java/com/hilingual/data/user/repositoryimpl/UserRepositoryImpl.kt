@@ -18,16 +18,13 @@ package com.hilingual.data.user.repositoryimpl
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.data.user.datasource.UserRemoteDataSource
-import com.hilingual.data.user.model.FeedNotificationModel
 import com.hilingual.data.user.model.NicknameValidationResult
-import com.hilingual.data.user.model.NoticeNotificationModel
 import com.hilingual.data.user.model.NotificationDetailModel
+import com.hilingual.data.user.model.NotificationModel
 import com.hilingual.data.user.model.UserInfoModel
 import com.hilingual.data.user.model.UserProfileModel
 import com.hilingual.data.user.model.toDto
-import com.hilingual.data.user.model.toFeedNotificationModel
 import com.hilingual.data.user.model.toModel
-import com.hilingual.data.user.model.toNoticeNotificationModel
 import com.hilingual.data.user.repository.UserRepository
 import jakarta.inject.Inject
 
@@ -56,14 +53,9 @@ internal class UserRepositoryImpl @Inject constructor(
             userRemoteDataSource.getUserInfo().data!!.toModel()
         }
 
-    override suspend fun getFeedNotifications(): Result<List<FeedNotificationModel>> =
+    override suspend fun getNotifications(tab: String): Result<List<NotificationModel>> =
         suspendRunCatching {
-            userRemoteDataSource.getFeedNotifications().data!!.map { it.toFeedNotificationModel() }
-        }
-
-    override suspend fun getNoticeNotifications(): Result<List<NoticeNotificationModel>> =
-        suspendRunCatching {
-            userRemoteDataSource.getNoticeNotifications().data!!.map { it.toNoticeNotificationModel() }
+            userRemoteDataSource.getNotifications(tab).data!!.map { it.toModel() }
         }
 
     override suspend fun getNotificationDetail(noticeId: Long): Result<NotificationDetailModel> =

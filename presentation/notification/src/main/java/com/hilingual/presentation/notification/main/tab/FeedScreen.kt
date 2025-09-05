@@ -27,18 +27,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.hilingual.presentation.notification.main.component.EmptyImage
 import com.hilingual.presentation.notification.main.component.NotificationItem
-import com.hilingual.presentation.notification.main.model.FeedNotificationItemModel
+import com.hilingual.presentation.notification.main.model.FeedNotificationItemUiModel
 import kotlinx.collections.immutable.ImmutableList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun FeedScreen(
-    notifications: ImmutableList<FeedNotificationItemModel>,
+    notifications: ImmutableList<FeedNotificationItemUiModel>,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
-    onNotificationClick: (FeedNotificationItemModel) -> Unit,
-    listState: LazyListState = rememberLazyListState(),
-    modifier: Modifier = Modifier
+    listState: LazyListState,
+    onNotificationClick: (FeedNotificationItemUiModel) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     PullToRefreshBox(
         isRefreshing = isRefreshing,
@@ -46,8 +46,8 @@ internal fun FeedScreen(
         modifier = modifier.fillMaxSize()
     ) {
         LazyColumn(
-            state = listState,
             modifier = Modifier.fillMaxSize(),
+            state = listState,
             verticalArrangement = if (notifications.isEmpty()) Arrangement.Center else Arrangement.Top
         ) {
             if (notifications.isEmpty()) {
@@ -57,11 +57,11 @@ internal fun FeedScreen(
             } else {
                 items(
                     items = notifications,
-                    key = { it.noticeId }
+                    key = { it.id }
                 ) { notification ->
                     NotificationItem(
                         title = notification.title,
-                        date = notification.date,
+                        date = notification.publishedAt,
                         isRead = notification.isRead,
                         onClick = { onNotificationClick(notification) }
                     )

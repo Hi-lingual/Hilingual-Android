@@ -27,17 +27,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.hilingual.presentation.notification.main.component.EmptyImage
 import com.hilingual.presentation.notification.main.component.NotificationItem
-import com.hilingual.presentation.notification.main.model.NoticeNotificationItemModel
+import com.hilingual.presentation.notification.main.model.NoticeNotificationItemUiModel
 import kotlinx.collections.immutable.ImmutableList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun NoticeScreen(
-    notifications: ImmutableList<NoticeNotificationItemModel>,
+    notifications: ImmutableList<NoticeNotificationItemUiModel>,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
-    onNotificationClick: (Long) -> Unit,
-    listState: LazyListState = rememberLazyListState(),
+    listState: LazyListState,
+    onNotificationClick: (NoticeNotificationItemUiModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
     PullToRefreshBox(
@@ -46,7 +46,6 @@ internal fun NoticeScreen(
         modifier = modifier.fillMaxSize()
     ) {
         LazyColumn(
-            state = listState,
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = if (notifications.isEmpty()) Arrangement.Center else Arrangement.Top
         ) {
@@ -61,9 +60,9 @@ internal fun NoticeScreen(
                 ) { notification ->
                     NotificationItem(
                         title = notification.title,
-                        date = notification.date,
+                        date = notification.publishedAt,
                         isRead = notification.isRead,
-                        onClick = { onNotificationClick(notification.id) }
+                        onClick = { onNotificationClick(notification) }
                     )
                 }
             }

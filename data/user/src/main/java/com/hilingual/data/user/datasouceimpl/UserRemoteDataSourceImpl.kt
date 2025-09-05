@@ -17,17 +17,18 @@ package com.hilingual.data.user.datasouceimpl
 
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.user.datasource.UserRemoteDataSource
-import com.hilingual.data.user.dto.reponse.FeedNotificationResponseDto
 import com.hilingual.data.user.dto.reponse.NicknameResponseDto
-import com.hilingual.data.user.dto.reponse.NoticeNotificationResponseDto
 import com.hilingual.data.user.dto.reponse.NotificationDetailResponseDto
+import com.hilingual.data.user.dto.reponse.NotificationResponseDto
 import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
 import com.hilingual.data.user.dto.request.UserProfileRequestDto
+import com.hilingual.data.user.service.NotificationService
 import com.hilingual.data.user.service.UserService
 import jakarta.inject.Inject
 
 internal class UserRemoteDataSourceImpl @Inject constructor(
-    private val userService: UserService
+    private val userService: UserService,
+    private val notificationService: NotificationService
 ) : UserRemoteDataSource {
     override suspend fun getNicknameAvailability(nickname: String): BaseResponse<NicknameResponseDto> =
         userService.getNicknameAvailability(nickname = nickname)
@@ -37,14 +38,11 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto> = userService.getUserInfo()
 
-    override suspend fun getFeedNotifications(): BaseResponse<List<FeedNotificationResponseDto>> =
-        userService.getFeedNotifications()
-
-    override suspend fun getNoticeNotifications(): BaseResponse<List<NoticeNotificationResponseDto>> =
-        userService.getNoticeNotifications()
+    override suspend fun getNotifications(tab: String): BaseResponse<List<NotificationResponseDto>> =
+        notificationService.getNotifications(tab)
 
     override suspend fun getNotificationDetail(noticeId: Long): BaseResponse<NotificationDetailResponseDto> =
-        userService.getNotificationDetail(noticeId)
+        notificationService.getNotificationDetail(noticeId)
 
-    override suspend fun readNotification(noticeId: Long): BaseResponse<Unit> = userService.readNotification(noticeId)
+    override suspend fun readNotification(noticeId: Long): BaseResponse<Unit> = notificationService.readNotification(noticeId)
 }
