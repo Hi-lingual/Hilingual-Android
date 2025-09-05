@@ -50,6 +50,7 @@ internal fun HomeHeader(
     streak: Int,
     isNewAlarm: Boolean,
     onAlarmClick: () -> Unit,
+    onImageClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -57,7 +58,12 @@ internal fun HomeHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        ProfileImage(imageUrl)
+        ProfileImage(
+            imageUrl = imageUrl,
+            modifier = Modifier.noRippleClickable(
+                onClick = onImageClick
+            )
+        )
 
         Column(modifier = Modifier.weight(1f)) {
             ProfileName(nickname)
@@ -84,19 +90,22 @@ internal fun HomeHeader(
 }
 
 @Composable
-private fun ProfileImage(imageUrl: String) {
+private fun ProfileImage(
+    imageUrl: String,
+    modifier: Modifier = Modifier
+) {
     if (imageUrl.isBlank()) {
         Image(
             painter = painterResource(R.drawable.img_default_image),
             contentDescription = null,
-            modifier = Modifier
+            modifier = modifier
                 .size(46.dp)
                 .clip(CircleShape)
         )
     } else {
         NetworkImage(
             imageUrl = imageUrl,
-            modifier = Modifier.size(46.dp)
+            modifier = modifier.size(46.dp)
         )
     }
 }
@@ -181,7 +190,8 @@ private fun HomeHeaderPreview() {
                 totalDiaries = 10,
                 streak = 5,
                 isNewAlarm = true,
-                onAlarmClick = {}
+                onAlarmClick = {},
+                onImageClick = {}
             )
             HomeHeader(
                 imageUrl = "",
@@ -189,7 +199,8 @@ private fun HomeHeaderPreview() {
                 totalDiaries = 0,
                 streak = 0,
                 isNewAlarm = false,
-                onAlarmClick = {}
+                onAlarmClick = {},
+                onImageClick = {}
             )
         }
     }
