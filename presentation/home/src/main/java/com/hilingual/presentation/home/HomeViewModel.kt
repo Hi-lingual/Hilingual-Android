@@ -58,35 +58,36 @@ class HomeViewModel @Inject constructor(
             _uiState.update { UiState.Loading }
             val today = LocalDate.now()
 
-            val userInfoResult = async {
-                userRepository.getUserInfo()
-            }.await()
+            val userInfoDeferred = async { userRepository.getUserInfo() }
+            val calendarDeferred = async { calendarRepository.getCalendar(today.year, today.monthValue) }
 
-            val calendarResult = async {
-                calendarRepository.getCalendar(today.year, today.monthValue)
-            }.await()
+            val userInfoResult = userInfoDeferred.await()
+            val calendarResult = calendarDeferred.await()
 
             delay(200)
 
-            val userInfo = userInfoResult.getOrNull()
-            val calendarData = calendarResult.getOrNull()
-
-            if (userInfo != null && calendarData != null) {
-                _uiState.update {
-                    UiState.Success(
-                        HomeUiState(
-                            userProfile = userInfo.toState(),
-                            dateList = calendarData.dateList.map { it.toState() }.toImmutableList(),
-                            selectedDate = today,
-                            diaryThumbnail = null,
-                            todayTopic = null
-                        )
-                    )
-                }
-                updateContentForDate(today)
-            } else {
+            if (userInfoResult.isFailure || calendarResult.isFailure) {
+                userInfoResult.onLogFailure {}
+                calendarResult.onLogFailure {}
                 emitRetrySideEffect { loadInitialData() }
+                return@launch
             }
+
+            val userInfo = userInfoResult.getOrThrow()
+            val calendarData = calendarResult.getOrThrow()
+
+            _uiState.update {
+                UiState.Success(
+                    HomeUiState(
+                        userProfile = userInfo.toState(),
+                        dateList = calendarData.dateList.map { it.toState() }.toImmutableList(),
+                        selectedDate = today,
+                        diaryThumbnail = null,
+                        todayTopic = null
+                    )
+                )
+            }
+            updateContentForDate(today)
         }
     }
 
@@ -135,17 +136,19 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             when {
                 hasDiary -> {
-                    val thumbnail = calendarRepository.getDiaryThumbnail(date.toString())
-                        .map { it.toState() }
-                        .getOrNull()
-                    _uiState.updateSuccess { it.copy(diaryThumbnail = thumbnail) }
+                    calendarRepository.getDiaryThumbnail(date.toString())
+                        .onSuccess { thumbnail ->
+                            _uiState.updateSuccess { it.copy(diaryThumbnail = thumbnail.toState()) }
+                        }
+                        .onLogFailure { }
                 }
 
                 isWritable -> {
-                    val topic = calendarRepository.getTopic(date.toString())
-                        .map { it.toState() }
-                        .getOrNull()
-                    _uiState.updateSuccess { it.copy(todayTopic = topic) }
+                    calendarRepository.getTopic(date.toString())
+                        .onSuccess { topic ->
+                            _uiState.updateSuccess { it.copy(todayTopic = topic.toState()) }
+                        }
+                        .onLogFailure { }
                 }
             }
         }
