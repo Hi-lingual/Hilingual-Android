@@ -8,7 +8,7 @@ data class NotificationDetailModel(
     val content: String
 )
 
-fun NotificationDetailResponseDto.toModel(): NotificationDetailModel = NotificationDetailModel(
+internal fun NotificationDetailResponseDto.toModel() = NotificationDetailModel(
     title = this.title,
     createdAt = this.createdAt,
     content = this.content

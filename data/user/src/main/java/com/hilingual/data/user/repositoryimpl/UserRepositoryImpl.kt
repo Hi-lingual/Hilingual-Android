@@ -21,12 +21,13 @@ import com.hilingual.data.user.datasource.UserRemoteDataSource
 import com.hilingual.data.user.model.NicknameValidationResult
 import com.hilingual.data.user.model.NotificationDetailModel
 import com.hilingual.data.user.model.NotificationModel
+import com.hilingual.data.user.model.NotificationSettingsModel
 import com.hilingual.data.user.model.UserInfoModel
 import com.hilingual.data.user.model.UserProfileModel
 import com.hilingual.data.user.model.toDto
 import com.hilingual.data.user.model.toModel
 import com.hilingual.data.user.repository.UserRepository
-import jakarta.inject.Inject
+import javax.inject.Inject
 
 internal class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
@@ -67,6 +68,14 @@ internal class UserRepositoryImpl @Inject constructor(
         suspendRunCatching {
             userRemoteDataSource.readNotification(noticeId).data
         }
+
+    override suspend fun getNotificationSettings(): Result<NotificationSettingsModel> = suspendRunCatching {
+        userRemoteDataSource.getNotificationSettings().data!!.toModel()
+    }
+
+    override suspend fun updateNotificationSetting(notiType: String): Result<NotificationSettingsModel> = suspendRunCatching {
+        userRemoteDataSource.updateNotificationSetting(notiType).data!!.toModel()
+    }
 
     override suspend fun saveRegisterStatus(isCompleted: Boolean) {
         userInfoManager.saveRegisterStatus(isCompleted)

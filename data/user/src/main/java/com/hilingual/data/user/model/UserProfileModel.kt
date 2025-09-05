@@ -22,7 +22,7 @@ data class UserProfileModel(
     val nickname: String
 )
 
-internal fun UserProfileModel.toDto(): UserProfileRequestDto = UserProfileRequestDto(
+internal fun UserProfileModel.toDto() = UserProfileRequestDto(
     profileImg = this.profileImg,
     nickname = this.nickname
 )

@@ -20,15 +20,14 @@ import com.hilingual.data.user.datasource.UserRemoteDataSource
 import com.hilingual.data.user.dto.reponse.NicknameResponseDto
 import com.hilingual.data.user.dto.reponse.NotificationDetailResponseDto
 import com.hilingual.data.user.dto.reponse.NotificationResponseDto
+import com.hilingual.data.user.dto.reponse.NotificationSettingsResponseDto
 import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
 import com.hilingual.data.user.dto.request.UserProfileRequestDto
-import com.hilingual.data.user.service.NotificationService
 import com.hilingual.data.user.service.UserService
-import jakarta.inject.Inject
+import javax.inject.Inject
 
 internal class UserRemoteDataSourceImpl @Inject constructor(
-    private val userService: UserService,
-    private val notificationService: NotificationService
+    private val userService: UserService
 ) : UserRemoteDataSource {
     override suspend fun getNicknameAvailability(nickname: String): BaseResponse<NicknameResponseDto> =
         userService.getNicknameAvailability(nickname = nickname)
@@ -39,10 +38,15 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
     override suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto> = userService.getUserInfo()
 
     override suspend fun getNotifications(tab: String): BaseResponse<List<NotificationResponseDto>> =
-        notificationService.getNotifications(tab)
+        userService.getNotifications(tab)
 
     override suspend fun getNotificationDetail(noticeId: Long): BaseResponse<NotificationDetailResponseDto> =
-        notificationService.getNotificationDetail(noticeId)
+        userService.getNotificationDetail(noticeId)
 
-    override suspend fun readNotification(noticeId: Long): BaseResponse<Unit> = notificationService.readNotification(noticeId)
+    override suspend fun readNotification(noticeId: Long): BaseResponse<Unit> = userService.readNotification(noticeId)
+
+    override suspend fun getNotificationSettings(): BaseResponse<NotificationSettingsResponseDto> =
+        userService.getNotificationSettings()
+
+    override suspend fun updateNotificationSetting(notiType: String): BaseResponse<NotificationSettingsResponseDto> = userService.updateNotificationSetting(notiType)
 }

@@ -27,7 +27,9 @@ class AuthInterceptor @Inject constructor(
     private val tokenManager: TokenManager
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzIiwidWlkIjozLCJyb2xlIjoiQURNSU4iLCJwcm92aWRlciI6IkdPT0dMRSIsInNpZCI6IjA1OTY2NGI4LTkxMDYtNGRlNS04YzAzLWYxNmY3ZTg0ZDkwZCIsInR5cGUiOiJBQ0NFU1NfVE9LRU4iLCJpYXQiOjE3NTcwOTAyNTQsImV4cCI6MTc1NzY5NTA1NH0.FLV_GZouDm4sKBfu7X5ZnPBNjUljylCRbIYoYfnAU1b_Lp-HfPRV5_-zS0M07KQ1J__xj-zNRpFWEqixfhSsSw"
+        val token = runBlocking {
+            tokenManager.getAccessToken()
+        }
         Timber.d("ACCESS_TOKEN: $token")
 
         val originalRequest = chain.request()

@@ -15,7 +15,6 @@
  */
 package com.hilingual.data.user.di
 
-import com.hilingual.data.user.service.NotificationService
 import com.hilingual.data.user.service.UserService
 import dagger.Module
 import dagger.Provides
@@ -30,9 +29,4 @@ internal object ServiceModule {
     @Provides
     @Singleton
     fun provideUserService(retrofit: Retrofit): UserService = retrofit.create(UserService::class.java)
-
-    @Provides
-    @Singleton
-    fun provideNotificationService(retrofit: Retrofit): NotificationService =
-        retrofit.create(NotificationService::class.java)
 }

@@ -19,6 +19,7 @@ import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.user.dto.reponse.NicknameResponseDto
 import com.hilingual.data.user.dto.reponse.NotificationDetailResponseDto
 import com.hilingual.data.user.dto.reponse.NotificationResponseDto
+import com.hilingual.data.user.dto.reponse.NotificationSettingsResponseDto
 import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
 import com.hilingual.data.user.dto.request.UserProfileRequestDto
 
@@ -34,4 +35,8 @@ interface UserRemoteDataSource {
     suspend fun getNotificationDetail(noticeId: Long): BaseResponse<NotificationDetailResponseDto>
 
     suspend fun readNotification(noticeId: Long): BaseResponse<Unit>
+
+    suspend fun getNotificationSettings(): BaseResponse<NotificationSettingsResponseDto>
+
+    suspend fun updateNotificationSetting(notiType: String): BaseResponse<NotificationSettingsResponseDto>
 }

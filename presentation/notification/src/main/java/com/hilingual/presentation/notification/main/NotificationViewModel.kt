@@ -40,11 +40,15 @@ internal class NotificationViewModel @Inject constructor(
             .onSuccess { notifications ->
                 _uiState.update {
                     when (tab) {
-                        NotificationTab.FEED -> it.copy(feedNotifications = notifications.map { item -> item.toFeedUiModel() }
-                            .toImmutableList())
+                        NotificationTab.FEED -> it.copy(
+                            feedNotifications = notifications.map { item -> item.toFeedUiModel() }
+                                .toImmutableList()
+                        )
 
-                        NotificationTab.NOTIFICATION -> it.copy(noticeNotifications = notifications.map { item -> item.toNoticeUiModel() }
-                            .toImmutableList())
+                        NotificationTab.NOTIFICATION -> it.copy(
+                            noticeNotifications = notifications.map { item -> item.toNoticeUiModel() }
+                                .toImmutableList()
+                        )
                     }
                 }
             }
