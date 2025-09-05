@@ -24,18 +24,18 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface CalendarService {
-    @GET("/api/v1/calendar/month")
+    @GET("/api/v1/home/calendar/month")
     suspend fun getCalendar(
         @Query("year") year: Int,
         @Query("month") month: Int
     ): BaseResponse<CalendarResponseDto>
 
-    @GET("/api/v1/calendar/{date}")
+    @GET("/api/v1/home/calendar/{date}")
     suspend fun getDiaryThumbnail(
         @Path("date") date: String
     ): BaseResponse<DiaryThumbnailResponseDto>
 
-    @GET("/api/v1/calendar/{date}/topic")
+    @GET("/api/v1/home/calendar/{date}/topic")
     suspend fun getTopic(
         @Path("date") date: String
     ): BaseResponse<TopicResponseDto>
