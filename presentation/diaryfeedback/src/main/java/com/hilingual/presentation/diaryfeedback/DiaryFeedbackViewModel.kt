@@ -172,16 +172,12 @@ internal class DiaryFeedbackViewModel @Inject constructor(
         }
     }
 
-    private fun showPublishSnackbar() {
-        viewModelScope.launch {
-            _sideEffect.emit(DiaryFeedbackSideEffect.ShowSnackbar(message = "일기가 게시되었어요!", actionLabel = "보러가기"))
-        }
+    private suspend fun showPublishSnackbar() {
+        _sideEffect.emit(DiaryFeedbackSideEffect.ShowSnackbar(message = "일기가 게시되었어요!", actionLabel = "보러가기"))
     }
 
-    private fun showToast(message: String) {
-        viewModelScope.launch {
-            _sideEffect.emit(DiaryFeedbackSideEffect.ShowToast(message = message))
-        }
+    private suspend fun showToast(message: String) {
+        _sideEffect.emit(DiaryFeedbackSideEffect.ShowToast(message = message))
     }
 }
 
