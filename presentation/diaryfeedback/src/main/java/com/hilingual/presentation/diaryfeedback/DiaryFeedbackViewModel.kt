@@ -75,6 +75,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
             val recommendExpressions = recommendExpressionsResult.getOrThrow()
 
             val newUiState = DiaryFeedbackUiState(
+                isPublished = diaryResult.isPublished,
                 writtenDate = diaryResult.writtenDate,
                 diaryContent = diaryResult.toState(),
                 feedbackList = feedbacks.map { it.toState() }.toImmutableList(),
