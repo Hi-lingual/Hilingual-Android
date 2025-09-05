@@ -20,6 +20,7 @@ import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.data.user.datasource.UserRemoteDataSource
 import com.hilingual.data.user.model.NicknameValidationResult
 import com.hilingual.data.user.model.UserInfoModel
+import com.hilingual.data.user.model.UserLoginInfoModel
 import com.hilingual.data.user.model.UserProfileModel
 import com.hilingual.data.user.model.toDto
 import com.hilingual.data.user.model.toModel
@@ -66,4 +67,9 @@ internal class UserRepositoryImpl @Inject constructor(
     override suspend fun isOtpVerified(): Boolean {
         return userInfoManager.isOtpVerified()
     }
+
+    override suspend fun getUserLoginInfo(): Result<UserLoginInfoModel> =
+        suspendRunCatching {
+            userRemoteDataSource.getUserLoginInfo().data!!.toModel()
+        }
 }

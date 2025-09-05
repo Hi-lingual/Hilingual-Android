@@ -19,6 +19,7 @@ import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.user.datasource.UserRemoteDataSource
 import com.hilingual.data.user.dto.reponse.NicknameResponseDto
 import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
+import com.hilingual.data.user.dto.reponse.UserLoginInfoResponseDto
 import com.hilingual.data.user.dto.request.UserProfileRequestDto
 import com.hilingual.data.user.service.UserService
 import jakarta.inject.Inject
@@ -34,4 +35,7 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto> =
         userService.getUserInfo()
+
+    override suspend fun getUserLoginInfo(): BaseResponse<UserLoginInfoResponseDto> =
+        userService.getUserLoginInfo()
 }

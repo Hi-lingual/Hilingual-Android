@@ -18,6 +18,7 @@ package com.hilingual.data.user.service
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.user.dto.reponse.NicknameResponseDto
 import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
+import com.hilingual.data.user.dto.reponse.UserLoginInfoResponseDto
 import com.hilingual.data.user.dto.request.UserProfileRequestDto
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -37,4 +38,7 @@ internal interface UserService {
 
     @GET("/api/v1/users/info")
     suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto>
+
+    @GET("/api/v1/users/mypage/info")
+    suspend fun getUserLoginInfo(): BaseResponse<UserLoginInfoResponseDto>
 }
