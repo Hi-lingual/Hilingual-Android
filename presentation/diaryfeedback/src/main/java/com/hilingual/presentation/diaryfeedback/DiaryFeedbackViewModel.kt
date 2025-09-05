@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
@@ -34,7 +35,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -102,6 +102,9 @@ internal class DiaryFeedbackViewModel @Inject constructor(
     }
 
     fun toggleIsPublished(isPublished: Boolean) {
+        val currentState = _uiState.value
+        if (currentState !is UiState.Success) return
+
         viewModelScope.launch {
             val result = if (isPublished) {
                 diaryRepository.patchDiaryPublish(diaryId)
@@ -110,13 +113,9 @@ internal class DiaryFeedbackViewModel @Inject constructor(
             }
 
             result.onSuccess {
-                _uiState.update { currentState ->
-                    val successState = currentState as UiState.Success
-                    successState.copy(
-                        data = successState.data.copy(isPublished = isPublished)
-                    )
+                _uiState.updateSuccess { currentState ->
+                    currentState.copy(isPublished = isPublished)
                 }
-
                 if (isPublished) {
                     showPublishSnackbar()
                 } else {
@@ -131,7 +130,6 @@ internal class DiaryFeedbackViewModel @Inject constructor(
         }
     }
 
-
     fun deleteDiary() {
         viewModelScope.launch {
             diaryRepository.deleteDiary(
@@ -144,16 +142,17 @@ internal class DiaryFeedbackViewModel @Inject constructor(
     }
 
     fun toggleBookmark(phraseId: Long, isMarked: Boolean) {
+        val currentState = _uiState.value
+        if (currentState !is UiState.Success) return
+
         viewModelScope.launch {
             diaryRepository.patchPhraseBookmark(
                 phraseId = phraseId,
                 bookmarkModel = PhraseBookmarkModel(isMarked)
             )
                 .onSuccess {
-                    _uiState.update { currentState ->
-
-                        val successState = currentState as UiState.Success
-                        val oldList = successState.data.recommendExpressionList
+                    _uiState.updateSuccess { currentState ->
+                        val oldList = currentState.recommendExpressionList
 
                         val updatedList = oldList.map { item ->
                             if (item.phraseId == phraseId) {
@@ -163,8 +162,8 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                             }
                         }.toImmutableList()
 
-                        successState.copy(
-                            data = successState.data.copy(recommendExpressionList = updatedList)
+                        currentState.copy(
+                            recommendExpressionList = updatedList
                         )
                     }
                 }
