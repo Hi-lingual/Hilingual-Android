@@ -20,8 +20,8 @@ import javax.inject.Inject
 internal class MyPageViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<MyPageUiState>>(UiState.Loading)
-    val uiState: StateFlow<UiState<MyPageUiState>> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<UiState<MyPageUiModel>>(UiState.Loading)
+    val uiState: StateFlow<UiState<MyPageUiModel>> = _uiState.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<MyPageSideEffect>()
     val sideEffect: SharedFlow<MyPageSideEffect> = _sideEffect.asSharedFlow()
@@ -35,7 +35,7 @@ internal class MyPageViewModel @Inject constructor(
             userRepository.getUserLoginInfo()
                 .onSuccess { userInfo ->
                     _uiState.value = UiState.Success(
-                        MyPageUiState(
+                        MyPageUiModel(
                             profileImageUrl = userInfo.profileImg,
                             profileNickname = userInfo.nickname,
                             profileProvider = userInfo.provider

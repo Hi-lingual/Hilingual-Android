@@ -36,7 +36,7 @@ import com.hilingual.core.designsystem.component.picker.ProfileImagePicker
 import com.hilingual.core.designsystem.component.topappbar.TitleCenterAlignedTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.mypage.MyPageSideEffect
-import com.hilingual.presentation.mypage.MyPageUiState
+import com.hilingual.presentation.mypage.MyPageUiModel
 import com.hilingual.presentation.mypage.MyPageViewModel
 import com.hilingual.presentation.mypage.component.ProfileItem
 import com.hilingual.presentation.mypage.component.WithdrawDialog
@@ -80,7 +80,7 @@ internal fun ProfileEditRoute(
 @Composable
 private fun ProfileEditScreen(
     paddingValues: PaddingValues,
-    profileLoginInfo: MyPageUiState,
+    profileLoginInfo: MyPageUiModel,
     onProfileImageUriChanged: (Uri?) -> Unit,
     onWithdrawClick: () -> Unit
 ) {
@@ -171,7 +171,7 @@ private fun ProfileEditScreenPreview() {
     HilingualTheme {
         ProfileEditScreen(
             paddingValues = PaddingValues(),
-            profileLoginInfo = MyPageUiState(
+            profileLoginInfo = MyPageUiModel(
                 profileImageUrl = "",
                 profileNickname = "하링이",
                 profileProvider = "구글 로그인"
