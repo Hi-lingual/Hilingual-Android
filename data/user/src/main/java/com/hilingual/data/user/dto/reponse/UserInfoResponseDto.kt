@@ -24,8 +24,10 @@ data class UserInfoResponseDto(
     val nickname: String,
     @SerialName("profileImg")
     val profileImg: String,
+    @SerialName("totalDiaries")
+    val totalDiaries: Int,
     @SerialName("streak")
     val streak: Int,
-    @SerialName("totalDiaries")
-    val totalDiaries: Int
+    @SerialName("newAlarm")
+    val newAlarm: Boolean
 )

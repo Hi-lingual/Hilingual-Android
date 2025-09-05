@@ -23,6 +23,7 @@ import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.data.auth.datasource.AuthRemoteDataSource
 import com.hilingual.data.auth.datasource.GoogleAuthDataSource
 import com.hilingual.data.auth.dto.request.LoginRequestDto
+import com.hilingual.data.auth.dto.request.VerifyCodeRequestDto
 import com.hilingual.data.auth.model.LoginModel
 import com.hilingual.data.auth.repository.AuthRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -54,6 +55,10 @@ internal class AuthRepositoryImpl @Inject constructor(
         userInfoManager.saveRegisterStatus(loginResponse.registerStatus)
 
         LoginModel(loginResponse.registerStatus)
+    }
+
+    override suspend fun verifyCode(code: String): Result<Unit> = suspendRunCatching {
+        authRemoteDataSource.verifyCode(VerifyCodeRequestDto(code))
     }
 
     override suspend fun getAccessToken(): String? = tokenManager.getAccessToken()

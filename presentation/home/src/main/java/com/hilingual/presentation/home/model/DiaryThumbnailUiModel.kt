@@ -30,5 +30,5 @@ internal fun DiaryThumbnailModel.toState() = DiaryThumbnailUiModel(
     diaryId = this.diaryId,
     imageUrl = this.imageUrl,
     originalText = this.originalText,
-    isPublished = false // TODO: API 연결시 변경
+    isPublished = this.isPublished
 )

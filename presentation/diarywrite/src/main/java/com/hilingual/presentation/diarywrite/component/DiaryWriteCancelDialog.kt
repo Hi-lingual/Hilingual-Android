@@ -30,7 +30,7 @@ internal fun DiaryWriteCancelDialog(
         title = "일기 작성을 취소하시겠어요?",
         description = "지금 나가면 작성한 내용이 모두 사라져요!",
         cancelText = "아니요",
-        confirmText = "네, 취소할게요",
+        confirmText = "취소하기",
         onNegative = onNoClick,
         onPositive = onCancelClick,
         onDismiss = onDismiss

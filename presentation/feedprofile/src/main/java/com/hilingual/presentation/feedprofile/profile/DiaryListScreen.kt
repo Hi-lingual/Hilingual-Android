@@ -16,17 +16,16 @@ import com.hilingual.core.designsystem.component.content.FeedCard
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCard
 import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType
-import com.hilingual.presentation.feedprofile.profile.model.DiaryItem
-import com.hilingual.presentation.feedprofile.profile.model.LikeDiaryItemModel
+import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun DiaryListScreen(
-    diaries: ImmutableList<DiaryItem>,
+    diaries: ImmutableList<FeedDiaryUIModel>,
     emptyCardType: FeedEmptyCardType,
     onProfileClick: (userId: Long) -> Unit,
     onContentDetailClick: (diaryId: Long) -> Unit,
-    onLikeClick: (diaryId: Long) -> Unit,
+    onLikeClick: (diaryId: Long, isLiked: Boolean) -> Unit,
     onUnpublishClick: (diaryId: Long) -> Unit,
     onReportClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -53,22 +52,18 @@ internal fun DiaryListScreen(
                 key = { _, diary -> diary.diaryId }
             ) { index, diary ->
                 with(diary) {
-                    val streak = (this as? LikeDiaryItemModel)?.streak
-                    val userId = (this as? LikeDiaryItemModel)?.userId ?: 0L
-                    val isMine = (this as? LikeDiaryItemModel)?.isMine ?: true
-
                     FeedCard(
-                        profileUrl = profileImageUrl,
-                        onProfileClick = { onProfileClick(userId) },
-                        nickname = nickname,
-                        streak = streak,
+                        profileUrl = authorProfileImageUrl,
+                        onProfileClick = { onProfileClick(authorUserId) },
+                        nickname = authorNickname,
+                        streak = authorStreak,
                         sharedDateInMinutes = sharedDate,
                         content = originalText,
                         onContentDetailClick = { onContentDetailClick(diaryId) },
                         imageUrl = diaryImageUrl,
                         likeCount = likeCount,
                         isLiked = isLiked,
-                        onLikeClick = { onLikeClick(diaryId) },
+                        onLikeClick = { onLikeClick(diaryId, !isLiked) },
                         isMine = isMine,
                         onUnpublishClick = { onUnpublishClick(diaryId) },
                         onReportClick = onReportClick

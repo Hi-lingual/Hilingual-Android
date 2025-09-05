@@ -19,6 +19,7 @@ import com.hilingual.core.network.LoginClient
 import com.hilingual.core.network.RefreshClient
 import com.hilingual.data.auth.service.LoginService
 import com.hilingual.data.auth.service.ReissueService
+import com.hilingual.data.auth.service.VerifyService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,4 +37,8 @@ internal object ServiceModule {
     @Provides
     @Singleton
     fun provideReissueService(@RefreshClient retrofit: Retrofit): ReissueService = retrofit.create(ReissueService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideVerifyService(@LoginClient retrofit: Retrofit): VerifyService = retrofit.create(VerifyService::class.java)
 }
