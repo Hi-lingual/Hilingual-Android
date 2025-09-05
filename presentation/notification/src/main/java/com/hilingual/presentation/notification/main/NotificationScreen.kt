@@ -38,6 +38,7 @@ import com.hilingual.presentation.notification.main.model.FeedNotificationType
 import com.hilingual.presentation.notification.main.model.NoticeNotificationItemUiModel
 import com.hilingual.presentation.notification.main.tab.FeedScreen
 import com.hilingual.presentation.notification.main.tab.NoticeScreen
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -89,11 +90,12 @@ private fun NotificationScreen(
 
     LaunchedEffect(pagerState.currentPage) {
         val tab = NotificationTab.entries[pagerState.currentPage]
+        onTabSelected(tab)
+        delay(100)
         when (tab) {
             NotificationTab.FEED -> feedListState.animateScrollToItem(0)
             NotificationTab.NOTIFICATION -> noticeListState.animateScrollToItem(0)
         }
-        onTabSelected(tab)
     }
 
     Column(

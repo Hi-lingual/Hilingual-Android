@@ -47,6 +47,7 @@ internal fun NoticeScreen(
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
+            state = listState,
             verticalArrangement = if (notifications.isEmpty()) Arrangement.Center else Arrangement.Top
         ) {
             if (notifications.isEmpty()) {
