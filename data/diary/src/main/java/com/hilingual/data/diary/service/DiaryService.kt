@@ -24,6 +24,7 @@ import com.hilingual.data.diary.dto.response.DiaryRecommendExpressionResponseDto
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
@@ -68,6 +69,11 @@ internal interface DiaryService {
 
     @PATCH("/api/v1/diaries/{diaryId}/unpublish")
     suspend fun patchDiaryUnpublish(
+        @Path("diaryId") diaryId: Long
+    ): BaseResponse<Unit>
+
+    @DELETE("/api/v1/diaries/{diaryId}")
+    suspend fun deleteDiary(
         @Path("diaryId") diaryId: Long
     ): BaseResponse<Unit>
 }

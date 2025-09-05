@@ -64,4 +64,7 @@ internal class DiaryRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun patchDiaryUnpublish(diaryId: Long): BaseResponse<Unit> =
         diaryService.patchDiaryUnpublish(diaryId)
+
+    override suspend fun deleteDiary(diaryId: Long): BaseResponse<Unit> =
+        diaryService.deleteDiary(diaryId)
 }

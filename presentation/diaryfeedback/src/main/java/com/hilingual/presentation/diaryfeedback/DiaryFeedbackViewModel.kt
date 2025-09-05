@@ -133,10 +133,13 @@ internal class DiaryFeedbackViewModel @Inject constructor(
 
 
     fun deleteDiary() {
-        // TODO: API 호출 성공 후 표시
         viewModelScope.launch {
-            showToast("삭제가 완료되었어요.")
-            _sideEffect.emit(DiaryFeedbackSideEffect.NavigateToHome)
+            diaryRepository.deleteDiary(
+                diaryId = diaryId
+            ).onSuccess {
+                showToast("삭제가 완료되었어요.")
+                _sideEffect.emit(DiaryFeedbackSideEffect.NavigateToHome)
+            }
         }
     }
 

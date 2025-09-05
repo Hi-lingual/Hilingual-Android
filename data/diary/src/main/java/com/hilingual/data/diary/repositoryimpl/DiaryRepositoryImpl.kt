@@ -102,6 +102,11 @@ internal class DiaryRepositoryImpl @Inject constructor(
             diaryRemoteDataSource.patchDiaryUnpublish(diaryId)
         }
 
+    override suspend fun deleteDiary(diaryId: Long): Result<Unit> =
+        suspendRunCatching {
+            diaryRemoteDataSource.deleteDiary(diaryId)
+        }
+
     companion object {
         const val APPLICATION_JSON = "application/json"
         const val IMAGE_FILE_NAME = "imageFile"

@@ -55,4 +55,8 @@ interface DiaryRemoteDataSource {
     suspend fun patchDiaryUnpublish(
         diaryId: Long
     ): BaseResponse<Unit>
+
+    suspend fun deleteDiary(
+        diaryId: Long
+    ): BaseResponse<Unit>
 }
