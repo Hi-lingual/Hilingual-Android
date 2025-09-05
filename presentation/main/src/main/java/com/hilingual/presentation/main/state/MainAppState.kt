@@ -40,6 +40,7 @@ import com.hilingual.presentation.notification.navigation.navigateToNotification
 import com.hilingual.presentation.notification.navigation.navigateToNotificationSetting
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.otp.navigation.navigateToOtp
+import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.voca.navigation.navigateToVoca
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -55,7 +56,7 @@ internal class MainAppState(
     coroutineScope: CoroutineScope,
     networkMonitor: NetworkMonitor
 ) {
-    val startDestination = Home
+    val startDestination = Splash
 
     val isOffline: StateFlow<Boolean> = networkMonitor.isOnline
         .map(Boolean::not)
