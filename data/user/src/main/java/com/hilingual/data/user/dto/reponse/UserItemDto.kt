@@ -4,18 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class FollowerResponseDto(
-    @SerialName("followerList")
-    val userList: List<UserItemDto>
-)
-
-@Serializable
-data class FollowingResponseDto(
-    @SerialName("followingList")
-    val userList: List<UserItemDto>
-)
-
-@Serializable
 data class UserItemDto(
     @SerialName("userId")
     val userId: Long,
