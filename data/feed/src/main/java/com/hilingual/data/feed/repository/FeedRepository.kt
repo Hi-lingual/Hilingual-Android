@@ -1,3 +1,7 @@
 package com.hilingual.data.feed.repository
 
-interface FeedRepository
+import com.hilingual.data.feed.model.FeedListModel
+
+interface FeedRepository {
+    suspend fun getRecommendFeeds(): Result<FeedListModel>
+}

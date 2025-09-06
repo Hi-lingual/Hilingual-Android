@@ -17,11 +17,14 @@ package com.hilingual.presentation.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
+import com.hilingual.data.feed.repository.FeedRepository
 import com.hilingual.presentation.feed.model.FeedListItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,16 +37,32 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class FeedViewModel @Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<FeedUiState>>(UiState.Success(FeedUiState.Fake))
+internal class FeedViewModel @Inject constructor(
+    private val feedRepository: FeedRepository
+) : ViewModel() {
+    private val _uiState = MutableStateFlow<UiState<FeedUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<FeedUiState>> = _uiState.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<FeedSideEffect>()
     val sideEffect: SharedFlow<FeedSideEffect> = _sideEffect.asSharedFlow()
 
+    init {
+        getRecommendFeeds()
+    }
+
     fun readAllFeed() {
         viewModelScope.launch {
             _sideEffect.emit(FeedSideEffect.ShowToast("피드의 일기를 모두 확인했어요."))
+        }
+    }
+
+    private fun getRecommendFeeds() {
+        viewModelScope.launch {
+            feedRepository.getRecommendFeeds().onSuccess {
+                _uiState.value = UiState.Success(FeedUiState(
+                    recommendFeedList = it.toState().toImmutableList()
+                ))
+            }
         }
     }
 

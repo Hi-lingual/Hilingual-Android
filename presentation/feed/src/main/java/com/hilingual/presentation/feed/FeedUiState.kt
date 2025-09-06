@@ -16,6 +16,7 @@
 package com.hilingual.presentation.feed
 
 import androidx.compose.runtime.Immutable
+import com.hilingual.data.feed.model.FeedListModel
 import com.hilingual.presentation.feed.model.FeedListItemUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -87,6 +88,24 @@ internal data class FeedUiState(
                     isMine = false
                 )
             )
+        )
+    }
+}
+
+internal fun FeedListModel.toState(): List<FeedListItemUiModel> {
+    return this.feedList.map {
+        FeedListItemUiModel(
+            isMine = it.profile.isMine,
+            userId = it.profile.userId,
+            profileUrl = it.profile.profileImg,
+            nickname = it.profile.nickname,
+            streak = it.profile.streak,
+            sharedDateInMinutes = it.diary.sharedDate,
+            content = it.diary.originalText,
+            imageUrl = it.diary.diaryImg,
+            diaryId = it.diary.diaryId,
+            likeCount = it.diary.likeCount,
+            isLiked = it.diary.isLiked
         )
     }
 }
