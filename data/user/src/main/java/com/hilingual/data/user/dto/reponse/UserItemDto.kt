@@ -1,13 +1,7 @@
-package com.hilingual.data.feed.dto.response
+package com.hilingual.data.user.dto.reponse
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-
-@Serializable
-data class UserResponseDto(
-    @SerialName("userList")
-    val userList: List<UserItemDto>
-)
 
 @Serializable
 data class UserItemDto(

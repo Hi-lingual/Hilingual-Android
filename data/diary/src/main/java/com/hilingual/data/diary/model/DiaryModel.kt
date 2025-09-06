@@ -22,7 +22,8 @@ data class DiaryContentModel(
     val originalText: String,
     val rewriteText: String,
     val diffRanges: List<DiaryContentFeedback>,
-    val imageUrl: String?
+    val imageUrl: String?,
+    val isPublished: Boolean
 )
 
 data class DiaryContentFeedback(
@@ -38,5 +39,6 @@ internal fun DiaryContentResponseDto.toModel() = DiaryContentModel(
         DiaryContentFeedback(
             Pair(it.start, it.end)
         )
-    }
+    },
+    isPublished = this.isPublished
 )
