@@ -21,6 +21,7 @@ import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feedprofile.follow.component.FollowTabRow
 import com.hilingual.presentation.feedprofile.follow.model.FollowItemModel
+import com.hilingual.presentation.feedprofile.follow.model.FollowTabType
 import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
@@ -51,7 +52,7 @@ private fun FollowListScreen(
     followings: UiState<ImmutableList<FollowItemModel>>,
     onBackClick: () -> Unit,
     onProfileClick: (Long) -> Unit,
-    onActionButtonClick: (Long, Boolean) -> Unit,
+    onActionButtonClick: (Long, Boolean, FollowTabType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -79,9 +80,9 @@ private fun FollowListScreen(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
         ) { page ->
-            val (followState, emptyCardType) = when (page) {
-                0 -> followers to FeedEmptyCardType.NO_FOLLOWER
-                else -> followings to FeedEmptyCardType.NO_FOLLOWING
+            val (followState, emptyCardType,tabType) = when (page) {
+                0 -> Triple(followers, FeedEmptyCardType.NO_FOLLOWER, FollowTabType.FOLLOWER)
+                else -> Triple(followings,FeedEmptyCardType.NO_FOLLOWING, FollowTabType.FOLLOWING)
             }
 
             when (followState) {
@@ -91,7 +92,9 @@ private fun FollowListScreen(
                         follows = followState.data,
                         emptyCardType = emptyCardType,
                         onProfileClick = onProfileClick,
-                        onActionButtonClick = onActionButtonClick
+                        onActionButtonClick = { userId, isFollowing ->
+                            onActionButtonClick(userId, isFollowing, tabType)
+                        }
                     )
                 }
 
@@ -111,7 +114,7 @@ private fun FollowListScreenPreview() {
             followings = FollowListUiState.Fake.followingList,
             onBackClick = {},
             onProfileClick = {},
-            onActionButtonClick = { _, _ -> }
+            onActionButtonClick = { _, _ ,_ -> }
         )
     }
 }
