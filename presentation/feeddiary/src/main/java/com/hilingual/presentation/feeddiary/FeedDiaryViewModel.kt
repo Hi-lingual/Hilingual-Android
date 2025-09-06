@@ -26,6 +26,8 @@ import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.presentation.feeddiary.navigation.FeedDiary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -34,6 +36,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,6 +51,54 @@ internal class FeedDiaryViewModel @Inject constructor(
 
     private val _sideEffect = MutableSharedFlow<FeedDiarySideEffect>()
     val sideEffect: SharedFlow<FeedDiarySideEffect> = _sideEffect.asSharedFlow()
+
+    init {
+        loadInitialData()
+    }
+
+    private suspend fun getDiaryData() {
+        val (contentResult, feedbacksResult, recommendExpressionsResult) = coroutineScope {
+            val contentDeferred = async { diaryRepository.getDiaryContent(diaryId) }
+            val feedbacksDeferred = async { diaryRepository.getDiaryFeedbacks(diaryId) }
+            val recommendExpressionsDeferred = async { diaryRepository.getDiaryRecommendExpressions(diaryId) }
+
+            Triple(contentDeferred.await(), feedbacksDeferred.await(), recommendExpressionsDeferred.await())
+        }
+
+        if (
+            contentResult.isSuccess &&
+            feedbacksResult.isSuccess &&
+            recommendExpressionsResult.isSuccess
+        ) {
+            val diaryResult = contentResult.getOrThrow()
+            val feedbacks = feedbacksResult.getOrThrow()
+            val recommendExpressions = recommendExpressionsResult.getOrThrow()
+
+            val newUiState = FeedDiaryUiState(
+                writtenDate = diaryResult.writtenDate,
+                diaryContent = diaryResult.toState(),
+                feedbackList = feedbacks.map { it.toState() }.toImmutableList(),
+                recommendExpressionList = recommendExpressions.map { it.toState() }.toImmutableList(),
+            )
+            _uiState.value = UiState.Success(newUiState)
+        } else {
+            throw Exception()
+        }
+    }
+
+    private fun loadInitialData() {
+        viewModelScope.launch {
+            runCatching {
+                getDiaryData()
+            }.onFailure { e ->
+                Timber.d("일기 상세 조회 실패: $e")
+                _uiState.value = UiState.Failure
+                _sideEffect.emit(
+                    FeedDiarySideEffect.ShowRetryDialog { loadInitialData() }
+                )
+            }
+        }
+    }
 
     fun toggleIsLiked(isLiked: Boolean) {
         viewModelScope.launch {
@@ -110,6 +161,7 @@ internal class FeedDiaryViewModel @Inject constructor(
 
 sealed interface FeedDiarySideEffect {
     data object NavigateToUp : FeedDiarySideEffect
+    data class ShowRetryDialog(val onRetry: () -> Unit) : FeedDiarySideEffect
     data class ShowSnackbar(val message: String, val actionLabel: String) : FeedDiarySideEffect
     data class ShowToast(val message: String) : FeedDiarySideEffect
 }

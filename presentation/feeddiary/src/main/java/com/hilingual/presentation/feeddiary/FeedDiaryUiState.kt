@@ -19,15 +19,19 @@ import androidx.compose.runtime.Immutable
 import com.hilingual.core.designsystem.model.DiaryContent
 import com.hilingual.core.designsystem.model.FeedbackContent
 import com.hilingual.core.designsystem.model.RecommendExpression
+import com.hilingual.data.diary.model.DiaryContentModel
+import com.hilingual.data.diary.model.DiaryFeedbackModel
+import com.hilingual.data.diary.model.DiaryRecommendExpressionModel
 import com.hilingual.presentation.feeddiary.model.ProfileContentUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 @Immutable
 internal data class FeedDiaryUiState(
     val writtenDate: String = "",
     val isMine: Boolean = false,
-    val profileContent: ProfileContentUiModel,
+    val profileContent: ProfileContentUiModel = ProfileContentUiModel(),
     val diaryContent: DiaryContent = DiaryContent(),
     val feedbackList: ImmutableList<FeedbackContent> = persistentListOf(),
     val recommendExpressionList: ImmutableList<RecommendExpression> = persistentListOf()
@@ -94,3 +98,28 @@ internal data class FeedDiaryUiState(
         )
     }
 }
+
+internal fun DiaryContentModel.toState() = DiaryContent(
+    originalText = this.originalText,
+    aiText = this.rewriteText,
+    diffRanges = this.diffRanges.map {
+        it.diffRange.first to it.diffRange.second
+    }.toImmutableList(),
+    imageUrl = this.imageUrl,
+    isPublished = this.isPublished
+)
+
+internal fun DiaryFeedbackModel.toState() = FeedbackContent(
+    originalText = this.originalText,
+    feedbackText = this.rewriteText,
+    explain = this.explain
+)
+
+internal fun DiaryRecommendExpressionModel.toState() = RecommendExpression(
+    phraseId = this.phraseId,
+    phraseType = this.phraseType.toImmutableList(),
+    phrase = this.phrase,
+    explanation = this.explanation,
+    reason = this.reason,
+    isMarked = this.isMarked
+)
