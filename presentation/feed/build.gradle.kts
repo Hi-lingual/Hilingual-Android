@@ -22,3 +22,7 @@ plugins {
 android {
     setNamespace("presentation.feed")
 }
+
+dependencies {
+    implementation(projects.data.feed)
+}
