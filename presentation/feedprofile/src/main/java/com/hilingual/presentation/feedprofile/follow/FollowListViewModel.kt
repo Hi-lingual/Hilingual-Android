@@ -94,6 +94,13 @@ internal class FollowListViewModel @Inject constructor(
         }
     }
 
+    fun refreshTab(tabType: FollowTabType) {
+        when (tabType) {
+            FollowTabType.FOLLOWER -> loadFollowers()
+            FollowTabType.FOLLOWING -> loadFollowings()
+        }
+    }
+
     private fun updateUiState(
         uiState: UiState<ImmutableList<FollowItemModel>>,
         userId: Long,

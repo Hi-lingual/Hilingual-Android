@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -41,7 +42,8 @@ internal fun FollowListRoute(
         followings = uiState.followingList,
         onBackClick = navigateUp,
         onProfileClick = navigateToFeedProfile,
-        onActionButtonClick = viewModel::updateFollowingState
+        onActionButtonClick = viewModel::updateFollowingState,
+        onTabRefresh = viewModel::refreshTab
     )
 }
 
@@ -53,10 +55,16 @@ private fun FollowListScreen(
     onBackClick: () -> Unit,
     onProfileClick: (Long) -> Unit,
     onActionButtonClick: (Long, Boolean, FollowTabType) -> Unit,
+    onTabRefresh: (FollowTabType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(pagerState.currentPage) {
+        val tabType = if (pagerState.currentPage == 0) FollowTabType.FOLLOWER else FollowTabType.FOLLOWING
+        onTabRefresh(tabType)
+    }
 
     Column(
         modifier = modifier
@@ -73,6 +81,8 @@ private fun FollowListScreen(
             onTabSelected = { index ->
                 coroutineScope.launch {
                     pagerState.animateScrollToPage(index)
+                    val tabType = if (index == 0) FollowTabType.FOLLOWER else FollowTabType.FOLLOWING
+                    onTabRefresh(tabType)
                 }
             }
         )
@@ -80,9 +90,9 @@ private fun FollowListScreen(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
         ) { page ->
-            val (followState, emptyCardType,tabType) = when (page) {
+            val (followState, emptyCardType, tabType) = when (page) {
                 0 -> Triple(followers, FeedEmptyCardType.NO_FOLLOWER, FollowTabType.FOLLOWER)
-                else -> Triple(followings,FeedEmptyCardType.NO_FOLLOWING, FollowTabType.FOLLOWING)
+                else -> Triple(followings, FeedEmptyCardType.NO_FOLLOWING, FollowTabType.FOLLOWING)
             }
 
             when (followState) {
@@ -114,7 +124,8 @@ private fun FollowListScreenPreview() {
             followings = FollowListUiState.Fake.followingList,
             onBackClick = {},
             onProfileClick = {},
-            onActionButtonClick = { _, _ ,_ -> }
+            onActionButtonClick = { _, _, _ -> },
+            onTabRefresh = {}
         )
     }
 }
