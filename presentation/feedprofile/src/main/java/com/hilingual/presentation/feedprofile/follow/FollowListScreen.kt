@@ -10,6 +10,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -95,20 +96,22 @@ private fun FollowListScreen(
                 else -> Triple(followings, FeedEmptyCardType.NO_FOLLOWING, FollowTabType.FOLLOWING)
             }
 
-            when (followState) {
-                is UiState.Loading -> HilingualLoadingIndicator()
-                is UiState.Success -> {
-                    FollowScreen(
-                        follows = followState.data,
-                        emptyCardType = emptyCardType,
-                        onProfileClick = onProfileClick,
-                        onActionButtonClick = { userId, isFollowing ->
-                            onActionButtonClick(userId, isFollowing, tabType)
-                        }
-                    )
-                }
+            key(pagerState.currentPage == page) {
+                when (followState) {
+                    is UiState.Loading -> HilingualLoadingIndicator()
+                    is UiState.Success -> {
+                        FollowScreen(
+                            follows = followState.data,
+                            emptyCardType = emptyCardType,
+                            onProfileClick = onProfileClick,
+                            onActionButtonClick = { userId, isFollowing ->
+                                onActionButtonClick(userId, isFollowing, tabType)
+                            }
+                        )
+                    }
 
-                else -> {}
+                    else -> {}
+                }
             }
         }
     }
