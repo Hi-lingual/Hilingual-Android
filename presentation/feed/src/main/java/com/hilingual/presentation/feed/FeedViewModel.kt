@@ -17,7 +17,7 @@ package com.hilingual.presentation.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hilingual.core.common.extension.updateSuccess
+import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.feed.repository.FeedRepository
 import com.hilingual.presentation.feed.model.FeedListItemUiModel
@@ -34,14 +34,15 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 internal class FeedViewModel @Inject constructor(
     private val feedRepository: FeedRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<FeedUiState>>(UiState.Loading)
-    val uiState: StateFlow<UiState<FeedUiState>> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(FeedUiState())
+    val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<FeedSideEffect>()
     val sideEffect: SharedFlow<FeedSideEffect> = _sideEffect.asSharedFlow()
@@ -58,11 +59,19 @@ internal class FeedViewModel @Inject constructor(
 
     private fun getRecommendFeeds() {
         viewModelScope.launch {
-            feedRepository.getRecommendFeeds().onSuccess {
-                _uiState.value = UiState.Success(FeedUiState(
-                    recommendFeedList = it.toState().toImmutableList()
-                ))
-            }
+            feedRepository.getRecommendFeeds()
+                .onSuccess { feedList ->
+                    _uiState.update {
+                        it.copy(
+                            recommendFeedList = UiState.Success(
+                                feedList.toState().toImmutableList()
+                            )
+                        )
+                    }
+                }
+                .onLogFailure { e ->
+                    Timber.d("피드 조회 실패: $e")
+                }
         }
     }
 
@@ -70,33 +79,29 @@ internal class FeedViewModel @Inject constructor(
         viewModelScope.launch {
             // TODO: API 성공 후 좋아요 수 증가
             _uiState.update { currentState ->
-                val successState = currentState as UiState.Success
-
-                val updatedRecommendList = updateSingleItem(
-                    list = successState.data.recommendFeedList.toPersistentList(),
-                    diaryId = diaryId
-                ) { item ->
-                    item.copy(
-                        isLiked = isLiked,
-                        likeCount = item.likeCount + if (isLiked) 1 else -1
-                    )
-                }
-
-                val updatedFollowingList = updateSingleItem(
-                    list = successState.data.followingFeedList.toPersistentList(),
-                    diaryId = diaryId
-                ) { item ->
-                    item.copy(
-                        isLiked = isLiked,
-                        likeCount = item.likeCount + if (isLiked) 1 else -1
-                    )
-                }
-
-                successState.copy(
-                    data = successState.data.copy(
-                        recommendFeedList = updatedRecommendList,
-                        followingFeedList = updatedFollowingList
-                    )
+                currentState.copy(
+                    recommendFeedList = currentState.recommendFeedList.updateIfSuccess { list ->
+                        updateSingleItem(
+                            list = list.toPersistentList(),
+                            diaryId = diaryId
+                        ) { item ->
+                            item.copy(
+                                isLiked = isLiked,
+                                likeCount = item.likeCount + if (isLiked) 1 else -1
+                            )
+                        }
+                    },
+                    followingFeedList = currentState.followingFeedList.updateIfSuccess { list ->
+                        updateSingleItem(
+                            list = list.toPersistentList(),
+                            diaryId = diaryId
+                        ) { item ->
+                            item.copy(
+                                isLiked = isLiked,
+                                likeCount = item.likeCount + if (isLiked) 1 else -1
+                            )
+                        }
+                    }
                 )
             }
         }
@@ -107,20 +112,24 @@ internal class FeedViewModel @Inject constructor(
         viewModelScope.launch {
             _sideEffect.emit(FeedSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
             _uiState.update { currentState ->
-                val successState = currentState as UiState.Success
-                successState.copy(
-                    data = successState.data.copy(
-                        recommendFeedList = removeSingleItem(
-                            list = successState.data.recommendFeedList.toPersistentList(),
-                            diaryId = diaryId
-                        ),
-                        followingFeedList = removeSingleItem(
-                            list = successState.data.followingFeedList.toPersistentList(),
-                            diaryId = diaryId
-                        )
-                    )
+                currentState.copy(
+                    recommendFeedList = currentState.recommendFeedList.updateIfSuccess { list ->
+                        removeSingleItem(list.toPersistentList(), diaryId)
+                    },
+                    followingFeedList = currentState.followingFeedList.updateIfSuccess { list ->
+                        removeSingleItem(list.toPersistentList(), diaryId)
+                    }
                 )
             }
+        }
+    }
+
+    private fun UiState<ImmutableList<FeedListItemUiModel>>.updateIfSuccess(
+        transform: (ImmutableList<FeedListItemUiModel>) -> ImmutableList<FeedListItemUiModel>
+    ): UiState<ImmutableList<FeedListItemUiModel>> {
+        return when (this) {
+            is UiState.Success -> UiState.Success(transform(this.data))
+            else -> this
         }
     }
 

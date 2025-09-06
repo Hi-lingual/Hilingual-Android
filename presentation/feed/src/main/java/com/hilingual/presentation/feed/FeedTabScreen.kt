@@ -34,7 +34,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.content.FeedCard
+import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedEmptyCard
 import com.hilingual.presentation.feed.component.FeedEmptyCardType
@@ -45,7 +47,7 @@ import kotlinx.collections.immutable.persistentListOf
 @Composable
 internal fun FeedTabScreen(
     listState: LazyListState,
-    feedList: ImmutableList<FeedListItemUiModel>,
+    feedListState: UiState<ImmutableList<FeedListItemUiModel>>,
     onProfileClick: (Long) -> Unit,
     onContentDetailClick: (Long) -> Unit,
     onLikeClick: (Long, Boolean) -> Unit,
@@ -54,59 +56,68 @@ internal fun FeedTabScreen(
     modifier: Modifier = Modifier,
     hasFollowing: Boolean = true
 ) {
-    LazyColumn(
-        state = listState,
-        contentPadding = PaddingValues(bottom = 48.dp),
-        modifier = modifier
-            .background(HilingualTheme.colors.white)
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-    ) {
-        if (feedList.isEmpty()) {
-            item {
-                Column(
-                    modifier = Modifier.fillParentMaxSize()
-                ) {
-                    Spacer(Modifier.weight(16f))
-                    FeedEmptyCard(
-                        type = if (hasFollowing) FeedEmptyCardType.NOT_FEED else FeedEmptyCardType.NOT_FOLLOWING
-                    )
-                    Spacer(Modifier.weight(30f))
-                }
-            }
-        } else {
-            itemsIndexed(
-                items = feedList,
-                key = { _, feed -> feed.diaryId }
-            ) { index, feed ->
-                with(feed) {
-                    FeedCard(
-                        profileUrl = profileUrl,
-                        onProfileClick = { onProfileClick(userId) },
-                        nickname = nickname,
-                        streak = streak,
-                        sharedDateInMinutes = sharedDateInMinutes,
-                        content = content,
-                        onContentDetailClick = { onContentDetailClick(diaryId) },
-                        imageUrl = imageUrl,
-                        likeCount = likeCount,
-                        isLiked = isLiked,
-                        onLikeClick = { onLikeClick(diaryId, !isLiked) },
-                        isMine = isMine,
-                        onUnpublishClick = { onUnpublishClick(diaryId) },
-                        onReportClick = onReportClick
-                    )
-                }
+    when (val state = feedListState) {
+        is UiState.Loading -> HilingualLoadingIndicator()
+        is UiState.Success -> {
+            val feedList = state.data
 
-                if (index != feedList.lastIndex) {
-                    HorizontalDivider(
-                        color = HilingualTheme.colors.gray100,
-                        thickness = 1.dp
-                    )
+            LazyColumn(
+                state = listState,
+                contentPadding = PaddingValues(bottom = 48.dp),
+                modifier = modifier
+                    .background(HilingualTheme.colors.white)
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+            ) {
+                if (feedList.isEmpty()) {
+                    item {
+                        Column(
+                            modifier = Modifier.fillParentMaxSize()
+                        ) {
+                            Spacer(Modifier.weight(16f))
+                            FeedEmptyCard(
+                                type = if (hasFollowing) FeedEmptyCardType.NOT_FEED else FeedEmptyCardType.NOT_FOLLOWING
+                            )
+                            Spacer(Modifier.weight(30f))
+                        }
+                    }
+                } else {
+                    itemsIndexed(
+                        items = feedList,
+                        key = { _, feed -> feed.diaryId }
+                    ) { index, feed ->
+                        with(feed) {
+                            FeedCard(
+                                profileUrl = profileUrl,
+                                onProfileClick = { onProfileClick(userId) },
+                                nickname = nickname,
+                                streak = streak,
+                                sharedDateInMinutes = sharedDateInMinutes,
+                                content = content,
+                                onContentDetailClick = { onContentDetailClick(diaryId) },
+                                imageUrl = imageUrl,
+                                likeCount = likeCount,
+                                isLiked = isLiked,
+                                onLikeClick = { onLikeClick(diaryId, !isLiked) },
+                                isMine = isMine,
+                                onUnpublishClick = { onUnpublishClick(diaryId) },
+                                onReportClick = onReportClick
+                            )
+                        }
+
+                        if (index != feedList.lastIndex) {
+                            HorizontalDivider(
+                                color = HilingualTheme.colors.gray100,
+                                thickness = 1.dp
+                            )
+                        }
+                    }
                 }
             }
         }
+        else -> {}
     }
+
 }
 
 @Preview(showBackground = true)
@@ -148,7 +159,7 @@ private fun FeedTabScreenPreview() {
     HilingualTheme {
         FeedTabScreen(
             listState = rememberLazyListState(),
-            feedList = sampleFeedList,
+            feedListState = UiState.Success(sampleFeedList),
             onProfileClick = { },
             onContentDetailClick = { },
             onLikeClick = { _, _ -> },

@@ -34,7 +34,7 @@ private fun FeedResultDto.toModel(): FeedModel = FeedModel(
         FeedProfileModel(
             userId = this.userId,
             isMine = this.isMine,
-            profileImg = this.profileImg,
+            profileImg = this.profileImg ?: "",
             nickname = this.nickname,
             streak = this.streak
         )

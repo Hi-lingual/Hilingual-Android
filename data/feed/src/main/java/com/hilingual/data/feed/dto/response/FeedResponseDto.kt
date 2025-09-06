@@ -24,7 +24,7 @@ data class FeedProfileDto(
     @SerialName("isMine")
     val isMine: Boolean,
     @SerialName("profileImg")
-    val profileImg: String,
+    val profileImg: String?,
     @SerialName("nickname")
     val nickname: String,
     @SerialName("streak")
