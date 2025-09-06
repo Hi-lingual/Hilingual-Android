@@ -111,6 +111,22 @@ internal class FeedProfileViewModel @Inject constructor(
         }
     }
 
+    fun refreshProfile() {
+        viewModelScope.launch {
+            feedRepository.getFeedProfile(targetUserId)
+                .onSuccess { feedProfileModel ->
+                    _uiState.update { currentState ->
+                        val successState = currentState as? UiState.Success ?: return@update currentState
+                        successState.copy(
+                            data = successState.data.copy(feedProfileInfo = feedProfileModel)
+                        )
+                    }
+                }
+                .onLogFailure {
+                }
+        }
+    }
+
     fun toggleIsLiked(diaryId: Long, isLiked: Boolean, type: DiaryTabType) {
         viewModelScope.launch {
             feedRepository.postIsLiked(
