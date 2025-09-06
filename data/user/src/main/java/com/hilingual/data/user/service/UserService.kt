@@ -22,8 +22,10 @@ import com.hilingual.data.user.dto.reponse.NicknameResponseDto
 import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
 import com.hilingual.data.user.dto.request.UserProfileRequestDto
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -50,4 +52,14 @@ internal interface UserService {
     suspend fun getFollowings(
         @Path("targetUserId") targetUserId: Long
     ): BaseResponse<FollowingResponseDto>
+
+    @PUT("/api/v1/users/following/{targetUserId}")
+    suspend fun putFollow(
+        @Path("targetUserId") targetUserId: Long
+    ): BaseResponse<Unit>
+
+    @DELETE("/api/v1/users/following/{targetUserId}")
+    suspend fun deleteFollow(
+        @Path("targetUserId") targetUserId: Long
+    ): BaseResponse<Unit>
 }

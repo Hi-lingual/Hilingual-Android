@@ -43,4 +43,10 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
     override suspend fun getFollowings(targetUserId: Long): BaseResponse<FollowingResponseDto> =
         userService.getFollowings(targetUserId = targetUserId)
 
+    override suspend fun putFollow(targetUserId: Long): BaseResponse<Unit> =
+        userService.putFollow(targetUserId = targetUserId)
+
+    override suspend fun deleteFollow(targetUserId: Long): BaseResponse<Unit> =
+        userService.deleteFollow(targetUserId = targetUserId)
+
 }

@@ -40,8 +40,7 @@ internal fun FollowListRoute(
         followings = uiState.followingList,
         onBackClick = navigateUp,
         onProfileClick = navigateToFeedProfile,
-        onActionButtonClick = { _, _ ->
-        }
+        onActionButtonClick = viewModel::updateFollowingState
     )
 }
 

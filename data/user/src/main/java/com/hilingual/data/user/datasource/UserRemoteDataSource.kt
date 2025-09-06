@@ -40,4 +40,12 @@ interface UserRemoteDataSource {
     suspend fun getFollowings(
         targetUserId: Long
     ): BaseResponse<FollowingResponseDto>
+
+    suspend fun putFollow(
+        targetUserId: Long
+    ): BaseResponse<Unit>
+
+    suspend fun deleteFollow(
+        targetUserId: Long
+    ): BaseResponse<Unit>
 }

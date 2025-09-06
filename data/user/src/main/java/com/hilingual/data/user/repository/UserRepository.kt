@@ -46,4 +46,12 @@ interface UserRepository {
     suspend fun getFollowings(
         targetUserId: Long
     ) : Result<List<FollowUserListResultModel>>
+
+    suspend fun putFollow(
+        targetUserId: Long
+    ) : Result<Unit>
+
+    suspend fun deleteFollow(
+        targetUserId: Long
+    ) : Result<Unit>
 }
