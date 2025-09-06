@@ -89,7 +89,11 @@ internal fun FeedProfileRoute(
                         navigateToFollowList()
                     }
                 },
-                onActionButtonClick = { },
+                onActionButtonClick = { isCurrentlyFollowing ->
+                    if (isCurrentlyFollowing != null) {
+                        viewModel.updateFollowingState(isCurrentlyFollowing)
+                    }
+                },
                 onProfileClick = navigateToFeedProfile,
                 onContentDetailClick = navigateToFeedDiary,
                 onReportUserClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },

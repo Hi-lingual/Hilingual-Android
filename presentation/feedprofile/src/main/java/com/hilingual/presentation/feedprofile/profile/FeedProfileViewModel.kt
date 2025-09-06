@@ -7,6 +7,7 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.feed.repository.FeedRepository
 import com.hilingual.data.feed.model.FeedProfileModel
+import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
 import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
 import com.hilingual.presentation.feedprofile.profile.model.toFeedDiaryUIModel
@@ -27,6 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class FeedProfileViewModel @Inject constructor(
     private val feedRepository: FeedRepository,
+    private val userRepository: UserRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val targetUserId: Long = savedStateHandle.get<Long>("userId") ?: 0L
@@ -146,6 +148,34 @@ internal class FeedProfileViewModel @Inject constructor(
     fun diaryUnpublish(diaryId: Long) {
         viewModelScope.launch {
             _sideEffect.emit(FeedProfileSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
+        }
+    }
+
+    fun updateFollowingState(isCurrentlyFollowing: Boolean) {
+        viewModelScope.launch {
+            val result = if (isCurrentlyFollowing) {
+                userRepository.deleteFollow(targetUserId)
+            } else {
+                userRepository.putFollow(targetUserId)
+            }
+
+            result.onSuccess {
+                _uiState.update { currentState ->
+                    val successState = currentState as? UiState.Success ?: return@update currentState
+                    val currentProfile = successState.data.feedProfileInfo
+
+                    val updatedProfile = currentProfile.copy(
+                        isFollowing = !isCurrentlyFollowing,
+                        follower = if (isCurrentlyFollowing) currentProfile.follower - 1 else currentProfile.follower + 1
+                    )
+
+                    successState.copy(
+                        data = successState.data.copy(feedProfileInfo = updatedProfile)
+                    )
+                }
+            }.onFailure {
+                _sideEffect.emit(FeedProfileSideEffect.ShowToast("팔로우 상태 변경에 실패했습니다."))
+            }
         }
     }
 }
