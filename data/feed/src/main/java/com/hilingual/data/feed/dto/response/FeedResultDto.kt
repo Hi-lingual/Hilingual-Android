@@ -4,12 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class FeedResponseDto(
-    @SerialName("diaryList")
-    val diaryList: List<FeedResultDto>
-)
-
-@Serializable
 data class FeedResultDto(
     @SerialName("profile")
     val profile: FeedProfileDto,

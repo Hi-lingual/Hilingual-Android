@@ -1,10 +1,12 @@
 package com.hilingual.data.feed.model
 
-import com.hilingual.data.feed.dto.response.FeedResponseDto
+import com.hilingual.data.feed.dto.response.RecommendFeedResponseDto
 import com.hilingual.data.feed.dto.response.FeedResultDto
+import com.hilingual.data.feed.dto.response.FollowingFeedResponseDto
 
 data class FeedListModel(
-    val feedList: List<FeedModel>
+    val feedList: List<FeedModel>,
+    val hasFollowing: Boolean = false
 )
 
 data class FeedModel(
@@ -51,6 +53,11 @@ private fun FeedResultDto.toModel(): FeedModel = FeedModel(
     }
 )
 
-internal fun FeedResponseDto.toModel(): FeedListModel = FeedListModel(
+internal fun RecommendFeedResponseDto.toModel(): FeedListModel = FeedListModel(
     feedList = this.diaryList.map { it.toModel() }
+)
+
+internal fun FollowingFeedResponseDto.toModel(): FeedListModel = FeedListModel(
+    feedList = this.diaryList.map { it.toModel() },
+    hasFollowing = this.haveFollowing
 )

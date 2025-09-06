@@ -49,6 +49,7 @@ internal class FeedViewModel @Inject constructor(
 
     init {
         getRecommendFeeds()
+        getFollowingFeeds()
     }
 
     fun readAllFeed() {
@@ -60,17 +61,36 @@ internal class FeedViewModel @Inject constructor(
     private fun getRecommendFeeds() {
         viewModelScope.launch {
             feedRepository.getRecommendFeeds()
-                .onSuccess { feedList ->
+                .onSuccess { feedResult ->
                     _uiState.update {
                         it.copy(
                             recommendFeedList = UiState.Success(
-                                feedList.toState().toImmutableList()
+                                feedResult.toState().toImmutableList()
                             )
                         )
                     }
                 }
                 .onLogFailure { e ->
-                    Timber.d("피드 조회 실패: $e")
+                    Timber.d("추천 피드 조회 실패: $e")
+                }
+        }
+    }
+
+    private fun getFollowingFeeds() {
+        viewModelScope.launch {
+            feedRepository.getFollowingFeeds()
+                .onSuccess { feedResult ->
+                    _uiState.update {
+                        it.copy(
+                            followingFeedList = UiState.Success(
+                                feedResult.toState().toImmutableList()
+                            ),
+                            hasFollowing = feedResult.hasFollowing
+                        )
+                    }
+                }
+                .onLogFailure { e ->
+                    Timber.d("팔로잉 피드 조회 실패: $e")
                 }
         }
     }

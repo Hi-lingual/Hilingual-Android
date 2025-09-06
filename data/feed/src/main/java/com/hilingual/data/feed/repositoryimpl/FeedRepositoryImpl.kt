@@ -14,4 +14,9 @@ internal class FeedRepositoryImpl @Inject constructor(
         suspendRunCatching {
             feedRemoteDataSource.getRecommendFeeds().data!!.toModel()
         }
+
+    override suspend fun getFollowingFeeds(): Result<FeedListModel> =
+        suspendRunCatching {
+            feedRemoteDataSource.getFollowingFeeds().data!!.toModel()
+        }
 }

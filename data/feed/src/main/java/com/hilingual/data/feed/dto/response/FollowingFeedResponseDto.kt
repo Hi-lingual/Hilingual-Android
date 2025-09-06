@@ -1,0 +1,12 @@
+package com.hilingual.data.feed.dto.response
+
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class FollowingFeedResponseDto(
+    @SerialName("diaryList")
+    val diaryList: List<FeedResultDto>,
+    @SerialName("haveFollowing")
+    val haveFollowing: Boolean
+)
