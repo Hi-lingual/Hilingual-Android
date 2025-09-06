@@ -1,12 +1,16 @@
 package com.hilingual.presentation.feedprofile.profile
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
+import com.hilingual.data.feed.repository.FeedRepository
 import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
 import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,11 +35,39 @@ import javax.inject.Inject
 //    - `isMine`, `userId`, `nickname`, `streak` 등 필요한 모든 정보가 이미 모델 안에 있으므로
 //      해당 값을 그대로 사용하여 `FeedDiaryUIModel`을 생성합니다.
 @HiltViewModel
-internal class FeedProfileViewModel @Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<FeedProfileUiState>>(UiState.Success(FeedProfileUiState.Fake))
+internal class FeedProfileViewModel @Inject constructor(
+    private val feedRepository: FeedRepository,
+    savedStateHandle: SavedStateHandle
+) : ViewModel() {
+    private val targetUserId: Long = savedStateHandle.get<Long>("targetUserId") ?: 0L
+    private val _uiState = MutableStateFlow<UiState<FeedProfileUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<FeedProfileUiState>> = _uiState.asStateFlow()
     private val _sideEffect = MutableSharedFlow<FeedProfileSideEffect>()
     val sideEffect: SharedFlow<FeedProfileSideEffect> = _sideEffect.asSharedFlow()
+
+    init {
+        loadFeedProfile()
+    }
+
+    private fun loadFeedProfile() {
+        viewModelScope.launch {
+            feedRepository.getFeedProfile(targetUserId)
+                .onSuccess { feedProfileModel ->
+                    _uiState.update {
+                        UiState.Success(
+                            FeedProfileUiState(
+                                feedProfileInfo = feedProfileModel,
+                                sharedDiaries = persistentListOf(),
+                                likedDiaries = persistentListOf()
+                            )
+                        )
+                    }
+                }
+                .onLogFailure {
+                    _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog {})
+                }
+        }
+    }
 
     fun toggleIsLiked(diaryId: Long, isLiked: Boolean, type: DiaryTabType) {
         viewModelScope.launch {
@@ -83,4 +115,5 @@ internal class FeedProfileViewModel @Inject constructor() : ViewModel() {
 
 sealed interface FeedProfileSideEffect {
     data class ShowToast(val message: String) : FeedProfileSideEffect
+    data class ShowRetryDialog(val onRetry: () -> Unit) : FeedProfileSideEffect
 }

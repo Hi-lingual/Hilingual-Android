@@ -1,6 +1,7 @@
 package com.hilingual.presentation.feedprofile.profile
 
 import androidx.compose.runtime.Immutable
+import com.hilingual.data.feed.model.FeedProfileModel
 import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
 import com.hilingual.presentation.feedprofile.profile.model.FeedProfileInfoModel
 import kotlinx.collections.immutable.ImmutableList
@@ -8,22 +9,22 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 data class FeedProfileUiState(
-    val feedProfileInfo: FeedProfileInfoModel,
+    val feedProfileInfo: FeedProfileModel,
     val sharedDiaries: ImmutableList<FeedDiaryUIModel> = persistentListOf(),
     val likedDiaries: ImmutableList<FeedDiaryUIModel> = persistentListOf()
 ) {
     companion object {
         val Fake = FeedProfileUiState(
-            feedProfileInfo = FeedProfileInfoModel(
+            feedProfileInfo = FeedProfileModel(
                 profileImageUrl = "",
                 nickname = "가짜프로필",
                 streak = 3,
                 follower = 10,
                 following = 5,
                 isMine = true,
-                isFollowing = false,
-                isFollowed = false,
-                isBlock = false
+                isFollowing = null,
+                isFollowed = null,
+                isBlock = null
             ),
             sharedDiaries = persistentListOf(
                 FeedDiaryUIModel(

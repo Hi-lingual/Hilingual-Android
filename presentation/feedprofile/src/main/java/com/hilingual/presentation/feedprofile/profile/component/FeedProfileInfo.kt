@@ -49,9 +49,9 @@ internal fun FeedProfileInfo(
     onFollowClick: () -> Unit,
     streak: Int,
     isMine: Boolean,
-    isFollowing: Boolean,
-    isFollowed: Boolean,
-    isBlock: Boolean,
+    isFollowing: Boolean?,
+    isFollowed: Boolean?,
+    isBlock: Boolean?,
     onActionButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -137,11 +137,11 @@ internal fun FeedProfileInfo(
 
         if (!isMine) {
             FeedUserActionButton(
-                isFilled = isFollowing,
+                isFilled = isFollowing == false,
                 buttonText = when {
-                    isBlock -> "차단 해제"
-                    isFollowing -> "팔로잉"
-                    isFollowed -> "맞팔로우"
+                    isBlock!! -> "차단 해제"
+                    isFollowing!! -> "팔로잉"
+                    isFollowed!! -> "맞팔로우"
                     else -> "팔로우"
                 },
                 onClick = onActionButtonClick,
