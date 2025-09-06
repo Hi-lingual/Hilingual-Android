@@ -22,6 +22,7 @@ import com.hilingual.core.designsystem.model.RecommendExpression
 import com.hilingual.data.diary.model.DiaryContentModel
 import com.hilingual.data.diary.model.DiaryFeedbackModel
 import com.hilingual.data.diary.model.DiaryRecommendExpressionModel
+import com.hilingual.data.feed.model.FeedDiaryProfileModel
 import com.hilingual.presentation.feeddiary.model.ProfileContentUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -98,6 +99,16 @@ internal data class FeedDiaryUiState(
         )
     }
 }
+
+internal fun FeedDiaryProfileModel.toState() = ProfileContentUiModel(
+    userId = this.profile.userId,
+    profileUrl = this.profile.profileImg ?: "",
+    nickname = this.profile.nickname,
+    streak = this.profile.streak,
+    sharedDateInMinutes = this.diary.sharedDate,
+    isLiked = this.diary.isLiked,
+    likeCount = this.diary.likeCount
+)
 
 internal fun DiaryContentModel.toState() = DiaryContent(
     originalText = this.originalText,

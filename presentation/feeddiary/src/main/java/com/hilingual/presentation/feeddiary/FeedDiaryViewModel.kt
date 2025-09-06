@@ -20,9 +20,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
+import com.hilingual.data.feed.repository.FeedRepository
 import com.hilingual.presentation.feeddiary.navigation.FeedDiary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
@@ -42,7 +44,8 @@ import javax.inject.Inject
 @HiltViewModel
 internal class FeedDiaryViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val diaryRepository: DiaryRepository
+    private val diaryRepository: DiaryRepository,
+    private val feedRepository: FeedRepository
 ) : ViewModel() {
     val diaryId = savedStateHandle.toRoute<FeedDiary>().diaryId
 
@@ -56,7 +59,7 @@ internal class FeedDiaryViewModel @Inject constructor(
         loadInitialData()
     }
 
-    private suspend fun getDiaryData() {
+    private suspend fun getDiaryContentData() {
         val (contentResult, feedbacksResult, recommendExpressionsResult) = coroutineScope {
             val contentDeferred = async { diaryRepository.getDiaryContent(diaryId) }
             val feedbacksDeferred = async { diaryRepository.getDiaryFeedbacks(diaryId) }
@@ -86,17 +89,32 @@ internal class FeedDiaryViewModel @Inject constructor(
         }
     }
 
+    private suspend fun getDiaryHeaderData() {
+        feedRepository.getFeedDiaryProfile(diaryId).onSuccess {
+             _uiState.updateSuccess { currentState ->
+                 currentState.copy(
+                     isMine = it.isMine,
+                     profileContent = it.toState()
+                 )
+             }
+        }.onLogFailure { e ->
+            Timber.d("일기 헤더 정보 조회 실패: $e")
+        }
+    }
+
     private fun loadInitialData() {
         viewModelScope.launch {
             runCatching {
-                getDiaryData()
-            }.onFailure { e ->
-                Timber.d("일기 상세 조회 실패: $e")
-                _uiState.value = UiState.Failure
-                _sideEffect.emit(
-                    FeedDiarySideEffect.ShowRetryDialog { loadInitialData() }
-                )
+                getDiaryContentData()
+                getDiaryHeaderData()
             }
+                .onFailure { e ->
+                    Timber.d("일기 상세 조회 실패: $e")
+                    _uiState.value = UiState.Failure
+                    _sideEffect.emit(
+                        FeedDiarySideEffect.ShowRetryDialog { loadInitialData() }
+                    )
+                }
         }
     }
 
