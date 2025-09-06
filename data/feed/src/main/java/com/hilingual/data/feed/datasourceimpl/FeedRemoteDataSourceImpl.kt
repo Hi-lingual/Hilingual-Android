@@ -2,6 +2,7 @@ package com.hilingual.data.feed.datasourceimpl
 
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.feed.datasource.FeedRemoteDataSource
+import com.hilingual.data.feed.dto.request.IsLikedRequestDto
 import com.hilingual.data.feed.dto.response.FeedProfileResponseDto
 import com.hilingual.data.feed.dto.response.LikedDiariesResponseDto
 import com.hilingual.data.feed.dto.response.SharedDiariesResponseDto
@@ -17,4 +18,6 @@ internal class FeedRemoteDataSourceImpl @Inject constructor(
         feedService.getSharedDiaries(targetUserId = targetUserId)
     override suspend fun getLikedDiaries(targetUserId: Long): BaseResponse<LikedDiariesResponseDto>  =
         feedService.getLikedDiaries(targetUserId = targetUserId)
+    override suspend fun postIsLiked(diaryId: Long, isLikedRequestDto: IsLikedRequestDto): BaseResponse<Unit> =
+        feedService.postIsLiked(diaryId = diaryId, isLikedRequestDto = isLikedRequestDto)
 }

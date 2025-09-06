@@ -7,6 +7,7 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.feed.repository.FeedRepository
 import com.hilingual.data.feed.model.FeedProfileModel
+import com.hilingual.data.feed.model.IsLikedModel
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
 import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
@@ -110,23 +111,31 @@ internal class FeedProfileViewModel @Inject constructor(
 
     fun toggleIsLiked(diaryId: Long, isLiked: Boolean, type: DiaryTabType) {
         viewModelScope.launch {
-            _uiState.update { currentState ->
-                val successState = currentState as? UiState.Success ?: return@update currentState
+            feedRepository.postIsLiked(
+                diaryId = diaryId,
+                isLikedModel = IsLikedModel(isLiked)
+            )
+                .onSuccess {
+                    _uiState.update { currentState ->
+                        val successState =
+                            currentState as? UiState.Success ?: return@update currentState
 
-                val updatedData = when (type) {
-                    DiaryTabType.SHARED -> {
-                        successState.data.copy(
-                            sharedDiaries = successState.data.sharedDiaries.updateLikeState(diaryId, isLiked)
-                        )
-                    }
-                    DiaryTabType.LIKED -> {
-                        successState.data.copy(
-                            likedDiaries = successState.data.likedDiaries.updateLikeState(diaryId, isLiked)
-                        )
+                        val updatedData = when (type) {
+                            DiaryTabType.SHARED -> {
+                                successState.data.copy(
+                                    sharedDiaries = successState.data.sharedDiaries.updateLikeState(diaryId, isLiked)
+                                )
+                            }
+
+                            DiaryTabType.LIKED -> {
+                                successState.data.copy(
+                                    likedDiaries = successState.data.likedDiaries.updateLikeState(diaryId, isLiked)
+                                )
+                            }
+                        }
+                        successState.copy(data = updatedData)
                     }
                 }
-                successState.copy(data = updatedData)
-            }
         }
     }
 
