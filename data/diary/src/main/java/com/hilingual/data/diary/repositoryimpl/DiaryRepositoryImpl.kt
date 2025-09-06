@@ -67,7 +67,7 @@ internal class DiaryRepositoryImpl @Inject constructor(
                 bookmarkRequestDto = bookmarkModel.toDto()
             )
 
-            BookmarkResult.getErrorResult(response.code)
+            BookmarkResult.getOrError(response.code)
         }
 
     override suspend fun postDiaryFeedbackCreate(

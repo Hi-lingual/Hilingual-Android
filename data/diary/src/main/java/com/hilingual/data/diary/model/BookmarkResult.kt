@@ -6,6 +6,6 @@ enum class BookmarkResult(val code: Int) {
     OVERCAPACITY(40301);
 
     companion object {
-        fun getErrorResult(code: Int) = entries.find { it.code == code } ?: DEFAULT
+        fun getOrError(code: Int) = entries.find { it.code == code } ?: DEFAULT
     }
 }
