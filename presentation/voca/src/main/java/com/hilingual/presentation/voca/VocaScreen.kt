@@ -127,7 +127,7 @@ internal fun VocaRoute(
                 phrase = vocaDetail.phrase,
                 phraseType = vocaDetail.phraseType.toPersistentList(),
                 explanation = vocaDetail.explanation,
-                writtenDate = vocaDetail.writtenDate,
+                writtenDate = vocaDetail.writtenFrom,
                 isBookmarked = vocaDetail.isBookmarked,
                 onBookmarkClick = { phraseId, isMarked ->
                     viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
