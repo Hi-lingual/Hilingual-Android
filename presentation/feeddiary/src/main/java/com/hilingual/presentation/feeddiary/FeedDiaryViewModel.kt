@@ -169,10 +169,11 @@ internal class FeedDiaryViewModel @Inject constructor(
     }
 
     fun diaryUnpublish() {
-        // TODO: API 호출 성공 후 표시
         viewModelScope.launch {
-            _sideEffect.emit(FeedDiarySideEffect.ShowToast(message = "일기가 비공개 되었어요."))
-            _sideEffect.emit(FeedDiarySideEffect.NavigateToUp)
+            diaryRepository.patchDiaryUnpublish(diaryId).onSuccess {
+                _sideEffect.emit(FeedDiarySideEffect.ShowToast(message = "일기가 비공개 되었어요."))
+                _sideEffect.emit(FeedDiarySideEffect.NavigateToUp)
+            }
         }
     }
 }
