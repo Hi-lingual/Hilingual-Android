@@ -18,6 +18,7 @@ package com.hilingual.data.user.repositoryimpl
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.data.user.datasource.UserRemoteDataSource
+import com.hilingual.data.user.model.FollowUserListResultModel
 import com.hilingual.data.user.model.NicknameValidationResult
 import com.hilingual.data.user.model.UserInfoModel
 import com.hilingual.data.user.model.UserProfileModel
@@ -66,4 +67,12 @@ internal class UserRepositoryImpl @Inject constructor(
     override suspend fun isOtpVerified(): Boolean {
         return userInfoManager.isOtpVerified()
     }
+    override suspend fun getFollowers(targetUserId: Long): Result<List<FollowUserListResultModel>> =
+        suspendRunCatching {
+            userRemoteDataSource.getFollowers(targetUserId = targetUserId).data!!.userList.map { it.toModel() }
+        }
+    override suspend fun getFollowings(targetUserId: Long): Result<List<FollowUserListResultModel>> =
+        suspendRunCatching {
+            userRemoteDataSource.getFollowings(targetUserId = targetUserId).data!!.userList.map { it.toModel() }
+        }
 }

@@ -15,6 +15,7 @@
  */
 package com.hilingual.data.user.repository
 
+import com.hilingual.data.user.model.FollowUserListResultModel
 import com.hilingual.data.user.model.NicknameValidationResult
 import com.hilingual.data.user.model.UserInfoModel
 import com.hilingual.data.user.model.UserProfileModel
@@ -37,4 +38,12 @@ interface UserRepository {
     suspend fun saveOtpVerified(isVerified: Boolean)
 
     suspend fun isOtpVerified(): Boolean
+
+    suspend fun getFollowers(
+        targetUserId: Long
+    ) : Result<List<FollowUserListResultModel>>
+
+    suspend fun getFollowings(
+        targetUserId: Long
+    ) : Result<List<FollowUserListResultModel>>
 }
