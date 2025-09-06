@@ -10,18 +10,6 @@ data class UserResponseDto(
 )
 
 @Serializable
-data class UserFollowerResponseDto(
-    @SerialName("followerList")
-    val userList: List<UserItemDto>
-)
-
-@Serializable
-data class UserFollowingResponseDto(
-    @SerialName("followingList")
-    val userList: List<UserItemDto>
-)
-
-@Serializable
 data class UserItemDto(
     @SerialName("userId")
     val userId: Long,
