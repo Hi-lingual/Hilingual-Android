@@ -208,6 +208,17 @@ internal class FeedProfileViewModel @Inject constructor(
             }
         }
     }
+
+    fun refreshTab(tabType: DiaryTabType) {
+        val currentState = _uiState.value as? UiState.Success ?: return
+        val feedProfileModel = currentState.data.feedProfileInfo
+
+        when (tabType) {
+            DiaryTabType.SHARED -> loadSharedDiaries(feedProfileModel)
+            DiaryTabType.LIKED -> loadLikedDiaries()
+        }
+    }
+
 }
 
 sealed interface FeedProfileSideEffect {

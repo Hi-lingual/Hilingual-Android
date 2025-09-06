@@ -15,6 +15,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -100,7 +101,8 @@ internal fun FeedProfileRoute(
                 onLikeClick = viewModel::toggleIsLiked,
                 onBlockClick = { },
                 onReportDiaryClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
-                onUnpublishClick = viewModel::diaryUnpublish
+                onUnpublishClick = viewModel::diaryUnpublish,
+                onTabRefresh = viewModel::refreshTab
             )
         }
 
@@ -122,6 +124,7 @@ private fun FeedProfileScreen(
     onBlockClick: () -> Unit,
     onUnpublishClick: (diaryId: Long) -> Unit,
     onReportDiaryClick: () -> Unit,
+    onTabRefresh: (DiaryTabType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -139,6 +142,13 @@ private fun FeedProfileScreen(
     }
 
     val profile = uiState.feedProfileInfo
+
+    LaunchedEffect(pagerState.currentPage) {
+        if (profile.isMine) {
+            val tabType = if (pagerState.currentPage == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
+            onTabRefresh(tabType)
+        }
+    }
 
     Box(
         modifier = modifier
@@ -196,6 +206,8 @@ private fun FeedProfileScreen(
                                 onTabSelected = { index ->
                                     coroutineScope.launch {
                                         pagerState.animateScrollToPage(index)
+                                        val tabType = if (index == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
+                                        onTabRefresh(tabType)
                                     }
                                 },
                                 modifier = Modifier
@@ -228,7 +240,7 @@ private fun FeedProfileScreen(
                         }
                     }
 
-                    profile.isBlock ==  true -> {
+                    profile.isBlock == true -> {
                         item {
                             Column(
                                 modifier = Modifier
@@ -335,7 +347,8 @@ private fun FeedProfileScreenPreview() {
             onContentDetailClick = {},
             onLikeClick = { _, _, _ -> },
             onUnpublishClick = {},
-            onReportDiaryClick = {}
+            onReportDiaryClick = {},
+            onTabRefresh = {}
         )
     }
 }
