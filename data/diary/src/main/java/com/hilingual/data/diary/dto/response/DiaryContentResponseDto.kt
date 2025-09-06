@@ -29,7 +29,9 @@ data class DiaryContentResponseDto(
     @SerialName("diffRanges")
     val diffRanges: List<DiaryContentDiffRange>,
     @SerialName("imageUrl")
-    val imageUrl: String?
+    val imageUrl: String?,
+    @SerialName("isPublished")
+    val isPublished: Boolean
 )
 
 @Serializable
