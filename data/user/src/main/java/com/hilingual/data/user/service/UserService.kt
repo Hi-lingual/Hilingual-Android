@@ -35,6 +35,6 @@ internal interface UserService {
         @Body userProfileRequestDto: UserProfileRequestDto
     ): BaseResponse<Unit>
 
-    @GET("/api/v1/users/info")
+    @GET("/api/v1/users/home/info")
     suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto>
 }
