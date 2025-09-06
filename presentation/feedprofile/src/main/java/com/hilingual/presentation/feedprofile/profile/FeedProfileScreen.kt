@@ -217,6 +217,7 @@ private fun FeedProfileScreen(
                                         pagerState.animateScrollToPage(index)
                                         val tabType = if (index == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
                                         onTabRefresh(tabType)
+                                        profileListState.animateScrollToItem(0)
                                     }
                                 },
                                 modifier = Modifier
