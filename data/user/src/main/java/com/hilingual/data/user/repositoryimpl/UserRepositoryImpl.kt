@@ -18,6 +18,7 @@ package com.hilingual.data.user.repositoryimpl
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.data.user.datasource.UserRemoteDataSource
+import com.hilingual.data.user.model.BlockListModel
 import com.hilingual.data.user.model.NicknameValidationResult
 import com.hilingual.data.user.model.UserInfoModel
 import com.hilingual.data.user.model.UserLoginInfoModel
@@ -71,5 +72,10 @@ internal class UserRepositoryImpl @Inject constructor(
     override suspend fun getUserLoginInfo(): Result<UserLoginInfoModel> =
         suspendRunCatching {
             userRemoteDataSource.getUserLoginInfo().data!!.toModel()
+        }
+
+    override suspend fun getBlockList(): Result<BlockListModel> =
+        suspendRunCatching {
+            userRemoteDataSource.getBlockList().data!!.toModel()
         }
 }

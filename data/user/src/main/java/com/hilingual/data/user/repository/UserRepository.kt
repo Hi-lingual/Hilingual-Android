@@ -15,6 +15,7 @@
  */
 package com.hilingual.data.user.repository
 
+import com.hilingual.data.user.model.BlockListModel
 import com.hilingual.data.user.model.NicknameValidationResult
 import com.hilingual.data.user.model.UserInfoModel
 import com.hilingual.data.user.model.UserLoginInfoModel
@@ -40,4 +41,6 @@ interface UserRepository {
     suspend fun isOtpVerified(): Boolean
 
     suspend fun getUserLoginInfo(): Result<UserLoginInfoModel>
+
+    suspend fun getBlockList(): Result<BlockListModel>
 }

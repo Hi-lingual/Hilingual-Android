@@ -17,6 +17,7 @@ package com.hilingual.data.user.datasouceimpl
 
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.user.datasource.UserRemoteDataSource
+import com.hilingual.data.user.dto.reponse.BlockListResponseDto
 import com.hilingual.data.user.dto.reponse.NicknameResponseDto
 import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
 import com.hilingual.data.user.dto.reponse.UserLoginInfoResponseDto
@@ -38,4 +39,7 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getUserLoginInfo(): BaseResponse<UserLoginInfoResponseDto> =
         userService.getUserLoginInfo()
+
+    override suspend fun getBlockList(): BaseResponse<BlockListResponseDto> =
+        userService.getBlockList()
 }

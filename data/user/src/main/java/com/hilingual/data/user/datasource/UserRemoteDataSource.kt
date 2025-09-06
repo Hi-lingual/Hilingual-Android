@@ -16,6 +16,7 @@
 package com.hilingual.data.user.datasource
 
 import com.hilingual.core.network.BaseResponse
+import com.hilingual.data.user.dto.reponse.BlockListResponseDto
 import com.hilingual.data.user.dto.reponse.NicknameResponseDto
 import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
 import com.hilingual.data.user.dto.reponse.UserLoginInfoResponseDto
@@ -33,4 +34,6 @@ interface UserRemoteDataSource {
     suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto>
 
     suspend fun getUserLoginInfo(): BaseResponse<UserLoginInfoResponseDto>
+
+    suspend fun getBlockList(): BaseResponse<BlockListResponseDto>
 }

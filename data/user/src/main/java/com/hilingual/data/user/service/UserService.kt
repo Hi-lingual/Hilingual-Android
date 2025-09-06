@@ -16,6 +16,7 @@
 package com.hilingual.data.user.service
 
 import com.hilingual.core.network.BaseResponse
+import com.hilingual.data.user.dto.reponse.BlockListResponseDto
 import com.hilingual.data.user.dto.reponse.NicknameResponseDto
 import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
 import com.hilingual.data.user.dto.reponse.UserLoginInfoResponseDto
@@ -41,4 +42,7 @@ internal interface UserService {
 
     @GET("/api/v1/users/mypage/info")
     suspend fun getUserLoginInfo(): BaseResponse<UserLoginInfoResponseDto>
+
+    @GET("/api/v1/users/mypage/blocks")
+    suspend fun getBlockList(): BaseResponse<BlockListResponseDto>
 }

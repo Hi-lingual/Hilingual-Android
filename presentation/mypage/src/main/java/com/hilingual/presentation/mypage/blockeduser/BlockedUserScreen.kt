@@ -48,7 +48,7 @@ internal fun BlockedUserRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.loadInitialData()
+        viewModel.getBlockList()
     }
 
     when (val state = uiState.blockedUserList) {
