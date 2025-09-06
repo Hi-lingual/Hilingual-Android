@@ -122,7 +122,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                 } else {
                     showToast("일기가 비공개되었어요!")
                 }
-            }.onFailure { exception ->
+            }.onLogFailure { exception ->
                 _uiState.value = UiState.Failure
                 _sideEffect.emit(
                     DiaryFeedbackSideEffect.ShowRetryDialog { loadInitialData() }
@@ -133,9 +133,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
 
     fun deleteDiary() {
         viewModelScope.launch {
-            diaryRepository.deleteDiary(
-                diaryId = diaryId
-            ).onSuccess {
+            diaryRepository.deleteDiary(diaryId = diaryId).onSuccess {
                 showToast("삭제가 완료되었어요.")
                 _sideEffect.emit(DiaryFeedbackSideEffect.NavigateToHome)
             }
