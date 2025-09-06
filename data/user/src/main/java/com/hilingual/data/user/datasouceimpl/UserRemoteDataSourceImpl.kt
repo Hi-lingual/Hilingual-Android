@@ -17,6 +17,8 @@ package com.hilingual.data.user.datasouceimpl
 
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.user.datasource.UserRemoteDataSource
+import com.hilingual.data.user.dto.reponse.FollowerResponseDto
+import com.hilingual.data.user.dto.reponse.FollowingResponseDto
 import com.hilingual.data.user.dto.reponse.NicknameResponseDto
 import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
 import com.hilingual.data.user.dto.request.UserProfileRequestDto
@@ -34,4 +36,17 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto> =
         userService.getUserInfo()
+
+    override suspend fun getFollowers(targetUserId: Long): BaseResponse<FollowerResponseDto> =
+        userService.getFollowers(targetUserId = targetUserId)
+
+    override suspend fun getFollowings(targetUserId: Long): BaseResponse<FollowingResponseDto> =
+        userService.getFollowings(targetUserId = targetUserId)
+
+    override suspend fun putFollow(targetUserId: Long): BaseResponse<Unit> =
+        userService.putFollow(targetUserId = targetUserId)
+
+    override suspend fun deleteFollow(targetUserId: Long): BaseResponse<Unit> =
+        userService.deleteFollow(targetUserId = targetUserId)
+
 }

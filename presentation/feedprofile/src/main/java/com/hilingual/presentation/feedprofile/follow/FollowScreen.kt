@@ -52,7 +52,7 @@ internal fun FollowScreen(
                         userId = userId,
                         profileUrl = profileImgUrl,
                         nickname = nickname,
-                        isFilled = followState.isFollowing,
+                        isFilled = !followState.isFollowing,
                         buttonText = followState.label,
                         onProfileClick = onProfileClick,
                         onButtonClick = { onActionButtonClick(userId, followState.isFollowing) }

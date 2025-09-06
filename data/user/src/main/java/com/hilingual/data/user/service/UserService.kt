@@ -16,12 +16,17 @@
 package com.hilingual.data.user.service
 
 import com.hilingual.core.network.BaseResponse
+import com.hilingual.data.user.dto.reponse.FollowerResponseDto
+import com.hilingual.data.user.dto.reponse.FollowingResponseDto
 import com.hilingual.data.user.dto.reponse.NicknameResponseDto
 import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
 import com.hilingual.data.user.dto.request.UserProfileRequestDto
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 internal interface UserService {
@@ -37,4 +42,24 @@ internal interface UserService {
 
     @GET("/api/v1/users/home/info")
     suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto>
+
+    @GET("/api/v1/users/following/{targetUserId}/followers")
+    suspend fun getFollowers(
+        @Path("targetUserId") targetUserId: Long
+    ): BaseResponse<FollowerResponseDto>
+
+    @GET("/api/v1/users/following/{targetUserId}/followings")
+    suspend fun getFollowings(
+        @Path("targetUserId") targetUserId: Long
+    ): BaseResponse<FollowingResponseDto>
+
+    @PUT("/api/v1/users/following/{targetUserId}")
+    suspend fun putFollow(
+        @Path("targetUserId") targetUserId: Long
+    ): BaseResponse<Unit>
+
+    @DELETE("/api/v1/users/following/{targetUserId}")
+    suspend fun deleteFollow(
+        @Path("targetUserId") targetUserId: Long
+    ): BaseResponse<Unit>
 }
