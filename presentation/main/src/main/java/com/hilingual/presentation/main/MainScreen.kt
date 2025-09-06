@@ -223,7 +223,8 @@ internal fun MainScreen(
                     paddingValues = innerPadding,
                     navigateUp = appState::navigateUp,
                     navigateToHome = appState::navigateToHome,
-                    navigateToFeed = appState::navigateToFeed
+                    navigateToFeed = appState::navigateToFeed,
+                    navigateToVoca = appState::navigateToVoca
                 )
 
                 feedNavGraph(

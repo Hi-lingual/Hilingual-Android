@@ -22,6 +22,7 @@ import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
+import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.presentation.diaryfeedback.navigation.DiaryFeedback
@@ -150,21 +151,29 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                 phraseId = phraseId,
                 bookmarkModel = PhraseBookmarkModel(isMarked)
             )
-                .onSuccess {
-                    _uiState.updateSuccess { currentState ->
-                        val oldList = currentState.recommendExpressionList
+                .onSuccess { result ->
+                    when (result) {
+                        BookmarkResult.SUCCESS -> {
+                            _uiState.updateSuccess { currentState ->
+                                val oldList = currentState.recommendExpressionList
 
-                        val updatedList = oldList.map { item ->
-                            if (item.phraseId == phraseId) {
-                                item.copy(isMarked = isMarked)
-                            } else {
-                                item
+                                val updatedList = oldList.map { item ->
+                                    if (item.phraseId == phraseId) {
+                                        item.copy(isMarked = isMarked)
+                                    } else {
+                                        item
+                                    }
+                                }.toImmutableList()
+
+                                currentState.copy(
+                                    recommendExpressionList = updatedList
+                                )
                             }
-                        }.toImmutableList()
-
-                        currentState.copy(
-                            recommendExpressionList = updatedList
-                        )
+                        }
+                        BookmarkResult.OVERCAPACITY -> {
+                            showVocaOverflowSnackbar()
+                        }
+                        else -> { }
                     }
                 }
                 .onLogFailure { }
@@ -172,7 +181,11 @@ internal class DiaryFeedbackViewModel @Inject constructor(
     }
 
     private suspend fun showPublishSnackbar() {
-        _sideEffect.emit(DiaryFeedbackSideEffect.ShowSnackbar(message = "일기가 게시되었어요!", actionLabel = "보러가기"))
+        _sideEffect.emit(DiaryFeedbackSideEffect.ShowDiaryPublishSnackbar(message = "일기가 게시되었어요!", actionLabel = "보러가기"))
+    }
+
+    private suspend fun showVocaOverflowSnackbar() {
+        _sideEffect.emit(DiaryFeedbackSideEffect.ShowDiaryPublishSnackbar(message = "단어장이 모두 찼어요!", actionLabel = "비우러가기"))
     }
 
     private suspend fun showToast(message: String) {
@@ -183,6 +196,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
 sealed interface DiaryFeedbackSideEffect {
     data object NavigateToHome : DiaryFeedbackSideEffect
     data class ShowRetryDialog(val onRetry: () -> Unit) : DiaryFeedbackSideEffect
-    data class ShowSnackbar(val message: String, val actionLabel: String) : DiaryFeedbackSideEffect
+    data class ShowDiaryPublishSnackbar(val message: String, val actionLabel: String) : DiaryFeedbackSideEffect
+    data class ShowVocaOverflowSnackbar(val message: String, val actionLabel: String) : DiaryFeedbackSideEffect
     data class ShowToast(val message: String) : DiaryFeedbackSideEffect
 }

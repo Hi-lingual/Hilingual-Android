@@ -20,6 +20,7 @@ import android.net.Uri
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.network.ContentUriRequestBody
 import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
+import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.DiaryContentModel
 import com.hilingual.data.diary.model.DiaryFeedbackCreateModel
 import com.hilingual.data.diary.model.DiaryFeedbackModel
@@ -59,12 +60,14 @@ internal class DiaryRepositoryImpl @Inject constructor(
     override suspend fun patchPhraseBookmark(
         phraseId: Long,
         bookmarkModel: PhraseBookmarkModel
-    ): Result<Unit> =
+    ): Result<BookmarkResult> =
         suspendRunCatching {
-            diaryRemoteDataSource.patchPhraseBookmark(
+            val response = diaryRemoteDataSource.patchPhraseBookmark(
                 phraseId = phraseId,
                 bookmarkRequestDto = bookmarkModel.toDto()
             )
+
+            BookmarkResult.getErrorResult(response.code)
         }
 
     override suspend fun postDiaryFeedbackCreate(
