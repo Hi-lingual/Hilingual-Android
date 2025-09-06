@@ -2,6 +2,7 @@ package com.hilingual.data.feed.service
 
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.feed.dto.response.FeedProfileResponseDto
+import com.hilingual.data.feed.dto.response.LikedDiariesResponseDto
 import com.hilingual.data.feed.dto.response.SharedDiariesResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -16,5 +17,10 @@ interface FeedService {
     suspend fun getSharedDiaries(
         @Path("targetUserId") targetUserId: Long
     ) : BaseResponse<SharedDiariesResponseDto>
+
+    @GET("/api/v1/feed/profiles/{targetUserId}/diaries/liked")
+    suspend fun getLikedDiaries(
+        @Path("targetUserId") targetUserId: Long
+    ) : BaseResponse<LikedDiariesResponseDto>
 
 }

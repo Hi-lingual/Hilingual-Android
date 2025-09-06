@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
-import com.hilingual.data.feed.model.FeedProfileModel
 import com.hilingual.data.feed.repository.FeedRepository
+import com.hilingual.data.feed.model.FeedProfileModel
 import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
 import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
 import com.hilingual.presentation.feedprofile.profile.model.toFeedDiaryUIModel
@@ -24,24 +24,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-// TODO: 아래의 UiState는 현재 Fake 데이터로 초기화되어 있습니다.
-//  실제 데이터 연동 시, ViewModel은 Repository로부터 `SharedDiaryItemModel` 또는 `LikeDiaryItemModel`을
-//  가져온 뒤, 아래와 같은 로직으로 UI 전용 모델인 `FeedDiaryUIModel`로 변환해야 합니다.
-//
-//  - SharedDiaryItemModel -> FeedDiaryUIModel:
-//    - `isMine` = true
-//    - `authorUserId`, `authorNickname`, `authorProfileImageUrl`, `authorStreak` 등은
-//      프로필 주인의 정보(`feedProfileInfo`)로 채워줍니다.
-//
-//  - LikeDiaryItemModel -> FeedDiaryUIModel:
-//    - `isMine`, `userId`, `nickname`, `streak` 등 필요한 모든 정보가 이미 모델 안에 있으므로
-//      해당 값을 그대로 사용하여 `FeedDiaryUIModel`을 생성합니다.
 @HiltViewModel
 internal class FeedProfileViewModel @Inject constructor(
     private val feedRepository: FeedRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    private val targetUserId: Long = savedStateHandle.get<Long>("targetUserId") ?: 0L
+    private val targetUserId: Long = savedStateHandle.get<Long>("userId") ?: 0L
     private val _uiState = MutableStateFlow<UiState<FeedProfileUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<FeedProfileUiState>> = _uiState.asStateFlow()
     private val _sideEffect = MutableSharedFlow<FeedProfileSideEffect>()
@@ -65,9 +53,10 @@ internal class FeedProfileViewModel @Inject constructor(
                         )
                     }
                     loadSharedDiaries(feedProfileModel)
+                    loadLikedDiaries()
                 }
                 .onLogFailure {
-                    _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog {})
+                    _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
                 }
         }
     }
@@ -91,7 +80,28 @@ internal class FeedProfileViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog {})
+                    _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
+                }
+        }
+    }
+
+    private fun loadLikedDiaries() {
+        viewModelScope.launch {
+            feedRepository.getLikedDiaries(targetUserId)
+                .onSuccess { likedDiariesModel ->
+                    val likedDiaryUIModels = likedDiariesModel.diaryList.map { likedDiaryItem ->
+                        likedDiaryItem.toFeedDiaryUIModel()
+                    }.toImmutableList()
+
+                    _uiState.update { currentState ->
+                        val successState = currentState as? UiState.Success ?: return@update currentState
+                        successState.copy(
+                            data = successState.data.copy(likedDiaries = likedDiaryUIModels)
+                        )
+                    }
+                }
+                .onLogFailure {
+                    _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
                 }
         }
     }
