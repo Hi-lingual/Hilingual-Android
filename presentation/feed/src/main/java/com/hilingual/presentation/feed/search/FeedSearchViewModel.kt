@@ -2,7 +2,7 @@ package com.hilingual.presentation.feed.search
 
 import androidx.lifecycle.ViewModel
 import com.hilingual.core.common.util.UiState
-import com.hilingual.presentation.feed.model.FollowState
+import com.hilingual.data.feed.model.FollowState
 import com.hilingual.presentation.feed.model.UserSearchUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -89,7 +89,7 @@ internal class FeedSearchViewModel @Inject constructor() : ViewModel() {
             ),
             UserSearchUiModel(
                 userId = 3L,
-                nickname = "Daljeong",
+                nickname = "Daljyeong",
                 profileUrl = "",
                 followState = FollowState.NONE
             ),
