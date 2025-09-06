@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
+import com.hilingual.data.feed.model.FeedProfileModel
 import com.hilingual.data.feed.repository.FeedRepository
 import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
 import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
+import com.hilingual.presentation.feedprofile.profile.model.toFeedDiaryUIModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -60,6 +62,31 @@ internal class FeedProfileViewModel @Inject constructor(
                                 sharedDiaries = persistentListOf(),
                                 likedDiaries = persistentListOf()
                             )
+                        )
+                    }
+                    loadSharedDiaries(feedProfileModel)
+                }
+                .onLogFailure {
+                    _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog {})
+                }
+        }
+    }
+
+    private fun loadSharedDiaries(feedProfileModel: FeedProfileModel) {
+        viewModelScope.launch {
+            feedRepository.getSharedDiaries(targetUserId)
+                .onSuccess { sharedDiariesModel ->
+                    val sharedDiaryUIModels = sharedDiariesModel.diaryList.map { sharedDiary ->
+                        sharedDiary.toFeedDiaryUIModel(
+                            feedProfileModel = feedProfileModel,
+                            authorUserId = targetUserId
+                        )
+                    }.toImmutableList()
+
+                    _uiState.update { currentState ->
+                        val successState = currentState as? UiState.Success ?: return@update currentState
+                        successState.copy(
+                            data = successState.data.copy(sharedDiaries = sharedDiaryUIModels)
                         )
                     }
                 }

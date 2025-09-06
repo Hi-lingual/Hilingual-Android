@@ -42,7 +42,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 internal fun FeedProfileInfo(
-    profileImageUrl: String,
+    profileImageUrl: String?,
     nickname: String,
     follower: Int,
     following: Int,
