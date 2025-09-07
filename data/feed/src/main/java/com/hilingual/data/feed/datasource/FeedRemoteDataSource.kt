@@ -1,10 +1,10 @@
 package com.hilingual.data.feed.datasource
 
 import com.hilingual.core.network.BaseResponse
-import com.hilingual.data.feed.dto.response.FollowingFeedResponseDto
-import com.hilingual.data.feed.dto.response.RecommendFeedResponseDto
 import com.hilingual.data.feed.dto.request.LikeRequestDto
 import com.hilingual.data.feed.dto.response.DiaryProfileResponseDto
+import com.hilingual.data.feed.dto.response.FollowingFeedResponseDto
+import com.hilingual.data.feed.dto.response.RecommendFeedResponseDto
 
 interface FeedRemoteDataSource {
     suspend fun getRecommendFeeds(): BaseResponse<RecommendFeedResponseDto>
@@ -20,4 +20,3 @@ interface FeedRemoteDataSource {
         likeRequestDto: LikeRequestDto
     ): BaseResponse<Unit>
 }
-

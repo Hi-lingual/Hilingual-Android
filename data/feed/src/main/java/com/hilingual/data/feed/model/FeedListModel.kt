@@ -1,8 +1,8 @@
 package com.hilingual.data.feed.model
 
-import com.hilingual.data.feed.dto.response.RecommendFeedResponseDto
 import com.hilingual.data.feed.dto.response.FeedResultDto
 import com.hilingual.data.feed.dto.response.FollowingFeedResponseDto
+import com.hilingual.data.feed.dto.response.RecommendFeedResponseDto
 
 data class FeedListModel(
     val feedList: List<FeedModel>,

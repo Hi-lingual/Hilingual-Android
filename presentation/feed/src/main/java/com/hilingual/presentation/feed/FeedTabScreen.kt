@@ -117,7 +117,6 @@ internal fun FeedTabScreen(
         }
         else -> {}
     }
-
 }
 
 @Preview(showBackground = true)

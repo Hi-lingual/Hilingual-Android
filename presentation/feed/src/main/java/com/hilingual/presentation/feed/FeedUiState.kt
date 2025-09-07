@@ -66,8 +66,8 @@ internal data class FeedUiState(
                         streak = 99,
                         sharedDateInMinutes = 60L * 24 * 3,
                         content = "Finished an amazing novel. Highly recommend it to anyone who loves a good mystery. " +
-                                "The plot twists were incredible, and the characters were so well-developed. " +
-                                "I couldn't put it down until I reached the very last page!",
+                            "The plot twists were incredible, and the characters were so well-developed. " +
+                            "I couldn't put it down until I reached the very last page!",
                         imageUrl = "https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                         diaryId = 3,
                         likeCount = 210,

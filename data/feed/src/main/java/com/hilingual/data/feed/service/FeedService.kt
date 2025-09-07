@@ -1,10 +1,10 @@
 package com.hilingual.data.feed.service
 
 import com.hilingual.core.network.BaseResponse
-import com.hilingual.data.feed.dto.response.FollowingFeedResponseDto
-import com.hilingual.data.feed.dto.response.RecommendFeedResponseDto
 import com.hilingual.data.feed.dto.request.LikeRequestDto
 import com.hilingual.data.feed.dto.response.DiaryProfileResponseDto
+import com.hilingual.data.feed.dto.response.FollowingFeedResponseDto
+import com.hilingual.data.feed.dto.response.RecommendFeedResponseDto
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST

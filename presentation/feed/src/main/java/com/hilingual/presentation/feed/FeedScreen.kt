@@ -145,7 +145,7 @@ private fun FeedScreen(
                     val lastVisibleItem = visibleItemsInfo.last()
                     val viewportHeight = layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
                     (lastVisibleItem.index == layoutInfo.totalItemsCount - 1) &&
-                            (lastVisibleItem.offset + lastVisibleItem.size <= viewportHeight)
+                        (lastVisibleItem.offset + lastVisibleItem.size <= viewportHeight)
                 }
                 else -> false
             }
@@ -246,7 +246,7 @@ private fun FeedScreenPreview() {
             onReportClick = {},
             myProfileUrl = "",
             recommendFeedList = UiState.Success(persistentListOf()),
-            followingFeedList = UiState.Success(persistentListOf()),
+            followingFeedList = UiState.Success(persistentListOf())
         )
     }
 }
