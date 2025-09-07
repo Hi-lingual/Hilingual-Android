@@ -25,4 +25,5 @@ android {
 
 dependencies {
     implementation(projects.data.feed)
+    implementation(projects.data.diary)
 }

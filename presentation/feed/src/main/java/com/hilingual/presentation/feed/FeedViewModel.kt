@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
+import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.feed.repository.FeedRepository
 import com.hilingual.presentation.feed.model.FeedListItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,7 +40,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class FeedViewModel @Inject constructor(
-    private val feedRepository: FeedRepository
+    private val feedRepository: FeedRepository,
+    private val diaryRepository: DiaryRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
@@ -129,18 +131,19 @@ internal class FeedViewModel @Inject constructor(
     }
 
     fun diaryUnpublish(diaryId: Long) {
-        // TODO: API 호출 성공 후 표시
         viewModelScope.launch {
-            _sideEffect.emit(FeedSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
-            _uiState.update { currentState ->
-                currentState.copy(
-                    recommendFeedList = currentState.recommendFeedList.updateIfSuccess { list ->
-                        removeSingleItem(list.toPersistentList(), diaryId)
-                    },
-                    followingFeedList = currentState.followingFeedList.updateIfSuccess { list ->
-                        removeSingleItem(list.toPersistentList(), diaryId)
-                    }
-                )
+            diaryRepository.patchDiaryUnpublish(diaryId).onSuccess {
+                _sideEffect.emit(FeedSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        recommendFeedList = currentState.recommendFeedList.updateIfSuccess { list ->
+                            removeSingleItem(list.toPersistentList(), diaryId)
+                        },
+                        followingFeedList = currentState.followingFeedList.updateIfSuccess { list ->
+                            removeSingleItem(list.toPersistentList(), diaryId)
+                        }
+                    )
+                }
             }
         }
     }
