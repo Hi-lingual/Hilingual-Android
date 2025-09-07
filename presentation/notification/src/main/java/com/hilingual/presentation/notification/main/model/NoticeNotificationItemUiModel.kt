@@ -17,10 +17,14 @@ data class NoticeNotificationItemUiModel(
     val noticeCategory: NoticeCategoryType
 )
 
-internal fun NotificationModel.toNoticeUiModel(): NoticeNotificationItemUiModel = NoticeNotificationItemUiModel(
-    id = id,
-    title = title,
-    isRead = isRead,
-    publishedAt = publishedAt,
-    noticeCategory = NoticeCategoryType.valueOf(category!!)
-)
+internal fun NotificationModel.toNoticeStateOrNull(): NoticeNotificationItemUiModel? {
+    val currentCategory = category ?: return null
+
+    return NoticeNotificationItemUiModel(
+        id = id,
+        title = title,
+        isRead = isRead,
+        publishedAt = publishedAt,
+        noticeCategory = NoticeCategoryType.valueOf(currentCategory)
+    )
+}

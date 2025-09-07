@@ -67,7 +67,7 @@ internal fun NotificationRoute(
         },
         onNoticeNotificationClick = { notification -> navigateToNoticeDetail(notification.id) },
         onTabSelected = viewModel::onTabSelected,
-        onRefresh = viewModel::refresh
+        onUserRefresh = viewModel::onUserRefresh
     )
 }
 
@@ -80,7 +80,7 @@ private fun NotificationScreen(
     onFeedNotificationClick: (FeedNotificationItemUiModel) -> Unit,
     onNoticeNotificationClick: (NoticeNotificationItemUiModel) -> Unit,
     onTabSelected: (NotificationTab) -> Unit,
-    onRefresh: (NotificationTab) -> Unit,
+    onUserRefresh: (NotificationTab) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val feedListState = rememberLazyListState()
@@ -126,7 +126,7 @@ private fun NotificationScreen(
                     onNotificationClick = onFeedNotificationClick,
                     isRefreshing = uiState.isFeedRefreshing,
                     listState = feedListState,
-                    onRefresh = { onRefresh(tab) }
+                    onRefresh = { onUserRefresh(tab) }
                 )
 
                 NotificationTab.NOTIFICATION -> NoticeScreen(
@@ -134,7 +134,7 @@ private fun NotificationScreen(
                     onNotificationClick = onNoticeNotificationClick,
                     isRefreshing = uiState.isNoticeRefreshing,
                     listState = noticeListState,
-                    onRefresh = { onRefresh(tab) }
+                    onRefresh = { onUserRefresh(tab) }
                 )
             }
         }

@@ -16,12 +16,12 @@
 package com.hilingual.data.user.datasource
 
 import com.hilingual.core.network.BaseResponse
-import com.hilingual.data.user.dto.response.user.NicknameResponseDto
+import com.hilingual.data.user.dto.request.user.UserProfileRequestDto
 import com.hilingual.data.user.dto.response.notification.NotificationDetailResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
+import com.hilingual.data.user.dto.response.user.NicknameResponseDto
 import com.hilingual.data.user.dto.response.user.UserInfoResponseDto
-import com.hilingual.data.user.dto.request.user.UserProfileRequestDto
 
 interface UserRemoteDataSource {
     suspend fun getNicknameAvailability(nickname: String): BaseResponse<NicknameResponseDto>

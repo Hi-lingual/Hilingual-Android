@@ -18,11 +18,16 @@ data class FeedNotificationItemUiModel(
     val targetId: String
 )
 
-internal fun NotificationModel.toFeedUiModel(): FeedNotificationItemUiModel = FeedNotificationItemUiModel(
-    id = id,
-    title = title,
-    isRead = isRead,
-    publishedAt = publishedAt,
-    feedType = FeedNotificationType.valueOf(type!!),
-    targetId = targetId!!
-)
+internal fun NotificationModel.toFeedStateOrNull(): FeedNotificationItemUiModel? {
+    val currentType = type ?: return null
+    val currentTargetId = targetId ?: return null
+
+    return FeedNotificationItemUiModel(
+        id = id,
+        title = title,
+        isRead = isRead,
+        publishedAt = publishedAt,
+        feedType = FeedNotificationType.valueOf(currentType),
+        targetId = currentTargetId
+    )
+}

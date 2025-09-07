@@ -15,10 +15,10 @@
  */
 package com.hilingual.data.user.repository
 
-import com.hilingual.data.user.model.user.NicknameValidationResult
 import com.hilingual.data.user.model.notification.NotificationDetailModel
 import com.hilingual.data.user.model.notification.NotificationModel
 import com.hilingual.data.user.model.notification.NotificationSettingsModel
+import com.hilingual.data.user.model.user.NicknameValidationResult
 import com.hilingual.data.user.model.user.UserInfoModel
 import com.hilingual.data.user.model.user.UserProfileModel
 

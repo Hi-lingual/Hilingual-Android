@@ -41,8 +41,7 @@ internal class NotificationDetailViewModel @Inject constructor(
                         )
                     }
                 }
-                .onLogFailure {
-                }
+                .onLogFailure { }
             _uiState.update { it.copy(isLoading = false) }
         }
     }

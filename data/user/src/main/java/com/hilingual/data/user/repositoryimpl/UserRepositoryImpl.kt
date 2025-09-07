@@ -18,14 +18,14 @@ package com.hilingual.data.user.repositoryimpl
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.data.user.datasource.UserRemoteDataSource
-import com.hilingual.data.user.model.user.NicknameValidationResult
 import com.hilingual.data.user.model.notification.NotificationDetailModel
 import com.hilingual.data.user.model.notification.NotificationModel
 import com.hilingual.data.user.model.notification.NotificationSettingsModel
+import com.hilingual.data.user.model.notification.toModel
+import com.hilingual.data.user.model.user.NicknameValidationResult
 import com.hilingual.data.user.model.user.UserInfoModel
 import com.hilingual.data.user.model.user.UserProfileModel
 import com.hilingual.data.user.model.user.toDto
-import com.hilingual.data.user.model.notification.toModel
 import com.hilingual.data.user.model.user.toModel
 import com.hilingual.data.user.repository.UserRepository
 import javax.inject.Inject
@@ -47,7 +47,7 @@ internal class UserRepositoryImpl @Inject constructor(
 
     override suspend fun postUserProfile(userProfileModel: UserProfileModel): Result<Unit> =
         suspendRunCatching {
-            userRemoteDataSource.postUserProfile(userProfileRequestDto = userProfileModel.toDto()).data
+            userRemoteDataSource.postUserProfile(userProfileRequestDto = userProfileModel.toDto())
         }
 
     override suspend fun getUserInfo(): Result<UserInfoModel> =
