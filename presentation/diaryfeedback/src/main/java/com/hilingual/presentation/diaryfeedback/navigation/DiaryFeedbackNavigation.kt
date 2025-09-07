@@ -45,7 +45,8 @@ fun NavGraphBuilder.diaryFeedbackNavGraph(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToHome: () -> Unit,
-    navigateToFeed: () -> Unit
+    navigateToFeed: () -> Unit,
+    navigateToVoca: () -> Unit
 ) {
     composable<DiaryFeedback>(
         enterTransition = {
@@ -59,7 +60,8 @@ fun NavGraphBuilder.diaryFeedbackNavGraph(
             paddingValues = paddingValues,
             navigateUp = navigateUp,
             navigateToHome = navigateToHome,
-            navigateToFeed = navigateToFeed
+            navigateToFeed = navigateToFeed,
+            navigateToVoca = navigateToVoca
         )
     }
 }

@@ -31,6 +31,7 @@ import com.hilingual.presentation.feed.navigation.navigateToFeed
 import com.hilingual.presentation.feeddiary.navigation.navigateToFeedDiary
 import com.hilingual.presentation.feedprofile.profile.navigation.navigateToFeedProfile
 import com.hilingual.presentation.feedprofile.profile.navigation.navigateToMyFeedProfile
+import com.hilingual.presentation.home.navigation.Home
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.main.MainTab
 import com.hilingual.presentation.main.monitor.NetworkMonitor
@@ -39,7 +40,6 @@ import com.hilingual.presentation.notification.navigation.navigateToNotification
 import com.hilingual.presentation.notification.navigation.navigateToNotificationSetting
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.otp.navigation.navigateToOtp
-import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.voca.navigation.navigateToVoca
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -55,7 +55,7 @@ internal class MainAppState(
     coroutineScope: CoroutineScope,
     networkMonitor: NetworkMonitor
 ) {
-    val startDestination = Splash
+    val startDestination = Home
 
     val isOffline: StateFlow<Boolean> = networkMonitor.isOnline
         .map(Boolean::not)
@@ -141,6 +141,10 @@ internal class MainAppState(
 
     fun navigateToHome(navOptions: NavOptions? = clearStackNavOptions) {
         navController.navigateToHome(navOptions)
+    }
+
+    fun navigateToVoca(navOptions: NavOptions? = clearStackNavOptions) {
+        navController.navigateToVoca(navOptions)
     }
 
     fun navigateToOnboarding(navOptions: NavOptions? = clearStackNavOptions) {

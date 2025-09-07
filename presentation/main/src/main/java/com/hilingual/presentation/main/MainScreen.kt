@@ -187,7 +187,8 @@ internal fun MainScreen(
                     paddingValues = innerPadding,
                     navigateToDiaryFeedback = appState::navigateToDiaryFeedback,
                     navigateToDiaryWrite = appState::navigateToDiaryWrite,
-                    navigateToNotification = appState::navigateToNotification
+                    navigateToNotification = appState::navigateToNotification,
+                    navigateToFeedProfile = appState::navigateToFeedProfile
                 )
 
                 notificationNavGraph(
@@ -223,7 +224,8 @@ internal fun MainScreen(
                     paddingValues = innerPadding,
                     navigateUp = appState::navigateUp,
                     navigateToHome = appState::navigateToHome,
-                    navigateToFeed = appState::navigateToFeed
+                    navigateToFeed = appState::navigateToFeed,
+                    navigateToVoca = appState::navigateToVoca
                 )
 
                 feedNavGraph(

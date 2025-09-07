@@ -20,7 +20,7 @@ plugins {
 }
 
 android {
-    setNamespace("presentation.diaryfeedback")
+    setNamespace("presentation.feeddiary")
 }
 
 dependencies {

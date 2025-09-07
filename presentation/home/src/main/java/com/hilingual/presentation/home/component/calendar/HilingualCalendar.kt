@@ -21,10 +21,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,6 +37,9 @@ import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.OutDateStyle
 import com.kizitonwose.calendar.core.daysOfWeek
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -48,11 +53,12 @@ internal fun HilingualCalendar(
     modifier: Modifier = Modifier
 ) {
     val currentMonth = remember { YearMonth.now() }
-    val startMonth = remember { currentMonth.minusMonths(100) }
-    val endMonth = remember { currentMonth.plusMonths(100) }
+    val startMonth = remember { YearMonth.of(2025, 1) }
+    val endMonth = remember { YearMonth.of(2100, 12) }
     val daysOfWeek = remember { daysOfWeek().toImmutableList() }
     val coroutineScope = rememberCoroutineScope()
     var isBottomSheetVisible by remember { mutableStateOf(false) }
+    var settledMonth by remember { mutableStateOf(currentMonth) }
 
     val state = rememberCalendarState(
         startMonth = startMonth,
@@ -64,18 +70,27 @@ internal fun HilingualCalendar(
 
     HilingualYearMonthPickerBottomSheet(
         isVisible = isBottomSheetVisible,
-        initialYearMonth = state.firstVisibleMonth.yearMonth,
+        initialYearMonth = settledMonth,
         onDismiss = { isBottomSheetVisible = false },
         onDateSelected = { newYearMonth ->
+            settledMonth = newYearMonth
+            onMonthChanged(newYearMonth)
             coroutineScope.launch {
                 state.scrollToMonth(newYearMonth)
+                isBottomSheetVisible = false
             }
-            isBottomSheetVisible = false
         }
     )
 
-    LaunchedEffect(state.firstVisibleMonth) {
-        onMonthChanged(state.firstVisibleMonth.yearMonth)
+    LaunchedEffect(state) {
+        snapshotFlow { state.isScrollInProgress }
+            .filter { !it }
+            .map { state.firstVisibleMonth.yearMonth }
+            .distinctUntilChanged()
+            .collect { yearMonth ->
+                settledMonth = yearMonth
+                onMonthChanged(yearMonth)
+            }
     }
 
     Column(
@@ -93,25 +108,27 @@ internal fun HilingualCalendar(
                     state.animateScrollToMonth(state.firstVisibleMonth.yearMonth.plusMonths(1))
                 }
             },
-            yearMonth = { state.firstVisibleMonth.yearMonth },
+            yearMonth = { settledMonth },
             modifier = Modifier.padding(bottom = 12.dp)
         )
 
-        HorizontalCalendar(
-            state = state,
-            modifier = Modifier.background(HilingualTheme.colors.white),
-            monthHeader = {
-                DaysOfWeekTitle(daysOfWeek = daysOfWeek)
-            },
-            dayContent = { day ->
-                DayItem(
-                    day = day,
-                    onClick = { onDateClick(day.date) },
-                    isSelected = selectedDate == day.date,
-                    isWritten = day.date in writtenDates
-                )
-            }
-        )
+        key(settledMonth) {
+            HorizontalCalendar(
+                state = state,
+                modifier = Modifier.background(HilingualTheme.colors.white),
+                monthHeader = {
+                    DaysOfWeekTitle(daysOfWeek = daysOfWeek)
+                },
+                dayContent = { day ->
+                    DayItem(
+                        day = day,
+                        onClick = { onDateClick(day.date) },
+                        isSelected = selectedDate == day.date,
+                        isWritten = day.date in writtenDates
+                    )
+                }
+            )
+        }
     }
 }
 

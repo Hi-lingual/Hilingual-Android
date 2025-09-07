@@ -41,14 +41,16 @@ fun NavGraphBuilder.homeNavGraph(
     paddingValues: PaddingValues,
     navigateToDiaryFeedback: (diaryId: Long) -> Unit,
     navigateToDiaryWrite: (selectedDate: LocalDate) -> Unit,
-    navigateToNotification: () -> Unit
+    navigateToNotification: () -> Unit,
+    navigateToFeedProfile: (userId: Long) -> Unit
 ) {
     composable<Home> {
         HomeRoute(
             paddingValues = paddingValues,
             navigateToDiaryFeedback = navigateToDiaryFeedback,
             navigateToDiaryWrite = navigateToDiaryWrite,
-            navigateToNotification = navigateToNotification
+            navigateToNotification = navigateToNotification,
+            navigateToFeedProfile = navigateToFeedProfile
         )
     }
 }

@@ -70,6 +70,7 @@ internal fun DiaryFeedbackRoute(
     navigateUp: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToFeed: () -> Unit,
+    navigateToVoca: () -> Unit,
     viewModel: DiaryFeedbackViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -93,12 +94,22 @@ internal fun DiaryFeedbackRoute(
         when (it) {
             is DiaryFeedbackSideEffect.ShowRetryDialog -> dialogTrigger.show(it.onRetry)
 
-            is DiaryFeedbackSideEffect.ShowSnackbar -> {
+            is DiaryFeedbackSideEffect.ShowDiaryPublishSnackbar -> {
                 snackbarTrigger(
                     SnackbarRequest(
                         message = it.message,
                         buttonText = it.actionLabel,
                         onClick = navigateToFeed
+                    )
+                )
+            }
+
+            is DiaryFeedbackSideEffect.ShowVocaOverflowSnackbar -> {
+                snackbarTrigger(
+                    SnackbarRequest(
+                        message = it.message,
+                        buttonText = it.actionLabel,
+                        onClick = navigateToVoca
                     )
                 )
             }
