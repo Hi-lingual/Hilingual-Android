@@ -6,7 +6,7 @@ import com.hilingual.data.feed.dto.response.RecommendFeedResponseDto
 
 data class FeedListModel(
     val feedList: List<FeedModel>,
-    val hasFollowing: Boolean = false
+    val hasFollowing: Boolean = true
 )
 
 data class FeedModel(
