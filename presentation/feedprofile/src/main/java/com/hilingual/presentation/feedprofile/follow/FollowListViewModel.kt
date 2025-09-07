@@ -125,7 +125,7 @@ internal class FollowListViewModel @Inject constructor(
         val newState = FollowState.getValueByFollowState(
             isFollowing = !currentIsFollowing,
             isFollowed = targetItem.followState.isFollowed
-        ) ?: targetItem.followState
+        )
 
         val updatedItem = targetItem.copy(followState = newState)
 
