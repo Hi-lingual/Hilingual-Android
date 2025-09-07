@@ -21,7 +21,7 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.feed.repository.FeedRepository
-import com.hilingual.presentation.feed.model.FeedListItemUiModel
+import com.hilingual.presentation.feed.model.FeedItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
@@ -148,9 +148,9 @@ internal class FeedViewModel @Inject constructor(
         }
     }
 
-    private fun UiState<ImmutableList<FeedListItemUiModel>>.updateIfSuccess(
-        transform: (ImmutableList<FeedListItemUiModel>) -> ImmutableList<FeedListItemUiModel>
-    ): UiState<ImmutableList<FeedListItemUiModel>> {
+    private fun UiState<ImmutableList<FeedItemUiModel>>.updateIfSuccess(
+        transform: (ImmutableList<FeedItemUiModel>) -> ImmutableList<FeedItemUiModel>
+    ): UiState<ImmutableList<FeedItemUiModel>> {
         return when (this) {
             is UiState.Success -> UiState.Success(transform(this.data))
             else -> this
@@ -158,10 +158,10 @@ internal class FeedViewModel @Inject constructor(
     }
 
     private fun updateSingleItem(
-        list: PersistentList<FeedListItemUiModel>,
+        list: PersistentList<FeedItemUiModel>,
         diaryId: Long,
-        transform: (FeedListItemUiModel) -> FeedListItemUiModel
-    ): ImmutableList<FeedListItemUiModel> {
+        transform: (FeedItemUiModel) -> FeedItemUiModel
+    ): ImmutableList<FeedItemUiModel> {
         val index = list.indexOfFirst { it.diaryId == diaryId }
         return if (index != -1) {
             val updatedItem = transform(list[index])
@@ -172,9 +172,9 @@ internal class FeedViewModel @Inject constructor(
     }
 
     private fun removeSingleItem(
-        list: PersistentList<FeedListItemUiModel>,
+        list: PersistentList<FeedItemUiModel>,
         diaryId: Long
-    ): ImmutableList<FeedListItemUiModel> {
+    ): ImmutableList<FeedItemUiModel> {
         val index = list.indexOfFirst { it.diaryId == diaryId }
         return if (index != -1) {
             list.removeAt(index)

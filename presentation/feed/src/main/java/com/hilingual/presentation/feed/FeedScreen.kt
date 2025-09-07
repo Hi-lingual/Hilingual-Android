@@ -47,7 +47,7 @@ import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedTopAppBar
-import com.hilingual.presentation.feed.model.FeedListItemUiModel
+import com.hilingual.presentation.feed.model.FeedItemUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
@@ -97,8 +97,8 @@ internal fun FeedRoute(
 private fun FeedScreen(
     paddingValues: PaddingValues,
     myProfileUrl: String,
-    recommendFeedList: UiState<ImmutableList<FeedListItemUiModel>>,
-    followingFeedList: UiState<ImmutableList<FeedListItemUiModel>>,
+    recommendFeedList: UiState<ImmutableList<FeedItemUiModel>>,
+    followingFeedList: UiState<ImmutableList<FeedItemUiModel>>,
     hasFollowing: Boolean,
     onMyProfileClick: () -> Unit,
     onSearchClick: () -> Unit,

@@ -18,22 +18,22 @@ package com.hilingual.presentation.feed
 import androidx.compose.runtime.Immutable
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.feed.model.FeedListModel
-import com.hilingual.presentation.feed.model.FeedListItemUiModel
+import com.hilingual.presentation.feed.model.FeedItemUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 internal data class FeedUiState(
     val myProfileUrl: String = "",
-    val recommendFeedList: UiState<ImmutableList<FeedListItemUiModel>> = UiState.Loading,
-    val followingFeedList: UiState<ImmutableList<FeedListItemUiModel>> = UiState.Loading,
+    val recommendFeedList: UiState<ImmutableList<FeedItemUiModel>> = UiState.Loading,
+    val followingFeedList: UiState<ImmutableList<FeedItemUiModel>> = UiState.Loading,
     val hasFollowing: Boolean = true
 ) {
     companion object {
         val Fake = FeedUiState(
             recommendFeedList = UiState.Success(
                 persistentListOf(
-                    FeedListItemUiModel(
+                    FeedItemUiModel(
                         userId = 1,
                         profileUrl = "https://avatars.githubusercontent.com/u/101113025?v=4",
                         nickname = "작나",
@@ -46,7 +46,7 @@ internal data class FeedUiState(
                         isLiked = false,
                         isMine = true
                     ),
-                    FeedListItemUiModel(
+                    FeedItemUiModel(
                         userId = 2,
                         profileUrl = "",
                         nickname = "한민돌",
@@ -59,7 +59,7 @@ internal data class FeedUiState(
                         isLiked = true,
                         isMine = false
                     ),
-                    FeedListItemUiModel(
+                    FeedItemUiModel(
                         userId = 3,
                         profileUrl = "",
                         nickname = "효비",
@@ -78,7 +78,7 @@ internal data class FeedUiState(
             ),
             followingFeedList = UiState.Success(
                 persistentListOf(
-                    FeedListItemUiModel(
+                    FeedItemUiModel(
                         userId = 2,
                         profileUrl = "",
                         nickname = "한민돌",
@@ -97,9 +97,9 @@ internal data class FeedUiState(
     }
 }
 
-internal fun FeedListModel.toState(): List<FeedListItemUiModel> {
+internal fun FeedListModel.toState(): List<FeedItemUiModel> {
     return this.feedList.map {
-        FeedListItemUiModel(
+        FeedItemUiModel(
             isMine = it.profile.isMine,
             userId = it.profile.userId,
             profileUrl = it.profile.profileImg,

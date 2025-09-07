@@ -40,14 +40,14 @@ import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndic
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedEmptyCard
 import com.hilingual.presentation.feed.component.FeedEmptyCardType
-import com.hilingual.presentation.feed.model.FeedListItemUiModel
+import com.hilingual.presentation.feed.model.FeedItemUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun FeedTabScreen(
     listState: LazyListState,
-    feedListState: UiState<ImmutableList<FeedListItemUiModel>>,
+    feedListState: UiState<ImmutableList<FeedItemUiModel>>,
     onProfileClick: (Long) -> Unit,
     onContentDetailClick: (Long) -> Unit,
     onLikeClick: (Long, Boolean) -> Unit,
@@ -125,7 +125,7 @@ private fun FeedTabScreenPreview() {
     var sampleFeedList by remember {
         mutableStateOf(
             persistentListOf(
-                FeedListItemUiModel(
+                FeedItemUiModel(
                     userId = 1,
                     profileUrl = "",
                     nickname = "TravelExplorer",
@@ -138,7 +138,7 @@ private fun FeedTabScreenPreview() {
                     isLiked = false,
                     isMine = true
                 ),
-                FeedListItemUiModel(
+                FeedItemUiModel(
                     userId = 2,
                     profileUrl = "",
                     nickname = "FoodieCoder",
