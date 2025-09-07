@@ -33,7 +33,6 @@ internal class FollowListViewModel @Inject constructor(
 
     init {
         loadFollowers()
-        loadFollowings()
     }
 
     private fun loadFollowers() {

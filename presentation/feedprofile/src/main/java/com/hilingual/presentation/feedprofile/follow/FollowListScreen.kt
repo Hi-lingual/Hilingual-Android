@@ -11,7 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -61,10 +64,14 @@ private fun FollowListScreen(
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
+    var previousPage by remember { mutableStateOf(pagerState.currentPage) }
 
     LaunchedEffect(pagerState.currentPage) {
-        val tabType = if (pagerState.currentPage == 0) FollowTabType.FOLLOWER else FollowTabType.FOLLOWING
-        onTabRefresh(tabType)
+        if (pagerState.currentPage != previousPage) {
+            val tabType = if (pagerState.currentPage == 0) FollowTabType.FOLLOWER else FollowTabType.FOLLOWING
+            onTabRefresh(tabType)
+            previousPage = pagerState.currentPage
+        }
     }
 
     Column(
