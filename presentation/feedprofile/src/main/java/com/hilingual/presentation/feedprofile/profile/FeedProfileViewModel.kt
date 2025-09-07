@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.feed.repository.FeedRepository
 import com.hilingual.data.feed.model.FeedProfileModel
@@ -53,7 +54,6 @@ internal class FeedProfileViewModel @Inject constructor(
                         )
                     }
                     loadSharedDiaries(feedProfileModel)
-                    loadLikedDiaries()
                 }
                 .onLogFailure {
                     _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
@@ -72,11 +72,8 @@ internal class FeedProfileViewModel @Inject constructor(
                         )
                     }.toImmutableList()
 
-                    _uiState.update { currentState ->
-                        val successState = currentState as? UiState.Success ?: return@update currentState
-                        successState.copy(
-                            data = successState.data.copy(sharedDiaries = sharedDiaryUIModels)
-                        )
+                    _uiState.updateSuccess { currentState ->
+                        currentState.copy(sharedDiaries = sharedDiaryUIModels)
                     }
                 }
                 .onLogFailure {
@@ -93,11 +90,8 @@ internal class FeedProfileViewModel @Inject constructor(
                         likedDiaryItem.toFeedDiaryUIModel()
                     }.toImmutableList()
 
-                    _uiState.update { currentState ->
-                        val successState = currentState as? UiState.Success ?: return@update currentState
-                        successState.copy(
-                            data = successState.data.copy(likedDiaries = likedDiaryUIModels)
-                        )
+                    _uiState.updateSuccess { currentState ->
+                        currentState.copy(likedDiaries = likedDiaryUIModels)
                     }
                 }
                 .onLogFailure {
@@ -108,22 +102,19 @@ internal class FeedProfileViewModel @Inject constructor(
 
     fun toggleIsLiked(diaryId: Long, isLiked: Boolean, type: DiaryTabType) {
         viewModelScope.launch {
-            _uiState.update { currentState ->
-                val successState = currentState as? UiState.Success ?: return@update currentState
-
-                val updatedData = when (type) {
+            _uiState.updateSuccess { currentState ->
+                when (type) {
                     DiaryTabType.SHARED -> {
-                        successState.data.copy(
-                            sharedDiaries = successState.data.sharedDiaries.updateLikeState(diaryId, isLiked)
+                        currentState.copy(
+                            sharedDiaries = currentState.sharedDiaries.updateLikeState(diaryId, isLiked)
                         )
                     }
+
                     DiaryTabType.LIKED -> {
-                        successState.data.copy(
-                            likedDiaries = successState.data.likedDiaries.updateLikeState(diaryId, isLiked)
+                        currentState.copy(likedDiaries = currentState.likedDiaries.updateLikeState(diaryId, isLiked)
                         )
                     }
                 }
-                successState.copy(data = updatedData)
             }
         }
     }
