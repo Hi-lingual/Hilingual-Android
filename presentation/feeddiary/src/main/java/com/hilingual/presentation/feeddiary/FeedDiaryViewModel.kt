@@ -120,17 +120,18 @@ internal class FeedDiaryViewModel @Inject constructor(
 
     fun toggleIsLiked(isLiked: Boolean) {
         viewModelScope.launch {
-            // TODO: API 성공 후 좋아요 수 증가
-            _uiState.update { currentState ->
-                val successState = currentState as UiState.Success
-                successState.copy(
-                    data = successState.data.copy(
-                        profileContent = successState.data.profileContent.copy(
-                            isLiked = isLiked,
-                            likeCount = successState.data.profileContent.likeCount + if (isLiked) 1 else -1
+            feedRepository.postIsLike(diaryId, isLiked).onSuccess {
+                _uiState.update { currentState ->
+                    val successState = currentState as UiState.Success
+                    successState.copy(
+                        data = successState.data.copy(
+                            profileContent = successState.data.profileContent.copy(
+                                isLiked = isLiked,
+                                likeCount = successState.data.profileContent.likeCount + if (isLiked) 1 else -1
+                            )
                         )
                     )
-                )
+                }
             }
         }
     }
