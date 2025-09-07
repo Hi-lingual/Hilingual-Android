@@ -13,33 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.data.diary.dto.response
+package com.hilingual.data.feed.dto.request
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DiaryContentResponseDto(
-    @SerialName("date")
-    val date: String,
-    @SerialName("originalText")
-    val originalText: String,
-    @SerialName("rewriteText")
-    val rewriteText: String,
-    @SerialName("diffRanges")
-    val diffRanges: List<DiaryContentDiffRange>,
-    @SerialName("imageUrl")
-    val imageUrl: String?,
-    @SerialName("isPublished")
-    val isPublished: Boolean
-)
-
-@Serializable
-data class DiaryContentDiffRange(
-    @SerialName("start")
-    val start: Int,
-    @SerialName("end")
-    val end: Int,
-    @SerialName("correctedText")
-    val correctedText: String
+data class LikeRequestDto(
+    @SerialName("isLiked")
+    val isLiked: Boolean
 )

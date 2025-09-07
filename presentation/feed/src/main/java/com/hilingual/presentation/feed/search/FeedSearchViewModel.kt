@@ -57,7 +57,7 @@ internal class FeedSearchViewModel @Inject constructor() : ViewModel() {
                         val newState = FollowState.getValueByFollowState(
                             isFollowing = !currentIsFollowing,
                             isFollowed = user.followState.isFollowed
-                        ) ?: user.followState
+                        )
                         user.copy(followState = newState)
                     } else {
                         user

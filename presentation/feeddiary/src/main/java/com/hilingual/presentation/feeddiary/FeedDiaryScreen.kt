@@ -78,6 +78,8 @@ internal fun FeedDiaryRoute(
             is FeedDiarySideEffect.ShowToast -> {
                 toastTrigger(it.message)
             }
+
+            else -> {}
         }
     }
 

@@ -13,7 +13,7 @@ internal fun UserItemDto.toModel(): FollowUserListResultModel = FollowUserListRe
     userId = this.userId,
     nickname = this.nickname,
     profileImg = this.profileImg,
-    followState = FollowState.getValueByFollowState(this.isFollowing, this.isFollowed)!!
+    followState = FollowState.getValueByFollowState(this.isFollowing, this.isFollowed)
 )
 
 enum class FollowState(
@@ -43,8 +43,8 @@ enum class FollowState(
     );
 
     companion object {
-        fun getValueByFollowState(isFollowing: Boolean, isFollowed: Boolean): FollowState? {
-            return entries.find { it.isFollowing == isFollowing && it.isFollowed == isFollowed }
+        fun getValueByFollowState(isFollowing: Boolean, isFollowed: Boolean): FollowState {
+            return entries.find { it.isFollowing == isFollowing && it.isFollowed == isFollowed } ?: NONE
         }
     }
 }

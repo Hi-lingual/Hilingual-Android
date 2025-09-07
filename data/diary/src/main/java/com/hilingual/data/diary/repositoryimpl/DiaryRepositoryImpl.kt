@@ -20,6 +20,7 @@ import android.net.Uri
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.network.ContentUriRequestBody
 import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
+import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.DiaryContentModel
 import com.hilingual.data.diary.model.DiaryFeedbackCreateModel
 import com.hilingual.data.diary.model.DiaryFeedbackModel
@@ -59,12 +60,14 @@ internal class DiaryRepositoryImpl @Inject constructor(
     override suspend fun patchPhraseBookmark(
         phraseId: Long,
         bookmarkModel: PhraseBookmarkModel
-    ): Result<Unit> =
+    ): Result<BookmarkResult> =
         suspendRunCatching {
-            diaryRemoteDataSource.patchPhraseBookmark(
+            val response = diaryRemoteDataSource.patchPhraseBookmark(
                 phraseId = phraseId,
                 bookmarkRequestDto = bookmarkModel.toDto()
             )
+
+            BookmarkResult.getOrError(response.code)
         }
 
     override suspend fun postDiaryFeedbackCreate(
@@ -91,6 +94,21 @@ internal class DiaryRepositoryImpl @Inject constructor(
             ).data!!.toModel()
         }
     }
+
+    override suspend fun patchDiaryPublish(diaryId: Long): Result<Unit> =
+        suspendRunCatching {
+            diaryRemoteDataSource.patchDiaryPublish(diaryId)
+        }
+
+    override suspend fun patchDiaryUnpublish(diaryId: Long): Result<Unit> =
+        suspendRunCatching {
+            diaryRemoteDataSource.patchDiaryUnpublish(diaryId)
+        }
+
+    override suspend fun deleteDiary(diaryId: Long): Result<Unit> =
+        suspendRunCatching {
+            diaryRemoteDataSource.deleteDiary(diaryId)
+        }
 
     companion object {
         const val APPLICATION_JSON = "application/json"

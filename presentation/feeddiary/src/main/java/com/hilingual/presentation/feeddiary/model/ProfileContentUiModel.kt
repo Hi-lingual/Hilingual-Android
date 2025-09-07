@@ -4,11 +4,11 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 data class ProfileContentUiModel(
-    val userId: Long,
-    val profileUrl: String,
-    val nickname: String,
-    val streak: Int,
-    val isLiked: Boolean,
-    val likeCount: Int,
-    val sharedDateInMinutes: Long
+    val userId: Long = 0,
+    val profileUrl: String = "",
+    val nickname: String = "UserName",
+    val streak: Int = 0,
+    val isLiked: Boolean = false,
+    val likeCount: Int = 0,
+    val sharedDateInMinutes: Long = 0
 )
