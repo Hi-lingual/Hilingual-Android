@@ -81,7 +81,7 @@ internal class FeedDiaryViewModel @Inject constructor(
                 writtenDate = diaryResult.writtenDate,
                 diaryContent = diaryResult.toState(),
                 feedbackList = feedbacks.map { it.toState() }.toImmutableList(),
-                recommendExpressionList = recommendExpressions.map { it.toState() }.toImmutableList(),
+                recommendExpressionList = recommendExpressions.map { it.toState() }.toImmutableList()
             )
             _uiState.value = UiState.Success(newUiState)
         } else {
@@ -91,12 +91,12 @@ internal class FeedDiaryViewModel @Inject constructor(
 
     private suspend fun getDiaryHeaderData() {
         feedRepository.getFeedDiaryProfile(diaryId).onSuccess {
-             _uiState.updateSuccess { currentState ->
-                 currentState.copy(
-                     isMine = it.isMine,
-                     profileContent = it.toState()
-                 )
-             }
+            _uiState.updateSuccess { currentState ->
+                currentState.copy(
+                    isMine = it.isMine,
+                    profileContent = it.toState()
+                )
+            }
         }.onLogFailure { e ->
             Timber.d("일기 헤더 정보 조회 실패: $e")
         }
@@ -108,7 +108,7 @@ internal class FeedDiaryViewModel @Inject constructor(
                 getDiaryContentData()
                 getDiaryHeaderData()
             }
-                .onFailure { e ->
+                .onLogFailure { e ->
                     Timber.d("일기 상세 조회 실패: $e")
                     _uiState.value = UiState.Failure
                     _sideEffect.emit(
