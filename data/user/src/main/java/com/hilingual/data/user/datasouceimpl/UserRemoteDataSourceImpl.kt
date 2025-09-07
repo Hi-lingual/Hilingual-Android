@@ -42,4 +42,10 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getBlockList(): BaseResponse<BlockListResponseDto> =
         userService.getBlockList()
+
+    override suspend fun putBlockUser(targetUserId: Long): BaseResponse<Unit> =
+        userService.putBlockUser(targetUserId = targetUserId)
+
+    override suspend fun deleteBlockUser(targetUserId: Long): BaseResponse<Unit> =
+        userService.deleteBlockUser(targetUserId = targetUserId)
 }

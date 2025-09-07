@@ -40,16 +40,33 @@ internal class BlockedUserViewModel @Inject constructor(
     }
 
     fun onUnblockStatusChanged(userId: Long) {
-        _uiState.update { currentList ->
-            when (val listState = currentList.blockedUserList) {
-                is UiState.Success -> {
-                    val updatedList = listState.data.map { user ->
-                        if (user.userId == userId) user.copy(isBlocked = !user.isBlocked) else user
-                    }.toPersistentList()
-                    currentList.copy(blockedUserList = UiState.Success(data = updatedList))
+        viewModelScope.launch {
+            val currentList = (_uiState.value.blockedUserList as? UiState.Success)?.data
+            val targetUser = currentList?.find { it.userId == userId }
+
+            if (currentList != null && targetUser != null) {
+                val apiFunction = if (targetUser.isBlocked) {
+                    userRepository.deleteBlockUser(targetUserId = userId)
+                } else {
+                    userRepository.putBlockUser(targetUserId = userId)
                 }
 
-                else -> currentList
+                apiFunction
+                    .onSuccess {
+                        _uiState.update { state ->
+                            val successState = state.blockedUserList as? UiState.Success
+                            if (successState != null) {
+                                val updatedList = successState.data.map { user ->
+                                    if (user.userId == userId) user.copy(isBlocked = !user.isBlocked) else user
+                                }.toPersistentList()
+
+                                state.copy(blockedUserList = UiState.Success(data = updatedList))
+                            } else {
+                                state
+                            }
+                        }
+                    }
+                    .onLogFailure { }
             }
         }
     }

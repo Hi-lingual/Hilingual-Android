@@ -78,4 +78,14 @@ internal class UserRepositoryImpl @Inject constructor(
         suspendRunCatching {
             userRemoteDataSource.getBlockList().data!!.toModel()
         }
+
+    override suspend fun putBlockUser(targetUserId: Long): Result<Unit> =
+        suspendRunCatching {
+            userRemoteDataSource.putBlockUser(targetUserId).data ?: Unit
+        }
+
+    override suspend fun deleteBlockUser(targetUserId: Long): Result<Unit> =
+        suspendRunCatching {
+            userRemoteDataSource.deleteBlockUser(targetUserId).data ?: Unit
+        }
 }

@@ -36,4 +36,8 @@ interface UserRemoteDataSource {
     suspend fun getUserLoginInfo(): BaseResponse<UserLoginInfoResponseDto>
 
     suspend fun getBlockList(): BaseResponse<BlockListResponseDto>
+
+    suspend fun putBlockUser(targetUserId: Long): BaseResponse<Unit>
+
+    suspend fun deleteBlockUser(targetUserId: Long): BaseResponse<Unit>
 }

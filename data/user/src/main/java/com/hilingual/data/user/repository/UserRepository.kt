@@ -43,4 +43,8 @@ interface UserRepository {
     suspend fun getUserLoginInfo(): Result<UserLoginInfoModel>
 
     suspend fun getBlockList(): Result<BlockListModel>
+
+    suspend fun putBlockUser(targetUserId: Long): Result<Unit>
+
+    suspend fun deleteBlockUser(targetUserId: Long): Result<Unit>
 }

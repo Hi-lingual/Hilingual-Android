@@ -22,8 +22,11 @@ import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
 import com.hilingual.data.user.dto.reponse.UserLoginInfoResponseDto
 import com.hilingual.data.user.dto.request.UserProfileRequestDto
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 internal interface UserService {
@@ -45,4 +48,14 @@ internal interface UserService {
 
     @GET("/api/v1/users/mypage/blocks")
     suspend fun getBlockList(): BaseResponse<BlockListResponseDto>
+
+    @PUT("/api/v1/users/block/{targetUserId}")
+    suspend fun putBlockUser(
+        @Path("targetUserId") targetUserId: Long
+    ): BaseResponse<Unit>
+
+    @DELETE("/api/v1/users/unblock/{targetUserId}")
+    suspend fun deleteBlockUser(
+        @Path("targetUserId") targetUserId: Long
+    ): BaseResponse<Unit>
 }
