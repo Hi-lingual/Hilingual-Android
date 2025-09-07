@@ -26,6 +26,7 @@ import com.hilingual.data.user.model.user.UserInfoModel
 import com.hilingual.data.user.model.user.UserProfileModel
 import com.hilingual.data.user.model.user.toDto
 import com.hilingual.data.user.model.notification.toModel
+import com.hilingual.data.user.model.user.toModel
 import com.hilingual.data.user.repository.UserRepository
 import javax.inject.Inject
 
