@@ -1,6 +1,6 @@
-package com.hilingual.data.user.model
+package com.hilingual.data.user.model.notification
 
-import com.hilingual.data.user.dto.reponse.NotificationResponseDto
+import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 
 data class NotificationModel(
     val id: Long,

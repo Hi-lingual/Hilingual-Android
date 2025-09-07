@@ -1,4 +1,4 @@
-package com.hilingual.data.user.dto.reponse
+package com.hilingual.data.user.dto.response.notification
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -17,5 +17,6 @@ data class NotificationResponseDto(
     val targetId: String? = null,
     @SerialName("isRead")
     val isRead: Boolean,
-    @SerialName("publishedAt") val publishedAt: String
+    @SerialName("publishedAt")
+    val publishedAt: String
 )

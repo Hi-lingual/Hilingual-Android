@@ -1,6 +1,6 @@
-package com.hilingual.data.user.model
+package com.hilingual.data.user.model.notification
 
-import com.hilingual.data.user.dto.reponse.NotificationSettingsResponseDto
+import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
 
 data class NotificationSettingsModel(
     val isMarketingEnabled: Boolean,

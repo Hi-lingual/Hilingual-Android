@@ -1,7 +1,7 @@
 package com.hilingual.presentation.notification.main.model
 
 import androidx.compose.runtime.Stable
-import com.hilingual.data.user.model.NotificationModel
+import com.hilingual.data.user.model.notification.NotificationModel
 
 enum class FeedNotificationType {
     LIKE_DIARY,
