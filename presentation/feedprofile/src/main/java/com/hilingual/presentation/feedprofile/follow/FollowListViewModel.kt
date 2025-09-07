@@ -81,14 +81,13 @@ internal class FollowListViewModel @Inject constructor(
                         }
                         FollowTabType.FOLLOWING -> {
                             currentState.copy(
-                                followingList = updateUiState(currentState.followingList, userId, isFollowing),
+                                followingList = updateUiState(currentState.followingList, userId, isFollowing)
                             )
                         }
                     }
                 }
             }
                 .onLogFailure {
-
                 }
         }
     }

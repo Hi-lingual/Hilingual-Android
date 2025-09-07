@@ -48,5 +48,4 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun deleteFollow(targetUserId: Long): BaseResponse<Unit> =
         userService.deleteFollow(targetUserId = targetUserId)
-
 }
