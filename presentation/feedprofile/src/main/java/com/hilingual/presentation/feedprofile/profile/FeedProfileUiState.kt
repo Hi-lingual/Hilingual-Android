@@ -3,7 +3,6 @@ package com.hilingual.presentation.feedprofile.profile
 import androidx.compose.runtime.Immutable
 import com.hilingual.data.feed.model.FeedProfileModel
 import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
-import com.hilingual.presentation.feedprofile.profile.model.FeedProfileInfoModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 

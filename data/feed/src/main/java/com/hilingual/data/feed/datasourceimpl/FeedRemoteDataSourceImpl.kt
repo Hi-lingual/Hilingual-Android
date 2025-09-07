@@ -15,6 +15,6 @@ internal class FeedRemoteDataSourceImpl @Inject constructor(
         feedService.getFeedProfile(targetUserId = targetUserId)
     override suspend fun getSharedDiaries(targetUserId: Long): BaseResponse<SharedDiariesResponseDto> =
         feedService.getSharedDiaries(targetUserId = targetUserId)
-    override suspend fun getLikedDiaries(targetUserId: Long): BaseResponse<LikedDiariesResponseDto>  =
+    override suspend fun getLikedDiaries(targetUserId: Long): BaseResponse<LikedDiariesResponseDto> =
         feedService.getLikedDiaries(targetUserId = targetUserId)
 }

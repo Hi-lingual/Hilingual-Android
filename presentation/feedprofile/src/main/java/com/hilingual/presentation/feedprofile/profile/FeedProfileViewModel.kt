@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
-import com.hilingual.data.feed.repository.FeedRepository
 import com.hilingual.data.feed.model.FeedProfileModel
+import com.hilingual.data.feed.repository.FeedRepository
 import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
 import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
 import com.hilingual.presentation.feedprofile.profile.model.toFeedDiaryUIModel
@@ -111,7 +111,8 @@ internal class FeedProfileViewModel @Inject constructor(
                     }
 
                     DiaryTabType.LIKED -> {
-                        currentState.copy(likedDiaries = currentState.likedDiaries.updateLikeState(diaryId, isLiked)
+                        currentState.copy(
+                            likedDiaries = currentState.likedDiaries.updateLikeState(diaryId, isLiked)
                         )
                     }
                 }

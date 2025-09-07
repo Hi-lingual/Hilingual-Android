@@ -224,7 +224,7 @@ private fun FeedProfileScreen(
                         }
                     }
 
-                    profile.isBlock ==  true -> {
+                    profile.isBlock == true -> {
                         item {
                             Column(
                                 modifier = Modifier
