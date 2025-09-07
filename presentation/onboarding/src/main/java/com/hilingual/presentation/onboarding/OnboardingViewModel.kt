@@ -78,7 +78,12 @@ internal class OnboardingViewModel @Inject constructor(
 
     fun onRegisterClick(nickname: String, isMarketingAgreed: Boolean, imageUri: Uri?) {
         viewModelScope.launch {
-            userRepository.postUserProfile(UserProfileModel(profileImg = "", nickname = nickname))
+            val userProfile = UserProfileModel(
+                nickname = nickname,
+                adAlarmAgree = isMarketingAgreed,
+                imageUri = imageUri
+            )
+            userRepository.postUserProfile(userProfile)
                 .onSuccess {
                     userRepository.saveRegisterStatus(true)
                     _sideEffect.emit(OnboardingSideEffect.NavigateToHome)

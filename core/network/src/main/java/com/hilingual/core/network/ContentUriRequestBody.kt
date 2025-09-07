@@ -64,7 +64,7 @@ class ContentUriRequestBody @Inject constructor(
         val maxFileSize: Int,
         val initialQuality: Int,
         val minQuality: Int,
-        val format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG
+        val format: Bitmap.CompressFormat
     ) {
         companion object {
             val DEFAULT = ImageConfig(
@@ -72,7 +72,17 @@ class ContentUriRequestBody @Inject constructor(
                 maxHeight = 1920,
                 maxFileSize = 2 * 1024 * 1024,
                 initialQuality = 90,
-                minQuality = 50
+                minQuality = 50,
+                format = Bitmap.CompressFormat.JPEG
+            )
+
+            val WEBP = ImageConfig(
+                maxWidth = 1920,
+                maxHeight = 1920,
+                maxFileSize = 2 * 1024 * 1024,
+                initialQuality = 90,
+                minQuality = 50,
+                format = Bitmap.CompressFormat.WEBP_LOSSY
             )
         }
     }

@@ -15,14 +15,10 @@
  */
 package com.hilingual.data.user.model
 
-import com.hilingual.data.user.dto.request.UserProfileRequestDto
+import android.net.Uri
 
 data class UserProfileModel(
-    val profileImg: String,
-    val nickname: String
-)
-
-internal fun UserProfileModel.toDto(): UserProfileRequestDto = UserProfileRequestDto(
-    profileImg = this.profileImg,
-    nickname = this.nickname
+    val nickname: String,
+    val adAlarmAgree: Boolean,
+    val imageUri: Uri?
 )
