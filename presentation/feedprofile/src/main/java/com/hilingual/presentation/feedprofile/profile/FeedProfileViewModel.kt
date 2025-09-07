@@ -196,8 +196,8 @@ internal class FeedProfileViewModel @Inject constructor(
 
                     currentState.copy(feedProfileInfo = updatedProfile)
                 }
-            }.onFailure {
-                _sideEffect.emit(FeedProfileSideEffect.ShowToast("팔로우 상태 변경에 실패했습니다."))
+            }.onLogFailure {
+
             }
         }
     }
@@ -212,6 +212,27 @@ internal class FeedProfileViewModel @Inject constructor(
         }
     }
 
+    fun updateBlockState(isCurrentlyBlocked: Boolean) {
+        viewModelScope.launch {
+            //TODO: 지영 유저 차단 작업 후 주석 처리 삭제
+            /*val result = if (isCurrentlyBlocked) {
+                userRepository.deleteBlock(targetUserId)
+            } else {
+                userRepository.putBlock(targetUserId)
+            }
+
+            result.onSuccess {
+                _uiState.updateSuccess { currentState ->
+                    val updatedProfile = currentState.feedProfileInfo.copy(
+                        isBlock = !isCurrentlyBlocked
+                    )
+                    currentState.copy(feedProfileInfo = updatedProfile)
+                }
+            }.onLogFailure {
+
+            }*/
+        }
+    }
 }
 
 sealed interface FeedProfileSideEffect {

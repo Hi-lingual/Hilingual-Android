@@ -29,8 +29,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.hilingual.core.common.constant.UrlConstant
@@ -111,7 +111,7 @@ internal fun FeedProfileRoute(
                 onContentDetailClick = navigateToFeedDiary,
                 onReportUserClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 onLikeClick = viewModel::toggleIsLiked,
-                onBlockClick = { },
+                onBlockClick = { viewModel.updateBlockState(state.data.feedProfileInfo.isBlock ?: false) },
                 onReportDiaryClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 onUnpublishClick = viewModel::diaryUnpublish,
                 onTabRefresh = viewModel::refreshTab
@@ -205,7 +205,13 @@ private fun FeedProfileScreen(
                             isFollowing = isFollowing,
                             isFollowed = isFollowed,
                             isBlock = isBlock,
-                            onActionButtonClick = { onActionButtonClick(isFollowing) },
+                            onActionButtonClick = {
+                                if (isBlock == true) {
+                                    onBlockClick()
+                                } else {
+                                    onActionButtonClick(isFollowing)
+                                }
+                            },
                             modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }
@@ -219,9 +225,6 @@ private fun FeedProfileScreen(
                                 onTabSelected = { index ->
                                     coroutineScope.launch {
                                         pagerState.animateScrollToPage(index)
-                                        val tabType = if (index == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
-                                        onTabRefresh(tabType)
-                                        profileListState.animateScrollToItem(0)
                                     }
                                 },
                                 modifier = Modifier
