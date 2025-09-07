@@ -183,7 +183,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
     }
 
     private suspend fun showVocaOverflowSnackbar() {
-        _sideEffect.emit(DiaryFeedbackSideEffect.ShowDiaryPublishSnackbar(message = "단어장이 모두 찼어요!", actionLabel = "비우러가기"))
+        _sideEffect.emit(DiaryFeedbackSideEffect.ShowVocaOverflowSnackbar(message = "단어장이 모두 찼어요!", actionLabel = "비우러가기"))
     }
 
     private suspend fun showToast(message: String) {

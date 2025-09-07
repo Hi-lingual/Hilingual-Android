@@ -22,6 +22,7 @@ import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
+import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.feed.repository.FeedRepository
@@ -49,7 +50,7 @@ internal class FeedDiaryViewModel @Inject constructor(
 ) : ViewModel() {
     val diaryId = savedStateHandle.toRoute<FeedDiary>().diaryId
 
-    private val _uiState = MutableStateFlow<UiState<FeedDiaryUiState>>(UiState.Success(FeedDiaryUiState.Fake))
+    private val _uiState = MutableStateFlow<UiState<FeedDiaryUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<FeedDiaryUiState>> = _uiState.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<FeedDiarySideEffect>()
@@ -146,23 +147,31 @@ internal class FeedDiaryViewModel @Inject constructor(
                 phraseId = phraseId,
                 bookmarkModel = PhraseBookmarkModel(isMarked)
             )
-                .onSuccess {
-                    _uiState.update { currentState ->
+                .onSuccess { result ->
+                    when (result) {
+                        BookmarkResult.SUCCESS -> {
+                            _uiState.update { currentState ->
 
-                        val successState = currentState as UiState.Success
-                        val oldList = successState.data.recommendExpressionList
+                                val successState = currentState as UiState.Success
+                                val oldList = successState.data.recommendExpressionList
 
-                        val updatedList = oldList.map { item ->
-                            if (item.phraseId == phraseId) {
-                                item.copy(isMarked = isMarked)
-                            } else {
-                                item
+                                val updatedList = oldList.map { item ->
+                                    if (item.phraseId == phraseId) {
+                                        item.copy(isMarked = isMarked)
+                                    } else {
+                                        item
+                                    }
+                                }.toImmutableList()
+
+                                successState.copy(
+                                    data = successState.data.copy(recommendExpressionList = updatedList)
+                                )
                             }
-                        }.toImmutableList()
-
-                        successState.copy(
-                            data = successState.data.copy(recommendExpressionList = updatedList)
-                        )
+                        }
+                        BookmarkResult.OVERCAPACITY -> {
+                            showVocaOverflowSnackbar()
+                        }
+                        else -> { }
                     }
                 }
                 .onLogFailure { }
@@ -177,11 +186,15 @@ internal class FeedDiaryViewModel @Inject constructor(
             }
         }
     }
+
+    private suspend fun showVocaOverflowSnackbar() {
+        _sideEffect.emit(FeedDiarySideEffect.ShowVocaOverflowSnackbar(message = "단어장이 모두 찼어요!", actionLabel = "비우러가기"))
+    }
 }
 
 sealed interface FeedDiarySideEffect {
     data object NavigateToUp : FeedDiarySideEffect
     data class ShowRetryDialog(val onRetry: () -> Unit) : FeedDiarySideEffect
-    data class ShowSnackbar(val message: String, val actionLabel: String) : FeedDiarySideEffect
+    data class ShowVocaOverflowSnackbar(val message: String, val actionLabel: String) : FeedDiarySideEffect
     data class ShowToast(val message: String) : FeedDiarySideEffect
 }
