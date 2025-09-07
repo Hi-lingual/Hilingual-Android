@@ -82,7 +82,6 @@ internal class FollowListViewModel @Inject constructor(
                     )
                 }
             }.onLogFailure {
-
             }
         }
     }

@@ -14,22 +14,21 @@ interface FeedService {
     @GET("/api/v1/feed/profiles/{targetUserId}")
     suspend fun getFeedProfile(
         @Path("targetUserId") targetUserId: Long
-    ) : BaseResponse<FeedProfileResponseDto>
+    ): BaseResponse<FeedProfileResponseDto>
 
     @GET("/api/v1/feed/profiles/{targetUserId}/diaries/shared")
     suspend fun getSharedDiaries(
         @Path("targetUserId") targetUserId: Long
-    ) : BaseResponse<SharedDiariesResponseDto>
+    ): BaseResponse<SharedDiariesResponseDto>
 
     @GET("/api/v1/feed/profiles/{targetUserId}/diaries/liked")
     suspend fun getLikedDiaries(
         @Path("targetUserId") targetUserId: Long
-    ) : BaseResponse<LikedDiariesResponseDto>
+    ): BaseResponse<LikedDiariesResponseDto>
 
     @POST("/api/v1/feed/likes/{diaryId}")
     suspend fun postIsLiked(
         @Path("diaryId") diaryId: Long,
         @Body isLikedRequestDto: IsLikedRequestDto
-    ) : BaseResponse<Unit>
-
+    ): BaseResponse<Unit>
 }

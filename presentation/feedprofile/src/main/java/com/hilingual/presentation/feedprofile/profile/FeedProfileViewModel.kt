@@ -197,7 +197,6 @@ internal class FeedProfileViewModel @Inject constructor(
                     currentState.copy(feedProfileInfo = updatedProfile)
                 }
             }.onLogFailure {
-
             }
         }
     }
@@ -214,7 +213,7 @@ internal class FeedProfileViewModel @Inject constructor(
 
     fun updateBlockState(isCurrentlyBlocked: Boolean) {
         viewModelScope.launch {
-            //TODO: 지영 유저 차단 작업 후 주석 처리 삭제
+            // TODO: 지영 유저 차단 작업 후 주석 처리 삭제
             /*val result = if (isCurrentlyBlocked) {
                 userRepository.deleteBlock(targetUserId)
             } else {

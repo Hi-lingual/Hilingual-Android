@@ -27,17 +27,17 @@ data class SharedDiaryModel(
     val originalText: String
 )
 
-internal fun SharedDiariesResponseDto.toModel() : SharedDiariesModel = SharedDiariesModel(
+internal fun SharedDiariesResponseDto.toModel(): SharedDiariesModel = SharedDiariesModel(
     profile = this.profile.toModel(),
     diaryList = this.diaryList.map { it.toModel() }
 )
 
-internal fun SharedDiaryProfileDto.toModel() : ProfileModel = ProfileModel(
+internal fun SharedDiaryProfileDto.toModel(): ProfileModel = ProfileModel(
     profileImg = this.profileImg,
     nickname = this.nickname
 )
 
-internal fun SharedDiaryDto.toModel() : SharedDiaryModel = SharedDiaryModel(
+internal fun SharedDiaryDto.toModel(): SharedDiaryModel = SharedDiaryModel(
     diaryId = this.diaryId,
     sharedDate = this.sharedDate,
     likeCount = this.likeCount,
