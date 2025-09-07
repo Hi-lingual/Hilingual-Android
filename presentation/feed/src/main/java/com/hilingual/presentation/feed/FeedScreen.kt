@@ -80,6 +80,7 @@ internal fun FeedRoute(
             myProfileUrl = myProfileUrl,
             recommendFeedList = recommendFeedList,
             followingFeedList = followingFeedList,
+            hasFollowing = hasFollowing,
             onSearchClick = navigateToFeedSearch,
             onMyProfileClick = navigateToMyFeedProfile,
             onFeedProfileClick = navigateToFeedProfile,
@@ -98,6 +99,7 @@ private fun FeedScreen(
     myProfileUrl: String,
     recommendFeedList: UiState<ImmutableList<FeedListItemUiModel>>,
     followingFeedList: UiState<ImmutableList<FeedListItemUiModel>>,
+    hasFollowing: Boolean,
     onMyProfileClick: () -> Unit,
     onSearchClick: () -> Unit,
     onFeedProfileClick: (Long) -> Unit,
@@ -198,7 +200,7 @@ private fun FeedScreen(
                         onProfileClick = onFeedProfileClick,
                         onContentDetailClick = onContentDetailClick,
                         onLikeClick = onLikeClick,
-                        hasFollowing = false,
+                        hasFollowing = true,
                         onUnpublishClick = onUnpublishClick,
                         onReportClick = onReportClick
                     )
@@ -208,7 +210,7 @@ private fun FeedScreen(
                         onProfileClick = onFeedProfileClick,
                         onContentDetailClick = onContentDetailClick,
                         onLikeClick = onLikeClick,
-                        hasFollowing = false,
+                        hasFollowing = hasFollowing,
                         onUnpublishClick = onUnpublishClick,
                         onReportClick = onReportClick
                     )
@@ -246,7 +248,8 @@ private fun FeedScreenPreview() {
             onReportClick = {},
             myProfileUrl = "",
             recommendFeedList = UiState.Success(persistentListOf()),
-            followingFeedList = UiState.Success(persistentListOf())
+            followingFeedList = UiState.Success(persistentListOf()),
+            hasFollowing = false
         )
     }
 }
