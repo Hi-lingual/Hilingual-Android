@@ -70,9 +70,12 @@ internal fun FeedProfileRoute(
 
     LaunchedEffect(lifecycleOwner) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-            viewModel.refreshProfile()
+            if (uiState is UiState.Success && (uiState as UiState.Success<FeedProfileUiState>).data.feedProfileInfo.isMine) {
+                viewModel.refreshProfile()
+            }
         }
     }
+
     viewModel.sideEffect.collectSideEffect {
         when (it) {
             is FeedProfileSideEffect.ShowToast -> {
@@ -141,7 +144,7 @@ private fun FeedProfileScreen(
     var isMenuBottomSheetVisible by remember { mutableStateOf(false) }
     var isBlockBottomSheetVisible by remember { mutableStateOf(false) }
     var isReportUserDialogVisible by remember { mutableStateOf(false) }
-
+    var previousPage by remember { mutableStateOf(pagerState.currentPage) }
     val profileListState = rememberLazyListState()
 
     val isFabVisible by remember {
@@ -153,9 +156,10 @@ private fun FeedProfileScreen(
     val profile = uiState.feedProfileInfo
 
     LaunchedEffect(pagerState.currentPage) {
-        if (profile.isMine) {
+        if (pagerState.currentPage != previousPage) {
             val tabType = if (pagerState.currentPage == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
             onTabRefresh(tabType)
+            previousPage = pagerState.currentPage
         }
     }
 

@@ -4,8 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
-//import com.hilingual.data.diary.repository.DiaryRepository
+import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.feed.model.FeedProfileModel
 import com.hilingual.data.feed.model.IsLikedModel
 import com.hilingual.data.feed.repository.FeedRepository
@@ -31,7 +32,7 @@ import javax.inject.Inject
 internal class FeedProfileViewModel @Inject constructor(
     private val feedRepository: FeedRepository,
     private val userRepository: UserRepository,
-    //private val diaryRepository: DiaryRepository,
+    private val diaryRepository: DiaryRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val targetUserId: Long = savedStateHandle.get<Long>("userId") ?: 0L
@@ -58,7 +59,6 @@ internal class FeedProfileViewModel @Inject constructor(
                         )
                     }
                     loadSharedDiaries(feedProfileModel)
-                    loadLikedDiaries()
                 }
                 .onLogFailure {
                     _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
@@ -77,11 +77,8 @@ internal class FeedProfileViewModel @Inject constructor(
                         )
                     }.toImmutableList()
 
-                    _uiState.update { currentState ->
-                        val successState = currentState as? UiState.Success ?: return@update currentState
-                        successState.copy(
-                            data = successState.data.copy(sharedDiaries = sharedDiaryUIModels)
-                        )
+                    _uiState.updateSuccess { currentState ->
+                        currentState.copy(sharedDiaries = sharedDiaryUIModels)
                     }
                 }
                 .onLogFailure {
@@ -98,11 +95,8 @@ internal class FeedProfileViewModel @Inject constructor(
                         likedDiaryItem.toFeedDiaryUIModel()
                     }.toImmutableList()
 
-                    _uiState.update { currentState ->
-                        val successState = currentState as? UiState.Success ?: return@update currentState
-                        successState.copy(
-                            data = successState.data.copy(likedDiaries = likedDiaryUIModels)
-                        )
+                    _uiState.updateSuccess { currentState ->
+                        currentState.copy(likedDiaries = likedDiaryUIModels)
                     }
                 }
                 .onLogFailure {
@@ -115,11 +109,8 @@ internal class FeedProfileViewModel @Inject constructor(
         viewModelScope.launch {
             feedRepository.getFeedProfile(targetUserId)
                 .onSuccess { feedProfileModel ->
-                    _uiState.update { currentState ->
-                        val successState = currentState as? UiState.Success ?: return@update currentState
-                        successState.copy(
-                            data = successState.data.copy(feedProfileInfo = feedProfileModel)
-                        )
+                    _uiState.updateSuccess { currentState ->
+                        currentState.copy(feedProfileInfo = feedProfileModel)
                     }
                 }
                 .onLogFailure {
@@ -134,24 +125,19 @@ internal class FeedProfileViewModel @Inject constructor(
                 isLikedModel = IsLikedModel(isLiked)
             )
                 .onSuccess {
-                    _uiState.update { currentState ->
-                        val successState =
-                            currentState as? UiState.Success ?: return@update currentState
-
-                        val updatedData = when (type) {
+                    _uiState.updateSuccess { currentState ->
+                        when (type) {
                             DiaryTabType.SHARED -> {
-                                successState.data.copy(
-                                    sharedDiaries = successState.data.sharedDiaries.updateLikeState(diaryId, isLiked)
+                                currentState.copy(
+                                    sharedDiaries = currentState.sharedDiaries.updateLikeState(diaryId, isLiked)
                                 )
                             }
-
                             DiaryTabType.LIKED -> {
-                                successState.data.copy(
-                                    likedDiaries = successState.data.likedDiaries.updateLikeState(diaryId, isLiked)
+                                currentState.copy(
+                                    likedDiaries = currentState.likedDiaries.updateLikeState(diaryId, isLiked)
                                 )
                             }
                         }
-                        successState.copy(data = updatedData)
                     }
                 }
         }
@@ -173,28 +159,22 @@ internal class FeedProfileViewModel @Inject constructor(
     }
 
     fun diaryUnpublish(diaryId: Long) {
-        //TODO: 작나 pr 머지 되고 주석 삭제 처리
-        /*viewModelScope.launch {
+        viewModelScope.launch {
             diaryRepository.patchDiaryUnpublish(diaryId)
                 .onSuccess {
                     _sideEffect.emit(FeedProfileSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
-                    _uiState.update { currentState ->
-                        val successState =
-                            currentState as? UiState.Success ?: return@update currentState
-
-                        val updatedSharedDiaries = successState.data.sharedDiaries
+                    _uiState.updateSuccess { currentState ->
+                        val updatedSharedDiaries = currentState.sharedDiaries
                             .filter { it.diaryId != diaryId }
                             .toImmutableList()
 
-                        successState.copy(
-                            data = successState.data.copy(sharedDiaries = updatedSharedDiaries)
-                        )
+                        currentState.copy(sharedDiaries = updatedSharedDiaries)
                     }
                 }
                 .onLogFailure {
                     _sideEffect.emit(FeedProfileSideEffect.ShowToast("일기 비공개에 실패했습니다."))
                 }
-        }*/
+        }
     }
 
     fun updateFollowingState(isCurrentlyFollowing: Boolean) {
@@ -206,18 +186,15 @@ internal class FeedProfileViewModel @Inject constructor(
             }
 
             result.onSuccess {
-                _uiState.update { currentState ->
-                    val successState = currentState as? UiState.Success ?: return@update currentState
-                    val currentProfile = successState.data.feedProfileInfo
+                _uiState.updateSuccess { currentState ->
+                    val currentProfile = currentState.feedProfileInfo
 
                     val updatedProfile = currentProfile.copy(
                         isFollowing = !isCurrentlyFollowing,
                         follower = if (isCurrentlyFollowing) currentProfile.follower - 1 else currentProfile.follower + 1
                     )
 
-                    successState.copy(
-                        data = successState.data.copy(feedProfileInfo = updatedProfile)
-                    )
+                    currentState.copy(feedProfileInfo = updatedProfile)
                 }
             }.onFailure {
                 _sideEffect.emit(FeedProfileSideEffect.ShowToast("팔로우 상태 변경에 실패했습니다."))
