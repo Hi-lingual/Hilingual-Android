@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -56,7 +55,6 @@ internal class NotificationSettingViewModel @Inject constructor(
     private fun observeMarketingToggle() {
         marketingToggleFlow
             .debounce(400L)
-            .distinctUntilChanged()
             .onEach { isChecked ->
                 if (serverState.value.isMarketingChecked != isChecked) {
                     updateNotificationSetting(NotiType.MARKETING)
@@ -68,7 +66,6 @@ internal class NotificationSettingViewModel @Inject constructor(
     private fun observeFeedToggle() {
         feedToggleFlow
             .debounce(400L)
-            .distinctUntilChanged()
             .onEach { isChecked ->
                 if (serverState.value.isFeedChecked != isChecked) {
                     updateNotificationSetting(NotiType.FEED)
@@ -78,14 +75,18 @@ internal class NotificationSettingViewModel @Inject constructor(
     }
 
     fun onMarketingCheckedChange(isChecked: Boolean) {
-        val currentState = (_uiState.value as? UiState.Success)?.data ?: return
-        _uiState.update { UiState.Success(currentState.copy(isMarketingChecked = isChecked)) }
+        val currentUiState = _uiState.value
+        if (currentUiState !is UiState.Success) return
+
+        _uiState.update { UiState.Success(currentUiState.data.copy(isMarketingChecked = isChecked)) }
         viewModelScope.launch { marketingToggleFlow.emit(isChecked) }
     }
 
     fun onFeedCheckedChange(isChecked: Boolean) {
-        val currentState = (_uiState.value as? UiState.Success)?.data ?: return
-        _uiState.update { UiState.Success(currentState.copy(isFeedChecked = isChecked)) }
+        val currentUiState = _uiState.value
+        if (currentUiState !is UiState.Success) return
+
+        _uiState.update { UiState.Success(currentUiState.data.copy(isFeedChecked = isChecked)) }
         viewModelScope.launch { feedToggleFlow.emit(isChecked) }
     }
 
