@@ -97,32 +97,33 @@ internal class FeedViewModel @Inject constructor(
 
     fun toggleIsLiked(diaryId: Long, isLiked: Boolean) {
         viewModelScope.launch {
-            // TODO: API 성공 후 좋아요 수 증가
-            _uiState.update { currentState ->
-                currentState.copy(
-                    recommendFeedList = currentState.recommendFeedList.updateIfSuccess { list ->
-                        updateSingleItem(
-                            list = list.toPersistentList(),
-                            diaryId = diaryId
-                        ) { item ->
-                            item.copy(
-                                isLiked = isLiked,
-                                likeCount = item.likeCount + if (isLiked) 1 else -1
-                            )
+            feedRepository.postIsLike(diaryId, isLiked).onSuccess {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        recommendFeedList = currentState.recommendFeedList.updateIfSuccess { list ->
+                            updateSingleItem(
+                                list = list.toPersistentList(),
+                                diaryId = diaryId
+                            ) { item ->
+                                item.copy(
+                                    isLiked = isLiked,
+                                    likeCount = item.likeCount + if (isLiked) 1 else -1
+                                )
+                            }
+                        },
+                        followingFeedList = currentState.followingFeedList.updateIfSuccess { list ->
+                            updateSingleItem(
+                                list = list.toPersistentList(),
+                                diaryId = diaryId
+                            ) { item ->
+                                item.copy(
+                                    isLiked = isLiked,
+                                    likeCount = item.likeCount + if (isLiked) 1 else -1
+                                )
+                            }
                         }
-                    },
-                    followingFeedList = currentState.followingFeedList.updateIfSuccess { list ->
-                        updateSingleItem(
-                            list = list.toPersistentList(),
-                            diaryId = diaryId
-                        ) { item ->
-                            item.copy(
-                                isLiked = isLiked,
-                                likeCount = item.likeCount + if (isLiked) 1 else -1
-                            )
-                        }
-                    }
-                )
+                    )
+                }
             }
         }
     }
