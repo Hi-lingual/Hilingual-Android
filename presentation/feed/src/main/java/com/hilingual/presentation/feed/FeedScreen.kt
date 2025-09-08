@@ -41,6 +41,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
+import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -64,12 +66,17 @@ internal fun FeedRoute(
     val context = LocalContext.current
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val dialogTrigger = LocalDialogTrigger.current
     val toastTrigger = LocalToastTrigger.current
 
-    viewModel.sideEffect.collectSideEffect {
-        when (it) {
+    viewModel.sideEffect.collectSideEffect { sideEffect ->
+        when (sideEffect) {
             is FeedSideEffect.ShowToast -> {
-                toastTrigger(it.message)
+                toastTrigger(sideEffect.message)
+            }
+
+            is FeedSideEffect.ShowRetryDialog -> {
+                dialogTrigger.show(sideEffect.onRetry)
             }
         }
     }
@@ -170,6 +177,7 @@ private fun FeedScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .statusBarColor(HilingualTheme.colors.white)
             .background(HilingualTheme.colors.white)
             .padding(paddingValues)
     ) {

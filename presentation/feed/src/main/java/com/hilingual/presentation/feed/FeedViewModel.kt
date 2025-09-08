@@ -54,7 +54,7 @@ internal class FeedViewModel @Inject constructor(
 
     fun readAllFeed() {
         viewModelScope.launch {
-            _sideEffect.emit(FeedSideEffect.ShowToast("피드의 일기를 모두 확인했어요."))
+            emitToastSideEffect("피드의 일기를 모두 확인했어요.")
         }
     }
 
@@ -68,7 +68,9 @@ internal class FeedViewModel @Inject constructor(
                         )
                     }
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    emitRetrySideEffect { getRecommendFeeds() }
+                }
         }
     }
 
@@ -83,7 +85,9 @@ internal class FeedViewModel @Inject constructor(
                         )
                     }
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    emitRetrySideEffect { getFollowingFeeds() }
+                }
         }
     }
 
@@ -124,7 +128,7 @@ internal class FeedViewModel @Inject constructor(
         viewModelScope.launch {
             diaryRepository.patchDiaryUnpublish(diaryId)
                 .onSuccess {
-                    _sideEffect.emit(FeedSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
+                    emitToastSideEffect("일기가 비공개 되었어요.")
                     _uiState.update { currentState ->
                         currentState.copy(
                             recommendFeedList = currentState.recommendFeedList.updateIfSuccess { list ->
@@ -173,8 +177,17 @@ internal class FeedViewModel @Inject constructor(
             list
         }
     }
+
+    private suspend fun emitRetrySideEffect(onRetry: () -> Unit) {
+        _sideEffect.emit(FeedSideEffect.ShowRetryDialog(onRetry = onRetry))
+    }
+
+    private suspend fun emitToastSideEffect(message: String) {
+        _sideEffect.emit(FeedSideEffect.ShowToast(message))
+    }
 }
 
 sealed interface FeedSideEffect {
+    data class ShowRetryDialog(val onRetry: () -> Unit) : FeedSideEffect
     data class ShowToast(val message: String) : FeedSideEffect
 }
