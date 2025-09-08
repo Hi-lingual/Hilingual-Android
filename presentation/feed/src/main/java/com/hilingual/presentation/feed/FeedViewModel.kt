@@ -35,7 +35,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -72,9 +71,7 @@ internal class FeedViewModel @Inject constructor(
                         )
                     }
                 }
-                .onLogFailure { e ->
-                    Timber.d("추천 피드 조회 실패: $e")
-                }
+                .onLogFailure { }
         }
     }
 
@@ -91,9 +88,7 @@ internal class FeedViewModel @Inject constructor(
                         )
                     }
                 }
-                .onLogFailure { e ->
-                    Timber.d("팔로잉 피드 조회 실패: $e")
-                }
+                .onLogFailure { }
         }
     }
 
@@ -120,7 +115,7 @@ internal class FeedViewModel @Inject constructor(
                             ) { item ->
                                 item.copy(
                                     isLiked = isLiked,
-                                    likeCount = item.likeCount + if (isLiked) 1 else -1
+                                    likeCount = (item.likeCount + if (isLiked) 1 else -1).coerceAtLeast(0)
                                 )
                             }
                         }
@@ -132,19 +127,20 @@ internal class FeedViewModel @Inject constructor(
 
     fun diaryUnpublish(diaryId: Long) {
         viewModelScope.launch {
-            diaryRepository.patchDiaryUnpublish(diaryId).onSuccess {
-                _sideEffect.emit(FeedSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        recommendFeedList = currentState.recommendFeedList.updateIfSuccess { list ->
-                            removeSingleItem(list.toPersistentList(), diaryId)
-                        },
-                        followingFeedList = currentState.followingFeedList.updateIfSuccess { list ->
-                            removeSingleItem(list.toPersistentList(), diaryId)
-                        }
-                    )
-                }
-            }
+            diaryRepository.patchDiaryUnpublish(diaryId)
+                .onSuccess {
+                    _sideEffect.emit(FeedSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            recommendFeedList = currentState.recommendFeedList.updateIfSuccess { list ->
+                                removeSingleItem(list.toPersistentList(), diaryId)
+                            },
+                            followingFeedList = currentState.followingFeedList.updateIfSuccess { list ->
+                                removeSingleItem(list.toPersistentList(), diaryId)
+                            }
+                        )
+                    }
+                }.onLogFailure { }
         }
     }
 
