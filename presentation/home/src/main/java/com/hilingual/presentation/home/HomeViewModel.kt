@@ -29,6 +29,7 @@ import com.hilingual.presentation.home.util.isDateWritten
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,7 +53,10 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<HomeUiState>> = _uiState.asStateFlow()
 
-    private val _sideEffect = MutableSharedFlow<HomeSideEffect>()
+    private val _sideEffect = MutableSharedFlow<HomeSideEffect>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
 
     fun loadInitialData() {
@@ -141,9 +145,13 @@ class HomeViewModel @Inject constructor(
                             diaryThumbnail = it.diaryThumbnail?.copy(isPublished = true)
                         )
                     }
+                    emitSnackBarSideEffect(
+                        message = "일기가 게시되었어요!",
+                        actionLabel = "보러가기"
+                    )
                 }
                 .onLogFailure {
-                    // TODO: Show error to user
+                    emitRetrySideEffect { }
                 }
         }
     }
@@ -161,9 +169,10 @@ class HomeViewModel @Inject constructor(
                             diaryThumbnail = it.diaryThumbnail?.copy(isPublished = false)
                         )
                     }
+                    emitToastSideEffect("일기가 비공개 되었어요.")
                 }
                 .onLogFailure {
-                    // TODO: Show error to user
+                    emitRetrySideEffect { }
                 }
         }
     }
@@ -178,15 +187,18 @@ class HomeViewModel @Inject constructor(
             diaryRepository.deleteDiary(diaryId)
                 .onSuccess {
                     _uiState.updateSuccess { state ->
-                        val newDateList = state.dateList.filter { it.date != selectedDate.toString() }.toImmutableList()
+                        val newDateList =
+                            state.dateList.filter { it.date != selectedDate.toString() }
+                                .toImmutableList()
                         state.copy(
                             dateList = newDateList
                         )
                     }
                     updateContentForDate(selectedDate)
+                    emitToastSideEffect("삭제가 완료되었어요.")
                 }
                 .onLogFailure {
-                    // TODO: Show error to user
+                    emitRetrySideEffect { }
                 }
         }
     }
@@ -221,8 +233,18 @@ class HomeViewModel @Inject constructor(
 
     private suspend fun emitRetrySideEffect(onRetry: () -> Unit) =
         _sideEffect.emit(HomeSideEffect.ShowRetryDialog(onRetry = onRetry))
+
+    private suspend fun emitToastSideEffect(text: String) =
+        _sideEffect.emit(HomeSideEffect.ShowToast(text = text))
+
+    private suspend fun emitSnackBarSideEffect(message: String, actionLabel: String) =
+        _sideEffect.emit(HomeSideEffect.ShowSnackBar(message = message, actionLabel = actionLabel))
 }
 
 sealed interface HomeSideEffect {
     data class ShowRetryDialog(val onRetry: () -> Unit) : HomeSideEffect
+
+    data class ShowToast(val text: String) : HomeSideEffect
+
+    data class ShowSnackBar(val message: String, val actionLabel: String) : HomeSideEffect
 }

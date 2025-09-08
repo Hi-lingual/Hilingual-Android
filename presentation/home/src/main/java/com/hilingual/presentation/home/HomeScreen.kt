@@ -48,7 +48,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.model.SnackbarRequest
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.trigger.LocalSnackbarTrigger
+import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
@@ -76,15 +79,28 @@ internal fun HomeRoute(
     navigateToDiaryFeedback: (diaryId: Long) -> Unit,
     navigateToNotification: () -> Unit,
     navigateToFeedProfile: (userId: Long) -> Unit,
+    navigateToFeed: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
+    val toastTrigger = LocalToastTrigger.current
+    val snackbarTrigger = LocalSnackbarTrigger.current
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is HomeSideEffect.ShowRetryDialog -> {
-                dialogTrigger.show(sideEffect.onRetry)
+            is HomeSideEffect.ShowRetryDialog -> dialogTrigger.show(sideEffect.onRetry)
+
+            is HomeSideEffect.ShowToast -> toastTrigger(sideEffect.text)
+
+            is HomeSideEffect.ShowSnackBar -> {
+                snackbarTrigger(
+                    SnackbarRequest(
+                        message = sideEffect.message,
+                        buttonText = sideEffect.actionLabel,
+                        onClick = navigateToFeed
+                    )
+                )
             }
         }
     }
