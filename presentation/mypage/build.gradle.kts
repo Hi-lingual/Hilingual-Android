@@ -25,4 +25,5 @@ android {
 
 dependencies {
     implementation(libs.jakewharton.process.phoenix)
+    implementation(projects.data.user)
 }

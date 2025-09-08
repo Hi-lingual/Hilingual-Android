@@ -4,6 +4,8 @@ import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.feed.dto.response.FeedProfileResponseDto
 import com.hilingual.data.feed.dto.response.LikedDiariesResponseDto
 import com.hilingual.data.feed.dto.response.SharedDiariesResponseDto
+import com.hilingual.data.feed.dto.request.LikeRequestDto
+import com.hilingual.data.feed.dto.response.DiaryProfileResponseDto
 
 interface FeedRemoteDataSource {
     suspend fun getFeedProfile(
@@ -17,4 +19,13 @@ interface FeedRemoteDataSource {
     suspend fun getLikedDiaries(
         targetUserId: Long
     ): BaseResponse<LikedDiariesResponseDto>
+
+    suspend fun getFeedDiaryProfile(
+        diaryId: Long
+    ): BaseResponse<DiaryProfileResponseDto>
+
+    suspend fun postIsLike(
+        diaryId: Long,
+        likeRequestDto: LikeRequestDto
+    ): BaseResponse<Unit>
 }

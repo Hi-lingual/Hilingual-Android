@@ -4,8 +4,12 @@ import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.feed.dto.response.FeedProfileResponseDto
 import com.hilingual.data.feed.dto.response.LikedDiariesResponseDto
 import com.hilingual.data.feed.dto.response.SharedDiariesResponseDto
+import com.hilingual.data.feed.dto.request.LikeRequestDto
+import com.hilingual.data.feed.dto.response.DiaryProfileResponseDto
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.POST
 
 interface FeedService {
     @GET("/api/v1/feed/profiles/{targetUserId}")
@@ -22,4 +26,15 @@ interface FeedService {
     suspend fun getLikedDiaries(
         @Path("targetUserId") targetUserId: Long
     ): BaseResponse<LikedDiariesResponseDto>
+
+    @GET("/api/v1/feed/{diaryId}/users/profiles")
+    suspend fun getFeedDiaryProfile(
+        @Path("diaryId") diaryId: Long
+    ): BaseResponse<DiaryProfileResponseDto>
+
+    @POST("/api/v1/feed/likes/{diaryId}")
+    suspend fun postIsLike(
+        @Path("diaryId") diaryId: Long,
+        @Body likeRequestDto: LikeRequestDto
+    ): BaseResponse<Unit>
 }

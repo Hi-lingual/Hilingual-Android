@@ -16,7 +16,7 @@
 package com.hilingual.presentation.home.model
 
 import androidx.compose.runtime.Immutable
-import com.hilingual.data.user.model.UserInfoModel
+import com.hilingual.data.user.model.user.UserInfoModel
 
 @Immutable
 data class UserProfileUiModel(
