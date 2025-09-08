@@ -9,6 +9,7 @@ import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.feed.model.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,6 +30,11 @@ internal class FeedSearchViewModel @Inject constructor(
     }
 
     fun searchUser() {
+        if (_uiState.value.searchWord.isBlank()) {
+            _uiState.update { it.copy(searchResultUserList = UiState.Success(persistentListOf())) }
+            return
+        }
+
         viewModelScope.launch {
             feedRepository.getUserSearchResult(_uiState.value.searchWord).onSuccess { searchResult ->
                 _uiState.value = _uiState.value.copy(
