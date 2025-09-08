@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -84,7 +85,7 @@ internal class FeedDiaryViewModel @Inject constructor(
                     )
                 }
             }.onSuccess { combinedState ->
-                _uiState.value = UiState.Success(combinedState)
+                _uiState.update { UiState.Success(combinedState) }
             }.onLogFailure {
                 _sideEffect.emit(FeedDiarySideEffect.ShowRetryDialog(onRetry = ::loadInitialData))
             }
@@ -99,7 +100,7 @@ internal class FeedDiaryViewModel @Inject constructor(
                         it.copy(
                             profileContent = it.profileContent.copy(
                                 isLiked = isLiked,
-                                likeCount = it.profileContent.likeCount + if (isLiked) 1 else -1
+                                likeCount = (it.profileContent.likeCount + if (isLiked) 1 else -1).coerceAtLeast(0)
                             )
                         )
                     }
