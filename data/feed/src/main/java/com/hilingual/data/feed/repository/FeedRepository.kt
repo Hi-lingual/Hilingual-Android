@@ -4,6 +4,7 @@ import com.hilingual.data.feed.model.FeedDiaryProfileModel
 import com.hilingual.data.feed.model.FeedProfileModel
 import com.hilingual.data.feed.model.LikedDiariesModel
 import com.hilingual.data.feed.model.SharedDiariesModel
+import com.hilingual.data.feed.model.FeedListModel
 
 interface FeedRepository {
     suspend fun getFeedProfile(
@@ -17,6 +18,10 @@ interface FeedRepository {
     suspend fun getLikedDiaries(
         targetUserId: Long
     ): Result<LikedDiariesModel>
+
+    suspend fun getRecommendFeeds(): Result<FeedListModel>
+
+    suspend fun getFollowingFeeds(): Result<FeedListModel>
 
     suspend fun getFeedDiaryProfile(diaryId: Long): Result<FeedDiaryProfileModel>
 

@@ -128,7 +128,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @LoginClient
+    @NoAuthClient
     fun provideLoginOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient = OkHttpClient.Builder()
@@ -174,9 +174,9 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @LoginClient
+    @NoAuthClient
     fun provideLoginRetrofit(
-        @LoginClient client: OkHttpClient,
+        @NoAuthClient client: OkHttpClient,
         factory: Converter.Factory
     ): Retrofit =
         Retrofit.Builder()

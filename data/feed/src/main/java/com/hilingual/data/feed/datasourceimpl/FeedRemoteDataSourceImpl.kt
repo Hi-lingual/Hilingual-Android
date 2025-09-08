@@ -7,6 +7,8 @@ import com.hilingual.data.feed.dto.response.DiaryProfileResponseDto
 import com.hilingual.data.feed.dto.response.FeedProfileResponseDto
 import com.hilingual.data.feed.dto.response.LikedDiariesResponseDto
 import com.hilingual.data.feed.dto.response.SharedDiariesResponseDto
+import com.hilingual.data.feed.dto.response.FollowingFeedResponseDto
+import com.hilingual.data.feed.dto.response.RecommendFeedResponseDto
 import com.hilingual.data.feed.service.FeedService
 import javax.inject.Inject
 
@@ -21,6 +23,12 @@ internal class FeedRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getLikedDiaries(targetUserId: Long): BaseResponse<LikedDiariesResponseDto> =
         feedService.getLikedDiaries(targetUserId = targetUserId)
+
+    override suspend fun getRecommendFeeds(): BaseResponse<RecommendFeedResponseDto> =
+        feedService.getRecommendFeeds()
+
+    override suspend fun getFollowingFeeds(): BaseResponse<FollowingFeedResponseDto> =
+        feedService.getFollowingFeeds()
 
     override suspend fun getFeedDiaryProfile(diaryId: Long): BaseResponse<DiaryProfileResponseDto> =
         feedService.getFeedDiaryProfile(diaryId)

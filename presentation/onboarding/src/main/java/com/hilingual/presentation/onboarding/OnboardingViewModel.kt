@@ -77,13 +77,21 @@ internal class OnboardingViewModel @Inject constructor(
     }
 
     fun onRegisterClick(nickname: String, isMarketingAgreed: Boolean, imageUri: Uri?) {
+        if (uiState.value.isLoading) return
         viewModelScope.launch {
-            userRepository.postUserProfile(UserProfileModel(profileImg = "", nickname = nickname))
+            _uiState.update { it.copy(isLoading = true) }
+            val userProfile = UserProfileModel(
+                nickname = nickname,
+                adAlarmAgree = isMarketingAgreed,
+                imageUri = imageUri
+            )
+            userRepository.postUserProfile(userProfile)
                 .onSuccess {
                     userRepository.saveRegisterStatus(true)
                     _sideEffect.emit(OnboardingSideEffect.NavigateToHome)
                 }
                 .onLogFailure {
+                    _uiState.update { it.copy(isLoading = false) }
                     _sideEffect.emit(OnboardingSideEffect.ShowRetryDialog { onRegisterClick(nickname, isMarketingAgreed, imageUri) })
                 }
         }

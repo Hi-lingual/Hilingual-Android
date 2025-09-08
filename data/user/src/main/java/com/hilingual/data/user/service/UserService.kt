@@ -16,7 +16,7 @@
 package com.hilingual.data.user.service
 
 import com.hilingual.core.network.BaseResponse
-import com.hilingual.data.user.dto.request.user.UserProfileRequestDto
+import com.hilingual.data.user.dto.request.RegisterProfileRequestDto
 import com.hilingual.data.user.dto.response.notification.NotificationDetailResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
@@ -34,14 +34,14 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 internal interface UserService {
-    @GET("/api/v1/users/profile")
+    @GET("/api/v1/users/profile/check")
     suspend fun getNicknameAvailability(
         @Query("nickname") nickname: String
     ): BaseResponse<NicknameResponseDto>
 
     @POST("/api/v1/users/profile")
     suspend fun postUserProfile(
-        @Body userProfileRequestDto: UserProfileRequestDto
+        @Body userProfileRequestDto: RegisterProfileRequestDto
     ): BaseResponse<Unit>
 
     @GET("/api/v1/users/home/info")
