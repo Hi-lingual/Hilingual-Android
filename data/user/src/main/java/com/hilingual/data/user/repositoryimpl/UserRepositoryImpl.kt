@@ -19,12 +19,8 @@ import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.data.presigned.repository.FileUploaderRepository
 import com.hilingual.data.user.datasource.UserRemoteDataSource
-import com.hilingual.data.user.model.FollowUserListResultModel
-import com.hilingual.data.user.model.NicknameValidationResult
-import com.hilingual.data.user.model.UserInfoModel
-import com.hilingual.data.user.model.UserProfileModel
-import com.hilingual.data.user.model.toDto
-import com.hilingual.data.user.model.toModel
+import com.hilingual.data.user.model.follow.FollowUserListResultModel
+import com.hilingual.data.user.model.follow.toModel
 import com.hilingual.data.user.model.notification.NotificationDetailModel
 import com.hilingual.data.user.model.notification.NotificationModel
 import com.hilingual.data.user.model.notification.NotificationSettingsModel

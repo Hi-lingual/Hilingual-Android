@@ -16,12 +16,9 @@
 package com.hilingual.data.user.service
 
 import com.hilingual.core.network.BaseResponse
-import com.hilingual.data.user.dto.reponse.FollowerResponseDto
-import com.hilingual.data.user.dto.reponse.FollowingResponseDto
-import com.hilingual.data.user.dto.reponse.NicknameResponseDto
-import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
-import com.hilingual.data.user.dto.request.UserProfileRequestDto
 import com.hilingual.data.user.dto.request.RegisterProfileRequestDto
+import com.hilingual.data.user.dto.response.follow.FollowerResponseDto
+import com.hilingual.data.user.dto.response.follow.FollowingResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationDetailResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto

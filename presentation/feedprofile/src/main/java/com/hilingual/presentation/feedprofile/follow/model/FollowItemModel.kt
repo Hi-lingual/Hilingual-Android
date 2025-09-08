@@ -1,8 +1,8 @@
 package com.hilingual.presentation.feedprofile.follow.model
 
 import androidx.compose.runtime.Immutable
-import com.hilingual.data.user.model.FollowState
-import com.hilingual.data.user.model.FollowUserListResultModel
+import com.hilingual.data.user.model.follow.FollowState
+import com.hilingual.data.user.model.follow.FollowUserListResultModel
 
 @Immutable
 data class FollowItemModel(
