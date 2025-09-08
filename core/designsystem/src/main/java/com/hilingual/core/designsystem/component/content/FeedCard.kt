@@ -278,7 +278,7 @@ private fun FeedDropDownMenu(
         onExpandedChange = onExpandedChange
     ) {
         HilingualDropdownMenuItem(
-            text = if (isMine) "비공개하기" else "신고하기",
+            text = if (isMine) "비공개하기" else "게시글 신고하기",
             iconResId = if (isMine) R.drawable.ic_hide_24 else R.drawable.ic_report_24,
             onClick = {
                 isDialogVisible = true
@@ -391,8 +391,8 @@ private fun FeedContentPreviewWithImage() {
                 if (isLiked) likeCount++ else likeCount--
             },
             isMine = true,
-            onUnpublishClick = { TODO() },
-            onReportClick = { TODO() }
+            onUnpublishClick = { },
+            onReportClick = { }
         )
     }
 }
@@ -424,8 +424,8 @@ private fun FeedContentPreviewNoImage() {
                 if (isLiked) likeCount++ else likeCount--
             },
             isMine = true,
-            onUnpublishClick = { TODO() },
-            onReportClick = { TODO() }
+            onUnpublishClick = { },
+            onReportClick = { }
         )
     }
 }

@@ -18,9 +18,9 @@ package com.hilingual.presentation.feed.model
 import androidx.compose.runtime.Immutable
 
 @Immutable
-internal data class FeedListItemUiModel(
+internal data class FeedItemUiModel(
     val userId: Long,
-    val profileUrl: String,
+    val profileUrl: String?,
     val nickname: String,
     val streak: Int,
     val sharedDateInMinutes: Long,
