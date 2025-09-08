@@ -134,7 +134,7 @@ internal fun VocaDialog(
             )
 
             Text(
-                text = "$writtenDate 일기에서 저장됨",
+                text = writtenDate,
                 style = HilingualTheme.typography.captionM12,
                 color = HilingualTheme.colors.gray400,
                 modifier = Modifier.align(Alignment.BottomEnd)
