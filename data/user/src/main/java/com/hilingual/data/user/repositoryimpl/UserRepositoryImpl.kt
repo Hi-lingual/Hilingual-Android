@@ -19,10 +19,6 @@ import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.data.presigned.repository.FileUploaderRepository
 import com.hilingual.data.user.datasource.UserRemoteDataSource
-import com.hilingual.data.user.model.NicknameValidationResult
-import com.hilingual.data.user.model.UserInfoModel
-import com.hilingual.data.user.model.UserProfileModel
-import com.hilingual.data.user.model.toModel
 import com.hilingual.data.user.model.notification.NotificationDetailModel
 import com.hilingual.data.user.model.notification.NotificationModel
 import com.hilingual.data.user.model.notification.NotificationSettingsModel
@@ -32,7 +28,6 @@ import com.hilingual.data.user.model.user.NicknameValidationResult
 import com.hilingual.data.user.model.user.UserInfoModel
 import com.hilingual.data.user.model.user.UserLoginInfoModel
 import com.hilingual.data.user.model.user.UserProfileModel
-import com.hilingual.data.user.model.user.toDto
 import com.hilingual.data.user.model.user.toModel
 import com.hilingual.data.user.repository.UserRepository
 import javax.inject.Inject
