@@ -37,9 +37,9 @@ internal class FeedSearchViewModel @Inject constructor(
 
         viewModelScope.launch {
             feedRepository.getUserSearchResult(_uiState.value.searchWord).onSuccess { searchResult ->
-                _uiState.value = _uiState.value.copy(
-                    searchResultUserList = UiState.Success(searchResult.toState().toImmutableList())
-                )
+                _uiState.update {
+                    it.copy(searchResultUserList = UiState.Success(searchResult.toState()))
+                }
             }
         }
     }

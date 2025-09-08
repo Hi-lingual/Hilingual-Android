@@ -2,6 +2,8 @@ package com.hilingual.presentation.feed.model
 
 import com.hilingual.data.feed.model.FollowState
 import com.hilingual.data.feed.model.UserListModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 internal data class UserSearchUiModel(
     val userId: Long,
@@ -10,7 +12,7 @@ internal data class UserSearchUiModel(
     val followState: FollowState
 )
 
-internal fun UserListModel.toState(): List<UserSearchUiModel> {
+internal fun UserListModel.toState(): ImmutableList<UserSearchUiModel> {
     return this.userList.map {
         UserSearchUiModel(
             userId = it.userId,
@@ -18,5 +20,5 @@ internal fun UserListModel.toState(): List<UserSearchUiModel> {
             profileUrl = it.profileImg,
             followState = it.followState
         )
-    }
+    }.toImmutableList()
 }
