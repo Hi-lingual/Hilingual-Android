@@ -96,6 +96,7 @@ dependencies {
     implementation(projects.data.diary)
     implementation(projects.data.user)
     implementation(projects.data.voca)
+    implementation(projects.data.feed)
 
     // other dependencies
     implementation(libs.timber)
