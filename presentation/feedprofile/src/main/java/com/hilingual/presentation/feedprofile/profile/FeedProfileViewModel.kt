@@ -12,7 +12,6 @@ import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
 import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
 import com.hilingual.presentation.feedprofile.profile.model.FeedProfileInfoModel
 import com.hilingual.presentation.feedprofile.profile.model.toState
-import com.hilingual.presentation.feedprofile.profile.navigation.FeedProfile
 import com.hilingual.presentation.feedprofile.profile.navigation.FeedProfileGraph
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
@@ -47,7 +46,6 @@ internal class FeedProfileViewModel @Inject constructor(
 
     private fun loadFeedProfile() {
         viewModelScope.launch {
-
             val feedProfileDeferred = async { feedRepository.getFeedProfile(targetUserId) }
             val sharedDiariesDeferred = async { feedRepository.getSharedDiaries(targetUserId) }
 

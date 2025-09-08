@@ -1,7 +1,7 @@
 package com.hilingual.data.feed.model
 
-import com.hilingual.data.feed.dto.response.SharedDiariesResponseDto
 import com.hilingual.data.feed.dto.response.DiaryDto
+import com.hilingual.data.feed.dto.response.SharedDiariesResponseDto
 import com.hilingual.data.feed.dto.response.SharedDiaryProfileDto
 import javax.annotation.concurrent.Immutable
 
