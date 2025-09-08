@@ -137,18 +137,6 @@ private fun FeedProfileScreen(
         derivedStateOf { profileListState.firstVisibleItemIndex >= 2 }
     }
 
-    val nestedScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                return if (!shouldEnableScroll || profileListState.firstVisibleItemIndex < 2) {
-                    Offset.Zero
-                } else {
-                    Offset.Zero
-                }
-            }
-        }
-    }
-
     val profile = uiState.feedProfileInfo
     val finalScrollEnabled = if (profile.isBlock) false else shouldEnableScroll
 
@@ -165,7 +153,6 @@ private fun FeedProfileScreen(
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
-            .nestedScroll(nestedScrollConnection)
     ) {
         Column(
             modifier = Modifier

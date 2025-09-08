@@ -40,21 +40,15 @@ internal fun DiaryListScreen(
     LaunchedEffect(listState.layoutInfo, diaries.size) {
         val layoutInfo = listState.layoutInfo
 
-        if (diaries.isEmpty()) {
-            onScrollStateChanged?.invoke(false)
-            return@LaunchedEffect
-        }
-
-        if (layoutInfo.visibleItemsInfo.isEmpty()) {
+        if (diaries.isEmpty() || layoutInfo.visibleItemsInfo.isEmpty()) {
             onScrollStateChanged?.invoke(false)
             return@LaunchedEffect
         }
 
         val canScrollDown = listState.canScrollForward
         val canScrollUp = listState.canScrollBackward
-        val needsScroll = canScrollDown || canScrollUp
 
-        onScrollStateChanged?.invoke(needsScroll)
+        onScrollStateChanged?.invoke(canScrollDown || canScrollUp)
     }
 
     LazyColumn(
