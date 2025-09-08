@@ -115,9 +115,9 @@ internal fun HomeRoute(
                 onMonthChanged = viewModel::onMonthChanged,
                 onWriteDiaryClick = navigateToDiaryWrite,
                 onDiaryPreviewClick = navigateToDiaryFeedback,
-                onDeleteClick = { /* TODO: 삭제 by.angrypodo*/ },
-                onPublishClick = { /* TODO: 게시 by.angrypodo*/ },
-                onUnpublishClick = { /* TODO: 비게시 by.angrypodo*/ }
+                onDeleteClick = viewModel::deleteDiary,
+                onPublishClick = viewModel::publishDiary,
+                onUnpublishClick = viewModel::unpublishDiary
             )
         }
 

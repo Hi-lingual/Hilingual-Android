@@ -21,6 +21,7 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.calendar.repository.CalendarRepository
+import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.home.model.toState
 import com.hilingual.presentation.home.util.isDateWritable
@@ -44,7 +45,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val calendarRepository: CalendarRepository
+    private val calendarRepository: CalendarRepository,
+    private val diaryRepository: DiaryRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Loading)
@@ -122,6 +124,69 @@ class HomeViewModel @Inject constructor(
                 }
                 .onLogFailure {
                     emitRetrySideEffect { onMonthChanged(yearMonth) }
+                }
+        }
+    }
+
+    fun publishDiary() {
+        val currentState = uiState.value
+        if (currentState !is UiState.Success) return
+        val diaryId = currentState.data.diaryThumbnail?.diaryId ?: return
+
+        viewModelScope.launch {
+            diaryRepository.patchDiaryPublish(diaryId)
+                .onSuccess {
+                    _uiState.updateSuccess {
+                        it.copy(
+                            diaryThumbnail = it.diaryThumbnail?.copy(isPublished = true)
+                        )
+                    }
+                }
+                .onLogFailure {
+                    // TODO: Show error to user
+                }
+        }
+    }
+
+    fun unpublishDiary() {
+        val currentState = uiState.value
+        if (currentState !is UiState.Success) return
+        val diaryId = currentState.data.diaryThumbnail?.diaryId ?: return
+
+        viewModelScope.launch {
+            diaryRepository.patchDiaryUnpublish(diaryId)
+                .onSuccess {
+                    _uiState.updateSuccess {
+                        it.copy(
+                            diaryThumbnail = it.diaryThumbnail?.copy(isPublished = false)
+                        )
+                    }
+                }
+                .onLogFailure {
+                    // TODO: Show error to user
+                }
+        }
+    }
+
+    fun deleteDiary() {
+        val currentState = uiState.value
+        if (currentState !is UiState.Success) return
+        val diaryId = currentState.data.diaryThumbnail?.diaryId ?: return
+        val selectedDate = currentState.data.selectedDate
+
+        viewModelScope.launch {
+            diaryRepository.deleteDiary(diaryId)
+                .onSuccess {
+                    _uiState.updateSuccess { state ->
+                        val newDateList = state.dateList.filter { it.date != selectedDate.toString() }.toImmutableList()
+                        state.copy(
+                            dateList = newDateList
+                        )
+                    }
+                    updateContentForDate(selectedDate)
+                }
+                .onLogFailure {
+                    // TODO: Show error to user
                 }
         }
     }
