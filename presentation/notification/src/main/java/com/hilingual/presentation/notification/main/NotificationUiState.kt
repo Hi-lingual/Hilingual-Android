@@ -10,7 +10,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 enum class NotificationTab {
     FEED,
-    NOTIFICATION
+    NOTICE
 }
 
 @Immutable
