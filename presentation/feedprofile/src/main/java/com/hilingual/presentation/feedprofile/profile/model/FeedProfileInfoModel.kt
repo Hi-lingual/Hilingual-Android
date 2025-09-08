@@ -19,7 +19,7 @@ data class FeedProfileInfoModel(
 internal fun FeedProfileModel.toState(): FeedProfileInfoModel =
     FeedProfileInfoModel(
         isMine = this.isMine,
-        profileImageUrl = this.profileImageUrl,
+        profileImageUrl = this.profileImageUrl ?: "",
         nickname = this.nickname,
         follower = this.follower,
         following = this.following,

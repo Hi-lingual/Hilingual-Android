@@ -8,7 +8,7 @@ data class FeedProfileResponseDto(
     @SerialName("isMine")
     val isMine: Boolean,
     @SerialName("profileImg")
-    val profileImg: String,
+    val profileImg: String?,
     @SerialName("nickname")
     val nickname: String,
     @SerialName("follower")

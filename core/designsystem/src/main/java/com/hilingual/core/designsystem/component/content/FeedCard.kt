@@ -56,7 +56,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun FeedCard(
-    profileUrl: String?,
+    profileUrl: String,
     onProfileClick: () -> Unit,
     nickname: String,
     streak: Int?,

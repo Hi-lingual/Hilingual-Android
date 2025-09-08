@@ -6,7 +6,7 @@ import javax.annotation.concurrent.Immutable
 @Immutable
 data class FeedProfileModel(
     val isMine: Boolean,
-    val profileImageUrl: String,
+    val profileImageUrl: String?,
     val nickname: String,
     val follower: Int,
     val following: Int,
