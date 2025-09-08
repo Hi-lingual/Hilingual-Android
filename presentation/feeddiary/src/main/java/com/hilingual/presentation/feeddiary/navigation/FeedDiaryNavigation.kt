@@ -43,14 +43,16 @@ fun NavGraphBuilder.feedDiaryNavGraph(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToMyFeedProfile: () -> Unit,
-    navigateToFeedProfile: (userId: Long) -> Unit
+    navigateToFeedProfile: (userId: Long) -> Unit,
+    navigateToVoca: () -> Unit
 ) {
     composable<FeedDiary> {
         FeedDiaryRoute(
             paddingValues = paddingValues,
             navigateUp = navigateUp,
             navigateToMyFeedProfile = navigateToMyFeedProfile,
-            navigateToFeedProfile = navigateToFeedProfile
+            navigateToFeedProfile = navigateToFeedProfile,
+            navigateToVoca = navigateToVoca
         )
     }
 }

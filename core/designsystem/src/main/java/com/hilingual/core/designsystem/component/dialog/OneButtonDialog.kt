@@ -30,7 +30,10 @@ fun OneButtonDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    properties: DialogProperties = DialogProperties(),
+    properties: DialogProperties = DialogProperties(
+        usePlatformDefaultWidth = false,
+        decorFitsSystemWindows = false
+    ),
     content: @Composable () -> Unit
 ) {
     HilingualBasicDialog(

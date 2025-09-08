@@ -240,7 +240,8 @@ internal fun MainScreen(
                     paddingValues = innerPadding,
                     navigateUp = appState::navigateUp,
                     navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
-                    navigateToFeedProfile = appState::navigateToFeedProfile
+                    navigateToFeedProfile = appState::navigateToFeedProfile,
+                    navigateToVoca = appState::navigateToVoca
                 )
 
                 myPageNavGraph(

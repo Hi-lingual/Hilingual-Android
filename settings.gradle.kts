@@ -38,6 +38,7 @@ include(":data:diary")
 include(":data:user")
 include(":data:voca")
 include(":data:feed")
+include(":data:presigned")
 
 //presentation
 include(":presentation:auth")
@@ -54,4 +55,3 @@ include(":presentation:feed")
 include(":presentation:feedprofile")
 include(":presentation:notification")
 include(":presentation:feeddiary")
-include(":data:feed")

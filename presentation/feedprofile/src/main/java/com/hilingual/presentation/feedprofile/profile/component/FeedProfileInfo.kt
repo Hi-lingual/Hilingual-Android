@@ -15,6 +15,7 @@
  */
 package com.hilingual.presentation.feedprofile.profile.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -31,7 +32,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,16 +45,16 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 internal fun FeedProfileInfo(
-    profileImageUrl: String,
+    profileImageUrl: String?,
     nickname: String,
     follower: Int,
     following: Int,
     onFollowClick: () -> Unit,
     streak: Int,
     isMine: Boolean,
-    isFollowing: Boolean,
-    isFollowed: Boolean,
-    isBlock: Boolean,
+    isFollowing: Boolean?,
+    isFollowed: Boolean?,
+    isBlock: Boolean?,
     onActionButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -65,17 +68,28 @@ internal fun FeedProfileInfo(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            NetworkImage(
-                imageUrl = profileImageUrl,
-                modifier = Modifier
-                    .padding(vertical = 4.dp)
-                    .size(60.dp)
-                    .border(
-                        width = 1.dp,
-                        color = HilingualTheme.colors.gray200,
-                        shape = CircleShape
-                    )
-            )
+            val imageModifier = Modifier
+                .padding(vertical = 4.dp)
+                .size(60.dp)
+                .clip(shape = CircleShape)
+                .border(
+                    width = 1.dp,
+                    color = HilingualTheme.colors.gray200,
+                    shape = CircleShape
+                )
+
+            if (profileImageUrl.isNullOrBlank()) {
+                Image(
+                    painter = painterResource(R.drawable.img_default_image),
+                    contentDescription = null,
+                    modifier = imageModifier
+                )
+            } else {
+                NetworkImage(
+                    imageUrl = profileImageUrl,
+                    modifier = imageModifier
+                )
+            }
             Column {
                 Text(
                     text = nickname,
@@ -125,7 +139,7 @@ internal fun FeedProfileInfo(
                             .size(16.dp)
                     )
                     Text(
-                        text = "${streak}일 연속 작성중",
+                        text = "${streak}일 연속 작성 중",
                         style = HilingualTheme.typography.bodyM14,
                         color = if (streak > 0) HilingualTheme.colors.hilingualOrange else HilingualTheme.colors.gray400
                     )
@@ -137,11 +151,11 @@ internal fun FeedProfileInfo(
 
         if (!isMine) {
             FeedUserActionButton(
-                isFilled = isFollowing,
+                isFilled = isFollowing == false,
                 buttonText = when {
-                    isBlock -> "차단 해제"
-                    isFollowing -> "팔로잉"
-                    isFollowed -> "맞팔로우"
+                    isBlock == true -> "차단 해제"
+                    isFollowing == true -> "팔로잉"
+                    isFollowed == true -> "맞팔로우"
                     else -> "팔로우"
                 },
                 onClick = onActionButtonClick,

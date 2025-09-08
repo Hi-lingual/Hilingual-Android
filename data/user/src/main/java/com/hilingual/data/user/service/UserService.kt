@@ -21,23 +21,32 @@ import com.hilingual.data.user.dto.reponse.FollowingResponseDto
 import com.hilingual.data.user.dto.reponse.NicknameResponseDto
 import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
 import com.hilingual.data.user.dto.request.UserProfileRequestDto
+import com.hilingual.data.user.dto.request.RegisterProfileRequestDto
+import com.hilingual.data.user.dto.response.notification.NotificationDetailResponseDto
+import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
+import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
+import com.hilingual.data.user.dto.response.user.BlockListResponseDto
+import com.hilingual.data.user.dto.response.user.NicknameResponseDto
+import com.hilingual.data.user.dto.response.user.UserInfoResponseDto
+import com.hilingual.data.user.dto.response.user.UserLoginInfoResponseDto
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 internal interface UserService {
-    @GET("/api/v1/users/profile")
+    @GET("/api/v1/users/profile/check")
     suspend fun getNicknameAvailability(
         @Query("nickname") nickname: String
     ): BaseResponse<NicknameResponseDto>
 
     @POST("/api/v1/users/profile")
     suspend fun postUserProfile(
-        @Body userProfileRequestDto: UserProfileRequestDto
+        @Body userProfileRequestDto: RegisterProfileRequestDto
     ): BaseResponse<Unit>
 
     @GET("/api/v1/users/home/info")
@@ -62,4 +71,43 @@ internal interface UserService {
     suspend fun deleteFollow(
         @Path("targetUserId") targetUserId: Long
     ): BaseResponse<Unit>
+
+    @GET("/api/v1/users/mypage/info")
+    suspend fun getUserLoginInfo(): BaseResponse<UserLoginInfoResponseDto>
+
+    @GET("/api/v1/users/mypage/blocks")
+    suspend fun getBlockList(): BaseResponse<BlockListResponseDto>
+
+    @PUT("/api/v1/users/block/{targetUserId}")
+    suspend fun putBlockUser(
+        @Path("targetUserId") targetUserId: Long
+    ): BaseResponse<Unit>
+
+    @DELETE("/api/v1/users/unblock/{targetUserId}")
+    suspend fun deleteBlockUser(
+        @Path("targetUserId") targetUserId: Long
+    ): BaseResponse<Unit>
+
+    @GET("/api/v1/users/notifications")
+    suspend fun getNotifications(
+        @Query("tab") tab: String
+    ): BaseResponse<List<NotificationResponseDto>>
+
+    @GET("/api/v1/users/notifications/{noticeId}")
+    suspend fun getNotificationDetail(
+        @Path("noticeId") noticeId: Long
+    ): BaseResponse<NotificationDetailResponseDto>
+
+    @PATCH("/api/v1/users/notifications/{noticeId}/read")
+    suspend fun readNotification(
+        @Path("noticeId") noticeId: Long
+    ): BaseResponse<Unit>
+
+    @GET("/api/v1/users/mypage/noti")
+    suspend fun getNotificationSettings(): BaseResponse<NotificationSettingsResponseDto>
+
+    @PATCH("/api/v1/users/mypage/noti")
+    suspend fun updateNotificationSetting(
+        @Query("notiType") notiType: String
+    ): BaseResponse<NotificationSettingsResponseDto>
 }

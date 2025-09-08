@@ -19,6 +19,14 @@ import com.hilingual.data.user.model.FollowUserListResultModel
 import com.hilingual.data.user.model.NicknameValidationResult
 import com.hilingual.data.user.model.UserInfoModel
 import com.hilingual.data.user.model.UserProfileModel
+import com.hilingual.data.user.model.notification.NotificationDetailModel
+import com.hilingual.data.user.model.notification.NotificationModel
+import com.hilingual.data.user.model.notification.NotificationSettingsModel
+import com.hilingual.data.user.model.user.BlockListModel
+import com.hilingual.data.user.model.user.NicknameValidationResult
+import com.hilingual.data.user.model.user.UserInfoModel
+import com.hilingual.data.user.model.user.UserLoginInfoModel
+import com.hilingual.data.user.model.user.UserProfileModel
 
 interface UserRepository {
     suspend fun getNicknameAvailability(
@@ -30,6 +38,16 @@ interface UserRepository {
     ): Result<Unit>
 
     suspend fun getUserInfo(): Result<UserInfoModel>
+
+    suspend fun getNotifications(tab: String): Result<List<NotificationModel>>
+
+    suspend fun getNotificationDetail(noticeId: Long): Result<NotificationDetailModel>
+
+    suspend fun readNotification(noticeId: Long): Result<Unit>
+
+    suspend fun getNotificationSettings(): Result<NotificationSettingsModel>
+
+    suspend fun updateNotificationSetting(notiType: String): Result<NotificationSettingsModel>
 
     suspend fun saveRegisterStatus(isCompleted: Boolean)
 
@@ -54,4 +72,12 @@ interface UserRepository {
     suspend fun deleteFollow(
         targetUserId: Long
     ): Result<Unit>
+
+    suspend fun getUserLoginInfo(): Result<UserLoginInfoModel>
+
+    suspend fun getBlockList(): Result<BlockListModel>
+
+    suspend fun putBlockUser(targetUserId: Long): Result<Unit>
+
+    suspend fun deleteBlockUser(targetUserId: Long): Result<Unit>
 }
