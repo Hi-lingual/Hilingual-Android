@@ -16,6 +16,7 @@
 package com.hilingual.data.diary.repository
 
 import android.net.Uri
+import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.DiaryContentModel
 import com.hilingual.data.diary.model.DiaryFeedbackCreateModel
 import com.hilingual.data.diary.model.DiaryFeedbackModel
@@ -33,11 +34,23 @@ interface DiaryRepository {
     suspend fun patchPhraseBookmark(
         phraseId: Long,
         bookmarkModel: PhraseBookmarkModel
-    ): Result<Unit>
+    ): Result<BookmarkResult>
 
     suspend fun postDiaryFeedbackCreate(
         originalText: String,
         date: LocalDate,
         imageFileUri: Uri? = null
     ): Result<DiaryFeedbackCreateModel>
+
+    suspend fun patchDiaryPublish(
+        diaryId: Long
+    ): Result<Unit>
+
+    suspend fun patchDiaryUnpublish(
+        diaryId: Long
+    ): Result<Unit>
+
+    suspend fun deleteDiary(
+        diaryId: Long
+    ): Result<Unit>
 }

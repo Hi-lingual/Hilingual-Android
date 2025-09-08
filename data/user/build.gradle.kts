@@ -22,3 +22,7 @@ plugins {
 android {
     setNamespace("data.user")
 }
+
+dependencies {
+    implementation(projects.data.presigned)
+}

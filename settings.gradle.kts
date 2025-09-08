@@ -37,6 +37,8 @@ include(":data:calendar")
 include(":data:diary")
 include(":data:user")
 include(":data:voca")
+include(":data:feed")
+include(":data:presigned")
 
 //presentation
 include(":presentation:auth")

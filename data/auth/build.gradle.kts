@@ -27,12 +27,21 @@ val properties = Properties().apply {
 android {
     setNamespace("data.auth")
 
-    defaultConfig {
-        buildConfigField(
-            "String",
-            "GOOGLE_WEB_CLIENT_ID",
-            properties["google.client.id"] as String
-        )
+    buildTypes {
+        getByName("debug") {
+            buildConfigField(
+                "String",
+                "GOOGLE_WEB_CLIENT_ID",
+                properties["dev.google.client.id"] as String
+            )
+        }
+        getByName("release") {
+            buildConfigField(
+                "String",
+                "GOOGLE_WEB_CLIENT_ID",
+                properties["prod.google.client.id"] as String
+            )
+        }
     }
 
     buildFeatures {
@@ -41,9 +50,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:common"))
-    implementation(project(":core:network"))
-
     // Google Auth
     api(libs.androidx.credentials)
     api(libs.googleid)

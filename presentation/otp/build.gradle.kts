@@ -22,3 +22,8 @@ plugins {
 android {
     setNamespace("presentation.otp")
 }
+
+dependencies {
+    implementation(projects.data.user)
+    implementation(projects.data.auth)
+}

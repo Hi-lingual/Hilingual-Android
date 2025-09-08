@@ -2,7 +2,7 @@ package com.hilingual.presentation.feed.search
 
 import androidx.lifecycle.ViewModel
 import com.hilingual.core.common.util.UiState
-import com.hilingual.presentation.feed.model.FollowState
+import com.hilingual.data.feed.model.FollowState
 import com.hilingual.presentation.feed.model.UserSearchUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -47,10 +47,29 @@ internal class FeedSearchViewModel @Inject constructor() : ViewModel() {
     }
 
     fun updateFollowingState(userId: Long, currentIsFollowing: Boolean) {
-        if (currentIsFollowing) {
-            // TODO: 팔로우 취소 API 호출
-        } else {
-            // TODO: 팔로우 등록 API 호출
+        // TODO: currentIsFollowing에 따라 취소/등록 API 호출
+        _uiState.update { currentState ->
+            val oldState = currentState.searchResultUserList
+
+            if (oldState is UiState.Success) {
+                val updatedList = oldState.data.map { user ->
+                    if (user.userId == userId) {
+                        val newState = FollowState.getValueByFollowState(
+                            isFollowing = !currentIsFollowing,
+                            isFollowed = user.followState.isFollowed
+                        )
+                        user.copy(followState = newState)
+                    } else {
+                        user
+                    }
+                }.toImmutableList()
+
+                currentState.copy(
+                    searchResultUserList = UiState.Success(updatedList)
+                )
+            } else {
+                currentState
+            }
         }
     }
 
@@ -70,7 +89,7 @@ internal class FeedSearchViewModel @Inject constructor() : ViewModel() {
             ),
             UserSearchUiModel(
                 userId = 3L,
-                nickname = "Daljeong",
+                nickname = "Daljyeong",
                 profileUrl = "",
                 followState = FollowState.NONE
             ),

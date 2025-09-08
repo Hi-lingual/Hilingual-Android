@@ -78,7 +78,7 @@ private val terms = persistentListOf(
         link = UrlConstant.ONBOARDING_PRIVACY_POLICY
     ),
     Term(
-        text = "광고성 정보 수신 동의 (선택)",
+        text = "앱 내 광고성 정보 수신 동의 (선택)",
         type = TermType.MARKETING
     )
 )
@@ -87,6 +87,7 @@ private val terms = persistentListOf(
 @Composable
 internal fun TermsBottomSheet(
     isVisible: Boolean,
+    isLoading: Boolean,
     onDismiss: () -> Unit,
     onStartClick: (isMarketingAgreed: Boolean) -> Unit,
     onTermLinkClick: (url: String) -> Unit,
@@ -181,7 +182,7 @@ internal fun TermsBottomSheet(
             HilingualButton(
                 text = "시작하기",
                 onClick = { onStartClick(isMarketingAgreed) },
-                enableProvider = { isStartButtonEnabled }
+                enableProvider = { isStartButtonEnabled && !isLoading }
             )
         }
     }
@@ -229,6 +230,7 @@ private fun TermsBottomSheetPreview() {
             isVisible = isVisible,
             onDismiss = { isVisible = false },
             onStartClick = {},
+            isLoading = false,
             onTermLinkClick = {}
         )
     }

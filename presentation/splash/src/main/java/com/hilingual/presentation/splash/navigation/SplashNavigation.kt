@@ -42,8 +42,7 @@ fun NavController.navigateToSplash() {
 
 fun NavGraphBuilder.splashNavGraph(
     navigateToAuth: () -> Unit,
-    navigateToHome: () -> Unit,
-    navigateToOnboarding: () -> Unit
+    navigateToHome: () -> Unit
 ) {
     composable<Splash>(
         exitTransition = { fadeOut(tween(500), 0.9999f) }
@@ -51,7 +50,6 @@ fun NavGraphBuilder.splashNavGraph(
         SplashRoute(
             navigateToAuth = navigateToAuth,
             navigateToHome = navigateToHome,
-            navigateToOnboarding = navigateToOnboarding,
             animatedVisibilityScope = this
         )
     }

@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -54,7 +55,7 @@ class HomeViewModel @Inject constructor(
 
     fun loadInitialData() {
         viewModelScope.launch {
-            _uiState.value = UiState.Loading
+            _uiState.update { UiState.Loading }
             val today = LocalDate.now()
 
             val userInfoDeferred = async { userRepository.getUserInfo() }
@@ -62,25 +63,31 @@ class HomeViewModel @Inject constructor(
 
             val userInfoResult = userInfoDeferred.await()
             val calendarResult = calendarDeferred.await()
+
             delay(200)
-            userInfoResult.onSuccess { userInfo ->
-                calendarResult.onSuccess { calendarData ->
-                    _uiState.value = UiState.Success(
-                        HomeUiState(
-                            userProfile = userInfo.toState(),
-                            dateList = calendarData.dateList.map { it.toState() }.toImmutableList(),
-                            selectedDate = today,
-                            diaryThumbnail = null,
-                            todayTopic = null
-                        )
-                    )
-                    updateContentForDate(today)
-                }.onLogFailure {
-                    emitRetrySideEffect { loadInitialData() }
-                }
-            }.onLogFailure {
+
+            if (userInfoResult.isFailure || calendarResult.isFailure) {
+                userInfoResult.onLogFailure {}
+                calendarResult.onLogFailure {}
                 emitRetrySideEffect { loadInitialData() }
+                return@launch
             }
+
+            val userInfo = userInfoResult.getOrThrow()
+            val calendarData = calendarResult.getOrThrow()
+
+            _uiState.update {
+                UiState.Success(
+                    HomeUiState(
+                        userProfile = userInfo.toState(),
+                        dateList = calendarData.dateList.map { it.toState() }.toImmutableList(),
+                        selectedDate = today,
+                        diaryThumbnail = null,
+                        todayTopic = null
+                    )
+                )
+            }
+            updateContentForDate(today)
         }
     }
 
@@ -89,11 +96,7 @@ class HomeViewModel @Inject constructor(
         if (currentState !is UiState.Success || currentState.data.selectedDate == date) return
 
         _uiState.updateSuccess {
-            it.copy(
-                selectedDate = date,
-                diaryThumbnail = null,
-                todayTopic = null
-            )
+            it.copy(selectedDate = date)
         }
         updateContentForDate(date)
     }
@@ -141,29 +144,23 @@ class HomeViewModel @Inject constructor(
                             _uiState.updateSuccess { it.copy(diaryThumbnail = null) }
                         }
                 }
+
                 isWritable -> {
                     calendarRepository.getTopic(date.toString())
                         .onSuccess { topic ->
                             _uiState.updateSuccess { it.copy(todayTopic = topic.toState()) }
                         }
-                        .onLogFailure {
-                            _uiState.updateSuccess { it.copy(todayTopic = null) }
-                        }
+                        .onLogFailure { }
                 }
                 else -> {
-                    _uiState.updateSuccess {
-                        it.copy(diaryThumbnail = null, todayTopic = null)
-                    }
+                    _uiState.updateSuccess { it.copy(diaryThumbnail = null, todayTopic = null) }
                 }
             }
         }
     }
 
-    private fun emitRetrySideEffect(onRetry: () -> Unit) {
-        viewModelScope.launch {
-            _sideEffect.emit(HomeSideEffect.ShowRetryDialog(onRetry = onRetry))
-        }
-    }
+    private suspend fun emitRetrySideEffect(onRetry: () -> Unit) =
+        _sideEffect.emit(HomeSideEffect.ShowRetryDialog(onRetry = onRetry))
 }
 
 sealed interface HomeSideEffect {

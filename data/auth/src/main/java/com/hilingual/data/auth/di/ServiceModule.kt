@@ -15,10 +15,11 @@
  */
 package com.hilingual.data.auth.di
 
-import com.hilingual.core.network.LoginClient
+import com.hilingual.core.network.NoAuthClient
 import com.hilingual.core.network.RefreshClient
 import com.hilingual.data.auth.service.LoginService
 import com.hilingual.data.auth.service.ReissueService
+import com.hilingual.data.auth.service.VerifyService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,9 +32,13 @@ import javax.inject.Singleton
 internal object ServiceModule {
     @Provides
     @Singleton
-    fun provideLoginService(@LoginClient retrofit: Retrofit): LoginService = retrofit.create(LoginService::class.java)
+    fun provideLoginService(@NoAuthClient retrofit: Retrofit): LoginService = retrofit.create(LoginService::class.java)
 
     @Provides
     @Singleton
     fun provideReissueService(@RefreshClient retrofit: Retrofit): ReissueService = retrofit.create(ReissueService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideVerifyService(@NoAuthClient retrofit: Retrofit): VerifyService = retrofit.create(VerifyService::class.java)
 }

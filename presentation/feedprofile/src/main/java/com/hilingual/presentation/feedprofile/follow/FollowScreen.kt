@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.content.UserActionItem
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feedprofile.follow.model.FollowItemModel
-import com.hilingual.presentation.feedprofile.follow.model.FollowState
 import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCard
 import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType
 import kotlinx.collections.immutable.ImmutableList
@@ -50,17 +49,12 @@ internal fun FollowScreen(
                 key = { it.userId }
             ) { follow ->
                 with(follow) {
-                    val followState = FollowState.getValueByFollowState(
-                        isFollowing = isFollowing,
-                        isFollowed = isFollowed
-                    ) ?: FollowState.NONE
-
                     UserActionItem(
                         userId = userId,
                         profileUrl = profileImgUrl,
                         nickname = nickname,
                         isFilled = followState.isFollowing,
-                        buttonText = followState.actionText,
+                        buttonText = followState.label,
                         onProfileClick = onProfileClick,
                         onButtonClick = { onActionButtonClick(userId, followState.isFollowing) }
                     )

@@ -19,7 +19,7 @@ import javax.inject.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class LoginClient
+annotation class NoAuthClient
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)

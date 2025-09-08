@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.auth.repository.AuthRepository
+import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,7 +31,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _navigationEvent = MutableSharedFlow<AuthSideEffect>(
@@ -45,13 +47,15 @@ class AuthViewModel @Inject constructor(
             authRepository.signInWithGoogle(context)
                 .onSuccess { idToken ->
                     Timber.d("Google ID Token: $idToken")
-                    authRepository.login(idToken, "GOOGLE")
+                    authRepository.login(idToken)
                         .onSuccess { authResult ->
-                            if (authResult.isProfileCompleted) {
-                                _navigationEvent.tryEmit(AuthSideEffect.NavigateToHome)
-                            } else {
-                                _navigationEvent.tryEmit(AuthSideEffect.NavigateToOnboarding)
+                            val isOtpVerified = userRepository.isOtpVerified()
+                            val sideEffect = when {
+                                authResult.registerStatus -> AuthSideEffect.NavigateToHome
+                                isOtpVerified -> AuthSideEffect.NavigateToOnboarding
+                                else -> AuthSideEffect.NavigateToOtp
                             }
+                            _navigationEvent.tryEmit(sideEffect)
                         }
                         .onLogFailure { }
                 }
@@ -63,4 +67,5 @@ class AuthViewModel @Inject constructor(
 sealed interface AuthSideEffect {
     data object NavigateToHome : AuthSideEffect
     data object NavigateToOnboarding : AuthSideEffect
+    data object NavigateToOtp : AuthSideEffect
 }

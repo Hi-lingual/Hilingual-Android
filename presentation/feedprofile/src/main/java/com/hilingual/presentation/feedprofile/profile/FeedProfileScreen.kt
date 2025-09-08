@@ -24,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -33,6 +34,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.constant.UrlConstant
+import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.extension.launchCustomTabs
+import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.dialog.report.ReportUserDialog
@@ -45,6 +50,7 @@ import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardTyp
 import com.hilingual.presentation.feedprofile.profile.component.FeedProfileInfo
 import com.hilingual.presentation.feedprofile.profile.component.FeedProfileTabRow
 import com.hilingual.presentation.feedprofile.profile.component.ReportBlockBottomSheet
+import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
 import kotlinx.coroutines.launch
 
 @Composable
@@ -57,6 +63,16 @@ internal fun FeedProfileRoute(
     viewModel: FeedProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val toastTrigger = LocalToastTrigger.current
+
+    viewModel.sideEffect.collectSideEffect {
+        when (it) {
+            is FeedProfileSideEffect.ShowToast -> {
+                toastTrigger(it.message)
+            }
+        }
+    }
 
     when (val state = uiState) {
         is UiState.Loading -> {
@@ -76,11 +92,11 @@ internal fun FeedProfileRoute(
                 onActionButtonClick = { },
                 onProfileClick = navigateToFeedProfile,
                 onContentDetailClick = navigateToFeedDiary,
-                onReportUserClick = { },
-                onLikeClick = { },
+                onReportUserClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
+                onLikeClick = viewModel::toggleIsLiked,
                 onBlockClick = { },
-                onReportDiaryClick = { },
-                onUnpublishClick = { }
+                onReportDiaryClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
+                onUnpublishClick = viewModel::diaryUnpublish
             )
         }
 
@@ -97,7 +113,7 @@ private fun FeedProfileScreen(
     onActionButtonClick: (Boolean) -> Unit,
     onProfileClick: (Long) -> Unit,
     onContentDetailClick: (Long) -> Unit,
-    onLikeClick: (Long) -> Unit,
+    onLikeClick: (Long, Boolean, DiaryTabType) -> Unit,
     onReportUserClick: () -> Unit,
     onBlockClick: () -> Unit,
     onUnpublishClick: (diaryId: Long) -> Unit,
@@ -216,9 +232,9 @@ private fun FeedProfileScreen(
                                 state = pagerState,
                                 modifier = Modifier.fillParentMaxSize()
                             ) { page ->
-                                val (diaries, emptyCardType) = when (page) {
-                                    0 -> uiState.sharedDiarys to FeedEmptyCardType.NOT_SHARED
-                                    else -> uiState.likedDiarys to FeedEmptyCardType.NOT_LIKED
+                                val (diaries, emptyCardType, tabType) = when (page) {
+                                    0 -> Triple(uiState.sharedDiaries, FeedEmptyCardType.NOT_SHARED, DiaryTabType.SHARED)
+                                    else -> Triple(uiState.likedDiaries, FeedEmptyCardType.NOT_LIKED, DiaryTabType.LIKED)
                                 }
 
                                 DiaryListScreen(
@@ -226,7 +242,7 @@ private fun FeedProfileScreen(
                                     emptyCardType = emptyCardType,
                                     onProfileClick = onProfileClick,
                                     onContentDetailClick = onContentDetailClick,
-                                    onLikeClick = onLikeClick,
+                                    onLikeClick = { diaryId, isLiked -> onLikeClick(diaryId, isLiked, tabType) },
                                     onUnpublishClick = onUnpublishClick,
                                     onReportClick = onReportDiaryClick,
                                     onScrollStateChanged = { isScrollable ->
@@ -270,11 +286,11 @@ private fun FeedProfileScreen(
                     else -> {
                         item {
                             DiaryListScreen(
-                                diaries = uiState.sharedDiarys,
+                                diaries = uiState.sharedDiaries,
                                 emptyCardType = FeedEmptyCardType.NOT_SHARED,
                                 onProfileClick = onProfileClick,
                                 onContentDetailClick = onContentDetailClick,
-                                onLikeClick = onLikeClick,
+                                onLikeClick = { diaryId, isLiked -> onLikeClick(diaryId, isLiked, DiaryTabType.SHARED) },
                                 onUnpublishClick = onUnpublishClick,
                                 onReportClick = onReportDiaryClick,
                                 onScrollStateChanged = { isScrollable ->
@@ -350,7 +366,7 @@ private fun FeedProfileScreenPreview() {
             onFollowClick = {},
             onProfileClick = {},
             onContentDetailClick = {},
-            onLikeClick = {},
+            onLikeClick = { _, _, _ -> },
             onUnpublishClick = {},
             onReportDiaryClick = {}
         )

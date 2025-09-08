@@ -18,13 +18,21 @@ package com.hilingual.data.auth.datasourceimpl
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.auth.datasource.AuthRemoteDataSource
 import com.hilingual.data.auth.dto.request.LoginRequestDto
+import com.hilingual.data.auth.dto.request.VerifyCodeRequestDto
 import com.hilingual.data.auth.dto.response.LoginResponseDto
 import com.hilingual.data.auth.service.LoginService
+import com.hilingual.data.auth.service.VerifyService
 import javax.inject.Inject
 
 internal class AuthRemoteDataSourceImpl @Inject constructor(
-    private val loginService: LoginService
+    private val loginService: LoginService,
+    private val verifyService: VerifyService
 ) : AuthRemoteDataSource {
-    override suspend fun login(providerToken: String, provider: String): BaseResponse<LoginResponseDto> =
-        loginService.login(providerToken, LoginRequestDto(provider))
+    override suspend fun login(
+        providerToken: String,
+        loginRequestDto: LoginRequestDto
+    ): BaseResponse<LoginResponseDto> = loginService.login(providerToken, loginRequestDto)
+
+    override suspend fun verifyCode(request: VerifyCodeRequestDto): BaseResponse<Unit> =
+        verifyService.verifyCode(request)
 }

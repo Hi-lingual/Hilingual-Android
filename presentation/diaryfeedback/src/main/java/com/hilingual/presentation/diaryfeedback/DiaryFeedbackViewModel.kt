@@ -20,7 +20,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
+import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.presentation.diaryfeedback.navigation.DiaryFeedback
@@ -34,7 +36,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -75,6 +76,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
             val recommendExpressions = recommendExpressionsResult.getOrThrow()
 
             val newUiState = DiaryFeedbackUiState(
+                isPublished = diaryResult.isPublished,
                 writtenDate = diaryResult.writtenDate,
                 diaryContent = diaryResult.toState(),
                 feedbackList = feedbacks.map { it.toState() }.toImmutableList(),
@@ -101,76 +103,98 @@ internal class DiaryFeedbackViewModel @Inject constructor(
     }
 
     fun toggleIsPublished(isPublished: Boolean) {
+        val currentState = _uiState.value
+        if (currentState !is UiState.Success) return
+
         viewModelScope.launch {
-            // TODO: 게시/비공개 API 호출
-            _uiState.update { currentState ->
-                val successState = currentState as UiState.Success
-                successState.copy(
-                    data = successState.data.copy(isPublished = isPublished)
-                )
-            }
-            // TODO: API 호출 성공 후 표시
-            if (isPublished) {
-                showPublishSnackbar()
+            val result = if (isPublished) {
+                diaryRepository.patchDiaryPublish(diaryId)
             } else {
-                showToast("일기가 비공개되었어요!")
+                diaryRepository.patchDiaryUnpublish(diaryId)
+            }
+
+            result.onSuccess {
+                _uiState.updateSuccess { currentState ->
+                    currentState.copy(isPublished = isPublished)
+                }
+                if (isPublished) {
+                    showPublishSnackbar()
+                } else {
+                    showToast("일기가 비공개되었어요!")
+                }
+            }.onLogFailure { exception ->
+                _uiState.value = UiState.Failure
+                _sideEffect.emit(
+                    DiaryFeedbackSideEffect.ShowRetryDialog { loadInitialData() }
+                )
             }
         }
     }
 
     fun deleteDiary() {
-        // TODO: API 호출 성공 후 표시
         viewModelScope.launch {
-            showToast("삭제가 완료되었어요.")
-            _sideEffect.emit(DiaryFeedbackSideEffect.NavigateToHome)
+            diaryRepository.deleteDiary(diaryId = diaryId).onSuccess {
+                showToast("삭제가 완료되었어요.")
+                _sideEffect.emit(DiaryFeedbackSideEffect.NavigateToHome)
+            }
         }
     }
 
     fun toggleBookmark(phraseId: Long, isMarked: Boolean) {
+        val currentState = _uiState.value
+        if (currentState !is UiState.Success) return
+
         viewModelScope.launch {
             diaryRepository.patchPhraseBookmark(
                 phraseId = phraseId,
                 bookmarkModel = PhraseBookmarkModel(isMarked)
             )
-                .onSuccess {
-                    _uiState.update { currentState ->
+                .onSuccess { result ->
+                    when (result) {
+                        BookmarkResult.SUCCESS -> {
+                            _uiState.updateSuccess { currentState ->
+                                val oldList = currentState.recommendExpressionList
 
-                        val successState = currentState as UiState.Success
-                        val oldList = successState.data.recommendExpressionList
+                                val updatedList = oldList.map { item ->
+                                    if (item.phraseId == phraseId) {
+                                        item.copy(isMarked = isMarked)
+                                    } else {
+                                        item
+                                    }
+                                }.toImmutableList()
 
-                        val updatedList = oldList.map { item ->
-                            if (item.phraseId == phraseId) {
-                                item.copy(isMarked = isMarked)
-                            } else {
-                                item
+                                currentState.copy(
+                                    recommendExpressionList = updatedList
+                                )
                             }
-                        }.toImmutableList()
-
-                        successState.copy(
-                            data = successState.data.copy(recommendExpressionList = updatedList)
-                        )
+                        }
+                        BookmarkResult.OVERCAPACITY -> {
+                            showVocaOverflowSnackbar()
+                        }
+                        else -> { }
                     }
                 }
                 .onLogFailure { }
         }
     }
 
-    private fun showPublishSnackbar() {
-        viewModelScope.launch {
-            _sideEffect.emit(DiaryFeedbackSideEffect.ShowSnackbar(message = "일기가 게시되었어요!", actionLabel = "보러가기"))
-        }
+    private suspend fun showPublishSnackbar() {
+        _sideEffect.emit(DiaryFeedbackSideEffect.ShowDiaryPublishSnackbar(message = "일기가 게시되었어요!", actionLabel = "보러가기"))
     }
 
-    private fun showToast(message: String) {
-        viewModelScope.launch {
-            _sideEffect.emit(DiaryFeedbackSideEffect.ShowToast(message = message))
-        }
+    private suspend fun showVocaOverflowSnackbar() {
+        _sideEffect.emit(DiaryFeedbackSideEffect.ShowVocaOverflowSnackbar(message = "단어장이 모두 찼어요!", actionLabel = "비우러가기"))
+    }
+
+    private suspend fun showToast(message: String) {
+        _sideEffect.emit(DiaryFeedbackSideEffect.ShowToast(message = message))
     }
 }
 
 sealed interface DiaryFeedbackSideEffect {
     data object NavigateToHome : DiaryFeedbackSideEffect
     data class ShowRetryDialog(val onRetry: () -> Unit) : DiaryFeedbackSideEffect
-    data class ShowSnackbar(val message: String, val actionLabel: String) : DiaryFeedbackSideEffect
+    data class ShowDiaryPublishSnackbar(val message: String, val actionLabel: String) : DiaryFeedbackSideEffect
+    data class ShowVocaOverflowSnackbar(val message: String, val actionLabel: String) : DiaryFeedbackSideEffect
     data class ShowToast(val message: String) : DiaryFeedbackSideEffect
 }

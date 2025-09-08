@@ -17,20 +17,28 @@ package com.hilingual.presentation.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hilingual.core.localstorage.TokenManager
+import com.hilingual.data.auth.repository.AuthRepository
+import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 internal class SplashViewModel @Inject constructor(
-    private val tokenManager: TokenManager
+    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<SplashUiState>(SplashUiState.NotLoggedIn)
-    val uiState = _uiState.asStateFlow()
+    private val _sideEffect = MutableSharedFlow<SplashSideEffect>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val sideEffect = _sideEffect.asSharedFlow()
 
     init {
         checkLoginStatus()
@@ -38,25 +46,21 @@ internal class SplashViewModel @Inject constructor(
 
     private fun checkLoginStatus() {
         viewModelScope.launch {
-            val accessToken = tokenManager.getAccessToken()
-            val refreshToken = tokenManager.getRefreshToken()
-            val isProfileCompleted = tokenManager.isProfileCompleted()
+            val accessToken = authRepository.getAccessToken()
+            val refreshToken = authRepository.getRefreshToken()
+            val isRegistered = userRepository.getRegisterStatus()
 
-            _uiState.value = if (!accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty()) {
-                if (isProfileCompleted) {
-                    SplashUiState.LoggedIn
-                } else {
-                    SplashUiState.OnboardingRequired
-                }
-            } else {
-                SplashUiState.NotLoggedIn
-            }
+            val isLoggedIn = !accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty() && isRegistered
+            val effect = if (isLoggedIn) SplashSideEffect.NavigateToHome else SplashSideEffect.NavigateToAuth
+
+            delay(1400L)
+
+            _sideEffect.tryEmit(effect)
         }
     }
 }
 
-sealed interface SplashUiState {
-    data object LoggedIn : SplashUiState
-    data object NotLoggedIn : SplashUiState
-    data object OnboardingRequired : SplashUiState
+sealed interface SplashSideEffect {
+    data object NavigateToHome : SplashSideEffect
+    data object NavigateToAuth : SplashSideEffect
 }

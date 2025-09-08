@@ -59,8 +59,9 @@ internal fun AuthRoute(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
     navigateToOnboarding: () -> Unit,
-    viewModel: AuthViewModel = hiltViewModel(),
-    animatedVisibilityScope: AnimatedVisibilityScope
+    navigateToOtp: () -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
 
@@ -68,6 +69,7 @@ internal fun AuthRoute(
         when (event) {
             is AuthSideEffect.NavigateToHome -> navigateToHome()
             is AuthSideEffect.NavigateToOnboarding -> navigateToOnboarding()
+            is AuthSideEffect.NavigateToOtp -> navigateToOtp()
         }
     }
 

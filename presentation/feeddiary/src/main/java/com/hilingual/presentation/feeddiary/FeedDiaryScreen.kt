@@ -28,6 +28,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
+import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.bottomsheet.BlockBottomSheet
@@ -37,6 +39,7 @@ import com.hilingual.core.designsystem.component.content.diary.GrammarSpellingTa
 import com.hilingual.core.designsystem.component.content.diary.ModalImage
 import com.hilingual.core.designsystem.component.content.diary.RecommendExpressionTab
 import com.hilingual.core.designsystem.component.dialog.diary.DiaryUnpublishDialog
+import com.hilingual.core.designsystem.component.dialog.report.ReportPostDialog
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -51,6 +54,7 @@ internal fun FeedDiaryRoute(
     navigateUp: () -> Unit,
     navigateToMyFeedProfile: () -> Unit,
     navigateToFeedProfile: (Long) -> Unit,
+    navigateToVoca: () -> Unit,
     viewModel: FeedDiaryViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -58,6 +62,7 @@ internal fun FeedDiaryRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var isImageDetailVisible by remember { mutableStateOf(false) }
 
+    val snackbarTrigger = LocalSnackbarTrigger.current
     val toastTrigger = LocalToastTrigger.current
 
     BackHandler {
@@ -72,11 +77,21 @@ internal fun FeedDiaryRoute(
         when (it) {
             is FeedDiarySideEffect.NavigateToUp -> navigateUp()
 
-            is FeedDiarySideEffect.ShowSnackbar -> {}
+            is FeedDiarySideEffect.ShowVocaOverflowSnackbar -> {
+                snackbarTrigger(
+                    SnackbarRequest(
+                        message = it.message,
+                        buttonText = it.actionLabel,
+                        onClick = navigateToVoca
+                    )
+                )
+            }
 
             is FeedDiarySideEffect.ShowToast -> {
                 toastTrigger(it.message)
             }
+
+            else -> {}
         }
     }
 
@@ -90,9 +105,9 @@ internal fun FeedDiaryRoute(
                 onBackClick = navigateUp,
                 onMyProfileClick = navigateToMyFeedProfile,
                 onProfileClick = navigateToFeedProfile,
-                onLikeClick = {},
+                onLikeClick = viewModel::toggleIsLiked,
                 onPrivateClick = viewModel::diaryUnpublish,
-                onBlockClick = {},
+                onBlockClick = viewModel::blockUser,
                 onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 isImageDetailVisible = isImageDetailVisible,
                 onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
@@ -111,7 +126,7 @@ private fun FeedDiaryScreen(
     onBackClick: () -> Unit,
     onMyProfileClick: () -> Unit,
     onProfileClick: (Long) -> Unit,
-    onLikeClick: () -> Unit,
+    onLikeClick: (Boolean) -> Unit,
     onPrivateClick: () -> Unit,
     onReportClick: () -> Unit,
     onBlockClick: () -> Unit,
@@ -123,6 +138,7 @@ private fun FeedDiaryScreen(
     var isUnpublishDialogVisible by remember { mutableStateOf(false) }
 
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
+    var isReportConfirmDialogVisible by remember { mutableStateOf(false) }
     var isBlockConfirmBottomSheetVisible by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
@@ -162,7 +178,7 @@ private fun FeedDiaryScreen(
                     isReportBottomSheetVisible = true
                 }
             },
-            title = null
+            title = "피드"
         )
 
         with(uiState.profileContent) {
@@ -180,7 +196,7 @@ private fun FeedDiaryScreen(
                         onProfileClick(userId)
                     }
                 },
-                onLikeClick = onLikeClick
+                onLikeClick = { onLikeClick(!isLiked) }
             )
         }
 
@@ -262,7 +278,7 @@ private fun FeedDiaryScreen(
             onDismiss = { isReportBottomSheetVisible = false },
             onReportClick = {
                 isReportBottomSheetVisible = false
-                onReportClick()
+                isReportConfirmDialogVisible = true
             },
             onBlockClick = {
                 isReportBottomSheetVisible = false
@@ -277,7 +293,6 @@ private fun FeedDiaryScreen(
         onPrivateClick = {
             isUnpublishDialogVisible = false
             onPrivateClick()
-            // TODO: 비공개 후 이전 화면으로 이동, 토스트 표시
         }
     )
 
@@ -287,6 +302,15 @@ private fun FeedDiaryScreen(
         onBlockButtonClick = {
             isBlockConfirmBottomSheetVisible = false
             onBlockClick()
+        }
+    )
+
+    ReportPostDialog(
+        isVisible = isReportConfirmDialogVisible,
+        onDismiss = { isReportConfirmDialogVisible = false },
+        onReportClick = {
+            isReportConfirmDialogVisible = false
+            onReportClick()
         }
     )
 }

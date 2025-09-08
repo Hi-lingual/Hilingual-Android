@@ -20,9 +20,10 @@ plugins {
 }
 
 android {
-    setNamespace("presentation.diaryfeedback")
+    setNamespace("presentation.feeddiary")
 }
 
 dependencies {
     implementation(projects.data.diary)
+    implementation(projects.data.feed)
 }

@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -62,14 +63,9 @@ import com.hilingual.presentation.home.component.footer.DiaryTimeInfo
 import com.hilingual.presentation.home.component.footer.HomeDropDownMenu
 import com.hilingual.presentation.home.component.footer.TodayTopic
 import com.hilingual.presentation.home.component.footer.WriteDiaryButton
-import com.hilingual.presentation.home.model.DateUiModel
-import com.hilingual.presentation.home.model.DiaryThumbnailUiModel
-import com.hilingual.presentation.home.model.TodayTopicUiModel
-import com.hilingual.presentation.home.model.UserProfileUiModel
 import com.hilingual.presentation.home.util.isDateFuture
 import com.hilingual.presentation.home.util.isDateWritable
 import com.hilingual.presentation.home.util.isDateWritten
-import kotlinx.collections.immutable.toPersistentList
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -79,6 +75,7 @@ internal fun HomeRoute(
     navigateToDiaryWrite: (selectedDate: LocalDate) -> Unit,
     navigateToDiaryFeedback: (diaryId: Long) -> Unit,
     navigateToNotification: () -> Unit,
+    navigateToFeedProfile: (userId: Long) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -113,6 +110,7 @@ internal fun HomeRoute(
                 paddingValues = paddingValues,
                 uiState = state.data,
                 onAlarmClick = navigateToNotification,
+                onImageClick = { navigateToFeedProfile(0L) },
                 onDateSelected = viewModel::onDateSelected,
                 onMonthChanged = viewModel::onMonthChanged,
                 onWriteDiaryClick = navigateToDiaryWrite,
@@ -132,6 +130,7 @@ private fun HomeScreen(
     paddingValues: PaddingValues,
     uiState: HomeUiState,
     onAlarmClick: () -> Unit,
+    onImageClick: () -> Unit,
     onDateSelected: (LocalDate) -> Unit,
     onMonthChanged: (YearMonth) -> Unit,
     onWriteDiaryClick: (LocalDate) -> Unit,
@@ -166,6 +165,7 @@ private fun HomeScreen(
                 streak = userProfile.streak,
                 isNewAlarm = userProfile.isNewAlarm,
                 onAlarmClick = onAlarmClick,
+                onImageClick = onImageClick,
                 modifier = Modifier
                     .background(hilingualBlack)
                     .padding(horizontal = 16.dp)
@@ -205,7 +205,8 @@ private fun HomeScreen(
                 DiaryDateInfo(
                     selectedDate = date,
                     isPublished = uiState.diaryThumbnail?.isPublished ?: false,
-                    isWritten = isWritten
+                    isWritten = isWritten,
+                    modifier = Modifier.heightIn(min = 20.dp)
                 )
                 when {
                     isWritten -> HomeDropDownMenu(
@@ -216,6 +217,7 @@ private fun HomeScreen(
                         onPublishClick = onPublishClick,
                         onUnpublishClick = onUnpublishClick
                     )
+
                     isWritable -> DiaryTimeInfo(remainingTime = uiState.todayTopic?.remainingTime)
                 }
             }
@@ -262,85 +264,20 @@ private fun HomeScreen(
     }
 }
 
-@Preview(showBackground = true, name = "Interactive HomeScreen Preview")
+@Preview
 @Composable
-private fun InteractiveHomeScreenPreview() {
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    var writtenDiaries by remember {
-        mutableStateOf(
-            mapOf(
-                LocalDate.now() to DiaryThumbnailUiModel(
-                    diaryId = 1L,
-                    originalText = "Today's diary.",
-                    imageUrl = "",
-                    isPublished = false
-                ),
-                LocalDate.now().minusDays(2) to DiaryThumbnailUiModel(
-                    diaryId = 2L,
-                    originalText = "Diary from 2 days ago.",
-                    imageUrl = "",
-                    isPublished = true
-                ),
-                LocalDate.now().minusDays(3) to DiaryThumbnailUiModel(
-                    diaryId = 3L,
-                    originalText = "Diary from 3 days ago.",
-                    imageUrl = "",
-                    isPublished = false
-                )
-            )
-        )
-    }
-
-    val writtenDates = writtenDiaries.keys
-    val diaryForSelectedDate = writtenDiaries[selectedDate]
-    val isWritten = selectedDate in writtenDates
-    val isWritable = remember(selectedDate) { isDateWritable(selectedDate) }
-
-    val uiState = HomeUiState(
-        userProfile = UserProfileUiModel(
-            profileImg = "",
-            nickname = "Podo",
-            totalDiaries = writtenDates.size,
-            streak = 5
-        ),
-        selectedDate = selectedDate,
-        dateList = writtenDates.map { DateUiModel(it.toString()) }.toPersistentList(),
-        diaryThumbnail = diaryForSelectedDate,
-        todayTopic = if (!isWritten && isWritable) {
-            TodayTopicUiModel(
-                topicKo = "인터랙티브 주제",
-                topicEn = "Interactive Topic",
-                remainingTime = 1000
-            )
-        } else {
-            null
-        }
+private fun HomeScreenPreview() {
+    HomeScreen(
+        paddingValues = PaddingValues(),
+        uiState = HomeUiState.Fake,
+        onAlarmClick = {},
+        onImageClick = {},
+        onDateSelected = {},
+        onMonthChanged = {},
+        onWriteDiaryClick = {},
+        onDiaryPreviewClick = {},
+        onDeleteClick = {},
+        onPublishClick = {},
+        onUnpublishClick = {}
     )
-
-    HilingualTheme {
-        HomeScreen(
-            paddingValues = PaddingValues(0.dp),
-            uiState = uiState,
-            onDateSelected = { newDate ->
-                selectedDate = newDate
-            },
-            onMonthChanged = {},
-            onWriteDiaryClick = {},
-            onDiaryPreviewClick = {},
-            onAlarmClick = {},
-            onDeleteClick = {
-                writtenDiaries = writtenDiaries - selectedDate
-            },
-            onPublishClick = {
-                writtenDiaries[selectedDate]?.let {
-                    writtenDiaries = writtenDiaries + (selectedDate to it.copy(isPublished = true))
-                }
-            },
-            onUnpublishClick = {
-                writtenDiaries[selectedDate]?.let {
-                    writtenDiaries = writtenDiaries + (selectedDate to it.copy(isPublished = false))
-                }
-            }
-        )
-    }
 }

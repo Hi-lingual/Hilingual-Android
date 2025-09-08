@@ -86,7 +86,8 @@ internal fun DiaryContentModel.toState() = DiaryContent(
     diffRanges = this.diffRanges.map {
         it.diffRange.first to it.diffRange.second
     }.toImmutableList(),
-    imageUrl = this.imageUrl
+    imageUrl = this.imageUrl,
+    isPublished = this.isPublished
 )
 
 internal fun DiaryFeedbackModel.toState() = FeedbackContent(

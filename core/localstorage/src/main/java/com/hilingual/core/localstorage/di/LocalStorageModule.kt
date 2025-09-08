@@ -17,6 +17,8 @@ package com.hilingual.core.localstorage.di
 
 import com.hilingual.core.localstorage.TokenManager
 import com.hilingual.core.localstorage.TokenManagerImpl
+import com.hilingual.core.localstorage.UserInfoManager
+import com.hilingual.core.localstorage.UserInfoManagerImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -30,4 +32,8 @@ abstract class LocalStorageModule {
     @Binds
     @Singleton
     abstract fun bindTokenManager(tokenManagerImpl: TokenManagerImpl): TokenManager
+
+    @Binds
+    @Singleton
+    abstract fun bindUserInfoManager(userInfoManagerImpl: UserInfoManagerImpl): UserInfoManager
 }

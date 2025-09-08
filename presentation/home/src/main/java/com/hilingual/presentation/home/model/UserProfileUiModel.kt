@@ -16,7 +16,7 @@
 package com.hilingual.presentation.home.model
 
 import androidx.compose.runtime.Immutable
-import com.hilingual.data.user.model.UserInfoModel
+import com.hilingual.data.user.model.user.UserInfoModel
 
 @Immutable
 data class UserProfileUiModel(
@@ -31,5 +31,6 @@ internal fun UserInfoModel.toState() = UserProfileUiModel(
     nickname = this.nickname,
     profileImg = this.profileImg,
     totalDiaries = this.totalDiaries,
-    streak = this.streak
+    streak = this.streak,
+    isNewAlarm = this.newAlarm
 )

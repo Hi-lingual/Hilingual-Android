@@ -2,6 +2,7 @@ package com.hilingual.presentation.feedprofile.follow
 
 import androidx.compose.runtime.Immutable
 import com.hilingual.core.common.util.UiState
+import com.hilingual.data.user.model.follow.FollowState
 import com.hilingual.presentation.feedprofile.follow.model.FollowItemModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -19,15 +20,13 @@ data class FollowListUiState(
                         userId = 1L,
                         profileImgUrl = "https://picsum.photos/200",
                         nickname = "follower_1",
-                        isFollowing = false,
-                        isFollowed = true
+                        followState = FollowState.NONE
                     ),
                     FollowItemModel(
                         userId = 2L,
                         profileImgUrl = "https://picsum.photos/201",
                         nickname = "follower_2",
-                        isFollowing = true,
-                        isFollowed = true
+                        followState = FollowState.ONLY_FOLLOWED
                     )
                 )
             ),
@@ -37,15 +36,13 @@ data class FollowListUiState(
                         userId = 3L,
                         profileImgUrl = "https://picsum.photos/202",
                         nickname = "following_1",
-                        isFollowing = true,
-                        isFollowed = false
+                        followState = FollowState.ONLY_FOLLOWING
                     ),
                     FollowItemModel(
                         userId = 4L,
                         profileImgUrl = "https://picsum.photos/203",
                         nickname = "following_2",
-                        isFollowing = true,
-                        isFollowed = true
+                        followState = FollowState.MUTUAL_FOLLOW
                     )
                 )
             )
