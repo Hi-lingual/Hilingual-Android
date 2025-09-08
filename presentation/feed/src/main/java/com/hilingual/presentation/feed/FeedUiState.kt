@@ -21,6 +21,7 @@ import com.hilingual.data.feed.model.FeedListModel
 import com.hilingual.presentation.feed.model.FeedItemUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 @Immutable
 internal data class FeedUiState(
@@ -97,7 +98,7 @@ internal data class FeedUiState(
     }
 }
 
-internal fun FeedListModel.toState(): List<FeedItemUiModel> {
+internal fun FeedListModel.toState(): ImmutableList<FeedItemUiModel> {
     return this.feedList.map {
         FeedItemUiModel(
             isMine = it.profile.isMine,
@@ -112,5 +113,5 @@ internal fun FeedListModel.toState(): List<FeedItemUiModel> {
             likeCount = it.diary.likeCount,
             isLiked = it.diary.isLiked
         )
-    }
+    }.toImmutableList()
 }

@@ -25,7 +25,6 @@ import com.hilingual.presentation.feed.model.FeedItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,9 +64,7 @@ internal class FeedViewModel @Inject constructor(
                 .onSuccess { feedResult ->
                     _uiState.update {
                         it.copy(
-                            recommendFeedList = UiState.Success(
-                                feedResult.toState().toImmutableList()
-                            )
+                            recommendFeedList = UiState.Success(feedResult.toState())
                         )
                     }
                 }
@@ -81,9 +78,7 @@ internal class FeedViewModel @Inject constructor(
                 .onSuccess { feedResult ->
                     _uiState.update {
                         it.copy(
-                            followingFeedList = UiState.Success(
-                                feedResult.toState().toImmutableList()
-                            ),
+                            followingFeedList = UiState.Success(feedResult.toState()),
                             hasFollowing = feedResult.hasFollowing
                         )
                     }
@@ -104,7 +99,7 @@ internal class FeedViewModel @Inject constructor(
                             ) { item ->
                                 item.copy(
                                     isLiked = isLiked,
-                                    likeCount = item.likeCount + if (isLiked) 1 else -1
+                                    likeCount = (item.likeCount + if (isLiked) 1 else -1).coerceAtLeast(0)
                                 )
                             }
                         },
