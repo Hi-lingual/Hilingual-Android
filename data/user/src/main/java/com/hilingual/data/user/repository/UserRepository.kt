@@ -18,8 +18,10 @@ package com.hilingual.data.user.repository
 import com.hilingual.data.user.model.notification.NotificationDetailModel
 import com.hilingual.data.user.model.notification.NotificationModel
 import com.hilingual.data.user.model.notification.NotificationSettingsModel
+import com.hilingual.data.user.model.user.BlockListModel
 import com.hilingual.data.user.model.user.NicknameValidationResult
 import com.hilingual.data.user.model.user.UserInfoModel
+import com.hilingual.data.user.model.user.UserLoginInfoModel
 import com.hilingual.data.user.model.user.UserProfileModel
 
 interface UserRepository {
@@ -50,4 +52,12 @@ interface UserRepository {
     suspend fun saveOtpVerified(isVerified: Boolean)
 
     suspend fun isOtpVerified(): Boolean
+
+    suspend fun getUserLoginInfo(): Result<UserLoginInfoModel>
+
+    suspend fun getBlockList(): Result<BlockListModel>
+
+    suspend fun putBlockUser(targetUserId: Long): Result<Unit>
+
+    suspend fun deleteBlockUser(targetUserId: Long): Result<Unit>
 }

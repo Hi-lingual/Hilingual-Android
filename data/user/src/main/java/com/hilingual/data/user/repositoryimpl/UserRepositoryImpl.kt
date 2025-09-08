@@ -22,8 +22,10 @@ import com.hilingual.data.user.model.notification.NotificationDetailModel
 import com.hilingual.data.user.model.notification.NotificationModel
 import com.hilingual.data.user.model.notification.NotificationSettingsModel
 import com.hilingual.data.user.model.notification.toModel
+import com.hilingual.data.user.model.user.BlockListModel
 import com.hilingual.data.user.model.user.NicknameValidationResult
 import com.hilingual.data.user.model.user.UserInfoModel
+import com.hilingual.data.user.model.user.UserLoginInfoModel
 import com.hilingual.data.user.model.user.UserProfileModel
 import com.hilingual.data.user.model.user.toDto
 import com.hilingual.data.user.model.user.toModel
@@ -93,4 +95,24 @@ internal class UserRepositoryImpl @Inject constructor(
     override suspend fun isOtpVerified(): Boolean {
         return userInfoManager.isOtpVerified()
     }
+
+    override suspend fun getUserLoginInfo(): Result<UserLoginInfoModel> =
+        suspendRunCatching {
+            userRemoteDataSource.getUserLoginInfo().data!!.toModel()
+        }
+
+    override suspend fun getBlockList(): Result<BlockListModel> =
+        suspendRunCatching {
+            userRemoteDataSource.getBlockList().data!!.toModel()
+        }
+
+    override suspend fun putBlockUser(targetUserId: Long): Result<Unit> =
+        suspendRunCatching {
+            userRemoteDataSource.putBlockUser(targetUserId).data
+        }
+
+    override suspend fun deleteBlockUser(targetUserId: Long): Result<Unit> =
+        suspendRunCatching {
+            userRemoteDataSource.deleteBlockUser(targetUserId).data
+        }
 }

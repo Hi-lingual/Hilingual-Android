@@ -20,12 +20,16 @@ import com.hilingual.data.user.dto.request.user.UserProfileRequestDto
 import com.hilingual.data.user.dto.response.notification.NotificationDetailResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
+import com.hilingual.data.user.dto.response.user.BlockListResponseDto
 import com.hilingual.data.user.dto.response.user.NicknameResponseDto
 import com.hilingual.data.user.dto.response.user.UserInfoResponseDto
+import com.hilingual.data.user.dto.response.user.UserLoginInfoResponseDto
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -42,6 +46,22 @@ internal interface UserService {
 
     @GET("/api/v1/users/home/info")
     suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto>
+
+    @GET("/api/v1/users/mypage/info")
+    suspend fun getUserLoginInfo(): BaseResponse<UserLoginInfoResponseDto>
+
+    @GET("/api/v1/users/mypage/blocks")
+    suspend fun getBlockList(): BaseResponse<BlockListResponseDto>
+
+    @PUT("/api/v1/users/block/{targetUserId}")
+    suspend fun putBlockUser(
+        @Path("targetUserId") targetUserId: Long
+    ): BaseResponse<Unit>
+
+    @DELETE("/api/v1/users/unblock/{targetUserId}")
+    suspend fun deleteBlockUser(
+        @Path("targetUserId") targetUserId: Long
+    ): BaseResponse<Unit>
 
     @GET("/api/v1/users/notifications")
     suspend fun getNotifications(

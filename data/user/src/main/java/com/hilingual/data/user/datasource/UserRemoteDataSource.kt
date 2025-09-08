@@ -20,8 +20,10 @@ import com.hilingual.data.user.dto.request.user.UserProfileRequestDto
 import com.hilingual.data.user.dto.response.notification.NotificationDetailResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
+import com.hilingual.data.user.dto.response.user.BlockListResponseDto
 import com.hilingual.data.user.dto.response.user.NicknameResponseDto
 import com.hilingual.data.user.dto.response.user.UserInfoResponseDto
+import com.hilingual.data.user.dto.response.user.UserLoginInfoResponseDto
 
 interface UserRemoteDataSource {
     suspend fun getNicknameAvailability(nickname: String): BaseResponse<NicknameResponseDto>
@@ -29,6 +31,14 @@ interface UserRemoteDataSource {
     suspend fun postUserProfile(userProfileRequestDto: UserProfileRequestDto): BaseResponse<Unit>
 
     suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto>
+
+    suspend fun getUserLoginInfo(): BaseResponse<UserLoginInfoResponseDto>
+
+    suspend fun getBlockList(): BaseResponse<BlockListResponseDto>
+
+    suspend fun putBlockUser(targetUserId: Long): BaseResponse<Unit>
+
+    suspend fun deleteBlockUser(targetUserId: Long): BaseResponse<Unit>
 
     suspend fun getNotifications(tab: String): BaseResponse<List<NotificationResponseDto>>
 
