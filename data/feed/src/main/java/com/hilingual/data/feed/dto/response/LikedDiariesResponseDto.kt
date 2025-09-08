@@ -6,27 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LikedDiariesResponseDto(
     @SerialName("diaryList")
-    val diaryList: List<LikedDiaryItemDto>
-)
-
-@Serializable
-data class LikedDiaryItemDto(
-    @SerialName("profile")
-    val profile: LikedDiaryProfileDto,
-    @SerialName("diary")
-    val diary: DiaryDto
-)
-
-@Serializable
-data class LikedDiaryProfileDto(
-    @SerialName("userId")
-    val userId: Long,
-    @SerialName("isMine")
-    val isMine: Boolean,
-    @SerialName("profileImg")
-    val profileImg: String?,
-    @SerialName("nickname")
-    val nickname: String,
-    @SerialName("streak")
-    val streak: Int
+    val diaryList: List<FeedItemDto>
 )

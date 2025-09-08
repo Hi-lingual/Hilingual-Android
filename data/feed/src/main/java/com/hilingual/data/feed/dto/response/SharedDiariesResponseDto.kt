@@ -8,7 +8,7 @@ data class SharedDiariesResponseDto(
     @SerialName("profile")
     val profile: SharedDiaryProfileDto,
     @SerialName("diaryList")
-    val diaryList: List<DiaryDto>
+    val diaryList: List<FeedItemDiaryDto>
 )
 
 @Serializable

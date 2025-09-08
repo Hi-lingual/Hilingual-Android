@@ -42,6 +42,7 @@ internal class FeedProfileViewModel @Inject constructor(
 
     init {
         loadFeedProfile()
+        loadLikedDiaries()
     }
 
     private fun loadFeedProfile() {

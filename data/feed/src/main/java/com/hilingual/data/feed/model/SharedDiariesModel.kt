@@ -15,7 +15,16 @@ data class SharedDiaryProfileModel(
 
 internal fun SharedDiariesResponseDto.toModel(): SharedDiariesModel = SharedDiariesModel(
     profile = this.profile.toModel(),
-    diaryList = this.diaryList.map { it.toFeedItemDiaryModel() }
+    diaryList = this.diaryList.map { diaryDto ->
+        FeedItemDiaryModel(
+            diaryId = diaryDto.diaryId,
+            sharedDate = diaryDto.sharedDate,
+            likeCount = diaryDto.likeCount,
+            isLiked = diaryDto.isLiked,
+            diaryImg = diaryDto.diaryImg,
+            originalText = diaryDto.originalText
+        )
+    }
 )
 
 internal fun SharedDiaryProfileDto.toModel(): SharedDiaryProfileModel = SharedDiaryProfileModel(
