@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
+import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -61,12 +62,14 @@ internal fun FeedProfileRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val toastTrigger = LocalToastTrigger.current
+    val dialogTrigger = LocalDialogTrigger.current
 
     viewModel.sideEffect.collectSideEffect {
         when (it) {
             is FeedProfileSideEffect.ShowToast -> {
                 toastTrigger(it.message)
             }
+            is FeedProfileSideEffect.ShowRetryDialog -> dialogTrigger.show(it.onRetry)
         }
     }
 
@@ -106,7 +109,7 @@ private fun FeedProfileScreen(
     uiState: FeedProfileUiState,
     onBackClick: () -> Unit,
     onFollowClick: (Boolean) -> Unit,
-    onActionButtonClick: (Boolean) -> Unit,
+    onActionButtonClick: (Boolean?) -> Unit,
     onProfileClick: (Long) -> Unit,
     onContentDetailClick: (Long) -> Unit,
     onLikeClick: (Long, Boolean, DiaryTabType) -> Unit,
@@ -134,7 +137,7 @@ private fun FeedProfileScreen(
     }
 
     val profile = uiState.feedProfileInfo
-    val finalScrollEnabled = if (profile.isBlock) false else shouldEnableScroll
+    val finalScrollEnabled = if (profile.isBlock == true) false else shouldEnableScroll
 
     val isFabVisible by remember {
         derivedStateOf {
@@ -155,7 +158,7 @@ private fun FeedProfileScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (profile.isMine || profile.isBlock) {
+            if (profile.isMine || profile.isBlock == true) {
                 BackTopAppBar(
                     title = "피드",
                     onBackClicked = onBackClick
@@ -239,7 +242,7 @@ private fun FeedProfileScreen(
                         }
                     }
 
-                    profile.isBlock -> {
+                    profile.isBlock == true -> {
                         item {
                             Column(
                                 modifier = Modifier.fillMaxWidth(),

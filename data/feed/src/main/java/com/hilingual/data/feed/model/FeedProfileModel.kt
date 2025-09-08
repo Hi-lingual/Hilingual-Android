@@ -1,10 +1,8 @@
-package com.hilingual.presentation.feedprofile.profile.model
+package com.hilingual.data.feed.model
 
-import androidx.compose.runtime.Immutable
-import com.hilingual.data.feed.model.FeedProfileModel
+import com.hilingual.data.feed.dto.response.FeedProfileResponseDto
 
-@Immutable
-data class FeedProfileInfoModel(
+data class FeedProfileModel(
     val isMine: Boolean,
     val profileImageUrl: String?,
     val nickname: String,
@@ -16,15 +14,15 @@ data class FeedProfileInfoModel(
     val isBlock: Boolean?
 )
 
-internal fun FeedProfileModel.toState(): FeedProfileInfoModel =
-    FeedProfileInfoModel(
+internal fun FeedProfileResponseDto.toModel(): FeedProfileModel =
+    FeedProfileModel(
         isMine = this.isMine,
-        profileImageUrl = this.profileImageUrl,
+        profileImageUrl = this.profileImg,
         nickname = this.nickname,
         follower = this.follower,
         following = this.following,
         streak = this.streak,
         isFollowing = this.isFollowing,
         isFollowed = this.isFollowed,
-        isBlock = this.isBlock
+        isBlock = this.isBlocked
     )
