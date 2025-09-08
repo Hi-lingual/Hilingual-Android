@@ -21,6 +21,7 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.feed.repository.FeedRepository
+import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.feed.model.FeedItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
@@ -39,7 +40,8 @@ import javax.inject.Inject
 @HiltViewModel
 internal class FeedViewModel @Inject constructor(
     private val feedRepository: FeedRepository,
-    private val diaryRepository: DiaryRepository
+    private val diaryRepository: DiaryRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
@@ -48,6 +50,7 @@ internal class FeedViewModel @Inject constructor(
     val sideEffect: SharedFlow<FeedSideEffect> = _sideEffect.asSharedFlow()
 
     fun loadFeedData() {
+        getMyProfile()
         getRecommendFeeds()
         getFollowingFeeds()
     }
@@ -55,6 +58,18 @@ internal class FeedViewModel @Inject constructor(
     fun readAllFeed() {
         viewModelScope.launch {
             emitToastSideEffect("피드의 일기를 모두 확인했어요.")
+        }
+    }
+
+    private fun getMyProfile() {
+        viewModelScope.launch {
+            userRepository.getUserLoginInfo().onSuccess { myInfo ->
+                _uiState.update {
+                    it.copy(
+                        myProfileUrl = myInfo.profileImg
+                    )
+                }
+            }.onLogFailure { }
         }
     }
 

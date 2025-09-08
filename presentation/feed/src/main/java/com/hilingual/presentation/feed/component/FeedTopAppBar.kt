@@ -34,7 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.R
-import com.hilingual.core.designsystem.component.image.NetworkImage
+import com.hilingual.core.designsystem.component.image.ProfileImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
@@ -70,12 +70,11 @@ internal fun FeedTopAppBar(
 
         Spacer(Modifier.width(8.dp))
 
-        NetworkImage(
+        ProfileImage(
             imageUrl = profileImageUrl,
-            contentDescription = null,
+            size = 36.dp,
             modifier = Modifier
                 .noRippleClickable(onClick = onProfileClick)
-                .size(36.dp)
                 .border(
                     width = 1.dp,
                     color = HilingualTheme.colors.gray400,

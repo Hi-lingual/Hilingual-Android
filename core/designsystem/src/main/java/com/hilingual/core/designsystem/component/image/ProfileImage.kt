@@ -14,7 +14,7 @@ import com.hilingual.core.designsystem.R
 fun ProfileImage(
     imageUrl: String?,
     size: Dp,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     if (imageUrl.isNullOrBlank()) {
         Image(
