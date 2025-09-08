@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.content.FeedCard
@@ -28,10 +30,31 @@ internal fun DiaryListScreen(
     onLikeClick: (diaryId: Long, isLiked: Boolean) -> Unit,
     onUnpublishClick: (diaryId: Long) -> Unit,
     onReportClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onScrollStateChanged: ((Boolean) -> Unit)? = null,
+    isNestedScroll: Boolean = false,
+    canParentScroll: Boolean = true
 ) {
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(listState.layoutInfo, diaries.size) {
+        val layoutInfo = listState.layoutInfo
+
+        if (diaries.isEmpty() || layoutInfo.visibleItemsInfo.isEmpty()) {
+            onScrollStateChanged?.invoke(false)
+            return@LaunchedEffect
+        }
+
+        val canScrollDown = listState.canScrollForward
+        val canScrollUp = listState.canScrollBackward
+
+        onScrollStateChanged?.invoke(canScrollDown || canScrollUp)
+    }
+
     LazyColumn(
+        state = listState,
         contentPadding = PaddingValues(bottom = 48.dp),
+        userScrollEnabled = if (isNestedScroll) canParentScroll else true,
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
@@ -42,8 +65,9 @@ internal fun DiaryListScreen(
                 Column(
                     modifier = Modifier.fillParentMaxSize()
                 ) {
-                    Spacer(Modifier.weight(14f))
+                    Spacer(modifier = Modifier.weight(140f))
                     FeedEmptyCard(type = emptyCardType)
+                    Spacer(modifier = Modifier.weight(243f))
                 }
             }
         } else {
