@@ -146,7 +146,7 @@ internal class FeedDiaryViewModel @Inject constructor(
                             showVocaOverflowSnackbar()
                         }
 
-                        else -> {}
+                        else -> {} // 성공, 실패 외 기타 처리
                     }
                 }
                 .onLogFailure { }
