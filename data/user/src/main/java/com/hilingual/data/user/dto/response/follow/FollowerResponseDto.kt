@@ -1,10 +1,10 @@
-package com.hilingual.data.user.dto.reponse
+package com.hilingual.data.user.dto.response.follow
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class FollowingResponseDto(
-    @SerialName("followingList")
+data class FollowerResponseDto(
+    @SerialName("followerList")
     val userList: List<UserItemDto>
 )

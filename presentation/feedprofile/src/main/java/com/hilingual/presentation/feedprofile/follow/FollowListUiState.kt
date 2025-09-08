@@ -2,7 +2,7 @@ package com.hilingual.presentation.feedprofile.follow
 
 import androidx.compose.runtime.Immutable
 import com.hilingual.core.common.util.UiState
-import com.hilingual.data.user.model.FollowState
+import com.hilingual.data.user.model.follow.FollowState
 import com.hilingual.presentation.feedprofile.follow.model.FollowItemModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf

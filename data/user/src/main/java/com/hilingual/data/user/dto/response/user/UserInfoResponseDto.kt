@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.notification.main.model
+package com.hilingual.data.user.dto.response.user
 
-import androidx.compose.runtime.Immutable
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-enum class FeedNotificationType {
-    LIKE_DIARY,
-    FOLLOW_USER
-}
-
-@Immutable
-data class FeedNotificationItemModel(
-    val noticeId: Long,
-    val type: FeedNotificationType,
-    val title: String,
-    val targetId: Long,
-    val date: String,
-    val isRead: Boolean
+@Serializable
+data class UserInfoResponseDto(
+    @SerialName("nickname")
+    val nickname: String,
+    @SerialName("profileImg")
+    val profileImg: String,
+    @SerialName("totalDiaries")
+    val totalDiaries: Int,
+    @SerialName("streak")
+    val streak: Int,
+    @SerialName("newAlarm")
+    val newAlarm: Boolean
 )

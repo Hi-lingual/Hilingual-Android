@@ -1,6 +1,6 @@
-package com.hilingual.data.user.model
+package com.hilingual.data.user.model.follow
 
-import com.hilingual.data.user.dto.reponse.UserItemDto
+import com.hilingual.data.user.dto.response.follow.UserItemDto
 
 data class FollowUserListResultModel(
     val userId: Long,

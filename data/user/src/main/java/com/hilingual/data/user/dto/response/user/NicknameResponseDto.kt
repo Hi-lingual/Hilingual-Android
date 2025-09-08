@@ -13,22 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.data.user.model
+package com.hilingual.data.user.dto.response.user
 
-import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-data class UserInfoModel(
-    val nickname: String,
-    val profileImg: String,
-    val streak: Int,
-    val totalDiaries: Int,
-    val newAlarm: Boolean
-)
-
-internal fun UserInfoResponseDto.toModel() = UserInfoModel(
-    nickname = this.nickname,
-    profileImg = this.profileImg,
-    streak = this.streak,
-    totalDiaries = this.totalDiaries,
-    newAlarm = this.newAlarm
+@Serializable
+data class NicknameResponseDto(
+    @SerialName("isAvailable")
+    val isAvailable: Boolean
 )
