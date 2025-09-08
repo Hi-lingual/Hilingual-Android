@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
@@ -42,6 +43,8 @@ internal fun FollowListRoute(
         paddingValues = paddingValues,
         followers = uiState.followerList,
         followings = uiState.followingList,
+        isFollowerRefreshing = uiState.isFollowerRefreshing,
+        isFollowingRefreshing = uiState.isFollowingRefreshing,
         onBackClick = navigateUp,
         onProfileClick = navigateToFeedProfile,
         onActionButtonClick = viewModel::updateFollowingState,
@@ -54,6 +57,8 @@ private fun FollowListScreen(
     paddingValues: PaddingValues,
     followers: UiState<ImmutableList<FollowItemModel>>,
     followings: UiState<ImmutableList<FollowItemModel>>,
+    isFollowerRefreshing: Boolean,
+    isFollowingRefreshing: Boolean,
     onBackClick: () -> Unit,
     onProfileClick: (Long) -> Unit,
     onActionButtonClick: (Long, Boolean, FollowTabType) -> Unit,
@@ -62,6 +67,8 @@ private fun FollowListScreen(
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
+    val followerListState = rememberLazyListState()
+    val followingListState = rememberLazyListState()
 
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.distinctUntilChanged().collect {
@@ -92,9 +99,15 @@ private fun FollowListScreen(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
         ) { page ->
-            val (followState, emptyCardType, tabType) = when (page) {
-                0 -> Triple(followers, FeedEmptyCardType.NO_FOLLOWER, FollowTabType.FOLLOWER)
-                else -> Triple(followings, FeedEmptyCardType.NO_FOLLOWING, FollowTabType.FOLLOWING)
+            val (followState, emptyCardType, tabType, isRefreshing, listState) = when (page) {
+                0 -> {
+                    val state = Triple(followers, FeedEmptyCardType.NO_FOLLOWER, FollowTabType.FOLLOWER)
+                    Tuple5(state.first, state.second, state.third, isFollowerRefreshing, followerListState)
+                }
+                else -> {
+                    val state = Triple(followings, FeedEmptyCardType.NO_FOLLOWING, FollowTabType.FOLLOWING)
+                    Tuple5(state.first, state.second, state.third, isFollowingRefreshing, followingListState)
+                }
             }
 
             when (followState) {
@@ -103,18 +116,28 @@ private fun FollowListScreen(
                     FollowScreen(
                         follows = followState.data,
                         emptyCardType = emptyCardType,
+                        isRefreshing = isRefreshing,
+                        listState = listState,
+                        onRefresh = { onTabRefresh(tabType) },
                         onProfileClick = onProfileClick,
                         onActionButtonClick = { userId, isFollowing ->
                             onActionButtonClick(userId, isFollowing, tabType)
                         }
                     )
                 }
-
                 else -> {}
             }
         }
     }
 }
+
+private data class Tuple5<A, B, C, D, E>(
+    val first: A,
+    val second: B,
+    val third: C,
+    val fourth: D,
+    val fifth: E
+)
 
 @Preview(showBackground = true)
 @Composable
@@ -124,6 +147,8 @@ private fun FollowListScreenPreview() {
             paddingValues = PaddingValues(0.dp),
             followers = FollowListUiState.Fake.followerList,
             followings = FollowListUiState.Fake.followingList,
+            isFollowerRefreshing = false,
+            isFollowingRefreshing = false,
             onBackClick = {},
             onProfileClick = {},
             onActionButtonClick = { _, _, _ -> },
