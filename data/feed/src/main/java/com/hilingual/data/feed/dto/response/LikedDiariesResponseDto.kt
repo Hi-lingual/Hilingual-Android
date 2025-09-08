@@ -14,7 +14,7 @@ data class LikedDiaryItemDto(
     @SerialName("profile")
     val profile: LikedDiaryProfileDto,
     @SerialName("diary")
-    val diary: LikedDiaryDto
+    val diary: DiaryDto
 )
 
 @Serializable
@@ -29,20 +29,4 @@ data class LikedDiaryProfileDto(
     val nickname: String,
     @SerialName("streak")
     val streak: Int
-)
-
-@Serializable
-data class LikedDiaryDto(
-    @SerialName("diaryId")
-    val diaryId: Long,
-    @SerialName("sharedDate")
-    val sharedDate: Long,
-    @SerialName("likeCount")
-    val likeCount: Int,
-    @SerialName("isLiked")
-    val isLiked: Boolean,
-    @SerialName("diaryImg")
-    val diaryImg: String?,
-    @SerialName("originalText")
-    val originalText: String
 )

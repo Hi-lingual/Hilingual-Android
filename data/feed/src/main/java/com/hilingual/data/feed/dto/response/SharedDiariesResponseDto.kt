@@ -8,7 +8,7 @@ data class SharedDiariesResponseDto(
     @SerialName("profile")
     val profile: SharedDiaryProfileDto,
     @SerialName("diaryList")
-    val diaryList: List<SharedDiaryDto>
+    val diaryList: List<DiaryDto>
 )
 
 @Serializable
@@ -17,20 +17,4 @@ data class SharedDiaryProfileDto(
     val profileImg: String?,
     @SerialName("nickname")
     val nickname: String
-)
-
-@Serializable
-data class SharedDiaryDto(
-    @SerialName("diaryId")
-    val diaryId: Long,
-    @SerialName("sharedDate")
-    val sharedDate: Long,
-    @SerialName("likeCount")
-    val likeCount: Int,
-    @SerialName("isLiked")
-    val isLiked: Boolean,
-    @SerialName("diaryImg")
-    val diaryImg: String?,
-    @SerialName("originalText")
-    val originalText: String
 )

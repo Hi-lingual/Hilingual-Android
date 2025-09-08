@@ -1,7 +1,7 @@
 package com.hilingual.data.feed.model
 
 import com.hilingual.data.feed.dto.response.SharedDiariesResponseDto
-import com.hilingual.data.feed.dto.response.SharedDiaryDto
+import com.hilingual.data.feed.dto.response.DiaryDto
 import com.hilingual.data.feed.dto.response.SharedDiaryProfileDto
 import javax.annotation.concurrent.Immutable
 
@@ -29,7 +29,7 @@ data class SharedDiaryModel(
 
 internal fun SharedDiariesResponseDto.toModel(): SharedDiariesModel = SharedDiariesModel(
     profile = this.profile.toModel(),
-    diaryList = this.diaryList.map { it.toModel() }
+    diaryList = this.diaryList.map { it.toSharedDiaryModel() }
 )
 
 internal fun SharedDiaryProfileDto.toModel(): ProfileModel = ProfileModel(
@@ -37,7 +37,7 @@ internal fun SharedDiaryProfileDto.toModel(): ProfileModel = ProfileModel(
     nickname = this.nickname
 )
 
-internal fun SharedDiaryDto.toModel(): SharedDiaryModel = SharedDiaryModel(
+internal fun DiaryDto.toSharedDiaryModel(): SharedDiaryModel = SharedDiaryModel(
     diaryId = this.diaryId,
     sharedDate = this.sharedDate,
     likeCount = this.likeCount,

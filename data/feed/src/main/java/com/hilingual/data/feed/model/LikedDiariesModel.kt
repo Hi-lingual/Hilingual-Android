@@ -1,7 +1,7 @@
 package com.hilingual.data.feed.model
 
 import com.hilingual.data.feed.dto.response.LikedDiariesResponseDto
-import com.hilingual.data.feed.dto.response.LikedDiaryDto
+import com.hilingual.data.feed.dto.response.DiaryDto
 import com.hilingual.data.feed.dto.response.LikedDiaryItemDto
 import com.hilingual.data.feed.dto.response.LikedDiaryProfileDto
 import javax.annotation.concurrent.Immutable
@@ -42,7 +42,7 @@ internal fun LikedDiariesResponseDto.toModel(): LikedDiariesModel = LikedDiaries
 
 internal fun LikedDiaryItemDto.toModel(): LikedDiaryItemModel = LikedDiaryItemModel(
     profile = this.profile.toModel(),
-    diary = this.diary.toModel()
+    diary = this.diary.toLikedDiaryModel()
 )
 
 internal fun LikedDiaryProfileDto.toModel(): LikedDiaryProfileModel = LikedDiaryProfileModel(
@@ -53,7 +53,7 @@ internal fun LikedDiaryProfileDto.toModel(): LikedDiaryProfileModel = LikedDiary
     streak = this.streak
 )
 
-internal fun LikedDiaryDto.toModel(): LikedDiaryModel = LikedDiaryModel(
+internal fun DiaryDto.toLikedDiaryModel(): LikedDiaryModel = LikedDiaryModel(
     diaryId = this.diaryId,
     sharedDate = this.sharedDate,
     likeCount = this.likeCount,
