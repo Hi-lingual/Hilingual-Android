@@ -1,9 +1,7 @@
 package com.hilingual.data.feed.model
 
 import com.hilingual.data.feed.dto.response.FeedProfileResponseDto
-import javax.annotation.concurrent.Immutable
 
-@Immutable
 data class FeedProfileModel(
     val isMine: Boolean,
     val profileImageUrl: String?,

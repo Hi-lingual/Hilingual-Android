@@ -4,20 +4,16 @@ import com.hilingual.data.feed.dto.response.DiaryDto
 import com.hilingual.data.feed.dto.response.LikedDiariesResponseDto
 import com.hilingual.data.feed.dto.response.LikedDiaryItemDto
 import com.hilingual.data.feed.dto.response.LikedDiaryProfileDto
-import javax.annotation.concurrent.Immutable
 
-@Immutable
 data class LikedDiariesModel(
     val diaryList: List<LikedDiaryItemModel>
 )
 
-@Immutable
 data class LikedDiaryItemModel(
     val profile: LikedDiaryProfileModel,
     val diary: LikedDiaryModel
 )
 
-@Immutable
 data class LikedDiaryProfileModel(
     val userId: Long,
     val isMine: Boolean,
@@ -26,7 +22,6 @@ data class LikedDiaryProfileModel(
     val streak: Int
 )
 
-@Immutable
 data class LikedDiaryModel(
     val diaryId: Long,
     val sharedDate: Long,

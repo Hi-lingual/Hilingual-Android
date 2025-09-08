@@ -3,21 +3,17 @@ package com.hilingual.data.feed.model
 import com.hilingual.data.feed.dto.response.DiaryDto
 import com.hilingual.data.feed.dto.response.SharedDiariesResponseDto
 import com.hilingual.data.feed.dto.response.SharedDiaryProfileDto
-import javax.annotation.concurrent.Immutable
 
-@Immutable
 data class SharedDiariesModel(
     val profile: ProfileModel,
     val diaryList: List<SharedDiaryModel>
 )
 
-@Immutable
 data class ProfileModel(
     val profileImg: String?,
     val nickname: String
 )
 
-@Immutable
 data class SharedDiaryModel(
     val diaryId: Long,
     val sharedDate: Long,
