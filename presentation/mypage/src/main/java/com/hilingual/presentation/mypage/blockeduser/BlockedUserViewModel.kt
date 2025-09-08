@@ -7,7 +7,6 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,6 +20,10 @@ internal class BlockedUserViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(BlockedUserUiState())
     val uiState: StateFlow<BlockedUserUiState> = _uiState.asStateFlow()
+
+    init {
+        getBlockList()
+    }
 
     fun getBlockList() {
         viewModelScope.launch {
