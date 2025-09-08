@@ -6,7 +6,7 @@ import com.hilingual.data.feed.model.FeedProfileModel
 @Immutable
 data class FeedProfileInfoModel(
     val isMine: Boolean,
-    val profileImageUrl: String,
+    val profileImageUrl: String?,
     val nickname: String,
     val follower: Int,
     val following: Int,
@@ -19,7 +19,7 @@ data class FeedProfileInfoModel(
 internal fun FeedProfileModel.toState(): FeedProfileInfoModel =
     FeedProfileInfoModel(
         isMine = this.isMine,
-        profileImageUrl = this.profileImageUrl ?: "",
+        profileImageUrl = this.profileImageUrl,
         nickname = this.nickname,
         follower = this.follower,
         following = this.following,
