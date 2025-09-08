@@ -38,8 +38,9 @@ internal fun FollowScreen(
                 Column(
                     modifier = Modifier.fillParentMaxSize()
                 ) {
-                    Spacer(Modifier.weight(16f))
+                    Spacer(Modifier.weight(1f))
                     FeedEmptyCard(type = emptyCardType)
+                    Spacer(Modifier.weight(2f))
                 }
             }
         } else {

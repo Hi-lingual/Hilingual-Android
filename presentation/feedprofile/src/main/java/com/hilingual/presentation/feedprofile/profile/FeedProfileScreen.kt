@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -122,14 +123,27 @@ private fun FeedProfileScreen(
     var isReportUserDialogVisible by remember { mutableStateOf(false) }
 
     val profileListState = rememberLazyListState()
+    var shouldEnableScroll by remember { mutableStateOf(true) }
 
-    val isFabVisible by remember {
-        derivedStateOf {
-            profileListState.firstVisibleItemIndex > 0 || profileListState.firstVisibleItemScrollOffset > 0
-        }
+    val canParentScrollForOthers by remember {
+        derivedStateOf { profileListState.firstVisibleItemIndex >= 1 }
+    }
+
+    val canParentScrollForMine by remember {
+        derivedStateOf { profileListState.firstVisibleItemIndex >= 2 }
     }
 
     val profile = uiState.feedProfileInfo
+    val finalScrollEnabled = if (profile.isBlock) false else shouldEnableScroll
+
+    val isFabVisible by remember {
+        derivedStateOf {
+            finalScrollEnabled && (
+                profileListState.firstVisibleItemIndex > 0 ||
+                    profileListState.firstVisibleItemScrollOffset > 0
+                )
+        }
+    }
 
     Box(
         modifier = modifier
@@ -143,12 +157,12 @@ private fun FeedProfileScreen(
         ) {
             if (profile.isMine || profile.isBlock) {
                 BackTopAppBar(
-                    title = null,
+                    title = "피드",
                     onBackClicked = onBackClick
                 )
             } else {
                 BackAndMoreTopAppBar(
-                    title = null,
+                    title = "피드",
                     onBackClicked = onBackClick,
                     onMoreClicked = { isMenuBottomSheetVisible = true }
                 )
@@ -156,6 +170,7 @@ private fun FeedProfileScreen(
 
             LazyColumn(
                 state = profileListState,
+                userScrollEnabled = finalScrollEnabled,
                 modifier = Modifier.fillMaxSize()
             ) {
                 item {
@@ -198,7 +213,7 @@ private fun FeedProfileScreen(
                         item {
                             HorizontalPager(
                                 state = pagerState,
-                                modifier = Modifier.fillMaxSize()
+                                modifier = Modifier.fillParentMaxSize()
                             ) { page ->
                                 val (diaries, emptyCardType, tabType) = when (page) {
                                     0 -> Triple(uiState.sharedDiaries, FeedEmptyCardType.NOT_SHARED, DiaryTabType.SHARED)
@@ -213,6 +228,11 @@ private fun FeedProfileScreen(
                                     onLikeClick = { diaryId, isLiked -> onLikeClick(diaryId, isLiked, tabType) },
                                     onUnpublishClick = onUnpublishClick,
                                     onReportClick = onReportDiaryClick,
+                                    onScrollStateChanged = { isScrollable ->
+                                        shouldEnableScroll = isScrollable
+                                    },
+                                    isNestedScroll = true,
+                                    canParentScroll = canParentScrollForMine,
                                     modifier = Modifier.fillParentMaxSize()
                                 )
                             }
@@ -222,8 +242,7 @@ private fun FeedProfileScreen(
                     profile.isBlock -> {
                         item {
                             Column(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth(),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Spacer(modifier = Modifier.height(140.dp))
@@ -257,6 +276,11 @@ private fun FeedProfileScreen(
                                 onLikeClick = { diaryId, isLiked -> onLikeClick(diaryId, isLiked, DiaryTabType.SHARED) },
                                 onUnpublishClick = onUnpublishClick,
                                 onReportClick = onReportDiaryClick,
+                                onScrollStateChanged = { isScrollable ->
+                                    shouldEnableScroll = isScrollable
+                                },
+                                isNestedScroll = true,
+                                canParentScroll = canParentScrollForOthers,
                                 modifier = Modifier.fillParentMaxSize()
                             )
                         }
@@ -274,6 +298,7 @@ private fun FeedProfileScreen(
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
+                .navigationBarsPadding()
                 .padding(bottom = 24.dp, end = 16.dp)
         )
     }
