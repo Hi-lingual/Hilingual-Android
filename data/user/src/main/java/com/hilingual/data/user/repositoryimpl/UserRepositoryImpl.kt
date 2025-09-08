@@ -81,11 +81,11 @@ internal class UserRepositoryImpl @Inject constructor(
 
     override suspend fun putBlockUser(targetUserId: Long): Result<Unit> =
         suspendRunCatching {
-            userRemoteDataSource.putBlockUser(targetUserId).data ?: Unit
+            userRemoteDataSource.putBlockUser(targetUserId).data
         }
 
     override suspend fun deleteBlockUser(targetUserId: Long): Result<Unit> =
         suspendRunCatching {
-            userRemoteDataSource.deleteBlockUser(targetUserId).data ?: Unit
+            userRemoteDataSource.deleteBlockUser(targetUserId).data
         }
 }
