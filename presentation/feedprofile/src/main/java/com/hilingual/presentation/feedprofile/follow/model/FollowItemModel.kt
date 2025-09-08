@@ -12,7 +12,7 @@ data class FollowItemModel(
     val followState: FollowState
 )
 
-internal fun FollowUserListResultModel.toFollowItemModel(): FollowItemModel = FollowItemModel(
+internal fun FollowUserListResultModel.toState(): FollowItemModel = FollowItemModel(
     userId = this.userId,
     profileImgUrl = this.profileImg,
     nickname = this.nickname,

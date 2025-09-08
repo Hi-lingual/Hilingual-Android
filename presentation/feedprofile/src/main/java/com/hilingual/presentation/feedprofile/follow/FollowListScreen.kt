@@ -10,11 +10,8 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,6 +26,7 @@ import com.hilingual.presentation.feedprofile.follow.model.FollowItemModel
 import com.hilingual.presentation.feedprofile.follow.model.FollowTabType
 import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 @Composable
@@ -64,13 +62,11 @@ private fun FollowListScreen(
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
-    var previousPage by remember { mutableStateOf(pagerState.currentPage) }
 
-    LaunchedEffect(pagerState.currentPage) {
-        if (pagerState.currentPage != previousPage) {
-            val tabType = if (pagerState.currentPage == 0) FollowTabType.FOLLOWER else FollowTabType.FOLLOWING
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.distinctUntilChanged().collect {
+            val tabType = if (it == 0) FollowTabType.FOLLOWER else FollowTabType.FOLLOWING
             onTabRefresh(tabType)
-            previousPage = pagerState.currentPage
         }
     }
 
@@ -89,8 +85,6 @@ private fun FollowListScreen(
             onTabSelected = { index ->
                 coroutineScope.launch {
                     pagerState.animateScrollToPage(index)
-                    val tabType = if (index == 0) FollowTabType.FOLLOWER else FollowTabType.FOLLOWING
-                    onTabRefresh(tabType)
                 }
             }
         )
@@ -103,22 +97,20 @@ private fun FollowListScreen(
                 else -> Triple(followings, FeedEmptyCardType.NO_FOLLOWING, FollowTabType.FOLLOWING)
             }
 
-            key(pagerState.currentPage == page) {
-                when (followState) {
-                    is UiState.Loading -> HilingualLoadingIndicator()
-                    is UiState.Success -> {
-                        FollowScreen(
-                            follows = followState.data,
-                            emptyCardType = emptyCardType,
-                            onProfileClick = onProfileClick,
-                            onActionButtonClick = { userId, isFollowing ->
-                                onActionButtonClick(userId, isFollowing, tabType)
-                            }
-                        )
-                    }
-
-                    else -> {}
+            when (followState) {
+                is UiState.Loading -> HilingualLoadingIndicator()
+                is UiState.Success -> {
+                    FollowScreen(
+                        follows = followState.data,
+                        emptyCardType = emptyCardType,
+                        onProfileClick = onProfileClick,
+                        onActionButtonClick = { userId, isFollowing ->
+                            onActionButtonClick(userId, isFollowing, tabType)
+                        }
+                    )
                 }
+
+                else -> {}
             }
         }
     }

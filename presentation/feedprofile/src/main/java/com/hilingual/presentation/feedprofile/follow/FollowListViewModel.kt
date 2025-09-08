@@ -9,7 +9,7 @@ import com.hilingual.data.user.model.FollowState
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.feedprofile.follow.model.FollowItemModel
 import com.hilingual.presentation.feedprofile.follow.model.FollowTabType
-import com.hilingual.presentation.feedprofile.follow.model.toFollowItemModel
+import com.hilingual.presentation.feedprofile.follow.model.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -27,19 +27,16 @@ internal class FollowListViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val targetUserId: Long = savedStateHandle.get<Long>("userId") ?: 0L
+    // private val targetUserId: Long = savedStateHandle.toRoute<FeedProfileGraph>().userId
 
     private val _uiState = MutableStateFlow(FollowListUiState())
     val uiState: StateFlow<FollowListUiState> = _uiState.asStateFlow()
-
-    init {
-        loadFollowers()
-    }
 
     private fun loadFollowers() {
         viewModelScope.launch {
             userRepository.getFollowers(targetUserId)
                 .onSuccess { followUserList ->
-                    val followerItems = followUserList.map { it.toFollowItemModel() }.toImmutableList()
+                    val followerItems = followUserList.map { it.toState() }.toImmutableList()
                     _uiState.update {
                         it.copy(followerList = UiState.Success(followerItems))
                     }
@@ -53,7 +50,7 @@ internal class FollowListViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.getFollowings(targetUserId)
                 .onSuccess { followUserList ->
-                    val followingItems = followUserList.map { it.toFollowItemModel() }.toImmutableList()
+                    val followingItems = followUserList.map { it.toState() }.toImmutableList()
                     _uiState.update {
                         it.copy(followingList = UiState.Success(followingItems))
                     }
