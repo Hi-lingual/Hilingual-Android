@@ -74,6 +74,10 @@ internal fun FeedRoute(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.loadFeedData()
+    }
+
     with(uiState) {
         FeedScreen(
             paddingValues = paddingValues,

@@ -49,7 +49,7 @@ internal class FeedViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<FeedSideEffect>()
     val sideEffect: SharedFlow<FeedSideEffect> = _sideEffect.asSharedFlow()
 
-    init {
+    fun loadFeedData() {
         getRecommendFeeds()
         getFollowingFeeds()
     }
