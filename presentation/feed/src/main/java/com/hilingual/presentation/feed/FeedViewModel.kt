@@ -49,10 +49,17 @@ internal class FeedViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<FeedSideEffect>()
     val sideEffect: SharedFlow<FeedSideEffect> = _sideEffect.asSharedFlow()
 
-    fun loadFeedData() {
+    fun loadInitialFeedData() {
         getMyProfile()
         getRecommendFeeds()
         getFollowingFeeds()
+    }
+
+    fun onFeedRefresh(tab: FeedTab) {
+        when (tab) {
+            FeedTab.RECOMMEND -> getRecommendFeeds()
+            FeedTab.FOLLOWING -> getFollowingFeeds()
+        }
     }
 
     fun readAllFeed() {
@@ -79,6 +86,7 @@ internal class FeedViewModel @Inject constructor(
                 .onSuccess { feedResult ->
                     _uiState.update {
                         it.copy(
+                            isRecommendRefreshing = false,
                             recommendFeedList = UiState.Success(feedResult.toState())
                         )
                     }
@@ -95,6 +103,7 @@ internal class FeedViewModel @Inject constructor(
                 .onSuccess { feedResult ->
                     _uiState.update {
                         it.copy(
+                            isFollowingRefreshing = false,
                             followingFeedList = UiState.Success(feedResult.toState()),
                             hasFollowing = feedResult.hasFollowing
                         )
