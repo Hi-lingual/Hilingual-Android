@@ -1,7 +1,6 @@
 package com.hilingual.presentation.feedprofile.profile.model
 
 import androidx.compose.runtime.Immutable
-import com.hilingual.data.feed.model.FeedProfileModel
 import com.hilingual.data.feed.model.LikedDiaryItemModel
 import com.hilingual.data.feed.model.SharedDiaryModel
 
@@ -20,29 +19,29 @@ data class FeedDiaryUIModel(
     val isMine: Boolean
 )
 
-internal fun SharedDiaryModel.toFeedDiaryUIModel(
-    feedProfileModel: FeedProfileModel,
+internal fun SharedDiaryModel.toState(
+    feedProfileInfoModel: FeedProfileInfoModel,
     authorUserId: Long
 ): FeedDiaryUIModel = FeedDiaryUIModel(
     diaryId = this.diaryId,
     authorUserId = authorUserId,
-    authorNickname = feedProfileModel.nickname,
-    authorProfileImageUrl = feedProfileModel.profileImageUrl,
-    authorStreak = if (feedProfileModel.isMine) null else feedProfileModel.streak,
+    authorNickname = feedProfileInfoModel.nickname,
+    authorProfileImageUrl = feedProfileInfoModel.profileImageUrl,
+    authorStreak = if (feedProfileInfoModel.isMine) null else feedProfileInfoModel.streak,
     sharedDate = this.sharedDate,
     originalText = this.originalText,
     diaryImageUrl = this.diaryImg,
     likeCount = this.likeCount,
     isLiked = this.isLiked,
-    isMine = feedProfileModel.isMine
+    isMine = feedProfileInfoModel.isMine
 )
 
-internal fun LikedDiaryItemModel.toFeedDiaryUIModel(): FeedDiaryUIModel = FeedDiaryUIModel(
+internal fun LikedDiaryItemModel.toState(): FeedDiaryUIModel = FeedDiaryUIModel(
     diaryId = this.diary.diaryId,
     authorUserId = this.profile.userId,
     authorNickname = this.profile.nickname,
     authorProfileImageUrl = this.profile.profileImg,
-    authorStreak = if (this.profile.isMine) null else this.profile.streak,
+    authorStreak = this.profile.streak,
     sharedDate = this.diary.sharedDate,
     originalText = this.diary.originalText,
     diaryImageUrl = this.diary.diaryImg,

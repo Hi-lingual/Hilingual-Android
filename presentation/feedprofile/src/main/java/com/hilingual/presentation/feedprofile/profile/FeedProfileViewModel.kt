@@ -6,15 +6,15 @@ import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
-import com.hilingual.data.feed.model.FeedProfileModel
 import com.hilingual.data.feed.repository.FeedRepository
 import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
 import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
-import com.hilingual.presentation.feedprofile.profile.model.toFeedDiaryUIModel
+import com.hilingual.presentation.feedprofile.profile.model.FeedProfileInfoModel
+import com.hilingual.presentation.feedprofile.profile.model.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -42,32 +42,48 @@ internal class FeedProfileViewModel @Inject constructor(
 
     private fun loadFeedProfile() {
         viewModelScope.launch {
-            feedRepository.getFeedProfile(targetUserId)
-                .onSuccess { feedProfileModel ->
-                    _uiState.update {
-                        UiState.Success(
-                            FeedProfileUiState(
-                                feedProfileInfo = feedProfileModel,
-                                sharedDiaries = persistentListOf(),
-                                likedDiaries = persistentListOf()
-                            )
-                        )
-                    }
-                    loadSharedDiaries(feedProfileModel)
-                }
-                .onLogFailure {
-                    _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
-                }
+
+            val feedProfileDeferred = async { feedRepository.getFeedProfile(targetUserId) }
+            val sharedDiariesDeferred = async { feedRepository.getSharedDiaries(targetUserId) }
+
+            val feedProfileResult = feedProfileDeferred.await()
+            val sharedDiariesResult = sharedDiariesDeferred.await()
+
+            if (feedProfileResult.isFailure || sharedDiariesResult.isFailure) {
+                feedProfileResult.onLogFailure {}
+                sharedDiariesResult.onLogFailure {}
+                _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
+                return@launch
+            }
+
+            val feedProfileInfoModel = feedProfileResult.getOrThrow()
+            val sharedDiariesModel = sharedDiariesResult.getOrThrow()
+
+            val sharedDiaryUIModels = sharedDiariesModel.diaryList.map { sharedDiary ->
+                sharedDiary.toState(
+                    feedProfileInfoModel = feedProfileInfoModel.toState(),
+                    authorUserId = targetUserId
+                )
+            }.toImmutableList()
+
+            _uiState.update {
+                UiState.Success(
+                    FeedProfileUiState(
+                        feedProfileInfo = feedProfileInfoModel.toState(),
+                        sharedDiaries = sharedDiaryUIModels
+                    )
+                )
+            }
         }
     }
 
-    private fun loadSharedDiaries(feedProfileModel: FeedProfileModel) {
+    private fun loadSharedDiaries(feedProfileIfoModel: FeedProfileInfoModel) {
         viewModelScope.launch {
             feedRepository.getSharedDiaries(targetUserId)
                 .onSuccess { sharedDiariesModel ->
                     val sharedDiaryUIModels = sharedDiariesModel.diaryList.map { sharedDiary ->
-                        sharedDiary.toFeedDiaryUIModel(
-                            feedProfileModel = feedProfileModel,
+                        sharedDiary.toState(
+                            feedProfileInfoModel = feedProfileIfoModel,
                             authorUserId = targetUserId
                         )
                     }.toImmutableList()
@@ -87,7 +103,7 @@ internal class FeedProfileViewModel @Inject constructor(
             feedRepository.getLikedDiaries(targetUserId)
                 .onSuccess { likedDiariesModel ->
                     val likedDiaryUIModels = likedDiariesModel.diaryList.map { likedDiaryItem ->
-                        likedDiaryItem.toFeedDiaryUIModel()
+                        likedDiaryItem.toState()
                     }.toImmutableList()
 
                     _uiState.updateSuccess { currentState ->
