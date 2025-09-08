@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RecommendFeedResponseDto(
     @SerialName("diaryList")
-    val diaryList: List<FeedResultDto>
+    val diaryList: List<FeedItemDto>
 )

@@ -4,15 +4,15 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class FeedResultDto(
+data class FeedItemDto(
     @SerialName("profile")
-    val profile: FeedProfileDto,
+    val profile: FeedItemProfileDto,
     @SerialName("diary")
-    val diary: FeedDiaryPreviewDto
+    val diary: FeedItemDiaryDto
 )
 
 @Serializable
-data class FeedProfileDto(
+data class FeedItemProfileDto(
     @SerialName("userId")
     val userId: Long,
     @SerialName("isMine")
@@ -26,7 +26,7 @@ data class FeedProfileDto(
 )
 
 @Serializable
-data class FeedDiaryPreviewDto(
+data class FeedItemDiaryDto(
     @SerialName("diaryId")
     val diaryId: Long,
     @SerialName("sharedDate")

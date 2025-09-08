@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FollowingFeedResponseDto(
     @SerialName("diaryList")
-    val diaryList: List<FeedResultDto>,
+    val diaryList: List<FeedItemDto>,
     @SerialName("haveFollowing")
     val haveFollowing: Boolean
 )
