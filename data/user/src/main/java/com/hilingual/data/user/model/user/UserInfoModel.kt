@@ -13,10 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.data.user.model
+package com.hilingual.data.user.model.user
 
-enum class NicknameValidationResult {
-    AVAILABLE,
-    DUPLICATE,
-    FORBIDDEN_WORD
-}
+import com.hilingual.data.user.dto.response.user.UserInfoResponseDto
+
+data class UserInfoModel(
+    val nickname: String,
+    val profileImg: String,
+    val streak: Int,
+    val totalDiaries: Int,
+    val newAlarm: Boolean
+)
+
+internal fun UserInfoResponseDto.toModel() = UserInfoModel(
+    nickname = this.nickname,
+    profileImg = this.profileImg,
+    streak = this.streak,
+    totalDiaries = this.totalDiaries,
+    newAlarm = this.newAlarm
+)

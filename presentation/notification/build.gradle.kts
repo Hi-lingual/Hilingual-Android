@@ -25,4 +25,5 @@ android {
 
 dependencies {
     implementation(libs.richeditor.compose)
+    implementation(projects.data.user)
 }
