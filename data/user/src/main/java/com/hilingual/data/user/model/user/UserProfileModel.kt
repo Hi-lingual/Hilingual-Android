@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.data.user.dto.request
+package com.hilingual.data.user.model.user
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.hilingual.data.user.dto.request.user.UserProfileRequestDto
 
-@Serializable
-data class UserProfileRequestDto(
-    @SerialName("profileImg")
+data class UserProfileModel(
     val profileImg: String,
-    @SerialName("nickname")
     val nickname: String
+)
+
+internal fun UserProfileModel.toDto() = UserProfileRequestDto(
+    profileImg = this.profileImg,
+    nickname = this.nickname
 )

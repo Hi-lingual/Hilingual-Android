@@ -25,8 +25,17 @@ import com.hilingual.data.user.model.UserLoginInfoModel
 import com.hilingual.data.user.model.UserProfileModel
 import com.hilingual.data.user.model.toDto
 import com.hilingual.data.user.model.toModel
+import com.hilingual.data.user.model.notification.NotificationDetailModel
+import com.hilingual.data.user.model.notification.NotificationModel
+import com.hilingual.data.user.model.notification.NotificationSettingsModel
+import com.hilingual.data.user.model.notification.toModel
+import com.hilingual.data.user.model.user.NicknameValidationResult
+import com.hilingual.data.user.model.user.UserInfoModel
+import com.hilingual.data.user.model.user.UserProfileModel
+import com.hilingual.data.user.model.user.toDto
+import com.hilingual.data.user.model.user.toModel
 import com.hilingual.data.user.repository.UserRepository
-import jakarta.inject.Inject
+import javax.inject.Inject
 
 internal class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
@@ -52,6 +61,29 @@ internal class UserRepositoryImpl @Inject constructor(
         suspendRunCatching {
             userRemoteDataSource.getUserInfo().data!!.toModel()
         }
+
+    override suspend fun getNotifications(tab: String): Result<List<NotificationModel>> =
+        suspendRunCatching {
+            userRemoteDataSource.getNotifications(tab).data!!.map { it.toModel() }
+        }
+
+    override suspend fun getNotificationDetail(noticeId: Long): Result<NotificationDetailModel> =
+        suspendRunCatching {
+            userRemoteDataSource.getNotificationDetail(noticeId).data!!.toModel()
+        }
+
+    override suspend fun readNotification(noticeId: Long): Result<Unit> =
+        suspendRunCatching {
+            userRemoteDataSource.readNotification(noticeId).data
+        }
+
+    override suspend fun getNotificationSettings(): Result<NotificationSettingsModel> = suspendRunCatching {
+        userRemoteDataSource.getNotificationSettings().data!!.toModel()
+    }
+
+    override suspend fun updateNotificationSetting(notiType: String): Result<NotificationSettingsModel> = suspendRunCatching {
+        userRemoteDataSource.updateNotificationSetting(notiType).data!!.toModel()
+    }
 
     override suspend fun saveRegisterStatus(isCompleted: Boolean) {
         userInfoManager.saveRegisterStatus(isCompleted)

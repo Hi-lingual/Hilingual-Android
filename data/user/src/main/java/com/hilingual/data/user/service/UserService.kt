@@ -21,9 +21,16 @@ import com.hilingual.data.user.dto.reponse.NicknameResponseDto
 import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
 import com.hilingual.data.user.dto.reponse.UserLoginInfoResponseDto
 import com.hilingual.data.user.dto.request.UserProfileRequestDto
+import com.hilingual.data.user.dto.request.user.UserProfileRequestDto
+import com.hilingual.data.user.dto.response.notification.NotificationDetailResponseDto
+import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
+import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
+import com.hilingual.data.user.dto.response.user.NicknameResponseDto
+import com.hilingual.data.user.dto.response.user.UserInfoResponseDto
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -58,4 +65,27 @@ internal interface UserService {
     suspend fun deleteBlockUser(
         @Path("targetUserId") targetUserId: Long
     ): BaseResponse<Unit>
+
+    @GET("/api/v1/users/notifications")
+    suspend fun getNotifications(
+        @Query("tab") tab: String
+    ): BaseResponse<List<NotificationResponseDto>>
+
+    @GET("/api/v1/users/notifications/{noticeId}")
+    suspend fun getNotificationDetail(
+        @Path("noticeId") noticeId: Long
+    ): BaseResponse<NotificationDetailResponseDto>
+
+    @PATCH("/api/v1/users/notifications/{noticeId}/read")
+    suspend fun readNotification(
+        @Path("noticeId") noticeId: Long
+    ): BaseResponse<Unit>
+
+    @GET("/api/v1/users/mypage/noti")
+    suspend fun getNotificationSettings(): BaseResponse<NotificationSettingsResponseDto>
+
+    @PATCH("/api/v1/users/mypage/noti")
+    suspend fun updateNotificationSetting(
+        @Query("notiType") notiType: String
+    ): BaseResponse<NotificationSettingsResponseDto>
 }

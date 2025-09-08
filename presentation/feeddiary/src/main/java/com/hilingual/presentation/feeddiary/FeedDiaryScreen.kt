@@ -28,6 +28,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
+import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.bottomsheet.BlockBottomSheet
@@ -52,6 +54,7 @@ internal fun FeedDiaryRoute(
     navigateUp: () -> Unit,
     navigateToMyFeedProfile: () -> Unit,
     navigateToFeedProfile: (Long) -> Unit,
+    navigateToVoca: () -> Unit,
     viewModel: FeedDiaryViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -59,6 +62,7 @@ internal fun FeedDiaryRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var isImageDetailVisible by remember { mutableStateOf(false) }
 
+    val snackbarTrigger = LocalSnackbarTrigger.current
     val toastTrigger = LocalToastTrigger.current
 
     BackHandler {
@@ -73,11 +77,21 @@ internal fun FeedDiaryRoute(
         when (it) {
             is FeedDiarySideEffect.NavigateToUp -> navigateUp()
 
-            is FeedDiarySideEffect.ShowSnackbar -> {}
+            is FeedDiarySideEffect.ShowVocaOverflowSnackbar -> {
+                snackbarTrigger(
+                    SnackbarRequest(
+                        message = it.message,
+                        buttonText = it.actionLabel,
+                        onClick = navigateToVoca
+                    )
+                )
+            }
 
             is FeedDiarySideEffect.ShowToast -> {
                 toastTrigger(it.message)
             }
+
+            else -> {}
         }
     }
 

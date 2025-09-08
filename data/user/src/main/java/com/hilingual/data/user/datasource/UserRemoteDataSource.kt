@@ -21,15 +21,17 @@ import com.hilingual.data.user.dto.reponse.NicknameResponseDto
 import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
 import com.hilingual.data.user.dto.reponse.UserLoginInfoResponseDto
 import com.hilingual.data.user.dto.request.UserProfileRequestDto
+import com.hilingual.data.user.dto.request.user.UserProfileRequestDto
+import com.hilingual.data.user.dto.response.notification.NotificationDetailResponseDto
+import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
+import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
+import com.hilingual.data.user.dto.response.user.NicknameResponseDto
+import com.hilingual.data.user.dto.response.user.UserInfoResponseDto
 
 interface UserRemoteDataSource {
-    suspend fun getNicknameAvailability(
-        nickname: String
-    ): BaseResponse<NicknameResponseDto>
+    suspend fun getNicknameAvailability(nickname: String): BaseResponse<NicknameResponseDto>
 
-    suspend fun postUserProfile(
-        userProfileRequestDto: UserProfileRequestDto
-    ): BaseResponse<Unit>
+    suspend fun postUserProfile(userProfileRequestDto: UserProfileRequestDto): BaseResponse<Unit>
 
     suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto>
 
@@ -40,4 +42,14 @@ interface UserRemoteDataSource {
     suspend fun putBlockUser(targetUserId: Long): BaseResponse<Unit>
 
     suspend fun deleteBlockUser(targetUserId: Long): BaseResponse<Unit>
+
+    suspend fun getNotifications(tab: String): BaseResponse<List<NotificationResponseDto>>
+
+    suspend fun getNotificationDetail(noticeId: Long): BaseResponse<NotificationDetailResponseDto>
+
+    suspend fun readNotification(noticeId: Long): BaseResponse<Unit>
+
+    suspend fun getNotificationSettings(): BaseResponse<NotificationSettingsResponseDto>
+
+    suspend fun updateNotificationSetting(notiType: String): BaseResponse<NotificationSettingsResponseDto>
 }
