@@ -170,7 +170,6 @@ internal class FeedProfileViewModel @Inject constructor(
                     _sideEffect.emit(FeedProfileSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
                     _uiState.updateSuccess { currentState ->
 
-
                         val updatedSharedDiaries = currentState.sharedDiaries
                             .filter { it.diaryId != diaryId }
                             .toImmutableList()
@@ -186,7 +185,7 @@ internal class FeedProfileViewModel @Inject constructor(
 
     fun updateFollowingState(isCurrentlyFollowing: Boolean) {
         viewModelScope.launch {
-            //TODO: 팔로우 화면 머지 후 주석 삭제
+            // TODO: 팔로우 화면 머지 후 주석 삭제
            /* val result = if (isCurrentlyFollowing) {
                 userRepository.deleteFollow(targetUserId)
             } else {
@@ -235,7 +234,6 @@ internal class FeedProfileViewModel @Inject constructor(
             DiaryTabType.LIKED -> loadLikedDiaries()
         }
     }
-
 }
 
 sealed interface FeedProfileSideEffect {
