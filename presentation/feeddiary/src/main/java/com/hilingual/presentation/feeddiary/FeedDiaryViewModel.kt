@@ -22,6 +22,7 @@ import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
@@ -39,7 +40,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -60,80 +60,52 @@ internal class FeedDiaryViewModel @Inject constructor(
         loadInitialData()
     }
 
-    private suspend fun getDiaryContentData() {
-        val (contentResult, feedbacksResult, recommendExpressionsResult) = coroutineScope {
-            val contentDeferred = async { diaryRepository.getDiaryContent(diaryId) }
-            val feedbacksDeferred = async { diaryRepository.getDiaryFeedbacks(diaryId) }
-            val recommendExpressionsDeferred = async { diaryRepository.getDiaryRecommendExpressions(diaryId) }
-
-            Triple(contentDeferred.await(), feedbacksDeferred.await(), recommendExpressionsDeferred.await())
-        }
-
-        if (
-            contentResult.isSuccess &&
-            feedbacksResult.isSuccess &&
-            recommendExpressionsResult.isSuccess
-        ) {
-            val diaryResult = contentResult.getOrThrow()
-            val feedbacks = feedbacksResult.getOrThrow()
-            val recommendExpressions = recommendExpressionsResult.getOrThrow()
-
-            val newUiState = FeedDiaryUiState(
-                writtenDate = diaryResult.writtenDate,
-                diaryContent = diaryResult.toState(),
-                feedbackList = feedbacks.map { it.toState() }.toImmutableList(),
-                recommendExpressionList = recommendExpressions.map { it.toState() }.toImmutableList()
-            )
-            _uiState.value = UiState.Success(newUiState)
-        } else {
-            throw Exception()
-        }
-    }
-
-    private suspend fun getDiaryHeaderData() {
-        feedRepository.getFeedDiaryProfile(diaryId).onSuccess {
-            _uiState.updateSuccess { currentState ->
-                currentState.copy(
-                    isMine = it.isMine,
-                    profileContent = it.toState()
-                )
-            }
-        }.onLogFailure { e ->
-            Timber.d("일기 헤더 정보 조회 실패: $e")
-        }
-    }
-
     private fun loadInitialData() {
         viewModelScope.launch {
-            runCatching {
-                getDiaryContentData()
-                getDiaryHeaderData()
-            }
-                .onLogFailure { e ->
-                    Timber.d("일기 상세 조회 실패: $e")
-                    _uiState.value = UiState.Failure
-                    _sideEffect.emit(
-                        FeedDiarySideEffect.ShowRetryDialog { loadInitialData() }
+            suspendRunCatching {
+                coroutineScope {
+                    val profileDeferred = async { feedRepository.getFeedDiaryProfile(diaryId) }
+                    val contentDeferred = async { diaryRepository.getDiaryContent(diaryId) }
+                    val feedbacksDeferred = async { diaryRepository.getDiaryFeedbacks(diaryId) }
+                    val recommendExpressionsDeferred = async { diaryRepository.getDiaryRecommendExpressions(diaryId) }
+
+                    val profileResult = profileDeferred.await().getOrThrow()
+                    val contentResult = contentDeferred.await().getOrThrow()
+                    val feedbacksResult = feedbacksDeferred.await().getOrThrow()
+                    val recommendExpressionsResult = recommendExpressionsDeferred.await().getOrThrow()
+
+                    FeedDiaryUiState(
+                        isMine = profileResult.isMine,
+                        profileContent = profileResult.toState(),
+                        writtenDate = contentResult.writtenDate,
+                        diaryContent = contentResult.toState(),
+                        feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),
+                        recommendExpressionList = recommendExpressionsResult.map { it.toState() }
+                            .toImmutableList()
                     )
                 }
+            }.onSuccess { combinedState ->
+                _uiState.update { UiState.Success(combinedState) }
+            }.onLogFailure {
+                _sideEffect.emit(FeedDiarySideEffect.ShowRetryDialog(onRetry = ::loadInitialData))
+            }
         }
     }
 
     fun toggleIsLiked(isLiked: Boolean) {
         viewModelScope.launch {
-            feedRepository.postIsLike(diaryId, isLiked).onSuccess {
-                _uiState.update { currentState ->
-                    val successState = currentState as UiState.Success
-                    successState.copy(
-                        data = successState.data.copy(
-                            profileContent = successState.data.profileContent.copy(
+            feedRepository.postIsLike(diaryId, isLiked)
+                .onSuccess {
+                    _uiState.updateSuccess {
+                        it.copy(
+                            profileContent = it.profileContent.copy(
                                 isLiked = isLiked,
-                                likeCount = successState.data.profileContent.likeCount + if (isLiked) 1 else -1
+                                likeCount = (it.profileContent.likeCount + if (isLiked) 1 else -1).coerceAtLeast(0)
                             )
                         )
-                    )
+                    }
                 }
-            }
+                .onLogFailure { }
         }
     }
 
@@ -142,6 +114,9 @@ internal class FeedDiaryViewModel @Inject constructor(
     }
 
     fun toggleBookmark(phraseId: Long, isMarked: Boolean) {
+        val currentState = _uiState.value
+        if (currentState !is UiState.Success) return
+
         viewModelScope.launch {
             diaryRepository.patchPhraseBookmark(
                 phraseId = phraseId,
@@ -150,10 +125,9 @@ internal class FeedDiaryViewModel @Inject constructor(
                 .onSuccess { result ->
                     when (result) {
                         BookmarkResult.SUCCESS -> {
-                            _uiState.update { currentState ->
+                            _uiState.updateSuccess { currentState ->
 
-                                val successState = currentState as UiState.Success
-                                val oldList = successState.data.recommendExpressionList
+                                val oldList = currentState.recommendExpressionList
 
                                 val updatedList = oldList.map { item ->
                                     if (item.phraseId == phraseId) {
@@ -163,15 +137,17 @@ internal class FeedDiaryViewModel @Inject constructor(
                                     }
                                 }.toImmutableList()
 
-                                successState.copy(
-                                    data = successState.data.copy(recommendExpressionList = updatedList)
+                                currentState.copy(
+                                    recommendExpressionList = updatedList
                                 )
                             }
                         }
+
                         BookmarkResult.OVERCAPACITY -> {
                             showVocaOverflowSnackbar()
                         }
-                        else -> { }
+
+                        else -> {} // 성공, 실패 외 기타 처리
                     }
                 }
                 .onLogFailure { }
@@ -180,10 +156,11 @@ internal class FeedDiaryViewModel @Inject constructor(
 
     fun diaryUnpublish() {
         viewModelScope.launch {
-            diaryRepository.patchDiaryUnpublish(diaryId).onSuccess {
-                _sideEffect.emit(FeedDiarySideEffect.ShowToast(message = "일기가 비공개 되었어요."))
-                _sideEffect.emit(FeedDiarySideEffect.NavigateToUp)
-            }
+            diaryRepository.patchDiaryUnpublish(diaryId)
+                .onSuccess {
+                    _sideEffect.emit(FeedDiarySideEffect.ShowToast(message = "일기가 비공개 되었어요."))
+                    _sideEffect.emit(FeedDiarySideEffect.NavigateToUp)
+                }.onLogFailure { }
         }
     }
 
