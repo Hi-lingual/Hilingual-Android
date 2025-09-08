@@ -151,9 +151,9 @@ private fun HomeScreen(
     onMonthChanged: (YearMonth) -> Unit,
     onWriteDiaryClick: (LocalDate) -> Unit,
     onDiaryPreviewClick: (diaryId: Long) -> Unit,
-    onDeleteClick: () -> Unit,
-    onPublishClick: () -> Unit,
-    onUnpublishClick: () -> Unit
+    onDeleteClick: (diaryId: Long) -> Unit,
+    onPublishClick: (diaryId: Long) -> Unit,
+    onUnpublishClick: (diaryId: Long) -> Unit
 ) {
     val date = uiState.selectedDate
     val verticalScrollState = rememberScrollState()
@@ -228,14 +228,18 @@ private fun HomeScreen(
                     modifier = Modifier.heightIn(min = 20.dp)
                 )
                 when {
-                    isWritten -> HomeDropDownMenu(
-                        isExpanded = isExpanded,
-                        isPublished = uiState.diaryThumbnail?.isPublished ?: false,
-                        onExpandedChange = { isExpanded = it },
-                        onDeleteClick = onDeleteClick,
-                        onPublishClick = onPublishClick,
-                        onUnpublishClick = onUnpublishClick
-                    )
+                    isWritten -> {
+                        uiState.diaryThumbnail?.let { diary ->
+                            HomeDropDownMenu(
+                                isExpanded = isExpanded,
+                                isPublished = diary.isPublished,
+                                onExpandedChange = { isExpanded = it },
+                                onDeleteClick = { onDeleteClick(diary.diaryId) },
+                                onPublishClick = { onPublishClick(diary.diaryId) },
+                                onUnpublishClick = { onUnpublishClick(diary.diaryId) }
+                            )
+                        }
+                    }
 
                     isWritable && !isRewriteDisabled -> DiaryTimeInfo(remainingTime = uiState.todayTopic?.remainingTime)
                 }

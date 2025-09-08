@@ -132,10 +132,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun publishDiary() {
+    fun publishDiary(diaryId: Long) {
         val currentState = uiState.value
         if (currentState !is UiState.Success) return
-        val diaryId = currentState.data.diaryThumbnail?.diaryId ?: return
 
         viewModelScope.launch {
             diaryRepository.patchDiaryPublish(diaryId)
@@ -156,10 +155,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun unpublishDiary() {
+    fun unpublishDiary(diaryId: Long) {
         val currentState = uiState.value
         if (currentState !is UiState.Success) return
-        val diaryId = currentState.data.diaryThumbnail?.diaryId ?: return
 
         viewModelScope.launch {
             diaryRepository.patchDiaryUnpublish(diaryId)
@@ -177,10 +175,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun deleteDiary() {
+    fun deleteDiary(diaryId: Long) {
         val currentState = uiState.value
         if (currentState !is UiState.Success) return
-        val diaryId = currentState.data.diaryThumbnail?.diaryId ?: return
         val selectedDate = currentState.data.selectedDate
 
         viewModelScope.launch {
