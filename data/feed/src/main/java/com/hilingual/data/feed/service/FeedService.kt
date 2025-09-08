@@ -1,15 +1,15 @@
 package com.hilingual.data.feed.service
 
 import com.hilingual.core.network.BaseResponse
+import com.hilingual.data.feed.dto.request.LikeRequestDto
+import com.hilingual.data.feed.dto.response.DiaryProfileResponseDto
 import com.hilingual.data.feed.dto.response.FeedProfileResponseDto
 import com.hilingual.data.feed.dto.response.LikedDiariesResponseDto
 import com.hilingual.data.feed.dto.response.SharedDiariesResponseDto
-import com.hilingual.data.feed.dto.request.LikeRequestDto
-import com.hilingual.data.feed.dto.response.DiaryProfileResponseDto
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface FeedService {
     @GET("/api/v1/feed/profiles/{targetUserId}")
