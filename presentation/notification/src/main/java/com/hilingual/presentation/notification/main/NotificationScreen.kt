@@ -129,7 +129,7 @@ private fun NotificationScreen(
                     onRefresh = { onUserRefresh(tab) }
                 )
 
-                NotificationTab.NOTIFICATION -> NoticeScreen(
+                NotificationTab.NOTICE -> NoticeScreen(
                     notifications = uiState.noticeNotifications,
                     onNotificationClick = onNoticeNotificationClick,
                     isRefreshing = uiState.isNoticeRefreshing,

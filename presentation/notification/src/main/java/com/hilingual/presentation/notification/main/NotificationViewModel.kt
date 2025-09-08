@@ -75,7 +75,7 @@ internal class NotificationViewModel @Inject constructor(
         _uiState.update {
             when (tab) {
                 NotificationTab.FEED -> it.copy(isFeedRefreshing = isRefreshing)
-                NotificationTab.NOTIFICATION -> it.copy(isNoticeRefreshing = isRefreshing)
+                NotificationTab.NOTICE -> it.copy(isNoticeRefreshing = isRefreshing)
             }
         }
     }
