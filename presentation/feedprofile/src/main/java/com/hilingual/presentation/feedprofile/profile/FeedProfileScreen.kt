@@ -161,6 +161,7 @@ private fun FeedProfileScreen(
         snapshotFlow { pagerState.currentPage }.distinctUntilChanged().collect {
             val tabType = if (it == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
             onTabRefresh(tabType)
+            profileListState.animateScrollToItem(0)
         }
     }
 
