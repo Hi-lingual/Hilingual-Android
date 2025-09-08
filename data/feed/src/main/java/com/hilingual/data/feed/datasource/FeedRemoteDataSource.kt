@@ -4,10 +4,10 @@ import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.feed.dto.request.LikeRequestDto
 import com.hilingual.data.feed.dto.response.DiaryProfileResponseDto
 import com.hilingual.data.feed.dto.response.FeedProfileResponseDto
-import com.hilingual.data.feed.dto.response.LikedDiariesResponseDto
-import com.hilingual.data.feed.dto.response.SharedDiariesResponseDto
 import com.hilingual.data.feed.dto.response.FollowingFeedResponseDto
+import com.hilingual.data.feed.dto.response.LikedDiariesResponseDto
 import com.hilingual.data.feed.dto.response.RecommendFeedResponseDto
+import com.hilingual.data.feed.dto.response.SharedDiariesResponseDto
 
 interface FeedRemoteDataSource {
     suspend fun getFeedProfile(

@@ -1,12 +1,11 @@
 package com.hilingual.data.feed.model
 
-import com.hilingual.data.feed.dto.response.DiaryDto
 import com.hilingual.data.feed.dto.response.SharedDiariesResponseDto
 import com.hilingual.data.feed.dto.response.SharedDiaryProfileDto
 
 data class SharedDiariesModel(
     val profile: SharedDiaryProfileModel,
-    val diaryList: List<SharedDiaryModel>
+    val diaryList: List<FeedItemDiaryModel>
 )
 
 data class SharedDiaryProfileModel(
@@ -14,30 +13,12 @@ data class SharedDiaryProfileModel(
     val nickname: String
 )
 
-data class SharedDiaryModel(
-    val diaryId: Long,
-    val sharedDate: Long,
-    val likeCount: Int,
-    val isLiked: Boolean,
-    val diaryImg: String?,
-    val originalText: String
-)
-
 internal fun SharedDiariesResponseDto.toModel(): SharedDiariesModel = SharedDiariesModel(
     profile = this.profile.toModel(),
-    diaryList = this.diaryList.map { it.toSharedDiaryModel() }
+    diaryList = this.diaryList.map { it.toFeedItemDiaryModel() }
 )
 
 internal fun SharedDiaryProfileDto.toModel(): SharedDiaryProfileModel = SharedDiaryProfileModel(
     profileImg = this.profileImg,
     nickname = this.nickname
-)
-
-internal fun DiaryDto.toSharedDiaryModel(): SharedDiaryModel = SharedDiaryModel(
-    diaryId = this.diaryId,
-    sharedDate = this.sharedDate,
-    likeCount = this.likeCount,
-    isLiked = this.isLiked,
-    diaryImg = this.diaryImg,
-    originalText = this.originalText
 )

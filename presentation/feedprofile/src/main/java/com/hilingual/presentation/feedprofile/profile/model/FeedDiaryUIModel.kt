@@ -1,8 +1,8 @@
 package com.hilingual.presentation.feedprofile.profile.model
 
 import androidx.compose.runtime.Immutable
-import com.hilingual.data.feed.model.LikedDiaryItemModel
-import com.hilingual.data.feed.model.SharedDiaryModel
+import com.hilingual.data.feed.model.FeedItemDiaryModel
+import com.hilingual.data.feed.model.FeedItemModel
 
 @Immutable
 data class FeedDiaryUIModel(
@@ -19,7 +19,7 @@ data class FeedDiaryUIModel(
     val isMine: Boolean
 )
 
-internal fun SharedDiaryModel.toState(
+internal fun FeedItemDiaryModel.toState(
     feedProfileInfoModel: FeedProfileInfoModel,
     authorUserId: Long
 ): FeedDiaryUIModel = FeedDiaryUIModel(
@@ -36,7 +36,7 @@ internal fun SharedDiaryModel.toState(
     isMine = feedProfileInfoModel.isMine
 )
 
-internal fun LikedDiaryItemModel.toState(): FeedDiaryUIModel = FeedDiaryUIModel(
+internal fun FeedItemModel.toState(): FeedDiaryUIModel = FeedDiaryUIModel(
     diaryId = this.diary.diaryId,
     authorUserId = this.profile.userId,
     authorNickname = this.profile.nickname,

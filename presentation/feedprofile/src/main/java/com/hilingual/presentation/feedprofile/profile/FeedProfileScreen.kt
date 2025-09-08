@@ -137,7 +137,7 @@ private fun FeedProfileScreen(
     }
 
     val profile = uiState.feedProfileInfo
-    val finalScrollEnabled = if (profile.isBlock) false else shouldEnableScroll
+    val finalScrollEnabled = if (profile.isBlock == true) false else shouldEnableScroll
 
     val isFabVisible by remember {
         derivedStateOf {

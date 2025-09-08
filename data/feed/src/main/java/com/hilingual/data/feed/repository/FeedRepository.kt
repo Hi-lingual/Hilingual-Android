@@ -1,10 +1,10 @@
 package com.hilingual.data.feed.repository
 
 import com.hilingual.data.feed.model.FeedDiaryProfileModel
+import com.hilingual.data.feed.model.FeedListModel
 import com.hilingual.data.feed.model.FeedProfileModel
 import com.hilingual.data.feed.model.LikedDiariesModel
 import com.hilingual.data.feed.model.SharedDiariesModel
-import com.hilingual.data.feed.model.FeedListModel
 
 interface FeedRepository {
     suspend fun getFeedProfile(

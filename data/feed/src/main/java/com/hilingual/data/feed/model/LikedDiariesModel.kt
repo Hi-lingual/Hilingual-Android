@@ -6,41 +6,19 @@ import com.hilingual.data.feed.dto.response.LikedDiaryItemDto
 import com.hilingual.data.feed.dto.response.LikedDiaryProfileDto
 
 data class LikedDiariesModel(
-    val diaryList: List<LikedDiaryItemModel>
-)
-
-data class LikedDiaryItemModel(
-    val profile: LikedDiaryProfileModel,
-    val diary: LikedDiaryModel
-)
-
-data class LikedDiaryProfileModel(
-    val userId: Long,
-    val isMine: Boolean,
-    val profileImg: String?,
-    val nickname: String,
-    val streak: Int
-)
-
-data class LikedDiaryModel(
-    val diaryId: Long,
-    val sharedDate: Long,
-    val likeCount: Int,
-    val isLiked: Boolean,
-    val diaryImg: String?,
-    val originalText: String
+    val diaryList: List<FeedItemModel>
 )
 
 internal fun LikedDiariesResponseDto.toModel(): LikedDiariesModel = LikedDiariesModel(
-    diaryList = this.diaryList.map { it.toModel() }
+    diaryList = this.diaryList.map { it.toFeedItemModel() }
 )
 
-internal fun LikedDiaryItemDto.toModel(): LikedDiaryItemModel = LikedDiaryItemModel(
-    profile = this.profile.toModel(),
-    diary = this.diary.toLikedDiaryModel()
+internal fun LikedDiaryItemDto.toFeedItemModel(): FeedItemModel = FeedItemModel(
+    profile = this.profile.toFeedItemProfileModel(),
+    diary = this.diary.toFeedItemDiaryModel()
 )
 
-internal fun LikedDiaryProfileDto.toModel(): LikedDiaryProfileModel = LikedDiaryProfileModel(
+internal fun LikedDiaryProfileDto.toFeedItemProfileModel(): FeedItemProfileModel = FeedItemProfileModel(
     userId = this.userId,
     isMine = this.isMine,
     profileImg = this.profileImg,
@@ -48,7 +26,7 @@ internal fun LikedDiaryProfileDto.toModel(): LikedDiaryProfileModel = LikedDiary
     streak = this.streak
 )
 
-internal fun DiaryDto.toLikedDiaryModel(): LikedDiaryModel = LikedDiaryModel(
+internal fun DiaryDto.toFeedItemDiaryModel(): FeedItemDiaryModel = FeedItemDiaryModel(
     diaryId = this.diaryId,
     sharedDate = this.sharedDate,
     likeCount = this.likeCount,
