@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.hilingual.build_logic.setNamespace
+package com.hilingual.data.feed.dto.request
 
-plugins {
-    alias(libs.plugins.hilingual.feature)
-}
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-android {
-    setNamespace("presentation.feeddiary")
-}
-
-dependencies {
-    implementation(projects.data.diary)
-    implementation(projects.data.feed)
-}
+@Serializable
+data class LikeRequestDto(
+    @SerialName("isLiked")
+    val isLiked: Boolean
+)
