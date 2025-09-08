@@ -51,9 +51,9 @@ internal fun NotificationSettingRoute(
         is UiState.Success -> {
             NotificationSettingScreen(
                 isMarketingChecked = state.data.isMarketingChecked,
-                onMarketingCheckedChange = viewModel::onMarketingCheckedChange,
+                onMarketingCheckedChange = viewModel::updateMarketingChecked,
                 isFeedChecked = state.data.isFeedChecked,
-                onFeedCheckedChange = viewModel::onFeedCheckedChange,
+                onFeedCheckedChange = viewModel::updateFeedChecked,
                 paddingValues = paddingValues,
                 onBackClick = navigateUp
             )

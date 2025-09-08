@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -27,8 +28,8 @@ internal class NotificationSettingViewModel @Inject constructor(
 
     private val serverState = MutableStateFlow(NotificationSettingUiState())
 
-    private val marketingToggleFlow = MutableSharedFlow<Boolean>()
-    private val feedToggleFlow = MutableSharedFlow<Boolean>()
+    private val marketingToggleFlow = MutableSharedFlow<Boolean>(replay = 1)
+    private val feedToggleFlow = MutableSharedFlow<Boolean>(replay = 1)
 
     init {
         getNotificationSettings()
@@ -55,26 +56,20 @@ internal class NotificationSettingViewModel @Inject constructor(
     private fun observeMarketingToggle() {
         marketingToggleFlow
             .debounce(400L)
-            .onEach { isChecked ->
-                if (serverState.value.isMarketingChecked != isChecked) {
-                    updateNotificationSetting(NotiType.MARKETING)
-                }
-            }
+            .filter { isChecked -> serverState.value.isMarketingChecked != isChecked }
+            .onEach { updateNotificationSetting(NotiType.MARKETING) }
             .launchIn(viewModelScope)
     }
 
     private fun observeFeedToggle() {
         feedToggleFlow
             .debounce(400L)
-            .onEach { isChecked ->
-                if (serverState.value.isFeedChecked != isChecked) {
-                    updateNotificationSetting(NotiType.FEED)
-                }
-            }
+            .filter { isChecked -> serverState.value.isFeedChecked != isChecked }
+            .onEach { updateNotificationSetting(NotiType.FEED) }
             .launchIn(viewModelScope)
     }
 
-    fun onMarketingCheckedChange(isChecked: Boolean) {
+    fun updateMarketingChecked(isChecked: Boolean) {
         val currentUiState = _uiState.value
         if (currentUiState !is UiState.Success) return
 
@@ -82,7 +77,7 @@ internal class NotificationSettingViewModel @Inject constructor(
         viewModelScope.launch { marketingToggleFlow.emit(isChecked) }
     }
 
-    fun onFeedCheckedChange(isChecked: Boolean) {
+    fun updateFeedChecked(isChecked: Boolean) {
         val currentUiState = _uiState.value
         if (currentUiState !is UiState.Success) return
 
