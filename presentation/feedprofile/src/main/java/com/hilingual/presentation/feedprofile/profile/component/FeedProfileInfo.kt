@@ -151,7 +151,7 @@ internal fun FeedProfileInfo(
 
         if (!isMine) {
             FeedUserActionButton(
-                isFilled = isFollowing == false,
+                isFilled = isFollowing == false && isBlock != true,
                 buttonText = when {
                     isBlock == true -> "차단 해제"
                     isFollowing == true -> "팔로잉"
