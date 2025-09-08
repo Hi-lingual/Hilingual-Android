@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.feed.model.FollowState
 import com.hilingual.data.feed.repository.FeedRepository
+import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.feed.model.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -18,7 +19,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 internal class FeedSearchViewModel @Inject constructor(
-    val feedRepository: FeedRepository
+    val feedRepository: FeedRepository,
+    val userRepository: UserRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(FeedSearchUiState())
     val uiState: StateFlow<FeedSearchUiState> = _uiState.asStateFlow()
@@ -49,28 +51,37 @@ internal class FeedSearchViewModel @Inject constructor(
     }
 
     fun updateFollowingState(userId: Long, currentIsFollowing: Boolean) {
-        // TODO: currentIsFollowing에 따라 취소/등록 API 호출
-        _uiState.update { currentState ->
-            val oldState = currentState.searchResultUserList
-
-            if (oldState is UiState.Success) {
-                val updatedList = oldState.data.map { user ->
-                    if (user.userId == userId) {
-                        val newState = FollowState.getValueByFollowState(
-                            isFollowing = !currentIsFollowing,
-                            isFollowed = user.followState.isFollowed
-                        )
-                        user.copy(followState = newState)
-                    } else {
-                        user
-                    }
-                }.toImmutableList()
-
-                currentState.copy(
-                    searchResultUserList = UiState.Success(updatedList)
-                )
+        viewModelScope.launch {
+            val result = if (currentIsFollowing) {
+                userRepository.deleteFollow(userId)
             } else {
-                currentState
+                userRepository.putFollow(userId)
+            }
+
+            result.onSuccess {
+                _uiState.update { currentState ->
+                    val oldState = currentState.searchResultUserList
+
+                    if (oldState is UiState.Success) {
+                        val updatedList = oldState.data.map { user ->
+                            if (user.userId == userId) {
+                                val newState = FollowState.getValueByFollowState(
+                                    isFollowing = !currentIsFollowing,
+                                    isFollowed = user.followState.isFollowed
+                                )
+                                user.copy(followState = newState)
+                            } else {
+                                user
+                            }
+                        }.toImmutableList()
+
+                        currentState.copy(
+                            searchResultUserList = UiState.Success(updatedList)
+                        )
+                    } else {
+                        currentState
+                    }
+                }
             }
         }
     }
