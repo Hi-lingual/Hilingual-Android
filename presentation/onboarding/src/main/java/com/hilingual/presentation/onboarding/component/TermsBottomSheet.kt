@@ -87,6 +87,7 @@ private val terms = persistentListOf(
 @Composable
 internal fun TermsBottomSheet(
     isVisible: Boolean,
+    isLoading: Boolean,
     onDismiss: () -> Unit,
     onStartClick: (isMarketingAgreed: Boolean) -> Unit,
     onTermLinkClick: (url: String) -> Unit,
@@ -181,7 +182,7 @@ internal fun TermsBottomSheet(
             HilingualButton(
                 text = "시작하기",
                 onClick = { onStartClick(isMarketingAgreed) },
-                enableProvider = { isStartButtonEnabled }
+                enableProvider = { isStartButtonEnabled && !isLoading }
             )
         }
     }
@@ -229,6 +230,7 @@ private fun TermsBottomSheetPreview() {
             isVisible = isVisible,
             onDismiss = { isVisible = false },
             onStartClick = {},
+            isLoading = false,
             onTermLinkClick = {}
         )
     }

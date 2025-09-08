@@ -21,5 +21,6 @@ import androidx.compose.runtime.Immutable
 data class OnboardingUiState(
     val nickname: String = "",
     val validationMessage: String = "",
-    val isNicknameValid: Boolean = false
+    val isNicknameValid: Boolean = false,
+    val isLoading: Boolean = false
 )

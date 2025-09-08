@@ -17,6 +17,7 @@ package com.hilingual.data.user.repositoryimpl
 
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.localstorage.UserInfoManager
+import com.hilingual.data.presigned.repository.FileUploaderRepository
 import com.hilingual.data.user.datasource.UserRemoteDataSource
 import com.hilingual.data.user.model.notification.NotificationDetailModel
 import com.hilingual.data.user.model.notification.NotificationModel
@@ -27,13 +28,13 @@ import com.hilingual.data.user.model.user.NicknameValidationResult
 import com.hilingual.data.user.model.user.UserInfoModel
 import com.hilingual.data.user.model.user.UserLoginInfoModel
 import com.hilingual.data.user.model.user.UserProfileModel
-import com.hilingual.data.user.model.user.toDto
 import com.hilingual.data.user.model.user.toModel
 import com.hilingual.data.user.repository.UserRepository
 import javax.inject.Inject
 
 internal class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
+    private val fileUploaderRepository: FileUploaderRepository,
     private val userInfoManager: UserInfoManager
 ) : UserRepository {
     override suspend fun getNicknameAvailability(nickname: String): Result<NicknameValidationResult> =
@@ -49,7 +50,20 @@ internal class UserRepositoryImpl @Inject constructor(
 
     override suspend fun postUserProfile(userProfileModel: UserProfileModel): Result<Unit> =
         suspendRunCatching {
-            userRemoteDataSource.postUserProfile(userProfileRequestDto = userProfileModel.toDto())
+            val fileKey = if (userProfileModel.imageUri != null) {
+                fileUploaderRepository.uploadFile(
+                    uri = userProfileModel.imageUri,
+                    purpose = "PROFILE_UPLOAD"
+                ).getOrThrow()
+            } else {
+                null
+            }
+
+            userRemoteDataSource.postUserProfile(
+                nickname = userProfileModel.nickname,
+                adAlarmAgree = userProfileModel.adAlarmAgree,
+                fileKey = fileKey
+            )
         }
 
     override suspend fun getUserInfo(): Result<UserInfoModel> =
