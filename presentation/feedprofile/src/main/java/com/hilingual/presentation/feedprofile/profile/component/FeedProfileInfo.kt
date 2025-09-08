@@ -78,7 +78,7 @@ internal fun FeedProfileInfo(
                     shape = CircleShape
                 )
 
-            if (profileImageUrl?.isBlank() == true) {
+            if (profileImageUrl.isNullOrBlank()) {
                 Image(
                     painter = painterResource(R.drawable.img_default_image),
                     contentDescription = null,

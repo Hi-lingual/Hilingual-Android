@@ -93,7 +93,7 @@ fun FeedCard(
             )
             .noRippleClickable(onClick = onProfileClick)
 
-        if (profileUrl?.isBlank() == true) {
+        if (profileUrl.isNullOrBlank()) {
             Image(
                 painter = painterResource(R.drawable.img_default_image),
                 contentDescription = null,
