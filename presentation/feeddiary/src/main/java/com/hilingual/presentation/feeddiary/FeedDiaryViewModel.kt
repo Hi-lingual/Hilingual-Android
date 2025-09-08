@@ -27,6 +27,7 @@ import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.feed.repository.FeedRepository
+import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.feeddiary.navigation.FeedDiary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
@@ -46,7 +47,8 @@ import javax.inject.Inject
 internal class FeedDiaryViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val diaryRepository: DiaryRepository,
-    private val feedRepository: FeedRepository
+    private val feedRepository: FeedRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     val diaryId = savedStateHandle.toRoute<FeedDiary>().diaryId
 
@@ -109,8 +111,12 @@ internal class FeedDiaryViewModel @Inject constructor(
         }
     }
 
-    fun blockUser() {
-        // TODO: 유저 차단하기 API 연동 (profileContent.userId)
+    fun blockUser(userId: Long) {
+        viewModelScope.launch {
+            userRepository.putBlockUser(userId).onSuccess {
+                _sideEffect.emit(FeedDiarySideEffect.NavigateToFeedProfile(userId))
+            }.onLogFailure { }
+        }
     }
 
     fun toggleBookmark(phraseId: Long, isMarked: Boolean) {
@@ -171,6 +177,7 @@ internal class FeedDiaryViewModel @Inject constructor(
 
 sealed interface FeedDiarySideEffect {
     data object NavigateToUp : FeedDiarySideEffect
+    data class NavigateToFeedProfile(val userId: Long) : FeedDiarySideEffect
     data class ShowRetryDialog(val onRetry: () -> Unit) : FeedDiarySideEffect
     data class ShowVocaOverflowSnackbar(val message: String, val actionLabel: String) : FeedDiarySideEffect
     data class ShowToast(val message: String) : FeedDiarySideEffect
