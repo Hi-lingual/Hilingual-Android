@@ -43,7 +43,7 @@ internal class NotificationViewModel @Inject constructor(
                                     .toImmutableList()
                             )
 
-                            NotificationTab.NOTIFICATION -> it.copy(
+                            NotificationTab.NOTICE -> it.copy(
                                 noticeNotifications = notifications.mapNotNull { item -> item.toNoticeStateOrNull() }
                                     .toImmutableList()
                             )

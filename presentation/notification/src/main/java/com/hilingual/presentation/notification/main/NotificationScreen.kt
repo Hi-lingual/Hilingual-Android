@@ -94,7 +94,7 @@ private fun NotificationScreen(
         delay(100)
         when (tab) {
             NotificationTab.FEED -> feedListState.animateScrollToItem(0)
-            NotificationTab.NOTIFICATION -> noticeListState.animateScrollToItem(0)
+            NotificationTab.NOTICE -> noticeListState.animateScrollToItem(0)
         }
     }
 
