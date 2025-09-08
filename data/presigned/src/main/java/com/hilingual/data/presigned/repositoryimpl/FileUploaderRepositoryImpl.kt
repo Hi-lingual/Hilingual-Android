@@ -4,16 +4,16 @@ import android.content.Context
 import android.net.Uri
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.network.ContentUriRequestBody
+import com.hilingual.data.presigned.datasource.FileUploaderRemoteDataSource
 import com.hilingual.data.presigned.repository.FileUploaderRepository
 import com.hilingual.data.presigned.repository.PresignedUrlRepository
-import com.hilingual.data.presigned.service.S3Service
 import dagger.hilt.android.qualifiers.ApplicationContext
-import jakarta.inject.Inject
+import javax.inject.Inject
 
 class FileUploaderRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val presignedUrlRepository: PresignedUrlRepository,
-    private val s3Service: S3Service
+    private val fileUploaderRemoteDataSource: FileUploaderRemoteDataSource
 ) : FileUploaderRepository {
 
     override suspend fun uploadFile(uri: Uri, purpose: String): Result<String> = suspendRunCatching {
@@ -29,7 +29,7 @@ class FileUploaderRepositoryImpl @Inject constructor(
         val requestBody = ContentUriRequestBody(context, uri, imageConfig)
         requestBody.prepareImage().getOrThrow()
 
-        val response = s3Service.uploadFile(
+        val response = fileUploaderRemoteDataSource.uploadFile(
             uploadUrl = presignedUrlModel.uploadUrl,
             contentType = contentType,
             file = requestBody
