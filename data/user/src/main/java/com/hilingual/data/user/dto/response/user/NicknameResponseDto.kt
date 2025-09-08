@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.data.user.model
+package com.hilingual.data.user.dto.response.user
 
-import android.net.Uri
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-data class UserProfileModel(
-    val nickname: String,
-    val adAlarmAgree: Boolean,
-    val imageUri: Uri?
+@Serializable
+data class NicknameResponseDto(
+    @SerialName("isAvailable")
+    val isAvailable: Boolean
 )

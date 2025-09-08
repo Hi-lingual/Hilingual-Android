@@ -143,7 +143,7 @@ internal class MainAppState(
         navController.navigateToHome(navOptions)
     }
 
-    fun navigateToVoca(navOptions: NavOptions? = clearStackNavOptions) {
+    fun navigateToVoca(navOptions: NavOptions? = null) {
         navController.navigateToVoca(navOptions)
     }
 

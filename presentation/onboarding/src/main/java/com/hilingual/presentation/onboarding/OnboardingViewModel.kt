@@ -19,8 +19,8 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
-import com.hilingual.data.user.model.NicknameValidationResult
-import com.hilingual.data.user.model.UserProfileModel
+import com.hilingual.data.user.model.user.NicknameValidationResult
+import com.hilingual.data.user.model.user.UserProfileModel
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview

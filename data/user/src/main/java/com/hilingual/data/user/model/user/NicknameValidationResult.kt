@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.data.user.dto.reponse
+package com.hilingual.data.user.model.user
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-
-@Serializable
-data class NicknameResponseDto(
-    @SerialName("isAvailable")
-    val isAvailable: Boolean
-)
+enum class NicknameValidationResult {
+    AVAILABLE,
+    DUPLICATE,
+    FORBIDDEN_WORD
+}

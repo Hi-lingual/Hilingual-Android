@@ -1,64 +1,78 @@
 package com.hilingual.presentation.mypage.blockeduser
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
+import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toPersistentList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class BlockedUserViewModel @Inject constructor() : ViewModel() {
+internal class BlockedUserViewModel @Inject constructor(
+    private val userRepository: UserRepository
+) : ViewModel() {
     private val _uiState = MutableStateFlow(BlockedUserUiState())
     val uiState: StateFlow<BlockedUserUiState> = _uiState.asStateFlow()
 
-    fun loadInitialData() {
-        val dummy = persistentListOf(
-            BlockedUserUiModel(
-                userId = 1L,
-                profileImageUrl = "",
-                nickname = "사과"
-            ),
-            BlockedUserUiModel(
-                userId = 2L,
-                profileImageUrl = "",
-                nickname = "바나나"
-            ),
-            BlockedUserUiModel(
-                userId = 3L,
-                profileImageUrl = "",
-                nickname = "오렌지"
-            ),
-            BlockedUserUiModel(
-                userId = 4L,
-                profileImageUrl = "https://picsum.photos/42/42?random=1",
-                nickname = "딸기"
-            ),
-            BlockedUserUiModel(
-                userId = 5L,
-                profileImageUrl = "",
-                nickname = "포도"
-            )
-        )
-        _uiState.update { it.copy(blockedUserList = UiState.Success(data = dummy)) }
+    init {
+        getBlockList()
+    }
+
+    fun getBlockList() {
+        viewModelScope.launch {
+            userRepository.getBlockList()
+                .onSuccess { blockList ->
+                    val blockUiModel = blockList.blockList.map { user ->
+                        BlockedUserUiModel(
+                            userId = user.userId,
+                            profileImageUrl = user.profileImageUrl,
+                            nickname = user.nickname
+                        )
+                    }.toImmutableList()
+
+                    _uiState.update { it.copy(blockedUserList = UiState.Success(data = blockUiModel)) }
+                }
+                .onLogFailure { }
+        }
     }
 
     fun onUnblockStatusChanged(userId: Long) {
-        _uiState.update { currentList ->
-            when (val listState = currentList.blockedUserList) {
-                is UiState.Success -> {
-                    val updatedList = listState.data.map { user ->
-                        if (user.userId == userId) user.copy(isBlocked = !user.isBlocked) else user
-                    }.toPersistentList()
-                    currentList.copy(blockedUserList = UiState.Success(data = updatedList))
-                }
+        viewModelScope.launch {
+            val blockedUserListState = _uiState.value.blockedUserList
+            if (blockedUserListState !is UiState.Success) return@launch
 
-                else -> currentList
+            val currentList = blockedUserListState.data
+            val targetUser = currentList.find { it.userId == userId } ?: return@launch
+
+            val apiResult = if (targetUser.isBlocked) {
+                userRepository.deleteBlockUser(targetUserId = userId)
+            } else {
+                userRepository.putBlockUser(targetUserId = userId)
             }
+
+            apiResult
+                .onSuccess {
+                    _uiState.update { state ->
+                        val successState = state.blockedUserList as? UiState.Success
+                        if (successState != null) {
+                            val updatedList = successState.data.map { user ->
+                                if (user.userId == userId) user.copy(isBlocked = !user.isBlocked) else user
+                            }.toImmutableList()
+
+                            state.copy(blockedUserList = UiState.Success(data = updatedList))
+                        } else {
+                            state
+                        }
+                    }
+                }
+                .onLogFailure { }
         }
     }
 }

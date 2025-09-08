@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
@@ -35,6 +36,7 @@ import com.hilingual.core.designsystem.component.picker.ProfileImagePicker
 import com.hilingual.core.designsystem.component.topappbar.TitleCenterAlignedTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.mypage.MyPageSideEffect
+import com.hilingual.presentation.mypage.MyPageUiState
 import com.hilingual.presentation.mypage.MyPageViewModel
 import com.hilingual.presentation.mypage.component.ProfileItem
 import com.hilingual.presentation.mypage.component.WithdrawDialog
@@ -43,7 +45,7 @@ import com.jakewharton.processphoenix.ProcessPhoenix
 @Composable
 internal fun ProfileEditRoute(
     paddingValues: PaddingValues,
-    viewModel: MyPageViewModel
+    viewModel: MyPageViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -65,9 +67,8 @@ internal fun ProfileEditRoute(
         is UiState.Success -> {
             ProfileEditScreen(
                 paddingValues = paddingValues,
-                profileImageUrl = state.data.profileImageUrl,
+                profileLoginInfo = state.data,
                 onProfileImageUriChanged = viewModel::patchProfileImage,
-                profileNickname = state.data.profileNickname,
                 onWithdrawClick = viewModel::withdraw
             )
         }
@@ -79,12 +80,11 @@ internal fun ProfileEditRoute(
 @Composable
 private fun ProfileEditScreen(
     paddingValues: PaddingValues,
-    profileImageUrl: String,
+    profileLoginInfo: MyPageUiState,
     onProfileImageUriChanged: (Uri?) -> Unit,
-    profileNickname: String,
     onWithdrawClick: () -> Unit
 ) {
-    var imageUri by remember { mutableStateOf<String?>(profileImageUrl) }
+    var imageUri by remember { mutableStateOf<String?>(profileLoginInfo.profileImageUrl) }
     var isImageSheetVisible by remember { mutableStateOf(false) }
     var isWithdrawDialogVisible by remember { mutableStateOf(false) }
 
@@ -121,8 +121,8 @@ private fun ProfileEditScreen(
             modifier = Modifier.padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            ProfileItem(label = "닉네임", value = profileNickname)
-            ProfileItem(label = "연결된 소셜 계정", value = "구글 로그인")
+            ProfileItem(label = "닉네임", value = profileLoginInfo.profileNickname)
+            ProfileItem(label = "연결된 소셜 계정", value = profileLoginInfo.profileProvider)
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -171,9 +171,12 @@ private fun ProfileEditScreenPreview() {
     HilingualTheme {
         ProfileEditScreen(
             paddingValues = PaddingValues(),
-            profileImageUrl = "",
+            profileLoginInfo = MyPageUiState(
+                profileImageUrl = "",
+                profileNickname = "하링이",
+                profileProvider = "구글 로그인"
+            ),
             onProfileImageUriChanged = {},
-            profileNickname = "하링이",
             onWithdrawClick = {}
         )
     }

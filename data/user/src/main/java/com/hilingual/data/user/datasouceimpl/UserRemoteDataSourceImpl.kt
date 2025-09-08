@@ -21,8 +21,16 @@ import com.hilingual.data.user.dto.reponse.NicknameResponseDto
 import com.hilingual.data.user.dto.reponse.UserInfoResponseDto
 import com.hilingual.data.user.dto.request.ImageRequestDto
 import com.hilingual.data.user.dto.request.RegisterProfileRequestDto
+import com.hilingual.data.user.dto.request.user.UserProfileRequestDto
+import com.hilingual.data.user.dto.response.notification.NotificationDetailResponseDto
+import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
+import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
+import com.hilingual.data.user.dto.response.user.BlockListResponseDto
+import com.hilingual.data.user.dto.response.user.NicknameResponseDto
+import com.hilingual.data.user.dto.response.user.UserInfoResponseDto
+import com.hilingual.data.user.dto.response.user.UserLoginInfoResponseDto
 import com.hilingual.data.user.service.UserService
-import jakarta.inject.Inject
+import javax.inject.Inject
 
 internal class UserRemoteDataSourceImpl @Inject constructor(
     private val userService: UserService
@@ -54,4 +62,29 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto> =
         userService.getUserInfo()
+
+    override suspend fun getUserLoginInfo(): BaseResponse<UserLoginInfoResponseDto> =
+        userService.getUserLoginInfo()
+
+    override suspend fun getBlockList(): BaseResponse<BlockListResponseDto> =
+        userService.getBlockList()
+
+    override suspend fun putBlockUser(targetUserId: Long): BaseResponse<Unit> =
+        userService.putBlockUser(targetUserId = targetUserId)
+
+    override suspend fun deleteBlockUser(targetUserId: Long): BaseResponse<Unit> =
+        userService.deleteBlockUser(targetUserId = targetUserId)
+
+    override suspend fun getNotifications(tab: String): BaseResponse<List<NotificationResponseDto>> =
+        userService.getNotifications(tab)
+
+    override suspend fun getNotificationDetail(noticeId: Long): BaseResponse<NotificationDetailResponseDto> =
+        userService.getNotificationDetail(noticeId)
+
+    override suspend fun readNotification(noticeId: Long): BaseResponse<Unit> = userService.readNotification(noticeId)
+
+    override suspend fun getNotificationSettings(): BaseResponse<NotificationSettingsResponseDto> =
+        userService.getNotificationSettings()
+
+    override suspend fun updateNotificationSetting(notiType: String): BaseResponse<NotificationSettingsResponseDto> = userService.updateNotificationSetting(notiType)
 }
