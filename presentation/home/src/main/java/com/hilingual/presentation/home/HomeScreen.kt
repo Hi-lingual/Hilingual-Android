@@ -163,6 +163,9 @@ private fun HomeScreen(
     }
     val isFuture = remember(date) { isDateFuture(date) }
     val isWritable = remember(date) { isDateWritable(date) }
+    val isRewriteDisabled = remember(uiState.todayTopic) {
+        uiState.todayTopic?.remainingTime == -1
+    }
     var isExpanded by remember { mutableStateOf(false) }
 
     Column(
@@ -234,7 +237,7 @@ private fun HomeScreen(
                         onUnpublishClick = onUnpublishClick
                     )
 
-                    isWritable -> DiaryTimeInfo(remainingTime = uiState.todayTopic?.remainingTime)
+                    isWritable && !isRewriteDisabled -> DiaryTimeInfo(remainingTime = uiState.todayTopic?.remainingTime)
                 }
             }
 
@@ -257,20 +260,24 @@ private fun HomeScreen(
                     isFuture -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
 
                     isWritable -> {
-                        if (todayTopic != null) {
-                            TodayTopic(
-                                koTopic = todayTopic.topicKo,
-                                enTopic = todayTopic.topicEn,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .animateContentSize()
+                        if (todayTopic?.remainingTime == -1) {
+                            DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
+                        } else {
+                            if (todayTopic != null) {
+                                TodayTopic(
+                                    koTopic = todayTopic.topicKo,
+                                    enTopic = todayTopic.topicEn,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .animateContentSize()
+                                )
+                            }
+                            Spacer(Modifier.height(12.dp))
+                            WriteDiaryButton(
+                                onClick = { onWriteDiaryClick(date) },
+                                modifier = Modifier.fillMaxWidth()
                             )
                         }
-                        Spacer(Modifier.height(12.dp))
-                        WriteDiaryButton(
-                            onClick = { onWriteDiaryClick(date) },
-                            modifier = Modifier.fillMaxWidth()
-                        )
                     }
 
                     else -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
@@ -283,17 +290,19 @@ private fun HomeScreen(
 @Preview
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreen(
-        paddingValues = PaddingValues(),
-        uiState = HomeUiState.Fake,
-        onAlarmClick = {},
-        onImageClick = {},
-        onDateSelected = {},
-        onMonthChanged = {},
-        onWriteDiaryClick = {},
-        onDiaryPreviewClick = {},
-        onDeleteClick = {},
-        onPublishClick = {},
-        onUnpublishClick = {}
-    )
+    HilingualTheme {
+        HomeScreen(
+            paddingValues = PaddingValues(),
+            uiState = HomeUiState.Fake,
+            onAlarmClick = {},
+            onImageClick = {},
+            onDateSelected = {},
+            onMonthChanged = {},
+            onWriteDiaryClick = {},
+            onDiaryPreviewClick = {},
+            onDeleteClick = {},
+            onPublishClick = {},
+            onUnpublishClick = {}
+        )
+    }
 }
