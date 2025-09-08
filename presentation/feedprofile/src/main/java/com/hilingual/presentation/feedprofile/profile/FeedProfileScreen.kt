@@ -70,6 +70,7 @@ internal fun FeedProfileRoute(
             }
             is FeedProfileSideEffect.ShowRetryDialog -> {
                 dialogTrigger.show { dialogTrigger.dismiss() }
+                it.onRetry()
             }
         }
     }

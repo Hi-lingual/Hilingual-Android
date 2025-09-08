@@ -3,6 +3,7 @@ package com.hilingual.presentation.feedprofile.profile
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
@@ -11,6 +12,8 @@ import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
 import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
 import com.hilingual.presentation.feedprofile.profile.model.FeedProfileInfoModel
 import com.hilingual.presentation.feedprofile.profile.model.toState
+import com.hilingual.presentation.feedprofile.profile.navigation.FeedProfile
+import com.hilingual.presentation.feedprofile.profile.navigation.FeedProfileGraph
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -30,9 +33,11 @@ internal class FeedProfileViewModel @Inject constructor(
     private val feedRepository: FeedRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    private val targetUserId: Long = savedStateHandle.get<Long>("userId") ?: 0L
+    private val targetUserId: Long = savedStateHandle.toRoute<FeedProfileGraph>().userId
+
     private val _uiState = MutableStateFlow<UiState<FeedProfileUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<FeedProfileUiState>> = _uiState.asStateFlow()
+
     private val _sideEffect = MutableSharedFlow<FeedProfileSideEffect>()
     val sideEffect: SharedFlow<FeedProfileSideEffect> = _sideEffect.asSharedFlow()
 

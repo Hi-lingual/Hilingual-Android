@@ -139,9 +139,9 @@ internal fun FeedProfileInfo(
             FeedUserActionButton(
                 isFilled = isFollowing == false,
                 buttonText = when {
-                    isBlock!! -> "차단 해제"
-                    isFollowing!! -> "팔로잉"
-                    isFollowed!! -> "맞팔로우"
+                    isBlock == true -> "차단 해제"
+                    isFollowing == true -> "팔로잉"
+                    isFollowed == true -> "맞팔로우"
                     else -> "팔로우"
                 },
                 onClick = onActionButtonClick,
