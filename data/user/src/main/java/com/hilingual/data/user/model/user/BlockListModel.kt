@@ -1,7 +1,7 @@
-package com.hilingual.data.user.model
+package com.hilingual.data.user.model.user
 
-import com.hilingual.data.user.dto.reponse.BlockListResponseDto
-import com.hilingual.data.user.dto.reponse.BlockUserDto
+import com.hilingual.data.user.dto.response.user.BlockListResponseDto
+import com.hilingual.data.user.dto.response.user.BlockUserDto
 
 data class BlockListModel(
     val blockList: List<BlockUserModel>
