@@ -15,8 +15,10 @@
  */
 package com.hilingual.data.user.repositoryimpl
 
+import android.net.Uri
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.localstorage.UserInfoManager
+import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.presigned.repository.FileUploaderRepository
 import com.hilingual.data.user.datasource.UserRemoteDataSource
 import com.hilingual.data.user.model.notification.NotificationDetailModel
@@ -128,5 +130,19 @@ internal class UserRepositoryImpl @Inject constructor(
     override suspend fun deleteBlockUser(targetUserId: Long): Result<Unit> =
         suspendRunCatching {
             userRemoteDataSource.deleteBlockUser(targetUserId).data
+        }
+
+    override suspend fun updateProfileImage(imageFileUri: Uri?): Result<Unit> =
+        suspendRunCatching {
+            val fileKey = if (imageFileUri != null) {
+                fileUploaderRepository.uploadFile(
+                    uri = imageFileUri,
+                    purpose = "PROFILE_UPDATE"
+                ).getOrThrow()
+            } else {
+                null
+            }
+
+            userRemoteDataSource.updateProfileImage(fileKey).data
         }
 }

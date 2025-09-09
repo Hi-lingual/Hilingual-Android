@@ -50,12 +50,19 @@ internal class MyPageViewModel @Inject constructor(
     }
 
     fun patchProfileImage(newImageUri: Uri?) {
-        // TODO: 프로필 사진 변경 PATCH API 연결 by 지영
-        val current = (_uiState.value as? UiState.Success)?.data ?: return
+        viewModelScope.launch {
+            userRepository.updateProfileImage(newImageUri)
+                .onSuccess {
+                    _uiState.update { state ->
+                        val current = (state as? UiState.Success)?.data ?: return@update state
 
-        _uiState.value = UiState.Success(
-            current.copy(profileImageUrl = newImageUri?.toString().orEmpty())
-        )
+                        UiState.Success(
+                            current.copy(profileImageUrl = newImageUri?.toString().orEmpty())
+                        )
+                    }
+                }
+                .onLogFailure { }
+        }
     }
 
     fun logout() {

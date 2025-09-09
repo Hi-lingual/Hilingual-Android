@@ -16,7 +16,9 @@
 package com.hilingual.data.user.service
 
 import com.hilingual.core.network.BaseResponse
+import com.hilingual.data.user.dto.request.ImageRequestDto
 import com.hilingual.data.user.dto.request.RegisterProfileRequestDto
+import com.hilingual.data.user.dto.request.UpdateProfileImageRequestDto
 import com.hilingual.data.user.dto.response.notification.NotificationDetailResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
@@ -85,4 +87,10 @@ internal interface UserService {
     suspend fun updateNotificationSetting(
         @Query("notiType") notiType: String
     ): BaseResponse<NotificationSettingsResponseDto>
+
+    @PATCH("/api/v1/users/mypage/profileImg")
+    suspend fun updateProfileImage(
+        @Body updateProfileImageRequestDto: UpdateProfileImageRequestDto
+    ): BaseResponse<Unit>
+
 }

@@ -19,6 +19,7 @@ import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.user.datasource.UserRemoteDataSource
 import com.hilingual.data.user.dto.request.ImageRequestDto
 import com.hilingual.data.user.dto.request.RegisterProfileRequestDto
+import com.hilingual.data.user.dto.request.UpdateProfileImageRequestDto
 import com.hilingual.data.user.dto.response.notification.NotificationDetailResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
@@ -78,10 +79,29 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
     override suspend fun getNotificationDetail(noticeId: Long): BaseResponse<NotificationDetailResponseDto> =
         userService.getNotificationDetail(noticeId)
 
-    override suspend fun readNotification(noticeId: Long): BaseResponse<Unit> = userService.readNotification(noticeId)
+    override suspend fun readNotification(noticeId: Long): BaseResponse<Unit> =
+        userService.readNotification(noticeId)
 
     override suspend fun getNotificationSettings(): BaseResponse<NotificationSettingsResponseDto> =
         userService.getNotificationSettings()
 
-    override suspend fun updateNotificationSetting(notiType: String): BaseResponse<NotificationSettingsResponseDto> = userService.updateNotificationSetting(notiType)
+    override suspend fun updateNotificationSetting(notiType: String): BaseResponse<NotificationSettingsResponseDto> =
+        userService.updateNotificationSetting(notiType)
+
+    override suspend fun updateProfileImage(fileKey: String?): BaseResponse<Unit> {
+        val imageRequest = if (fileKey != null) {
+            ImageRequestDto(
+                fileKey = fileKey,
+                purpose = "PROFILE_UPDATE"
+            )
+        } else {
+            null
+        }
+
+        return userService.updateProfileImage(
+            updateProfileImageRequestDto = UpdateProfileImageRequestDto(
+                image = imageRequest
+            )
+        )
+    }
 }

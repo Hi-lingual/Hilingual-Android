@@ -52,4 +52,6 @@ interface UserRemoteDataSource {
     suspend fun getNotificationSettings(): BaseResponse<NotificationSettingsResponseDto>
 
     suspend fun updateNotificationSetting(notiType: String): BaseResponse<NotificationSettingsResponseDto>
+
+    suspend fun updateProfileImage(fileKey: String?): BaseResponse<Unit>
 }
