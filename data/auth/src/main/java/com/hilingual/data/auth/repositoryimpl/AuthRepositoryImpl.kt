@@ -64,4 +64,8 @@ internal class AuthRepositoryImpl @Inject constructor(
     override suspend fun getAccessToken(): String? = tokenManager.getAccessToken()
 
     override suspend fun getRefreshToken(): String? = tokenManager.getRefreshToken()
+
+    override suspend fun logout(accessToken: String): Result<Unit> = suspendRunCatching {
+        authRemoteDataSource.logout(accessToken)
+    }
 }

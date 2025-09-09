@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
+import com.hilingual.data.auth.repository.AuthRepository
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class MyPageViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<MyPageUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<MyPageUiState>> = _uiState.asStateFlow()
@@ -66,9 +68,16 @@ internal class MyPageViewModel @Inject constructor(
     }
 
     fun logout() {
-        // TODO: 로그아웃 POST API 연결 by 지영
         viewModelScope.launch {
-            _sideEffect.emit(MyPageSideEffect.RestartApp)
+            val accessToken = authRepository.getAccessToken()
+
+            if (accessToken != null) {
+                authRepository.logout(accessToken)
+                    .onSuccess {
+                        _sideEffect.emit(MyPageSideEffect.RestartApp)
+                    }
+                    .onLogFailure { }
+            }
         }
     }
 

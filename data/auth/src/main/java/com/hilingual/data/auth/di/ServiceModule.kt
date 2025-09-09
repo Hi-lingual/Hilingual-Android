@@ -18,6 +18,7 @@ package com.hilingual.data.auth.di
 import com.hilingual.core.network.NoAuthClient
 import com.hilingual.core.network.RefreshClient
 import com.hilingual.data.auth.service.LoginService
+import com.hilingual.data.auth.service.LogoutService
 import com.hilingual.data.auth.service.ReissueService
 import com.hilingual.data.auth.service.VerifyService
 import dagger.Module
@@ -41,4 +42,8 @@ internal object ServiceModule {
     @Provides
     @Singleton
     fun provideVerifyService(@NoAuthClient retrofit: Retrofit): VerifyService = retrofit.create(VerifyService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideLogoutService(@NoAuthClient retrofit: Retrofit): LogoutService = retrofit.create(LogoutService::class.java)
 }
