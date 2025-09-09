@@ -51,6 +51,8 @@ import com.hilingual.presentation.feedprofile.profile.component.FeedProfileInfo
 import com.hilingual.presentation.feedprofile.profile.component.FeedProfileTabRow
 import com.hilingual.presentation.feedprofile.profile.component.ReportBlockBottomSheet
 import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
+import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -73,6 +75,7 @@ internal fun FeedProfileRoute(
             is FeedProfileSideEffect.ShowToast -> {
                 toastTrigger(it.message)
             }
+
             is FeedProfileSideEffect.ShowRetryDialog -> dialogTrigger.show(it.onRetry)
         }
     }
@@ -138,9 +141,9 @@ private fun FeedProfileScreen(
     val profileListState = rememberLazyListState()
     var shouldEnableScroll by remember { mutableStateOf(true) }
 
-    var sharedDiaryListState by remember { mutableStateOf<LazyListState?>(null) }
-    var likedDiaryListState by remember { mutableStateOf<LazyListState?>(null) }
-    var othersDiaryListState by remember { mutableStateOf<LazyListState?>(null) }
+    val sharedDiaryListState = rememberLazyListState()
+    val likedDiaryListState = rememberLazyListState()
+    val othersDiaryListState = rememberLazyListState()
 
     val canParentScrollForOthers by remember {
         derivedStateOf { profileListState.firstVisibleItemIndex >= 1 }
@@ -176,10 +179,10 @@ private fun FeedProfileScreen(
                                 0 -> sharedDiaryListState
                                 else -> likedDiaryListState
                             }
-                            currentListState?.animateScrollToItem(0)
+                            currentListState.animateScrollToItem(0)
                         }
                         profile.isBlock != true -> {
-                            othersDiaryListState?.animateScrollToItem(0)
+                            othersDiaryListState.animateScrollToItem(0)
                         }
                     }
                 }
@@ -267,9 +270,25 @@ private fun FeedProfileScreen(
                                 state = pagerState,
                                 modifier = Modifier.fillParentMaxSize()
                             ) { page ->
-                                val (diaries, emptyCardType, tabType) = when (page) {
-                                    0 -> Triple(uiState.sharedDiaries, FeedEmptyCardType.NOT_SHARED, DiaryTabType.SHARED)
-                                    else -> Triple(uiState.likedDiaries, FeedEmptyCardType.NOT_LIKED, DiaryTabType.LIKED)
+                                val diaries: ImmutableList<FeedDiaryUIModel>
+                                val emptyCardType: FeedEmptyCardType
+                                val tabType: DiaryTabType
+                                val listState: LazyListState
+
+                                when (page) {
+                                    0 -> {
+                                        diaries = uiState.sharedDiaries
+                                        emptyCardType = FeedEmptyCardType.NOT_SHARED
+                                        tabType = DiaryTabType.SHARED
+                                        listState = sharedDiaryListState
+                                    }
+
+                                    else -> {
+                                        diaries = uiState.likedDiaries
+                                        emptyCardType = FeedEmptyCardType.NOT_LIKED
+                                        tabType = DiaryTabType.LIKED
+                                        listState = likedDiaryListState
+                                    }
                                 }
 
                                 DiaryListScreen(
@@ -285,12 +304,7 @@ private fun FeedProfileScreen(
                                     },
                                     isNestedScroll = true,
                                     canParentScroll = canParentScrollForMine,
-                                    onListStateCreated = { listState ->
-                                        when (page) {
-                                            0 -> sharedDiaryListState = listState
-                                            else -> likedDiaryListState = listState
-                                        }
-                                    },
+                                    listState = listState,
                                     modifier = Modifier.fillParentMaxSize()
                                 )
                             }
@@ -339,9 +353,7 @@ private fun FeedProfileScreen(
                                 },
                                 isNestedScroll = true,
                                 canParentScroll = canParentScrollForOthers,
-                                onListStateCreated = { listState ->
-                                    othersDiaryListState = listState
-                                },
+                                listState = sharedDiaryListState,
                                 modifier = Modifier.fillParentMaxSize()
                             )
                         }
@@ -361,10 +373,10 @@ private fun FeedProfileScreen(
                                 0 -> sharedDiaryListState
                                 else -> likedDiaryListState
                             }
-                            currentListState?.animateScrollToItem(0)
+                            currentListState.animateScrollToItem(0)
                         }
                         profile.isBlock != true -> {
-                            othersDiaryListState?.animateScrollToItem(0)
+                            othersDiaryListState.animateScrollToItem(0)
                         }
                     }
                 }

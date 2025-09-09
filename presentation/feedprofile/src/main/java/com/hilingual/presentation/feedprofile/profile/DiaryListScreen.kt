@@ -35,14 +35,8 @@ internal fun DiaryListScreen(
     onScrollStateChanged: ((Boolean) -> Unit)? = null,
     isNestedScroll: Boolean = false,
     canParentScroll: Boolean = true,
-    onListStateCreated: ((LazyListState) -> Unit)? = null
+    listState: LazyListState = rememberLazyListState()
 ) {
-    val listState = rememberLazyListState()
-
-    LaunchedEffect(listState) {
-        onListStateCreated?.invoke(listState)
-    }
-
     LaunchedEffect(listState.layoutInfo, diaries.size) {
         val layoutInfo = listState.layoutInfo
 
