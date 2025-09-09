@@ -66,6 +66,7 @@ import com.hilingual.presentation.home.component.footer.DiaryTimeInfo
 import com.hilingual.presentation.home.component.footer.HomeDropDownMenu
 import com.hilingual.presentation.home.component.footer.TodayTopic
 import com.hilingual.presentation.home.component.footer.WriteDiaryButton
+import com.hilingual.presentation.home.type.DiaryCardState
 import com.hilingual.presentation.home.util.isDateFuture
 import com.hilingual.presentation.home.util.isDateWritable
 import com.hilingual.presentation.home.util.isDateWritten
@@ -168,6 +169,22 @@ private fun HomeScreen(
     }
     var isExpanded by remember { mutableStateOf(false) }
 
+    val cardState = remember(isWritten, isFuture, isWritable, isRewriteDisabled) {
+        when {
+            isWritten -> DiaryCardState.WRITTEN
+            isFuture -> DiaryCardState.FUTURE
+            isWritable -> {
+                if (isRewriteDisabled) {
+                    DiaryCardState.REWRITE_DISABLED
+                } else {
+                    DiaryCardState.WRITABLE
+                }
+            }
+
+            else -> DiaryCardState.PAST
+        }
+    }
+
     Column(
         modifier = Modifier
             .background(HilingualTheme.colors.white)
@@ -248,8 +265,8 @@ private fun HomeScreen(
             Spacer(Modifier.height(16.dp))
 
             with(uiState) {
-                when {
-                    isWritten -> {
+                when (cardState) {
+                    DiaryCardState.WRITTEN -> {
                         if (diaryThumbnail != null) {
                             DiaryPreviewCard(
                                 diaryText = diaryThumbnail.originalText,
@@ -261,30 +278,25 @@ private fun HomeScreen(
                         }
                     }
 
-                    isFuture -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
-
-                    isWritable -> {
-                        if (todayTopic?.remainingTime == -1) {
-                            DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
-                        } else {
-                            if (todayTopic != null) {
-                                TodayTopic(
-                                    koTopic = todayTopic.topicKo,
-                                    enTopic = todayTopic.topicEn,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .animateContentSize()
-                                )
-                            }
-                            Spacer(Modifier.height(12.dp))
-                            WriteDiaryButton(
-                                onClick = { onWriteDiaryClick(date) },
-                                modifier = Modifier.fillMaxWidth()
+                    DiaryCardState.FUTURE -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
+                    DiaryCardState.WRITABLE -> {
+                        if (todayTopic != null) {
+                            TodayTopic(
+                                koTopic = todayTopic.topicKo,
+                                enTopic = todayTopic.topicEn,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .animateContentSize()
                             )
                         }
+                        Spacer(Modifier.height(12.dp))
+                        WriteDiaryButton(
+                            onClick = { onWriteDiaryClick(date) },
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     }
 
-                    else -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
+                    DiaryCardState.REWRITE_DISABLED, DiaryCardState.PAST -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
                 }
             }
         }
