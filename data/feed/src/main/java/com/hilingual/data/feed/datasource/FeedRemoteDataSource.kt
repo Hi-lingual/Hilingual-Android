@@ -8,6 +8,7 @@ import com.hilingual.data.feed.dto.response.FollowingFeedResponseDto
 import com.hilingual.data.feed.dto.response.LikedDiariesResponseDto
 import com.hilingual.data.feed.dto.response.RecommendFeedResponseDto
 import com.hilingual.data.feed.dto.response.SharedDiariesResponseDto
+import com.hilingual.data.feed.dto.response.UserResponseDto
 
 interface FeedRemoteDataSource {
     suspend fun getFeedProfile(
@@ -34,4 +35,6 @@ interface FeedRemoteDataSource {
         diaryId: Long,
         likeRequestDto: LikeRequestDto
     ): BaseResponse<Unit>
+
+    suspend fun getUserSearchResult(keyword: String): BaseResponse<UserResponseDto>
 }

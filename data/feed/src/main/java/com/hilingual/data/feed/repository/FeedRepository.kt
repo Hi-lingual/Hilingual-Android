@@ -5,6 +5,7 @@ import com.hilingual.data.feed.model.FeedListModel
 import com.hilingual.data.feed.model.FeedProfileModel
 import com.hilingual.data.feed.model.LikedDiariesModel
 import com.hilingual.data.feed.model.SharedDiariesModel
+import com.hilingual.data.feed.model.UserListModel
 
 interface FeedRepository {
     suspend fun getFeedProfile(
@@ -26,4 +27,6 @@ interface FeedRepository {
     suspend fun getFeedDiaryProfile(diaryId: Long): Result<FeedDiaryProfileModel>
 
     suspend fun postIsLike(diaryId: Long, isLiked: Boolean): Result<Unit>
+
+    suspend fun getUserSearchResult(keyword: String): Result<UserListModel>
 }

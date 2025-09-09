@@ -8,10 +8,12 @@ import com.hilingual.data.feed.dto.response.FollowingFeedResponseDto
 import com.hilingual.data.feed.dto.response.LikedDiariesResponseDto
 import com.hilingual.data.feed.dto.response.RecommendFeedResponseDto
 import com.hilingual.data.feed.dto.response.SharedDiariesResponseDto
+import com.hilingual.data.feed.dto.response.UserResponseDto
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface FeedService {
     @GET("/api/v1/feed/profiles/{targetUserId}")
@@ -45,4 +47,9 @@ interface FeedService {
         @Path("diaryId") diaryId: Long,
         @Body likeRequestDto: LikeRequestDto
     ): BaseResponse<Unit>
+
+    @GET("/api/v1/feed/search")
+    suspend fun getUserSearchResult(
+        @Query("keyword") keyword: String
+    ): BaseResponse<UserResponseDto>
 }
