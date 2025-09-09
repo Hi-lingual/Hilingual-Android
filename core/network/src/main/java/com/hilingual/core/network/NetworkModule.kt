@@ -15,7 +15,6 @@
  */
 package com.hilingual.core.network
 
-import com.hilingual.core.localstorage.TokenManager
 import com.hilingual.core.network.BuildConfig.BASE_URL
 import dagger.Module
 import dagger.Provides
@@ -104,10 +103,6 @@ object NetworkModule {
             level = HttpLoggingInterceptor.Level.BODY
         }
     }
-
-    @Provides
-    @Singleton
-    fun provideAuthInterceptor(tokenManager: TokenManager): AuthInterceptor = AuthInterceptor(tokenManager)
 
     @Provides
     @Singleton
