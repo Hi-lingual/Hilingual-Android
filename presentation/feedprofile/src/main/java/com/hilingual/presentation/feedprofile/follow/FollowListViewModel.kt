@@ -3,6 +3,7 @@ package com.hilingual.presentation.feedprofile.follow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.user.model.follow.FollowState
@@ -10,6 +11,7 @@ import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.feedprofile.follow.model.FollowItemModel
 import com.hilingual.presentation.feedprofile.follow.model.FollowTabType
 import com.hilingual.presentation.feedprofile.follow.model.toState
+import com.hilingual.presentation.feedprofile.profile.navigation.FollowList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -26,8 +28,7 @@ internal class FollowListViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val targetUserId: Long = savedStateHandle.get<Long>("userId") ?: 0L
-    // private val targetUserId: Long = savedStateHandle.toRoute<FeedProfileGraph>().userId
+    private val targetUserId: Long = savedStateHandle.toRoute<FollowList>().userId
 
     private val _uiState = MutableStateFlow(FollowListUiState())
     val uiState: StateFlow<FollowListUiState> = _uiState.asStateFlow()
