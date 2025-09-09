@@ -10,7 +10,9 @@ import kotlinx.collections.immutable.persistentListOf
 data class FeedProfileUiState(
     val feedProfileInfo: FeedProfileInfoModel,
     val sharedDiaries: ImmutableList<FeedDiaryUIModel> = persistentListOf(),
-    val likedDiaries: ImmutableList<FeedDiaryUIModel> = persistentListOf()
+    val likedDiaries: ImmutableList<FeedDiaryUIModel> = persistentListOf(),
+    val isSharedRefreshing: Boolean = false,
+    val isLikedRefreshing: Boolean = false
 ) {
     companion object {
         val Fake = FeedProfileUiState(

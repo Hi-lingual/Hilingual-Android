@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -21,6 +23,7 @@ import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardTyp
 import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
 import kotlinx.collections.immutable.ImmutableList
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DiaryListScreen(
     diaries: ImmutableList<FeedDiaryUIModel>,
@@ -33,7 +36,9 @@ internal fun DiaryListScreen(
     modifier: Modifier = Modifier,
     onScrollStateChanged: ((Boolean) -> Unit)? = null,
     isNestedScroll: Boolean = false,
-    canParentScroll: Boolean = true
+    canParentScroll: Boolean = true,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit
 ) {
     val listState = rememberLazyListState()
 
@@ -50,55 +55,60 @@ internal fun DiaryListScreen(
 
         onScrollStateChanged?.invoke(canScrollDown || canScrollUp)
     }
-
-    LazyColumn(
-        state = listState,
-        contentPadding = PaddingValues(bottom = 48.dp),
-        userScrollEnabled = if (isNestedScroll) canParentScroll else true,
-        modifier = modifier
-            .fillMaxSize()
-            .background(HilingualTheme.colors.white)
-            .padding(horizontal = 16.dp)
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = modifier.fillMaxSize()
     ) {
-        if (diaries.isEmpty()) {
-            item {
-                Column(
-                    modifier = Modifier.fillParentMaxSize()
-                ) {
-                    Spacer(modifier = Modifier.weight(140f))
-                    FeedEmptyCard(type = emptyCardType)
-                    Spacer(modifier = Modifier.weight(243f))
+        LazyColumn(
+            state = listState,
+            contentPadding = PaddingValues(bottom = 48.dp),
+            userScrollEnabled = if (isNestedScroll) canParentScroll else true,
+            modifier = modifier
+                .fillMaxSize()
+                .background(HilingualTheme.colors.white)
+                .padding(horizontal = 16.dp)
+        ) {
+            if (diaries.isEmpty()) {
+                item {
+                    Column(
+                        modifier = Modifier.fillParentMaxSize()
+                    ) {
+                        Spacer(modifier = Modifier.weight(140f))
+                        FeedEmptyCard(type = emptyCardType)
+                        Spacer(modifier = Modifier.weight(243f))
+                    }
                 }
-            }
-        } else {
-            itemsIndexed(
-                items = diaries,
-                key = { _, diary -> diary.diaryId }
-            ) { index, diary ->
-                with(diary) {
-                    FeedCard(
-                        profileUrl = authorProfileImageUrl,
-                        onProfileClick = { onProfileClick(authorUserId) },
-                        nickname = authorNickname,
-                        streak = authorStreak,
-                        sharedDateInMinutes = sharedDate,
-                        content = originalText,
-                        onContentDetailClick = { onContentDetailClick(diaryId) },
-                        imageUrl = diaryImageUrl,
-                        likeCount = likeCount,
-                        isLiked = isLiked,
-                        onLikeClick = { onLikeClick(diaryId, !isLiked) },
-                        isMine = isMine,
-                        onUnpublishClick = { onUnpublishClick(diaryId) },
-                        onReportClick = onReportClick
-                    )
-                }
+            } else {
+                itemsIndexed(
+                    items = diaries,
+                    key = { _, diary -> diary.diaryId }
+                ) { index, diary ->
+                    with(diary) {
+                        FeedCard(
+                            profileUrl = authorProfileImageUrl,
+                            onProfileClick = { onProfileClick(authorUserId) },
+                            nickname = authorNickname,
+                            streak = authorStreak,
+                            sharedDateInMinutes = sharedDate,
+                            content = originalText,
+                            onContentDetailClick = { onContentDetailClick(diaryId) },
+                            imageUrl = diaryImageUrl,
+                            likeCount = likeCount,
+                            isLiked = isLiked,
+                            onLikeClick = { onLikeClick(diaryId, !isLiked) },
+                            isMine = isMine,
+                            onUnpublishClick = { onUnpublishClick(diaryId) },
+                            onReportClick = onReportClick
+                        )
+                    }
 
-                if (index < diaries.lastIndex) {
-                    HorizontalDivider(
-                        thickness = 1.dp,
-                        color = HilingualTheme.colors.gray100
-                    )
+                    if (index < diaries.lastIndex) {
+                        HorizontalDivider(
+                            thickness = 1.dp,
+                            color = HilingualTheme.colors.gray100
+                        )
+                    }
                 }
             }
         }

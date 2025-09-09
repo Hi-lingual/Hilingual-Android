@@ -103,7 +103,8 @@ internal fun FeedProfileRoute(
                 onBlockClick = { viewModel.updateBlockState(state.data.feedProfileInfo.isBlock ?: false) },
                 onReportDiaryClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 onUnpublishClick = viewModel::diaryUnpublish,
-                onTabRefresh = viewModel::refreshTab
+                onTabRefresh = viewModel::refreshTab,
+                onUserRefresh = viewModel::onUserRefresh
             )
         }
 
@@ -126,6 +127,7 @@ private fun FeedProfileScreen(
     onUnpublishClick: (diaryId: Long) -> Unit,
     onReportDiaryClick: () -> Unit,
     onTabRefresh: (DiaryTabType) -> Unit,
+    onUserRefresh: (DiaryTabType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -255,10 +257,12 @@ private fun FeedProfileScreen(
                                     onUnpublishClick = onUnpublishClick,
                                     onReportClick = onReportDiaryClick,
                                     onScrollStateChanged = { isScrollable ->
-                                        shouldEnableScroll = isScrollable
+                                        shouldEnableScroll = !isScrollable
                                     },
                                     isNestedScroll = true,
-                                    canParentScroll = canParentScrollForMine,
+                                    canParentScroll = !canParentScrollForMine,
+                                    isRefreshing = if (tabType == DiaryTabType.SHARED) uiState.isSharedRefreshing else uiState.isLikedRefreshing,
+                                    onRefresh = { onUserRefresh(tabType) },
                                     modifier = Modifier.fillParentMaxSize()
                                 )
                             }
@@ -303,10 +307,12 @@ private fun FeedProfileScreen(
                                 onUnpublishClick = onUnpublishClick,
                                 onReportClick = onReportDiaryClick,
                                 onScrollStateChanged = { isScrollable ->
-                                    shouldEnableScroll = isScrollable
+                                    shouldEnableScroll = !isScrollable
                                 },
                                 isNestedScroll = true,
-                                canParentScroll = canParentScrollForOthers,
+                                canParentScroll = !canParentScrollForOthers,
+                                isRefreshing = uiState.isSharedRefreshing,
+                                onRefresh = { onTabRefresh(DiaryTabType.SHARED) },
                                 modifier = Modifier.fillParentMaxSize()
                             )
                         }
@@ -378,7 +384,8 @@ private fun FeedProfileScreenPreview() {
             onLikeClick = { _, _, _ -> },
             onUnpublishClick = {},
             onReportDiaryClick = {},
-            onTabRefresh = {}
+            onTabRefresh = {},
+            onUserRefresh = {}
         )
     }
 }

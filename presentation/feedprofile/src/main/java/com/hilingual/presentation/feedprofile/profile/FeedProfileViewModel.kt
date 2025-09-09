@@ -84,13 +84,17 @@ internal class FeedProfileViewModel @Inject constructor(
         }
     }
 
-    private fun loadSharedDiaries(feedProfileIfoModel: FeedProfileInfoModel) {
+    private fun loadSharedDiaries(feedProfileInfoModel: FeedProfileInfoModel, isUserRefresh: Boolean = false) {
         viewModelScope.launch {
+            if (isUserRefresh) {
+                setRefreshing(DiaryTabType.SHARED, isRefreshing = true)
+            }
+
             feedRepository.getSharedDiaries(targetUserId)
                 .onSuccess { sharedDiariesModel ->
                     val sharedDiaryUIModels = sharedDiariesModel.diaryList.map { sharedDiary ->
                         sharedDiary.toState(
-                            feedProfileInfoModel = feedProfileIfoModel,
+                            feedProfileInfoModel = feedProfileInfoModel,
                             authorUserId = targetUserId
                         )
                     }.toImmutableList()
@@ -102,11 +106,19 @@ internal class FeedProfileViewModel @Inject constructor(
                 .onLogFailure {
                     _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
                 }
+
+            if (isUserRefresh) {
+                setRefreshing(DiaryTabType.SHARED, isRefreshing = false)
+            }
         }
     }
 
-    private fun loadLikedDiaries() {
+    private fun loadLikedDiaries(isUserRefresh: Boolean = false) {
         viewModelScope.launch {
+            if (isUserRefresh) {
+                setRefreshing(DiaryTabType.LIKED, isRefreshing = true)
+            }
+
             feedRepository.getLikedDiaries(targetUserId)
                 .onSuccess { likedDiariesModel ->
                     val likedDiaryUIModels = likedDiariesModel.diaryList.map { likedDiaryItem ->
@@ -120,6 +132,41 @@ internal class FeedProfileViewModel @Inject constructor(
                 .onLogFailure {
                     _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
                 }
+
+            if (isUserRefresh) {
+                setRefreshing(DiaryTabType.LIKED, isRefreshing = false)
+            }
+        }
+    }
+
+    fun refreshTab(tabType: DiaryTabType) {
+        loadTab(tabType, isUserRefresh = false)
+    }
+
+    fun onUserRefresh(tabType: DiaryTabType) {
+        loadTab(tabType, isUserRefresh = true)
+    }
+
+    private fun loadTab(tabType: DiaryTabType, isUserRefresh: Boolean) {
+        val currentState = _uiState.value as? UiState.Success ?: return
+        val feedProfileModel = currentState.data.feedProfileInfo
+
+        when (tabType) {
+            DiaryTabType.SHARED -> {
+                loadSharedDiaries(feedProfileModel, isUserRefresh)
+            }
+            DiaryTabType.LIKED -> {
+                loadLikedDiaries(isUserRefresh)
+            }
+        }
+    }
+
+    private fun setRefreshing(tabType: DiaryTabType, isRefreshing: Boolean) {
+        _uiState.updateSuccess { currentState ->
+            when (tabType) {
+                DiaryTabType.SHARED -> currentState.copy(isSharedRefreshing = isRefreshing)
+                DiaryTabType.LIKED -> currentState.copy(isLikedRefreshing = isRefreshing)
+            }
         }
     }
 
@@ -177,33 +224,31 @@ internal class FeedProfileViewModel @Inject constructor(
                         currentState.copy(sharedDiaries = updatedSharedDiaries)
                     }
                 }
-                .onLogFailure {
-                    _sideEffect.emit(FeedProfileSideEffect.ShowToast("일기 비공개에 실패했습니다."))
-                }
+                .onLogFailure { }
         }
     }
 
     fun updateFollowingState(isCurrentlyFollowing: Boolean) {
         viewModelScope.launch {
             // TODO: 팔로우 화면 머지 후 주석 삭제
-           /* val result = if (isCurrentlyFollowing) {
-                userRepository.deleteFollow(targetUserId)
-            } else {
-                userRepository.putFollow(targetUserId)
-            }
-            result.onSuccess {
-                _uiState.updateSuccess { currentState ->
-                    val currentProfile = currentState.feedProfileInfo
+            /* val result = if (isCurrentlyFollowing) {
+                 userRepository.deleteFollow(targetUserId)
+             } else {
+                 userRepository.putFollow(targetUserId)
+             }
+             result.onSuccess {
+                 _uiState.updateSuccess { currentState ->
+                     val currentProfile = currentState.feedProfileInfo
 
-                    val updatedProfile = currentProfile.copy(
-                        isFollowing = !isCurrentlyFollowing,
-                        follower = if (isCurrentlyFollowing) currentProfile.follower - 1 else currentProfile.follower + 1
-                    )
+                     val updatedProfile = currentProfile.copy(
+                         isFollowing = !isCurrentlyFollowing,
+                         follower = if (isCurrentlyFollowing) currentProfile.follower - 1 else currentProfile.follower + 1
+                     )
 
-                    currentState.copy(feedProfileInfo = updatedProfile)
-                }
-            }.onLogFailure {
-            }*/
+                     currentState.copy(feedProfileInfo = updatedProfile)
+                 }
+             }.onLogFailure {
+             }*/
         }
     }
 
@@ -221,17 +266,7 @@ internal class FeedProfileViewModel @Inject constructor(
                     )
                     currentState.copy(feedProfileInfo = updatedProfile)
                 }
-            }.onLogFailure {
-            }
-        }
-    }
-
-    fun refreshTab(tabType: DiaryTabType) {
-        val currentState = _uiState.value as? UiState.Success ?: return
-        val feedProfileModel = currentState.data.feedProfileInfo
-        when (tabType) {
-            DiaryTabType.SHARED -> loadSharedDiaries(feedProfileModel)
-            DiaryTabType.LIKED -> loadLikedDiaries()
+            }.onLogFailure { }
         }
     }
 }
