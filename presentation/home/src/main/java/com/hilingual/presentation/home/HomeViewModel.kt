@@ -215,7 +215,7 @@ class HomeViewModel @Inject constructor(
                             _uiState.updateSuccess { it.copy(diaryThumbnail = thumbnail.toState()) }
                         }
                         .onLogFailure {
-                            emitRetrySideEffect { updateContentForDate(date) }
+                            emitRetrySideEffect {  }
                         }
                 }
 
