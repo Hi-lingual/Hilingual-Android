@@ -2,6 +2,7 @@ package com.hilingual.presentation.feed.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.feed.model.FollowState
 import com.hilingual.data.feed.repository.FeedRepository
@@ -30,17 +31,19 @@ internal class FeedSearchViewModel @Inject constructor(
     }
 
     fun searchUser() {
-        if (_uiState.value.searchWord.isBlank()) {
+        val searchWord = _uiState.value.searchWord
+        if (searchWord.isBlank()) {
             _uiState.update { it.copy(searchResultUserList = UiState.Success(persistentListOf())) }
             return
         }
 
         viewModelScope.launch {
-            feedRepository.getUserSearchResult(_uiState.value.searchWord).onSuccess { searchResult ->
-                _uiState.update {
-                    it.copy(searchResultUserList = UiState.Success(searchResult.toState()))
-                }
-            }
+            feedRepository.getUserSearchResult(searchWord)
+                .onSuccess { searchResult ->
+                    _uiState.update {
+                        it.copy(searchResultUserList = UiState.Success(searchResult.toState()))
+                    }
+                }.onLogFailure { }
         }
     }
 
@@ -59,30 +62,26 @@ internal class FeedSearchViewModel @Inject constructor(
             }
 
             result.onSuccess {
-                _uiState.update { currentState ->
-                    val oldState = currentState.searchResultUserList
+                val currentListState = _uiState.value.searchResultUserList
+                if (currentListState !is UiState.Success) return@onSuccess
 
-                    if (oldState is UiState.Success) {
-                        val updatedList = oldState.data.map { user ->
-                            if (user.userId == userId) {
-                                val newState = FollowState.getValueByFollowState(
-                                    isFollowing = !currentIsFollowing,
-                                    isFollowed = user.followState.isFollowed
-                                )
-                                user.copy(followState = newState)
-                            } else {
-                                user
-                            }
-                        }.toImmutableList()
-
-                        currentState.copy(
-                            searchResultUserList = UiState.Success(updatedList)
+                val updatedList = currentListState.data.map { user ->
+                    if (user.userId == userId) {
+                        user.copy(
+                            followState = FollowState.getValueByFollowState(
+                                isFollowing = !currentIsFollowing,
+                                isFollowed = user.followState.isFollowed
+                            )
                         )
                     } else {
-                        currentState
+                        user
                     }
+                }.toImmutableList()
+
+                _uiState.update {
+                    it.copy(searchResultUserList = UiState.Success(updatedList))
                 }
-            }
+            }.onLogFailure { }
         }
     }
 }
