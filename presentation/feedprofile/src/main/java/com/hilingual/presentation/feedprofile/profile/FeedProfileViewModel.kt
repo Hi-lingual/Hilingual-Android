@@ -84,12 +84,8 @@ internal class FeedProfileViewModel @Inject constructor(
         }
     }
 
-    private fun loadSharedDiaries(feedProfileInfoModel: FeedProfileInfoModel, isUserRefresh: Boolean = false) {
+    private fun loadSharedDiaries(feedProfileInfoModel: FeedProfileInfoModel) {
         viewModelScope.launch {
-            if (isUserRefresh) {
-                setRefreshing(DiaryTabType.SHARED, isRefreshing = true)
-            }
-
             feedRepository.getSharedDiaries(targetUserId)
                 .onSuccess { sharedDiariesModel ->
                     val sharedDiaryUIModels = sharedDiariesModel.diaryList.map { sharedDiary ->
@@ -106,19 +102,11 @@ internal class FeedProfileViewModel @Inject constructor(
                 .onLogFailure {
                     _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
                 }
-
-            if (isUserRefresh) {
-                setRefreshing(DiaryTabType.SHARED, isRefreshing = false)
-            }
         }
     }
 
-    private fun loadLikedDiaries(isUserRefresh: Boolean = false) {
+    private fun loadLikedDiaries() {
         viewModelScope.launch {
-            if (isUserRefresh) {
-                setRefreshing(DiaryTabType.LIKED, isRefreshing = true)
-            }
-
             feedRepository.getLikedDiaries(targetUserId)
                 .onSuccess { likedDiariesModel ->
                     val likedDiaryUIModels = likedDiariesModel.diaryList.map { likedDiaryItem ->
@@ -132,41 +120,16 @@ internal class FeedProfileViewModel @Inject constructor(
                 .onLogFailure {
                     _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
                 }
-
-            if (isUserRefresh) {
-                setRefreshing(DiaryTabType.LIKED, isRefreshing = false)
-            }
         }
     }
 
     fun refreshTab(tabType: DiaryTabType) {
-        loadTab(tabType, isUserRefresh = false)
-    }
-
-    fun onUserRefresh(tabType: DiaryTabType) {
-        loadTab(tabType, isUserRefresh = true)
-    }
-
-    private fun loadTab(tabType: DiaryTabType, isUserRefresh: Boolean) {
         val currentState = _uiState.value as? UiState.Success ?: return
         val feedProfileModel = currentState.data.feedProfileInfo
 
         when (tabType) {
-            DiaryTabType.SHARED -> {
-                loadSharedDiaries(feedProfileModel, isUserRefresh)
-            }
-            DiaryTabType.LIKED -> {
-                loadLikedDiaries(isUserRefresh)
-            }
-        }
-    }
-
-    private fun setRefreshing(tabType: DiaryTabType, isRefreshing: Boolean) {
-        _uiState.updateSuccess { currentState ->
-            when (tabType) {
-                DiaryTabType.SHARED -> currentState.copy(isSharedRefreshing = isRefreshing)
-                DiaryTabType.LIKED -> currentState.copy(isLikedRefreshing = isRefreshing)
-            }
+            DiaryTabType.SHARED -> { loadSharedDiaries(feedProfileModel) }
+            DiaryTabType.LIKED -> { loadLikedDiaries() }
         }
     }
 

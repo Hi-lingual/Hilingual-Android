@@ -168,6 +168,21 @@ private fun FeedProfileScreen(
             .collect { pageIndex ->
                 val tabType = if (pageIndex == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
                 onTabRefresh(tabType)
+                coroutineScope.launch {
+                    profileListState.animateScrollToItem(0)
+                    when {
+                        profile.isMine -> {
+                            val currentListState = when (pageIndex) {
+                                0 -> sharedDiaryListState
+                                else -> likedDiaryListState
+                            }
+                            currentListState?.animateScrollToItem(0)
+                        }
+                        profile.isBlock != true -> {
+                            othersDiaryListState?.animateScrollToItem(0)
+                        }
+                    }
+                }
             }
     }
 
