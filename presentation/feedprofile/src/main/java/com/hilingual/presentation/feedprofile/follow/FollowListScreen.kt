@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -106,29 +107,35 @@ private fun FollowListScreen(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
         ) { page ->
-            val (followState, emptyCardType, tabType, isRefreshing, listState) = when (page) {
-                0 -> {
-                    val state = Triple(followers, FeedEmptyCardType.NO_FOLLOWER, FollowTabType.FOLLOWER)
-                    Tuple5(state.first, state.second, state.third, isFollowerRefreshing, followerListState)
-                }
-                else -> {
-                    val state = Triple(followings, FeedEmptyCardType.NO_FOLLOWING, FollowTabType.FOLLOWING)
-                    Tuple5(state.first, state.second, state.third, isFollowingRefreshing, followingListState)
-                }
+            val pageState = when (page) {
+                0 -> FollowPageState(
+                    followState = followers,
+                    emptyCardType = FeedEmptyCardType.NO_FOLLOWER,
+                    tabType = FollowTabType.FOLLOWER,
+                    isRefreshing = isFollowerRefreshing,
+                    listState = followerListState
+                )
+                else -> FollowPageState(
+                    followState = followings,
+                    emptyCardType = FeedEmptyCardType.NO_FOLLOWING,
+                    tabType = FollowTabType.FOLLOWING,
+                    isRefreshing = isFollowingRefreshing,
+                    listState = followingListState
+                )
             }
 
-            when (followState) {
+            when (pageState.followState) {
                 is UiState.Loading -> HilingualLoadingIndicator()
                 is UiState.Success -> {
                     FollowScreen(
-                        follows = followState.data,
-                        emptyCardType = emptyCardType,
-                        isRefreshing = isRefreshing,
-                        listState = listState,
-                        onRefresh = { onTabRefresh(tabType) },
+                        follows = pageState.followState.data,
+                        emptyCardType = pageState.emptyCardType,
+                        isRefreshing = pageState.isRefreshing,
+                        listState = pageState.listState,
+                        onRefresh = { onTabRefresh(pageState.tabType) },
                         onProfileClick = onProfileClick,
                         onActionButtonClick = { userId, isFollowing ->
-                            onActionButtonClick(userId, isFollowing, tabType)
+                            onActionButtonClick(userId, isFollowing, pageState.tabType)
                         }
                     )
                 }
@@ -138,12 +145,12 @@ private fun FollowListScreen(
     }
 }
 
-private data class Tuple5<A, B, C, D, E>(
-    val first: A,
-    val second: B,
-    val third: C,
-    val fourth: D,
-    val fifth: E
+private data class FollowPageState(
+    val followState: UiState<ImmutableList<FollowItemModel>>,
+    val emptyCardType: FeedEmptyCardType,
+    val tabType: FollowTabType,
+    val isRefreshing: Boolean,
+    val listState: LazyListState
 )
 
 @Preview(showBackground = true)
