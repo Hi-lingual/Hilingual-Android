@@ -20,25 +20,25 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.notification.main.component.NotificationTapRow
 import com.hilingual.presentation.notification.main.component.NotificationTopAppBar
-import com.hilingual.presentation.notification.main.model.FeedNotificationItemModel
+import com.hilingual.presentation.notification.main.model.FeedNotificationItemUiModel
 import com.hilingual.presentation.notification.main.model.FeedNotificationType
-import com.hilingual.presentation.notification.main.model.NoticeNotificationItemModel
+import com.hilingual.presentation.notification.main.model.NoticeNotificationItemUiModel
 import com.hilingual.presentation.notification.main.tab.FeedScreen
 import com.hilingual.presentation.notification.main.tab.NoticeScreen
-import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -54,34 +54,49 @@ internal fun NotificationRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     NotificationScreen(
-        feedNotifications = uiState.feedNotifications,
-        noticeNotifications = uiState.noticeNotifications,
+        uiState = uiState,
+        paddingValues = paddingValues,
         onBackClick = navigateUp,
         onSettingClick = navigateToSetting,
         onFeedNotificationClick = { notification ->
-            when (notification.type) {
-                FeedNotificationType.LIKE_DIARY -> navigateToFeedDiary(notification.targetId)
-                FeedNotificationType.FOLLOW_USER -> navigateToFeedProfile(notification.targetId)
+            viewModel.readNotification(notification.id)
+            when (notification.feedType) {
+                FeedNotificationType.LIKE_DIARY -> navigateToFeedDiary(notification.targetId.toLong())
+                FeedNotificationType.FOLLOW_USER -> navigateToFeedProfile(notification.targetId.toLong())
             }
         },
-        onNoticeNotificationClick = navigateToNoticeDetail,
-        paddingValues = paddingValues
+        onNoticeNotificationClick = { notification -> navigateToNoticeDetail(notification.id) },
+        onTabSelected = viewModel::onTabSelected,
+        onUserRefresh = viewModel::onUserRefresh
     )
 }
 
 @Composable
 private fun NotificationScreen(
-    feedNotifications: ImmutableList<FeedNotificationItemModel>,
-    noticeNotifications: ImmutableList<NoticeNotificationItemModel>,
+    uiState: NotificationUiState,
+    paddingValues: PaddingValues,
     onBackClick: () -> Unit,
     onSettingClick: () -> Unit,
-    onFeedNotificationClick: (FeedNotificationItemModel) -> Unit,
-    onNoticeNotificationClick: (Long) -> Unit,
-    paddingValues: PaddingValues,
+    onFeedNotificationClick: (FeedNotificationItemUiModel) -> Unit,
+    onNoticeNotificationClick: (NoticeNotificationItemUiModel) -> Unit,
+    onTabSelected: (NotificationTab) -> Unit,
+    onUserRefresh: (NotificationTab) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val feedListState = rememberLazyListState()
+    val noticeListState = rememberLazyListState()
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(pagerState.currentPage) {
+        val tab = NotificationTab.entries[pagerState.currentPage]
+        onTabSelected(tab)
+        delay(100)
+        when (tab) {
+            NotificationTab.FEED -> feedListState.animateScrollToItem(0)
+            NotificationTab.NOTICE -> noticeListState.animateScrollToItem(0)
+        }
+    }
 
     Column(
         modifier = modifier
@@ -105,33 +120,23 @@ private fun NotificationScreen(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
         ) { page ->
-            when (page) {
-                0 -> FeedScreen(
-                    notifications = feedNotifications,
-                    onNotificationClick = onFeedNotificationClick
+            when (val tab = NotificationTab.entries[page]) {
+                NotificationTab.FEED -> FeedScreen(
+                    notifications = uiState.feedNotifications,
+                    onNotificationClick = onFeedNotificationClick,
+                    isRefreshing = uiState.isFeedRefreshing,
+                    listState = feedListState,
+                    onRefresh = { onUserRefresh(tab) }
                 )
 
-                1 -> NoticeScreen(
-                    notifications = noticeNotifications,
-                    onNotificationClick = onNoticeNotificationClick
+                NotificationTab.NOTICE -> NoticeScreen(
+                    notifications = uiState.noticeNotifications,
+                    onNotificationClick = onNoticeNotificationClick,
+                    isRefreshing = uiState.isNoticeRefreshing,
+                    listState = noticeListState,
+                    onRefresh = { onUserRefresh(tab) }
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun NotificationMainScreenPreview() {
-    HilingualTheme {
-        NotificationScreen(
-            feedNotifications = NotificationUiState.Fake.feedNotifications,
-            noticeNotifications = NotificationUiState.Fake.noticeNotifications,
-            onBackClick = {},
-            onSettingClick = {},
-            onFeedNotificationClick = {},
-            onNoticeNotificationClick = {},
-            paddingValues = PaddingValues(0.dp)
-        )
     }
 }
