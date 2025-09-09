@@ -188,7 +188,8 @@ internal fun MainScreen(
                     navigateToDiaryFeedback = appState::navigateToDiaryFeedback,
                     navigateToDiaryWrite = appState::navigateToDiaryWrite,
                     navigateToNotification = appState::navigateToNotification,
-                    navigateToFeedProfile = appState::navigateToFeedProfile
+                    navigateToFeedProfile = appState::navigateToFeedProfile,
+                    navigateToFeed = appState::navigateToFeed
                 )
 
                 notificationNavGraph(
