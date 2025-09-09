@@ -99,7 +99,8 @@ internal fun OnboardingRoute(
         isNicknameValid = { uiState.isNicknameValid },
         onDoneAction = viewModel::onSubmitNickname,
         onRegisterClick = viewModel::onRegisterClick,
-        onTermLinkClick = { url -> context.launchCustomTabs(url) }
+        onTermLinkClick = { url -> context.launchCustomTabs(url) },
+        isLoading = { uiState.isLoading }
     )
 }
 
@@ -114,6 +115,7 @@ private fun OnboardingScreen(
     onDoneAction: (String) -> Unit,
     onRegisterClick: (String, Boolean, Uri?) -> Unit,
     onTermLinkClick: (String) -> Unit,
+    isLoading: () -> Boolean,
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
@@ -186,9 +188,11 @@ private fun OnboardingScreen(
         isVisible = isTermsSheetVisible,
         onDismiss = { isTermsSheetVisible = false },
         onStartClick = { isMarketingAgreed ->
+            isTermsSheetVisible = false
             onRegisterClick(nickname(), isMarketingAgreed, imageUri)
         },
-        onTermLinkClick = onTermLinkClick
+        onTermLinkClick = onTermLinkClick,
+        isLoading = isLoading()
     )
 
     HilingualProfileImageBottomSheet(
@@ -222,7 +226,8 @@ private fun OnboardingScreenPreview() {
             isNicknameValid = { true },
             onDoneAction = { _ -> },
             onRegisterClick = { _, _, _ -> },
-            onTermLinkClick = {}
+            onTermLinkClick = {},
+            isLoading = { false }
         )
     }
 }

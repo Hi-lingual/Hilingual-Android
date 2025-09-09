@@ -21,9 +21,9 @@ data class FeedProfileUiState(
                 follower = 10,
                 following = 5,
                 isMine = true,
-                isFollowing = false,
-                isFollowed = false,
-                isBlock = false
+                isFollowing = null,
+                isFollowed = null,
+                isBlock = null
             ),
             sharedDiaries = persistentListOf(
                 FeedDiaryUIModel(

@@ -17,7 +17,8 @@ package com.hilingual.data.user.datasouceimpl
 
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.user.datasource.UserRemoteDataSource
-import com.hilingual.data.user.dto.request.user.UserProfileRequestDto
+import com.hilingual.data.user.dto.request.ImageRequestDto
+import com.hilingual.data.user.dto.request.RegisterProfileRequestDto
 import com.hilingual.data.user.dto.response.notification.NotificationDetailResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
@@ -34,8 +35,27 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
     override suspend fun getNicknameAvailability(nickname: String): BaseResponse<NicknameResponseDto> =
         userService.getNicknameAvailability(nickname = nickname)
 
-    override suspend fun postUserProfile(userProfileRequestDto: UserProfileRequestDto): BaseResponse<Unit> =
-        userService.postUserProfile(userProfileRequestDto = userProfileRequestDto)
+    override suspend fun postUserProfile(
+        nickname: String,
+        adAlarmAgree: Boolean,
+        fileKey: String?
+    ): BaseResponse<Unit> {
+        val imageRequest = if (fileKey != null) {
+            ImageRequestDto(
+                fileKey = fileKey,
+                purpose = "PROFILE_UPLOAD"
+            )
+        } else {
+            null
+        }
+        return userService.postUserProfile(
+            RegisterProfileRequestDto(
+                image = imageRequest,
+                nickname = nickname,
+                adAlarmAgree = adAlarmAgree
+            )
+        )
+    }
 
     override suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto> =
         userService.getUserInfo()

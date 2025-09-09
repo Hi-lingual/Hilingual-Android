@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,6 +38,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualBasicBottomSheet
 import com.hilingual.core.designsystem.component.button.HilingualButton
@@ -68,7 +70,7 @@ internal fun BlockBottomSheet(
                 .padding(horizontal = 16.dp)
         ) {
             Text(
-                text = "정말 차단하실건가요?",
+                text = "정말 차단하실 건가요?",
                 style = HilingualTheme.typography.headB18,
                 color = HilingualTheme.colors.black
             )
@@ -90,6 +92,7 @@ internal fun BlockBottomSheet(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     modifier = Modifier
                         .fillMaxWidth()
+                        .heightIn(min = 28.dp)
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_check_24),

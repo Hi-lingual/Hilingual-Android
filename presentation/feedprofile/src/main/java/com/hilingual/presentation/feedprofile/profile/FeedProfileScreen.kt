@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -32,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
+import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -60,12 +62,14 @@ internal fun FeedProfileRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val toastTrigger = LocalToastTrigger.current
+    val dialogTrigger = LocalDialogTrigger.current
 
     viewModel.sideEffect.collectSideEffect {
         when (it) {
             is FeedProfileSideEffect.ShowToast -> {
                 toastTrigger(it.message)
             }
+            is FeedProfileSideEffect.ShowRetryDialog -> dialogTrigger.show(it.onRetry)
         }
     }
 
@@ -105,7 +109,7 @@ private fun FeedProfileScreen(
     uiState: FeedProfileUiState,
     onBackClick: () -> Unit,
     onFollowClick: (Boolean) -> Unit,
-    onActionButtonClick: (Boolean) -> Unit,
+    onActionButtonClick: (Boolean?) -> Unit,
     onProfileClick: (Long) -> Unit,
     onContentDetailClick: (Long) -> Unit,
     onLikeClick: (Long, Boolean, DiaryTabType) -> Unit,
@@ -122,14 +126,27 @@ private fun FeedProfileScreen(
     var isReportUserDialogVisible by remember { mutableStateOf(false) }
 
     val profileListState = rememberLazyListState()
+    var shouldEnableScroll by remember { mutableStateOf(true) }
 
-    val isFabVisible by remember {
-        derivedStateOf {
-            profileListState.firstVisibleItemIndex > 0 || profileListState.firstVisibleItemScrollOffset > 0
-        }
+    val canParentScrollForOthers by remember {
+        derivedStateOf { profileListState.firstVisibleItemIndex >= 1 }
+    }
+
+    val canParentScrollForMine by remember {
+        derivedStateOf { profileListState.firstVisibleItemIndex >= 2 }
     }
 
     val profile = uiState.feedProfileInfo
+    val finalScrollEnabled = if (profile.isBlock == true) false else shouldEnableScroll
+
+    val isFabVisible by remember {
+        derivedStateOf {
+            finalScrollEnabled && (
+                profileListState.firstVisibleItemIndex > 0 ||
+                    profileListState.firstVisibleItemScrollOffset > 0
+                )
+        }
+    }
 
     Box(
         modifier = modifier
@@ -141,14 +158,14 @@ private fun FeedProfileScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (profile.isMine || profile.isBlock) {
+            if (profile.isMine || profile.isBlock == true) {
                 BackTopAppBar(
-                    title = null,
+                    title = "피드",
                     onBackClicked = onBackClick
                 )
             } else {
                 BackAndMoreTopAppBar(
-                    title = null,
+                    title = "피드",
                     onBackClicked = onBackClick,
                     onMoreClicked = { isMenuBottomSheetVisible = true }
                 )
@@ -156,6 +173,7 @@ private fun FeedProfileScreen(
 
             LazyColumn(
                 state = profileListState,
+                userScrollEnabled = finalScrollEnabled,
                 modifier = Modifier.fillMaxSize()
             ) {
                 item {
@@ -198,7 +216,7 @@ private fun FeedProfileScreen(
                         item {
                             HorizontalPager(
                                 state = pagerState,
-                                modifier = Modifier.fillMaxSize()
+                                modifier = Modifier.fillParentMaxSize()
                             ) { page ->
                                 val (diaries, emptyCardType, tabType) = when (page) {
                                     0 -> Triple(uiState.sharedDiaries, FeedEmptyCardType.NOT_SHARED, DiaryTabType.SHARED)
@@ -213,17 +231,21 @@ private fun FeedProfileScreen(
                                     onLikeClick = { diaryId, isLiked -> onLikeClick(diaryId, isLiked, tabType) },
                                     onUnpublishClick = onUnpublishClick,
                                     onReportClick = onReportDiaryClick,
+                                    onScrollStateChanged = { isScrollable ->
+                                        shouldEnableScroll = isScrollable
+                                    },
+                                    isNestedScroll = true,
+                                    canParentScroll = canParentScrollForMine,
                                     modifier = Modifier.fillParentMaxSize()
                                 )
                             }
                         }
                     }
 
-                    profile.isBlock -> {
+                    profile.isBlock == true -> {
                         item {
                             Column(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth(),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Spacer(modifier = Modifier.height(140.dp))
@@ -257,6 +279,11 @@ private fun FeedProfileScreen(
                                 onLikeClick = { diaryId, isLiked -> onLikeClick(diaryId, isLiked, DiaryTabType.SHARED) },
                                 onUnpublishClick = onUnpublishClick,
                                 onReportClick = onReportDiaryClick,
+                                onScrollStateChanged = { isScrollable ->
+                                    shouldEnableScroll = isScrollable
+                                },
+                                isNestedScroll = true,
+                                canParentScroll = canParentScrollForOthers,
                                 modifier = Modifier.fillParentMaxSize()
                             )
                         }
@@ -274,6 +301,7 @@ private fun FeedProfileScreen(
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
+                .navigationBarsPadding()
                 .padding(bottom = 24.dp, end = 16.dp)
         )
     }
