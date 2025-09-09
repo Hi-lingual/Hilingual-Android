@@ -15,11 +15,9 @@
  */
 package com.hilingual.core.network
 
-import android.content.Context
+import com.hilingual.core.common.app.AppRestarter
 import com.hilingual.core.localstorage.TokenManager
 import com.hilingual.core.network.service.TokenRefreshService
-import com.jakewharton.processphoenix.ProcessPhoenix
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -35,7 +33,7 @@ import javax.inject.Singleton
 class TokenAuthenticator @Inject constructor(
     private val tokenManager: TokenManager,
     private val tokenRefreshService: TokenRefreshService,
-    @ApplicationContext private val context: Context
+    private val appRestarter: AppRestarter
 ) : Authenticator {
 
     private val mutex = Mutex()
@@ -64,7 +62,7 @@ class TokenAuthenticator @Inject constructor(
         val refreshToken = tokenManager.getRefreshToken() ?: run {
             Timber.d("리프레시 토큰 없음. 토큰 삭제 및 앱 재시작.")
             tokenManager.clearTokens()
-            ProcessPhoenix.triggerRebirth(context)
+            appRestarter.restartApp()
             return@withLock null
         }
 
@@ -80,7 +78,7 @@ class TokenAuthenticator @Inject constructor(
         } else {
             Timber.d(result.exceptionOrNull(), "토큰 재발급 실패. 토큰 삭제 및 앱 재시작.")
             tokenManager.clearTokens()
-            ProcessPhoenix.triggerRebirth(context)
+            appRestarter.restartApp()
             null
         }
     }
