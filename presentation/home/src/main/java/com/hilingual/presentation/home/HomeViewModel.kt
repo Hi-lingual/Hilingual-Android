@@ -215,7 +215,7 @@ class HomeViewModel @Inject constructor(
                             _uiState.updateSuccess { it.copy(diaryThumbnail = thumbnail.toState()) }
                         }
                         .onLogFailure {
-                            _uiState.updateSuccess { it.copy(diaryThumbnail = null) }
+                            emitRetrySideEffect { updateContentForDate(date) }
                         }
                 }
 
@@ -225,9 +225,6 @@ class HomeViewModel @Inject constructor(
                             _uiState.updateSuccess { it.copy(todayTopic = topic.toState()) }
                         }
                         .onLogFailure { }
-                }
-                else -> {
-                    _uiState.updateSuccess { it.copy(diaryThumbnail = null, todayTopic = null) }
                 }
             }
         }
