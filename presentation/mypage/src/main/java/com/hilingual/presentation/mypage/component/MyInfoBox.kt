@@ -1,5 +1,6 @@
 package com.hilingual.presentation.mypage.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,17 +49,28 @@ internal fun MyInfoBox(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            NetworkImage(
-                imageUrl = profileUrl,
-                modifier = Modifier
-                    .size(60.dp)
-                    .border(
-                        width = 1.dp,
-                        color = HilingualTheme.colors.gray200,
-                        shape = CircleShape
-                    )
-                    .noRippleClickable(onClick = onEditButtonClick)
-            )
+            val imageModifier = Modifier
+                .size(60.dp)
+                .clip(shape = CircleShape)
+                .border(
+                    width = 1.dp,
+                    color = HilingualTheme.colors.gray200,
+                    shape = CircleShape
+                )
+                .noRippleClickable(onClick = onEditButtonClick)
+
+            if (profileUrl.isNullOrBlank()) {
+                Image(
+                    painter = painterResource(R.drawable.img_default_image),
+                    contentDescription = null,
+                    modifier = imageModifier
+                )
+            } else {
+                NetworkImage(
+                    imageUrl = profileUrl,
+                    modifier = imageModifier
+                )
+            }
 
             Spacer(modifier = Modifier.width(10.dp))
 
