@@ -160,11 +160,12 @@ private fun FeedProfileScreen(
     }
 
     LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.distinctUntilChanged().collect {
-            val tabType = if (it == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
-            onTabRefresh(tabType)
-            profileListState.animateScrollToItem(0)
-        }
+        snapshotFlow { pagerState.currentPage }
+            .distinctUntilChanged()
+            .collect { pageIndex ->
+                val tabType = if (pageIndex == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
+                onTabRefresh(tabType)
+            }
     }
 
     Box(
@@ -229,7 +230,12 @@ private fun FeedProfileScreen(
                                 tabIndex = pagerState.currentPage,
                                 onTabSelected = { index ->
                                     coroutineScope.launch {
-                                        pagerState.animateScrollToPage(index)
+                                        val tabType = if (index == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
+                                        if (index == pagerState.currentPage) {
+                                            onTabRefresh(tabType)
+                                        } else {
+                                            pagerState.animateScrollToPage(index)
+                                        }
                                     }
                                 },
                                 modifier = Modifier
