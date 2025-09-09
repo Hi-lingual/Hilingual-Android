@@ -16,7 +16,6 @@
 package com.hilingual.data.user.repository
 
 import android.net.Uri
-import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.user.model.notification.NotificationDetailModel
 import com.hilingual.data.user.model.notification.NotificationModel
 import com.hilingual.data.user.model.notification.NotificationSettingsModel

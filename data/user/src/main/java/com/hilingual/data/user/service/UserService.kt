@@ -16,7 +16,6 @@
 package com.hilingual.data.user.service
 
 import com.hilingual.core.network.BaseResponse
-import com.hilingual.data.user.dto.request.ImageRequestDto
 import com.hilingual.data.user.dto.request.RegisterProfileRequestDto
 import com.hilingual.data.user.dto.request.UpdateProfileImageRequestDto
 import com.hilingual.data.user.dto.response.notification.NotificationDetailResponseDto
@@ -92,5 +91,4 @@ internal interface UserService {
     suspend fun updateProfileImage(
         @Body updateProfileImageRequestDto: UpdateProfileImageRequestDto
     ): BaseResponse<Unit>
-
 }
