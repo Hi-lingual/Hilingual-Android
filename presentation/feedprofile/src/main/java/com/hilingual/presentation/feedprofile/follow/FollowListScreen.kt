@@ -71,10 +71,12 @@ private fun FollowListScreen(
     val followingListState = rememberLazyListState()
 
     LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.distinctUntilChanged().collect {
-            val tabType = if (it == 0) FollowTabType.FOLLOWER else FollowTabType.FOLLOWING
-            onTabRefresh(tabType)
-        }
+        snapshotFlow { pagerState.currentPage }
+            .distinctUntilChanged()
+            .collect { pageIndex ->
+                val tabType = if (pageIndex == 0) FollowTabType.FOLLOWER else FollowTabType.FOLLOWING
+                onTabRefresh(tabType)
+            }
     }
 
     Column(
@@ -91,7 +93,12 @@ private fun FollowListScreen(
             tabIndex = pagerState.currentPage,
             onTabSelected = { index ->
                 coroutineScope.launch {
-                    pagerState.animateScrollToPage(index)
+                    val tabType = if (index == 0) FollowTabType.FOLLOWER else FollowTabType.FOLLOWING
+                    if (index == pagerState.currentPage) {
+                        onTabRefresh(tabType)
+                    } else {
+                        pagerState.animateScrollToPage(index)
+                    }
                 }
             }
         )

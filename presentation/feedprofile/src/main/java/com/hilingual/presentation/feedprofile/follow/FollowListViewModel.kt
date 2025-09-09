@@ -32,10 +32,6 @@ internal class FollowListViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(FollowListUiState())
     val uiState: StateFlow<FollowListUiState> = _uiState.asStateFlow()
 
-    init {
-        loadFollowers()
-    }
-
     private fun loadFollowers() {
         viewModelScope.launch {
             _uiState.update { it.copy(followerList = UiState.Loading) }
