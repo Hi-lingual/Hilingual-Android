@@ -36,6 +36,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import timber.log.Timber
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.seconds
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -115,6 +116,22 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @LongTimeoutClient
+    fun provideLongTimeoutOkHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor,
+        authInterceptor: AuthInterceptor,
+        tokenAuthenticator: TokenAuthenticator
+    ): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(loggingInterceptor)
+        .addInterceptor(authInterceptor)
+        .authenticator(tokenAuthenticator)
+        .connectTimeout(60.seconds)
+        .readTimeout(60.seconds)
+        .writeTimeout(60.seconds)
+        .build()
+
+    @Provides
+    @Singleton
     fun provideDefaultRetrofit(
         client: OkHttpClient,
         factory: Converter.Factory
@@ -143,6 +160,19 @@ object NetworkModule {
     @RefreshClient
     fun provideRefreshRetrofit(
         @RefreshClient client: OkHttpClient,
+        factory: Converter.Factory
+    ): Retrofit =
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(client)
+            .addConverterFactory(factory)
+            .build()
+
+    @Provides
+    @Singleton
+    @LongTimeoutClient
+    fun provideLongTimeoutRetrofit(
+        @LongTimeoutClient client: OkHttpClient,
         factory: Converter.Factory
     ): Retrofit =
         Retrofit.Builder()

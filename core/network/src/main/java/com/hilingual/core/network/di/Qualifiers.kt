@@ -24,3 +24,7 @@ annotation class NoAuthClient
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class RefreshClient
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class LongTimeoutClient
