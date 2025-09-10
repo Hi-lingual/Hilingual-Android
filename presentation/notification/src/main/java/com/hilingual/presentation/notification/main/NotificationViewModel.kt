@@ -43,7 +43,7 @@ internal class NotificationViewModel @Inject constructor(
                                     .toImmutableList()
                             )
 
-                            NotificationTab.NOTICE -> it.copy(
+                            NotificationTab.NOTIFICATION -> it.copy(
                                 noticeNotifications = notifications.mapNotNull { item -> item.toNoticeStateOrNull() }
                                     .toImmutableList()
                             )
@@ -75,7 +75,7 @@ internal class NotificationViewModel @Inject constructor(
         _uiState.update {
             when (tab) {
                 NotificationTab.FEED -> it.copy(isFeedRefreshing = isRefreshing)
-                NotificationTab.NOTICE -> it.copy(isNoticeRefreshing = isRefreshing)
+                NotificationTab.NOTIFICATION -> it.copy(isNoticeRefreshing = isRefreshing)
             }
         }
     }

@@ -1,6 +1,6 @@
 package com.hilingual.data.presigned.service
 
-import com.hilingual.core.network.BaseResponse
+import com.hilingual.core.network.model.BaseResponse
 import com.hilingual.data.presigned.dto.request.PresignedUrlRequestDto
 import com.hilingual.data.presigned.dto.response.PresignedUrlResponseDto
 import retrofit2.http.Body

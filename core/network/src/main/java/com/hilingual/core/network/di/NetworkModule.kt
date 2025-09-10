@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.network
+package com.hilingual.core.network.di
 
 import com.hilingual.core.network.BuildConfig.BASE_URL
+import com.hilingual.core.network.auth.AuthInterceptor
+import com.hilingual.core.network.auth.TokenAuthenticator
+import com.hilingual.core.network.ext.isJsonArray
+import com.hilingual.core.network.ext.isJsonObject
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,6 +28,8 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -53,45 +59,19 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
-        var isMultipart = false
         return HttpLoggingInterceptor { message ->
             when {
-                message.contains("Content-Type: multipart/form-data") -> {
-                    isMultipart = true
-                    Timber.tag("okhttp").d("CONNECTION INFO -> $message")
-                }
-
-                isMultipart && message.startsWith("--") -> {
-                    Timber.tag("okhttp").d("CONNECTION INFO -> (multipart boundary)")
-                    if (message.endsWith("--")) {
-                        isMultipart = false // End of multipart content
-                    }
-                }
-
-                isMultipart -> {
-                    if (message.contains("Content-Disposition")) {
-                        Timber.tag("okhttp").d("CONNECTION INFO -> $message")
-                    } else {
-                        try {
-                            val json = JSONObject(message)
-                            Timber.tag("okhttp").d(json.toString(UNIT_TAB))
-                        } catch (e: org.json.JSONException) {
-                            Timber.tag("okhttp").d("CONNECTION INFO -> (multipart content part)")
-                        }
-                    }
-                }
-
                 message.isJsonObject() ->
                     try {
                         Timber.tag("okhttp").d(JSONObject(message).toString(UNIT_TAB))
-                    } catch (e: org.json.JSONException) {
+                    } catch (e: JSONException) {
                         Timber.tag("okhttp").d("CONNECTION INFO -> $message")
                     }
 
                 message.isJsonArray() ->
                     try {
-                        Timber.tag("okhttp").d(org.json.JSONArray(message).toString(UNIT_TAB))
-                    } catch (e: org.json.JSONException) {
+                        Timber.tag("okhttp").d(JSONArray(message).toString(UNIT_TAB))
+                    } catch (e: JSONException) {
                         Timber.tag("okhttp").d("CONNECTION INFO -> $message")
                     }
 
@@ -136,8 +116,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @MultipartClient
-    fun provideMultipartOkHttpClient(
+    @LongTimeoutClient
+    fun provideLongTimeoutOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
         authInterceptor: AuthInterceptor,
         tokenAuthenticator: TokenAuthenticator
@@ -190,9 +170,9 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @MultipartClient
-    fun provideMultipartRetrofit(
-        @MultipartClient client: OkHttpClient,
+    @LongTimeoutClient
+    fun provideLongTimeoutRetrofit(
+        @LongTimeoutClient client: OkHttpClient,
         factory: Converter.Factory
     ): Retrofit =
         Retrofit.Builder()

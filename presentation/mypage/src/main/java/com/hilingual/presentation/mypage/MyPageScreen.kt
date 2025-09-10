@@ -112,6 +112,7 @@ private fun MyPageScreen(
     onLogoutClick: () -> Unit
 ) {
     var isLogoutDialogVisible by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -185,7 +186,7 @@ private fun MyPageScreen(
                 title = "버전 정보",
                 trailingContent = {
                     Text(
-                        text = "1.01.01", // TODO: 버전 정보 가져오기 by 지영
+                        text = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "",
                         color = HilingualTheme.colors.gray400,
                         style = HilingualTheme.typography.captionR14,
                         modifier = Modifier.padding(end = 4.dp)

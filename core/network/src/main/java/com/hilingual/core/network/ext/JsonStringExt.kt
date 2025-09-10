@@ -13,17 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.network
+package com.hilingual.core.network.ext
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+fun String?.isJsonObject(): Boolean = this?.startsWith("{") == true && this.endsWith("}")
 
-@Serializable
-data class BaseResponse<T>(
-    @SerialName("code")
-    val code: Int,
-    @SerialName("message")
-    val message: String,
-    @SerialName("data")
-    val data: T? = null
-)
+fun String?.isJsonArray(): Boolean = this?.startsWith("[") == true && this.endsWith("]")

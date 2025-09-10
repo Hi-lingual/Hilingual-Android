@@ -14,7 +14,7 @@ data class NotificationResponseDto(
     @SerialName("title")
     val title: String,
     @SerialName("targetId")
-    val targetId: String? = null,
+    val targetId: Long? = null,
     @SerialName("isRead")
     val isRead: Boolean,
     @SerialName("publishedAt")

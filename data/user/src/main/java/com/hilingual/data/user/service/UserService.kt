@@ -15,7 +15,7 @@
  */
 package com.hilingual.data.user.service
 
-import com.hilingual.core.network.BaseResponse
+import com.hilingual.core.network.model.BaseResponse
 import com.hilingual.data.user.dto.request.RegisterProfileRequestDto
 import com.hilingual.data.user.dto.response.follow.FollowerResponseDto
 import com.hilingual.data.user.dto.response.follow.FollowingResponseDto

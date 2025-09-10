@@ -29,7 +29,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okio.BufferedSink
 import timber.log.Timber
@@ -49,12 +48,11 @@ class ContentUriRequestBody @Inject constructor(
     private var metadata: ImageMetadata? = null
 
     private data class ImageMetadata(
-        val fileName: String,
         val size: Long,
         val mimeType: String?
     ) {
         companion object {
-            val EMPTY = ImageMetadata("", 0L, null)
+            val EMPTY = ImageMetadata(0L, null)
         }
     }
 
@@ -113,15 +111,6 @@ class ContentUriRequestBody @Inject constructor(
             prepareImageJob = deferred
             deferred.await()
         }
-    }
-
-    fun toFormData(name: String): MultipartBody.Part? {
-        if (uri == null) return null
-        return MultipartBody.Part.createFormData(
-            name = name,
-            filename = metadata?.fileName ?: DEFAULT_FILE_NAME,
-            body = this
-        )
     }
 
     private suspend fun compressImage(uri: Uri): Result<ByteArray> =
@@ -191,7 +180,6 @@ class ContentUriRequestBody @Inject constructor(
                 uri,
                 arrayOf(
                     MediaStore.Images.Media.SIZE,
-                    MediaStore.Images.Media.DISPLAY_NAME,
                     MediaStore.Images.Media.MIME_TYPE
                 ),
                 null,
@@ -200,7 +188,6 @@ class ContentUriRequestBody @Inject constructor(
             )?.use { cursor ->
                 if (cursor.moveToFirst()) {
                     ImageMetadata(
-                        fileName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)),
                         size = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)),
                         mimeType = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE))
                     )
@@ -226,9 +213,5 @@ class ContentUriRequestBody @Inject constructor(
 
     override fun writeTo(sink: BufferedSink) {
         compressedImage?.let(sink::write)
-    }
-
-    companion object {
-        const val DEFAULT_FILE_NAME = "image.jpg"
     }
 }
