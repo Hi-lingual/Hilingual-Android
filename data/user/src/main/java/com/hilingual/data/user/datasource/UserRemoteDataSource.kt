@@ -44,6 +44,7 @@ interface UserRemoteDataSource {
     suspend fun getFollowings(
         targetUserId: Long
     ): BaseResponse<FollowingResponseDto>
+
     suspend fun getUserLoginInfo(): BaseResponse<UserLoginInfoResponseDto>
 
     suspend fun getBlockList(): BaseResponse<BlockListResponseDto>
