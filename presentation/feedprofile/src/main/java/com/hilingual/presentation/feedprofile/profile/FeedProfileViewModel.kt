@@ -156,7 +156,7 @@ internal class FeedProfileViewModel @Inject constructor(
                         }
                     }
                 }
-                .onLogFailure {  }
+                .onLogFailure { }
         }
     }
 
