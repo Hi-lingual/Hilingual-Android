@@ -94,7 +94,7 @@ private fun NotificationScreen(
         delay(100)
         when (tab) {
             NotificationTab.FEED -> feedListState.animateScrollToItem(0)
-            NotificationTab.NOTICE -> noticeListState.animateScrollToItem(0)
+            NotificationTab.NOTIFICATION -> noticeListState.animateScrollToItem(0)
         }
     }
 
@@ -129,7 +129,7 @@ private fun NotificationScreen(
                     onRefresh = { onUserRefresh(tab) }
                 )
 
-                NotificationTab.NOTICE -> NoticeScreen(
+                NotificationTab.NOTIFICATION -> NoticeScreen(
                     notifications = uiState.noticeNotifications,
                     onNotificationClick = onNoticeNotificationClick,
                     isRefreshing = uiState.isNoticeRefreshing,
