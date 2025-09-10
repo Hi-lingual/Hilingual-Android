@@ -61,8 +61,8 @@ internal fun NotificationRoute(
         onFeedNotificationClick = { notification ->
             viewModel.readNotification(notification.id)
             when (notification.feedType) {
-                FeedNotificationType.LIKE_DIARY -> navigateToFeedDiary(notification.targetId.toLong())
-                FeedNotificationType.FOLLOW_USER -> navigateToFeedProfile(notification.targetId.toLong())
+                FeedNotificationType.LIKE_DIARY -> navigateToFeedDiary(notification.targetId)
+                FeedNotificationType.FOLLOW_USER -> navigateToFeedProfile(notification.targetId)
             }
         },
         onNoticeNotificationClick = { notification -> navigateToNoticeDetail(notification.id) },

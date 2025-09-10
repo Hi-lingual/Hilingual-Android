@@ -27,7 +27,7 @@ data class NotificationUiState(
                     id = 0,
                     feedType = FeedNotificationType.LIKE_DIARY,
                     title = "방금 이병건님이 당신의 8월 14일 일기에 공감했습니다.",
-                    targetId = "100",
+                    targetId = 100L,
                     publishedAt = "2025.08.15",
                     isRead = false
                 ),
@@ -35,7 +35,7 @@ data class NotificationUiState(
                     id = 1,
                     feedType = FeedNotificationType.FOLLOW_USER,
                     title = "토착왜구맨님이 당신을 팔로우하기 시작했습니다.",
-                    targetId = "200",
+                    targetId = 200L,
                     publishedAt = "2025.08.15",
                     isRead = true
                 )
