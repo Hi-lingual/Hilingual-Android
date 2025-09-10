@@ -143,7 +143,15 @@ private fun FeedProfileScreen(
 
     val sharedDiaryListState = rememberLazyListState()
     val likedDiaryListState = rememberLazyListState()
-    val othersDiaryListState = rememberLazyListState()
+
+    val currentListState by remember {
+        derivedStateOf {
+            when (pagerState.currentPage) {
+                0 -> sharedDiaryListState
+                else -> likedDiaryListState
+            }
+        }
+    }
 
     val canParentScrollForOthers by remember {
         derivedStateOf { profileListState.firstVisibleItemIndex >= 1 }
@@ -175,14 +183,10 @@ private fun FeedProfileScreen(
                     profileListState.animateScrollToItem(0)
                     when {
                         profile.isMine -> {
-                            val currentListState = when (pageIndex) {
-                                0 -> sharedDiaryListState
-                                else -> likedDiaryListState
-                            }
                             currentListState.animateScrollToItem(0)
                         }
                         profile.isBlock != true -> {
-                            othersDiaryListState.animateScrollToItem(0)
+                            sharedDiaryListState.animateScrollToItem(0)
                         }
                     }
                 }
@@ -270,25 +274,19 @@ private fun FeedProfileScreen(
                                 state = pagerState,
                                 modifier = Modifier.fillParentMaxSize()
                             ) { page ->
-                                val diaries: ImmutableList<FeedDiaryUIModel>
-                                val emptyCardType: FeedEmptyCardType
-                                val tabType: DiaryTabType
-                                val listState: LazyListState
 
-                                when (page) {
-                                    0 -> {
-                                        diaries = uiState.sharedDiaries
-                                        emptyCardType = FeedEmptyCardType.NOT_SHARED
-                                        tabType = DiaryTabType.SHARED
-                                        listState = sharedDiaryListState
-                                    }
-
-                                    else -> {
-                                        diaries = uiState.likedDiaries
-                                        emptyCardType = FeedEmptyCardType.NOT_LIKED
-                                        tabType = DiaryTabType.LIKED
-                                        listState = likedDiaryListState
-                                    }
+                                val tabType = DiaryTabType.entries[page]
+                                val (diaries, emptyCardType, listState) = when (tabType) {
+                                    DiaryTabType.SHARED -> Triple(
+                                        uiState.sharedDiaries,
+                                        FeedEmptyCardType.NOT_SHARED,
+                                        sharedDiaryListState
+                                    )
+                                    DiaryTabType.LIKED -> Triple(
+                                        uiState.likedDiaries,
+                                        FeedEmptyCardType.NOT_LIKED,
+                                        likedDiaryListState
+                                    )
                                 }
 
                                 DiaryListScreen(
@@ -369,14 +367,10 @@ private fun FeedProfileScreen(
                     profileListState.animateScrollToItem(0)
                     when {
                         profile.isMine -> {
-                            val currentListState = when (pagerState.currentPage) {
-                                0 -> sharedDiaryListState
-                                else -> likedDiaryListState
-                            }
                             currentListState.animateScrollToItem(0)
                         }
                         profile.isBlock != true -> {
-                            othersDiaryListState.animateScrollToItem(0)
+                            sharedDiaryListState.animateScrollToItem(0)
                         }
                     }
                 }

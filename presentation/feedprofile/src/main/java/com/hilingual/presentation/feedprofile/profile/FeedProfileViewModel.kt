@@ -124,12 +124,13 @@ internal class FeedProfileViewModel @Inject constructor(
     }
 
     fun refreshTab(tabType: DiaryTabType) {
-        val currentState = _uiState.value as? UiState.Success ?: return
-        val feedProfileModel = currentState.data.feedProfileInfo
-
-        when (tabType) {
-            DiaryTabType.SHARED -> { loadSharedDiaries(feedProfileModel) }
-            DiaryTabType.LIKED -> { loadLikedDiaries() }
+        _uiState.updateSuccess { currentState ->
+            val feedProfileModel = currentState.feedProfileInfo
+            when (tabType) {
+                DiaryTabType.SHARED -> loadSharedDiaries(feedProfileModel)
+                DiaryTabType.LIKED -> loadLikedDiaries()
+            }
+            currentState
         }
     }
 
@@ -155,6 +156,7 @@ internal class FeedProfileViewModel @Inject constructor(
                         }
                     }
                 }
+                .onLogFailure {  }
         }
     }
 
@@ -177,7 +179,6 @@ internal class FeedProfileViewModel @Inject constructor(
         viewModelScope.launch {
             diaryRepository.patchDiaryUnpublish(diaryId)
                 .onSuccess {
-                    _sideEffect.emit(FeedProfileSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
                     _uiState.updateSuccess { currentState ->
 
                         val updatedSharedDiaries = currentState.sharedDiaries
@@ -186,6 +187,7 @@ internal class FeedProfileViewModel @Inject constructor(
 
                         currentState.copy(sharedDiaries = updatedSharedDiaries)
                     }
+                    _sideEffect.emit(FeedProfileSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
                 }
                 .onLogFailure { }
         }
