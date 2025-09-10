@@ -224,7 +224,9 @@ class HomeViewModel @Inject constructor(
                         .onSuccess { topic ->
                             _uiState.updateSuccess { it.copy(todayTopic = topic.toState()) }
                         }
-                        .onLogFailure { }
+                        .onLogFailure {
+                            _uiState.updateSuccess { it.copy(todayTopic = null) }
+                        }
                 }
             }
         }
