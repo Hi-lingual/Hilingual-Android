@@ -98,7 +98,7 @@ internal fun FeedTabScreen(
                         ) { index, feed ->
                             with(feed) {
                                 FeedCard(
-                                    profileUrl = profileUrl ?: "", // TODO: 이미지 null 처리 필요
+                                    profileUrl = profileUrl,
                                     onProfileClick = { onProfileClick(userId) },
                                     nickname = nickname,
                                     streak = streak,

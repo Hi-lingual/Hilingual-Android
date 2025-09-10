@@ -61,8 +61,8 @@ fun UserActionItem(
         ) {
             ProfileImage(
                 imageUrl = profileUrl,
-                size = 42.dp,
                 modifier = Modifier
+                    .size(42.dp)
                     .border(
                         width = 1.dp,
                         color = HilingualTheme.colors.gray200,

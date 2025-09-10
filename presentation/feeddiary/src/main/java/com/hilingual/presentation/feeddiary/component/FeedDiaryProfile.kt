@@ -50,7 +50,6 @@ internal fun FeedDiaryProfile(
     ) {
         ProfileImage(
             imageUrl = profileUrl,
-            size = 42.dp,
             modifier = Modifier
                 .size(42.dp)
                 .clip(shape = CircleShape)

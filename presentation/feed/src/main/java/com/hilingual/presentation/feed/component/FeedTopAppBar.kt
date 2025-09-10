@@ -72,9 +72,9 @@ internal fun FeedTopAppBar(
 
         ProfileImage(
             imageUrl = profileImageUrl,
-            size = 36.dp,
             modifier = Modifier
                 .noRippleClickable(onClick = onProfileClick)
+                .size(36.dp)
                 .border(
                     width = 1.dp,
                     color = HilingualTheme.colors.gray400,

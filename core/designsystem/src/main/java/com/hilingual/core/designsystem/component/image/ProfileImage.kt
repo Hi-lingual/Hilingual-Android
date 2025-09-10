@@ -13,21 +13,18 @@ import com.hilingual.core.designsystem.R
 @Composable
 fun ProfileImage(
     imageUrl: String?,
-    size: Dp,
     modifier: Modifier = Modifier
 ) {
     if (imageUrl.isNullOrBlank()) {
         Image(
             painter = painterResource(R.drawable.img_default_image),
             contentDescription = null,
-            modifier = modifier
-                .size(size)
-                .clip(CircleShape)
+            modifier = modifier.clip(CircleShape)
         )
     } else {
         NetworkImage(
             imageUrl = imageUrl,
-            modifier = modifier.size(size)
+            modifier = modifier
         )
     }
 }
