@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.network
+package com.hilingual.core.network.auth
 
 import com.hilingual.core.common.app.AppRestarter
 import com.hilingual.core.localstorage.TokenManager
-import com.hilingual.core.network.service.TokenRefreshService
+import com.hilingual.core.network.constant.AUTHORIZATION
+import com.hilingual.core.network.constant.BEARER
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

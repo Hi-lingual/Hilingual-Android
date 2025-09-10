@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.network
+package com.hilingual.core.network.auth
 
-fun String?.isJsonObject(): Boolean = this?.startsWith("{") == true && this.endsWith("}")
-
-fun String?.isJsonArray(): Boolean = this?.startsWith("[") == true && this.endsWith("]")
+interface TokenRefreshService {
+    suspend fun refreshToken(refreshToken: String): Result<Pair<String, String>>
+}

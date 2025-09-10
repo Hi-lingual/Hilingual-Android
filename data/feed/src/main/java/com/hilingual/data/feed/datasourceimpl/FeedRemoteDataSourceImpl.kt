@@ -1,6 +1,6 @@
 package com.hilingual.data.feed.datasourceimpl
 
-import com.hilingual.core.network.BaseResponse
+import com.hilingual.core.network.model.BaseResponse
 import com.hilingual.data.feed.datasource.FeedRemoteDataSource
 import com.hilingual.data.feed.dto.request.LikeRequestDto
 import com.hilingual.data.feed.dto.response.DiaryProfileResponseDto

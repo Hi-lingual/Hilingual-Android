@@ -195,25 +195,23 @@ internal class FeedProfileViewModel @Inject constructor(
 
     fun updateFollowingState(isCurrentlyFollowing: Boolean) {
         viewModelScope.launch {
-            // TODO: 팔로우 화면 머지 후 주석 삭제
-            /* val result = if (isCurrentlyFollowing) {
-                 userRepository.deleteFollow(targetUserId)
-             } else {
-                 userRepository.putFollow(targetUserId)
-             }
-             result.onSuccess {
-                 _uiState.updateSuccess { currentState ->
-                     val currentProfile = currentState.feedProfileInfo
+            val result = if (isCurrentlyFollowing) {
+                userRepository.deleteFollow(targetUserId)
+            } else {
+                userRepository.putFollow(targetUserId)
+            }
+            result.onSuccess {
+                _uiState.updateSuccess { currentState ->
+                    val currentProfile = currentState.feedProfileInfo
 
-                     val updatedProfile = currentProfile.copy(
-                         isFollowing = !isCurrentlyFollowing,
-                         follower = if (isCurrentlyFollowing) currentProfile.follower - 1 else currentProfile.follower + 1
-                     )
+                    val updatedProfile = currentProfile.copy(
+                        isFollowing = !isCurrentlyFollowing,
+                        follower = if (isCurrentlyFollowing) currentProfile.follower - 1 else currentProfile.follower + 1
+                    )
 
-                     currentState.copy(feedProfileInfo = updatedProfile)
-                 }
-             }.onLogFailure {
-             }*/
+                    currentState.copy(feedProfileInfo = updatedProfile)
+                }
+            }.onLogFailure { }
         }
     }
 
