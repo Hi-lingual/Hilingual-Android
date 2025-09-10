@@ -21,6 +21,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,11 +32,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.kizitonwose.calendar.core.CalendarDay
-import com.kizitonwose.calendar.core.DayPosition
+import com.hilingual.presentation.home.component.calendar.model.CalendarDay
+import com.hilingual.presentation.home.component.calendar.model.DayPosition
 import java.time.LocalDate
 
 @Composable
@@ -55,7 +57,14 @@ internal fun DayItem(
 
     val scale by animateFloatAsState(
         targetValue = if (isSelected) 1f else 0f,
-        animationSpec = if (isSelected) spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium) else tween(durationMillis = 150),
+        animationSpec = if (isSelected) {
+            spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessMedium
+            )
+        } else {
+            tween(durationMillis = 150)
+        },
         label = "DayItemScale"
     )
 
@@ -77,6 +86,7 @@ internal fun DayItem(
                     }
                 )
             }
+
             isWritten -> {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_bubble_34),
@@ -97,7 +107,9 @@ internal fun DayItem(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_dot_4),
                 contentDescription = null,
                 tint = Color.Unspecified,
-                modifier = Modifier.align(Alignment.BottomCenter)
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .offset(y = 8.dp)
             )
         }
     }
