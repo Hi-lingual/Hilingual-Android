@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
@@ -59,6 +60,7 @@ import com.hilingual.core.designsystem.component.textfield.HilingualLongTextFiel
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
+import com.hilingual.presentation.diarywrite.component.AnimatedLoadingText
 import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
 import com.hilingual.presentation.diarywrite.component.DiaryWriteCancelDialog
 import com.hilingual.presentation.diarywrite.component.FeedbackCompleteContent
@@ -75,6 +77,7 @@ import com.skydoves.balloon.BalloonSizeSpec
 import com.skydoves.balloon.compose.Balloon
 import com.skydoves.balloon.compose.rememberBalloonBuilder
 import com.skydoves.balloon.compose.setBackgroundColor
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import java.io.File
 import java.time.LocalDate
@@ -153,7 +156,15 @@ internal fun DiaryWriteRoute(
                 paddingValues = paddingValues,
                 uiData = FeedbackUIData(
                     title = "일기 저장 중..",
-                    description = "피드백을 요청하고 있어요.",
+                    description = {
+                        AnimatedLoadingText(
+                            texts = persistentListOf(
+                                "피드백을 요청하고 있어요.",
+                                "오늘 하루도 수고했어요!",
+                                "발전하는 모습이 멋져요."
+                            )
+                        )
+                    },
                     media = FeedbackMedia.Lottie(
                         resId = R.raw.lottie_feedback_loading,
                         heightDp = 194.dp
@@ -169,7 +180,14 @@ internal fun DiaryWriteRoute(
                 paddingValues = paddingValues,
                 uiData = FeedbackUIData(
                     title = "AI 피드백 완료!",
-                    description = "틀린 부분을 고치고,\n더 나은 표현으로 수정했어요!",
+                    description = {
+                        Text(
+                            text = "틀린 부분을 고치고,\n더 나은 표현으로 수정했어요!",
+                            color = HilingualTheme.colors.gray400,
+                            style = HilingualTheme.typography.bodyR18,
+                            textAlign = TextAlign.Center
+                        )
+                    },
                     media = FeedbackMedia.Lottie(
                         resId = R.raw.lottie_feedback_complete,
                         heightDp = 180.dp

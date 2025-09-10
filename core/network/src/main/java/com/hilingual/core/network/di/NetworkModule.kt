@@ -15,8 +15,8 @@
  */
 package com.hilingual.core.network.di
 
-import com.hilingual.core.network.auth.AuthInterceptor
 import com.hilingual.core.network.BuildConfig.BASE_URL
+import com.hilingual.core.network.auth.AuthInterceptor
 import com.hilingual.core.network.auth.TokenAuthenticator
 import com.hilingual.core.network.ext.isJsonArray
 import com.hilingual.core.network.ext.isJsonObject

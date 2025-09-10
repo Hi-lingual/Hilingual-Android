@@ -42,5 +42,5 @@ class AuthInterceptor @Inject constructor(
     }
 
     private fun Request.Builder.newAuthBuilder(accessToken: String?) =
-        this.header(AUTHORIZATION, "${BEARER} $accessToken")
+        this.header(AUTHORIZATION, "$BEARER $accessToken")
 }
