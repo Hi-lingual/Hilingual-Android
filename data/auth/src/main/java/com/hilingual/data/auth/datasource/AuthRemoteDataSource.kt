@@ -23,5 +23,5 @@ import com.hilingual.data.auth.dto.response.LoginResponseDto
 interface AuthRemoteDataSource {
     suspend fun login(providerToken: String, loginRequestDto: LoginRequestDto): BaseResponse<LoginResponseDto>
     suspend fun verifyCode(request: VerifyCodeRequestDto): BaseResponse<Unit>
-    suspend fun logout(accessToken: String): BaseResponse<Unit>
+    suspend fun logout(): BaseResponse<Unit>
 }

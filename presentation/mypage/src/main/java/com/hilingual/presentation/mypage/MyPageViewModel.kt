@@ -69,15 +69,11 @@ internal class MyPageViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
-            val accessToken = authRepository.getAccessToken()
-
-            if (accessToken != null) {
-                authRepository.logout(accessToken)
-                    .onSuccess {
-                        _sideEffect.emit(MyPageSideEffect.RestartApp)
-                    }
-                    .onLogFailure { }
-            }
+            authRepository.logout()
+                .onSuccess {
+                    _sideEffect.emit(MyPageSideEffect.RestartApp)
+                }
+                .onLogFailure { }
         }
     }
 

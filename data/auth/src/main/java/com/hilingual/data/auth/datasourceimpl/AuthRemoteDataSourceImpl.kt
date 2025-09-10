@@ -15,8 +15,6 @@
  */
 package com.hilingual.data.auth.datasourceimpl
 
-import com.hilingual.core.localstorage.TokenManager
-import com.hilingual.core.network.BEARER
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.auth.datasource.AuthRemoteDataSource
 import com.hilingual.data.auth.dto.request.LoginRequestDto
@@ -30,8 +28,7 @@ import javax.inject.Inject
 internal class AuthRemoteDataSourceImpl @Inject constructor(
     private val loginService: LoginService,
     private val verifyService: VerifyService,
-    private val logoutService: LogoutService,
-    private val tokenManager: TokenManager
+    private val logoutService: LogoutService
 ) : AuthRemoteDataSource {
     override suspend fun login(
         providerToken: String,
@@ -41,9 +38,6 @@ internal class AuthRemoteDataSourceImpl @Inject constructor(
     override suspend fun verifyCode(request: VerifyCodeRequestDto): BaseResponse<Unit> =
         verifyService.verifyCode(request)
 
-    override suspend fun logout(accessToken: String): BaseResponse<Unit> {
-        val response = logoutService.logout(accessToken = "$BEARER $accessToken")
-        tokenManager.clearTokens()
-        return response
-    }
+    override suspend fun logout(): BaseResponse<Unit> =
+        logoutService.logout()
 }

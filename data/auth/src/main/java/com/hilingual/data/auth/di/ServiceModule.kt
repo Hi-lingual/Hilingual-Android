@@ -45,5 +45,5 @@ internal object ServiceModule {
 
     @Provides
     @Singleton
-    fun provideLogoutService(@NoAuthClient retrofit: Retrofit): LogoutService = retrofit.create(LogoutService::class.java)
+    fun provideLogoutService(retrofit: Retrofit): LogoutService = retrofit.create(LogoutService::class.java)
 }
