@@ -16,12 +16,14 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -48,6 +50,7 @@ import com.hilingual.presentation.feedprofile.profile.component.FeedProfileInfo
 import com.hilingual.presentation.feedprofile.profile.component.FeedProfileTabRow
 import com.hilingual.presentation.feedprofile.profile.component.ReportBlockBottomSheet
 import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 @Composable
@@ -69,6 +72,7 @@ internal fun FeedProfileRoute(
             is FeedProfileSideEffect.ShowToast -> {
                 toastTrigger(it.message)
             }
+
             is FeedProfileSideEffect.ShowRetryDialog -> dialogTrigger.show(it.onRetry)
         }
     }
@@ -88,14 +92,19 @@ internal fun FeedProfileRoute(
                         navigateToFollowList()
                     }
                 },
-                onActionButtonClick = { },
+                onActionButtonClick = { isCurrentlyFollowing ->
+                    if (isCurrentlyFollowing != null) {
+                        viewModel.updateFollowingState(isCurrentlyFollowing)
+                    }
+                },
                 onProfileClick = navigateToFeedProfile,
                 onContentDetailClick = navigateToFeedDiary,
                 onReportUserClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 onLikeClick = viewModel::toggleIsLiked,
-                onBlockClick = { },
+                onBlockClick = { viewModel.updateBlockState(state.data.feedProfileInfo.isBlock ?: false) },
                 onReportDiaryClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
-                onUnpublishClick = viewModel::diaryUnpublish
+                onUnpublishClick = viewModel::diaryUnpublish,
+                onTabRefresh = viewModel::refreshTab
             )
         }
 
@@ -117,6 +126,7 @@ private fun FeedProfileScreen(
     onBlockClick: () -> Unit,
     onUnpublishClick: (diaryId: Long) -> Unit,
     onReportDiaryClick: () -> Unit,
+    onTabRefresh: (DiaryTabType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -127,6 +137,18 @@ private fun FeedProfileScreen(
 
     val profileListState = rememberLazyListState()
     var shouldEnableScroll by remember { mutableStateOf(true) }
+
+    val sharedDiaryListState = rememberLazyListState()
+    val likedDiaryListState = rememberLazyListState()
+
+    val currentListState by remember {
+        derivedStateOf {
+            when (pagerState.currentPage) {
+                0 -> sharedDiaryListState
+                else -> likedDiaryListState
+            }
+        }
+    }
 
     val canParentScrollForOthers by remember {
         derivedStateOf { profileListState.firstVisibleItemIndex >= 1 }
@@ -146,6 +168,26 @@ private fun FeedProfileScreen(
                     profileListState.firstVisibleItemScrollOffset > 0
                 )
         }
+    }
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }
+            .distinctUntilChanged()
+            .collect { pageIndex ->
+                val tabType = if (pageIndex == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
+                onTabRefresh(tabType)
+                coroutineScope.launch {
+                    profileListState.animateScrollToItem(0)
+                    when {
+                        profile.isMine -> {
+                            currentListState.animateScrollToItem(0)
+                        }
+                        profile.isBlock != true -> {
+                            sharedDiaryListState.animateScrollToItem(0)
+                        }
+                    }
+                }
+            }
     }
 
     Box(
@@ -191,7 +233,13 @@ private fun FeedProfileScreen(
                             isFollowing = isFollowing,
                             isFollowed = isFollowed,
                             isBlock = isBlock,
-                            onActionButtonClick = { onActionButtonClick(isFollowing) },
+                            onActionButtonClick = {
+                                if (isBlock == true) {
+                                    onBlockClick()
+                                } else {
+                                    onActionButtonClick(isFollowing)
+                                }
+                            },
                             modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }
@@ -204,7 +252,12 @@ private fun FeedProfileScreen(
                                 tabIndex = pagerState.currentPage,
                                 onTabSelected = { index ->
                                     coroutineScope.launch {
-                                        pagerState.animateScrollToPage(index)
+                                        val tabType = if (index == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
+                                        if (index == pagerState.currentPage) {
+                                            onTabRefresh(tabType)
+                                        } else {
+                                            pagerState.animateScrollToPage(index)
+                                        }
                                     }
                                 },
                                 modifier = Modifier
@@ -218,9 +271,19 @@ private fun FeedProfileScreen(
                                 state = pagerState,
                                 modifier = Modifier.fillParentMaxSize()
                             ) { page ->
-                                val (diaries, emptyCardType, tabType) = when (page) {
-                                    0 -> Triple(uiState.sharedDiaries, FeedEmptyCardType.NOT_SHARED, DiaryTabType.SHARED)
-                                    else -> Triple(uiState.likedDiaries, FeedEmptyCardType.NOT_LIKED, DiaryTabType.LIKED)
+
+                                val tabType = DiaryTabType.entries[page]
+                                val (diaries, emptyCardType, listState) = when (tabType) {
+                                    DiaryTabType.SHARED -> Triple(
+                                        uiState.sharedDiaries,
+                                        FeedEmptyCardType.NOT_SHARED,
+                                        sharedDiaryListState
+                                    )
+                                    DiaryTabType.LIKED -> Triple(
+                                        uiState.likedDiaries,
+                                        FeedEmptyCardType.NOT_LIKED,
+                                        likedDiaryListState
+                                    )
                                 }
 
                                 DiaryListScreen(
@@ -236,6 +299,7 @@ private fun FeedProfileScreen(
                                     },
                                     isNestedScroll = true,
                                     canParentScroll = canParentScrollForMine,
+                                    listState = listState,
                                     modifier = Modifier.fillParentMaxSize()
                                 )
                             }
@@ -284,6 +348,7 @@ private fun FeedProfileScreen(
                                 },
                                 isNestedScroll = true,
                                 canParentScroll = canParentScrollForOthers,
+                                listState = sharedDiaryListState,
                                 modifier = Modifier.fillParentMaxSize()
                             )
                         }
@@ -297,6 +362,14 @@ private fun FeedProfileScreen(
             onClick = {
                 coroutineScope.launch {
                     profileListState.animateScrollToItem(0)
+                    when {
+                        profile.isMine -> {
+                            currentListState.animateScrollToItem(0)
+                        }
+                        profile.isBlock != true -> {
+                            sharedDiaryListState.animateScrollToItem(0)
+                        }
+                    }
                 }
             },
             modifier = Modifier
@@ -354,7 +427,8 @@ private fun FeedProfileScreenPreview() {
             onContentDetailClick = {},
             onLikeClick = { _, _, _ -> },
             onUnpublishClick = {},
-            onReportDiaryClick = {}
+            onReportDiaryClick = {},
+            onTabRefresh = {}
         )
     }
 }
