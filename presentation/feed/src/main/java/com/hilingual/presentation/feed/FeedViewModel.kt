@@ -51,14 +51,14 @@ internal class FeedViewModel @Inject constructor(
 
     fun loadInitialFeedData() {
         getMyProfile()
-        getRecommendFeeds()
-        getFollowingFeeds()
+        getRecommendFeeds(isUserRefresh = false)
+        getFollowingFeeds(isUserRefresh = false)
     }
 
     fun onFeedRefresh(tab: FeedTab) {
         when (tab) {
-            FeedTab.RECOMMEND -> getRecommendFeeds()
-            FeedTab.FOLLOWING -> getFollowingFeeds()
+            FeedTab.RECOMMEND -> getRecommendFeeds(isUserRefresh = true)
+            FeedTab.FOLLOWING -> getFollowingFeeds(isUserRefresh = true)
         }
     }
 
@@ -81,9 +81,11 @@ internal class FeedViewModel @Inject constructor(
         }
     }
 
-    private fun getRecommendFeeds() {
+    private fun getRecommendFeeds(isUserRefresh: Boolean) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isRecommendRefreshing = true) }
+            if (isUserRefresh) {
+                _uiState.update { it.copy(isRecommendRefreshing = true) }
+            }
 
             feedRepository.getRecommendFeeds()
                 .onSuccess { feedResult ->
@@ -94,32 +96,37 @@ internal class FeedViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    emitRetrySideEffect { getRecommendFeeds() }
+                    emitRetrySideEffect { getRecommendFeeds(isUserRefresh) }
                 }
 
-            _uiState.update { it.copy(isRecommendRefreshing = false) }
+            if (isUserRefresh) {
+                _uiState.update { it.copy(isRecommendRefreshing = false) }
+            }
         }
     }
 
-    private fun getFollowingFeeds() {
+    private fun getFollowingFeeds(isUserRefresh: Boolean) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isFollowingRefreshing = true) }
+            if (isUserRefresh) {
+                _uiState.update { it.copy(isFollowingRefreshing = true) }
+            }
 
             feedRepository.getFollowingFeeds()
                 .onSuccess { feedResult ->
                     _uiState.update {
                         it.copy(
-                            isFollowingRefreshing = false,
                             followingFeedList = UiState.Success(feedResult.toState()),
                             hasFollowing = feedResult.hasFollowing
                         )
                     }
                 }
                 .onLogFailure {
-                    emitRetrySideEffect { getFollowingFeeds() }
+                    emitRetrySideEffect { getFollowingFeeds(isUserRefresh) }
                 }
 
-            _uiState.update { it.copy(isFollowingRefreshing = false) }
+            if (isUserRefresh) {
+                _uiState.update { it.copy(isFollowingRefreshing = false) }
+            }
         }
     }
 
