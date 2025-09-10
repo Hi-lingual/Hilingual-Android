@@ -15,6 +15,7 @@
  */
 package com.hilingual.data.user.repository
 
+import com.hilingual.data.user.model.follow.FollowUserListResultModel
 import com.hilingual.data.user.model.notification.NotificationDetailModel
 import com.hilingual.data.user.model.notification.NotificationModel
 import com.hilingual.data.user.model.notification.NotificationSettingsModel
@@ -52,6 +53,14 @@ interface UserRepository {
     suspend fun saveOtpVerified(isVerified: Boolean)
 
     suspend fun isOtpVerified(): Boolean
+
+    suspend fun getFollowers(
+        targetUserId: Long
+    ): Result<List<FollowUserListResultModel>>
+
+    suspend fun getFollowings(
+        targetUserId: Long
+    ): Result<List<FollowUserListResultModel>>
 
     suspend fun getUserLoginInfo(): Result<UserLoginInfoModel>
 

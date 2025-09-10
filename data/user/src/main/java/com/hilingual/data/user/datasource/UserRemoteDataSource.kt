@@ -16,6 +16,8 @@
 package com.hilingual.data.user.datasource
 
 import com.hilingual.core.network.BaseResponse
+import com.hilingual.data.user.dto.response.follow.FollowerResponseDto
+import com.hilingual.data.user.dto.response.follow.FollowingResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationDetailResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
@@ -34,6 +36,14 @@ interface UserRemoteDataSource {
     ): BaseResponse<Unit>
 
     suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto>
+
+    suspend fun getFollowers(
+        targetUserId: Long
+    ): BaseResponse<FollowerResponseDto>
+
+    suspend fun getFollowings(
+        targetUserId: Long
+    ): BaseResponse<FollowingResponseDto>
 
     suspend fun getUserLoginInfo(): BaseResponse<UserLoginInfoResponseDto>
 

@@ -17,6 +17,8 @@ package com.hilingual.data.user.service
 
 import com.hilingual.core.network.BaseResponse
 import com.hilingual.data.user.dto.request.RegisterProfileRequestDto
+import com.hilingual.data.user.dto.response.follow.FollowerResponseDto
+import com.hilingual.data.user.dto.response.follow.FollowingResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationDetailResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
@@ -46,6 +48,26 @@ internal interface UserService {
 
     @GET("/api/v1/users/home/info")
     suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto>
+
+    @GET("/api/v1/users/following/{targetUserId}/followers")
+    suspend fun getFollowers(
+        @Path("targetUserId") targetUserId: Long
+    ): BaseResponse<FollowerResponseDto>
+
+    @GET("/api/v1/users/following/{targetUserId}/followings")
+    suspend fun getFollowings(
+        @Path("targetUserId") targetUserId: Long
+    ): BaseResponse<FollowingResponseDto>
+
+    @PUT("/api/v1/users/following/{targetUserId}")
+    suspend fun putFollow(
+        @Path("targetUserId") targetUserId: Long
+    ): BaseResponse<Unit>
+
+    @DELETE("/api/v1/users/following/{targetUserId}")
+    suspend fun deleteFollow(
+        @Path("targetUserId") targetUserId: Long
+    ): BaseResponse<Unit>
 
     @GET("/api/v1/users/mypage/info")
     suspend fun getUserLoginInfo(): BaseResponse<UserLoginInfoResponseDto>
@@ -85,14 +107,4 @@ internal interface UserService {
     suspend fun updateNotificationSetting(
         @Query("notiType") notiType: String
     ): BaseResponse<NotificationSettingsResponseDto>
-
-    @PUT("/api/v1/users/following/{targetUserId}")
-    suspend fun putFollow(
-        @Path("targetUserId") targetUserId: Long
-    ): BaseResponse<Unit>
-
-    @DELETE("/api/v1/users/following/{targetUserId}")
-    suspend fun deleteFollow(
-        @Path("targetUserId") targetUserId: Long
-    ): BaseResponse<Unit>
 }
