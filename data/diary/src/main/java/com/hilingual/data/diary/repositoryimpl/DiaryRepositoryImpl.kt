@@ -15,7 +15,6 @@
  */
 package com.hilingual.data.diary.repositoryimpl
 
-import android.content.Context
 import android.net.Uri
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
@@ -29,13 +28,13 @@ import com.hilingual.data.diary.model.toDto
 import com.hilingual.data.diary.model.toModel
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.presigned.repository.FileUploaderRepository
-import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
+private val DATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+
 internal class DiaryRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val diaryRemoteDataSource: DiaryRemoteDataSource,
     private val fileUploaderRepository: FileUploaderRepository
 ) : DiaryRepository {
@@ -102,11 +101,4 @@ internal class DiaryRepositoryImpl @Inject constructor(
         suspendRunCatching {
             diaryRemoteDataSource.deleteDiary(diaryId)
         }
-
-    companion object {
-        const val APPLICATION_JSON = "application/json"
-        const val IMAGE_FILE_NAME = "imageFile"
-
-        val DATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
-    }
 }
