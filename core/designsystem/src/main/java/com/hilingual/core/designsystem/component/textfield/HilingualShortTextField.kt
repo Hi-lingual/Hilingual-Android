@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import com.chattymin.pebble.graphemeLength
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
+private val INPUT_FILTER_REGEX = Regex("""[^\p{IsHangul}a-zA-Z0-9\p{Punct}\p{S}]""")
+
 enum class TextFieldState {
     NORMAL, ERROR, SUCCESS
 }
@@ -64,7 +66,8 @@ fun HilingualShortTextField(
             placeholderTextStyle = HilingualTheme.typography.bodyM16,
             inputTextStyle = HilingualTheme.typography.bodySB16,
             onValueChanged = {
-                val newText = it.filter { !it.isWhitespace() }
+                val filteredText = it.replace(INPUT_FILTER_REGEX, "")
+                val newText = filteredText.filter { !it.isWhitespace() }
                 if (newText.graphemeLength <= maxLength) {
                     onValueChanged(newText)
                 }
