@@ -82,7 +82,7 @@ internal fun FeedRoute(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.loadFeedData()
+        viewModel.loadInitialFeedData()
     }
 
     with(uiState) {
@@ -91,6 +91,9 @@ internal fun FeedRoute(
             myProfileUrl = myProfileUrl,
             recommendFeedList = recommendFeedList,
             followingFeedList = followingFeedList,
+            recommendRefreshing = isRecommendRefreshing,
+            followingRefreshing = isFollowingRefreshing,
+            onFeedRefresh = viewModel::onFeedRefresh,
             hasFollowing = hasFollowing,
             onSearchClick = navigateToFeedSearch,
             onMyProfileClick = navigateToMyFeedProfile,
@@ -110,6 +113,8 @@ private fun FeedScreen(
     myProfileUrl: String,
     recommendFeedList: UiState<ImmutableList<FeedItemUiModel>>,
     followingFeedList: UiState<ImmutableList<FeedItemUiModel>>,
+    recommendRefreshing: Boolean,
+    followingRefreshing: Boolean,
     hasFollowing: Boolean,
     onMyProfileClick: () -> Unit,
     onSearchClick: () -> Unit,
@@ -119,6 +124,7 @@ private fun FeedScreen(
     onUnpublishClick: (Long) -> Unit,
     onReportClick: () -> Unit,
     readAllFeed: () -> Unit,
+    onFeedRefresh: (FeedTab) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -205,10 +211,12 @@ private fun FeedScreen(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize()
             ) { page ->
-                when (page) {
-                    0 -> FeedTabScreen(
+                when (val tab = FeedTab.entries[page]) {
+                    FeedTab.RECOMMEND -> FeedTabScreen(
                         listState = recommendListState,
                         feedListState = recommendFeedList,
+                        isRefreshing = recommendRefreshing,
+                        onRefresh = { onFeedRefresh(tab) },
                         onProfileClick = onFeedProfileClick,
                         onContentDetailClick = onContentDetailClick,
                         onLikeClick = onLikeClick,
@@ -216,9 +224,11 @@ private fun FeedScreen(
                         onUnpublishClick = onUnpublishClick,
                         onReportClick = onReportClick
                     )
-                    1 -> FeedTabScreen(
+                    FeedTab.FOLLOWING -> FeedTabScreen(
                         listState = followingsListState,
                         feedListState = followingFeedList,
+                        isRefreshing = followingRefreshing,
+                        onRefresh = { onFeedRefresh(tab) },
                         onProfileClick = onFeedProfileClick,
                         onContentDetailClick = onContentDetailClick,
                         onLikeClick = onLikeClick,
@@ -261,7 +271,10 @@ private fun FeedScreenPreview() {
             myProfileUrl = "",
             recommendFeedList = UiState.Success(persistentListOf()),
             followingFeedList = UiState.Success(persistentListOf()),
-            hasFollowing = false
+            hasFollowing = false,
+            recommendRefreshing = false,
+            followingRefreshing = false,
+            onFeedRefresh = {}
         )
     }
 }

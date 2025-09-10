@@ -1,0 +1,28 @@
+package com.hilingual.core.designsystem.component.image
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import com.hilingual.core.designsystem.R
+
+@Composable
+fun ProfileImage(
+    imageUrl: String?,
+    modifier: Modifier = Modifier
+) {
+    if (imageUrl.isNullOrBlank()) {
+        Image(
+            painter = painterResource(R.drawable.img_default_image),
+            contentDescription = null,
+            modifier = modifier.clip(CircleShape)
+        )
+    } else {
+        NetworkImage(
+            imageUrl = imageUrl,
+            modifier = modifier
+        )
+    }
+}

@@ -16,6 +16,8 @@
 package com.hilingual.data.user.datasource
 
 import com.hilingual.core.network.BaseResponse
+import com.hilingual.data.user.dto.response.follow.FollowerResponseDto
+import com.hilingual.data.user.dto.response.follow.FollowingResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationDetailResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
@@ -35,6 +37,14 @@ interface UserRemoteDataSource {
 
     suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto>
 
+    suspend fun getFollowers(
+        targetUserId: Long
+    ): BaseResponse<FollowerResponseDto>
+
+    suspend fun getFollowings(
+        targetUserId: Long
+    ): BaseResponse<FollowingResponseDto>
+
     suspend fun getUserLoginInfo(): BaseResponse<UserLoginInfoResponseDto>
 
     suspend fun getBlockList(): BaseResponse<BlockListResponseDto>
@@ -42,6 +52,14 @@ interface UserRemoteDataSource {
     suspend fun putBlockUser(targetUserId: Long): BaseResponse<Unit>
 
     suspend fun deleteBlockUser(targetUserId: Long): BaseResponse<Unit>
+
+    suspend fun putFollow(
+        targetUserId: Long
+    ): BaseResponse<Unit>
+
+    suspend fun deleteFollow(
+        targetUserId: Long
+    ): BaseResponse<Unit>
 
     suspend fun getNotifications(tab: String): BaseResponse<List<NotificationResponseDto>>
 

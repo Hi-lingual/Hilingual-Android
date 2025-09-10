@@ -15,7 +15,6 @@
  */
 package com.hilingual.core.designsystem.component.content
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -41,7 +40,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,6 +53,7 @@ import com.hilingual.core.designsystem.component.dropdown.HilingualBasicDropdown
 import com.hilingual.core.designsystem.component.dropdown.HilingualDropdownMenuItem
 import com.hilingual.core.designsystem.component.image.ErrorImageSize
 import com.hilingual.core.designsystem.component.image.NetworkImage
+import com.hilingual.core.designsystem.component.image.ProfileImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
@@ -83,28 +82,19 @@ fun FeedCard(
             .background(HilingualTheme.colors.white)
             .padding(vertical = 20.dp)
     ) {
-        val profileImageModifier = Modifier
-            .size(42.dp)
-            .clip(shape = CircleShape)
-            .border(
-                width = 1.dp,
-                color = HilingualTheme.colors.gray200,
-                shape = CircleShape
-            )
-            .noRippleClickable(onClick = onProfileClick)
+        ProfileImage(
+            imageUrl = profileUrl,
+            modifier = Modifier
+                .size(42.dp)
+                .clip(shape = CircleShape)
+                .border(
+                    width = 1.dp,
+                    color = HilingualTheme.colors.gray200,
+                    shape = CircleShape
+                )
+                .noRippleClickable(onClick = onProfileClick)
+        )
 
-        if (profileUrl.isNullOrBlank()) {
-            Image(
-                painter = painterResource(R.drawable.img_default_image),
-                contentDescription = null,
-                modifier = profileImageModifier
-            )
-        } else {
-            NetworkImage(
-                imageUrl = profileUrl,
-                modifier = profileImageModifier
-            )
-        }
         Column {
             FeedHeader(
                 nickname = nickname,

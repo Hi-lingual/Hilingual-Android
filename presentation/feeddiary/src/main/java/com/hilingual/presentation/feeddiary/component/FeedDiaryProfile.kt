@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.util.formatRelativeTime
 import com.hilingual.core.designsystem.R
-import com.hilingual.core.designsystem.component.image.NetworkImage
+import com.hilingual.core.designsystem.component.image.ProfileImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
@@ -47,16 +47,16 @@ internal fun FeedDiaryProfile(
             .fillMaxWidth()
             .padding(vertical = 10.dp, horizontal = 20.dp)
     ) {
-        NetworkImage(
+        ProfileImage(
             imageUrl = profileUrl,
             modifier = Modifier
-                .noRippleClickable(onClick = onProfileClick)
                 .size(42.dp)
                 .border(
                     width = 1.dp,
                     color = HilingualTheme.colors.gray200,
                     shape = CircleShape
                 )
+                .noRippleClickable(onClick = onProfileClick)
         )
 
         Spacer(Modifier.width(10.dp))

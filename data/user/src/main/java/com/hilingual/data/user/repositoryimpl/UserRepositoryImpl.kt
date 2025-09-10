@@ -19,6 +19,8 @@ import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.data.presigned.repository.FileUploaderRepository
 import com.hilingual.data.user.datasource.UserRemoteDataSource
+import com.hilingual.data.user.model.follow.FollowUserListResultModel
+import com.hilingual.data.user.model.follow.toModel
 import com.hilingual.data.user.model.notification.NotificationDetailModel
 import com.hilingual.data.user.model.notification.NotificationModel
 import com.hilingual.data.user.model.notification.NotificationSettingsModel
@@ -109,6 +111,14 @@ internal class UserRepositoryImpl @Inject constructor(
     override suspend fun isOtpVerified(): Boolean {
         return userInfoManager.isOtpVerified()
     }
+    override suspend fun getFollowers(targetUserId: Long): Result<List<FollowUserListResultModel>> =
+        suspendRunCatching {
+            userRemoteDataSource.getFollowers(targetUserId = targetUserId).data!!.userList.map { it.toModel() }
+        }
+    override suspend fun getFollowings(targetUserId: Long): Result<List<FollowUserListResultModel>> =
+        suspendRunCatching {
+            userRemoteDataSource.getFollowings(targetUserId = targetUserId).data!!.userList.map { it.toModel() }
+        }
 
     override suspend fun getUserLoginInfo(): Result<UserLoginInfoModel> =
         suspendRunCatching {
@@ -128,5 +138,14 @@ internal class UserRepositoryImpl @Inject constructor(
     override suspend fun deleteBlockUser(targetUserId: Long): Result<Unit> =
         suspendRunCatching {
             userRemoteDataSource.deleteBlockUser(targetUserId).data
+        }
+
+    override suspend fun putFollow(targetUserId: Long): Result<Unit> =
+        suspendRunCatching {
+            userRemoteDataSource.putFollow(targetUserId = targetUserId)
+        }
+    override suspend fun deleteFollow(targetUserId: Long): Result<Unit> =
+        suspendRunCatching {
+            userRemoteDataSource.deleteFollow(targetUserId = targetUserId)
         }
 }

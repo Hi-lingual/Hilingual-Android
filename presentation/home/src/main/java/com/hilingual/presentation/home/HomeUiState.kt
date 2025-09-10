@@ -57,7 +57,7 @@ data class HomeUiState(
             todayTopic = TodayTopicUiModel(
                 topicKo = "가장 좋아하는 계절은 무엇인가요?",
                 topicEn = "What is your favorite season?",
-                remainingTime = 3
+                remainingTime = -1
             )
         )
     }

@@ -9,6 +9,7 @@ import com.hilingual.data.feed.dto.response.FollowingFeedResponseDto
 import com.hilingual.data.feed.dto.response.LikedDiariesResponseDto
 import com.hilingual.data.feed.dto.response.RecommendFeedResponseDto
 import com.hilingual.data.feed.dto.response.SharedDiariesResponseDto
+import com.hilingual.data.feed.dto.response.UserResponseDto
 import com.hilingual.data.feed.service.FeedService
 import javax.inject.Inject
 
@@ -35,4 +36,7 @@ internal class FeedRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun postIsLike(diaryId: Long, likeRequestDto: LikeRequestDto): BaseResponse<Unit> =
         feedService.postIsLike(diaryId, likeRequestDto)
+
+    override suspend fun getUserSearchResult(keyword: String): BaseResponse<UserResponseDto> =
+        feedService.getUserSearchResult(keyword)
 }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
@@ -33,10 +34,9 @@ internal fun DiaryListScreen(
     modifier: Modifier = Modifier,
     onScrollStateChanged: ((Boolean) -> Unit)? = null,
     isNestedScroll: Boolean = false,
-    canParentScroll: Boolean = true
+    canParentScroll: Boolean = true,
+    listState: LazyListState = rememberLazyListState()
 ) {
-    val listState = rememberLazyListState()
-
     LaunchedEffect(listState.layoutInfo, diaries.size) {
         val layoutInfo = listState.layoutInfo
 
