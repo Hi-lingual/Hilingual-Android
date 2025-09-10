@@ -22,3 +22,7 @@ plugins {
 android {
     setNamespace("data.diary")
 }
+
+dependencies {
+    implementation(projects.data.presigned)
+}

@@ -21,8 +21,6 @@ import com.hilingual.data.diary.dto.response.DiaryContentResponseDto
 import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResponseDto
 import com.hilingual.data.diary.dto.response.DiaryFeedbackResponseDto
 import com.hilingual.data.diary.dto.response.DiaryRecommendExpressionResponseDto
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 
 interface DiaryRemoteDataSource {
     suspend fun getDiaryContent(
@@ -43,9 +41,9 @@ interface DiaryRemoteDataSource {
     ): BaseResponse<Unit>
 
     suspend fun postDiaryFeedbackCreate(
-        originalText: RequestBody,
-        date: RequestBody,
-        imageFile: MultipartBody.Part? = null
+        originalText: String,
+        date: String,
+        fileKey: String?
     ): BaseResponse<DiaryFeedbackCreateResponseDto>
 
     suspend fun patchDiaryPublish(
