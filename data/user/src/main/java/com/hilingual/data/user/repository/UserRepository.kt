@@ -62,14 +62,6 @@ interface UserRepository {
         targetUserId: Long
     ): Result<List<FollowUserListResultModel>>
 
-    suspend fun putFollow(
-        targetUserId: Long
-    ): Result<Unit>
-
-    suspend fun deleteFollow(
-        targetUserId: Long
-    ): Result<Unit>
-
     suspend fun getUserLoginInfo(): Result<UserLoginInfoModel>
 
     suspend fun getBlockList(): Result<BlockListModel>

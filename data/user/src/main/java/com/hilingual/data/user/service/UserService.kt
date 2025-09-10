@@ -107,14 +107,4 @@ internal interface UserService {
     suspend fun updateNotificationSetting(
         @Query("notiType") notiType: String
     ): BaseResponse<NotificationSettingsResponseDto>
-
-    @PUT("/api/v1/users/following/{targetUserId}")
-    suspend fun putFollow(
-        @Path("targetUserId") targetUserId: Long
-    ): BaseResponse<Unit>
-
-    @DELETE("/api/v1/users/following/{targetUserId}")
-    suspend fun deleteFollow(
-        @Path("targetUserId") targetUserId: Long
-    ): BaseResponse<Unit>
 }

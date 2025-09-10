@@ -119,14 +119,6 @@ internal class UserRepositoryImpl @Inject constructor(
         suspendRunCatching {
             userRemoteDataSource.getFollowings(targetUserId = targetUserId).data!!.userList.map { it.toModel() }
         }
-    override suspend fun putFollow(targetUserId: Long): Result<Unit> =
-        suspendRunCatching {
-            userRemoteDataSource.putFollow(targetUserId = targetUserId)
-        }
-    override suspend fun deleteFollow(targetUserId: Long): Result<Unit> =
-        suspendRunCatching {
-            userRemoteDataSource.deleteFollow(targetUserId = targetUserId)
-        }
 
     override suspend fun getUserLoginInfo(): Result<UserLoginInfoModel> =
         suspendRunCatching {
