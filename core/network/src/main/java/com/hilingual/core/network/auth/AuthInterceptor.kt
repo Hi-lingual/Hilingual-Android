@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.network
+package com.hilingual.core.network.auth
 
 import com.hilingual.core.localstorage.TokenManager
+import com.hilingual.core.network.constant.AUTHORIZATION
+import com.hilingual.core.network.constant.BEARER
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -40,5 +42,5 @@ class AuthInterceptor @Inject constructor(
     }
 
     private fun Request.Builder.newAuthBuilder(accessToken: String?) =
-        this.header(AUTHORIZATION, "$BEARER $accessToken")
+        this.header(AUTHORIZATION, "${BEARER} $accessToken")
 }

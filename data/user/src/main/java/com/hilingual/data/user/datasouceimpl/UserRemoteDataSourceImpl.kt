@@ -15,7 +15,7 @@
  */
 package com.hilingual.data.user.datasouceimpl
 
-import com.hilingual.core.network.BaseResponse
+import com.hilingual.core.network.model.BaseResponse
 import com.hilingual.data.user.datasource.UserRemoteDataSource
 import com.hilingual.data.user.dto.request.ImageRequestDto
 import com.hilingual.data.user.dto.request.RegisterProfileRequestDto

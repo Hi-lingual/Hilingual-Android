@@ -48,12 +48,11 @@ class ContentUriRequestBody @Inject constructor(
     private var metadata: ImageMetadata? = null
 
     private data class ImageMetadata(
-        val fileName: String,
         val size: Long,
         val mimeType: String?
     ) {
         companion object {
-            val EMPTY = ImageMetadata("", 0L, null)
+            val EMPTY = ImageMetadata(0L, null)
         }
     }
 
@@ -181,7 +180,6 @@ class ContentUriRequestBody @Inject constructor(
                 uri,
                 arrayOf(
                     MediaStore.Images.Media.SIZE,
-                    MediaStore.Images.Media.DISPLAY_NAME,
                     MediaStore.Images.Media.MIME_TYPE
                 ),
                 null,
@@ -190,7 +188,6 @@ class ContentUriRequestBody @Inject constructor(
             )?.use { cursor ->
                 if (cursor.moveToFirst()) {
                     ImageMetadata(
-                        fileName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)),
                         size = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)),
                         mimeType = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE))
                     )

@@ -17,8 +17,8 @@ package com.hilingual.data.auth.service
 
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.localstorage.TokenManager
-import com.hilingual.core.network.BEARER
-import com.hilingual.core.network.service.TokenRefreshService
+import com.hilingual.core.network.constant.BEARER
+import com.hilingual.core.network.auth.TokenRefreshService
 import javax.inject.Inject
 
 internal class TokenRefreshServiceImpl @Inject constructor(

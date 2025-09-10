@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.network
+package com.hilingual.core.network.di
 
+import com.hilingual.core.network.auth.AuthInterceptor
 import com.hilingual.core.network.BuildConfig.BASE_URL
+import com.hilingual.core.network.auth.TokenAuthenticator
+import com.hilingual.core.network.ext.isJsonArray
+import com.hilingual.core.network.ext.isJsonObject
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,6 +28,8 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -57,14 +63,14 @@ object NetworkModule {
                 message.isJsonObject() ->
                     try {
                         Timber.tag("okhttp").d(JSONObject(message).toString(UNIT_TAB))
-                    } catch (e: org.json.JSONException) {
+                    } catch (e: JSONException) {
                         Timber.tag("okhttp").d("CONNECTION INFO -> $message")
                     }
 
                 message.isJsonArray() ->
                     try {
-                        Timber.tag("okhttp").d(org.json.JSONArray(message).toString(UNIT_TAB))
-                    } catch (e: org.json.JSONException) {
+                        Timber.tag("okhttp").d(JSONArray(message).toString(UNIT_TAB))
+                    } catch (e: JSONException) {
                         Timber.tag("okhttp").d("CONNECTION INFO -> $message")
                     }
 

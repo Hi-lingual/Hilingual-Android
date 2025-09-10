@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.network
+package com.hilingual.core.network.auth
 
 import com.hilingual.core.common.app.AppRestarter
 import com.hilingual.core.localstorage.TokenManager
-import com.hilingual.core.network.service.TokenRefreshService
+import com.hilingual.core.network.constant.AUTHORIZATION
+import com.hilingual.core.network.constant.BEARER
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -50,11 +51,11 @@ class TokenAuthenticator @Inject constructor(
 
         // 현재 저장된 토큰과 방금 실패한 요청의 토큰을 비교합니다.
         val currentToken = tokenManager.getAccessToken()
-        if (requestToken != "$BEARER $currentToken") {
+        if (requestToken != "${BEARER} $currentToken") {
             // 다른 스레드에서 이미 토큰이 갱신되어, 현재 요청은 새 토큰으로 재시도하면 될 경우
-            Timber.d("토큰 이미 갱신됨. 새 토큰으로 재시도: $BEARER $currentToken")
+            Timber.d("토큰 이미 갱신됨. 새 토큰으로 재시도: ${BEARER} $currentToken")
             return response.request.newBuilder()
-                .header(AUTHORIZATION, "$BEARER $currentToken")
+                .header(AUTHORIZATION, "${BEARER} $currentToken")
                 .build()
         }
 
@@ -73,7 +74,7 @@ class TokenAuthenticator @Inject constructor(
             val (newAccessToken, _) = result.getOrThrow()
             Timber.d("토큰 재발급 성공. 요청 재시도.")
             response.request.newBuilder()
-                .header(AUTHORIZATION, "$BEARER $newAccessToken")
+                .header(AUTHORIZATION, "${BEARER} $newAccessToken")
                 .build()
         } else {
             Timber.d(result.exceptionOrNull(), "토큰 재발급 실패. 토큰 삭제 및 앱 재시작.")

@@ -15,7 +15,7 @@
  */
 package com.hilingual.data.voca.service
 
-import com.hilingual.core.network.BaseResponse
+import com.hilingual.core.network.model.BaseResponse
 import com.hilingual.data.voca.dto.response.VocaDetailResponseDto
 import com.hilingual.data.voca.dto.response.VocaListResponseDto
 import retrofit2.http.GET

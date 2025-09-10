@@ -1,6 +1,6 @@
 package com.hilingual.data.presigned.datasourceimpl
 
-import com.hilingual.core.network.BaseResponse
+import com.hilingual.core.network.model.BaseResponse
 import com.hilingual.data.presigned.datasource.PresignedUrlRemoteDataSource
 import com.hilingual.data.presigned.dto.request.PresignedUrlRequestDto
 import com.hilingual.data.presigned.dto.response.PresignedUrlResponseDto

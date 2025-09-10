@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.network
+package com.hilingual.core.network.di
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import javax.inject.Qualifier
 
-@Serializable
-data class BaseResponse<T>(
-    @SerialName("code")
-    val code: Int,
-    @SerialName("message")
-    val message: String,
-    @SerialName("data")
-    val data: T? = null
-)
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class NoAuthClient
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class RefreshClient

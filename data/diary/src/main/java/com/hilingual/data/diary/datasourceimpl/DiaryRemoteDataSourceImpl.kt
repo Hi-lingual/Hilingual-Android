@@ -15,7 +15,7 @@
  */
 package com.hilingual.data.diary.datasourceimpl
 
-import com.hilingual.core.network.BaseResponse
+import com.hilingual.core.network.model.BaseResponse
 import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
 import com.hilingual.data.diary.dto.request.BookmarkRequestDto
 import com.hilingual.data.diary.dto.request.DiaryFeedbackCreateRequestDto

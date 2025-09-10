@@ -15,8 +15,8 @@
  */
 package com.hilingual.data.auth.service
 
-import com.hilingual.core.network.BaseResponse
-import com.hilingual.core.network.PROVIDER_TOKEN
+import com.hilingual.core.network.model.BaseResponse
+import com.hilingual.core.network.constant.PROVIDER_TOKEN
 import com.hilingual.data.auth.dto.request.LoginRequestDto
 import com.hilingual.data.auth.dto.response.LoginResponseDto
 import retrofit2.http.Body

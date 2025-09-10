@@ -13,14 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.network
+package com.hilingual.core.network.constant
 
-import javax.inject.Qualifier
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class NoAuthClient
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class RefreshClient
+const val AUTHORIZATION = "Authorization"
+const val PROVIDER_TOKEN = "Provider-Token"
+const val BEARER = "Bearer"
