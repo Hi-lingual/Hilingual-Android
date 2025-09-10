@@ -1,6 +1,6 @@
 package com.hilingual.data.auth.service
 
-import com.hilingual.core.network.BaseResponse
+import com.hilingual.core.network.model.BaseResponse
 import retrofit2.http.POST
 
 interface LogoutService {
