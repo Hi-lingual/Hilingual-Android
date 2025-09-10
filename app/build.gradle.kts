@@ -106,6 +106,9 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.jakewharton.process.phoenix)
+
+    implementation(platform(libs.coil.bom))
+    implementation(libs.bundles.coil)
 }
 
 ktlint {

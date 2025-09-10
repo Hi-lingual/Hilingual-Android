@@ -49,7 +49,7 @@ retrofit = "3.0.0"
 kotlinxSerializationJson = "1.9.0"
 daggerHilt = "2.57.1"
 hiltNavigationCompose = "1.2.0"
-coil = "2.7.0"
+coil = "3.3.0"
 timber = "5.0.1"
 lottieCompose = "6.6.7"
 coroutine = "1.10.2"
@@ -134,7 +134,9 @@ hilt-android-gradle-plugin = { group = "com.google.dagger", name = "hilt-android
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 
 # UI & Animation
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+coil-bom = { group = "io.coil-kt.coil3", name = "coil-bom", version.ref = "coil" }
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose" }
+coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp" }
 lottie = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
 balloon-compose = { group = "com.github.skydoves", name = "balloon-compose", version.ref = "balloonCompose" }
 
@@ -193,6 +195,8 @@ androidx = [
     "androidx-security",
     "androidx-appcompat"
 ]
+
+coil = ["coil-compose", "coil-network-okhttp"]
 
 test = [
     "androidx-junit",
