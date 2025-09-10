@@ -55,13 +55,7 @@ internal class MyPageViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.updateProfileImage(newImageUri)
                 .onSuccess {
-                    _uiState.update { state ->
-                        val current = (state as? UiState.Success)?.data ?: return@update state
-
-                        UiState.Success(
-                            current.copy(profileImageUrl = newImageUri?.toString().orEmpty())
-                        )
-                    }
+                    getProfileInfo()
                 }
                 .onLogFailure { }
         }
