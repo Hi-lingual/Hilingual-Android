@@ -279,7 +279,7 @@ private fun HomeScreen(
                     }
 
                     DiaryCardState.FUTURE -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
-                    DiaryCardState.REWRITE_DISABLED, DiaryCardState.WRITABLE -> {
+                    DiaryCardState.WRITABLE -> {
                         if (todayTopic != null) {
                             TodayTopic(
                                 koTopic = todayTopic.topicKo,
@@ -296,7 +296,7 @@ private fun HomeScreen(
                         )
                     }
 
-                    DiaryCardState.PAST -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
+                    DiaryCardState.REWRITE_DISABLED, DiaryCardState.PAST -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
                 }
             }
         }
