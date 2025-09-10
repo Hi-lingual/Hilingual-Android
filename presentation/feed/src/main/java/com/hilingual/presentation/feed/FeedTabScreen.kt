@@ -25,7 +25,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,10 +46,13 @@ import com.hilingual.presentation.feed.model.FeedItemUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun FeedTabScreen(
     listState: LazyListState,
     feedListState: UiState<ImmutableList<FeedItemUiModel>>,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
     onProfileClick: (Long) -> Unit,
     onContentDetailClick: (Long) -> Unit,
     onLikeClick: (Long, Boolean) -> Unit,
@@ -61,55 +66,61 @@ internal fun FeedTabScreen(
         is UiState.Success -> {
             val feedList = state.data
 
-            LazyColumn(
-                state = listState,
-                contentPadding = PaddingValues(bottom = 48.dp),
-                modifier = modifier
-                    .background(HilingualTheme.colors.white)
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp)
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = onRefresh,
+                modifier = modifier.fillMaxSize()
             ) {
-                if (feedList.isEmpty()) {
-                    item {
-                        Column(
-                            modifier = Modifier.fillParentMaxSize()
-                        ) {
-                            Spacer(Modifier.weight(16f))
-                            FeedEmptyCard(
-                                type = if (hasFollowing) FeedEmptyCardType.NOT_FEED else FeedEmptyCardType.NOT_FOLLOWING
-                            )
-                            Spacer(Modifier.weight(30f))
+                LazyColumn(
+                    state = listState,
+                    contentPadding = PaddingValues(bottom = 48.dp),
+                    modifier = Modifier
+                        .background(HilingualTheme.colors.white)
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    if (feedList.isEmpty()) {
+                        item {
+                            Column(
+                                modifier = Modifier.fillParentMaxSize()
+                            ) {
+                                Spacer(Modifier.weight(16f))
+                                FeedEmptyCard(
+                                    type = if (hasFollowing) FeedEmptyCardType.NOT_FEED else FeedEmptyCardType.NOT_FOLLOWING
+                                )
+                                Spacer(Modifier.weight(30f))
+                            }
                         }
-                    }
-                } else {
-                    itemsIndexed(
-                        items = feedList,
-                        key = { _, feed -> feed.diaryId }
-                    ) { index, feed ->
-                        with(feed) {
-                            FeedCard(
-                                profileUrl = profileUrl ?: "", // TODO: 이미지 null 처리 필요
-                                onProfileClick = { onProfileClick(userId) },
-                                nickname = nickname,
-                                streak = streak,
-                                sharedDateInMinutes = sharedDateInMinutes,
-                                content = content,
-                                onContentDetailClick = { onContentDetailClick(diaryId) },
-                                imageUrl = imageUrl,
-                                likeCount = likeCount,
-                                isLiked = isLiked,
-                                onLikeClick = { onLikeClick(diaryId, !isLiked) },
-                                isMine = isMine,
-                                onUnpublishClick = { onUnpublishClick(diaryId) },
-                                onReportClick = onReportClick
-                            )
-                        }
+                    } else {
+                        itemsIndexed(
+                            items = feedList,
+                            key = { _, feed -> feed.diaryId }
+                        ) { index, feed ->
+                            with(feed) {
+                                FeedCard(
+                                    profileUrl = profileUrl,
+                                    onProfileClick = { onProfileClick(userId) },
+                                    nickname = nickname,
+                                    streak = streak,
+                                    sharedDateInMinutes = sharedDateInMinutes,
+                                    content = content,
+                                    onContentDetailClick = { onContentDetailClick(diaryId) },
+                                    imageUrl = imageUrl,
+                                    likeCount = likeCount,
+                                    isLiked = isLiked,
+                                    onLikeClick = { onLikeClick(diaryId, !isLiked) },
+                                    isMine = isMine,
+                                    onUnpublishClick = { onUnpublishClick(diaryId) },
+                                    onReportClick = onReportClick
+                                )
+                            }
 
-                        if (index != feedList.lastIndex) {
-                            HorizontalDivider(
-                                color = HilingualTheme.colors.gray100,
-                                thickness = 1.dp
-                            )
+                            if (index != feedList.lastIndex) {
+                                HorizontalDivider(
+                                    color = HilingualTheme.colors.gray100,
+                                    thickness = 1.dp
+                                )
+                            }
                         }
                     }
                 }
@@ -159,6 +170,8 @@ private fun FeedTabScreenPreview() {
         FeedTabScreen(
             listState = rememberLazyListState(),
             feedListState = UiState.Success(sampleFeedList),
+            isRefreshing = false,
+            onRefresh = { },
             onProfileClick = { },
             onContentDetailClick = { },
             onLikeClick = { _, _ -> },

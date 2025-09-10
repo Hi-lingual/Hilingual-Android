@@ -109,7 +109,7 @@ internal class MainAppState(
             }
         }
 
-        val vocaNavOptions = navOptions {
+        val refreshNavOptions = navOptions {
             popUpTo(0) {
                 inclusive = true
             }
@@ -118,8 +118,8 @@ internal class MainAppState(
 
         when (tab) {
             MainTab.HOME -> navController.navigateToHome(navOptions = navOptions)
-            MainTab.VOCA -> navController.navigateToVoca(navOptions = vocaNavOptions)
-            MainTab.FEED -> navController.navigateToFeed(navOptions = navOptions)
+            MainTab.VOCA -> navController.navigateToVoca(navOptions = refreshNavOptions)
+            MainTab.FEED -> navController.navigateToFeed(navOptions = refreshNavOptions)
             MainTab.MY -> navController.navigateToMyPage(navOptions = navOptions)
         }
     }
@@ -143,7 +143,7 @@ internal class MainAppState(
         navController.navigateToHome(navOptions)
     }
 
-    fun navigateToVoca(navOptions: NavOptions? = null) {
+    fun navigateToVoca(navOptions: NavOptions? = clearStackNavOptions) {
         navController.navigateToVoca(navOptions)
     }
 
@@ -175,7 +175,6 @@ internal class MainAppState(
         navController.navigateToNotification(navOptions)
     }
 
-    // TODO: 추후 마이페이지의 스택관리로 변경해주세요 to.지영
     fun navigateToNotificationSetting(
         navOptions: NavOptions = navOptions {
             launchSingleTop = true

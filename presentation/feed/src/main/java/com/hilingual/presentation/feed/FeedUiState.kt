@@ -23,9 +23,16 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
+enum class FeedTab {
+    RECOMMEND,
+    FOLLOWING
+}
+
 @Immutable
 internal data class FeedUiState(
     val myProfileUrl: String = "",
+    val isRecommendRefreshing: Boolean = false,
+    val isFollowingRefreshing: Boolean = false,
     val recommendFeedList: UiState<ImmutableList<FeedItemUiModel>> = UiState.Loading,
     val followingFeedList: UiState<ImmutableList<FeedItemUiModel>> = UiState.Loading,
     val hasFollowing: Boolean = true
