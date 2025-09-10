@@ -53,34 +53,8 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
-        var isMultipart = false
         return HttpLoggingInterceptor { message ->
             when {
-                message.contains("Content-Type: multipart/form-data") -> {
-                    isMultipart = true
-                    Timber.tag("okhttp").d("CONNECTION INFO -> $message")
-                }
-
-                isMultipart && message.startsWith("--") -> {
-                    Timber.tag("okhttp").d("CONNECTION INFO -> (multipart boundary)")
-                    if (message.endsWith("--")) {
-                        isMultipart = false // End of multipart content
-                    }
-                }
-
-                isMultipart -> {
-                    if (message.contains("Content-Disposition")) {
-                        Timber.tag("okhttp").d("CONNECTION INFO -> $message")
-                    } else {
-                        try {
-                            val json = JSONObject(message)
-                            Timber.tag("okhttp").d(json.toString(UNIT_TAB))
-                        } catch (e: org.json.JSONException) {
-                            Timber.tag("okhttp").d("CONNECTION INFO -> (multipart content part)")
-                        }
-                    }
-                }
-
                 message.isJsonObject() ->
                     try {
                         Timber.tag("okhttp").d(JSONObject(message).toString(UNIT_TAB))
@@ -136,22 +110,6 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @MultipartClient
-    fun provideMultipartOkHttpClient(
-        loggingInterceptor: HttpLoggingInterceptor,
-        authInterceptor: AuthInterceptor,
-        tokenAuthenticator: TokenAuthenticator
-    ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
-        .addInterceptor(authInterceptor)
-        .authenticator(tokenAuthenticator)
-        .connectTimeout(60.seconds)
-        .readTimeout(60.seconds)
-        .writeTimeout(60.seconds)
-        .build()
-
-    @Provides
-    @Singleton
     fun provideDefaultRetrofit(
         client: OkHttpClient,
         factory: Converter.Factory
@@ -180,19 +138,6 @@ object NetworkModule {
     @RefreshClient
     fun provideRefreshRetrofit(
         @RefreshClient client: OkHttpClient,
-        factory: Converter.Factory
-    ): Retrofit =
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(client)
-            .addConverterFactory(factory)
-            .build()
-
-    @Provides
-    @Singleton
-    @MultipartClient
-    fun provideMultipartRetrofit(
-        @MultipartClient client: OkHttpClient,
         factory: Converter.Factory
     ): Retrofit =
         Retrofit.Builder()
