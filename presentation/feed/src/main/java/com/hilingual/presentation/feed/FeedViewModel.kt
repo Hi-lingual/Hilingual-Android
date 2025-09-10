@@ -70,23 +70,25 @@ internal class FeedViewModel @Inject constructor(
 
     private fun getMyProfile() {
         viewModelScope.launch {
-            userRepository.getUserLoginInfo().onSuccess { myInfo ->
-                _uiState.update {
-                    it.copy(
-                        myProfileUrl = myInfo.profileImg
-                    )
-                }
-            }.onLogFailure { }
+            userRepository.getUserLoginInfo()
+                .onSuccess { myInfo ->
+                    _uiState.update {
+                        it.copy(
+                            myProfileUrl = myInfo.profileImg
+                        )
+                    }
+                }.onLogFailure { }
         }
     }
 
     private fun getRecommendFeeds() {
         viewModelScope.launch {
+            _uiState.update { it.copy(isRecommendRefreshing = true) }
+
             feedRepository.getRecommendFeeds()
                 .onSuccess { feedResult ->
                     _uiState.update {
                         it.copy(
-                            isRecommendRefreshing = false,
                             recommendFeedList = UiState.Success(feedResult.toState())
                         )
                     }
@@ -94,11 +96,15 @@ internal class FeedViewModel @Inject constructor(
                 .onLogFailure {
                     emitRetrySideEffect { getRecommendFeeds() }
                 }
+
+            _uiState.update { it.copy(isRecommendRefreshing = false) }
         }
     }
 
     private fun getFollowingFeeds() {
         viewModelScope.launch {
+            _uiState.update { it.copy(isFollowingRefreshing = true) }
+
             feedRepository.getFollowingFeeds()
                 .onSuccess { feedResult ->
                     _uiState.update {
@@ -112,6 +118,8 @@ internal class FeedViewModel @Inject constructor(
                 .onLogFailure {
                     emitRetrySideEffect { getFollowingFeeds() }
                 }
+
+            _uiState.update { it.copy(isFollowingRefreshing = false) }
         }
     }
 
