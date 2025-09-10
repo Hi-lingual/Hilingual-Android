@@ -21,6 +21,7 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.calendar.repository.CalendarRepository
+import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.home.model.toState
 import com.hilingual.presentation.home.util.isDateWritable
@@ -28,6 +29,7 @@ import com.hilingual.presentation.home.util.isDateWritten
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,13 +46,17 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val calendarRepository: CalendarRepository
+    private val calendarRepository: CalendarRepository,
+    private val diaryRepository: DiaryRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<HomeUiState>> = _uiState.asStateFlow()
 
-    private val _sideEffect = MutableSharedFlow<HomeSideEffect>()
+    private val _sideEffect = MutableSharedFlow<HomeSideEffect>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
 
     fun loadInitialData() {
@@ -126,6 +132,74 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun publishDiary(diaryId: Long) {
+        val currentState = uiState.value
+        if (currentState !is UiState.Success) return
+
+        viewModelScope.launch {
+            diaryRepository.patchDiaryPublish(diaryId)
+                .onSuccess {
+                    _uiState.updateSuccess {
+                        it.copy(
+                            diaryThumbnail = it.diaryThumbnail?.copy(isPublished = true)
+                        )
+                    }
+                    emitSnackBarSideEffect(
+                        message = "일기가 게시되었어요!",
+                        actionLabel = "보러가기"
+                    )
+                }
+                .onLogFailure {
+                    emitRetrySideEffect { }
+                }
+        }
+    }
+
+    fun unpublishDiary(diaryId: Long) {
+        val currentState = uiState.value
+        if (currentState !is UiState.Success) return
+
+        viewModelScope.launch {
+            diaryRepository.patchDiaryUnpublish(diaryId)
+                .onSuccess {
+                    _uiState.updateSuccess {
+                        it.copy(
+                            diaryThumbnail = it.diaryThumbnail?.copy(isPublished = false)
+                        )
+                    }
+                    emitToastSideEffect("일기가 비공개 되었어요.")
+                }
+                .onLogFailure {
+                    emitRetrySideEffect { }
+                }
+        }
+    }
+
+    fun deleteDiary(diaryId: Long) {
+        val currentState = uiState.value
+        if (currentState !is UiState.Success) return
+        val selectedDate = currentState.data.selectedDate
+
+        viewModelScope.launch {
+            diaryRepository.deleteDiary(diaryId)
+                .onSuccess {
+                    _uiState.updateSuccess { state ->
+                        val newDateList =
+                            state.dateList.filter { it.date != selectedDate.toString() }
+                                .toImmutableList()
+                        state.copy(
+                            dateList = newDateList
+                        )
+                    }
+                    updateContentForDate(selectedDate)
+                    emitToastSideEffect("삭제가 완료되었어요.")
+                }
+                .onLogFailure {
+                    emitRetrySideEffect { }
+                }
+        }
+    }
+
     private fun updateContentForDate(date: LocalDate) {
         val currentState = uiState.value
         if (currentState !is UiState.Success) return
@@ -141,7 +215,7 @@ class HomeViewModel @Inject constructor(
                             _uiState.updateSuccess { it.copy(diaryThumbnail = thumbnail.toState()) }
                         }
                         .onLogFailure {
-                            _uiState.updateSuccess { it.copy(diaryThumbnail = null) }
+                            emitRetrySideEffect { }
                         }
                 }
 
@@ -152,17 +226,24 @@ class HomeViewModel @Inject constructor(
                         }
                         .onLogFailure { }
                 }
-                else -> {
-                    _uiState.updateSuccess { it.copy(diaryThumbnail = null, todayTopic = null) }
-                }
             }
         }
     }
 
     private suspend fun emitRetrySideEffect(onRetry: () -> Unit) =
         _sideEffect.emit(HomeSideEffect.ShowRetryDialog(onRetry = onRetry))
+
+    private suspend fun emitToastSideEffect(text: String) =
+        _sideEffect.emit(HomeSideEffect.ShowToast(text = text))
+
+    private suspend fun emitSnackBarSideEffect(message: String, actionLabel: String) =
+        _sideEffect.emit(HomeSideEffect.ShowSnackBar(message = message, actionLabel = actionLabel))
 }
 
 sealed interface HomeSideEffect {
     data class ShowRetryDialog(val onRetry: () -> Unit) : HomeSideEffect
+
+    data class ShowToast(val text: String) : HomeSideEffect
+
+    data class ShowSnackBar(val message: String, val actionLabel: String) : HomeSideEffect
 }

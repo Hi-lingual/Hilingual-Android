@@ -43,6 +43,14 @@ interface UserRemoteDataSource {
 
     suspend fun deleteBlockUser(targetUserId: Long): BaseResponse<Unit>
 
+    suspend fun putFollow(
+        targetUserId: Long
+    ): BaseResponse<Unit>
+
+    suspend fun deleteFollow(
+        targetUserId: Long
+    ): BaseResponse<Unit>
+
     suspend fun getNotifications(tab: String): BaseResponse<List<NotificationResponseDto>>
 
     suspend fun getNotificationDetail(noticeId: Long): BaseResponse<NotificationDetailResponseDto>
