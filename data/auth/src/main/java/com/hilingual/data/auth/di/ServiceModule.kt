@@ -15,8 +15,8 @@
  */
 package com.hilingual.data.auth.di
 
-import com.hilingual.core.network.NoAuthClient
-import com.hilingual.core.network.RefreshClient
+import com.hilingual.core.network.di.NoAuthClient
+import com.hilingual.core.network.di.RefreshClient
 import com.hilingual.data.auth.service.LoginService
 import com.hilingual.data.auth.service.LogoutService
 import com.hilingual.data.auth.service.ReissueService

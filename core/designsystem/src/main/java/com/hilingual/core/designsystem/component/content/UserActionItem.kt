@@ -32,7 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.button.UserActionButton
-import com.hilingual.core.designsystem.component.image.NetworkImage
+import com.hilingual.core.designsystem.component.image.ProfileImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
@@ -59,9 +59,8 @@ fun UserActionItem(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.noRippleClickable(onClick = { onProfileClick(userId) })
         ) {
-            NetworkImage(
+            ProfileImage(
                 imageUrl = profileUrl,
-                shape = CircleShape,
                 modifier = Modifier
                     .size(42.dp)
                     .border(

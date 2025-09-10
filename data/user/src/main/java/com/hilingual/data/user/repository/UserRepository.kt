@@ -15,6 +15,7 @@
  */
 package com.hilingual.data.user.repository
 
+import com.hilingual.data.user.model.follow.FollowUserListResultModel
 import android.net.Uri
 import com.hilingual.data.user.model.notification.NotificationDetailModel
 import com.hilingual.data.user.model.notification.NotificationModel
@@ -54,6 +55,14 @@ interface UserRepository {
 
     suspend fun isOtpVerified(): Boolean
 
+    suspend fun getFollowers(
+        targetUserId: Long
+    ): Result<List<FollowUserListResultModel>>
+
+    suspend fun getFollowings(
+        targetUserId: Long
+    ): Result<List<FollowUserListResultModel>>
+
     suspend fun getUserLoginInfo(): Result<UserLoginInfoModel>
 
     suspend fun getBlockList(): Result<BlockListModel>
@@ -63,4 +72,12 @@ interface UserRepository {
     suspend fun deleteBlockUser(targetUserId: Long): Result<Unit>
 
     suspend fun updateProfileImage(imageFileUri: Uri?): Result<Unit>
+
+    suspend fun putFollow(
+        targetUserId: Long
+    ): Result<Unit>
+
+    suspend fun deleteFollow(
+        targetUserId: Long
+    ): Result<Unit>
 }

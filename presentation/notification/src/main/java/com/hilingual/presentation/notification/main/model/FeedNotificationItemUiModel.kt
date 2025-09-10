@@ -15,7 +15,7 @@ data class FeedNotificationItemUiModel(
     val isRead: Boolean,
     val publishedAt: String,
     val feedType: FeedNotificationType,
-    val targetId: String
+    val targetId: Long
 )
 
 internal fun NotificationModel.toFeedStateOrNull(): FeedNotificationItemUiModel? {

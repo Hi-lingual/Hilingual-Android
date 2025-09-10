@@ -77,6 +77,8 @@ internal fun FeedDiaryRoute(
         when (it) {
             is FeedDiarySideEffect.NavigateToUp -> navigateUp()
 
+            is FeedDiarySideEffect.NavigateToFeedProfile -> navigateToFeedProfile(it.userId)
+
             is FeedDiarySideEffect.ShowVocaOverflowSnackbar -> {
                 snackbarTrigger(
                     SnackbarRequest(
@@ -129,7 +131,7 @@ private fun FeedDiaryScreen(
     onLikeClick: (Boolean) -> Unit,
     onPrivateClick: () -> Unit,
     onReportClick: () -> Unit,
-    onBlockClick: () -> Unit,
+    onBlockClick: (Long) -> Unit,
     isImageDetailVisible: Boolean,
     onChangeImageDetailVisible: () -> Unit,
     onToggleBookmark: (Long, Boolean) -> Unit
@@ -181,22 +183,22 @@ private fun FeedDiaryScreen(
             title = "피드"
         )
 
-        with(uiState.profileContent) {
+        with(uiState) {
             FeedDiaryProfile(
-                profileUrl = profileUrl,
-                nickname = nickname,
-                streak = streak,
-                isLiked = isLiked,
-                likeCount = likeCount,
-                sharedDateInMinutes = sharedDateInMinutes,
+                profileUrl = profileContent.profileUrl,
+                nickname = profileContent.nickname,
+                streak = profileContent.streak,
+                isLiked = profileContent.isLiked,
+                likeCount = profileContent.likeCount,
+                sharedDateInMinutes = profileContent.sharedDateInMinutes,
                 onProfileClick = {
-                    if (uiState.isMine) {
+                    if (isMine) {
                         onMyProfileClick()
                     } else {
-                        onProfileClick(userId)
+                        onProfileClick(profileContent.userId)
                     }
                 },
-                onLikeClick = { onLikeClick(!isLiked) }
+                onLikeClick = { onLikeClick(!profileContent.isLiked) }
             )
         }
 
@@ -301,7 +303,7 @@ private fun FeedDiaryScreen(
         onDismiss = { isBlockConfirmBottomSheetVisible = false },
         onBlockButtonClick = {
             isBlockConfirmBottomSheetVisible = false
-            onBlockClick()
+            onBlockClick(uiState.profileContent.userId)
         }
     )
 

@@ -7,7 +7,9 @@ import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
+import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.feed.repository.FeedRepository
+import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
 import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
 import com.hilingual.presentation.feedprofile.profile.model.FeedProfileInfoModel
@@ -30,6 +32,8 @@ import javax.inject.Inject
 @HiltViewModel
 internal class FeedProfileViewModel @Inject constructor(
     private val feedRepository: FeedRepository,
+    private val userRepository: UserRepository,
+    private val diaryRepository: DiaryRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val targetUserId: Long = savedStateHandle.toRoute<FeedProfileGraph>().userId
@@ -42,7 +46,6 @@ internal class FeedProfileViewModel @Inject constructor(
 
     init {
         loadFeedProfile()
-        loadLikedDiaries()
     }
 
     private fun loadFeedProfile() {
@@ -81,13 +84,13 @@ internal class FeedProfileViewModel @Inject constructor(
         }
     }
 
-    private fun loadSharedDiaries(feedProfileIfoModel: FeedProfileInfoModel) {
+    private fun loadSharedDiaries(feedProfileInfoModel: FeedProfileInfoModel) {
         viewModelScope.launch {
             feedRepository.getSharedDiaries(targetUserId)
                 .onSuccess { sharedDiariesModel ->
                     val sharedDiaryUIModels = sharedDiariesModel.diaryList.map { sharedDiary ->
                         sharedDiary.toState(
-                            feedProfileInfoModel = feedProfileIfoModel,
+                            feedProfileInfoModel = feedProfileInfoModel,
                             authorUserId = targetUserId
                         )
                     }.toImmutableList()
@@ -120,23 +123,40 @@ internal class FeedProfileViewModel @Inject constructor(
         }
     }
 
+    fun refreshTab(tabType: DiaryTabType) {
+        _uiState.updateSuccess { currentState ->
+            val feedProfileModel = currentState.feedProfileInfo
+            when (tabType) {
+                DiaryTabType.SHARED -> loadSharedDiaries(feedProfileModel)
+                DiaryTabType.LIKED -> loadLikedDiaries()
+            }
+            currentState
+        }
+    }
+
     fun toggleIsLiked(diaryId: Long, isLiked: Boolean, type: DiaryTabType) {
         viewModelScope.launch {
-            _uiState.updateSuccess { currentState ->
-                when (type) {
-                    DiaryTabType.SHARED -> {
-                        currentState.copy(
-                            sharedDiaries = currentState.sharedDiaries.updateLikeState(diaryId, isLiked)
-                        )
-                    }
-
-                    DiaryTabType.LIKED -> {
-                        currentState.copy(
-                            likedDiaries = currentState.likedDiaries.updateLikeState(diaryId, isLiked)
-                        )
+            feedRepository.postIsLike(
+                diaryId = diaryId,
+                isLiked = isLiked
+            )
+                .onSuccess {
+                    _uiState.updateSuccess { currentState ->
+                        when (type) {
+                            DiaryTabType.SHARED -> {
+                                currentState.copy(
+                                    sharedDiaries = currentState.sharedDiaries.updateLikeState(diaryId, isLiked)
+                                )
+                            }
+                            DiaryTabType.LIKED -> {
+                                currentState.copy(
+                                    likedDiaries = currentState.likedDiaries.updateLikeState(diaryId, isLiked)
+                                )
+                            }
+                        }
                     }
                 }
-            }
+                .onLogFailure { }
         }
     }
 
@@ -157,7 +177,59 @@ internal class FeedProfileViewModel @Inject constructor(
 
     fun diaryUnpublish(diaryId: Long) {
         viewModelScope.launch {
-            _sideEffect.emit(FeedProfileSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
+            diaryRepository.patchDiaryUnpublish(diaryId)
+                .onSuccess {
+                    _uiState.updateSuccess { currentState ->
+
+                        val updatedSharedDiaries = currentState.sharedDiaries
+                            .filter { it.diaryId != diaryId }
+                            .toImmutableList()
+
+                        currentState.copy(sharedDiaries = updatedSharedDiaries)
+                    }
+                    _sideEffect.emit(FeedProfileSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
+                }
+                .onLogFailure { }
+        }
+    }
+
+    fun updateFollowingState(isCurrentlyFollowing: Boolean) {
+        viewModelScope.launch {
+            val result = if (isCurrentlyFollowing) {
+                userRepository.deleteFollow(targetUserId)
+            } else {
+                userRepository.putFollow(targetUserId)
+            }
+            result.onSuccess {
+                _uiState.updateSuccess { currentState ->
+                    val currentProfile = currentState.feedProfileInfo
+
+                    val updatedProfile = currentProfile.copy(
+                        isFollowing = !isCurrentlyFollowing,
+                        follower = if (isCurrentlyFollowing) currentProfile.follower - 1 else currentProfile.follower + 1
+                    )
+
+                    currentState.copy(feedProfileInfo = updatedProfile)
+                }
+            }.onLogFailure { }
+        }
+    }
+
+    fun updateBlockState(isCurrentlyBlocked: Boolean) {
+        viewModelScope.launch {
+            val result = if (isCurrentlyBlocked) {
+                userRepository.deleteBlockUser(targetUserId)
+            } else {
+                userRepository.putBlockUser(targetUserId)
+            }
+            result.onSuccess {
+                _uiState.updateSuccess { currentState ->
+                    val updatedProfile = currentState.feedProfileInfo.copy(
+                        isBlock = !isCurrentlyBlocked
+                    )
+                    currentState.copy(feedProfileInfo = updatedProfile)
+                }
+            }.onLogFailure { }
         }
     }
 }

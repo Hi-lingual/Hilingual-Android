@@ -10,7 +10,9 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 data class FollowListUiState(
     val followerList: UiState<ImmutableList<FollowItemModel>> = UiState.Loading,
-    val followingList: UiState<ImmutableList<FollowItemModel>> = UiState.Loading
+    val followingList: UiState<ImmutableList<FollowItemModel>> = UiState.Loading,
+    val isFollowerRefreshing: Boolean = false,
+    val isFollowingRefreshing: Boolean = false
 ) {
     companion object {
         val Fake = FollowListUiState(

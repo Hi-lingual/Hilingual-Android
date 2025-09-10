@@ -15,7 +15,9 @@
  */
 package com.hilingual.core.designsystem.component.content
 
-import androidx.compose.foundation.Image
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -35,13 +37,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,7 +58,9 @@ import com.hilingual.core.designsystem.component.dropdown.HilingualBasicDropdown
 import com.hilingual.core.designsystem.component.dropdown.HilingualDropdownMenuItem
 import com.hilingual.core.designsystem.component.image.ErrorImageSize
 import com.hilingual.core.designsystem.component.image.NetworkImage
+import com.hilingual.core.designsystem.component.image.ProfileImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun FeedCard(
@@ -83,28 +88,19 @@ fun FeedCard(
             .background(HilingualTheme.colors.white)
             .padding(vertical = 20.dp)
     ) {
-        val profileImageModifier = Modifier
-            .size(42.dp)
-            .clip(shape = CircleShape)
-            .border(
-                width = 1.dp,
-                color = HilingualTheme.colors.gray200,
-                shape = CircleShape
-            )
-            .noRippleClickable(onClick = onProfileClick)
+        ProfileImage(
+            imageUrl = profileUrl,
+            modifier = Modifier
+                .size(42.dp)
+                .clip(shape = CircleShape)
+                .border(
+                    width = 1.dp,
+                    color = HilingualTheme.colors.gray200,
+                    shape = CircleShape
+                )
+                .noRippleClickable(onClick = onProfileClick)
+        )
 
-        if (profileUrl.isNullOrBlank()) {
-            Image(
-                painter = painterResource(R.drawable.img_default_image),
-                contentDescription = null,
-                modifier = profileImageModifier
-            )
-        } else {
-            NetworkImage(
-                imageUrl = profileUrl,
-                modifier = profileImageModifier
-            )
-        }
         Column {
             FeedHeader(
                 nickname = nickname,
@@ -230,6 +226,9 @@ private fun FeedFooter(
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val scale = remember { Animatable(1f) }
+    val coroutineScope = rememberCoroutineScope()
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -249,7 +248,27 @@ private fun FeedFooter(
                 tint = Color.Unspecified,
                 modifier = Modifier
                     .size(24.dp)
-                    .noRippleClickable(onClick = onLikeClick)
+                    .noRippleClickable(
+                        onClick = {
+                            onLikeClick()
+                            if (!isLiked) {
+                                coroutineScope.launch {
+                                    scale.snapTo(0.5f)
+                                    scale.animateTo(
+                                        targetValue = 1f,
+                                        animationSpec = spring(
+                                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                                            stiffness = Spring.StiffnessMedium
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    )
+                    .graphicsLayer {
+                        scaleX = scale.value
+                        scaleY = scale.value
+                    }
             )
             Text(
                 text = likeCount.toString(),

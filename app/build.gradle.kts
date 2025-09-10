@@ -87,6 +87,9 @@ android {
 }
 
 dependencies {
+    // core
+    implementation(projects.core.common)
+
     // presentation
     implementation(projects.presentation.main)
 
@@ -102,6 +105,7 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.jakewharton.process.phoenix)
 }
 
 ktlint {

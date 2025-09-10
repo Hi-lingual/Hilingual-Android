@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.network
+package com.hilingual.core.network.auth
 
+import com.hilingual.core.common.app.AppRestarter
 import com.hilingual.core.localstorage.TokenManager
-import com.hilingual.core.network.service.TokenRefreshService
+import com.hilingual.core.network.constant.AUTHORIZATION
+import com.hilingual.core.network.constant.BEARER
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -31,15 +33,13 @@ import javax.inject.Singleton
 @Singleton
 class TokenAuthenticator @Inject constructor(
     private val tokenManager: TokenManager,
-    private val tokenRefreshService: TokenRefreshService
+    private val tokenRefreshService: TokenRefreshService,
+    private val appRestarter: AppRestarter
 ) : Authenticator {
 
     private val mutex = Mutex()
 
     override fun authenticate(route: Route?, response: Response): Request? {
-        // Authenticator는 동기적으로 동작하므로, suspend 함수인 토큰 재발급 로직을 호출하기 위해
-        // runBlocking을 사용하는 것이 불가피합니다.
-        // OkHttp의 I/O 스레드에서 실행되므로 메인 스레드를 직접 차단하지는 않습니다.
         return runBlocking {
             handleAuthentication(response)
         }
@@ -61,8 +61,9 @@ class TokenAuthenticator @Inject constructor(
 
         // 토큰 재발급 로직 실행
         val refreshToken = tokenManager.getRefreshToken() ?: run {
-            Timber.d("리프레시 토큰 없음. 토큰 삭제 및 로그아웃 처리.")
+            Timber.d("리프레시 토큰 없음. 토큰 삭제 및 앱 재시작.")
             tokenManager.clearTokens()
+            appRestarter.restartApp()
             return@withLock null
         }
 
@@ -70,15 +71,15 @@ class TokenAuthenticator @Inject constructor(
         val result = tokenRefreshService.refreshToken(refreshToken)
 
         return if (result.isSuccess) {
-            val (newAccessToken, newRefreshToken) = result.getOrThrow()
-            tokenManager.saveTokens(newAccessToken, newRefreshToken)
+            val (newAccessToken, _) = result.getOrThrow()
             Timber.d("토큰 재발급 성공. 요청 재시도.")
             response.request.newBuilder()
                 .header(AUTHORIZATION, "$BEARER $newAccessToken")
                 .build()
         } else {
-            Timber.d(result.exceptionOrNull(), "토큰 재발급 실패. 토큰 삭제 및 로그아웃 처리.")
+            Timber.d(result.exceptionOrNull(), "토큰 재발급 실패. 토큰 삭제 및 앱 재시작.")
             tokenManager.clearTokens()
+            appRestarter.restartApp()
             null
         }
     }

@@ -15,16 +15,16 @@
  */
 package com.hilingual.data.diary.datasourceimpl
 
-import com.hilingual.core.network.BaseResponse
+import com.hilingual.core.network.model.BaseResponse
 import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
 import com.hilingual.data.diary.dto.request.BookmarkRequestDto
+import com.hilingual.data.diary.dto.request.DiaryFeedbackCreateRequestDto
+import com.hilingual.data.diary.dto.request.ImageRequestDto
 import com.hilingual.data.diary.dto.response.DiaryContentResponseDto
 import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResponseDto
 import com.hilingual.data.diary.dto.response.DiaryFeedbackResponseDto
 import com.hilingual.data.diary.dto.response.DiaryRecommendExpressionResponseDto
 import com.hilingual.data.diary.service.DiaryService
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import javax.inject.Inject
 
 internal class DiaryRemoteDataSourceImpl @Inject constructor(
@@ -49,15 +49,27 @@ internal class DiaryRemoteDataSourceImpl @Inject constructor(
         )
 
     override suspend fun postDiaryFeedbackCreate(
-        originalText: RequestBody,
-        date: RequestBody,
-        imageFile: MultipartBody.Part?
-    ): BaseResponse<DiaryFeedbackCreateResponseDto> =
-        diaryService.postDiaryFeedbackCreate(
-            originalText = originalText,
-            date = date,
-            imageFile = imageFile
+        originalText: String,
+        date: String,
+        fileKey: String?
+    ): BaseResponse<DiaryFeedbackCreateResponseDto> {
+        val imageRequest = if (fileKey != null) {
+            ImageRequestDto(
+                fileKey = fileKey,
+                purpose = "DIARY_IMAGE"
+            )
+        } else {
+            null
+        }
+
+        return diaryService.postDiaryFeedbackCreate(
+            diaryFeedbackCreateRequestDto = DiaryFeedbackCreateRequestDto(
+                originalText = originalText,
+                date = date,
+                image = imageRequest
+            )
         )
+    }
 
     override suspend fun patchDiaryPublish(diaryId: Long): BaseResponse<Unit> =
         diaryService.patchDiaryPublish(diaryId)

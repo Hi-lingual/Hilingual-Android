@@ -21,6 +21,7 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.feed.repository.FeedRepository
+import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.feed.model.FeedItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
@@ -39,7 +40,8 @@ import javax.inject.Inject
 @HiltViewModel
 internal class FeedViewModel @Inject constructor(
     private val feedRepository: FeedRepository,
-    private val diaryRepository: DiaryRepository
+    private val diaryRepository: DiaryRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
@@ -47,9 +49,17 @@ internal class FeedViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<FeedSideEffect>()
     val sideEffect: SharedFlow<FeedSideEffect> = _sideEffect.asSharedFlow()
 
-    fun loadFeedData() {
-        getRecommendFeeds()
-        getFollowingFeeds()
+    fun loadInitialFeedData() {
+        getMyProfile()
+        getRecommendFeeds(isUserRefresh = false)
+        getFollowingFeeds(isUserRefresh = false)
+    }
+
+    fun onFeedRefresh(tab: FeedTab) {
+        when (tab) {
+            FeedTab.RECOMMEND -> getRecommendFeeds(isUserRefresh = true)
+            FeedTab.FOLLOWING -> getFollowingFeeds(isUserRefresh = true)
+        }
     }
 
     fun readAllFeed() {
@@ -58,8 +68,25 @@ internal class FeedViewModel @Inject constructor(
         }
     }
 
-    private fun getRecommendFeeds() {
+    private fun getMyProfile() {
         viewModelScope.launch {
+            userRepository.getUserLoginInfo()
+                .onSuccess { myInfo ->
+                    _uiState.update {
+                        it.copy(
+                            myProfileUrl = myInfo.profileImg
+                        )
+                    }
+                }.onLogFailure { }
+        }
+    }
+
+    private fun getRecommendFeeds(isUserRefresh: Boolean) {
+        viewModelScope.launch {
+            if (isUserRefresh) {
+                _uiState.update { it.copy(isRecommendRefreshing = true) }
+            }
+
             feedRepository.getRecommendFeeds()
                 .onSuccess { feedResult ->
                     _uiState.update {
@@ -69,13 +96,21 @@ internal class FeedViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    emitRetrySideEffect { getRecommendFeeds() }
+                    emitRetrySideEffect { getRecommendFeeds(isUserRefresh) }
                 }
+
+            if (isUserRefresh) {
+                _uiState.update { it.copy(isRecommendRefreshing = false) }
+            }
         }
     }
 
-    private fun getFollowingFeeds() {
+    private fun getFollowingFeeds(isUserRefresh: Boolean) {
         viewModelScope.launch {
+            if (isUserRefresh) {
+                _uiState.update { it.copy(isFollowingRefreshing = true) }
+            }
+
             feedRepository.getFollowingFeeds()
                 .onSuccess { feedResult ->
                     _uiState.update {
@@ -86,8 +121,12 @@ internal class FeedViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    emitRetrySideEffect { getFollowingFeeds() }
+                    emitRetrySideEffect { getFollowingFeeds(isUserRefresh) }
                 }
+
+            if (isUserRefresh) {
+                _uiState.update { it.copy(isFollowingRefreshing = false) }
+            }
         }
     }
 

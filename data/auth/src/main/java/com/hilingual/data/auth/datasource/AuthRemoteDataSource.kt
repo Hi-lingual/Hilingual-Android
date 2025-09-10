@@ -15,7 +15,7 @@
  */
 package com.hilingual.data.auth.datasource
 
-import com.hilingual.core.network.BaseResponse
+import com.hilingual.core.network.model.BaseResponse
 import com.hilingual.data.auth.dto.request.LoginRequestDto
 import com.hilingual.data.auth.dto.request.VerifyCodeRequestDto
 import com.hilingual.data.auth.dto.response.LoginResponseDto

@@ -51,6 +51,7 @@ android {
 
 dependencies {
     // core
+    implementation(projects.core.common)
     implementation(projects.core.localstorage)
 
     // others
@@ -61,6 +62,4 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.timber)
-
-    implementation(libs.jakewharton.process.phoenix)
 }

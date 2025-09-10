@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.network
+package com.hilingual.core.network.constant
 
 const val AUTHORIZATION = "Authorization"
 const val PROVIDER_TOKEN = "Provider-Token"

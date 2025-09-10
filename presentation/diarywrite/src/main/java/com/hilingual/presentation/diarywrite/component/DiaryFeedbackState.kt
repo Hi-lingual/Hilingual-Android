@@ -17,6 +17,7 @@ package com.hilingual.presentation.diarywrite.component
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 
 sealed class DiaryFeedbackState() {
@@ -40,6 +41,6 @@ sealed class FeedbackMedia {
 
 data class FeedbackUIData(
     val title: String = "",
-    val description: String? = null,
+    val description: (@Composable () -> Unit)? = null,
     val media: FeedbackMedia
 )

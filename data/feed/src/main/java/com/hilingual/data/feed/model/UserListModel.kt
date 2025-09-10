@@ -1,15 +1,24 @@
 package com.hilingual.data.feed.model
 
 import com.hilingual.data.feed.dto.response.UserItemDto
+import com.hilingual.data.feed.dto.response.UserResponseDto
 
-data class UserListResultModel(
+data class UserListModel(
+    val userList: List<UserModel>
+)
+
+data class UserModel(
     val userId: Long,
     val nickname: String,
     val profileImg: String,
     val followState: FollowState
 )
 
-internal fun UserItemDto.toModel(): UserListResultModel = UserListResultModel(
+internal fun UserResponseDto.toModel(): UserListModel = UserListModel(
+    userList = this.userList.map { it.toModel() }
+)
+
+private fun UserItemDto.toModel(): UserModel = UserModel(
     userId = this.userId,
     nickname = this.nickname,
     profileImg = this.profileImg,

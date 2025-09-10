@@ -15,7 +15,7 @@
  */
 package com.hilingual.data.calendar.datasource
 
-import com.hilingual.core.network.BaseResponse
+import com.hilingual.core.network.model.BaseResponse
 import com.hilingual.data.calendar.dto.response.CalendarResponseDto
 import com.hilingual.data.calendar.dto.response.DiaryThumbnailResponseDto
 import com.hilingual.data.calendar.dto.response.TopicResponseDto
