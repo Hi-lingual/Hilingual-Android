@@ -57,10 +57,10 @@ internal fun CalendarHeader(
         ) {
             Text(
                 text = "${currentYearMonth.year}년 ${
-                    currentYearMonth.month.getDisplayName(
-                        TextStyle.SHORT,
-                        Locale.getDefault()
-                    )
+                currentYearMonth.month.getDisplayName(
+                    TextStyle.SHORT,
+                    Locale.getDefault()
+                )
                 }",
                 style = HilingualTheme.typography.headB18,
                 color = HilingualTheme.colors.black
