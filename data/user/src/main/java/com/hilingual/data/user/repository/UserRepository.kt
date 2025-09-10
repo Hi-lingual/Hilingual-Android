@@ -77,4 +77,12 @@ interface UserRepository {
     suspend fun putBlockUser(targetUserId: Long): Result<Unit>
 
     suspend fun deleteBlockUser(targetUserId: Long): Result<Unit>
+
+    suspend fun putFollow(
+        targetUserId: Long
+    ): Result<Unit>
+
+    suspend fun deleteFollow(
+        targetUserId: Long
+    ): Result<Unit>
 }

@@ -8,6 +8,7 @@ import com.hilingual.data.feed.model.FeedListModel
 import com.hilingual.data.feed.model.FeedProfileModel
 import com.hilingual.data.feed.model.LikedDiariesModel
 import com.hilingual.data.feed.model.SharedDiariesModel
+import com.hilingual.data.feed.model.UserListModel
 import com.hilingual.data.feed.model.toModel
 import com.hilingual.data.feed.repository.FeedRepository
 import javax.inject.Inject
@@ -54,4 +55,9 @@ internal class FeedRepositoryImpl @Inject constructor(
             likeRequestDto = LikeRequestDto(isLiked)
         )
     }
+
+    override suspend fun getUserSearchResult(keyword: String): Result<UserListModel> =
+        suspendRunCatching {
+            feedRemoteDataSource.getUserSearchResult(keyword).data!!.toModel()
+        }
 }

@@ -22,14 +22,14 @@ import okhttp3.Request
 import okhttp3.Response
 import timber.log.Timber
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class AuthInterceptor @Inject constructor(
     private val tokenManager: TokenManager
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val token = runBlocking {
-            tokenManager.getAccessToken()
-        }
+        val token = runBlocking { tokenManager.getAccessToken() }
         Timber.d("ACCESS_TOKEN: $token")
 
         val originalRequest = chain.request()

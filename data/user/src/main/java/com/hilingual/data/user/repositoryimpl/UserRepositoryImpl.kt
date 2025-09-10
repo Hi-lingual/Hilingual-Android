@@ -147,4 +147,13 @@ internal class UserRepositoryImpl @Inject constructor(
         suspendRunCatching {
             userRemoteDataSource.deleteBlockUser(targetUserId).data
         }
+
+    override suspend fun putFollow(targetUserId: Long): Result<Unit> =
+        suspendRunCatching {
+            userRemoteDataSource.putFollow(targetUserId = targetUserId)
+        }
+    override suspend fun deleteFollow(targetUserId: Long): Result<Unit> =
+        suspendRunCatching {
+            userRemoteDataSource.deleteFollow(targetUserId = targetUserId)
+        }
 }
