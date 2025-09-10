@@ -2,6 +2,7 @@ package com.hilingual.presentation.feedprofile.follow.model
 
 import androidx.compose.runtime.Immutable
 import com.hilingual.data.user.model.follow.FollowState
+import com.hilingual.data.user.model.follow.FollowUserListResultModel
 
 @Immutable
 data class FollowItemModel(
@@ -9,4 +10,11 @@ data class FollowItemModel(
     val profileImgUrl: String,
     val nickname: String,
     val followState: FollowState
+)
+
+internal fun FollowUserListResultModel.toState(): FollowItemModel = FollowItemModel(
+    userId = this.userId,
+    profileImgUrl = this.profileImg,
+    nickname = this.nickname,
+    followState = this.followState
 )

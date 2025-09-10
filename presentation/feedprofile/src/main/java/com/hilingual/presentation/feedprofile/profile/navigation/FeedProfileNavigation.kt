@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.feedprofile.follow.FollowListRoute
+import com.hilingual.presentation.feedprofile.follow.FollowListViewModel
 import com.hilingual.presentation.feedprofile.profile.FeedProfileRoute
 import com.hilingual.presentation.feedprofile.profile.FeedProfileViewModel
 import kotlinx.serialization.Serializable
@@ -27,7 +28,7 @@ internal data class FeedProfileGraph(val userId: Long)
 internal data object FeedProfile : Route
 
 @Serializable
-internal data object FollowList : Route
+internal data class FollowList(val userId: Long) : Route
 
 fun NavController.navigateToFeedProfile(userId: Long, navOptions: NavOptions? = null) =
     navigate(FeedProfileGraph(userId), navOptions)
@@ -35,8 +36,8 @@ fun NavController.navigateToFeedProfile(userId: Long, navOptions: NavOptions? = 
 fun NavController.navigateToMyFeedProfile(navOptions: NavOptions? = null) =
     navigate(FeedProfileGraph(0), navOptions)
 
-private fun NavController.navigateToFollowList(navOptions: NavOptions? = null) =
-    navigate(FollowList, navOptions)
+private fun NavController.navigateToFollowList(userId: Long, navOptions: NavOptions? = null) =
+    navigate(FollowList(userId), navOptions)
 
 fun NavGraphBuilder.feedProfileNavGraph(
     paddingValues: PaddingValues,
@@ -60,7 +61,7 @@ fun NavGraphBuilder.feedProfileNavGraph(
                 viewModel = viewModel,
                 paddingValues = paddingValues,
                 navigateUp = navigateUp,
-                navigateToFollowList = { navController.navigateToFollowList() },
+                navigateToFollowList = { navController.navigateToFollowList(userId = 0L) },
                 navigateToFeedProfile = navigateToFeedProfile,
                 navigateToFeedDiary = navigateToFeedDiary
             )
@@ -70,8 +71,10 @@ fun NavGraphBuilder.feedProfileNavGraph(
             exitTransition = { ExitTransition.None },
             popEnterTransition = { EnterTransition.None },
             popExitTransition = popExitTransition
-        ) {
+        ) { backStackEntry ->
+            val viewModel: FollowListViewModel = hiltViewModel(backStackEntry)
             FollowListRoute(
+                viewModel = viewModel,
                 paddingValues = paddingValues,
                 navigateUp = navigateUp,
                 navigateToFeedProfile = navigateToFeedProfile
