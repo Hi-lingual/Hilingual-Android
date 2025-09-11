@@ -74,5 +74,6 @@ internal class AuthRepositoryImpl @Inject constructor(
     override suspend fun withdraw(): Result<Unit> = suspendRunCatching {
         authRemoteDataSource.withdraw()
         tokenManager.clearTokens()
+        userInfoManager.clear()
     }
 }
