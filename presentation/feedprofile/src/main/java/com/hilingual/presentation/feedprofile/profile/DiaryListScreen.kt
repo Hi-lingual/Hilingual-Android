@@ -32,29 +32,11 @@ internal fun DiaryListScreen(
     onUnpublishClick: (diaryId: Long) -> Unit,
     onReportClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onScrollStateChanged: ((Boolean) -> Unit)? = null,
-    isNestedScroll: Boolean = false,
-    canParentScroll: Boolean = true,
     listState: LazyListState = rememberLazyListState()
 ) {
-    LaunchedEffect(listState.layoutInfo, diaries.size) {
-        val layoutInfo = listState.layoutInfo
-
-        if (diaries.isEmpty() || layoutInfo.visibleItemsInfo.isEmpty()) {
-            onScrollStateChanged?.invoke(false)
-            return@LaunchedEffect
-        }
-
-        val canScrollDown = listState.canScrollForward
-        val canScrollUp = listState.canScrollBackward
-
-        onScrollStateChanged?.invoke(canScrollDown || canScrollUp)
-    }
-
     LazyColumn(
         state = listState,
         contentPadding = PaddingValues(bottom = 48.dp),
-        userScrollEnabled = if (isNestedScroll) canParentScroll else true,
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
