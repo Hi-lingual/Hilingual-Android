@@ -196,6 +196,30 @@ constructor(
                 }
         }
     }
+
+    fun refreshVocaList() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isRefreshing = true) }
+
+            vocaRepository.getVocaList(sort = _uiState.value.sortType.sortParam)
+                .onSuccess { (count, vocaLists) ->
+                    _uiState.update {
+                        it.copy(
+                            vocaGroupList = UiState.Success(vocaLists.toPersistentList()),
+                            vocaCount = count,
+                            isRefreshing = false
+                        )
+                    }
+                    AtoZGroupList = vocaLists.toPersistentList()
+                }
+
+                .onLogFailure {
+                    _uiState.update { it.copy(isRefreshing = false) }
+                    _sideEffect.emit(VocaSideEffect.ShowRetryDialog {})
+                }
+        }
+    }
+
 }
 
 sealed interface VocaSideEffect {

@@ -30,7 +30,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -107,6 +109,7 @@ internal fun VocaRoute(
             vocaGroupList = vocaGroupList,
             searchResultList = searchResultList,
             searchText = searchKeyword,
+            isRefreshing = isRefreshing,
             onSortTypeChanged = viewModel::updateSort,
             onCardClick = viewModel::fetchVocaDetail,
             onBookmarkClick = { phraseId, isMarked ->
@@ -114,7 +117,8 @@ internal fun VocaRoute(
             },
             onSearchTextChanged = viewModel::updateSearchKeyword,
             onWriteDiaryClick = navigateToHome,
-            onCloseButtonClick = viewModel::clearSearchKeyword
+            onCloseButtonClick = viewModel::clearSearchKeyword,
+            onRefresh = viewModel::refreshVocaList
         )
     }
 
@@ -153,6 +157,8 @@ private fun VocaScreen(
     onCardClick: (Long) -> Unit,
     onBookmarkClick: (Long, Boolean) -> Unit,
     onSearchTextChanged: (String) -> Unit,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
     onCloseButtonClick: () -> Unit
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -215,7 +221,10 @@ private fun VocaScreen(
                                 onSortClick = { showBottomSheet = true },
                                 onCardClick = onCardClick,
                                 onBookmarkClick = onBookmarkClick,
-                                onWriteDiaryClick = onWriteDiaryClick
+                                onWriteDiaryClick = onWriteDiaryClick,
+                                isRefreshing = isRefreshing,
+                                onRefresh = onRefresh
+
                             )
                         }
 
@@ -255,97 +264,108 @@ private fun VocaScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun VocaListWithInfoSection(
     listState: LazyListState,
     vocaGroupList: ImmutableList<GroupingVocaModel>,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
     sortType: WordSortType,
     wordCount: Int,
     onWriteDiaryClick: () -> Unit,
     onSortClick: () -> Unit,
     onCardClick: (Long) -> Unit,
-    onBookmarkClick: (Long, Boolean) -> Unit
+    onBookmarkClick: (Long, Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val isEmpty = vocaGroupList.all { it.words.isEmpty() }
 
-    LazyColumn(
-        state = listState,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = modifier.fillMaxSize()
     ) {
-        if (isEmpty) {
-            item {
-                Column(
-                    modifier = Modifier
-                        .fillParentMaxSize()
-                        .padding(top = 120.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    VocaEmptyCard(type = VocaEmptyCardType.NOT_ADD)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    AddVocaButton(onClick = onWriteDiaryClick)
-                }
-            }
-        } else {
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-                VocaInfo(
-                    wordCount = wordCount,
-                    sortType = sortType,
-                    onSortClick = onSortClick,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-            }
 
-            vocaGroupList.forEach { group ->
-                if (group.words.isNotEmpty()) {
-                    item {
-                        val groupLabel = when (sortType) {
-                            WordSortType.Latest -> when (group.group) {
-                                "today" -> "오늘"
-                                "7days" -> "7일 전"
-                                "30days" -> "30일 전"
-                                else -> group.group
+        LazyColumn(
+            state = listState,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+        ) {
+            if (isEmpty) {
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillParentMaxSize()
+                            .padding(top = 120.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        VocaEmptyCard(type = VocaEmptyCardType.NOT_ADD)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        AddVocaButton(onClick = onWriteDiaryClick)
+                    }
+                }
+            } else {
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    VocaInfo(
+                        wordCount = wordCount,
+                        sortType = sortType,
+                        onSortClick = onSortClick,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                vocaGroupList.forEach { group ->
+                    if (group.words.isNotEmpty()) {
+                        item {
+                            val groupLabel = when (sortType) {
+                                WordSortType.Latest -> when (group.group) {
+                                    "today" -> "오늘"
+                                    "7days" -> "7일 전"
+                                    "30days" -> "30일 전"
+                                    else -> group.group
+                                }
+
+                                WordSortType.AtoZ -> group.group
                             }
 
-                            WordSortType.AtoZ -> group.group
+                            Text(
+                                text = groupLabel,
+                                style = HilingualTheme.typography.bodySB16,
+                                color = HilingualTheme.colors.black,
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            )
                         }
 
-                        Text(
-                            text = groupLabel,
-                            style = HilingualTheme.typography.bodySB16,
-                            color = HilingualTheme.colors.black,
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        )
-                    }
-
-                    itemsIndexed(
-                        group.words,
-                        key = { _, voca -> voca.phraseId }
-                    ) { index, voca ->
-                        val isLastItem = index == group.words.lastIndex
-                        VocaCard(
-                            phrase = voca.phrase,
-                            phraseType = voca.phraseType.toPersistentList(),
-                            onCardClick = { onCardClick(voca.phraseId) },
-                            isBookmarked = voca.isBookmarked,
-                            onBookmarkClick = {
-                                onBookmarkClick(
-                                    voca.phraseId,
-                                    !voca.isBookmarked
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = if (isLastItem) 20.dp else 16.dp)
-                        )
+                        itemsIndexed(
+                            group.words,
+                            key = { _, voca -> voca.phraseId }
+                        ) { index, voca ->
+                            val isLastItem = index == group.words.lastIndex
+                            VocaCard(
+                                phrase = voca.phrase,
+                                phraseType = voca.phraseType.toPersistentList(),
+                                onCardClick = { onCardClick(voca.phraseId) },
+                                isBookmarked = voca.isBookmarked,
+                                onBookmarkClick = {
+                                    onBookmarkClick(
+                                        voca.phraseId,
+                                        !voca.isBookmarked
+                                    )
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = if (isLastItem) 20.dp else 16.dp)
+                            )
+                        }
                     }
                 }
-            }
-            item {
-                Spacer(modifier = Modifier.height(20.dp))
+                item {
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
             }
         }
     }
@@ -410,7 +430,9 @@ private fun VocaScreenLoadingPreview() {
             onCardClick = {},
             onBookmarkClick = { _, _ -> },
             onSearchTextChanged = {},
-            onCloseButtonClick = {}
+            onCloseButtonClick = {},
+            isRefreshing = false,
+            onRefresh = {}
         )
     }
 }
