@@ -83,7 +83,8 @@ internal fun VocaDialog(
                 .fillMaxSize()
                 .background(HilingualTheme.colors.dim2)
                 .padding(horizontal = 16.dp)
-                .padding(bottom = 20.dp),
+                .padding(bottom = 20.dp)
+                .noRippleClickable(onClick = onDismiss),
             contentAlignment = Alignment.BottomCenter
         ) {
             Box(
