@@ -97,7 +97,7 @@ private fun BlockedUserScreen(
                     contentDescription = null
                 )
                 Text(
-                    text = "검색 결과가 없습니다.",
+                    text = "차단된 계정이 없습니다.",
                     style = HilingualTheme.typography.headM18,
                     color = HilingualTheme.colors.gray500,
                     textAlign = TextAlign.Center
