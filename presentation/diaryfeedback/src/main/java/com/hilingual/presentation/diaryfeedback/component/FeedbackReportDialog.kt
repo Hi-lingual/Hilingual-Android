@@ -34,6 +34,7 @@ internal fun FeedbackReportDialog(
             cancelText = "아니요",
             confirmText = "신고하기",
             properties = DialogProperties(
+                dismissOnClickOutside = false,
                 usePlatformDefaultWidth = false,
                 decorFitsSystemWindows = false
             ),

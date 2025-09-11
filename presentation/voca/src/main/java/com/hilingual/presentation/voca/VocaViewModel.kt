@@ -30,7 +30,6 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -85,15 +84,13 @@ constructor(
         viewModelScope.launch {
             if (isRefresh) {
                 _uiState.update { it.copy(isRefreshing = true) }
-            } else {
-                delay(200)
             }
 
             vocaRepository.getVocaList(sort = sort.sortParam)
                 .onSuccess { (count, vocaLists) ->
                     _uiState.update {
                         it.copy(
-                            vocaGroupList = UiState.Success(vocaLists.toPersistentList()),
+                            vocaGroupList = UiState.Success(vocaLists.toImmutableList()),
                             vocaCount = count,
                             isRefreshing = false
                         )

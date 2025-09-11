@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -82,9 +83,10 @@ internal fun VocaDialog(
             modifier = modifier
                 .fillMaxSize()
                 .background(HilingualTheme.colors.dim2)
+                .noRippleClickable(onClick = onDismiss)
+                .navigationBarsPadding()
                 .padding(horizontal = 16.dp)
-                .padding(bottom = 20.dp)
-                .noRippleClickable(onClick = onDismiss),
+                .padding(bottom = 20.dp),
             contentAlignment = Alignment.BottomCenter
         ) {
             Box(

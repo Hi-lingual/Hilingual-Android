@@ -54,9 +54,10 @@ internal class FeedProfileViewModel @Inject constructor(
             val sharedDiariesResult = sharedDiariesDeferred.await()
             val likedDiariesResult = likedDiariesDeferred.await()
 
-            if (feedProfileResult.isFailure || sharedDiariesResult.isFailure) {
+            if (feedProfileResult.isFailure || sharedDiariesResult.isFailure || likedDiariesResult.isFailure) {
                 feedProfileResult.onLogFailure {}
                 sharedDiariesResult.onLogFailure {}
+                likedDiariesResult.onLogFailure {}
                 _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
                 return@launch
             }
