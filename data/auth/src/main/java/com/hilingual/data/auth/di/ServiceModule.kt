@@ -21,6 +21,7 @@ import com.hilingual.data.auth.service.LoginService
 import com.hilingual.data.auth.service.LogoutService
 import com.hilingual.data.auth.service.ReissueService
 import com.hilingual.data.auth.service.VerifyService
+import com.hilingual.data.auth.service.WithdrawService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,4 +47,8 @@ internal object ServiceModule {
     @Provides
     @Singleton
     fun provideLogoutService(retrofit: Retrofit): LogoutService = retrofit.create(LogoutService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideWithdrawService(retrofit: Retrofit): WithdrawService = retrofit.create(WithdrawService::class.java)
 }

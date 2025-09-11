@@ -72,9 +72,12 @@ internal class MyPageViewModel @Inject constructor(
     }
 
     fun withdraw() {
-        // TODO: 회원탈퇴 DELETE API 연결 by 지영
         viewModelScope.launch {
-            _sideEffect.emit(MyPageSideEffect.RestartApp)
+            authRepository.withdraw()
+                .onSuccess {
+                    _sideEffect.emit(MyPageSideEffect.RestartApp)
+                }
+                .onLogFailure { }
         }
     }
 }

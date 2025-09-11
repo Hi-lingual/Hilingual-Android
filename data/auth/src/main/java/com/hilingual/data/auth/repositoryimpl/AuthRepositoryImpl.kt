@@ -47,7 +47,8 @@ internal class AuthRepositoryImpl @Inject constructor(
             deviceType = "PHONE",
             osType = "Android",
             osVersion = Build.VERSION.RELEASE,
-            appVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: ""
+            appVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName
+                ?: ""
         )
         val loginResponse = authRemoteDataSource.login(providerToken, loginRequestDto).data!!
 
@@ -67,6 +68,11 @@ internal class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun logout(): Result<Unit> = suspendRunCatching {
         authRemoteDataSource.logout()
+        tokenManager.clearTokens()
+    }
+
+    override suspend fun withdraw(): Result<Unit> = suspendRunCatching {
+        authRemoteDataSource.withdraw()
         tokenManager.clearTokens()
     }
 }
