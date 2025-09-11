@@ -17,7 +17,7 @@ spotless = "7.2.1"
 kotlin = "2.2.20"
 kotlinxImmutable = "0.4.0"
 composeCompilerGradlePlugin = "2.2.20"
-ksp = "2.2.10-2.0.2"
+ksp = "2.2.20-2.0.2"
 jetbrainsKotlinJvm = "2.2.20"
 
 # AndroidX
