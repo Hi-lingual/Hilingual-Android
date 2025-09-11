@@ -51,6 +51,7 @@ import com.hilingual.presentation.feedprofile.profile.component.FeedProfileTabRo
 import com.hilingual.presentation.feedprofile.profile.component.ReportBlockBottomSheet
 import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
 @Composable
@@ -66,6 +67,10 @@ internal fun FeedProfileRoute(
     val context = LocalContext.current
     val toastTrigger = LocalToastTrigger.current
     val dialogTrigger = LocalDialogTrigger.current
+
+    LaunchedEffect(Unit) {
+        viewModel.loadFeedProfile()
+    }
 
     viewModel.sideEffect.collectSideEffect {
         when (it) {
@@ -173,6 +178,7 @@ private fun FeedProfileScreen(
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }
             .distinctUntilChanged()
+            .drop(1)
             .collect { pageIndex ->
                 val tabType = if (pageIndex == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
                 onTabRefresh(tabType)

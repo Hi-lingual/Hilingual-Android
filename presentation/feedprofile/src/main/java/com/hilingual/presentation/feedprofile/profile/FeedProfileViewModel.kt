@@ -44,11 +44,7 @@ internal class FeedProfileViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<FeedProfileSideEffect>()
     val sideEffect: SharedFlow<FeedProfileSideEffect> = _sideEffect.asSharedFlow()
 
-    init {
-        loadFeedProfile()
-    }
-
-    private fun loadFeedProfile() {
+    fun loadFeedProfile() {
         viewModelScope.launch {
             val feedProfileDeferred = async { feedRepository.getFeedProfile(targetUserId) }
             val sharedDiariesDeferred = async { feedRepository.getSharedDiaries(targetUserId) }
