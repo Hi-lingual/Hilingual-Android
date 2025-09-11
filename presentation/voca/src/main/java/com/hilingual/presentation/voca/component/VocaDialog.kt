@@ -66,7 +66,7 @@ internal fun VocaDialog(
     modifier: Modifier = Modifier,
     properties: DialogProperties = DialogProperties(
         usePlatformDefaultWidth = false,
-        decorFitsSystemWindows = false,
+        decorFitsSystemWindows = false
     )
 ) {
     var isMarked by remember { mutableStateOf(isBookmarked) }

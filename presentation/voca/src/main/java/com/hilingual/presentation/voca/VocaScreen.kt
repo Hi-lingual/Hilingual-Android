@@ -286,7 +286,6 @@ private fun VocaListWithInfoSection(
         onRefresh = onRefresh,
         modifier = modifier.fillMaxSize()
     ) {
-
         LazyColumn(
             state = listState,
             modifier = Modifier

@@ -207,7 +207,6 @@ constructor(
     fun refreshVocaList() {
         fetchWords(_uiState.value.sortType, isRefresh = true)
     }
-
 }
 
 sealed interface VocaSideEffect {
