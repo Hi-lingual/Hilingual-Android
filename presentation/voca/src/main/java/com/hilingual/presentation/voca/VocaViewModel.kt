@@ -81,20 +81,27 @@ constructor(
         }
     }
 
-    fun fetchWords(sort: WordSortType) {
+    fun fetchWords(sort: WordSortType, isRefresh: Boolean = false) {
         viewModelScope.launch {
+            if (isRefresh) {
+                _uiState.update { it.copy(isRefreshing = true) }
+            } else {
+                delay(200)
+            }
+
             vocaRepository.getVocaList(sort = sort.sortParam)
                 .onSuccess { (count, vocaLists) ->
-                    delay(200)
                     _uiState.update {
                         it.copy(
                             vocaGroupList = UiState.Success(vocaLists.toPersistentList()),
-                            vocaCount = count
+                            vocaCount = count,
+                            isRefreshing = false
                         )
                     }
                     AtoZGroupList = vocaLists.toPersistentList()
                 }
                 .onLogFailure {
+                    _uiState.update { it.copy(isRefreshing = false) }
                     _sideEffect.emit(VocaSideEffect.ShowRetryDialog {})
                 }
         }
@@ -198,26 +205,7 @@ constructor(
     }
 
     fun refreshVocaList() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isRefreshing = true) }
-
-            vocaRepository.getVocaList(sort = _uiState.value.sortType.sortParam)
-                .onSuccess { (count, vocaLists) ->
-                    _uiState.update {
-                        it.copy(
-                            vocaGroupList = UiState.Success(vocaLists.toPersistentList()),
-                            vocaCount = count,
-                            isRefreshing = false
-                        )
-                    }
-                    AtoZGroupList = vocaLists.toPersistentList()
-                }
-
-                .onLogFailure {
-                    _uiState.update { it.copy(isRefreshing = false) }
-                    _sideEffect.emit(VocaSideEffect.ShowRetryDialog {})
-                }
-        }
+        fetchWords(_uiState.value.sortType, isRefresh = true)
     }
 
 }
