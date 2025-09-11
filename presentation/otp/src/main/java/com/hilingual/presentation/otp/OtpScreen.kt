@@ -188,7 +188,9 @@ private fun OtpFailureDialog(
             onDismiss = { },
             properties = DialogProperties(
                 dismissOnBackPress = false,
-                dismissOnClickOutside = false
+                dismissOnClickOutside = false,
+                usePlatformDefaultWidth = false,
+                decorFitsSystemWindows = false
             )
         )
     }
