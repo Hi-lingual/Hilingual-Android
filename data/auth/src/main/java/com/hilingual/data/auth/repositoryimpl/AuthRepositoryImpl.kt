@@ -47,8 +47,7 @@ internal class AuthRepositoryImpl @Inject constructor(
             deviceType = "PHONE",
             osType = "Android",
             osVersion = Build.VERSION.RELEASE,
-            appVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName
-                ?: ""
+            appVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: ""
         )
         val loginResponse = authRemoteDataSource.login(providerToken, loginRequestDto).data!!
 
