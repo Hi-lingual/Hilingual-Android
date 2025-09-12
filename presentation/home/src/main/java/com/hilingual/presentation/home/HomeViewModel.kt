@@ -114,7 +114,12 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             calendarRepository.getCalendar(yearMonth.year, yearMonth.monthValue)
                 .onSuccess { calendarModel ->
-                    val newDate = yearMonth.atDay(1)
+                    val today = LocalDate.now()
+                    val newDate = if (yearMonth == YearMonth.from(today)) {
+                        today
+                    } else {
+                        yearMonth.atDay(1)
+                    }
                     _uiState.updateSuccess {
                         it.copy(
                             dateList = calendarModel.dateList.map { data -> data.toState() }
@@ -224,7 +229,9 @@ class HomeViewModel @Inject constructor(
                         .onSuccess { topic ->
                             _uiState.updateSuccess { it.copy(todayTopic = topic.toState()) }
                         }
-                        .onLogFailure { }
+                        .onLogFailure {
+                            _uiState.updateSuccess { it.copy(todayTopic = null) }
+                        }
                 }
             }
         }

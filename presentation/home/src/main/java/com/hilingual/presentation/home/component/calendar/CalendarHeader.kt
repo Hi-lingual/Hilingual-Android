@@ -51,25 +51,29 @@ internal fun CalendarHeader(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.background(HilingualTheme.colors.white)
     ) {
-        Text(
-            text = "${currentYearMonth.year}년 ${
-            currentYearMonth.month.getDisplayName(
-                TextStyle.SHORT,
-                Locale.getDefault()
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.noRippleClickable(onClick = onDownArrowClick)
+        ) {
+            Text(
+                text = "${currentYearMonth.year}년 ${
+                currentYearMonth.month.getDisplayName(
+                    TextStyle.SHORT,
+                    Locale.getDefault()
+                )
+                }",
+                style = HilingualTheme.typography.headB18,
+                color = HilingualTheme.colors.black
             )
-            }",
-            style = HilingualTheme.typography.headB18,
-            color = HilingualTheme.colors.black
-        )
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_down_24_black),
-            contentDescription = null,
-            tint = Color.Unspecified,
-            modifier = Modifier
-                .size(28.dp)
-                .padding(2.dp)
-                .noRippleClickable(onClick = onDownArrowClick)
-        )
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_down_24_black),
+                contentDescription = null,
+                tint = Color.Unspecified,
+                modifier = Modifier
+                    .size(28.dp)
+                    .padding(2.dp)
+            )
+        }
         Spacer(Modifier.weight(1f))
 
         Icon(
