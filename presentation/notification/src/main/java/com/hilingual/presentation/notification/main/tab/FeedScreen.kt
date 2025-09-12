@@ -21,7 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import com.hilingual.core.designsystem.component.pulltorefresh.HilingualPullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.hilingual.presentation.notification.main.component.EmptyImage
@@ -39,7 +39,7 @@ internal fun FeedScreen(
     onNotificationClick: (FeedNotificationItemUiModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    PullToRefreshBox(
+    HilingualPullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = onRefresh,
         modifier = modifier.fillMaxSize()

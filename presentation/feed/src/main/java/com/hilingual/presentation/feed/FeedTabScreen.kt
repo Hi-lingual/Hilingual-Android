@@ -27,7 +27,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import com.hilingual.core.designsystem.component.pulltorefresh.HilingualPullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -66,7 +66,7 @@ internal fun FeedTabScreen(
         is UiState.Success -> {
             val feedList = state.data
 
-            PullToRefreshBox(
+            HilingualPullToRefreshBox(
                 isRefreshing = isRefreshing,
                 onRefresh = onRefresh,
                 modifier = modifier.fillMaxSize()

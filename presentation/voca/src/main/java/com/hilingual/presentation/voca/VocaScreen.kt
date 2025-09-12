@@ -32,7 +32,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import com.hilingual.core.designsystem.component.pulltorefresh.HilingualPullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -281,7 +281,7 @@ private fun VocaListWithInfoSection(
 ) {
     val isEmpty = vocaGroupList.all { it.words.isEmpty() }
 
-    PullToRefreshBox(
+    HilingualPullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = onRefresh,
         modifier = modifier.fillMaxSize()
