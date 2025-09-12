@@ -24,6 +24,8 @@ import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.home.model.toState
+import com.hilingual.presentation.home.type.DiaryCardState
+import com.hilingual.presentation.home.util.isDateFuture
 import com.hilingual.presentation.home.util.isDateWritable
 import com.hilingual.presentation.home.util.isDateWritten
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -209,29 +211,67 @@ class HomeViewModel @Inject constructor(
         val currentState = uiState.value
         if (currentState !is UiState.Success) return
 
-        val hasDiary = isDateWritten(date, currentState.data.dateList)
-        val isWritable = isDateWritable(date)
-
         viewModelScope.launch {
             when {
-                hasDiary -> {
+                isDateFuture(date) -> {
+                    _uiState.updateSuccess {
+                        it.copy(
+                            cardState = DiaryCardState.FUTURE,
+                            diaryThumbnail = null,
+                            todayTopic = null
+                        )
+                    }
+                }
+
+                isDateWritten(date, currentState.data.dateList) -> {
                     calendarRepository.getDiaryThumbnail(date.toString())
                         .onSuccess { thumbnail ->
-                            _uiState.updateSuccess { it.copy(diaryThumbnail = thumbnail.toState()) }
+                            _uiState.updateSuccess {
+                                it.copy(
+                                    cardState = DiaryCardState.WRITTEN,
+                                    diaryThumbnail = thumbnail.toState(),
+                                    todayTopic = null
+                                )
+                            }
+                        }
+                        .onLogFailure { emitRetrySideEffect { updateContentForDate(date) } }
+                }
+
+                isDateWritable(date) -> {
+                    calendarRepository.getTopic(date.toString())
+                        .onSuccess { topic ->
+                            val cardState = if (topic.remainingTime == -1) {
+                                DiaryCardState.REWRITE_DISABLED
+                            } else {
+                                DiaryCardState.WRITABLE
+                            }
+                            _uiState.updateSuccess {
+                                it.copy(
+                                    cardState = cardState,
+                                    diaryThumbnail = null,
+                                    todayTopic = topic.toState()
+                                )
+                            }
                         }
                         .onLogFailure {
-                            emitRetrySideEffect { }
+                            _uiState.updateSuccess {
+                                it.copy(
+                                    cardState = DiaryCardState.PAST,
+                                    diaryThumbnail = null,
+                                    todayTopic = null
+                                )
+                            }
                         }
                 }
 
-                isWritable -> {
-                    calendarRepository.getTopic(date.toString())
-                        .onSuccess { topic ->
-                            _uiState.updateSuccess { it.copy(todayTopic = topic.toState()) }
-                        }
-                        .onLogFailure {
-                            _uiState.updateSuccess { it.copy(todayTopic = null) }
-                        }
+                else -> {
+                    _uiState.updateSuccess {
+                        it.copy(
+                            cardState = DiaryCardState.PAST,
+                            diaryThumbnail = null,
+                            todayTopic = null
+                        )
+                    }
                 }
             }
         }
