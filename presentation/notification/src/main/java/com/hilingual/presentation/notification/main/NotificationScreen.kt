@@ -106,7 +106,12 @@ private fun NotificationScreen(
     ) {
         NotificationTopAppBar(
             onBackClick = onBackClick,
-            onSettingClick = onSettingClick
+            onSettingClick = {
+                coroutineScope.launch {
+                    onSettingClick()
+                    pagerState.scrollToPage(0)
+                }
+            }
         )
         NotificationTapRow(
             tabIndex = pagerState.currentPage,
