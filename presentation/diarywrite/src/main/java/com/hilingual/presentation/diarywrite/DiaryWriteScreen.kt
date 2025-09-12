@@ -152,26 +152,7 @@ internal fun DiaryWriteRoute(
         }
 
         is DiaryFeedbackState.Loading -> {
-            DiaryFeedbackStatusScreen(
-                paddingValues = paddingValues,
-                uiData = FeedbackUIData(
-                    title = "일기 저장 중..",
-                    description = {
-                        AnimatedLoadingText(
-                            texts = persistentListOf(
-                                "피드백을 요청하고 있어요.",
-                                "오늘 하루도 수고했어요!",
-                                "발전하는 모습이 멋져요."
-                            )
-                        )
-                    },
-                    media = FeedbackMedia.Lottie(
-                        resId = R.raw.lottie_feedback_loading,
-                        heightDp = 194.dp
-                    )
-                ),
-                content = { FeedbackLoadingContent() }
-            )
+            DiaryFeedbackLoadingScreen(paddingValues = paddingValues)
         }
 
         is DiaryFeedbackState.Complete -> {
