@@ -73,11 +73,16 @@ constructor(
     }
 
     fun updateSort(sort: WordSortType) {
+        val isSameSortType = _uiState.value.sortType == sort
         _uiState.update {
             it.copy(
                 sortType = sort,
                 vocaGroupList = UiState.Loading
             )
+        }
+
+        if (isSameSortType) {
+            fetchWords(sort, isRefresh = true)
         }
     }
 
