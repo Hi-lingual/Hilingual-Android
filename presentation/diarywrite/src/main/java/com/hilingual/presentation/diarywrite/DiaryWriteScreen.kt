@@ -297,23 +297,6 @@ private fun DiaryWriteScreen(
             }
         )
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(top = 12.dp, bottom = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            DateText(
-                selectedDateProvider = { selectedDate }
-            )
-
-            TextScanButton(
-                onClick = { isBottomSheetVisible = true }
-            )
-        }
-
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -321,6 +304,23 @@ private fun DiaryWriteScreen(
                 .verticalScroll(verticalScrollState)
                 .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
         ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 12.dp, bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                DateText(
+                    selectedDateProvider = { selectedDate }
+                )
+
+                TextScanButton(
+                    onClick = { isBottomSheetVisible = true }
+                )
+            }
+
             RecommendedTopicDropdown(
                 enTopic = topicEn,
                 koTopic = topicKo,
