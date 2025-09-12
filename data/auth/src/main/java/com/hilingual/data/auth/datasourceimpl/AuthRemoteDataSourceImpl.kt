@@ -21,12 +21,16 @@ import com.hilingual.data.auth.dto.request.LoginRequestDto
 import com.hilingual.data.auth.dto.request.VerifyCodeRequestDto
 import com.hilingual.data.auth.dto.response.LoginResponseDto
 import com.hilingual.data.auth.service.LoginService
+import com.hilingual.data.auth.service.LogoutService
 import com.hilingual.data.auth.service.VerifyService
+import com.hilingual.data.auth.service.WithdrawService
 import javax.inject.Inject
 
 internal class AuthRemoteDataSourceImpl @Inject constructor(
     private val loginService: LoginService,
-    private val verifyService: VerifyService
+    private val verifyService: VerifyService,
+    private val logoutService: LogoutService,
+    private val withdrawService: WithdrawService
 ) : AuthRemoteDataSource {
     override suspend fun login(
         providerToken: String,
@@ -35,4 +39,10 @@ internal class AuthRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun verifyCode(request: VerifyCodeRequestDto): BaseResponse<Unit> =
         verifyService.verifyCode(request)
+
+    override suspend fun logout(): BaseResponse<Unit> =
+        logoutService.logout()
+
+    override suspend fun withdraw(): BaseResponse<Unit> =
+        withdrawService.withdraw()
 }

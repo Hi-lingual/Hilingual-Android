@@ -15,6 +15,7 @@
  */
 package com.hilingual.data.user.repositoryimpl
 
+import android.net.Uri
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.data.presigned.repository.FileUploaderRepository
@@ -88,13 +89,15 @@ internal class UserRepositoryImpl @Inject constructor(
             userRemoteDataSource.readNotification(noticeId).data
         }
 
-    override suspend fun getNotificationSettings(): Result<NotificationSettingsModel> = suspendRunCatching {
-        userRemoteDataSource.getNotificationSettings().data!!.toModel()
-    }
+    override suspend fun getNotificationSettings(): Result<NotificationSettingsModel> =
+        suspendRunCatching {
+            userRemoteDataSource.getNotificationSettings().data!!.toModel()
+        }
 
-    override suspend fun updateNotificationSetting(notiType: String): Result<NotificationSettingsModel> = suspendRunCatching {
-        userRemoteDataSource.updateNotificationSetting(notiType).data!!.toModel()
-    }
+    override suspend fun updateNotificationSetting(notiType: String): Result<NotificationSettingsModel> =
+        suspendRunCatching {
+            userRemoteDataSource.updateNotificationSetting(notiType).data!!.toModel()
+        }
 
     override suspend fun saveRegisterStatus(isCompleted: Boolean) {
         userInfoManager.saveRegisterStatus(isCompleted)
@@ -111,10 +114,12 @@ internal class UserRepositoryImpl @Inject constructor(
     override suspend fun isOtpVerified(): Boolean {
         return userInfoManager.isOtpVerified()
     }
+
     override suspend fun getFollowers(targetUserId: Long): Result<List<FollowUserListResultModel>> =
         suspendRunCatching {
             userRemoteDataSource.getFollowers(targetUserId = targetUserId).data!!.userList.map { it.toModel() }
         }
+
     override suspend fun getFollowings(targetUserId: Long): Result<List<FollowUserListResultModel>> =
         suspendRunCatching {
             userRemoteDataSource.getFollowings(targetUserId = targetUserId).data!!.userList.map { it.toModel() }
@@ -140,10 +145,25 @@ internal class UserRepositoryImpl @Inject constructor(
             userRemoteDataSource.deleteBlockUser(targetUserId).data
         }
 
+    override suspend fun updateProfileImage(imageFileUri: Uri?): Result<Unit> =
+        suspendRunCatching {
+            val fileKey = if (imageFileUri != null) {
+                fileUploaderRepository.uploadFile(
+                    uri = imageFileUri,
+                    purpose = "PROFILE_UPDATE"
+                ).getOrThrow()
+            } else {
+                null
+            }
+
+            userRemoteDataSource.updateProfileImage(fileKey)
+        }
+
     override suspend fun putFollow(targetUserId: Long): Result<Unit> =
         suspendRunCatching {
             userRemoteDataSource.putFollow(targetUserId = targetUserId)
         }
+
     override suspend fun deleteFollow(targetUserId: Long): Result<Unit> =
         suspendRunCatching {
             userRemoteDataSource.deleteFollow(targetUserId = targetUserId)
