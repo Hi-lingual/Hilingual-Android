@@ -59,7 +59,7 @@ internal fun DaysOfWeekTitle(
 
 @Preview
 @Composable
-internal fun DaysOfWeekTitlePreview() {
+private fun DaysOfWeekTitlePreview() {
     HilingualTheme {
         val daysOfWeek = DayOfWeek.entries.toTypedArray().toImmutableList()
         DaysOfWeekTitle(

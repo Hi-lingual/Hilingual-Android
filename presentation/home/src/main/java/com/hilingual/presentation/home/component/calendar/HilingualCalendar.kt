@@ -32,8 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualYearMonthPickerBottomSheet
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.home.component.calendar.model.daysOfWeek
 import com.hilingual.presentation.home.component.calendar.state.rememberCalendarState
+import com.hilingual.presentation.home.component.calendar.util.daysOfWeek
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch

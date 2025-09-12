@@ -3,10 +3,6 @@ package com.hilingual.presentation.home.component.calendar.util
 import com.hilingual.presentation.home.component.calendar.model.CalendarDay
 import com.hilingual.presentation.home.component.calendar.model.CalendarMonth
 import com.hilingual.presentation.home.component.calendar.model.DayPosition
-import com.hilingual.presentation.home.component.calendar.model.atStartOfMonth
-import com.hilingual.presentation.home.component.calendar.model.nextMonth
-import com.hilingual.presentation.home.component.calendar.model.previousMonth
-import com.hilingual.presentation.home.component.calendar.model.yearMonth
 import java.time.DayOfWeek
 import java.time.YearMonth
 
@@ -34,7 +30,7 @@ internal data class MonthData(
             month -> DayPosition.MonthDate
             previousMonth -> DayPosition.InDate
             nextMonth -> DayPosition.OutDate
-            else -> throw Exception()
+            else -> error("Date is in an unexpected month. Should not happen.")
         }
         return CalendarDay(date, position)
     }

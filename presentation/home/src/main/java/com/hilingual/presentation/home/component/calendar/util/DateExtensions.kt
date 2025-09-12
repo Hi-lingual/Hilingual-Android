@@ -1,4 +1,4 @@
-package com.hilingual.presentation.home.component.calendar.model
+package com.hilingual.presentation.home.component.calendar.util
 
 import java.time.DayOfWeek
 import java.time.LocalDate

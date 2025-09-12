@@ -8,7 +8,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import com.hilingual.presentation.home.component.calendar.model.CalendarMonth
-import com.hilingual.presentation.home.component.calendar.model.firstDayOfWeekFromLocale
+import com.hilingual.presentation.home.component.calendar.util.firstDayOfWeekFromLocale
 import com.hilingual.presentation.home.component.calendar.util.generateMonthData
 import com.hilingual.presentation.home.component.calendar.util.getMonthIndex
 import com.hilingual.presentation.home.component.calendar.util.getMonthIndicesCount
