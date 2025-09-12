@@ -40,8 +40,6 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
-private val INPUT_FILTER_REGEX = Regex("""[^\p{IsHangul}a-zA-Z0-9\p{Punct}\p{S}]""")
-
 @Composable
 fun HilingualSearchTextField(
     value: String,
@@ -58,11 +56,7 @@ fun HilingualSearchTextField(
     HilingualBasicTextField(
         value = value,
         placeholder = placeholder,
-        onValueChanged = {
-            val filteredText = it.replace(INPUT_FILTER_REGEX, "")
-            val newText = filteredText.filter { !it.isWhitespace() }
-            onValueChanged(newText)
-        },
+        onValueChanged = onValueChanged,
         modifier = modifier,
         placeholderTextStyle = HilingualTheme.typography.bodyM16,
         inputTextStyle = HilingualTheme.typography.bodyM16,
