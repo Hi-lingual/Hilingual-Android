@@ -84,15 +84,17 @@ private fun ProfileEditScreen(
     onProfileImageUriChanged: (Uri?) -> Unit,
     onWithdrawClick: () -> Unit
 ) {
-    var imageUri by remember { mutableStateOf<String?>(profileLoginInfo.profileImageUrl) }
+    var imageUri by remember { mutableStateOf<String?>(profileLoginInfo.profileImageUrl.takeIf { it.isNotBlank() }) }
     var isImageSheetVisible by remember { mutableStateOf(false) }
     var isWithdrawDialogVisible by remember { mutableStateOf(false) }
 
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
-            imageUri = uri.toString()
-            onProfileImageUriChanged(uri)
+            if (uri != null) {
+                imageUri = uri.toString()
+                onProfileImageUriChanged(uri)
+            }
         }
     )
 
@@ -112,7 +114,7 @@ private fun ProfileEditScreen(
 
         ProfileImagePicker(
             onClick = { isImageSheetVisible = true },
-            imageUrl = imageUri.toString()
+            imageUrl = imageUri
         )
 
         Spacer(modifier = Modifier.height(48.dp))
@@ -145,8 +147,10 @@ private fun ProfileEditScreen(
         onDismiss = { isImageSheetVisible = false },
         onDefaultImageClick = {
             isImageSheetVisible = false
-            imageUri = null
-            onProfileImageUriChanged(null)
+            if (imageUri != null) {
+                imageUri = null
+                onProfileImageUriChanged(null)
+            }
         },
         onGalleryImageClick = {
             isImageSheetVisible = false
