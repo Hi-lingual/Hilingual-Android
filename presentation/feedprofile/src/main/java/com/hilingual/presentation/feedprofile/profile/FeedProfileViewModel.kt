@@ -228,14 +228,8 @@ internal class FeedProfileViewModel @Inject constructor(
             } else {
                 userRepository.putBlockUser(targetUserId)
             }
-            result.onSuccess {
-                _uiState.updateSuccess { currentState ->
-                    val updatedProfile = currentState.feedProfileInfo.copy(
-                        isBlock = !isCurrentlyBlocked
-                    )
-                    currentState.copy(feedProfileInfo = updatedProfile)
-                }
-            }.onLogFailure { }
+            result.onSuccess { loadFeedProfile() }
+                .onLogFailure { }
         }
     }
 }
