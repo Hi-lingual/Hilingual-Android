@@ -32,14 +32,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualYearMonthPickerBottomSheet
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.kizitonwose.calendar.compose.HorizontalCalendar
-import com.kizitonwose.calendar.compose.rememberCalendarState
-import com.kizitonwose.calendar.core.OutDateStyle
-import com.kizitonwose.calendar.core.daysOfWeek
+import com.hilingual.presentation.home.component.calendar.state.rememberCalendarState
+import com.hilingual.presentation.home.component.calendar.util.daysOfWeek
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -52,29 +48,37 @@ internal fun HilingualCalendar(
     onMonthChanged: (yearMonth: YearMonth) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val currentMonth = remember { YearMonth.now() }
-    val startMonth = remember { YearMonth.of(2025, 1) }
-    val endMonth = remember { YearMonth.of(2100, 12) }
-    val daysOfWeek = remember { daysOfWeek().toImmutableList() }
     val coroutineScope = rememberCoroutineScope()
-    var isBottomSheetVisible by remember { mutableStateOf(false) }
-    var settledMonth by remember { mutableStateOf(currentMonth) }
-
+    val daysOfWeek = remember { daysOfWeek().toImmutableList() }
+    val initialMonth = remember { YearMonth.now() }
     val state = rememberCalendarState(
-        startMonth = startMonth,
-        endMonth = endMonth,
-        firstVisibleMonth = currentMonth,
-        firstDayOfWeek = daysOfWeek.first(),
-        outDateStyle = OutDateStyle.EndOfRow
+        initialVisibleMonth = initialMonth,
+        firstDayOfWeek = daysOfWeek.first()
     )
+    var isBottomSheetVisible by remember { mutableStateOf(false) }
+    var settledMonth by remember { mutableStateOf(initialMonth) }
+
+    LaunchedEffect(state.listState) {
+        snapshotFlow { state.listState.isScrollInProgress }
+            .filter { !it }
+            .collect {
+                val newMonth = state.firstVisibleMonth.yearMonth
+                if (newMonth != settledMonth) {
+                    settledMonth = newMonth
+                    onMonthChanged(newMonth)
+                }
+            }
+    }
 
     HilingualYearMonthPickerBottomSheet(
         isVisible = isBottomSheetVisible,
         initialYearMonth = settledMonth,
         onDismiss = { isBottomSheetVisible = false },
         onDateSelected = { newYearMonth ->
-            settledMonth = newYearMonth
-            onMonthChanged(newYearMonth)
+            if (newYearMonth != settledMonth) {
+                settledMonth = newYearMonth
+                onMonthChanged(newYearMonth)
+            }
             coroutineScope.launch {
                 state.scrollToMonth(newYearMonth)
                 isBottomSheetVisible = false
@@ -82,30 +86,17 @@ internal fun HilingualCalendar(
         }
     )
 
-    LaunchedEffect(state) {
-        snapshotFlow { state.isScrollInProgress }
-            .filter { !it }
-            .map { state.firstVisibleMonth.yearMonth }
-            .distinctUntilChanged()
-            .collect { yearMonth ->
-                settledMonth = yearMonth
-                onMonthChanged(yearMonth)
-            }
-    }
-
-    Column(
-        modifier = modifier
-    ) {
+    Column(modifier = modifier) {
         CalendarHeader(
             onDownArrowClick = { isBottomSheetVisible = true },
             onLeftArrowClick = {
                 coroutineScope.launch {
-                    state.animateScrollToMonth(state.firstVisibleMonth.yearMonth.minusMonths(1))
+                    state.animateScrollToMonth(settledMonth.minusMonths(1))
                 }
             },
             onRightArrowClick = {
                 coroutineScope.launch {
-                    state.animateScrollToMonth(state.firstVisibleMonth.yearMonth.plusMonths(1))
+                    state.animateScrollToMonth(settledMonth.plusMonths(1))
                 }
             },
             yearMonth = { settledMonth },
