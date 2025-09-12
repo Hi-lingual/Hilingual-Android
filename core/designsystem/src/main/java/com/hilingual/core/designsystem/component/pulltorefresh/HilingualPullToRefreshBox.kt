@@ -27,7 +27,7 @@ fun HilingualPullToRefreshBox(
         modifier = modifier,
         state = state,
         contentAlignment = contentAlignment,
-        indicator =  {
+        indicator = {
             Indicator(
                 modifier = Modifier.align(Alignment.TopCenter),
                 isRefreshing = isRefreshing,
