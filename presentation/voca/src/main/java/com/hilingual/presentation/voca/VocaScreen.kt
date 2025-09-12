@@ -388,9 +388,9 @@ private fun SearchResultSection(
     } else {
         LazyColumn(
             state = listState,
+            contentPadding = PaddingValues(16.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
         ) {
             items(
                 searchResultList,
