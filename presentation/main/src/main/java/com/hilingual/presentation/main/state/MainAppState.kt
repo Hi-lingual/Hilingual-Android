@@ -131,6 +131,10 @@ internal class MainAppState(
         launchSingleTop = true
     }
 
+    private val launchSingleTopOption = navOptions {
+        launchSingleTop = true
+    }
+
     fun navigateToOtp(navOptions: NavOptions? = clearStackNavOptions) {
         navController.navigateToOtp(navOptions)
     }
@@ -153,32 +157,26 @@ internal class MainAppState(
 
     fun navigateToDiaryFeedback(
         diaryId: Long,
-        navOptions: NavOptions? = null
+        navOptions: NavOptions? = launchSingleTopOption
     ) {
         navController.navigateToDiaryFeedback(diaryId, navOptions)
     }
 
     fun navigateToDiaryWrite(
         selectedDate: LocalDate,
-        navOptions: NavOptions? = navOptions {
-            launchSingleTop = true
-        }
+        navOptions: NavOptions? = launchSingleTopOption
     ) {
         navController.navigateToDiaryWrite(selectedDate, navOptions)
     }
 
     fun navigateToNotification(
-        navOptions: NavOptions = navOptions {
-            launchSingleTop = true
-        }
+        navOptions: NavOptions = launchSingleTopOption
     ) {
         navController.navigateToNotification(navOptions)
     }
 
     fun navigateToNotificationSetting(
-        navOptions: NavOptions = navOptions {
-            launchSingleTop = true
-        }
+        navOptions: NavOptions = launchSingleTopOption
     ) {
         navController.navigateToNotificationSetting(navOptions)
     }
@@ -189,19 +187,19 @@ internal class MainAppState(
 
     fun navigateToFeedDiary(
         diaryId: Long,
-        navOptions: NavOptions? = null
+        navOptions: NavOptions? = launchSingleTopOption
     ) {
         navController.navigateToFeedDiary(diaryId, navOptions)
     }
 
     fun navigateToFeedProfile(
         userId: Long,
-        navOptions: NavOptions? = null
+        navOptions: NavOptions? = launchSingleTopOption
     ) {
         navController.navigateToFeedProfile(userId, navOptions)
     }
 
-    fun navigateToMyFeedProfile(navOptions: NavOptions? = null) {
+    fun navigateToMyFeedProfile(navOptions: NavOptions? = launchSingleTopOption) {
         navController.navigateToMyFeedProfile(navOptions)
     }
 
