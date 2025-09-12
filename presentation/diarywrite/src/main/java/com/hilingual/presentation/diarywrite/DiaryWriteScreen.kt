@@ -179,7 +179,7 @@ internal fun DiaryWriteRoute(
             DiaryFeedbackStatusScreen(
                 paddingValues = paddingValues,
                 uiData = FeedbackUIData(
-                    title = "AI 피드백 완료!",
+                    title = "일기 저장 완료!",
                     description = {
                         Text(
                             text = "틀린 부분을 고치고,\n더 나은 표현으로 수정했어요!",
