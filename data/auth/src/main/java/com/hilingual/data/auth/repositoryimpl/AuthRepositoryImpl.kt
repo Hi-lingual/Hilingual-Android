@@ -69,6 +69,7 @@ internal class AuthRepositoryImpl @Inject constructor(
     override suspend fun logout(): Result<Unit> = suspendRunCatching {
         authRemoteDataSource.logout()
         tokenManager.clearTokens()
+        userInfoManager.clear()
     }
 
     override suspend fun withdraw(): Result<Unit> = suspendRunCatching {
