@@ -15,6 +15,7 @@
  */
 package com.hilingual.data.user.repository
 
+import android.net.Uri
 import com.hilingual.data.user.model.follow.FollowUserListResultModel
 import com.hilingual.data.user.model.notification.NotificationDetailModel
 import com.hilingual.data.user.model.notification.NotificationModel
@@ -69,6 +70,8 @@ interface UserRepository {
     suspend fun putBlockUser(targetUserId: Long): Result<Unit>
 
     suspend fun deleteBlockUser(targetUserId: Long): Result<Unit>
+
+    suspend fun updateProfileImage(imageFileUri: Uri?): Result<Unit>
 
     suspend fun putFollow(
         targetUserId: Long
