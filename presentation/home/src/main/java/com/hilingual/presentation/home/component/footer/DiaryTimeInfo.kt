@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import kotlin.math.ceil
 
 @Composable
 internal fun DiaryTimeInfo(
@@ -53,14 +54,14 @@ internal fun DiaryTimeInfo(
             )
             Spacer(Modifier.width(4.dp))
 
-            val annotatedString = buildAnnotatedString {
-                val (timeValue, timeUnit) = calculateRemainingTime(remainingTime)
+            val timeText = formatRemainingTime(remainingTime)
 
+            val annotatedString = buildAnnotatedString {
                 withStyle(style = SpanStyle(color = HilingualTheme.colors.hilingualOrange)) {
-                    append(timeValue.toString())
+                    append(timeText)
                 }
                 withStyle(style = SpanStyle(color = HilingualTheme.colors.black)) {
-                    append("$timeUnit 남았어요")
+                    append(" 남았어요")
                 }
             }
             Text(
@@ -71,12 +72,11 @@ internal fun DiaryTimeInfo(
     }
 }
 
-private fun calculateRemainingTime(remainingTime: Int): Pair<Int, String> =
-    when {
-        remainingTime >= 60 -> (remainingTime / 60) to "시간"
-        remainingTime >= 1 -> remainingTime to "분"
-        else -> 1 to "분"
-    }
+private fun formatRemainingTime(remainingMinutes: Int): String = when {
+    remainingMinutes > 60 -> "${ceil(remainingMinutes / 60.0).toInt()}시간"
+    remainingMinutes >= 1 -> "${remainingMinutes}분"
+    else -> "1분"
+}
 
 private data class DiaryTimeInfoPreviewState(
     val remainingTime: Int?
@@ -85,7 +85,17 @@ private data class DiaryTimeInfoPreviewState(
 private class DiaryTimeInfoPreviewProvider :
     PreviewParameterProvider<DiaryTimeInfoPreviewState> {
     override val values = sequenceOf(
-        DiaryTimeInfoPreviewState(remainingTime = 1440)
+        DiaryTimeInfoPreviewState(remainingTime = 0), // 0m -> 1분
+        DiaryTimeInfoPreviewState(remainingTime = 241), // 4h 01m -> 5시간
+        DiaryTimeInfoPreviewState(remainingTime = 240), // 4h 00m -> 4시간
+        DiaryTimeInfoPreviewState(remainingTime = 239), // 3h 59m -> 4시간
+        DiaryTimeInfoPreviewState(remainingTime = 119), // 1h 59m -> 2시간
+        DiaryTimeInfoPreviewState(remainingTime = 61), // 1h 1m -> 2시간
+        DiaryTimeInfoPreviewState(remainingTime = 60), // 1h 0m -> 60분
+        DiaryTimeInfoPreviewState(remainingTime = 59), // 59m -> 59분
+        DiaryTimeInfoPreviewState(remainingTime = 1), // 1m -> 1분
+        DiaryTimeInfoPreviewState(remainingTime = 0) // 0m -> 1분
+
     )
 }
 
