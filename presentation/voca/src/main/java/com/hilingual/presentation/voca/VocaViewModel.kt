@@ -75,7 +75,8 @@ constructor(
     fun updateSort(sort: WordSortType) {
         _uiState.update {
             it.copy(
-                sortType = sort
+                sortType = sort,
+                vocaGroupList = UiState.Loading
             )
         }
     }
