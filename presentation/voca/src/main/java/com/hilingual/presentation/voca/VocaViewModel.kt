@@ -101,12 +101,26 @@ constructor(
                             isRefreshing = false
                         )
                     }
-                    AtoZGroupList = vocaLists.toPersistentList()
+                    if (sort != WordSortType.AtoZ) {
+                        loadAtoZDataForSearch()
+                    } else {
+                        AtoZGroupList = vocaLists.toImmutableList()
+                    }
                 }
                 .onLogFailure {
                     _uiState.update { it.copy(isRefreshing = false) }
                     _sideEffect.emit(VocaSideEffect.ShowRetryDialog {})
                 }
+        }
+    }
+
+    private fun loadAtoZDataForSearch() {
+        viewModelScope.launch {
+            vocaRepository.getVocaList(sort = WordSortType.AtoZ.sortParam)
+                .onSuccess { (_, vocaLists) ->
+                    AtoZGroupList = vocaLists.toImmutableList()
+                }
+                .onLogFailure { }
         }
     }
 
@@ -181,9 +195,9 @@ constructor(
                                         } else {
                                             item
                                         }
-                                    }.toPersistentList()
+                                    }.toImmutableList()
                                     group.copy(words = updatedWords)
-                                }.toPersistentList()
+                                }.toImmutableList()
 
                                 UiState.Success(updatedList)
                             }
@@ -193,7 +207,18 @@ constructor(
 
                         val updatedSearchResults = currentState.searchResultList.map {
                             if (it.phraseId == phraseId) it.copy(isBookmarked = isMarked) else it
-                        }.toPersistentList()
+                        }.toImmutableList()
+
+                        AtoZGroupList = AtoZGroupList.map { group ->
+                            val updatedWords = group.words.map { item ->
+                                if (item.phraseId == phraseId) {
+                                    item.copy(isBookmarked = isMarked)
+                                } else {
+                                    item
+                                }
+                            }.toImmutableList()
+                            group.copy(words = updatedWords)
+                        }.toImmutableList()
 
                         currentState.copy(
                             vocaGroupList = updatedGroupList,
