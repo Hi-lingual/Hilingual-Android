@@ -1,5 +1,6 @@
 package com.hilingual.presentation.feedprofile.profile
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,15 +11,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -26,6 +29,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,6 +58,7 @@ import com.hilingual.presentation.feedprofile.profile.component.FeedProfileTabRo
 import com.hilingual.presentation.feedprofile.profile.component.ReportBlockBottomSheet
 import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
 @Composable
@@ -66,6 +74,10 @@ internal fun FeedProfileRoute(
     val context = LocalContext.current
     val toastTrigger = LocalToastTrigger.current
     val dialogTrigger = LocalDialogTrigger.current
+
+    LaunchedEffect(Unit) {
+        viewModel.loadFeedProfile()
+    }
 
     viewModel.sideEffect.collectSideEffect {
         when (it) {
@@ -135,8 +147,7 @@ private fun FeedProfileScreen(
     var isBlockBottomSheetVisible by remember { mutableStateOf(false) }
     var isReportUserDialogVisible by remember { mutableStateOf(false) }
 
-    val profileListState = rememberLazyListState()
-    var shouldEnableScroll by remember { mutableStateOf(true) }
+    val scrollState = rememberScrollState()
 
     val sharedDiaryListState = rememberLazyListState()
     val likedDiaryListState = rememberLazyListState()
@@ -150,34 +161,23 @@ private fun FeedProfileScreen(
         }
     }
 
-    val canParentScrollForOthers by remember {
-        derivedStateOf { profileListState.firstVisibleItemIndex >= 1 }
-    }
-
-    val canParentScrollForMine by remember {
-        derivedStateOf { profileListState.firstVisibleItemIndex >= 2 }
-    }
-
     val profile = uiState.feedProfileInfo
-    val finalScrollEnabled = if (profile.isBlock == true) false else shouldEnableScroll
 
     val isFabVisible by remember {
         derivedStateOf {
-            finalScrollEnabled && (
-                profileListState.firstVisibleItemIndex > 0 ||
-                    profileListState.firstVisibleItemScrollOffset > 0
-                )
+            scrollState.value > 0 || currentListState.firstVisibleItemIndex > 0 || currentListState.firstVisibleItemScrollOffset > 0
         }
     }
 
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }
             .distinctUntilChanged()
+            .drop(1)
             .collect { pageIndex ->
                 val tabType = if (pageIndex == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
                 onTabRefresh(tabType)
                 coroutineScope.launch {
-                    profileListState.animateScrollToItem(0)
+                    scrollState.animateScrollTo(0)
                     when {
                         profile.isMine -> {
                             currentListState.animateScrollToItem(0)
@@ -213,146 +213,126 @@ private fun FeedProfileScreen(
                 )
             }
 
-            LazyColumn(
-                state = profileListState,
-                userScrollEnabled = finalScrollEnabled,
-                modifier = Modifier.fillMaxSize()
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(scrollState)
             ) {
-                item {
-                    Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                    with(profile) {
-                        FeedProfileInfo(
-                            profileImageUrl = profileImageUrl,
-                            nickname = nickname,
-                            streak = streak,
-                            follower = follower,
-                            following = following,
-                            onFollowClick = { onFollowClick(isMine) },
-                            isMine = isMine,
-                            isFollowing = isFollowing,
-                            isFollowed = isFollowed,
-                            isBlock = isBlock,
-                            onActionButtonClick = {
-                                if (isBlock == true) {
-                                    onBlockClick()
+                with(profile) {
+                    FeedProfileInfo(
+                        profileImageUrl = profileImageUrl,
+                        nickname = nickname,
+                        streak = streak,
+                        follower = follower,
+                        following = following,
+                        onFollowClick = { onFollowClick(isMine) },
+                        isMine = isMine,
+                        isFollowing = isFollowing,
+                        isFollowed = isFollowed,
+                        isBlock = isBlock,
+                        onActionButtonClick = {
+                            if (isBlock == true) {
+                                onBlockClick()
+                            } else {
+                                onActionButtonClick(isFollowing)
+                            }
+                        },
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+            }
+
+            when {
+                profile.isMine -> {
+                    FeedProfileTabRow(
+                        tabIndex = pagerState.currentPage,
+                        onTabSelected = { index ->
+                            coroutineScope.launch {
+                                val tabType = if (index == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
+                                if (index == pagerState.currentPage) {
+                                    onTabRefresh(tabType)
                                 } else {
-                                    onActionButtonClick(isFollowing)
+                                    pagerState.animateScrollToPage(index)
                                 }
-                            },
-                            modifier = Modifier.padding(horizontal = 16.dp)
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(HilingualTheme.colors.white)
+                            .stickyHeader(scrollState)
+                    )
+
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.fillMaxSize()
+                    ) { page ->
+                        val tabType = DiaryTabType.entries[page]
+                        val (diaries, emptyCardType, listState) = when (tabType) {
+                            DiaryTabType.SHARED -> Triple(
+                                uiState.sharedDiaries,
+                                FeedEmptyCardType.NOT_SHARED,
+                                sharedDiaryListState
+                            )
+                            DiaryTabType.LIKED -> Triple(
+                                uiState.likedDiaries,
+                                FeedEmptyCardType.NOT_LIKED,
+                                likedDiaryListState
+                            )
+                        }
+
+                        DiaryListScreen(
+                            diaries = diaries,
+                            emptyCardType = emptyCardType,
+                            onProfileClick = onProfileClick,
+                            onContentDetailClick = onContentDetailClick,
+                            onLikeClick = { diaryId, isLiked -> onLikeClick(diaryId, isLiked, tabType) },
+                            onUnpublishClick = onUnpublishClick,
+                            onReportClick = onReportDiaryClick,
+                            listState = listState,
+                            modifier = Modifier.fillMaxSize()
                         )
                     }
                 }
 
-                when {
-                    profile.isMine -> {
-                        stickyHeader {
-                            FeedProfileTabRow(
-                                tabIndex = pagerState.currentPage,
-                                onTabSelected = { index ->
-                                    coroutineScope.launch {
-                                        val tabType = if (index == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
-                                        if (index == pagerState.currentPage) {
-                                            onTabRefresh(tabType)
-                                        } else {
-                                            pagerState.animateScrollToPage(index)
-                                        }
-                                    }
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(HilingualTheme.colors.white)
-                            )
-                        }
+                profile.isBlock == true -> {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(modifier = Modifier.height(140.dp))
 
-                        item {
-                            HorizontalPager(
-                                state = pagerState,
-                                modifier = Modifier.fillParentMaxSize()
-                            ) { page ->
+                        Text(
+                            text = "${profile.nickname}님의 글을 확인할 수 없어요.",
+                            style = HilingualTheme.typography.headB18,
+                            color = HilingualTheme.colors.black,
+                            textAlign = TextAlign.Center
+                        )
 
-                                val tabType = DiaryTabType.entries[page]
-                                val (diaries, emptyCardType, listState) = when (tabType) {
-                                    DiaryTabType.SHARED -> Triple(
-                                        uiState.sharedDiaries,
-                                        FeedEmptyCardType.NOT_SHARED,
-                                        sharedDiaryListState
-                                    )
-                                    DiaryTabType.LIKED -> Triple(
-                                        uiState.likedDiaries,
-                                        FeedEmptyCardType.NOT_LIKED,
-                                        likedDiaryListState
-                                    )
-                                }
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                                DiaryListScreen(
-                                    diaries = diaries,
-                                    emptyCardType = emptyCardType,
-                                    onProfileClick = onProfileClick,
-                                    onContentDetailClick = onContentDetailClick,
-                                    onLikeClick = { diaryId, isLiked -> onLikeClick(diaryId, isLiked, tabType) },
-                                    onUnpublishClick = onUnpublishClick,
-                                    onReportClick = onReportDiaryClick,
-                                    onScrollStateChanged = { isScrollable ->
-                                        shouldEnableScroll = isScrollable
-                                    },
-                                    isNestedScroll = true,
-                                    canParentScroll = canParentScrollForMine,
-                                    listState = listState,
-                                    modifier = Modifier.fillParentMaxSize()
-                                )
-                            }
-                        }
+                        Text(
+                            text = "차단을 해제하면 글을 확인할 수 있어요.",
+                            style = HilingualTheme.typography.bodyM16,
+                            color = HilingualTheme.colors.gray400,
+                            textAlign = TextAlign.Center
+                        )
                     }
+                }
 
-                    profile.isBlock == true -> {
-                        item {
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Spacer(modifier = Modifier.height(140.dp))
-
-                                Text(
-                                    text = "${profile.nickname}님의 글을 확인할 수 없어요.",
-                                    style = HilingualTheme.typography.headB18,
-                                    color = HilingualTheme.colors.black,
-                                    textAlign = TextAlign.Center
-                                )
-
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                Text(
-                                    text = "차단을 해제하면 글을 확인할 수 있어요.",
-                                    style = HilingualTheme.typography.bodyM16,
-                                    color = HilingualTheme.colors.gray400,
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-                        }
-                    }
-
-                    else -> {
-                        item {
-                            DiaryListScreen(
-                                diaries = uiState.sharedDiaries,
-                                emptyCardType = FeedEmptyCardType.NOT_SHARED,
-                                onProfileClick = onProfileClick,
-                                onContentDetailClick = onContentDetailClick,
-                                onLikeClick = { diaryId, isLiked -> onLikeClick(diaryId, isLiked, DiaryTabType.SHARED) },
-                                onUnpublishClick = onUnpublishClick,
-                                onReportClick = onReportDiaryClick,
-                                onScrollStateChanged = { isScrollable ->
-                                    shouldEnableScroll = isScrollable
-                                },
-                                isNestedScroll = true,
-                                canParentScroll = canParentScrollForOthers,
-                                listState = sharedDiaryListState,
-                                modifier = Modifier.fillParentMaxSize()
-                            )
-                        }
-                    }
+                else -> {
+                    DiaryListScreen(
+                        diaries = uiState.sharedDiaries,
+                        emptyCardType = FeedEmptyCardType.NOT_SHARED,
+                        onProfileClick = onProfileClick,
+                        onContentDetailClick = onContentDetailClick,
+                        onLikeClick = { diaryId, isLiked -> onLikeClick(diaryId, isLiked, DiaryTabType.SHARED) },
+                        onUnpublishClick = onUnpublishClick,
+                        onReportClick = onReportDiaryClick,
+                        listState = sharedDiaryListState,
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
             }
         }
@@ -361,7 +341,7 @@ private fun FeedProfileScreen(
             isVisible = isFabVisible,
             onClick = {
                 coroutineScope.launch {
-                    profileListState.animateScrollToItem(0)
+                    scrollState.animateScrollTo(0)
                     when {
                         profile.isMine -> {
                             currentListState.animateScrollToItem(0)
@@ -409,6 +389,28 @@ private fun FeedProfileScreen(
             onReportUserClick()
         }
     )
+}
+
+private fun Modifier.stickyHeader(scrollState: ScrollState): Modifier = composed {
+    var initialY by remember { mutableFloatStateOf(0f) }
+    var isPlaced by remember { mutableStateOf(false) }
+    this
+        .onGloballyPositioned { coordinates ->
+            if (!isPlaced) {
+                initialY = coordinates.parentLayoutCoordinates?.localPositionOf(
+                    coordinates,
+                    Offset.Zero
+                )?.y ?: 0f
+                isPlaced = true
+            }
+        }
+        .graphicsLayer {
+            translationY = if (scrollState.value > initialY) {
+                scrollState.value - initialY
+            } else {
+                0f
+            }
+        }
 }
 
 @Preview(showBackground = true)

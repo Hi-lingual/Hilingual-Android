@@ -21,7 +21,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -63,7 +65,10 @@ internal fun VocaDialog(
     isBookmarked: Boolean,
     onBookmarkClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    properties: DialogProperties = DialogProperties(usePlatformDefaultWidth = false)
+    properties: DialogProperties = DialogProperties(
+        usePlatformDefaultWidth = false,
+        decorFitsSystemWindows = false
+    )
 ) {
     var isMarked by remember { mutableStateOf(isBookmarked) }
 
@@ -76,69 +81,78 @@ internal fun VocaDialog(
 
         Box(
             modifier = modifier
+                .fillMaxSize()
+                .background(HilingualTheme.colors.dim2)
+                .noRippleClickable(onClick = onDismiss)
+                .navigationBarsPadding()
                 .padding(horizontal = 16.dp)
-                .padding(bottom = 20.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .fillMaxWidth()
-                .background(
-                    color = HilingualTheme.colors.white,
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .padding(top = 28.dp, bottom = 40.dp)
-                .padding(horizontal = 24.dp)
+                .padding(bottom = 20.dp),
+            contentAlignment = Alignment.BottomCenter
         ) {
-            Column(
+            Box(
                 modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(bottom = 80.dp, end = 44.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .fillMaxWidth()
+                    .background(
+                        color = HilingualTheme.colors.white,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .padding(top = 28.dp, bottom = 40.dp)
+                    .padding(horizontal = 24.dp)
             ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    phraseType.forEach { type ->
-                        key(type) {
-                            WordPhraseTypeTag(phraseType = type)
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(bottom = 80.dp, end = 44.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        phraseType.forEach { type ->
+                            key(type) {
+                                WordPhraseTypeTag(phraseType = type)
+                            }
                         }
                     }
+
+                    Text(
+                        text = phrase,
+                        style = HilingualTheme.typography.bodyM20,
+                        color = HilingualTheme.colors.black
+                    )
+
+                    Text(
+                        text = explanation,
+                        style = HilingualTheme.typography.bodyM14,
+                        color = HilingualTheme.colors.black
+                    )
                 }
 
-                Text(
-                    text = phrase,
-                    style = HilingualTheme.typography.bodyM20,
-                    color = HilingualTheme.colors.black
+                Icon(
+                    imageVector = ImageVector.vectorResource(
+                        id = if (isMarked) {
+                            DesignSystemR.drawable.ic_save_28_filled
+                        } else {
+                            DesignSystemR.drawable.ic_save_28_empty
+                        }
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .align(Alignment.TopEnd)
+                        .noRippleClickable {
+                            isMarked = !isMarked
+                            onBookmarkClick(phraseId, isMarked)
+                        },
+                    tint = Color.Unspecified
                 )
 
                 Text(
-                    text = explanation,
-                    style = HilingualTheme.typography.bodyM14,
-                    color = HilingualTheme.colors.black
+                    text = writtenDate,
+                    style = HilingualTheme.typography.captionM12,
+                    color = HilingualTheme.colors.gray400,
+                    modifier = Modifier.align(Alignment.BottomEnd)
                 )
             }
-
-            Icon(
-                imageVector = ImageVector.vectorResource(
-                    id = if (isMarked) {
-                        DesignSystemR.drawable.ic_save_28_filled
-                    } else {
-                        DesignSystemR.drawable.ic_save_28_empty
-                    }
-                ),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(36.dp)
-                    .align(Alignment.TopEnd)
-                    .noRippleClickable {
-                        isMarked = !isMarked
-                        onBookmarkClick(phraseId, isMarked)
-                    },
-                tint = Color.Unspecified
-            )
-
-            Text(
-                text = writtenDate,
-                style = HilingualTheme.typography.captionM12,
-                color = HilingualTheme.colors.gray400,
-                modifier = Modifier.align(Alignment.BottomEnd)
-            )
         }
     }
 }

@@ -30,7 +30,6 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -76,25 +75,31 @@ constructor(
     fun updateSort(sort: WordSortType) {
         _uiState.update {
             it.copy(
-                sortType = sort
+                sortType = sort,
+                vocaGroupList = UiState.Loading
             )
         }
     }
 
-    fun fetchWords(sort: WordSortType) {
+    fun fetchWords(sort: WordSortType, isRefresh: Boolean = false) {
         viewModelScope.launch {
+            if (isRefresh) {
+                _uiState.update { it.copy(isRefreshing = true) }
+            }
+
             vocaRepository.getVocaList(sort = sort.sortParam)
                 .onSuccess { (count, vocaLists) ->
-                    delay(200)
                     _uiState.update {
                         it.copy(
-                            vocaGroupList = UiState.Success(vocaLists.toPersistentList()),
-                            vocaCount = count
+                            vocaGroupList = UiState.Success(vocaLists.toImmutableList()),
+                            vocaCount = count,
+                            isRefreshing = false
                         )
                     }
                     AtoZGroupList = vocaLists.toPersistentList()
                 }
                 .onLogFailure {
+                    _uiState.update { it.copy(isRefreshing = false) }
                     _sideEffect.emit(VocaSideEffect.ShowRetryDialog {})
                 }
         }
@@ -195,6 +200,10 @@ constructor(
                     _sideEffect.emit(VocaSideEffect.ShowRetryDialog {})
                 }
         }
+    }
+
+    fun refreshVocaList() {
+        fetchWords(_uiState.value.sortType, isRefresh = true)
     }
 }
 

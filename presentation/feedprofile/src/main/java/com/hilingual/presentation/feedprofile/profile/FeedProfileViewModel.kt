@@ -44,27 +44,27 @@ internal class FeedProfileViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<FeedProfileSideEffect>()
     val sideEffect: SharedFlow<FeedProfileSideEffect> = _sideEffect.asSharedFlow()
 
-    init {
-        loadFeedProfile()
-    }
-
-    private fun loadFeedProfile() {
+    fun loadFeedProfile() {
         viewModelScope.launch {
             val feedProfileDeferred = async { feedRepository.getFeedProfile(targetUserId) }
             val sharedDiariesDeferred = async { feedRepository.getSharedDiaries(targetUserId) }
+            val likedDiariesDeferred = async { feedRepository.getLikedDiaries(targetUserId) }
 
             val feedProfileResult = feedProfileDeferred.await()
             val sharedDiariesResult = sharedDiariesDeferred.await()
+            val likedDiariesResult = likedDiariesDeferred.await()
 
-            if (feedProfileResult.isFailure || sharedDiariesResult.isFailure) {
+            if (feedProfileResult.isFailure || sharedDiariesResult.isFailure || likedDiariesResult.isFailure) {
                 feedProfileResult.onLogFailure {}
                 sharedDiariesResult.onLogFailure {}
+                likedDiariesResult.onLogFailure {}
                 _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
                 return@launch
             }
 
             val feedProfileInfoModel = feedProfileResult.getOrThrow()
             val sharedDiariesModel = sharedDiariesResult.getOrThrow()
+            val likedDiariesModel = likedDiariesResult.getOrThrow()
 
             val sharedDiaryUIModels = sharedDiariesModel.diaryList.map { sharedDiary ->
                 sharedDiary.toState(
@@ -73,11 +73,17 @@ internal class FeedProfileViewModel @Inject constructor(
                 )
             }.toImmutableList()
 
+            val likedDiaryUIModels = likedDiariesModel.diaryList.map { likedDiary ->
+                likedDiary.toState()
+            }.toImmutableList()
+
             _uiState.update {
                 UiState.Success(
                     FeedProfileUiState(
                         feedProfileInfo = feedProfileInfoModel.toState(),
-                        sharedDiaries = sharedDiaryUIModels
+                        sharedDiaries = sharedDiaryUIModels,
+                        likedDiaries = likedDiaryUIModels
+
                     )
                 )
             }
