@@ -27,6 +27,8 @@ interface AuthRemoteDataSource {
     ): BaseResponse<LoginResponseDto>
 
     suspend fun verifyCode(request: VerifyCodeRequestDto): BaseResponse<Unit>
+
     suspend fun logout(): BaseResponse<Unit>
+
     suspend fun withdraw(): BaseResponse<Unit>
 }
