@@ -56,7 +56,8 @@ class HomeViewModel @Inject constructor(
     val uiState: StateFlow<UiState<HomeUiState>> = _uiState.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<HomeSideEffect>(
-        replay = 1,
+        replay = 0,
+        extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
     val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
