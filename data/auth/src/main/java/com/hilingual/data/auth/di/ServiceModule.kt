@@ -18,8 +18,10 @@ package com.hilingual.data.auth.di
 import com.hilingual.core.network.di.NoAuthClient
 import com.hilingual.core.network.di.RefreshClient
 import com.hilingual.data.auth.service.LoginService
+import com.hilingual.data.auth.service.LogoutService
 import com.hilingual.data.auth.service.ReissueService
 import com.hilingual.data.auth.service.VerifyService
+import com.hilingual.data.auth.service.WithdrawService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,13 +34,26 @@ import javax.inject.Singleton
 internal object ServiceModule {
     @Provides
     @Singleton
-    fun provideLoginService(@NoAuthClient retrofit: Retrofit): LoginService = retrofit.create(LoginService::class.java)
+    fun provideLoginService(@NoAuthClient retrofit: Retrofit): LoginService =
+        retrofit.create(LoginService::class.java)
 
     @Provides
     @Singleton
-    fun provideReissueService(@RefreshClient retrofit: Retrofit): ReissueService = retrofit.create(ReissueService::class.java)
+    fun provideReissueService(@RefreshClient retrofit: Retrofit): ReissueService =
+        retrofit.create(ReissueService::class.java)
 
     @Provides
     @Singleton
-    fun provideVerifyService(@NoAuthClient retrofit: Retrofit): VerifyService = retrofit.create(VerifyService::class.java)
+    fun provideVerifyService(@NoAuthClient retrofit: Retrofit): VerifyService =
+        retrofit.create(VerifyService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideLogoutService(retrofit: Retrofit): LogoutService =
+        retrofit.create(LogoutService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideWithdrawService(retrofit: Retrofit): WithdrawService =
+        retrofit.create(WithdrawService::class.java)
 }
