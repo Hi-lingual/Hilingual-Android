@@ -35,7 +35,7 @@ import com.hilingual.core.designsystem.component.textfield.HilingualSearchTextFi
 import com.hilingual.core.designsystem.component.topappbar.TitleLeftAlignedTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
-private val INPUT_FILTER_REGEX = Regex("""[^a-zA-Z ]""")
+private val INPUT_FILTER_REGEX = Regex("""[^a-zA-Z -]""")
 
 @Composable
 internal fun VocaHeader(
