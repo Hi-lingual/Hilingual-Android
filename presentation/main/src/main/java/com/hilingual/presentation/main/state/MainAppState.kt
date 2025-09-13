@@ -131,10 +131,6 @@ internal class MainAppState(
         launchSingleTop = true
     }
 
-    private val launchSingleTopOption = navOptions {
-        launchSingleTop = true
-    }
-
     fun navigateToOtp(navOptions: NavOptions? = clearStackNavOptions) {
         navController.navigateToOtp(navOptions)
     }
@@ -157,26 +153,32 @@ internal class MainAppState(
 
     fun navigateToDiaryFeedback(
         diaryId: Long,
-        navOptions: NavOptions? = launchSingleTopOption
+        navOptions: NavOptions? = null
     ) {
         navController.navigateToDiaryFeedback(diaryId, navOptions)
     }
 
     fun navigateToDiaryWrite(
         selectedDate: LocalDate,
-        navOptions: NavOptions? = launchSingleTopOption
+        navOptions: NavOptions? = navOptions {
+            launchSingleTop = true
+        }
     ) {
         navController.navigateToDiaryWrite(selectedDate, navOptions)
     }
 
     fun navigateToNotification(
-        navOptions: NavOptions = launchSingleTopOption
+        navOptions: NavOptions = navOptions {
+            launchSingleTop = true
+        }
     ) {
         navController.navigateToNotification(navOptions)
     }
 
     fun navigateToNotificationSetting(
-        navOptions: NavOptions = launchSingleTopOption
+        navOptions: NavOptions = navOptions {
+            launchSingleTop = true
+        }
     ) {
         navController.navigateToNotificationSetting(navOptions)
     }
@@ -187,19 +189,19 @@ internal class MainAppState(
 
     fun navigateToFeedDiary(
         diaryId: Long,
-        navOptions: NavOptions? = launchSingleTopOption
+        navOptions: NavOptions? = null
     ) {
         navController.navigateToFeedDiary(diaryId, navOptions)
     }
 
     fun navigateToFeedProfile(
         userId: Long,
-        navOptions: NavOptions? = launchSingleTopOption
+        navOptions: NavOptions? = null
     ) {
         navController.navigateToFeedProfile(userId, navOptions)
     }
 
-    fun navigateToMyFeedProfile(navOptions: NavOptions? = launchSingleTopOption) {
+    fun navigateToMyFeedProfile(navOptions: NavOptions? = null) {
         navController.navigateToMyFeedProfile(navOptions)
     }
 
