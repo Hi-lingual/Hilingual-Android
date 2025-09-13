@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,6 +45,17 @@ internal class FeedProfileViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<FeedProfileSideEffect>()
     val sideEffect: SharedFlow<FeedProfileSideEffect> = _sideEffect.asSharedFlow()
 
+    private fun loadFeedProfileInfo() {
+        viewModelScope.launch {
+            feedRepository.getFeedProfile(targetUserId)
+                .onSuccess { feedProfileInfoModel ->
+                    _uiState.updateSuccess { currentState ->
+                        currentState.copy(feedProfileInfo = feedProfileInfoModel.toState())
+                    }
+                }
+        }
+    }
+
     fun loadFeedProfile() {
         viewModelScope.launch {
             val feedProfileDeferred = async { feedRepository.getFeedProfile(targetUserId) }
@@ -55,7 +67,7 @@ internal class FeedProfileViewModel @Inject constructor(
             if (feedProfileResult.isFailure || sharedDiariesResult.isFailure) {
                 feedProfileResult.onLogFailure {}
                 sharedDiariesResult.onLogFailure {}
-                _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
+                _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfileInfo() })
                 return@launch
             }
 
@@ -63,15 +75,16 @@ internal class FeedProfileViewModel @Inject constructor(
             val sharedDiariesModel = sharedDiariesResult.getOrThrow()
 
             val likedDiariesModel = if (feedProfileInfoModel.isMine) {
-                val likedDiariesResult = feedRepository.getLikedDiaries(targetUserId)
-                if (likedDiariesResult.isFailure) {
-                    likedDiariesResult.onLogFailure {}
-                    _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
-                    return@launch
-                }
-                likedDiariesResult.getOrThrow()
+                feedRepository.getLikedDiaries(targetUserId).fold(
+                    onSuccess = { it.diaryList },
+                    onFailure = { throwable ->
+                        Timber.e(throwable)
+                        _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadLikedDiaries() })
+                        return@launch
+                    }
+                )
             } else {
-                null
+                emptyList()
             }
 
             val sharedDiaryUIModels = sharedDiariesModel.diaryList.map { sharedDiary ->
@@ -81,9 +94,9 @@ internal class FeedProfileViewModel @Inject constructor(
                 )
             }.toImmutableList()
 
-            val likedDiaryUIModels = likedDiariesModel?.diaryList?.map { likedDiary ->
+            val likedDiaryUIModels = likedDiariesModel.map { likedDiary ->
                 likedDiary.toState()
-            }?.toImmutableList() ?: emptyList<FeedDiaryUIModel>().toImmutableList()
+            }.toImmutableList()
 
             _uiState.update {
                 UiState.Success(
@@ -137,17 +150,17 @@ internal class FeedProfileViewModel @Inject constructor(
     }
 
     fun refreshTab(tabType: DiaryTabType) {
-        _uiState.updateSuccess { currentState ->
-            val feedProfileModel = currentState.feedProfileInfo
-            when (tabType) {
-                DiaryTabType.SHARED -> loadSharedDiaries(feedProfileModel)
-                DiaryTabType.LIKED -> {
-                    if (feedProfileModel.isMine) {
-                        loadLikedDiaries()
-                    }
+        val currentState = _uiState.value
+        if (currentState !is UiState.Success) return
+
+        val feedProfileModel = currentState.data.feedProfileInfo
+        when (tabType) {
+            DiaryTabType.SHARED -> loadSharedDiaries(feedProfileModel)
+            DiaryTabType.LIKED -> {
+                if (feedProfileModel.isMine) {
+                    loadLikedDiaries()
                 }
             }
-            currentState
         }
     }
 

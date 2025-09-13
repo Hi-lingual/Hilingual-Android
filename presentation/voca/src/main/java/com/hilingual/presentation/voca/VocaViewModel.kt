@@ -60,6 +60,8 @@ constructor(
     private var AtoZGroupList: ImmutableList<GroupingVocaModel> = persistentListOf()
 
     init {
+        fetchWords(_uiState.value.sortType)
+
         @OptIn(FlowPreview::class)
         _uiState
             .map { it.searchKeyword }
@@ -72,26 +74,22 @@ constructor(
     }
 
     fun updateSort(sort: WordSortType) {
-        val isSameSortType = _uiState.value.sortType == sort
         _uiState.update {
             it.copy(
                 sortType = sort,
                 vocaGroupList = UiState.Loading
             )
         }
-
-        if (isSameSortType) {
-            fetchWords(sort, isRefresh = true)
-        }
+        fetchWords(sort, isRefresh = true)
     }
 
-    fun fetchWords(sort: WordSortType, isRefresh: Boolean = false) {
+    private fun fetchWords(sort: WordSortType, isRefresh: Boolean = false) {
         viewModelScope.launch {
             if (isRefresh) {
                 _uiState.update { it.copy(isRefreshing = true) }
             }
 
-            vocaRepository.getVocaList(sort = sort.sortParam)
+            loadVocaList(sort)
                 .onSuccess { (count, vocaLists) ->
                     _uiState.update {
                         it.copy(
@@ -100,11 +98,8 @@ constructor(
                             isRefreshing = false
                         )
                     }
-                    if (sort != WordSortType.AtoZ) {
-                        loadAtoZDataForSearch()
-                    } else {
-                        AtoZGroupList = vocaLists.toImmutableList()
-                    }
+
+                    AtoZDataForSearch(sort, vocaLists.toImmutableList())
                 }
                 .onLogFailure {
                     _uiState.update { it.copy(isRefreshing = false) }
@@ -113,15 +108,23 @@ constructor(
         }
     }
 
-    private fun loadAtoZDataForSearch() {
-        viewModelScope.launch {
-            vocaRepository.getVocaList(sort = WordSortType.AtoZ.sortParam)
+    private suspend fun AtoZDataForSearch(
+        currentSort: WordSortType,
+        currentData: ImmutableList<GroupingVocaModel>
+    ) {
+        if (currentSort == WordSortType.AtoZ) {
+            AtoZGroupList = currentData
+        } else {
+            loadVocaList(WordSortType.AtoZ)
                 .onSuccess { (_, vocaLists) ->
                     AtoZGroupList = vocaLists.toImmutableList()
                 }
                 .onLogFailure { }
         }
     }
+
+    private suspend fun loadVocaList(sort: WordSortType) =
+        vocaRepository.getVocaList(sort = sort.sortParam)
 
     fun fetchVocaDetail(phraseId: Long) {
         viewModelScope.launch {

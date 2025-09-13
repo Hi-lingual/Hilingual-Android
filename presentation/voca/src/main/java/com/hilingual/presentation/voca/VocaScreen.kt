@@ -88,10 +88,6 @@ internal fun VocaRoute(
         }
     }
 
-    LaunchedEffect(uiState.sortType) {
-        viewModel.fetchWords(uiState.sortType)
-    }
-
     viewModel.sideEffect.collectSideEffect {
         when (it) {
             is VocaSideEffect.ShowRetryDialog -> {
@@ -175,6 +171,10 @@ private fun VocaScreen(
         if (viewType == ScreenType.DEFAULT) {
             listState.animateScrollToItem(0)
         }
+    }
+
+    LaunchedEffect(sortType) {
+        listState.animateScrollToItem(0)
     }
 
     Box(
