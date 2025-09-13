@@ -43,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -221,6 +222,7 @@ private fun DiaryWriteScreen(
     val focusManager = LocalFocusManager.current
     var isDialogVisible by remember { mutableStateOf(false) }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
+    var isTextFieldFocused by remember { mutableStateOf(false) }
 
     BackHandler {
         cancelDiaryWrite(
@@ -273,23 +275,6 @@ private fun DiaryWriteScreen(
             }
         )
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(top = 12.dp, bottom = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            DateText(
-                selectedDateProvider = { selectedDate }
-            )
-
-            TextScanButton(
-                onClick = { isBottomSheetVisible = true }
-            )
-        }
-
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -297,6 +282,23 @@ private fun DiaryWriteScreen(
                 .verticalScroll(verticalScrollState)
                 .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
         ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 12.dp, bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                DateText(
+                    selectedDateProvider = { selectedDate }
+                )
+
+                TextScanButton(
+                    onClick = { isBottomSheetVisible = true }
+                )
+            }
+
             RecommendedTopicDropdown(
                 enTopic = topicEn,
                 koTopic = topicKo,
@@ -306,6 +308,9 @@ private fun DiaryWriteScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             HilingualLongTextField(
+                modifier = Modifier.onFocusChanged {
+                    if (it.isFocused) isTextFieldFocused = true
+                },
                 value = diaryText,
                 onValueChanged = onDiaryTextChanged,
                 maxLength = 1000,
@@ -343,6 +348,11 @@ private fun DiaryWriteScreen(
                 delay(5000)
                 balloon.dismiss()
             }
+
+            LaunchedEffect(isTextFieldFocused) {
+                if (isTextFieldFocused) balloon.dismiss()
+            }
+
             HilingualButton(
                 modifier = Modifier
                     .fillMaxWidth()

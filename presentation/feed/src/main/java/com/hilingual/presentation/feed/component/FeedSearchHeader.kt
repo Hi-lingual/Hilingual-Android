@@ -29,6 +29,8 @@ import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.textfield.HilingualSearchTextField
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
+private val INPUT_FILTER_REGEX = Regex("""[^\p{IsHangul}a-zA-Z0-9\p{Punct}\p{S}]""")
+
 @Composable
 internal fun FeedSearchHeader(
     searchWord: () -> String,
@@ -65,7 +67,10 @@ internal fun FeedSearchHeader(
 
         HilingualSearchTextField(
             value = searchWord(),
-            onValueChanged = onSearchWordChanged,
+            onValueChanged = {
+                val filteredText = it.replace(INPUT_FILTER_REGEX, "")
+                onSearchWordChanged(filteredText)
+            },
             placeholder = "닉네임을 입력해주세요.",
             backgroundColor = HilingualTheme.colors.gray100,
             modifier = Modifier
