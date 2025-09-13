@@ -33,7 +33,7 @@ internal fun DiaryFeedbackLoadingScreen(
             .background(HilingualTheme.colors.white)
     ) {
         Column(
-            modifier = modifier.align(Alignment.Center),
+            modifier = Modifier.align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(

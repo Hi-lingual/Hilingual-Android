@@ -24,8 +24,8 @@ import kotlinx.coroutines.delay
 
 @Composable
 internal fun AnimatedLoadingLottie(
-    modifier: Modifier = Modifier,
-    height: Dp
+    height: Dp,
+    modifier: Modifier = Modifier
 ) {
     val lottieFiles = remember {
         persistentListOf(
