@@ -67,7 +67,7 @@ internal class FeedProfileViewModel @Inject constructor(
             if (feedProfileResult.isFailure || sharedDiariesResult.isFailure) {
                 feedProfileResult.onLogFailure {}
                 sharedDiariesResult.onLogFailure {}
-                _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfileInfo() })
+                _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
                 return@launch
             }
 
@@ -144,7 +144,7 @@ internal class FeedProfileViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
+                    _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadLikedDiaries() })
                 }
         }
     }
@@ -252,8 +252,13 @@ internal class FeedProfileViewModel @Inject constructor(
             } else {
                 userRepository.putBlockUser(targetUserId)
             }
-            result.onSuccess { loadFeedProfile() }
-                .onLogFailure { }
+            result.onSuccess {
+                if (isCurrentlyBlocked) {
+                    loadFeedProfile()
+                } else {
+                    loadFeedProfileInfo()
+                }
+            }.onLogFailure { }
         }
     }
 }
