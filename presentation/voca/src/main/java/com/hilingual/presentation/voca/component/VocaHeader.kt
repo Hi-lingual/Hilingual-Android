@@ -35,6 +35,8 @@ import com.hilingual.core.designsystem.component.textfield.HilingualSearchTextFi
 import com.hilingual.core.designsystem.component.topappbar.TitleLeftAlignedTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
+private val INPUT_FILTER_REGEX = Regex("""[^a-zA-Z -]""")
+
 @Composable
 internal fun VocaHeader(
     searchText: () -> String,
@@ -56,7 +58,10 @@ internal fun VocaHeader(
         )
         HilingualSearchTextField(
             value = searchText(),
-            onValueChanged = onSearchTextChanged,
+            onValueChanged = {
+                val filteredText = it.replace(INPUT_FILTER_REGEX, "")
+                onSearchTextChanged(filteredText)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
