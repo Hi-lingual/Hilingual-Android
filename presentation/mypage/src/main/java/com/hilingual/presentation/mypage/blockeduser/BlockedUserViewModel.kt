@@ -21,10 +21,6 @@ internal class BlockedUserViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(BlockedUserUiState())
     val uiState: StateFlow<BlockedUserUiState> = _uiState.asStateFlow()
 
-    init {
-        getBlockList()
-    }
-
     fun getBlockList() {
         viewModelScope.launch {
             userRepository.getBlockList()
