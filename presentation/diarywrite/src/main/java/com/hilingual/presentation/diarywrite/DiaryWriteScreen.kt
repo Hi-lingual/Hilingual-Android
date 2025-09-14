@@ -23,6 +23,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -254,77 +255,81 @@ private fun DiaryWriteScreen(
         }
     )
 
-    Column(
-        modifier = Modifier
-            .statusBarColor(white)
-            .background(HilingualTheme.colors.white)
-            .fillMaxSize()
-            .padding(top = paddingValues.calculateTopPadding())
-            .navigationBarsPadding()
-            .addFocusCleaner(focusManager)
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        BackTopAppBar(
-            title = "일기 작성하기",
-            onBackClicked = {
-                cancelDiaryWrite(
-                    diaryText = diaryText,
-                    diaryImageUri = diaryImageUri,
-                    onBackClicked = onBackClicked,
-                    setDialogVisible = { isDialogVisible = it }
-                )
-            }
-        )
-
         Column(
             modifier = Modifier
-                .weight(1f)
-                .advancedImePadding()
-                .verticalScroll(verticalScrollState)
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                .statusBarColor(white)
+                .background(HilingualTheme.colors.white)
+                .fillMaxSize()
+                .padding(paddingValues)
+                .addFocusCleaner(focusManager)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 12.dp, bottom = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                DateText(
-                    selectedDateProvider = { selectedDate }
-                )
-
-                TextScanButton(
-                    onClick = { isBottomSheetVisible = true }
-                )
-            }
-
-            RecommendedTopicDropdown(
-                enTopic = topicEn,
-                koTopic = topicKo,
-                focusManager = focusManager
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            HilingualLongTextField(
-                modifier = Modifier.onFocusChanged {
-                    if (it.isFocused) isTextFieldFocused = true
-                },
-                value = diaryText,
-                onValueChanged = onDiaryTextChanged,
-                maxLength = 1000,
-                onDoneAction = {
-                    focusManager.clearFocus()
+            BackTopAppBar(
+                title = "일기 작성하기",
+                onBackClicked = {
+                    cancelDiaryWrite(
+                        diaryText = diaryText,
+                        diaryImageUri = diaryImageUri,
+                        onBackClicked = onBackClicked,
+                        setDialogVisible = { isDialogVisible = it }
+                    )
                 }
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .advancedImePadding()
+                    .verticalScroll(verticalScrollState)
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp, bottom = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    DateText(
+                        selectedDateProvider = { selectedDate }
+                    )
 
-            PhotoSelectButton(
-                selectedImgUri = diaryImageUri,
-                onImgSelected = onDiaryImageUriChanged
-            )
+                    TextScanButton(
+                        onClick = { isBottomSheetVisible = true }
+                    )
+                }
+
+                RecommendedTopicDropdown(
+                    enTopic = topicEn,
+                    koTopic = topicKo,
+                    focusManager = focusManager
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                HilingualLongTextField(
+                    modifier = Modifier
+                        .onFocusChanged {
+                            if (it.isFocused) isTextFieldFocused = true
+                        },
+                    value = diaryText,
+                    onValueChanged = onDiaryTextChanged,
+                    maxLength = 1000,
+                    onDoneAction = {
+                        focusManager.clearFocus()
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                PhotoSelectButton(
+                    selectedImgUri = diaryImageUri,
+                    onImgSelected = onDiaryImageUriChanged
+                )
+            }
         }
 
         Balloon(
@@ -341,7 +346,8 @@ private fun DiaryWriteScreen(
                 WriteGuideTooltip(
                     text = "10자 이상 작성해야 피드백 요청이 가능해요!"
                 )
-            }
+            },
+            modifier = Modifier.align(Alignment.BottomCenter)
         ) { balloon ->
             LaunchedEffect(Unit) {
                 balloon.showAlignTop()
@@ -356,7 +362,9 @@ private fun DiaryWriteScreen(
             HilingualButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp)
+                    .navigationBarsPadding(),
                 text = "피드백 요청하기",
                 enableProvider = { diaryText.length >= 10 },
                 onClick = onDiaryFeedbackRequestButtonClick
