@@ -23,12 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
@@ -64,6 +65,7 @@ internal fun FeedDiaryRoute(
 
     val snackbarTrigger = LocalSnackbarTrigger.current
     val toastTrigger = LocalToastTrigger.current
+    val dialogTrigger = LocalDialogTrigger.current
 
     BackHandler {
         if (isImageDetailVisible) {
@@ -93,7 +95,11 @@ internal fun FeedDiaryRoute(
                 toastTrigger(it.message)
             }
 
-            else -> {}
+            is FeedDiarySideEffect.ShowErrorDialog -> {
+                dialogTrigger.show(navigateUp)
+            }
+
+            is FeedDiarySideEffect.ShowRetryDialog -> { TODO() }
         }
     }
 

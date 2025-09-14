@@ -27,8 +27,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.notification.main.component.NotificationTapRow
@@ -39,6 +40,7 @@ import com.hilingual.presentation.notification.main.model.NoticeNotificationItem
 import com.hilingual.presentation.notification.main.tab.FeedScreen
 import com.hilingual.presentation.notification.main.tab.NoticeScreen
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
 
 @Composable
@@ -88,14 +90,20 @@ private fun NotificationScreen(
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(pagerState.currentPage) {
-        val tab = NotificationTab.entries[pagerState.currentPage]
-        onTabSelected(tab)
-        delay(100)
-        when (tab) {
-            NotificationTab.FEED -> feedListState.animateScrollToItem(0)
-            NotificationTab.NOTIFICATION -> noticeListState.animateScrollToItem(0)
-        }
+    LaunchedEffect(pagerState, feedListState, noticeListState) {
+        snapshotFlow { pagerState.currentPage }
+            .withIndex()
+            .collect { (index, page) ->
+                val tab = NotificationTab.entries[page]
+                onTabSelected(tab)
+                if (index > 0) {
+                    delay(100)
+                    when (tab) {
+                        NotificationTab.FEED -> feedListState.animateScrollToItem(0)
+                        NotificationTab.NOTIFICATION -> noticeListState.animateScrollToItem(0)
+                    }
+                }
+            }
     }
 
     Column(
@@ -106,7 +114,12 @@ private fun NotificationScreen(
     ) {
         NotificationTopAppBar(
             onBackClick = onBackClick,
-            onSettingClick = onSettingClick
+            onSettingClick = {
+                coroutineScope.launch {
+                    onSettingClick()
+                    pagerState.scrollToPage(0)
+                }
+            }
         )
         NotificationTapRow(
             tabIndex = pagerState.currentPage,

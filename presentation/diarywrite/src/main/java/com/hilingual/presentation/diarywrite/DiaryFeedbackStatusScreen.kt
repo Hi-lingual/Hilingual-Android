@@ -37,7 +37,6 @@ import com.hilingual.core.designsystem.component.image.HilingualLottieAnimation
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.diarywrite.component.FeedbackCompleteContent
 import com.hilingual.presentation.diarywrite.component.FeedbackFailureContent
-import com.hilingual.presentation.diarywrite.component.FeedbackLoadingContent
 import com.hilingual.presentation.diarywrite.component.FeedbackMedia
 import com.hilingual.presentation.diarywrite.component.FeedbackUIData
 import com.hilingual.core.designsystem.R as DesignSystemR
@@ -98,25 +97,6 @@ internal fun DiaryFeedbackStatusScreen(
         }
 
         content()
-    }
-}
-
-@Preview
-@Composable
-private fun DiaryFeedbackLoadingStatusScreenPreview() {
-    HilingualTheme {
-        DiaryFeedbackStatusScreen(
-            paddingValues = PaddingValues(0.dp),
-            uiData = FeedbackUIData(
-                title = "일기 저장 중..",
-                description = { Text("피드백을 요청하고 있어요.") },
-                media = FeedbackMedia.Lottie(
-                    resId = R.raw.lottie_feedback_loading,
-                    heightDp = 194.dp
-                )
-            ),
-            content = { FeedbackLoadingContent() }
-        )
     }
 }
 

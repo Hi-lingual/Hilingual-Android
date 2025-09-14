@@ -44,7 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
@@ -67,9 +67,6 @@ import com.hilingual.presentation.home.component.footer.HomeDropDownMenu
 import com.hilingual.presentation.home.component.footer.TodayTopic
 import com.hilingual.presentation.home.component.footer.WriteDiaryButton
 import com.hilingual.presentation.home.type.DiaryCardState
-import com.hilingual.presentation.home.util.isDateFuture
-import com.hilingual.presentation.home.util.isDateWritable
-import com.hilingual.presentation.home.util.isDateWritten
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -158,32 +155,7 @@ private fun HomeScreen(
 ) {
     val date = uiState.selectedDate
     val verticalScrollState = rememberScrollState()
-
-    val isWritten = remember(uiState.dateList, date) {
-        isDateWritten(date, uiState.dateList)
-    }
-    val isFuture = remember(date) { isDateFuture(date) }
-    val isWritable = remember(date) { isDateWritable(date) }
-    val isRewriteDisabled = remember(uiState.todayTopic) {
-        uiState.todayTopic?.remainingTime == -1
-    }
     var isExpanded by remember { mutableStateOf(false) }
-
-    val cardState = remember(isWritten, isFuture, isWritable, isRewriteDisabled) {
-        when {
-            isWritten -> DiaryCardState.WRITTEN
-            isFuture -> DiaryCardState.FUTURE
-            isWritable -> {
-                if (isRewriteDisabled) {
-                    DiaryCardState.REWRITE_DISABLED
-                } else {
-                    DiaryCardState.WRITABLE
-                }
-            }
-
-            else -> DiaryCardState.PAST
-        }
-    }
 
     Column(
         modifier = Modifier
@@ -241,11 +213,11 @@ private fun HomeScreen(
                 DiaryDateInfo(
                     selectedDate = date,
                     isPublished = uiState.diaryThumbnail?.isPublished ?: false,
-                    isWritten = isWritten,
+                    isWritten = uiState.cardState == DiaryCardState.WRITTEN,
                     modifier = Modifier.heightIn(min = 20.dp)
                 )
-                when {
-                    isWritten -> {
+                when (uiState.cardState) {
+                    DiaryCardState.WRITTEN -> {
                         uiState.diaryThumbnail?.let { diary ->
                             HomeDropDownMenu(
                                 isExpanded = isExpanded,
@@ -258,7 +230,8 @@ private fun HomeScreen(
                         }
                     }
 
-                    isWritable && !isRewriteDisabled -> DiaryTimeInfo(remainingTime = uiState.todayTopic?.remainingTime)
+                    DiaryCardState.WRITABLE -> DiaryTimeInfo(remainingTime = uiState.todayTopic?.remainingTime)
+                    else -> {}
                 }
             }
 
@@ -296,7 +269,8 @@ private fun HomeScreen(
                         )
                     }
 
-                    DiaryCardState.REWRITE_DISABLED, DiaryCardState.PAST -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
+                    DiaryCardState.REWRITE_DISABLED,
+                    DiaryCardState.PAST -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
                 }
             }
         }

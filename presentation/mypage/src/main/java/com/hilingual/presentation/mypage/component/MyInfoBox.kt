@@ -59,7 +59,7 @@ internal fun MyInfoBox(
                 )
                 .noRippleClickable(onClick = onEditButtonClick)
 
-            if (profileUrl.isNullOrBlank()) {
+            if (profileUrl.isBlank()) {
                 Image(
                     painter = painterResource(R.drawable.img_default_image),
                     contentDescription = null,

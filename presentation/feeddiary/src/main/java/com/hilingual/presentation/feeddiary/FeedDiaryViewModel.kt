@@ -64,23 +64,29 @@ internal class FeedDiaryViewModel @Inject constructor(
 
     private fun loadInitialData() {
         viewModelScope.launch {
+            val profileResult = feedRepository.getFeedDiaryProfile(diaryId)
+
+            if (profileResult.isFailure) {
+                _sideEffect.emit(FeedDiarySideEffect.ShowErrorDialog)
+                return@launch
+            }
+            val profileInfo = profileResult.getOrThrow()
+
             suspendRunCatching {
                 coroutineScope {
-                    val profileDeferred = async { feedRepository.getFeedDiaryProfile(diaryId) }
                     val contentDeferred = async { diaryRepository.getDiaryContent(diaryId) }
                     val feedbacksDeferred = async { diaryRepository.getDiaryFeedbacks(diaryId) }
                     val recommendExpressionsDeferred =
                         async { diaryRepository.getDiaryRecommendExpressions(diaryId) }
 
-                    val profileResult = profileDeferred.await().getOrThrow()
                     val contentResult = contentDeferred.await().getOrThrow()
                     val feedbacksResult = feedbacksDeferred.await().getOrThrow()
                     val recommendExpressionsResult =
                         recommendExpressionsDeferred.await().getOrThrow()
 
                     FeedDiaryUiState(
-                        isMine = profileResult.isMine,
-                        profileContent = profileResult.toState(),
+                        isMine = profileInfo.isMine,
+                        profileContent = profileInfo.toState(),
                         writtenDate = contentResult.writtenDate,
                         diaryContent = contentResult.toState(),
                         feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),
@@ -192,4 +198,6 @@ sealed interface FeedDiarySideEffect {
         FeedDiarySideEffect
 
     data class ShowToast(val message: String) : FeedDiarySideEffect
+
+    data object ShowErrorDialog : FeedDiarySideEffect
 }
