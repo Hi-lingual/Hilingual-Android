@@ -185,6 +185,10 @@ internal class FeedProfileViewModel @Inject constructor(
                             }
                         }
                     }
+
+                    val isMine = (_uiState.value as? UiState.Success)?.data?.feedProfileInfo?.isMine == true
+                    if (isMine) return@launch
+                    if (isLiked) showLikeSnackbar()
                 }
                 .onLogFailure { }
         }
@@ -261,9 +265,14 @@ internal class FeedProfileViewModel @Inject constructor(
             }.onLogFailure { }
         }
     }
+
+    private suspend fun showLikeSnackbar() {
+        _sideEffect.emit(FeedProfileSideEffect.ShowDiaryLikeSnackbar(message = "일기를 공감했습니다.", actionLabel = "보러가기"))
+    }
 }
 
 sealed interface FeedProfileSideEffect {
+    data class ShowDiaryLikeSnackbar(val message: String, val actionLabel: String) : FeedProfileSideEffect
     data class ShowToast(val message: String) : FeedProfileSideEffect
     data class ShowRetryDialog(val onRetry: () -> Unit) : FeedProfileSideEffect
 }

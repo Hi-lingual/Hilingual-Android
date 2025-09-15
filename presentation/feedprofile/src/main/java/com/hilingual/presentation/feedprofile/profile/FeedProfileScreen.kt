@@ -42,7 +42,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
+import com.hilingual.core.common.model.SnackbarRequest
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -65,6 +67,7 @@ import kotlinx.coroutines.launch
 internal fun FeedProfileRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
+    navigateToMyFeedProfile: () -> Unit,
     navigateToFeedProfile: (Long) -> Unit,
     navigateToFollowList: () -> Unit,
     navigateToFeedDiary: (Long) -> Unit,
@@ -72,6 +75,8 @@ internal fun FeedProfileRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    val snackbarTrigger = LocalSnackbarTrigger.current
     val toastTrigger = LocalToastTrigger.current
     val dialogTrigger = LocalDialogTrigger.current
 
@@ -81,6 +86,16 @@ internal fun FeedProfileRoute(
 
     viewModel.sideEffect.collectSideEffect {
         when (it) {
+            is FeedProfileSideEffect.ShowDiaryLikeSnackbar -> {
+                snackbarTrigger(
+                    SnackbarRequest(
+                        message = it.message,
+                        buttonText = it.actionLabel,
+                        onClick = navigateToMyFeedProfile
+                    )
+                )
+            }
+
             is FeedProfileSideEffect.ShowToast -> {
                 toastTrigger(it.message)
             }
