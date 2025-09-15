@@ -103,7 +103,7 @@ constructor(
                 }
                 .onLogFailure {
                     _uiState.update { it.copy(isRefreshing = false) }
-                    _sideEffect.emit(VocaSideEffect.ShowRetryDialog {})
+                    _sideEffect.emit(VocaSideEffect.ShowErrorDialog {})
                 }
         }
     }
@@ -137,7 +137,7 @@ constructor(
                     }
                 }
                 .onLogFailure {
-                    _sideEffect.emit(VocaSideEffect.ShowRetryDialog {})
+                    _sideEffect.emit(VocaSideEffect.ShowErrorDialog(onRetry = ::refreshVocaList))
                 }
         }
     }
@@ -229,7 +229,7 @@ constructor(
                     }
                 }
                 .onLogFailure {
-                    _sideEffect.emit(VocaSideEffect.ShowRetryDialog {})
+                    _sideEffect.emit(VocaSideEffect.ShowErrorDialog {})
                 }
         }
     }
@@ -240,5 +240,5 @@ constructor(
 }
 
 sealed interface VocaSideEffect {
-    data class ShowRetryDialog(val onRetry: () -> Unit) : VocaSideEffect
+    data class ShowErrorDialog(val onRetry: () -> Unit) : VocaSideEffect
 }

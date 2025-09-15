@@ -67,7 +67,7 @@ internal class FeedProfileViewModel @Inject constructor(
             if (feedProfileResult.isFailure || sharedDiariesResult.isFailure) {
                 feedProfileResult.onLogFailure {}
                 sharedDiariesResult.onLogFailure {}
-                _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
+                _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
                 return@launch
             }
 
@@ -79,7 +79,7 @@ internal class FeedProfileViewModel @Inject constructor(
                     onSuccess = { it.diaryList },
                     onFailure = { throwable ->
                         Timber.e(throwable)
-                        _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadLikedDiaries() })
+                        _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
                         return@launch
                     }
                 )
@@ -126,7 +126,7 @@ internal class FeedProfileViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
+                    _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
                 }
         }
     }
@@ -144,7 +144,7 @@ internal class FeedProfileViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadLikedDiaries() })
+                    _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
                 }
         }
     }
@@ -265,5 +265,5 @@ internal class FeedProfileViewModel @Inject constructor(
 
 sealed interface FeedProfileSideEffect {
     data class ShowToast(val message: String) : FeedProfileSideEffect
-    data class ShowRetryDialog(val onRetry: () -> Unit) : FeedProfileSideEffect
+    data object ShowErrorDialog : FeedProfileSideEffect
 }

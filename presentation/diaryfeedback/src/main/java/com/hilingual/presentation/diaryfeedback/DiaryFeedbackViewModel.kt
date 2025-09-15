@@ -37,7 +37,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -92,11 +91,10 @@ internal class DiaryFeedbackViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 requestDiaryFeedbackData()
-            }.onFailure { e ->
-                Timber.d("일기 상세 조회 실패: $e")
+            }.onFailure {
                 _uiState.value = UiState.Failure
                 _sideEffect.emit(
-                    DiaryFeedbackSideEffect.ShowRetryDialog { loadInitialData() }
+                    DiaryFeedbackSideEffect.ShowErrorDialog
                 )
             }
         }
@@ -122,10 +120,10 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                 } else {
                     showToast("일기가 비공개되었어요!")
                 }
-            }.onLogFailure { exception ->
+            }.onLogFailure {
                 _uiState.value = UiState.Failure
                 _sideEffect.emit(
-                    DiaryFeedbackSideEffect.ShowRetryDialog { loadInitialData() }
+                    DiaryFeedbackSideEffect.ShowErrorDialog
                 )
             }
         }
@@ -193,7 +191,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
 
 sealed interface DiaryFeedbackSideEffect {
     data object NavigateToHome : DiaryFeedbackSideEffect
-    data class ShowRetryDialog(val onRetry: () -> Unit) : DiaryFeedbackSideEffect
+    data object ShowErrorDialog : DiaryFeedbackSideEffect
     data class ShowDiaryPublishSnackbar(val message: String, val actionLabel: String) : DiaryFeedbackSideEffect
     data class ShowVocaOverflowSnackbar(val message: String, val actionLabel: String) : DiaryFeedbackSideEffect
     data class ShowToast(val message: String) : DiaryFeedbackSideEffect

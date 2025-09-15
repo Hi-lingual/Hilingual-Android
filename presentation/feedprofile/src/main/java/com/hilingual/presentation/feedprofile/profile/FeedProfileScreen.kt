@@ -85,7 +85,7 @@ internal fun FeedProfileRoute(
                 toastTrigger(it.message)
             }
 
-            is FeedProfileSideEffect.ShowRetryDialog -> dialogTrigger.show(it.onRetry)
+            is FeedProfileSideEffect.ShowErrorDialog -> dialogTrigger.show(navigateUp)
         }
     }
 

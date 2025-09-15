@@ -87,7 +87,7 @@ internal fun HomeRoute(
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is HomeSideEffect.ShowRetryDialog -> dialogTrigger.show(sideEffect.onRetry)
+            is HomeSideEffect.ShowErrorDialog -> dialogTrigger.show(sideEffect.onRetry)
 
             is HomeSideEffect.ShowToast -> toastTrigger(sideEffect.text)
 

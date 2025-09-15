@@ -99,7 +99,7 @@ internal fun FeedDiaryRoute(
                 dialogTrigger.show(navigateUp)
             }
 
-            is FeedDiarySideEffect.ShowRetryDialog -> { TODO() }
+            is FeedDiarySideEffect.ShowErrorDialog -> dialogTrigger.show(navigateUp)
         }
     }
 

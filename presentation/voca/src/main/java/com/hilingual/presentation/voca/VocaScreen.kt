@@ -90,8 +90,8 @@ internal fun VocaRoute(
 
     viewModel.sideEffect.collectSideEffect {
         when (it) {
-            is VocaSideEffect.ShowRetryDialog -> {
-                dialogTrigger.show { dialogTrigger.dismiss() }
+            is VocaSideEffect.ShowErrorDialog -> {
+                dialogTrigger.show(it.onRetry)
             }
         }
     }

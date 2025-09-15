@@ -75,7 +75,7 @@ internal fun FeedRoute(
                 toastTrigger(sideEffect.message)
             }
 
-            is FeedSideEffect.ShowRetryDialog -> {
+            is FeedSideEffect.ShowErrorDialog -> {
                 dialogTrigger.show(sideEffect.onRetry)
             }
         }

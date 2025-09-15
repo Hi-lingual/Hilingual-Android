@@ -47,7 +47,11 @@ internal class MyPageViewModel @Inject constructor(
                         )
                     }
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    viewModelScope.launch {
+                        _sideEffect.emit(MyPageSideEffect.ShowErrorDialog(onRetry = ::getProfileInfo))
+                    }
+                }
         }
     }
 
@@ -83,6 +87,6 @@ internal class MyPageViewModel @Inject constructor(
 }
 
 sealed interface MyPageSideEffect {
-    data class ShowRetryDialog(val onRetry: () -> Unit) : MyPageSideEffect
+    data class ShowErrorDialog(val onRetry: () -> Unit) : MyPageSideEffect
     data object RestartApp : MyPageSideEffect
 }

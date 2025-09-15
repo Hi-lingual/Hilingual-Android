@@ -97,7 +97,7 @@ internal class FeedDiaryViewModel @Inject constructor(
             }.onSuccess { combinedState ->
                 _uiState.update { UiState.Success(combinedState) }
             }.onLogFailure {
-                _sideEffect.emit(FeedDiarySideEffect.ShowRetryDialog(onRetry = ::loadInitialData))
+                _sideEffect.emit(FeedDiarySideEffect.ShowErrorDialog)
             }
         }
     }
@@ -193,7 +193,6 @@ internal class FeedDiaryViewModel @Inject constructor(
 sealed interface FeedDiarySideEffect {
     data object NavigateToUp : FeedDiarySideEffect
     data class NavigateToFeedProfile(val userId: Long) : FeedDiarySideEffect
-    data class ShowRetryDialog(val onRetry: () -> Unit) : FeedDiarySideEffect
     data class ShowVocaOverflowSnackbar(val message: String, val actionLabel: String) :
         FeedDiarySideEffect
 

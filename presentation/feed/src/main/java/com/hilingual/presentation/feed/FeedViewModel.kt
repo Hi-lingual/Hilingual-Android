@@ -96,7 +96,7 @@ internal class FeedViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    emitRetrySideEffect { getRecommendFeeds(isUserRefresh) }
+                    emitErrorDialogSideEffect { getRecommendFeeds(isUserRefresh) }
                 }
 
             if (isUserRefresh) {
@@ -121,7 +121,7 @@ internal class FeedViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    emitRetrySideEffect { getFollowingFeeds(isUserRefresh) }
+                    emitErrorDialogSideEffect { getFollowingFeeds(isUserRefresh) }
                 }
 
             if (isUserRefresh) {
@@ -217,8 +217,8 @@ internal class FeedViewModel @Inject constructor(
         }
     }
 
-    private suspend fun emitRetrySideEffect(onRetry: () -> Unit) {
-        _sideEffect.emit(FeedSideEffect.ShowRetryDialog(onRetry = onRetry))
+    private suspend fun emitErrorDialogSideEffect(onRetry: () -> Unit) {
+        _sideEffect.emit(FeedSideEffect.ShowErrorDialog(onRetry = onRetry))
     }
 
     private suspend fun emitToastSideEffect(message: String) {
@@ -227,6 +227,6 @@ internal class FeedViewModel @Inject constructor(
 }
 
 sealed interface FeedSideEffect {
-    data class ShowRetryDialog(val onRetry: () -> Unit) : FeedSideEffect
+    data class ShowErrorDialog(val onRetry: () -> Unit) : FeedSideEffect
     data class ShowToast(val message: String) : FeedSideEffect
 }
