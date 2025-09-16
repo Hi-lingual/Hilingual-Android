@@ -6,11 +6,13 @@ googleid = "1.1.1"
 minSdk = "30"
 targetSdk = "35"
 jvmTarget = "17"
-versionCode = "1"
-versionName = "1.0.0"
 kotlinCompilerExtensionVersion = "1.5.15"
 androidGradlePlugin = "8.12.1"
 spotless = "7.2.1"
+
+# App version
+versionCode = "10000"
+versionName = "1.0.0"
 
 # Kotlin
 kotlin = "2.2.20"
