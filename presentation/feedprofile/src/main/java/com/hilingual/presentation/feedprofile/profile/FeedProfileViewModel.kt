@@ -67,7 +67,7 @@ internal class FeedProfileViewModel @Inject constructor(
             if (feedProfileResult.isFailure || sharedDiariesResult.isFailure) {
                 feedProfileResult.onLogFailure {}
                 sharedDiariesResult.onLogFailure {}
-                _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
+                _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
                 return@launch
             }
 
@@ -79,7 +79,7 @@ internal class FeedProfileViewModel @Inject constructor(
                     onSuccess = { it.diaryList },
                     onFailure = { throwable ->
                         Timber.e(throwable)
-                        _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadLikedDiaries() })
+                        _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
                         return@launch
                     }
                 )
@@ -126,7 +126,7 @@ internal class FeedProfileViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadFeedProfile() })
+                    _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
                 }
         }
     }
@@ -144,7 +144,7 @@ internal class FeedProfileViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    _sideEffect.emit(FeedProfileSideEffect.ShowRetryDialog { loadLikedDiaries() })
+                    _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
                 }
         }
     }
@@ -270,12 +270,12 @@ internal class FeedProfileViewModel @Inject constructor(
     }
 
     private suspend fun showLikeSnackbar() {
-        _sideEffect.emit(FeedProfileSideEffect.ShowDiaryLikeSnackbar(message = "일기를 공감했습니다.", actionLabel = "보러가기"))
+        _sideEffect.emit(FeedProfileSideEffect.ShowDiaryLikeSnackbar(message = "공감한 일기에 추가되었어요.", actionLabel = "보러가기"))
     }
 }
 
 sealed interface FeedProfileSideEffect {
     data class ShowDiaryLikeSnackbar(val message: String, val actionLabel: String) : FeedProfileSideEffect
     data class ShowToast(val message: String) : FeedProfileSideEffect
-    data class ShowRetryDialog(val onRetry: () -> Unit) : FeedProfileSideEffect
+    data object ShowErrorDialog : FeedProfileSideEffect
 }

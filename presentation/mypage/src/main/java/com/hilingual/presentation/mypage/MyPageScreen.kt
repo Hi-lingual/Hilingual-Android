@@ -68,7 +68,7 @@ internal fun MyPageRoute(
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is MyPageSideEffect.ShowRetryDialog -> {
+            is MyPageSideEffect.ShowErrorDialog -> {
                 dialogTrigger.show(sideEffect.onRetry)
             }
 

@@ -78,7 +78,7 @@ class HomeViewModel @Inject constructor(
             if (userInfoResult.isFailure || calendarResult.isFailure) {
                 userInfoResult.onLogFailure {}
                 calendarResult.onLogFailure {}
-                emitRetrySideEffect { loadInitialData() }
+                emitErrorDialogSideEffect { loadInitialData() }
                 return@launch
             }
 
@@ -135,7 +135,7 @@ class HomeViewModel @Inject constructor(
                     updateContentForDate(newDate)
                 }
                 .onLogFailure {
-                    emitRetrySideEffect { onMonthChanged(yearMonth) }
+                    emitErrorDialogSideEffect { onMonthChanged(yearMonth) }
                 }
         }
     }
@@ -158,7 +158,7 @@ class HomeViewModel @Inject constructor(
                     )
                 }
                 .onLogFailure {
-                    emitRetrySideEffect { }
+                    emitErrorDialogSideEffect { }
                 }
         }
     }
@@ -178,7 +178,7 @@ class HomeViewModel @Inject constructor(
                     emitToastSideEffect("일기가 비공개 되었어요.")
                 }
                 .onLogFailure {
-                    emitRetrySideEffect { }
+                    emitErrorDialogSideEffect { }
                 }
         }
     }
@@ -203,7 +203,7 @@ class HomeViewModel @Inject constructor(
                     emitToastSideEffect("삭제가 완료되었어요.")
                 }
                 .onLogFailure {
-                    emitRetrySideEffect { }
+                    emitErrorDialogSideEffect { }
                 }
         }
     }
@@ -235,7 +235,7 @@ class HomeViewModel @Inject constructor(
                                 )
                             }
                         }
-                        .onLogFailure { emitRetrySideEffect { updateContentForDate(date) } }
+                        .onLogFailure { emitErrorDialogSideEffect { updateContentForDate(date) } }
                 }
 
                 isDateWritable(date) -> {
@@ -278,8 +278,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private suspend fun emitRetrySideEffect(onRetry: () -> Unit) =
-        _sideEffect.emit(HomeSideEffect.ShowRetryDialog(onRetry = onRetry))
+    private suspend fun emitErrorDialogSideEffect(onRetry: () -> Unit) =
+        _sideEffect.emit(HomeSideEffect.ShowErrorDialog(onRetry = onRetry))
 
     private suspend fun emitToastSideEffect(text: String) =
         _sideEffect.emit(HomeSideEffect.ShowToast(text = text))
@@ -289,7 +289,7 @@ class HomeViewModel @Inject constructor(
 }
 
 sealed interface HomeSideEffect {
-    data class ShowRetryDialog(val onRetry: () -> Unit) : HomeSideEffect
+    data class ShowErrorDialog(val onRetry: () -> Unit) : HomeSideEffect
 
     data class ShowToast(val text: String) : HomeSideEffect
 
