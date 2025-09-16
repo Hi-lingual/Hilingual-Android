@@ -186,9 +186,12 @@ internal class FeedProfileViewModel @Inject constructor(
                         }
                     }
 
-                    val isMine = (_uiState.value as? UiState.Success)?.data?.feedProfileInfo?.isMine == true
-                    if (isMine) return@launch
-                    if (isLiked) showLikeSnackbar()
+                    val currentState = _uiState.value
+                    if (currentState !is UiState.Success) return@launch
+
+                    if (!currentState.data.feedProfileInfo.isMine && isLiked) {
+                        showLikeSnackbar()
+                    }
                 }
                 .onLogFailure { }
         }
