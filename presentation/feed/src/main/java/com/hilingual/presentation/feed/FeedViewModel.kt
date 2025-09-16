@@ -224,7 +224,7 @@ internal class FeedViewModel @Inject constructor(
     }
 
     private suspend fun showLikeSnackbar() {
-        _sideEffect.emit(FeedSideEffect.ShowDiaryLikeSnackbar(message = "일기를 공감했습니다.", actionLabel = "보러가기"))
+        _sideEffect.emit(FeedSideEffect.ShowDiaryLikeSnackbar(message = "공감한 일기에 추가되었어요.", actionLabel = "보러가기"))
     }
 
     private suspend fun emitErrorDialogSideEffect(onRetry: () -> Unit) {
