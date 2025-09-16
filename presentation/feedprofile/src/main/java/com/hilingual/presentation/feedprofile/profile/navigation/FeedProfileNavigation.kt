@@ -43,6 +43,7 @@ fun NavGraphBuilder.feedProfileNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
     navigateUp: () -> Unit,
+    navigateToMyFeedProfile: () -> Unit,
     navigateToFeedProfile: (Long) -> Unit,
     navigateToFeedDiary: (Long) -> Unit
 ) {
@@ -61,6 +62,7 @@ fun NavGraphBuilder.feedProfileNavGraph(
                 viewModel = viewModel,
                 paddingValues = paddingValues,
                 navigateUp = navigateUp,
+                navigateToMyFeedProfile = navigateToMyFeedProfile,
                 navigateToFollowList = { navController.navigateToFollowList(userId = 0L) },
                 navigateToFeedProfile = navigateToFeedProfile,
                 navigateToFeedDiary = navigateToFeedDiary

@@ -259,6 +259,7 @@ internal fun MainScreen(
                     navigateUp = appState::navigateUp,
                     navigateToFeedProfile = appState::navigateToFeedProfile,
                     navController = appState.navController,
+                    navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
                     navigateToFeedDiary = appState::navigateToFeedDiary
                 )
             }
