@@ -91,6 +91,16 @@ internal fun FeedDiaryRoute(
                 )
             }
 
+            is FeedDiarySideEffect.ShowDiaryLikeSnackbar -> {
+                snackbarTrigger(
+                    SnackbarRequest(
+                        message = it.message,
+                        buttonText = it.actionLabel,
+                        onClick = navigateToMyFeedProfile
+                    )
+                )
+            }
+
             is FeedDiarySideEffect.ShowToast -> {
                 toastTrigger(it.message)
             }

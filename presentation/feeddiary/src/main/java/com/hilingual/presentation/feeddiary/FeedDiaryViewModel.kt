@@ -115,6 +115,7 @@ internal class FeedDiaryViewModel @Inject constructor(
                             )
                         )
                     }
+                    if (isLiked) showLikeSnackbar()
                 }
                 .onLogFailure { }
         }
@@ -180,6 +181,10 @@ internal class FeedDiaryViewModel @Inject constructor(
         }
     }
 
+    private suspend fun showLikeSnackbar() {
+        _sideEffect.emit(FeedDiarySideEffect.ShowDiaryLikeSnackbar(message = "일기를 공감했습니다.", actionLabel = "보러가기"))
+    }
+
     private suspend fun showVocaOverflowSnackbar() {
         _sideEffect.emit(
             FeedDiarySideEffect.ShowVocaOverflowSnackbar(
@@ -192,9 +197,12 @@ internal class FeedDiaryViewModel @Inject constructor(
 
 sealed interface FeedDiarySideEffect {
     data object NavigateToUp : FeedDiarySideEffect
+
     data class NavigateToFeedProfile(val userId: Long) : FeedDiarySideEffect
-    data class ShowVocaOverflowSnackbar(val message: String, val actionLabel: String) :
-        FeedDiarySideEffect
+
+    data class ShowDiaryLikeSnackbar(val message: String, val actionLabel: String) : FeedDiarySideEffect
+
+    data class ShowVocaOverflowSnackbar(val message: String, val actionLabel: String) : FeedDiarySideEffect
 
     data class ShowToast(val message: String) : FeedDiarySideEffect
 

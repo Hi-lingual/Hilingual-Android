@@ -42,7 +42,9 @@ import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.model.SnackbarRequest
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -66,6 +68,8 @@ internal fun FeedRoute(
     val context = LocalContext.current
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val snackbarTrigger = LocalSnackbarTrigger.current
     val dialogTrigger = LocalDialogTrigger.current
     val toastTrigger = LocalToastTrigger.current
 
@@ -77,6 +81,16 @@ internal fun FeedRoute(
 
             is FeedSideEffect.ShowErrorDialog -> {
                 dialogTrigger.show(sideEffect.onRetry)
+            }
+
+            is FeedSideEffect.ShowDiaryLikeSnackbar -> {
+                snackbarTrigger(
+                    SnackbarRequest(
+                        message = sideEffect.message,
+                        buttonText = sideEffect.actionLabel,
+                        onClick = navigateToMyFeedProfile
+                    )
+                )
             }
         }
     }

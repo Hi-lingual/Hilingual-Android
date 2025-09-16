@@ -132,34 +132,40 @@ internal class FeedViewModel @Inject constructor(
 
     fun toggleIsLiked(diaryId: Long, isLiked: Boolean) {
         viewModelScope.launch {
-            feedRepository.postIsLike(diaryId, isLiked).onSuccess {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        recommendFeedList = currentState.recommendFeedList.updateIfSuccess { list ->
-                            updateSingleItem(
-                                list = list.toPersistentList(),
-                                diaryId = diaryId
-                            ) { item ->
-                                item.copy(
-                                    isLiked = isLiked,
-                                    likeCount = (item.likeCount + if (isLiked) 1 else -1).coerceAtLeast(0)
-                                )
+            feedRepository.postIsLike(diaryId, isLiked)
+                .onSuccess {
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            recommendFeedList = currentState.recommendFeedList.updateIfSuccess { list ->
+                                updateSingleItem(
+                                    list = list.toPersistentList(),
+                                    diaryId = diaryId
+                                ) { item ->
+                                    item.copy(
+                                        isLiked = isLiked,
+                                        likeCount = (item.likeCount + if (isLiked) 1 else -1).coerceAtLeast(
+                                            0
+                                        )
+                                    )
+                                }
+                            },
+                            followingFeedList = currentState.followingFeedList.updateIfSuccess { list ->
+                                updateSingleItem(
+                                    list = list.toPersistentList(),
+                                    diaryId = diaryId
+                                ) { item ->
+                                    item.copy(
+                                        isLiked = isLiked,
+                                        likeCount = (item.likeCount + if (isLiked) 1 else -1).coerceAtLeast(
+                                            0
+                                        )
+                                    )
+                                }
                             }
-                        },
-                        followingFeedList = currentState.followingFeedList.updateIfSuccess { list ->
-                            updateSingleItem(
-                                list = list.toPersistentList(),
-                                diaryId = diaryId
-                            ) { item ->
-                                item.copy(
-                                    isLiked = isLiked,
-                                    likeCount = (item.likeCount + if (isLiked) 1 else -1).coerceAtLeast(0)
-                                )
-                            }
-                        }
-                    )
-                }
-            }
+                        )
+                    }
+                    if (isLiked) showLikeSnackbar()
+                }.onLogFailure { }
         }
     }
 
@@ -217,6 +223,10 @@ internal class FeedViewModel @Inject constructor(
         }
     }
 
+    private suspend fun showLikeSnackbar() {
+        _sideEffect.emit(FeedSideEffect.ShowDiaryLikeSnackbar(message = "일기를 공감했습니다.", actionLabel = "보러가기"))
+    }
+
     private suspend fun emitErrorDialogSideEffect(onRetry: () -> Unit) {
         _sideEffect.emit(FeedSideEffect.ShowErrorDialog(onRetry = onRetry))
     }
@@ -228,5 +238,8 @@ internal class FeedViewModel @Inject constructor(
 
 sealed interface FeedSideEffect {
     data class ShowErrorDialog(val onRetry: () -> Unit) : FeedSideEffect
+
+    data class ShowDiaryLikeSnackbar(val message: String, val actionLabel: String) : FeedSideEffect
+
     data class ShowToast(val message: String) : FeedSideEffect
 }
