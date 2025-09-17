@@ -22,7 +22,7 @@ import kotlinx.serialization.Serializable
 private const val ANIMATION_DURATION = 300
 
 @Serializable
-internal data class FeedProfileGraph(val userId: Long)
+internal data class FeedProfileGraph(val userId: Long, val showLikedDiaries: Boolean = false)
 
 @Serializable
 internal data object FeedProfile : Route
@@ -33,8 +33,8 @@ internal data class FollowList(val userId: Long) : Route
 fun NavController.navigateToFeedProfile(userId: Long, navOptions: NavOptions? = null) =
     navigate(FeedProfileGraph(userId), navOptions)
 
-fun NavController.navigateToMyFeedProfile(navOptions: NavOptions? = null) =
-    navigate(FeedProfileGraph(0), navOptions)
+fun NavController.navigateToMyFeedProfile(showLikedDiaries: Boolean = false, navOptions: NavOptions? = null) =
+    navigate(FeedProfileGraph(userId = 0, showLikedDiaries = showLikedDiaries), navOptions)
 
 private fun NavController.navigateToFollowList(userId: Long, navOptions: NavOptions? = null) =
     navigate(FollowList(userId), navOptions)
@@ -43,7 +43,7 @@ fun NavGraphBuilder.feedProfileNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
     navigateUp: () -> Unit,
-    navigateToMyFeedProfile: () -> Unit,
+    navigateToMyFeedProfile: (Boolean) -> Unit,
     navigateToFeedProfile: (Long) -> Unit,
     navigateToFeedDiary: (Long) -> Unit
 ) {
@@ -62,7 +62,7 @@ fun NavGraphBuilder.feedProfileNavGraph(
                 viewModel = viewModel,
                 paddingValues = paddingValues,
                 navigateUp = navigateUp,
-                navigateToMyFeedProfile = navigateToMyFeedProfile,
+                navigateToMyFeedProfile = { navigateToMyFeedProfile(false) },
                 navigateToFollowList = { navController.navigateToFollowList(userId = 0L) },
                 navigateToFeedProfile = navigateToFeedProfile,
                 navigateToFeedDiary = navigateToFeedDiary

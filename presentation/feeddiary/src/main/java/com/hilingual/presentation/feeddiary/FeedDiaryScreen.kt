@@ -53,7 +53,7 @@ import kotlinx.coroutines.launch
 internal fun FeedDiaryRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
-    navigateToMyFeedProfile: () -> Unit,
+    navigateToMyFeedProfile: (showLikedDiaries: Boolean) -> Unit,
     navigateToFeedProfile: (Long) -> Unit,
     navigateToVoca: () -> Unit,
     viewModel: FeedDiaryViewModel = hiltViewModel()
@@ -96,7 +96,7 @@ internal fun FeedDiaryRoute(
                     SnackbarRequest(
                         message = it.message,
                         buttonText = it.actionLabel,
-                        onClick = navigateToMyFeedProfile
+                        onClick = { navigateToMyFeedProfile(true) }
                     )
                 )
             }
@@ -108,8 +108,6 @@ internal fun FeedDiaryRoute(
             is FeedDiarySideEffect.ShowErrorDialog -> {
                 dialogTrigger.show(navigateUp)
             }
-
-            is FeedDiarySideEffect.ShowErrorDialog -> dialogTrigger.show(navigateUp)
         }
     }
 
@@ -142,7 +140,7 @@ private fun FeedDiaryScreen(
     paddingValues: PaddingValues,
     uiState: FeedDiaryUiState,
     onBackClick: () -> Unit,
-    onMyProfileClick: () -> Unit,
+    onMyProfileClick: (showLikedDiaries: Boolean) -> Unit,
     onProfileClick: (Long) -> Unit,
     onLikeClick: (Boolean) -> Unit,
     onPrivateClick: () -> Unit,
@@ -209,7 +207,7 @@ private fun FeedDiaryScreen(
                 sharedDateInMinutes = profileContent.sharedDateInMinutes,
                 onProfileClick = {
                     if (isMine) {
-                        onMyProfileClick()
+                        onMyProfileClick(false)
                     } else {
                         onProfileClick(profileContent.userId)
                     }

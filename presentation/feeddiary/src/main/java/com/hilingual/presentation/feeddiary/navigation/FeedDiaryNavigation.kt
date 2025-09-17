@@ -42,7 +42,7 @@ fun NavController.navigateToFeedDiary(
 fun NavGraphBuilder.feedDiaryNavGraph(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
-    navigateToMyFeedProfile: () -> Unit,
+    navigateToMyFeedProfile: (showLikedDiaries: Boolean) -> Unit,
     navigateToFeedProfile: (userId: Long) -> Unit,
     navigateToVoca: () -> Unit
 ) {
