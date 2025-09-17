@@ -201,8 +201,8 @@ internal class MainAppState(
         navController.navigateToFeedProfile(userId, navOptions)
     }
 
-    fun navigateToMyFeedProfile(navOptions: NavOptions? = null) {
-        navController.navigateToMyFeedProfile(navOptions)
+    fun navigateToMyFeedProfile(showLikedDiaries: Boolean = false, navOptions: NavOptions? = null) {
+        navController.navigateToMyFeedProfile(showLikedDiaries, navOptions)
     }
 
     fun navigateUp() {

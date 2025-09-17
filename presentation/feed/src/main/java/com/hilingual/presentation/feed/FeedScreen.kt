@@ -59,7 +59,7 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun FeedRoute(
     paddingValues: PaddingValues,
-    navigateToMyFeedProfile: () -> Unit,
+    navigateToMyFeedProfile: (showLikedDiaries: Boolean) -> Unit,
     navigateToFeedProfile: (userId: Long) -> Unit,
     navigateToFeedDiary: (Long) -> Unit,
     navigateToFeedSearch: () -> Unit,
@@ -88,7 +88,7 @@ internal fun FeedRoute(
                     SnackbarRequest(
                         message = sideEffect.message,
                         buttonText = sideEffect.actionLabel,
-                        onClick = navigateToMyFeedProfile
+                        onClick = { navigateToMyFeedProfile(true) }
                     )
                 )
             }
@@ -110,7 +110,7 @@ internal fun FeedRoute(
             onFeedRefresh = viewModel::onFeedRefresh,
             hasFollowing = hasFollowing,
             onSearchClick = navigateToFeedSearch,
-            onMyProfileClick = navigateToMyFeedProfile,
+            onMyProfileClick = { navigateToMyFeedProfile(false) },
             onFeedProfileClick = navigateToFeedProfile,
             onLikeClick = viewModel::toggleIsLiked,
             onContentDetailClick = navigateToFeedDiary,

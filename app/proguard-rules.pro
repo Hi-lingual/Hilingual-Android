@@ -4,32 +4,17 @@
 # Hilingual 특정 규칙
 
 ##---------------시작: kotlin serialization ----------
-# DTO를 위해 필수적인, 프로젝트 내 @Serializable 어노테이션이 붙은 클래스를 유지합니다.
--keepclassmembers,allowobfuscation,allowshrinking @kotlinx.serialization.Serializable class com.hilingual.** {
-    *** Companion;
-    kotlinx.serialization.KSerializer serializer(...);
-}
-
-# 직렬화 가능 클래스의 Companion 객체를 유지합니다.
--if @kotlinx.serialization.Serializable class com.hilingual.**
--keepclassmembers class com.hilingual.<1>$Companion {
-    kotlinx.serialization.KSerializer serializer(...);
-}
-
-# @SerialName 어노테이션이 붙은 필드를 유지합니다.
--keepclassmembers class com.hilingual.** {
-    @kotlinx.serialization.SerialName <fields>;
-}
-
-# 생성된 serializer를 유지합니다.
--keep,allowobfuscation,allowshrinking class **$$serializer {
-    *** Companion;
-    *** INSTANCE;
-}
-
-# kotlinx.serialization 기본 클래스를 유지합니다.
--keep class kotlinx.serialization.** { *; }
+# kotlinx.serialization 라이브러리 클래스를 유지합니다.
+-keep,includedescriptorclasses class kotlinx.serialization.** { *; }
 -dontwarn kotlinx.serialization.**
+
+# @Serializable 어노테이션이 붙은 모든 DTO와 Model 클래스 및 멤버를 유지합니다.
+# 이렇게 하면 R8이 직렬화에 필요한 생성자나 프로퍼티를 제거하는 것을 방지합니다.
+-keep @kotlinx.serialization.Serializable class com.hilingual.**.dto.** { *; }
+-keep @kotlinx.serialization.Serializable class com.hilingual.**.model.** { *; }
+
+# 생성된 serializer 클래스를 유지합니다.
+-keep,includedescriptorclasses class **$serializer { *; }
 ##---------------종료: kotlin serialization ----------
 
 ##---------------시작: Hilt ----------

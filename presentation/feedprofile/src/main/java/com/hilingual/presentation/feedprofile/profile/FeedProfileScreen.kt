@@ -67,7 +67,7 @@ import kotlinx.coroutines.launch
 internal fun FeedProfileRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
-    navigateToMyFeedProfile: () -> Unit,
+    navigateToMyFeedProfile: (Boolean) -> Unit,
     navigateToFeedProfile: (Long) -> Unit,
     navigateToFollowList: () -> Unit,
     navigateToFeedDiary: (Long) -> Unit,
@@ -91,7 +91,7 @@ internal fun FeedProfileRoute(
                     SnackbarRequest(
                         message = it.message,
                         buttonText = it.actionLabel,
-                        onClick = navigateToMyFeedProfile
+                        onClick = { navigateToMyFeedProfile(true) }
                     )
                 )
             }
@@ -113,6 +113,7 @@ internal fun FeedProfileRoute(
             FeedProfileScreen(
                 paddingValues = paddingValues,
                 uiState = state.data,
+                initialTab = if (viewModel.showLikedDiaries) 1 else 0,
                 onBackClick = navigateUp,
                 onFollowClick = { isMine ->
                     if (isMine) {
@@ -143,6 +144,7 @@ internal fun FeedProfileRoute(
 private fun FeedProfileScreen(
     paddingValues: PaddingValues,
     uiState: FeedProfileUiState,
+    initialTab: Int,
     onBackClick: () -> Unit,
     onFollowClick: (Boolean) -> Unit,
     onActionButtonClick: (Boolean?) -> Unit,
@@ -156,7 +158,7 @@ private fun FeedProfileScreen(
     onTabRefresh: (DiaryTabType) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val pagerState = rememberPagerState(pageCount = { 2 })
+    val pagerState = rememberPagerState(initialPage = initialTab, pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
     var isMenuBottomSheetVisible by remember { mutableStateOf(false) }
     var isBlockBottomSheetVisible by remember { mutableStateOf(false) }
@@ -435,6 +437,7 @@ private fun FeedProfileScreenPreview() {
         FeedProfileScreen(
             paddingValues = PaddingValues(0.dp),
             uiState = FeedProfileUiState.Fake,
+            initialTab = 0,
             onBackClick = {},
             onActionButtonClick = {},
             onReportUserClick = {},
