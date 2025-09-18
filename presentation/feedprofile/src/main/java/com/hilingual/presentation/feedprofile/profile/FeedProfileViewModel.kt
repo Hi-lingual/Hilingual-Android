@@ -1,13 +1,24 @@
 package com.hilingual.presentation.feedprofile.profile
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
+import com.hilingual.data.diary.repository.DiaryRepository
+import com.hilingual.data.feed.repository.FeedRepository
+import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
 import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
+import com.hilingual.presentation.feedprofile.profile.model.FeedProfileInfoModel
+import com.hilingual.presentation.feedprofile.profile.model.toState
+import com.hilingual.presentation.feedprofile.profile.navigation.FeedProfileGraph
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -16,46 +27,175 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
-// TODO: 아래의 UiState는 현재 Fake 데이터로 초기화되어 있습니다.
-//  실제 데이터 연동 시, ViewModel은 Repository로부터 `SharedDiaryItemModel` 또는 `LikeDiaryItemModel`을
-//  가져온 뒤, 아래와 같은 로직으로 UI 전용 모델인 `FeedDiaryUIModel`로 변환해야 합니다.
-//
-//  - SharedDiaryItemModel -> FeedDiaryUIModel:
-//    - `isMine` = true
-//    - `authorUserId`, `authorNickname`, `authorProfileImageUrl`, `authorStreak` 등은
-//      프로필 주인의 정보(`feedProfileInfo`)로 채워줍니다.
-//
-//  - LikeDiaryItemModel -> FeedDiaryUIModel:
-//    - `isMine`, `userId`, `nickname`, `streak` 등 필요한 모든 정보가 이미 모델 안에 있으므로
-//      해당 값을 그대로 사용하여 `FeedDiaryUIModel`을 생성합니다.
 @HiltViewModel
-internal class FeedProfileViewModel @Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<FeedProfileUiState>>(UiState.Success(FeedProfileUiState.Fake))
+internal class FeedProfileViewModel @Inject constructor(
+    private val feedRepository: FeedRepository,
+    private val userRepository: UserRepository,
+    private val diaryRepository: DiaryRepository,
+    savedStateHandle: SavedStateHandle
+) : ViewModel() {
+    private val routeData = savedStateHandle.toRoute<FeedProfileGraph>()
+    private val targetUserId: Long = routeData.userId
+    val showLikedDiaries: Boolean = routeData.showLikedDiaries
+
+    private val _uiState = MutableStateFlow<UiState<FeedProfileUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<FeedProfileUiState>> = _uiState.asStateFlow()
+
     private val _sideEffect = MutableSharedFlow<FeedProfileSideEffect>()
     val sideEffect: SharedFlow<FeedProfileSideEffect> = _sideEffect.asSharedFlow()
 
-    fun toggleIsLiked(diaryId: Long, isLiked: Boolean, type: DiaryTabType) {
+    private fun loadFeedProfileInfo() {
         viewModelScope.launch {
-            _uiState.update { currentState ->
-                val successState = currentState as? UiState.Success ?: return@update currentState
-
-                val updatedData = when (type) {
-                    DiaryTabType.SHARED -> {
-                        successState.data.copy(
-                            sharedDiaries = successState.data.sharedDiaries.updateLikeState(diaryId, isLiked)
-                        )
-                    }
-                    DiaryTabType.LIKED -> {
-                        successState.data.copy(
-                            likedDiaries = successState.data.likedDiaries.updateLikeState(diaryId, isLiked)
-                        )
+            feedRepository.getFeedProfile(targetUserId)
+                .onSuccess { feedProfileInfoModel ->
+                    _uiState.updateSuccess { currentState ->
+                        currentState.copy(feedProfileInfo = feedProfileInfoModel.toState())
                     }
                 }
-                successState.copy(data = updatedData)
+        }
+    }
+
+    fun loadFeedProfile() {
+        viewModelScope.launch {
+            val feedProfileDeferred = async { feedRepository.getFeedProfile(targetUserId) }
+            val sharedDiariesDeferred = async { feedRepository.getSharedDiaries(targetUserId) }
+
+            val feedProfileResult = feedProfileDeferred.await()
+            val sharedDiariesResult = sharedDiariesDeferred.await()
+
+            if (feedProfileResult.isFailure || sharedDiariesResult.isFailure) {
+                feedProfileResult.onLogFailure {}
+                sharedDiariesResult.onLogFailure {}
+                _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+                return@launch
             }
+
+            val feedProfileInfoModel = feedProfileResult.getOrThrow()
+            val sharedDiariesModel = sharedDiariesResult.getOrThrow()
+
+            val likedDiariesModel = if (feedProfileInfoModel.isMine) {
+                feedRepository.getLikedDiaries(targetUserId).fold(
+                    onSuccess = { it.diaryList },
+                    onFailure = { throwable ->
+                        Timber.e(throwable)
+                        _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+                        return@launch
+                    }
+                )
+            } else {
+                emptyList()
+            }
+
+            val sharedDiaryUIModels = sharedDiariesModel.diaryList.map { sharedDiary ->
+                sharedDiary.toState(
+                    feedProfileInfoModel = feedProfileInfoModel.toState(),
+                    authorUserId = targetUserId
+                )
+            }.toImmutableList()
+
+            val likedDiaryUIModels = likedDiariesModel.map { likedDiary ->
+                likedDiary.toState()
+            }.toImmutableList()
+
+            _uiState.update {
+                UiState.Success(
+                    FeedProfileUiState(
+                        feedProfileInfo = feedProfileInfoModel.toState(),
+                        sharedDiaries = sharedDiaryUIModels,
+                        likedDiaries = likedDiaryUIModels
+                    )
+                )
+            }
+        }
+    }
+
+    private fun loadSharedDiaries(feedProfileInfoModel: FeedProfileInfoModel) {
+        viewModelScope.launch {
+            feedRepository.getSharedDiaries(targetUserId)
+                .onSuccess { sharedDiariesModel ->
+                    val sharedDiaryUIModels = sharedDiariesModel.diaryList.map { sharedDiary ->
+                        sharedDiary.toState(
+                            feedProfileInfoModel = feedProfileInfoModel,
+                            authorUserId = targetUserId
+                        )
+                    }.toImmutableList()
+
+                    _uiState.updateSuccess { currentState ->
+                        currentState.copy(sharedDiaries = sharedDiaryUIModels)
+                    }
+                }
+                .onLogFailure {
+                    _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+                }
+        }
+    }
+
+    private fun loadLikedDiaries() {
+        viewModelScope.launch {
+            feedRepository.getLikedDiaries(targetUserId)
+                .onSuccess { likedDiariesModel ->
+                    val likedDiaryUIModels = likedDiariesModel.diaryList.map { likedDiaryItem ->
+                        likedDiaryItem.toState()
+                    }.toImmutableList()
+
+                    _uiState.updateSuccess { currentState ->
+                        currentState.copy(likedDiaries = likedDiaryUIModels)
+                    }
+                }
+                .onLogFailure {
+                    _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+                }
+        }
+    }
+
+    fun refreshTab(tabType: DiaryTabType) {
+        val currentState = _uiState.value
+        if (currentState !is UiState.Success) return
+
+        val feedProfileModel = currentState.data.feedProfileInfo
+        when (tabType) {
+            DiaryTabType.SHARED -> loadSharedDiaries(feedProfileModel)
+            DiaryTabType.LIKED -> {
+                if (feedProfileModel.isMine) {
+                    loadLikedDiaries()
+                }
+            }
+        }
+    }
+
+    fun toggleIsLiked(diaryId: Long, isLiked: Boolean, type: DiaryTabType) {
+        viewModelScope.launch {
+            feedRepository.postIsLike(
+                diaryId = diaryId,
+                isLiked = isLiked
+            )
+                .onSuccess {
+                    _uiState.updateSuccess { currentState ->
+                        when (type) {
+                            DiaryTabType.SHARED -> {
+                                currentState.copy(
+                                    sharedDiaries = currentState.sharedDiaries.updateLikeState(diaryId, isLiked)
+                                )
+                            }
+                            DiaryTabType.LIKED -> {
+                                currentState.copy(
+                                    likedDiaries = currentState.likedDiaries.updateLikeState(diaryId, isLiked)
+                                )
+                            }
+                        }
+                    }
+
+                    val currentState = _uiState.value
+                    if (currentState !is UiState.Success) return@launch
+
+                    if (!currentState.data.feedProfileInfo.isMine && isLiked) {
+                        showLikeSnackbar()
+                    }
+                }
+                .onLogFailure { }
         }
     }
 
@@ -76,11 +216,68 @@ internal class FeedProfileViewModel @Inject constructor() : ViewModel() {
 
     fun diaryUnpublish(diaryId: Long) {
         viewModelScope.launch {
-            _sideEffect.emit(FeedProfileSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
+            diaryRepository.patchDiaryUnpublish(diaryId)
+                .onSuccess {
+                    _uiState.updateSuccess { currentState ->
+
+                        val updatedSharedDiaries = currentState.sharedDiaries
+                            .filter { it.diaryId != diaryId }
+                            .toImmutableList()
+
+                        currentState.copy(sharedDiaries = updatedSharedDiaries)
+                    }
+                    _sideEffect.emit(FeedProfileSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
+                }
+                .onLogFailure { }
         }
+    }
+
+    fun updateFollowingState(isCurrentlyFollowing: Boolean) {
+        viewModelScope.launch {
+            val result = if (isCurrentlyFollowing) {
+                userRepository.deleteFollow(targetUserId)
+            } else {
+                userRepository.putFollow(targetUserId)
+            }
+            result.onSuccess {
+                _uiState.updateSuccess { currentState ->
+                    val currentProfile = currentState.feedProfileInfo
+
+                    val updatedProfile = currentProfile.copy(
+                        isFollowing = !isCurrentlyFollowing,
+                        follower = if (isCurrentlyFollowing) currentProfile.follower - 1 else currentProfile.follower + 1
+                    )
+
+                    currentState.copy(feedProfileInfo = updatedProfile)
+                }
+            }.onLogFailure { }
+        }
+    }
+
+    fun updateBlockState(isCurrentlyBlocked: Boolean) {
+        viewModelScope.launch {
+            val result = if (isCurrentlyBlocked) {
+                userRepository.deleteBlockUser(targetUserId)
+            } else {
+                userRepository.putBlockUser(targetUserId)
+            }
+            result.onSuccess {
+                if (isCurrentlyBlocked) {
+                    loadFeedProfile()
+                } else {
+                    loadFeedProfileInfo()
+                }
+            }.onLogFailure { }
+        }
+    }
+
+    private suspend fun showLikeSnackbar() {
+        _sideEffect.emit(FeedProfileSideEffect.ShowDiaryLikeSnackbar(message = "공감한 일기에 추가되었어요.", actionLabel = "보러가기"))
     }
 }
 
 sealed interface FeedProfileSideEffect {
+    data class ShowDiaryLikeSnackbar(val message: String, val actionLabel: String) : FeedProfileSideEffect
     data class ShowToast(val message: String) : FeedProfileSideEffect
+    data object ShowErrorDialog : FeedProfileSideEffect
 }

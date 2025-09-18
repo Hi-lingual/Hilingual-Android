@@ -43,7 +43,7 @@ internal fun AddVocaButton(
             .clip(RoundedCornerShape(8.dp))
             .background(
                 shape = RoundedCornerShape(8.dp),
-                color = HilingualTheme.colors.black
+                color = HilingualTheme.colors.hilingualBlack
             )
             .width(IntrinsicSize.Max)
             .noRippleClickable(onClick = onClick)

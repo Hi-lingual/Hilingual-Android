@@ -42,7 +42,7 @@ internal fun DiaryViewModeToggle(
         modifier = modifier
     ) {
         Text(
-            text = "AI가 쓴 일기",
+            text = "교정된 일기",
             style = HilingualTheme.typography.captionR14,
             color = HilingualTheme.colors.gray500
         )

@@ -98,7 +98,6 @@ fun HilingualBasicTextField(
                 color = borderColor,
                 shape = RoundedCornerShape(8.dp)
             )
-            .padding(paddingValues)
             .focusRequester(focusRequester)
             .onFocusChanged { focusState ->
                 onFocusChanged(focusState.isFocused)
@@ -119,7 +118,8 @@ fun HilingualBasicTextField(
         decorationBox = { innerTextField ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.padding(paddingValues)
             ) {
                 leadingIcon()
 

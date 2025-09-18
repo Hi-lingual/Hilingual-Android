@@ -15,19 +15,29 @@
  */
 package com.hilingual.data.user.repositoryimpl
 
+import android.net.Uri
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.localstorage.UserInfoManager
+import com.hilingual.data.presigned.repository.FileUploaderRepository
 import com.hilingual.data.user.datasource.UserRemoteDataSource
-import com.hilingual.data.user.model.NicknameValidationResult
-import com.hilingual.data.user.model.UserInfoModel
-import com.hilingual.data.user.model.UserProfileModel
-import com.hilingual.data.user.model.toDto
-import com.hilingual.data.user.model.toModel
+import com.hilingual.data.user.model.follow.FollowUserListResultModel
+import com.hilingual.data.user.model.follow.toModel
+import com.hilingual.data.user.model.notification.NotificationDetailModel
+import com.hilingual.data.user.model.notification.NotificationModel
+import com.hilingual.data.user.model.notification.NotificationSettingsModel
+import com.hilingual.data.user.model.notification.toModel
+import com.hilingual.data.user.model.user.BlockListModel
+import com.hilingual.data.user.model.user.NicknameValidationResult
+import com.hilingual.data.user.model.user.UserInfoModel
+import com.hilingual.data.user.model.user.UserLoginInfoModel
+import com.hilingual.data.user.model.user.UserProfileModel
+import com.hilingual.data.user.model.user.toModel
 import com.hilingual.data.user.repository.UserRepository
-import jakarta.inject.Inject
+import javax.inject.Inject
 
 internal class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
+    private val fileUploaderRepository: FileUploaderRepository,
     private val userInfoManager: UserInfoManager
 ) : UserRepository {
     override suspend fun getNicknameAvailability(nickname: String): Result<NicknameValidationResult> =
@@ -43,12 +53,50 @@ internal class UserRepositoryImpl @Inject constructor(
 
     override suspend fun postUserProfile(userProfileModel: UserProfileModel): Result<Unit> =
         suspendRunCatching {
-            userRemoteDataSource.postUserProfile(userProfileRequestDto = userProfileModel.toDto())
+            val fileKey = if (userProfileModel.imageUri != null) {
+                fileUploaderRepository.uploadFile(
+                    uri = userProfileModel.imageUri,
+                    purpose = "PROFILE_UPLOAD"
+                ).getOrThrow()
+            } else {
+                null
+            }
+
+            userRemoteDataSource.postUserProfile(
+                nickname = userProfileModel.nickname,
+                adAlarmAgree = userProfileModel.adAlarmAgree,
+                fileKey = fileKey
+            )
         }
 
     override suspend fun getUserInfo(): Result<UserInfoModel> =
         suspendRunCatching {
             userRemoteDataSource.getUserInfo().data!!.toModel()
+        }
+
+    override suspend fun getNotifications(tab: String): Result<List<NotificationModel>> =
+        suspendRunCatching {
+            userRemoteDataSource.getNotifications(tab).data!!.map { it.toModel() }
+        }
+
+    override suspend fun getNotificationDetail(noticeId: Long): Result<NotificationDetailModel> =
+        suspendRunCatching {
+            userRemoteDataSource.getNotificationDetail(noticeId).data!!.toModel()
+        }
+
+    override suspend fun readNotification(noticeId: Long): Result<Unit> =
+        suspendRunCatching {
+            userRemoteDataSource.readNotification(noticeId).data
+        }
+
+    override suspend fun getNotificationSettings(): Result<NotificationSettingsModel> =
+        suspendRunCatching {
+            userRemoteDataSource.getNotificationSettings().data!!.toModel()
+        }
+
+    override suspend fun updateNotificationSetting(notiType: String): Result<NotificationSettingsModel> =
+        suspendRunCatching {
+            userRemoteDataSource.updateNotificationSetting(notiType).data!!.toModel()
         }
 
     override suspend fun saveRegisterStatus(isCompleted: Boolean) {
@@ -66,4 +114,58 @@ internal class UserRepositoryImpl @Inject constructor(
     override suspend fun isOtpVerified(): Boolean {
         return userInfoManager.isOtpVerified()
     }
+
+    override suspend fun getFollowers(targetUserId: Long): Result<List<FollowUserListResultModel>> =
+        suspendRunCatching {
+            userRemoteDataSource.getFollowers(targetUserId = targetUserId).data!!.userList.map { it.toModel() }
+        }
+
+    override suspend fun getFollowings(targetUserId: Long): Result<List<FollowUserListResultModel>> =
+        suspendRunCatching {
+            userRemoteDataSource.getFollowings(targetUserId = targetUserId).data!!.userList.map { it.toModel() }
+        }
+
+    override suspend fun getUserLoginInfo(): Result<UserLoginInfoModel> =
+        suspendRunCatching {
+            userRemoteDataSource.getUserLoginInfo().data!!.toModel()
+        }
+
+    override suspend fun getBlockList(): Result<BlockListModel> =
+        suspendRunCatching {
+            userRemoteDataSource.getBlockList().data!!.toModel()
+        }
+
+    override suspend fun putBlockUser(targetUserId: Long): Result<Unit> =
+        suspendRunCatching {
+            userRemoteDataSource.putBlockUser(targetUserId).data
+        }
+
+    override suspend fun deleteBlockUser(targetUserId: Long): Result<Unit> =
+        suspendRunCatching {
+            userRemoteDataSource.deleteBlockUser(targetUserId).data
+        }
+
+    override suspend fun updateProfileImage(imageFileUri: Uri?): Result<Unit> =
+        suspendRunCatching {
+            val fileKey = if (imageFileUri != null) {
+                fileUploaderRepository.uploadFile(
+                    uri = imageFileUri,
+                    purpose = "PROFILE_UPDATE"
+                ).getOrThrow()
+            } else {
+                null
+            }
+
+            userRemoteDataSource.updateProfileImage(fileKey)
+        }
+
+    override suspend fun putFollow(targetUserId: Long): Result<Unit> =
+        suspendRunCatching {
+            userRemoteDataSource.putFollow(targetUserId = targetUserId)
+        }
+
+    override suspend fun deleteFollow(targetUserId: Long): Result<Unit> =
+        suspendRunCatching {
+            userRemoteDataSource.deleteFollow(targetUserId = targetUserId)
+        }
 }

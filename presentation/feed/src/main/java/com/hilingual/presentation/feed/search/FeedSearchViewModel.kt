@@ -1,9 +1,13 @@
 package com.hilingual.presentation.feed.search
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.feed.model.FollowState
-import com.hilingual.presentation.feed.model.UserSearchUiModel
+import com.hilingual.data.feed.repository.FeedRepository
+import com.hilingual.data.user.repository.UserRepository
+import com.hilingual.presentation.feed.model.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.collections.immutable.persistentListOf
@@ -12,32 +16,35 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 @HiltViewModel
-internal class FeedSearchViewModel @Inject constructor() : ViewModel() {
+internal class FeedSearchViewModel @Inject constructor(
+    val feedRepository: FeedRepository,
+    val userRepository: UserRepository
+) : ViewModel() {
     private val _uiState = MutableStateFlow(FeedSearchUiState())
     val uiState: StateFlow<FeedSearchUiState> = _uiState.asStateFlow()
-
-    init {
-        // 검색 화면 -> 피드 프로필 이동 테스트용
-        _uiState.value = _uiState.value.copy(
-            searchResultUserList = UiState.Success(
-                dummyUsers.toImmutableList()
-            )
-        )
-    }
 
     fun updateSearchWord(searchWord: String) {
         _uiState.update { it.copy(searchWord = searchWord) }
     }
 
     fun searchUser() {
-        // TODO: API 호출
-        _uiState.value = _uiState.value.copy(
-            searchResultUserList = UiState.Success(
-                tempSearch(_uiState.value.searchWord).toImmutableList()
-            )
-        )
+        val searchWord = _uiState.value.searchWord
+        if (searchWord.isBlank()) {
+            _uiState.update { it.copy(searchResultUserList = UiState.Success(persistentListOf())) }
+            return
+        }
+
+        viewModelScope.launch {
+            feedRepository.getUserSearchResult(searchWord)
+                .onSuccess { searchResult ->
+                    _uiState.update {
+                        it.copy(searchResultUserList = UiState.Success(searchResult.toState()))
+                    }
+                }.onLogFailure { }
+        }
     }
 
     fun clearSearchWord() {
@@ -47,62 +54,34 @@ internal class FeedSearchViewModel @Inject constructor() : ViewModel() {
     }
 
     fun updateFollowingState(userId: Long, currentIsFollowing: Boolean) {
-        // TODO: currentIsFollowing에 따라 취소/등록 API 호출
-        _uiState.update { currentState ->
-            val oldState = currentState.searchResultUserList
+        viewModelScope.launch {
+            val result = if (currentIsFollowing) {
+                userRepository.deleteFollow(userId)
+            } else {
+                userRepository.putFollow(userId)
+            }
 
-            if (oldState is UiState.Success) {
-                val updatedList = oldState.data.map { user ->
+            result.onSuccess {
+                val currentListState = _uiState.value.searchResultUserList
+                if (currentListState !is UiState.Success) return@onSuccess
+
+                val updatedList = currentListState.data.map { user ->
                     if (user.userId == userId) {
-                        val newState = FollowState.getValueByFollowState(
-                            isFollowing = !currentIsFollowing,
-                            isFollowed = user.followState.isFollowed
+                        user.copy(
+                            followState = FollowState.getValueByFollowState(
+                                isFollowing = !currentIsFollowing,
+                                isFollowed = user.followState.isFollowed
+                            )
                         )
-                        user.copy(followState = newState)
                     } else {
                         user
                     }
                 }.toImmutableList()
 
-                currentState.copy(
-                    searchResultUserList = UiState.Success(updatedList)
-                )
-            } else {
-                currentState
-            }
-        }
-    }
-
-    companion object {
-        val dummyUsers = persistentListOf(
-            UserSearchUiModel(
-                userId = 1L,
-                nickname = "작나",
-                profileUrl = "",
-                followState = FollowState.ONLY_FOLLOWING
-            ),
-            UserSearchUiModel(
-                userId = 2L,
-                nickname = "큰나",
-                profileUrl = "",
-                followState = FollowState.MUTUAL_FOLLOW
-            ),
-            UserSearchUiModel(
-                userId = 3L,
-                nickname = "Daljyeong",
-                profileUrl = "",
-                followState = FollowState.NONE
-            ),
-            UserSearchUiModel(
-                userId = 4L,
-                nickname = "Makers",
-                profileUrl = "",
-                followState = FollowState.ONLY_FOLLOWED
-            )
-        )
-
-        fun tempSearch(searchKeyword: String) = dummyUsers.filter {
-            it.nickname.contains(searchKeyword)
+                _uiState.update {
+                    it.copy(searchResultUserList = UiState.Success(updatedList))
+                }
+            }.onLogFailure { }
         }
     }
 }

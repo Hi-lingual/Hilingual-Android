@@ -15,7 +15,7 @@
  */
 package com.hilingual.data.auth.di
 
-import com.hilingual.core.network.service.TokenRefreshService
+import com.hilingual.core.network.auth.TokenRefreshService
 import com.hilingual.data.auth.service.TokenRefreshServiceImpl
 import dagger.Binds
 import dagger.Module

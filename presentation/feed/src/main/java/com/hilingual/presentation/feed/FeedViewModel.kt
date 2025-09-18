@@ -17,8 +17,12 @@ package com.hilingual.presentation.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
-import com.hilingual.presentation.feed.model.FeedListItemUiModel
+import com.hilingual.data.diary.repository.DiaryRepository
+import com.hilingual.data.feed.repository.FeedRepository
+import com.hilingual.data.user.repository.UserRepository
+import com.hilingual.presentation.feed.model.FeedItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
@@ -34,82 +38,170 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class FeedViewModel @Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<FeedUiState>>(UiState.Success(FeedUiState.Fake))
-    val uiState: StateFlow<UiState<FeedUiState>> = _uiState.asStateFlow()
+internal class FeedViewModel @Inject constructor(
+    private val feedRepository: FeedRepository,
+    private val diaryRepository: DiaryRepository,
+    private val userRepository: UserRepository
+) : ViewModel() {
+    private val _uiState = MutableStateFlow(FeedUiState())
+    val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<FeedSideEffect>()
     val sideEffect: SharedFlow<FeedSideEffect> = _sideEffect.asSharedFlow()
 
+    fun loadInitialFeedData() {
+        getMyProfile()
+        getRecommendFeeds(isUserRefresh = false)
+        getFollowingFeeds(isUserRefresh = false)
+    }
+
+    fun onFeedRefresh(tab: FeedTab) {
+        when (tab) {
+            FeedTab.RECOMMEND -> getRecommendFeeds(isUserRefresh = true)
+            FeedTab.FOLLOWING -> getFollowingFeeds(isUserRefresh = true)
+        }
+    }
+
     fun readAllFeed() {
         viewModelScope.launch {
-            _sideEffect.emit(FeedSideEffect.ShowToast("피드의 일기를 모두 확인했어요."))
+            emitToastSideEffect("피드의 일기를 모두 확인했어요.")
+        }
+    }
+
+    private fun getMyProfile() {
+        viewModelScope.launch {
+            userRepository.getUserLoginInfo()
+                .onSuccess { myInfo ->
+                    _uiState.update {
+                        it.copy(
+                            myProfileUrl = myInfo.profileImg
+                        )
+                    }
+                }.onLogFailure { }
+        }
+    }
+
+    private fun getRecommendFeeds(isUserRefresh: Boolean) {
+        viewModelScope.launch {
+            if (isUserRefresh) {
+                _uiState.update { it.copy(isRecommendRefreshing = true) }
+            }
+
+            feedRepository.getRecommendFeeds()
+                .onSuccess { feedResult ->
+                    _uiState.update {
+                        it.copy(
+                            recommendFeedList = UiState.Success(feedResult.toState())
+                        )
+                    }
+                }
+                .onLogFailure {
+                    emitErrorDialogSideEffect { getRecommendFeeds(isUserRefresh) }
+                }
+
+            if (isUserRefresh) {
+                _uiState.update { it.copy(isRecommendRefreshing = false) }
+            }
+        }
+    }
+
+    private fun getFollowingFeeds(isUserRefresh: Boolean) {
+        viewModelScope.launch {
+            if (isUserRefresh) {
+                _uiState.update { it.copy(isFollowingRefreshing = true) }
+            }
+
+            feedRepository.getFollowingFeeds()
+                .onSuccess { feedResult ->
+                    _uiState.update {
+                        it.copy(
+                            followingFeedList = UiState.Success(feedResult.toState()),
+                            hasFollowing = feedResult.hasFollowing
+                        )
+                    }
+                }
+                .onLogFailure {
+                    emitErrorDialogSideEffect { getFollowingFeeds(isUserRefresh) }
+                }
+
+            if (isUserRefresh) {
+                _uiState.update { it.copy(isFollowingRefreshing = false) }
+            }
         }
     }
 
     fun toggleIsLiked(diaryId: Long, isLiked: Boolean) {
         viewModelScope.launch {
-            // TODO: API 성공 후 좋아요 수 증가
-            _uiState.update { currentState ->
-                val successState = currentState as UiState.Success
-
-                val updatedRecommendList = updateSingleItem(
-                    list = successState.data.recommendFeedList.toPersistentList(),
-                    diaryId = diaryId
-                ) { item ->
-                    item.copy(
-                        isLiked = isLiked,
-                        likeCount = item.likeCount + if (isLiked) 1 else -1
-                    )
-                }
-
-                val updatedFollowingList = updateSingleItem(
-                    list = successState.data.followingFeedList.toPersistentList(),
-                    diaryId = diaryId
-                ) { item ->
-                    item.copy(
-                        isLiked = isLiked,
-                        likeCount = item.likeCount + if (isLiked) 1 else -1
-                    )
-                }
-
-                successState.copy(
-                    data = successState.data.copy(
-                        recommendFeedList = updatedRecommendList,
-                        followingFeedList = updatedFollowingList
-                    )
-                )
-            }
+            feedRepository.postIsLike(diaryId, isLiked)
+                .onSuccess {
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            recommendFeedList = currentState.recommendFeedList.updateIfSuccess { list ->
+                                updateSingleItem(
+                                    list = list.toPersistentList(),
+                                    diaryId = diaryId
+                                ) { item ->
+                                    item.copy(
+                                        isLiked = isLiked,
+                                        likeCount = (item.likeCount + if (isLiked) 1 else -1).coerceAtLeast(
+                                            0
+                                        )
+                                    )
+                                }
+                            },
+                            followingFeedList = currentState.followingFeedList.updateIfSuccess { list ->
+                                updateSingleItem(
+                                    list = list.toPersistentList(),
+                                    diaryId = diaryId
+                                ) { item ->
+                                    item.copy(
+                                        isLiked = isLiked,
+                                        likeCount = (item.likeCount + if (isLiked) 1 else -1).coerceAtLeast(
+                                            0
+                                        )
+                                    )
+                                }
+                            }
+                        )
+                    }
+                    if (isLiked) showLikeSnackbar()
+                }.onLogFailure { }
         }
     }
 
     fun diaryUnpublish(diaryId: Long) {
-        // TODO: API 호출 성공 후 표시
         viewModelScope.launch {
-            _sideEffect.emit(FeedSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
-            _uiState.update { currentState ->
-                val successState = currentState as UiState.Success
-                successState.copy(
-                    data = successState.data.copy(
-                        recommendFeedList = removeSingleItem(
-                            list = successState.data.recommendFeedList.toPersistentList(),
-                            diaryId = diaryId
-                        ),
-                        followingFeedList = removeSingleItem(
-                            list = successState.data.followingFeedList.toPersistentList(),
-                            diaryId = diaryId
+            diaryRepository.patchDiaryUnpublish(diaryId)
+                .onSuccess {
+                    emitToastSideEffect("일기가 비공개 되었어요.")
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            recommendFeedList = currentState.recommendFeedList.updateIfSuccess { list ->
+                                removeSingleItem(list.toPersistentList(), diaryId)
+                            },
+                            followingFeedList = currentState.followingFeedList.updateIfSuccess { list ->
+                                removeSingleItem(list.toPersistentList(), diaryId)
+                            }
                         )
-                    )
-                )
-            }
+                    }
+                }.onLogFailure { }
+        }
+    }
+
+    private fun UiState<ImmutableList<FeedItemUiModel>>.updateIfSuccess(
+        transform: (ImmutableList<FeedItemUiModel>) -> ImmutableList<FeedItemUiModel>
+    ): UiState<ImmutableList<FeedItemUiModel>> {
+        return when (this) {
+            is UiState.Success -> UiState.Success(transform(this.data))
+            else -> this
         }
     }
 
     private fun updateSingleItem(
-        list: PersistentList<FeedListItemUiModel>,
+        list: PersistentList<FeedItemUiModel>,
         diaryId: Long,
-        transform: (FeedListItemUiModel) -> FeedListItemUiModel
-    ): ImmutableList<FeedListItemUiModel> {
+        transform: (FeedItemUiModel) -> FeedItemUiModel
+    ): ImmutableList<FeedItemUiModel> {
         val index = list.indexOfFirst { it.diaryId == diaryId }
         return if (index != -1) {
             val updatedItem = transform(list[index])
@@ -120,9 +212,9 @@ internal class FeedViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun removeSingleItem(
-        list: PersistentList<FeedListItemUiModel>,
+        list: PersistentList<FeedItemUiModel>,
         diaryId: Long
-    ): ImmutableList<FeedListItemUiModel> {
+    ): ImmutableList<FeedItemUiModel> {
         val index = list.indexOfFirst { it.diaryId == diaryId }
         return if (index != -1) {
             list.removeAt(index)
@@ -130,8 +222,24 @@ internal class FeedViewModel @Inject constructor() : ViewModel() {
             list
         }
     }
+
+    private suspend fun showLikeSnackbar() {
+        _sideEffect.emit(FeedSideEffect.ShowDiaryLikeSnackbar(message = "공감한 일기에 추가되었어요.", actionLabel = "보러가기"))
+    }
+
+    private suspend fun emitErrorDialogSideEffect(onRetry: () -> Unit) {
+        _sideEffect.emit(FeedSideEffect.ShowErrorDialog(onRetry = onRetry))
+    }
+
+    private suspend fun emitToastSideEffect(message: String) {
+        _sideEffect.emit(FeedSideEffect.ShowToast(message))
+    }
 }
 
 sealed interface FeedSideEffect {
+    data class ShowErrorDialog(val onRetry: () -> Unit) : FeedSideEffect
+
+    data class ShowDiaryLikeSnackbar(val message: String, val actionLabel: String) : FeedSideEffect
+
     data class ShowToast(val message: String) : FeedSideEffect
 }

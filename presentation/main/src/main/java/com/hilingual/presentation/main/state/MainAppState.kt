@@ -31,7 +31,6 @@ import com.hilingual.presentation.feed.navigation.navigateToFeed
 import com.hilingual.presentation.feeddiary.navigation.navigateToFeedDiary
 import com.hilingual.presentation.feedprofile.profile.navigation.navigateToFeedProfile
 import com.hilingual.presentation.feedprofile.profile.navigation.navigateToMyFeedProfile
-import com.hilingual.presentation.home.navigation.Home
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.main.MainTab
 import com.hilingual.presentation.main.monitor.NetworkMonitor
@@ -40,6 +39,7 @@ import com.hilingual.presentation.notification.navigation.navigateToNotification
 import com.hilingual.presentation.notification.navigation.navigateToNotificationSetting
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.otp.navigation.navigateToOtp
+import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.voca.navigation.navigateToVoca
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -55,7 +55,7 @@ internal class MainAppState(
     coroutineScope: CoroutineScope,
     networkMonitor: NetworkMonitor
 ) {
-    val startDestination = Home
+    val startDestination = Splash
 
     val isOffline: StateFlow<Boolean> = networkMonitor.isOnline
         .map(Boolean::not)
@@ -109,7 +109,7 @@ internal class MainAppState(
             }
         }
 
-        val vocaNavOptions = navOptions {
+        val refreshNavOptions = navOptions {
             popUpTo(0) {
                 inclusive = true
             }
@@ -118,8 +118,8 @@ internal class MainAppState(
 
         when (tab) {
             MainTab.HOME -> navController.navigateToHome(navOptions = navOptions)
-            MainTab.VOCA -> navController.navigateToVoca(navOptions = vocaNavOptions)
-            MainTab.FEED -> navController.navigateToFeed(navOptions = navOptions)
+            MainTab.VOCA -> navController.navigateToVoca(navOptions = refreshNavOptions)
+            MainTab.FEED -> navController.navigateToFeed(navOptions = refreshNavOptions)
             MainTab.MY -> navController.navigateToMyPage(navOptions = navOptions)
         }
     }
@@ -143,7 +143,7 @@ internal class MainAppState(
         navController.navigateToHome(navOptions)
     }
 
-    fun navigateToVoca(navOptions: NavOptions? = null) {
+    fun navigateToVoca(navOptions: NavOptions? = clearStackNavOptions) {
         navController.navigateToVoca(navOptions)
     }
 
@@ -175,7 +175,6 @@ internal class MainAppState(
         navController.navigateToNotification(navOptions)
     }
 
-    // TODO: 추후 마이페이지의 스택관리로 변경해주세요 to.지영
     fun navigateToNotificationSetting(
         navOptions: NavOptions = navOptions {
             launchSingleTop = true
@@ -202,8 +201,8 @@ internal class MainAppState(
         navController.navigateToFeedProfile(userId, navOptions)
     }
 
-    fun navigateToMyFeedProfile(navOptions: NavOptions? = null) {
-        navController.navigateToMyFeedProfile(navOptions)
+    fun navigateToMyFeedProfile(showLikedDiaries: Boolean = false, navOptions: NavOptions? = null) {
+        navController.navigateToMyFeedProfile(showLikedDiaries, navOptions)
     }
 
     fun navigateUp() {

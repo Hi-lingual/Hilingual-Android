@@ -35,7 +35,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.addFocusCleaner
@@ -188,7 +188,9 @@ private fun OtpFailureDialog(
             onDismiss = { },
             properties = DialogProperties(
                 dismissOnBackPress = false,
-                dismissOnClickOutside = false
+                dismissOnClickOutside = false,
+                usePlatformDefaultWidth = false,
+                decorFitsSystemWindows = false
             )
         )
     }

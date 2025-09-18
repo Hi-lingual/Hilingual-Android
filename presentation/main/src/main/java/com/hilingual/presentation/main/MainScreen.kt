@@ -87,7 +87,7 @@ internal fun MainScreen(
     )
 
     val snackBarHostState = remember { SnackbarHostState() }
-    var snackbarOnClick by remember { mutableStateOf({}) }
+    var currentSnackbarRequest by remember { mutableStateOf<SnackbarRequest?>(null) }
 
     val onShowToast: (String) -> Unit = remember(coroutineScope, snackBarHostState) {
         { message ->
@@ -106,7 +106,7 @@ internal fun MainScreen(
     }
     val onShowSnackbar: (SnackbarRequest) -> Unit = remember(coroutineScope, snackBarHostState) {
         { request ->
-            snackbarOnClick = request.onClick
+            currentSnackbarRequest = request
             coroutineScope.launch {
                 snackBarHostState.currentSnackbarData?.dismiss()
                 val job = launch {
@@ -117,7 +117,9 @@ internal fun MainScreen(
                     )
                 }
                 job.invokeOnCompletion {
-                    snackbarOnClick = {}
+                    if (currentSnackbarRequest == request) {
+                        currentSnackbarRequest = null
+                    }
                 }
                 delay(EXIT_MILLIS)
                 job.cancel()
@@ -188,7 +190,8 @@ internal fun MainScreen(
                     navigateToDiaryFeedback = appState::navigateToDiaryFeedback,
                     navigateToDiaryWrite = appState::navigateToDiaryWrite,
                     navigateToNotification = appState::navigateToNotification,
-                    navigateToFeedProfile = appState::navigateToFeedProfile
+                    navigateToFeedProfile = appState::navigateToFeedProfile,
+                    navigateToFeed = appState::navigateToFeed
                 )
 
                 notificationNavGraph(
@@ -258,6 +261,7 @@ internal fun MainScreen(
                     navigateUp = appState::navigateUp,
                     navigateToFeedProfile = appState::navigateToFeedProfile,
                     navController = appState.navController,
+                    navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
                     navigateToFeedDiary = appState::navigateToFeedDiary
                 )
             }
@@ -276,15 +280,17 @@ internal fun MainScreen(
             ) {
                 SnackbarHost(hostState = snackBarHostState) { data ->
                     if (data.visuals.withDismissAction) {
-                        DiarySnackbar(
-                            message = data.visuals.message,
-                            buttonText = data.visuals.actionLabel ?: "",
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            onClick = {
-                                snackbarOnClick()
-                                data.dismiss()
-                            }
-                        )
+                        currentSnackbarRequest?.let { request ->
+                            DiarySnackbar(
+                                message = data.visuals.message,
+                                buttonText = data.visuals.actionLabel ?: "",
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                onClick = {
+                                    request.onClick()
+                                    data.dismiss()
+                                }
+                            )
+                        }
                     } else {
                         TextToast(text = data.visuals.message)
                     }

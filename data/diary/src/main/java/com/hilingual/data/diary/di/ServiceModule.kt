@@ -15,7 +15,7 @@
  */
 package com.hilingual.data.diary.di
 
-import com.hilingual.core.network.MultipartClient
+import com.hilingual.core.network.di.LongTimeoutClient
 import com.hilingual.data.diary.service.DiaryService
 import dagger.Module
 import dagger.Provides
@@ -29,5 +29,5 @@ import javax.inject.Singleton
 internal object ServiceModule {
     @Provides
     @Singleton
-    fun provideDiaryService(@MultipartClient retrofit: Retrofit): DiaryService = retrofit.create(DiaryService::class.java)
+    fun provideDiaryService(@LongTimeoutClient retrofit: Retrofit): DiaryService = retrofit.create(DiaryService::class.java)
 }

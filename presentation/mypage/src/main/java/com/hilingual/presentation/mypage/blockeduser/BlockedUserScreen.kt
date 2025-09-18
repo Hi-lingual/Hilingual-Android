@@ -26,7 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.util.UiState
@@ -48,7 +48,7 @@ internal fun BlockedUserRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.loadInitialData()
+        viewModel.getBlockList()
     }
 
     when (val state = uiState.blockedUserList) {
@@ -102,7 +102,7 @@ private fun BlockedUserScreen(
                     contentDescription = null
                 )
                 Text(
-                    text = "검색 결과가 없습니다.",
+                    text = "차단된 계정이 없습니다.",
                     style = HilingualTheme.typography.headM18,
                     color = HilingualTheme.colors.gray500,
                     textAlign = TextAlign.Center

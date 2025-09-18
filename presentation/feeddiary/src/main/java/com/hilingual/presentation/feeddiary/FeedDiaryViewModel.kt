@@ -27,6 +27,7 @@ import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.feed.repository.FeedRepository
+import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.feeddiary.navigation.FeedDiary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
@@ -46,7 +47,8 @@ import javax.inject.Inject
 internal class FeedDiaryViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val diaryRepository: DiaryRepository,
-    private val feedRepository: FeedRepository
+    private val feedRepository: FeedRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     val diaryId = savedStateHandle.toRoute<FeedDiary>().diaryId
 
@@ -62,21 +64,29 @@ internal class FeedDiaryViewModel @Inject constructor(
 
     private fun loadInitialData() {
         viewModelScope.launch {
+            val profileResult = feedRepository.getFeedDiaryProfile(diaryId)
+
+            if (profileResult.isFailure) {
+                _sideEffect.emit(FeedDiarySideEffect.ShowErrorDialog)
+                return@launch
+            }
+            val profileInfo = profileResult.getOrThrow()
+
             suspendRunCatching {
                 coroutineScope {
-                    val profileDeferred = async { feedRepository.getFeedDiaryProfile(diaryId) }
                     val contentDeferred = async { diaryRepository.getDiaryContent(diaryId) }
                     val feedbacksDeferred = async { diaryRepository.getDiaryFeedbacks(diaryId) }
-                    val recommendExpressionsDeferred = async { diaryRepository.getDiaryRecommendExpressions(diaryId) }
+                    val recommendExpressionsDeferred =
+                        async { diaryRepository.getDiaryRecommendExpressions(diaryId) }
 
-                    val profileResult = profileDeferred.await().getOrThrow()
                     val contentResult = contentDeferred.await().getOrThrow()
                     val feedbacksResult = feedbacksDeferred.await().getOrThrow()
-                    val recommendExpressionsResult = recommendExpressionsDeferred.await().getOrThrow()
+                    val recommendExpressionsResult =
+                        recommendExpressionsDeferred.await().getOrThrow()
 
                     FeedDiaryUiState(
-                        isMine = profileResult.isMine,
-                        profileContent = profileResult.toState(),
+                        isMine = profileInfo.isMine,
+                        profileContent = profileInfo.toState(),
                         writtenDate = contentResult.writtenDate,
                         diaryContent = contentResult.toState(),
                         feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),
@@ -87,7 +97,7 @@ internal class FeedDiaryViewModel @Inject constructor(
             }.onSuccess { combinedState ->
                 _uiState.update { UiState.Success(combinedState) }
             }.onLogFailure {
-                _sideEffect.emit(FeedDiarySideEffect.ShowRetryDialog(onRetry = ::loadInitialData))
+                _sideEffect.emit(FeedDiarySideEffect.ShowErrorDialog)
             }
         }
     }
@@ -100,17 +110,24 @@ internal class FeedDiaryViewModel @Inject constructor(
                         it.copy(
                             profileContent = it.profileContent.copy(
                                 isLiked = isLiked,
-                                likeCount = (it.profileContent.likeCount + if (isLiked) 1 else -1).coerceAtLeast(0)
+                                likeCount = (it.profileContent.likeCount + if (isLiked) 1 else -1)
+                                    .coerceAtLeast(0)
                             )
                         )
                     }
+                    if (isLiked) showLikeSnackbar()
                 }
                 .onLogFailure { }
         }
     }
 
-    fun blockUser() {
-        // TODO: 유저 차단하기 API 연동 (profileContent.userId)
+    fun blockUser(userId: Long) {
+        viewModelScope.launch {
+            userRepository.putBlockUser(userId)
+                .onSuccess {
+                    _sideEffect.emit(FeedDiarySideEffect.NavigateToFeedProfile(userId))
+                }.onLogFailure { }
+        }
     }
 
     fun toggleBookmark(phraseId: Long, isMarked: Boolean) {
@@ -164,14 +181,30 @@ internal class FeedDiaryViewModel @Inject constructor(
         }
     }
 
+    private suspend fun showLikeSnackbar() {
+        _sideEffect.emit(FeedDiarySideEffect.ShowDiaryLikeSnackbar(message = "공감한 일기에 추가되었어요.", actionLabel = "보러가기"))
+    }
+
     private suspend fun showVocaOverflowSnackbar() {
-        _sideEffect.emit(FeedDiarySideEffect.ShowVocaOverflowSnackbar(message = "단어장이 모두 찼어요!", actionLabel = "비우러가기"))
+        _sideEffect.emit(
+            FeedDiarySideEffect.ShowVocaOverflowSnackbar(
+                message = "단어장이 모두 찼어요!",
+                actionLabel = "비우러가기"
+            )
+        )
     }
 }
 
 sealed interface FeedDiarySideEffect {
     data object NavigateToUp : FeedDiarySideEffect
-    data class ShowRetryDialog(val onRetry: () -> Unit) : FeedDiarySideEffect
+
+    data class NavigateToFeedProfile(val userId: Long) : FeedDiarySideEffect
+
+    data class ShowDiaryLikeSnackbar(val message: String, val actionLabel: String) : FeedDiarySideEffect
+
     data class ShowVocaOverflowSnackbar(val message: String, val actionLabel: String) : FeedDiarySideEffect
+
     data class ShowToast(val message: String) : FeedDiarySideEffect
+
+    data object ShowErrorDialog : FeedDiarySideEffect
 }

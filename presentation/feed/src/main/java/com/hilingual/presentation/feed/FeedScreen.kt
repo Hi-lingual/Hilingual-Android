@@ -36,25 +36,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
+import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
-import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedTopAppBar
+import com.hilingual.presentation.feed.model.FeedItemUiModel
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun FeedRoute(
     paddingValues: PaddingValues,
-    navigateToMyFeedProfile: () -> Unit,
+    navigateToMyFeedProfile: (showLikedDiaries: Boolean) -> Unit,
     navigateToFeedProfile: (userId: Long) -> Unit,
     navigateToFeedDiary: (Long) -> Unit,
     navigateToFeedSearch: () -> Unit,
@@ -63,41 +68,68 @@ internal fun FeedRoute(
     val context = LocalContext.current
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val snackbarTrigger = LocalSnackbarTrigger.current
+    val dialogTrigger = LocalDialogTrigger.current
     val toastTrigger = LocalToastTrigger.current
 
-    viewModel.sideEffect.collectSideEffect {
-        when (it) {
+    viewModel.sideEffect.collectSideEffect { sideEffect ->
+        when (sideEffect) {
             is FeedSideEffect.ShowToast -> {
-                toastTrigger(it.message)
+                toastTrigger(sideEffect.message)
+            }
+
+            is FeedSideEffect.ShowErrorDialog -> {
+                dialogTrigger.show(sideEffect.onRetry)
+            }
+
+            is FeedSideEffect.ShowDiaryLikeSnackbar -> {
+                snackbarTrigger(
+                    SnackbarRequest(
+                        message = sideEffect.message,
+                        buttonText = sideEffect.actionLabel,
+                        onClick = { navigateToMyFeedProfile(true) }
+                    )
+                )
             }
         }
     }
 
-    when (val state = uiState) {
-        is UiState.Loading -> HilingualLoadingIndicator()
+    LaunchedEffect(Unit) {
+        viewModel.loadInitialFeedData()
+    }
 
-        is UiState.Success -> {
-            FeedScreen(
-                paddingValues = paddingValues,
-                uiState = state.data,
-                onSearchClick = navigateToFeedSearch,
-                onMyProfileClick = navigateToMyFeedProfile,
-                onFeedProfileClick = navigateToFeedProfile,
-                onLikeClick = viewModel::toggleIsLiked,
-                onContentDetailClick = navigateToFeedDiary,
-                onUnpublishClick = viewModel::diaryUnpublish,
-                onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
-                readAllFeed = viewModel::readAllFeed
-            )
-        }
-        else -> {}
+    with(uiState) {
+        FeedScreen(
+            paddingValues = paddingValues,
+            myProfileUrl = myProfileUrl,
+            recommendFeedList = recommendFeedList,
+            followingFeedList = followingFeedList,
+            recommendRefreshing = isRecommendRefreshing,
+            followingRefreshing = isFollowingRefreshing,
+            onFeedRefresh = viewModel::onFeedRefresh,
+            hasFollowing = hasFollowing,
+            onSearchClick = navigateToFeedSearch,
+            onMyProfileClick = { navigateToMyFeedProfile(false) },
+            onFeedProfileClick = navigateToFeedProfile,
+            onLikeClick = viewModel::toggleIsLiked,
+            onContentDetailClick = navigateToFeedDiary,
+            onUnpublishClick = viewModel::diaryUnpublish,
+            onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
+            readAllFeed = viewModel::readAllFeed
+        )
     }
 }
 
 @Composable
 private fun FeedScreen(
     paddingValues: PaddingValues,
-    uiState: FeedUiState,
+    myProfileUrl: String,
+    recommendFeedList: UiState<ImmutableList<FeedItemUiModel>>,
+    followingFeedList: UiState<ImmutableList<FeedItemUiModel>>,
+    recommendRefreshing: Boolean,
+    followingRefreshing: Boolean,
+    hasFollowing: Boolean,
     onMyProfileClick: () -> Unit,
     onSearchClick: () -> Unit,
     onFeedProfileClick: (Long) -> Unit,
@@ -106,6 +138,7 @@ private fun FeedScreen(
     onUnpublishClick: (Long) -> Unit,
     onReportClick: () -> Unit,
     readAllFeed: () -> Unit,
+    onFeedRefresh: (FeedTab) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -129,18 +162,26 @@ private fun FeedScreen(
 
     val isAtBottom by remember(pagerState.currentPage) {
         derivedStateOf {
-            val feedList = when (pagerState.currentPage) {
-                0 -> uiState.recommendFeedList
-                else -> uiState.followingFeedList
+            val feedListState = when (pagerState.currentPage) {
+                0 -> recommendFeedList
+                else -> followingFeedList
             }
-            val layoutInfo = currentListState.layoutInfo
-            val visibleItemsInfo = layoutInfo.visibleItemsInfo
 
-            if (feedList.isEmpty() || layoutInfo.totalItemsCount == 0) return@derivedStateOf false
+            when (feedListState) {
+                is UiState.Success -> {
+                    val feedList = feedListState.data
+                    val layoutInfo = currentListState.layoutInfo
+                    val visibleItemsInfo = layoutInfo.visibleItemsInfo
 
-            val lastVisibleItem = visibleItemsInfo.last()
-            val viewportHeight = layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
-            (lastVisibleItem.index == layoutInfo.totalItemsCount - 1) && (lastVisibleItem.offset + lastVisibleItem.size <= viewportHeight)
+                    if (feedList.isEmpty() || layoutInfo.totalItemsCount == 0) return@derivedStateOf false
+
+                    val lastVisibleItem = visibleItemsInfo.last()
+                    val viewportHeight = layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
+                    (lastVisibleItem.index == layoutInfo.totalItemsCount - 1) &&
+                        (lastVisibleItem.offset + lastVisibleItem.size <= viewportHeight)
+                }
+                else -> false
+            }
         }
     }
 
@@ -156,11 +197,12 @@ private fun FeedScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .statusBarColor(HilingualTheme.colors.white)
             .background(HilingualTheme.colors.white)
             .padding(paddingValues)
     ) {
         FeedTopAppBar(
-            profileImageUrl = uiState.myProfileUrl,
+            profileImageUrl = myProfileUrl,
             onProfileClick = onMyProfileClick,
             onSearchClick = onSearchClick
         )
@@ -183,24 +225,28 @@ private fun FeedScreen(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize()
             ) { page ->
-                when (page) {
-                    0 -> FeedTabScreen(
+                when (val tab = FeedTab.entries[page]) {
+                    FeedTab.RECOMMEND -> FeedTabScreen(
                         listState = recommendListState,
-                        feedList = uiState.recommendFeedList,
+                        feedListState = recommendFeedList,
+                        isRefreshing = recommendRefreshing,
+                        onRefresh = { onFeedRefresh(tab) },
                         onProfileClick = onFeedProfileClick,
                         onContentDetailClick = onContentDetailClick,
                         onLikeClick = onLikeClick,
-                        hasFollowing = false,
+                        hasFollowing = true,
                         onUnpublishClick = onUnpublishClick,
                         onReportClick = onReportClick
                     )
-                    1 -> FeedTabScreen(
+                    FeedTab.FOLLOWING -> FeedTabScreen(
                         listState = followingsListState,
-                        feedList = uiState.followingFeedList,
+                        feedListState = followingFeedList,
+                        isRefreshing = followingRefreshing,
+                        onRefresh = { onFeedRefresh(tab) },
                         onProfileClick = onFeedProfileClick,
                         onContentDetailClick = onContentDetailClick,
                         onLikeClick = onLikeClick,
-                        hasFollowing = uiState.hasFollowing,
+                        hasFollowing = hasFollowing,
                         onUnpublishClick = onUnpublishClick,
                         onReportClick = onReportClick
                     )
@@ -236,7 +282,13 @@ private fun FeedScreenPreview() {
             readAllFeed = {},
             onUnpublishClick = {},
             onReportClick = {},
-            uiState = FeedUiState.Fake
+            myProfileUrl = "",
+            recommendFeedList = UiState.Success(persistentListOf()),
+            followingFeedList = UiState.Success(persistentListOf()),
+            hasFollowing = false,
+            recommendRefreshing = false,
+            followingRefreshing = false,
+            onFeedRefresh = {}
         )
     }
 }

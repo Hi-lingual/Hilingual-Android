@@ -32,7 +32,8 @@ dependencies {
     implementation(libs.bundles.androidx)
 
     // others
-    implementation(libs.coil.compose)
+    implementation(platform(libs.coil.bom))
+    implementation(libs.bundles.coil)
     implementation(libs.kotlinx.immutable)
     implementation(libs.lottie)
     implementation(libs.pebble)

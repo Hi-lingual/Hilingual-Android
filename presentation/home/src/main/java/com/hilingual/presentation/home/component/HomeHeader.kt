@@ -139,7 +139,7 @@ private fun UserStatsRow(totalDiaries: Int, streak: Int) {
 private fun DiaryCountStat(count: Int) {
     StatItem(
         icon = R.drawable.ic_bubble_16,
-        text = if (count > 0) "총 ${count}편" else "일기를 작성해보세요!"
+        text = "총 ${count}편"
     )
 }
 

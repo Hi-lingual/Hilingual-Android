@@ -23,12 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
@@ -52,7 +53,7 @@ import kotlinx.coroutines.launch
 internal fun FeedDiaryRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
-    navigateToMyFeedProfile: () -> Unit,
+    navigateToMyFeedProfile: (showLikedDiaries: Boolean) -> Unit,
     navigateToFeedProfile: (Long) -> Unit,
     navigateToVoca: () -> Unit,
     viewModel: FeedDiaryViewModel = hiltViewModel()
@@ -64,6 +65,7 @@ internal fun FeedDiaryRoute(
 
     val snackbarTrigger = LocalSnackbarTrigger.current
     val toastTrigger = LocalToastTrigger.current
+    val dialogTrigger = LocalDialogTrigger.current
 
     BackHandler {
         if (isImageDetailVisible) {
@@ -77,6 +79,8 @@ internal fun FeedDiaryRoute(
         when (it) {
             is FeedDiarySideEffect.NavigateToUp -> navigateUp()
 
+            is FeedDiarySideEffect.NavigateToFeedProfile -> navigateToFeedProfile(it.userId)
+
             is FeedDiarySideEffect.ShowVocaOverflowSnackbar -> {
                 snackbarTrigger(
                     SnackbarRequest(
@@ -87,11 +91,23 @@ internal fun FeedDiaryRoute(
                 )
             }
 
+            is FeedDiarySideEffect.ShowDiaryLikeSnackbar -> {
+                snackbarTrigger(
+                    SnackbarRequest(
+                        message = it.message,
+                        buttonText = it.actionLabel,
+                        onClick = { navigateToMyFeedProfile(true) }
+                    )
+                )
+            }
+
             is FeedDiarySideEffect.ShowToast -> {
                 toastTrigger(it.message)
             }
 
-            else -> {}
+            is FeedDiarySideEffect.ShowErrorDialog -> {
+                dialogTrigger.show(navigateUp)
+            }
         }
     }
 
@@ -124,12 +140,12 @@ private fun FeedDiaryScreen(
     paddingValues: PaddingValues,
     uiState: FeedDiaryUiState,
     onBackClick: () -> Unit,
-    onMyProfileClick: () -> Unit,
+    onMyProfileClick: (showLikedDiaries: Boolean) -> Unit,
     onProfileClick: (Long) -> Unit,
     onLikeClick: (Boolean) -> Unit,
     onPrivateClick: () -> Unit,
     onReportClick: () -> Unit,
-    onBlockClick: () -> Unit,
+    onBlockClick: (Long) -> Unit,
     isImageDetailVisible: Boolean,
     onChangeImageDetailVisible: () -> Unit,
     onToggleBookmark: (Long, Boolean) -> Unit
@@ -181,22 +197,22 @@ private fun FeedDiaryScreen(
             title = "피드"
         )
 
-        with(uiState.profileContent) {
+        with(uiState) {
             FeedDiaryProfile(
-                profileUrl = profileUrl,
-                nickname = nickname,
-                streak = streak,
-                isLiked = isLiked,
-                likeCount = likeCount,
-                sharedDateInMinutes = sharedDateInMinutes,
+                profileUrl = profileContent.profileUrl,
+                nickname = profileContent.nickname,
+                streak = profileContent.streak,
+                isLiked = profileContent.isLiked,
+                likeCount = profileContent.likeCount,
+                sharedDateInMinutes = profileContent.sharedDateInMinutes,
                 onProfileClick = {
-                    if (uiState.isMine) {
-                        onMyProfileClick()
+                    if (isMine) {
+                        onMyProfileClick(false)
                     } else {
-                        onProfileClick(userId)
+                        onProfileClick(profileContent.userId)
                     }
                 },
-                onLikeClick = { onLikeClick(!isLiked) }
+                onLikeClick = { onLikeClick(!profileContent.isLiked) }
             )
         }
 
@@ -301,7 +317,7 @@ private fun FeedDiaryScreen(
         onDismiss = { isBlockConfirmBottomSheetVisible = false },
         onBlockButtonClick = {
             isBlockConfirmBottomSheetVisible = false
-            onBlockClick()
+            onBlockClick(uiState.profileContent.userId)
         }
     )
 

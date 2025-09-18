@@ -32,7 +32,8 @@ data class VocaUiState(
     val vocaGroupList: UiState<ImmutableList<GroupingVocaModel>> = UiState.Loading,
     val searchKeyword: String = "",
     val searchResultList: ImmutableList<VocaItemModel> = persistentListOf(),
-    val vocaItemDetail: UiState<VocaDetailModel> = UiState.Loading
+    val vocaItemDetail: UiState<VocaDetailModel> = UiState.Loading,
+    val isRefreshing: Boolean = false
 )
 
 enum class ScreenType {

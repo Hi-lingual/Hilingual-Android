@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -28,9 +30,11 @@ internal fun DiaryListScreen(
     onLikeClick: (diaryId: Long, isLiked: Boolean) -> Unit,
     onUnpublishClick: (diaryId: Long) -> Unit,
     onReportClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    listState: LazyListState = rememberLazyListState()
 ) {
     LazyColumn(
+        state = listState,
         contentPadding = PaddingValues(bottom = 48.dp),
         modifier = modifier
             .fillMaxSize()
@@ -42,8 +46,9 @@ internal fun DiaryListScreen(
                 Column(
                     modifier = Modifier.fillParentMaxSize()
                 ) {
-                    Spacer(Modifier.weight(14f))
+                    Spacer(modifier = Modifier.weight(140f))
                     FeedEmptyCard(type = emptyCardType)
+                    Spacer(modifier = Modifier.weight(243f))
                 }
             }
         } else {

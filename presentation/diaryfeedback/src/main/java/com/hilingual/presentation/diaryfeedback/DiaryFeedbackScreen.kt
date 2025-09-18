@@ -38,11 +38,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
+import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.SnackbarRequest
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalSnackbarTrigger
@@ -92,7 +93,7 @@ internal fun DiaryFeedbackRoute(
 
     viewModel.sideEffect.collectSideEffect {
         when (it) {
-            is DiaryFeedbackSideEffect.ShowRetryDialog -> dialogTrigger.show(it.onRetry)
+            is DiaryFeedbackSideEffect.ShowErrorDialog -> dialogTrigger.show(navigateUp)
 
             is DiaryFeedbackSideEffect.ShowDiaryPublishSnackbar -> {
                 snackbarTrigger(
@@ -180,6 +181,7 @@ private fun DiaryFeedbackScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .statusBarColor(HilingualTheme.colors.white)
             .background(HilingualTheme.colors.white)
             .padding(paddingValues)
     ) {

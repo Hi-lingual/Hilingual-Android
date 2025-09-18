@@ -30,10 +30,14 @@ internal fun FeedbackReportDialog(
     if (isVisible) {
         TwoButtonDialog(
             title = "AI 피드백을 신고하시겠어요?",
-            description = "신고된 AI 피드백은 확인 후 \n서비스의 운영원칙에 따라 처리됩니다.",
+            description = "신고된 AI 피드백은 확인 후 \n서비스의 운영원칙에 따라 처리돼요.",
             cancelText = "아니요",
-            confirmText = "네, 신고할게요",
-            properties = DialogProperties(dismissOnClickOutside = false),
+            confirmText = "신고하기",
+            properties = DialogProperties(
+                dismissOnClickOutside = false,
+                usePlatformDefaultWidth = false,
+                decorFitsSystemWindows = false
+            ),
             onNegative = onDismiss,
             onPositive = {
                 onReportClick()

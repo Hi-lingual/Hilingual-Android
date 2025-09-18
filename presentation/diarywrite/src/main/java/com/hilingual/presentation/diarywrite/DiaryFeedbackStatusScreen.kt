@@ -37,7 +37,6 @@ import com.hilingual.core.designsystem.component.image.HilingualLottieAnimation
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.diarywrite.component.FeedbackCompleteContent
 import com.hilingual.presentation.diarywrite.component.FeedbackFailureContent
-import com.hilingual.presentation.diarywrite.component.FeedbackLoadingContent
 import com.hilingual.presentation.diarywrite.component.FeedbackMedia
 import com.hilingual.presentation.diarywrite.component.FeedbackUIData
 import com.hilingual.core.designsystem.R as DesignSystemR
@@ -69,12 +68,7 @@ internal fun DiaryFeedbackStatusScreen(
             if (uiData.description != null) {
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Text(
-                    text = uiData.description,
-                    color = HilingualTheme.colors.gray400,
-                    style = HilingualTheme.typography.bodyR18,
-                    textAlign = TextAlign.Center
-                )
+                uiData.description.invoke()
             }
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -108,32 +102,13 @@ internal fun DiaryFeedbackStatusScreen(
 
 @Preview
 @Composable
-private fun DiaryFeedbackLoadingStatusScreenPreview() {
-    HilingualTheme {
-        DiaryFeedbackStatusScreen(
-            paddingValues = PaddingValues(0.dp),
-            uiData = FeedbackUIData(
-                title = "일기 저장 중..",
-                description = "피드백을 요청하고 있어요.",
-                media = FeedbackMedia.Lottie(
-                    resId = R.raw.lottie_feedback_loading,
-                    heightDp = 194.dp
-                )
-            ),
-            content = { FeedbackLoadingContent() }
-        )
-    }
-}
-
-@Preview
-@Composable
 private fun DiaryFeedbackCompleteStatusScreenPreview() {
     HilingualTheme {
         DiaryFeedbackStatusScreen(
             paddingValues = PaddingValues(0.dp),
             uiData = FeedbackUIData(
                 title = "일기 저장 완료!",
-                description = "펜펜이가 틀린 부분을 고치고,\n더 나은 표현으로 수정했어요!",
+                description = { Text("틀린 부분을 고치고,\n더 나은 표현으로 수정했어요!") },
                 media = FeedbackMedia.Lottie(
                     resId = R.raw.lottie_feedback_complete,
                     heightDp = 180.dp

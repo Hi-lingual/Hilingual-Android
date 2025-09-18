@@ -20,6 +20,7 @@ import com.hilingual.presentation.home.model.DateUiModel
 import com.hilingual.presentation.home.model.DiaryThumbnailUiModel
 import com.hilingual.presentation.home.model.TodayTopicUiModel
 import com.hilingual.presentation.home.model.UserProfileUiModel
+import com.hilingual.presentation.home.type.DiaryCardState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import java.time.LocalDate
@@ -30,7 +31,8 @@ data class HomeUiState(
     val selectedDate: LocalDate = LocalDate.now(),
     val diaryThumbnail: DiaryThumbnailUiModel? = null,
     val dateList: ImmutableList<DateUiModel> = persistentListOf(),
-    val todayTopic: TodayTopicUiModel? = null
+    val todayTopic: TodayTopicUiModel? = null,
+    val cardState: DiaryCardState = DiaryCardState.PAST
 ) {
     companion object {
         val Fake = HomeUiState(
@@ -57,7 +59,7 @@ data class HomeUiState(
             todayTopic = TodayTopicUiModel(
                 topicKo = "가장 좋아하는 계절은 무엇인가요?",
                 topicEn = "What is your favorite season?",
-                remainingTime = 3
+                remainingTime = -1
             )
         )
     }

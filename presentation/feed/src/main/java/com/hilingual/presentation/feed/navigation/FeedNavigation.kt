@@ -58,7 +58,7 @@ fun NavGraphBuilder.feedNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
     navigateToFeedDiary: (Long) -> Unit,
-    navigateToMyFeedProfile: () -> Unit,
+    navigateToMyFeedProfile: (showLikedDiaries: Boolean) -> Unit,
     navigateToFeedProfile: (Long) -> Unit
 ) {
     navigation<FeedGraph>(

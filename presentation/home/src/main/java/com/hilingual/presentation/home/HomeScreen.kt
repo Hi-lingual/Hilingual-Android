@@ -44,11 +44,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.model.SnackbarRequest
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.trigger.LocalSnackbarTrigger
+import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
@@ -63,9 +66,7 @@ import com.hilingual.presentation.home.component.footer.DiaryTimeInfo
 import com.hilingual.presentation.home.component.footer.HomeDropDownMenu
 import com.hilingual.presentation.home.component.footer.TodayTopic
 import com.hilingual.presentation.home.component.footer.WriteDiaryButton
-import com.hilingual.presentation.home.util.isDateFuture
-import com.hilingual.presentation.home.util.isDateWritable
-import com.hilingual.presentation.home.util.isDateWritten
+import com.hilingual.presentation.home.type.DiaryCardState
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -76,15 +77,28 @@ internal fun HomeRoute(
     navigateToDiaryFeedback: (diaryId: Long) -> Unit,
     navigateToNotification: () -> Unit,
     navigateToFeedProfile: (userId: Long) -> Unit,
+    navigateToFeed: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
+    val toastTrigger = LocalToastTrigger.current
+    val snackbarTrigger = LocalSnackbarTrigger.current
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is HomeSideEffect.ShowRetryDialog -> {
-                dialogTrigger.show(sideEffect.onRetry)
+            is HomeSideEffect.ShowErrorDialog -> dialogTrigger.show(sideEffect.onRetry)
+
+            is HomeSideEffect.ShowToast -> toastTrigger(sideEffect.text)
+
+            is HomeSideEffect.ShowSnackBar -> {
+                snackbarTrigger(
+                    SnackbarRequest(
+                        message = sideEffect.message,
+                        buttonText = sideEffect.actionLabel,
+                        onClick = navigateToFeed
+                    )
+                )
             }
         }
     }
@@ -115,9 +129,9 @@ internal fun HomeRoute(
                 onMonthChanged = viewModel::onMonthChanged,
                 onWriteDiaryClick = navigateToDiaryWrite,
                 onDiaryPreviewClick = navigateToDiaryFeedback,
-                onDeleteClick = { /* TODO: 삭제 by.angrypodo*/ },
-                onPublishClick = { /* TODO: 게시 by.angrypodo*/ },
-                onUnpublishClick = { /* TODO: 비게시 by.angrypodo*/ }
+                onDeleteClick = viewModel::deleteDiary,
+                onPublishClick = viewModel::publishDiary,
+                onUnpublishClick = viewModel::unpublishDiary
             )
         }
 
@@ -135,18 +149,12 @@ private fun HomeScreen(
     onMonthChanged: (YearMonth) -> Unit,
     onWriteDiaryClick: (LocalDate) -> Unit,
     onDiaryPreviewClick: (diaryId: Long) -> Unit,
-    onDeleteClick: () -> Unit,
-    onPublishClick: () -> Unit,
-    onUnpublishClick: () -> Unit
+    onDeleteClick: (diaryId: Long) -> Unit,
+    onPublishClick: (diaryId: Long) -> Unit,
+    onUnpublishClick: (diaryId: Long) -> Unit
 ) {
     val date = uiState.selectedDate
     val verticalScrollState = rememberScrollState()
-
-    val isWritten = remember(uiState.dateList, date) {
-        isDateWritten(date, uiState.dateList)
-    }
-    val isFuture = remember(date) { isDateFuture(date) }
-    val isWritable = remember(date) { isDateWritable(date) }
     var isExpanded by remember { mutableStateOf(false) }
 
     Column(
@@ -205,28 +213,33 @@ private fun HomeScreen(
                 DiaryDateInfo(
                     selectedDate = date,
                     isPublished = uiState.diaryThumbnail?.isPublished ?: false,
-                    isWritten = isWritten,
+                    isWritten = uiState.cardState == DiaryCardState.WRITTEN,
                     modifier = Modifier.heightIn(min = 20.dp)
                 )
-                when {
-                    isWritten -> HomeDropDownMenu(
-                        isExpanded = isExpanded,
-                        isPublished = uiState.diaryThumbnail?.isPublished ?: false,
-                        onExpandedChange = { isExpanded = it },
-                        onDeleteClick = onDeleteClick,
-                        onPublishClick = onPublishClick,
-                        onUnpublishClick = onUnpublishClick
-                    )
+                when (uiState.cardState) {
+                    DiaryCardState.WRITTEN -> {
+                        uiState.diaryThumbnail?.let { diary ->
+                            HomeDropDownMenu(
+                                isExpanded = isExpanded,
+                                isPublished = diary.isPublished,
+                                onExpandedChange = { isExpanded = it },
+                                onDeleteClick = { onDeleteClick(diary.diaryId) },
+                                onPublishClick = { onPublishClick(diary.diaryId) },
+                                onUnpublishClick = { onUnpublishClick(diary.diaryId) }
+                            )
+                        }
+                    }
 
-                    isWritable -> DiaryTimeInfo(remainingTime = uiState.todayTopic?.remainingTime)
+                    DiaryCardState.WRITABLE -> DiaryTimeInfo(remainingTime = uiState.todayTopic?.remainingTime)
+                    else -> {}
                 }
             }
 
             Spacer(Modifier.height(16.dp))
 
             with(uiState) {
-                when {
-                    isWritten -> {
+                when (cardState) {
+                    DiaryCardState.WRITTEN -> {
                         if (diaryThumbnail != null) {
                             DiaryPreviewCard(
                                 diaryText = diaryThumbnail.originalText,
@@ -238,9 +251,8 @@ private fun HomeScreen(
                         }
                     }
 
-                    isFuture -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
-
-                    isWritable -> {
+                    DiaryCardState.FUTURE -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
+                    DiaryCardState.WRITABLE -> {
                         if (todayTopic != null) {
                             TodayTopic(
                                 koTopic = todayTopic.topicKo,
@@ -257,7 +269,8 @@ private fun HomeScreen(
                         )
                     }
 
-                    else -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
+                    DiaryCardState.REWRITE_DISABLED,
+                    DiaryCardState.PAST -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
                 }
             }
         }
@@ -267,17 +280,19 @@ private fun HomeScreen(
 @Preview
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreen(
-        paddingValues = PaddingValues(),
-        uiState = HomeUiState.Fake,
-        onAlarmClick = {},
-        onImageClick = {},
-        onDateSelected = {},
-        onMonthChanged = {},
-        onWriteDiaryClick = {},
-        onDiaryPreviewClick = {},
-        onDeleteClick = {},
-        onPublishClick = {},
-        onUnpublishClick = {}
-    )
+    HilingualTheme {
+        HomeScreen(
+            paddingValues = PaddingValues(),
+            uiState = HomeUiState.Fake,
+            onAlarmClick = {},
+            onImageClick = {},
+            onDateSelected = {},
+            onMonthChanged = {},
+            onWriteDiaryClick = {},
+            onDiaryPreviewClick = {},
+            onDeleteClick = {},
+            onPublishClick = {},
+            onUnpublishClick = {}
+        )
+    }
 }
