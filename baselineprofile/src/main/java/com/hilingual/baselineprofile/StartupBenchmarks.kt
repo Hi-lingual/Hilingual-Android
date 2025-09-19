@@ -13,25 +13,25 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * This test class benchmarks the speed of app startup.
- * Run this benchmark to verify how effective a Baseline Profile is.
- * It does this by comparing [CompilationMode.None], which represents the app with no Baseline
- * Profiles optimizations, and [CompilationMode.Partial], which uses Baseline Profiles.
+ * 앱 시작 속도를 벤치마크하는 테스트 클래스입니다.
+ * 이 벤치마크를 실행하여 베이스라인 프로파일의 효율성을 확인할 수 있습니다.
+ * 베이스라인 프로파일 최적화가 없는 앱을 나타내는 [CompilationMode.None]과
+ * 베이스라인 프로파일을 사용하는 [CompilationMode.Partial]을 비교합니다.
  *
- * Run this benchmark to see startup measurements and captured system traces for verifying
- * the effectiveness of your Baseline Profiles. You can run it directly from Android
- * Studio as an instrumentation test, or run all benchmarks for a variant, for example benchmarkRelease,
- * with this Gradle task:
+ * 이 벤치마크를 실행하면 시작 시간 측정 및 시스템 트레이스 캡처를 통해
+ * 베이스라인 프로파일의 효율성을 확인할 수 있습니다. Android Studio에서
+ * instrumentation test로 직접 실행하거나, 다음 Gradle 태스크를 사용하여
+ * 특정 variant(예: benchmarkRelease)의 모든 벤치마크를 실행할 수 있습니다:
  * ```
- * ./gradlew :baselineprofile:connectedBenchmarkReleaseAndroidTest
+ * ./gradlew :baselineprofile:pixel8proApi35BenchmarkReleaseAndroidTest
  * ```
  *
- * You should run the benchmarks on a physical device, not an Android emulator, because the
- * emulator doesn't represent real world performance and shares system resources with its host.
+ * 자세한 내용은 [Macrobenchmark 문서](https://d.android.com/macrobenchmark#create-macrobenchmark) 및
+ * [instrumentation arguments 문서](https://d.android.com/topic/performance/benchmarking/macrobenchmark-instrumentation-args)를 참조하세요.
  *
- * For more information, see the [Macrobenchmark documentation](https://d.android.com/macrobenchmark#create-macrobenchmark)
- * and the [instrumentation arguments documentation](https://d.android.com/topic/performance/benchmarking/macrobenchmark-instrumentation-args).
- **/
+ * @see CompilationMode.None
+ * @see CompilationMode.Partial
+ */
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class StartupBenchmarks {
@@ -48,10 +48,10 @@ class StartupBenchmarks {
         benchmark(CompilationMode.Partial(BaselineProfileMode.Require))
 
     private fun benchmark(compilationMode: CompilationMode) {
-        // The application id for the running build variant is read from the instrumentation arguments.
+        // 실행 중인 빌드 variant의 application id는 instrumentation arguments에서 읽어옵니다.
         rule.measureRepeated(
             packageName = InstrumentationRegistry.getArguments().getString("targetAppId")
-                ?: throw Exception("targetAppId not passed as instrumentation runner arg"),
+                ?: throw Exception("targetAppId가 instrumentation runner 인수로 전달되지 않았습니다."),
             metrics = listOf(StartupTimingMetric()),
             compilationMode = compilationMode,
             startupMode = StartupMode.COLD,
@@ -62,13 +62,11 @@ class StartupBenchmarks {
             measureBlock = {
                 startActivityAndWait()
 
-                // TODO Add interactions to wait for when your app is fully drawn.
-                // The app is fully drawn when Activity.reportFullyDrawn is called.
-                // For Jetpack Compose, you can use ReportDrawn, ReportDrawnWhen and ReportDrawnAfter
-                // from the AndroidX Activity library.
+                // TODO: 앱이 완전히 그려졌을 때를 기다리기 위한 상호작용을 추가하세요.
+                // 앱은 Activity.reportFullyDrawn()이 호출될 때 완전히 그려진 것으로 간주됩니다.
+                // Jetpack Compose의 경우, AndroidX Activity 라이브러리의 ReportDrawn, ReportDrawnWhen, ReportDrawnAfter를 사용할 수 있습니다.
 
-                // Check the UiAutomator documentation for more information on how to
-                // interact with the app.
+                // 앱과 상호작용하는 방법에 대한 자세한 내용은 UiAutomator 문서를 확인하세요.
                 // https://d.android.com/training/testing/other-components/ui-automator
             }
         )

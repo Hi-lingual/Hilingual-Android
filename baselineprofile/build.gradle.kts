@@ -26,14 +26,27 @@ android {
         targetSdk = libs.versions.targetSdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
     }
 
     targetProjectPath = ":app"
 
+    testOptions {
+        managedDevices {
+            allDevices {
+                create<com.android.build.api.dsl.ManagedVirtualDevice>("pixel8proApi35") {
+                    device = "Pixel 8 Pro"
+                    apiLevel = 35
+                    systemImageSource = "aosp-atd"
+                }
+            }
+        }
+    }
 }
 
 baselineProfile {
-    useConnectedDevices = true
+    managedDevices.add("pixel8proApi35")
+    useConnectedDevices = false
 }
 
 dependencies {
