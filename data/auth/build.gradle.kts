@@ -20,33 +20,8 @@ plugins {
     alias(libs.plugins.hilingual.data)
 }
 
-val properties = Properties().apply {
-    load(project.rootProject.file("local.properties").inputStream())
-}
-
 android {
     setNamespace("data.auth")
-
-    buildTypes {
-        getByName("debug") {
-            buildConfigField(
-                "String",
-                "GOOGLE_WEB_CLIENT_ID",
-                properties["dev.google.client.id"] as String
-            )
-        }
-        getByName("release") {
-            buildConfigField(
-                "String",
-                "GOOGLE_WEB_CLIENT_ID",
-                properties["prod.google.client.id"] as String
-            )
-        }
-    }
-
-    buildFeatures {
-        buildConfig = true
-    }
 }
 
 dependencies {

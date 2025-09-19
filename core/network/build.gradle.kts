@@ -27,26 +27,6 @@ android {
     defaultConfig {
         consumerProguardFile("consumer-rules.pro")
     }
-
-    val properties = Properties().apply {
-        load(rootProject.file("local.properties").inputStream())
-    }
-
-    buildTypes {
-        debug {
-            val devUrl = properties["dev.base.url"] as? String ?: ""
-            buildConfigField("String", "BASE_URL", devUrl)
-        }
-
-        release {
-            val prodUrl = properties["prod.base.url"] as? String ?: ""
-            buildConfigField("String", "BASE_URL", prodUrl)
-        }
-    }
-
-    buildFeatures {
-        buildConfig = true
-    }
 }
 
 dependencies {

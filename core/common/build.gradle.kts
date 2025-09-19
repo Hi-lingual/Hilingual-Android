@@ -24,14 +24,6 @@ plugins {
 
 android {
     setNamespace("core.common")
-
-    val properties = Properties().apply {
-        load(rootProject.file("local.properties").inputStream())
-    }
-
-    buildFeatures {
-        buildConfig = true
-    }
 }
 
 dependencies {
