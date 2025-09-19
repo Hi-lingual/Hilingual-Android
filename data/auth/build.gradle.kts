@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import com.hilingual.build_logic.setNamespace
-import java.util.Properties
 
 plugins {
     alias(libs.plugins.hilingual.data)
