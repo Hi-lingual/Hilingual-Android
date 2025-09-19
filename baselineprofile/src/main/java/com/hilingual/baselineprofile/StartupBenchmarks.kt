@@ -8,6 +8,8 @@ import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Until
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -61,13 +63,9 @@ class StartupBenchmarks {
             },
             measureBlock = {
                 startActivityAndWait()
-
-                // TODO: 앱이 완전히 그려졌을 때를 기다리기 위한 상호작용을 추가하세요.
-                // 앱은 Activity.reportFullyDrawn()이 호출될 때 완전히 그려진 것으로 간주됩니다.
-                // Jetpack Compose의 경우, AndroidX Activity 라이브러리의 ReportDrawn, ReportDrawnWhen, ReportDrawnAfter를 사용할 수 있습니다.
-
-                // 앱과 상호작용하는 방법에 대한 자세한 내용은 UiAutomator 문서를 확인하세요.
-                // https://d.android.com/training/testing/other-components/ui-automator
+                // 로그인 화면의 "Google로 계속하기" 버튼이 표시될 때까지 기다립니다.
+                // 이 상호작용은 앱이 완전히 그려졌다고 판단하는 기준이 됩니다.
+                device.wait(Until.hasObject(By.text("Google로 계속하기")), 10_000)
             }
         )
     }

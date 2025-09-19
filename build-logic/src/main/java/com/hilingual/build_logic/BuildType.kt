@@ -18,7 +18,6 @@ internal fun Project.configureBuildTypes(
 
         buildTypes {
             debug {
-                buildConfigField("boolean", "IS_BENCHMARK", "false")
                 buildConfigField(
                     "String",
                     "BASE_URL",
@@ -31,7 +30,6 @@ internal fun Project.configureBuildTypes(
                 )
             }
             release {
-                buildConfigField("boolean", "IS_BENCHMARK", "false")
                 buildConfigField(
                     "String",
                     "BASE_URL",
@@ -42,11 +40,6 @@ internal fun Project.configureBuildTypes(
                     "GOOGLE_WEB_CLIENT_ID",
                     properties["prod.google.client.id"] as String
                 )
-            }
-            create("benchmark") {
-                initWith(getByName("release"))
-                matchingFallbacks.add("release")
-                buildConfigField("boolean", "IS_BENCHMARK", "true")
             }
         }
     }

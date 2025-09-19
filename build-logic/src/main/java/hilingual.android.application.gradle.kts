@@ -12,14 +12,4 @@ configureHiltAndroid()
 
 extensions.configure<ApplicationExtension> {
     configureBuildTypes(this)
-
-    buildTypes.getByName("benchmark") {
-        signingConfig = signingConfigs.getByName("debug")
-    }
-
-    sourceSets {
-        getByName("benchmark") {
-            res.srcDirs("src/release/res")
-        }
-    }
 }

@@ -69,10 +69,6 @@ android {
             )
             signingConfig = signingConfigs.getByName("release")
         }
-        getByName("benchmark") {
-            isMinifyEnabled = false
-            isShrinkResources = false
-        }
     }
 }
 
