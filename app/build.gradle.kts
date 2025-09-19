@@ -18,6 +18,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.hilingual.application)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.baselineprofile)
 }
 
 val properties = Properties().apply {
@@ -109,6 +110,9 @@ dependencies {
 
     implementation(platform(libs.coil.bom))
     implementation(libs.bundles.coil)
+
+    implementation(libs.androidx.profileinstaller)
+    baselineProfile(projects.baselineprofile)
 }
 
 ktlint {
