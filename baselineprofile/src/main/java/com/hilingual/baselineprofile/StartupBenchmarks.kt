@@ -15,24 +15,23 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * 앱 시작 속도를 벤치마크하는 테스트 클래스입니다.
- * 이 벤치마크를 실행하여 베이스라인 프로파일의 효율성을 확인할 수 있습니다.
- * 베이스라인 프로파일 최적화가 없는 앱을 나타내는 [CompilationMode.None]과
- * 베이스라인 프로파일을 사용하는 [CompilationMode.Partial]을 비교합니다.
+ * 앱 시작 속도를 측정하는 벤치마크 테스트입니다.
  *
- * 이 벤치마크를 실행하면 시작 시간 측정 및 시스템 트레이스 캡처를 통해
- * 베이스라인 프로파일의 효율성을 확인할 수 있습니다. Android Studio에서
- * instrumentation test로 직접 실행하거나, 다음 Gradle 태스크를 사용하여
- * 특정 variant(예: benchmarkRelease)의 모든 벤치마크를 실행할 수 있습니다:
- * ```
- * ./gradlew :baselineprofile:pixel8proApi35BenchmarkReleaseAndroidTest
- * ```
+ * - [CompilationMode.None] : Baseline Profile 없이 실행
+ * - [CompilationMode.Partial] : Baseline Profile 적용 후 실행
  *
- * 자세한 내용은 [Macrobenchmark 문서](https://d.android.com/macrobenchmark#create-macrobenchmark) 및
- * [instrumentation arguments 문서](https://d.android.com/topic/performance/benchmarking/macrobenchmark-instrumentation-args)를 참조하세요.
+ * 두 모드를 비교하여 **Baseline Profile 최적화 효과**를 확인할 수 있습니다.
  *
- * @see CompilationMode.None
- * @see CompilationMode.Partial
+ * 실행 방법:
+ * - Android Studio에서 instrumentation test 실행
+ * - Gradle 태스크 실행 (예: benchmarkRelease):
+ *   ```
+ *   ./gradlew :baselineprofile:pixel8proApi35BenchmarkReleaseAndroidTest
+ *   ```
+ *
+ * 참고 문서:
+ * - [Macrobenchmark 가이드](https://d.android.com/macrobenchmark#create-macrobenchmark)
+ * - [Instrumentation arguments](https://d.android.com/topic/performance/benchmarking/macrobenchmark-instrumentation-args)
  */
 @RunWith(AndroidJUnit4::class)
 @LargeTest
@@ -50,10 +49,9 @@ class StartupBenchmarks {
         benchmark(CompilationMode.Partial(BaselineProfileMode.Require))
 
     private fun benchmark(compilationMode: CompilationMode) {
-        // 실행 중인 빌드 variant의 application id는 instrumentation arguments에서 읽어옵니다.
         rule.measureRepeated(
             packageName = InstrumentationRegistry.getArguments().getString("targetAppId")
-                ?: throw Exception("targetAppId가 instrumentation runner 인수로 전달되지 않았습니다."),
+                ?: throw Exception("instrumentation runner에 targetAppId가 전달되지 않았습니다."),
             metrics = listOf(StartupTimingMetric()),
             compilationMode = compilationMode,
             startupMode = StartupMode.COLD,
@@ -63,8 +61,8 @@ class StartupBenchmarks {
             },
             measureBlock = {
                 startActivityAndWait()
-                // 로그인 화면의 "Google로 계속하기" 버튼이 표시될 때까지 기다립니다.
-                // 이 상호작용은 앱이 완전히 그려졌다고 판단하는 기준이 됩니다.
+                // "Google로 계속하기" 버튼이 표시될 때까지 대기
+                // → 앱이 완전히 그려졌다고 판단하는 기준
                 device.wait(Until.hasObject(By.text("Google로 계속하기")), 10_000)
             }
         )
