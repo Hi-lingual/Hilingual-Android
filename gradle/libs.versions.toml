@@ -62,10 +62,15 @@ richeditorCompose = "1.0.0-rc13"
 mlkitTextRecognition = "16.0.1"
 coroutinesPlayServices = "1.10.2"
 espressoCore = "3.7.0"
+
+# Baseline Profile
 uiautomator = "2.3.0"
 benchmarkMacroJunit4 = "1.4.1"
 baselineprofile = "1.4.1"
 profileinstaller = "1.4.1"
+
+# AboutLibraries
+aboutLibraries = "13.0.0-rc01"
 
 [libraries]
 # Build Tools
@@ -156,7 +161,9 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 # ML Kit
 mlkit-text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "mlkitTextRecognition" }
 kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutinesPlayServices" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+
+# AboutLibraries
+aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
 
 # Baseline profile
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
@@ -179,6 +186,9 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "daggerHilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+
+# AboutLibraries
+aboutlibraries-android = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "aboutLibraries" }
 
 hilingual-application = { id = "hilingual.android.application", version = "unspecified" }
 hilingual-compose = { id = "hilingual.android.compose", version = "unspecified" }

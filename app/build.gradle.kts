@@ -19,6 +19,7 @@ plugins {
     alias(libs.plugins.hilingual.application)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.aboutlibraries.android)
 }
 
 val properties = Properties().apply {
@@ -63,7 +64,6 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
-
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
