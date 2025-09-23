@@ -55,3 +55,6 @@ include(":presentation:feed")
 include(":presentation:feedprofile")
 include(":presentation:notification")
 include(":presentation:feeddiary")
+
+// Benchmarks
+include(":baselineprofile")

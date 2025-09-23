@@ -23,7 +23,7 @@ ksp = "2.2.20-2.0.3"
 coreKtx = "1.17.0"
 coreSplachscreen = "1.0.1"
 androidxAppCompat = "1.7.1"
-lifecycleRuntimeKtx = "2.9.3"
+lifecycleRuntimeKtx = "2.9.4"
 lifecycleRuntimeComposeAndroid = "2.9.4"
 activityCompose = "1.11.0"
 composeBom = "2025.09.00"
@@ -61,6 +61,13 @@ richeditorCompose = "1.0.0-rc13"
 # ML Kit
 mlkitTextRecognition = "16.0.1"
 coroutinesPlayServices = "1.10.2"
+espressoCore = "3.7.0"
+
+# Baseline Profile
+uiautomator = "2.3.0"
+benchmarkMacroJunit4 = "1.4.1"
+baselineprofile = "1.4.1"
+profileinstaller = "1.4.1"
 
 # AboutLibraries
 aboutLibraries = "13.0.0-rc01"
@@ -158,6 +165,11 @@ kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-cor
 # AboutLibraries
 aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
 
+# Baseline profile
+androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
+androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
+androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
+
 [plugins]
 # Android
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -184,6 +196,10 @@ hilingual-feature = { id = "hilingual.android.feature", version = "unspecified" 
 hilingual-data = { id = "hilingual.android.data", version = "unspecified" }
 hilingual-library = { id = "hilingual.android.library", version = "unspecified" }
 hilingual-kotlin = { id = "hilingual.kotlin.library", version = "unspecified" }
+
+# Baseline profile
+android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
+baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
 
 [bundles]
 androidx = [

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import com.hilingual.build_logic.setNamespace
-import java.util.Properties
 
 plugins {
     alias(libs.plugins.hilingual.library)
@@ -24,14 +23,6 @@ plugins {
 
 android {
     setNamespace("core.common")
-
-    val properties = Properties().apply {
-        load(rootProject.file("local.properties").inputStream())
-    }
-
-    buildFeatures {
-        buildConfig = true
-    }
 }
 
 dependencies {

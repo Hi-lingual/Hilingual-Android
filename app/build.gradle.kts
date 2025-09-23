@@ -18,6 +18,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.hilingual.application)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.baselineprofile)
     alias(libs.plugins.aboutlibraries.android)
 }
 
@@ -56,22 +57,10 @@ android {
     }
 
     buildTypes {
-        debug {
+        getByName("debug") {
             applicationIdSuffix = ".debug"
-            buildConfigField(
-                "String",
-                "BASE_URL",
-                properties["dev.base.url"] as String
-            )
         }
-
-        release {
-            buildConfigField(
-                "String",
-                "BASE_URL",
-                properties["prod.base.url"] as String
-            )
-
+        getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -80,10 +69,6 @@ android {
             )
             signingConfig = signingConfigs.getByName("release")
         }
-    }
-
-    buildFeatures {
-        buildConfig = true
     }
 }
 
@@ -110,6 +95,9 @@ dependencies {
 
     implementation(platform(libs.coil.bom))
     implementation(libs.bundles.coil)
+
+    implementation(libs.androidx.profileinstaller)
+    baselineProfile(projects.baselineprofile)
 }
 
 ktlint {
