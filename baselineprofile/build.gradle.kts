@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import com.android.build.api.dsl.ManagedVirtualDevice
 
 plugins {
     alias(libs.plugins.android.test)
@@ -34,7 +35,7 @@ android {
     testOptions {
         managedDevices {
             allDevices {
-                create<com.android.build.api.dsl.ManagedVirtualDevice>("pixel8proApi35") {
+                create<ManagedVirtualDevice>("pixel8proApi35") {
                     device = "Pixel 8 Pro"
                     apiLevel = 35
                     systemImageSource = "aosp-atd"
@@ -51,7 +52,6 @@ baselineProfile {
 
 dependencies {
     implementation(libs.androidx.junit)
-    implementation(libs.androidx.espresso.core)
     implementation(libs.androidx.uiautomator)
     implementation(libs.androidx.benchmark.macro.junit4)
 }
