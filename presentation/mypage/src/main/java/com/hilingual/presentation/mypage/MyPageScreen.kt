@@ -60,6 +60,7 @@ internal fun MyPageRoute(
     navigateToMyFeedProfile: () -> Unit,
     navigateToAlarm: () -> Unit,
     navigateToBlock: () -> Unit,
+    navigateToOssLicenses: () -> Unit,
     viewModel: MyPageViewModel
 ) {
     val context = LocalContext.current
@@ -88,6 +89,7 @@ internal fun MyPageRoute(
                 onMyFeedClick = navigateToMyFeedProfile,
                 onAlarmClick = navigateToAlarm,
                 onBlockClick = navigateToBlock,
+                onOssLicensesClick = navigateToOssLicenses,
                 onCustomerCenterClick = { context.launchCustomTabs(UrlConstant.KAKAOTALK_CHANNEL) },
                 onTermsClick = { context.launchCustomTabs(UrlConstant.PRIVACY_POLICY) },
                 onLogoutClick = viewModel::logout
@@ -107,6 +109,7 @@ private fun MyPageScreen(
     onMyFeedClick: () -> Unit,
     onAlarmClick: () -> Unit,
     onBlockClick: () -> Unit,
+    onOssLicensesClick: () -> Unit,
     onCustomerCenterClick: () -> Unit,
     onTermsClick: () -> Unit,
     onLogoutClick: () -> Unit
@@ -195,6 +198,12 @@ private fun MyPageScreen(
             )
 
             SettingItem(
+                iconRes = R.drawable.ic_info_24,
+                title = "오픈소스 라이선스",
+                onClick = onOssLicensesClick
+            )
+
+            SettingItem(
                 iconRes = R.drawable.ic_logout_24,
                 title = "로그아웃",
                 onClick = { isLogoutDialogVisible = true }
@@ -233,6 +242,7 @@ private fun MyPageScreenPreview() {
             onMyFeedClick = {},
             onAlarmClick = {},
             onBlockClick = {},
+            onOssLicensesClick = {},
             onCustomerCenterClick = {},
             onTermsClick = {},
             onLogoutClick = {}

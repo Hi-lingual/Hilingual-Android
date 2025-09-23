@@ -18,6 +18,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.hilingual.application)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.aboutlibraries.android)
 }
 
 val properties = Properties().apply {

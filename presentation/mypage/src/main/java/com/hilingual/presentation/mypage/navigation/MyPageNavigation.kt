@@ -29,11 +29,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navOptions
 import com.hilingual.core.navigation.MainTabRoute
 import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.mypage.MyPageRoute
 import com.hilingual.presentation.mypage.MyPageViewModel
 import com.hilingual.presentation.mypage.blockeduser.BlockedUserRoute
+import com.hilingual.presentation.mypage.licenses.OssLicensesScreen
 import com.hilingual.presentation.mypage.profileedit.ProfileEditRoute
 import kotlinx.serialization.Serializable
 
@@ -50,6 +52,9 @@ internal data object ProfileEdit : Route
 
 @Serializable
 internal data object BlockedUser : Route
+
+@Serializable
+internal data object OssLicenses : Route
 
 fun NavController.navigateToMyPage(
     navOptions: NavOptions? = null
@@ -78,6 +83,17 @@ private fun NavController.navigateToBlockedUser(
     )
 }
 
+private fun NavController.navigateToOssLicenses(
+    navOptions: NavOptions? = navOptions {
+        launchSingleTop = true
+    }
+) {
+    navigate(
+        route = OssLicenses,
+        navOptions = navOptions
+    )
+}
+
 fun NavGraphBuilder.myPageNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
@@ -98,6 +114,7 @@ fun NavGraphBuilder.myPageNavGraph(
                 navigateToMyFeedProfile = navigateToMyFeedProfile,
                 navigateToAlarm = navigateToAlarm,
                 navigateToBlock = navController::navigateToBlockedUser,
+                navigateToOssLicenses = navController::navigateToOssLicenses,
                 viewModel = viewModel
             )
         }
@@ -126,6 +143,18 @@ fun NavGraphBuilder.myPageNavGraph(
                 paddingValues = paddingValues,
                 navigateUp = navigateUp,
                 navigateToProfile = navigateToFeedProfile
+            )
+        }
+
+        composable<OssLicenses>(
+            enterTransition = enterTransition,
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = popExitTransition
+        ) {
+            OssLicensesScreen(
+                paddingValues = paddingValues,
+                onBackClick = navigateUp
             )
         }
     }
