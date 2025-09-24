@@ -13,3 +13,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "hilingual-build-logic"
+include(":convention")
