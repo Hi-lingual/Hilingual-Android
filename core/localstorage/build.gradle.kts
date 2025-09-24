@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.hilingual.build_logic.setNamespace
+import com.hilingual.buildlogic.setNamespace
 
 plugins {
-    alias(libs.plugins.hilingual.library)
+    alias(libs.plugins.hilingual.android.library)
+    alias(libs.plugins.hilingual.hilt)
 }
 
 android {

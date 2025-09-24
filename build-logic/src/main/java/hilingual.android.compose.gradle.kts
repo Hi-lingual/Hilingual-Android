@@ -1,3 +1,0 @@
-import com.hilingual.build_logic.configureComposeAndroid
-
-configureComposeAndroid()

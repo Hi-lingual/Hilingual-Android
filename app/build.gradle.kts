@@ -16,7 +16,7 @@
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.hilingual.application)
+    alias(libs.plugins.hilingual.android.application)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.aboutlibraries.android)
