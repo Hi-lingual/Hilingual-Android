@@ -40,11 +40,6 @@ fun Project.configureBuildTypes(
                     "GOOGLE_WEB_CLIENT_ID",
                     properties.getQuotedProperty("prod.google.client.id")
                 )
-                isMinifyEnabled = false
-                proguardFiles(
-                    getDefaultProguardFile("proguard-android-optimize.txt"),
-                    "proguard-rules.pro"
-                )
             }
         }
     }

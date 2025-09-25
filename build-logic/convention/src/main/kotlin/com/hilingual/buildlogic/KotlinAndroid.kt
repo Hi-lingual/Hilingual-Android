@@ -45,8 +45,8 @@ private fun Project.configureKotlin() {
             // 활성화하려면 ~/.gradle/gradle.properties 파일에 warningsAsErrors=true 를 추가하세요.
             val warningsAsErrors: String? by project
             allWarningsAsErrors.set(warningsAsErrors.toBoolean())
-            freeCompilerArgs.set(
-                freeCompilerArgs.get() + listOf(
+            freeCompilerArgs.addAll(
+                listOf(
                     "-opt-in=kotlin.RequiresOptIn",
                     "-Xannotation-default-target=param-property",
                 )

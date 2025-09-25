@@ -6,7 +6,6 @@ plugins {
 
 group = "com.hilingual.buildlogic"
 
-// Configure the build-logic plugins to target JDK 17
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
