@@ -16,24 +16,25 @@
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.hilingual.application)
+    alias(libs.plugins.hilingual.android.application)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.aboutlibraries.android)
 }
 
 val properties = Properties().apply {
-    load(project.rootProject.file("local.properties").inputStream())
+    project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use {
+        load(
+            it
+        )
+    }
 }
 
 android {
     namespace = "com.hilingual"
-    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.hilingual"
-        minSdk = libs.versions.minSdk.get().toInt()
-        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = libs.versions.versionCode.get().toInt()
         versionName = libs.versions.versionName.get()
 

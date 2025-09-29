@@ -1,7 +1,7 @@
-import com.hilingual.build_logic.setNamespace
+import com.hilingual.buildlogic.setNamespace
 
 plugins {
-    alias(libs.plugins.hilingual.data)
+    alias(libs.plugins.hilingual.android.data)
 }
 
 android {

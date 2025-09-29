@@ -1,31 +1,14 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import com.android.build.api.dsl.ManagedVirtualDevice
 
 plugins {
-    alias(libs.plugins.android.test)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hilingual.android.test)
     alias(libs.plugins.baselineprofile)
 }
 
 android {
     namespace = "com.hilingual.baselineprofile"
-    compileSdk = libs.versions.compileSdk.get().toInt()
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
-        }
-    }
 
     defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt()
-        targetSdk = libs.versions.targetSdk.get().toInt()
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
     }
