@@ -23,9 +23,9 @@ class AmplitudeTracker @Inject constructor(
         )
     )
 
-    override fun logEvent(page: Page, action: String, properties: Map<String, Any>?) {
-        val eventName = "${page.pageName}.$action"
-        Timber.d("Tracking event: $eventName, properties: ${properties ?: "None"}")
+    override fun logEvent(page: Page, event: String, properties: Map<String, Any>?) {
+        val eventName = "${page.pageName}.$event"
+        Timber.tag("AmplitudeTracker").d("Tracking event: $eventName, properties: ${properties ?: "None"}")
 
         if (properties == null) {
             amplitude.track(eventName)
