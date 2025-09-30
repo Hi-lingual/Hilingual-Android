@@ -39,6 +39,7 @@ android {
         versionName = libs.versions.versionName.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "AMPLITUDE_API_KEY", "\"${properties.getProperty("amplitudeKey")}\"")
     }
 
     signingConfigs {

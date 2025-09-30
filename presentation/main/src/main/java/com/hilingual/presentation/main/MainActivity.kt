@@ -21,6 +21,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.main.monitor.NetworkMonitor
 import com.hilingual.presentation.main.state.rememberMainAppState
@@ -32,6 +33,9 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var networkMonitor: NetworkMonitor
 
+    @Inject
+    lateinit var tracker: Tracker
+
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +44,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             HilingualTheme {
                 val appState = rememberMainAppState(networkMonitor = networkMonitor)
-                MainScreen(appState = appState)
+                MainScreen(
+                    appState = appState,
+                    tracker = tracker)
             }
         }
     }
