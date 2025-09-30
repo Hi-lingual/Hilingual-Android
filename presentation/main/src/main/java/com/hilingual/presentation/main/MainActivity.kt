@@ -46,7 +46,8 @@ class MainActivity : ComponentActivity() {
                 val appState = rememberMainAppState(networkMonitor = networkMonitor)
                 MainScreen(
                     appState = appState,
-                    tracker = tracker)
+                    tracker = tracker
+                )
             }
         }
     }
