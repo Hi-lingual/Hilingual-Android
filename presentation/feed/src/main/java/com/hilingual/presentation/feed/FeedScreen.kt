@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -187,11 +188,30 @@ private fun FeedScreen(
 
     val latestReadAllFeed by rememberUpdatedState(newValue = readAllFeed)
 
-    LaunchedEffect(isAtBottom, pagerState.currentPage) {
-        // TODO: 리스트 끌어당김 이벤트 감지
-        if (isAtBottom) {
-            latestReadAllFeed()
+    LaunchedEffect(pagerState.currentPage) {
+        var previousFirstVisibleItemIndex = currentListState.firstVisibleItemIndex
+        var previousFirstVisibleItemScrollOffset = currentListState.firstVisibleItemScrollOffset
+
+        snapshotFlow {
+            Triple(
+                currentListState.isScrollInProgress,
+                currentListState.firstVisibleItemIndex,
+                currentListState.firstVisibleItemScrollOffset
+            )
         }
+            .collect { (isScrolling, currentIndex, currentOffset) ->
+                if (isScrolling) {
+                    val isScrollingDown = currentIndex > previousFirstVisibleItemIndex ||
+                            (currentIndex == previousFirstVisibleItemIndex && currentOffset > previousFirstVisibleItemScrollOffset)
+
+                    previousFirstVisibleItemIndex = currentIndex
+                    previousFirstVisibleItemScrollOffset = currentOffset
+
+                    if (isScrollingDown && isAtBottom) {
+                        latestReadAllFeed()
+                    }
+                }
+            }
     }
 
     Column(
