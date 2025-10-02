@@ -1,0 +1,52 @@
+/*
+ * Copyright 2025 The Hilingual Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.hilingual.presentation.diarywrite.component
+
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import com.hilingual.core.designsystem.component.bottomsheet.HilingualMenuBottomSheet
+import com.hilingual.core.designsystem.component.bottomsheet.HilingualMenuBottomSheetItem
+import com.hilingual.core.designsystem.R as DesignSystemR
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun ImageSelectBottomSheet(
+    isVisible: Boolean,
+    onDismiss: () -> Unit,
+    onCameraSelected: () -> Unit,
+    onGallerySelected: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    HilingualMenuBottomSheet(
+        isVisible = isVisible,
+        onDismiss = onDismiss,
+        modifier = modifier,
+        title = "이미지 선택"
+    ) {
+        HilingualMenuBottomSheetItem(
+            text = "카메라로 사진 찍기",
+            iconResId = DesignSystemR.drawable.ic_camera_24,
+            onClick = onCameraSelected
+        )
+
+        HilingualMenuBottomSheetItem(
+            text = "갤러리에서 선택하기",
+            iconResId = DesignSystemR.drawable.ic_gallary_24,
+            onClick = onGallerySelected
+        )
+    }
+}
