@@ -37,6 +37,7 @@ dependencies {
     implementation(libs.androidx.junit)
     implementation(libs.androidx.uiautomator)
     implementation(libs.androidx.benchmark.macro.junit4)
+    implementation(libs.androidx.runner)
 }
 
 androidComponents {
