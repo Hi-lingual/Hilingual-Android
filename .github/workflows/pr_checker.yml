@@ -97,6 +97,16 @@ jobs:
             echo "DEBUG_KEYSTORE_BASE64 secret not found. Skipping."
           fi
 
+      - name: Create google-services.json
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            echo "$GOOGLE_SERVICES_JSON" > ./app/google-services.json
+          else
+            echo "GOOGLE_SERVICES_JSON secret not found. Skipping."
+          fi
+
       - name: Grant permission to gradlew
         run: chmod +x ./gradlew
 
