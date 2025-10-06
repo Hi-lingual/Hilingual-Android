@@ -202,7 +202,7 @@ private fun FeedScreen(
             .collect { (isScrolling, currentIndex, currentOffset) ->
                 if (isScrolling) {
                     val isScrollingDown = currentIndex > previousFirstVisibleItemIndex ||
-                            (currentIndex == previousFirstVisibleItemIndex && currentOffset > previousFirstVisibleItemScrollOffset)
+                        (currentIndex == previousFirstVisibleItemIndex && currentOffset > previousFirstVisibleItemScrollOffset)
 
                     previousFirstVisibleItemIndex = currentIndex
                     previousFirstVisibleItemScrollOffset = currentOffset
