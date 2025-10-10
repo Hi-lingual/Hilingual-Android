@@ -3,7 +3,7 @@
 compileSdk = "36"
 credentials = "1.6.0-beta01"
 googleid = "1.1.1"
-googleServices = "4.4.3"
+googleServices = "4.4.4"
 minSdk = "30"
 targetSdk = "35"
 jvmTarget = "17"
