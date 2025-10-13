@@ -42,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
+import com.hilingual.core.common.extension.pairwise
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.SnackbarRequest
 import com.hilingual.core.common.trigger.LocalDialogTrigger
@@ -117,7 +118,8 @@ internal fun FeedRoute(
             onContentDetailClick = navigateToFeedDiary,
             onUnpublishClick = viewModel::diaryUnpublish,
             onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
-            readAllFeed = viewModel::readAllFeed
+            readAllFeed = viewModel::readAllFeed,
+            isScrollingDown = viewModel::isScrollingDown
         )
     }
 }
@@ -140,6 +142,7 @@ private fun FeedScreen(
     onReportClick: () -> Unit,
     readAllFeed: () -> Unit,
     onFeedRefresh: (FeedTab) -> Unit,
+    isScrollingDown: (FeedScrollState?, FeedScrollState) -> Boolean,
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -189,27 +192,19 @@ private fun FeedScreen(
     val latestReadAllFeed by rememberUpdatedState(newValue = readAllFeed)
 
     LaunchedEffect(pagerState.currentPage) {
-        var previousFirstVisibleItemIndex = currentListState.firstVisibleItemIndex
-        var previousFirstVisibleItemScrollOffset = currentListState.firstVisibleItemScrollOffset
-
         snapshotFlow {
-            Triple(
-                currentListState.isScrollInProgress,
-                currentListState.firstVisibleItemIndex,
-                currentListState.firstVisibleItemScrollOffset
+            FeedScrollState(
+                firstVisibleItemIndex = currentListState.firstVisibleItemIndex,
+                firstVisibleItemScrollOffset = currentListState.firstVisibleItemScrollOffset
             )
         }
-            .collect { (isScrolling, currentIndex, currentOffset) ->
-                if (isScrolling) {
-                    val isScrollingDown = currentIndex > previousFirstVisibleItemIndex ||
-                        (currentIndex == previousFirstVisibleItemIndex && currentOffset > previousFirstVisibleItemScrollOffset)
-
-                    previousFirstVisibleItemIndex = currentIndex
-                    previousFirstVisibleItemScrollOffset = currentOffset
-
-                    if (isScrollingDown && isAtBottom) {
-                        latestReadAllFeed()
-                    }
+            .pairwise()
+            .collect { (previous, current) ->
+                if (currentListState.isScrollInProgress &&
+                    isScrollingDown(previous, current) &&
+                    isAtBottom
+                ) {
+                    latestReadAllFeed()
                 }
             }
     }
@@ -308,7 +303,8 @@ private fun FeedScreenPreview() {
             hasFollowing = false,
             recommendRefreshing = false,
             followingRefreshing = false,
-            onFeedRefresh = {}
+            onFeedRefresh = {},
+            isScrollingDown = { _, _ -> false }
         )
     }
 }

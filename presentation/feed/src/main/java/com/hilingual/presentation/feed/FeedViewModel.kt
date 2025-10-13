@@ -188,6 +188,16 @@ internal class FeedViewModel @Inject constructor(
         }
     }
 
+    fun isScrollingDown(previous: FeedScrollState?, current: FeedScrollState): Boolean {
+        if (previous == null) return false
+
+        return current.firstVisibleItemIndex > previous.firstVisibleItemIndex ||
+            (
+                current.firstVisibleItemIndex == previous.firstVisibleItemIndex &&
+                    current.firstVisibleItemScrollOffset > previous.firstVisibleItemScrollOffset
+                )
+    }
+
     private fun UiState<ImmutableList<FeedItemUiModel>>.updateIfSuccess(
         transform: (ImmutableList<FeedItemUiModel>) -> ImmutableList<FeedItemUiModel>
     ): UiState<ImmutableList<FeedItemUiModel>> {
@@ -235,6 +245,11 @@ internal class FeedViewModel @Inject constructor(
         _sideEffect.emit(FeedSideEffect.ShowToast(message))
     }
 }
+
+internal data class FeedScrollState(
+    val firstVisibleItemIndex: Int,
+    val firstVisibleItemScrollOffset: Int
+)
 
 sealed interface FeedSideEffect {
     data class ShowErrorDialog(val onRetry: () -> Unit) : FeedSideEffect
