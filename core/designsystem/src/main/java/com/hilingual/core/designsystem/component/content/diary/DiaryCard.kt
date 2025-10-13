@@ -42,6 +42,9 @@ import com.hilingual.core.designsystem.theme.SuitMedium
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
+private const val MAX_AI = 1500
+private const val MAX_ORIGINAL = 1000
+
 @Composable
 internal fun DiaryCard(
     isAIWritten: Boolean,
@@ -51,7 +54,7 @@ internal fun DiaryCard(
     diffRanges: ImmutableList<Pair<Int, Int>> = persistentListOf(),
     imageUrl: String? = null
 ) {
-    val maxContentLength = if (isAIWritten) 1500 else 1000
+    val maxContentLength = if (isAIWritten) MAX_AI else MAX_ORIGINAL
 
     val clipContent = diaryContent.run {
         if (length > maxContentLength) this.take(maxContentLength) else this
@@ -111,6 +114,7 @@ private fun getAnnotatedString(
     return buildAnnotatedString {
         append(content)
         diffRanges.forEach {
+            if (it.second >= MAX_AI) return@forEach
             addStyle(
                 style = SpanStyle(
                     color = HilingualTheme.colors.hilingualOrange,
@@ -160,7 +164,7 @@ private class DiaryContentCardPreviewProvider :
     )
 }
 
-@Preview(showBackground = true, backgroundColor = 0x000000)
+@Preview
 @Composable
 private fun DiaryCardPreview(
     @PreviewParameter(DiaryContentCardPreviewProvider::class) state: DiaryCardPreviewState
