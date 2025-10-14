@@ -18,19 +18,15 @@ package com.hilingual.core.network.di
 import com.hilingual.core.network.BuildConfig.BASE_URL
 import com.hilingual.core.network.auth.AuthInterceptor
 import com.hilingual.core.network.auth.TokenAuthenticator
-import com.hilingual.core.network.ext.isJsonArray
-import com.hilingual.core.network.ext.isJsonObject
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -41,8 +37,6 @@ import kotlin.time.Duration.Companion.seconds
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val UNIT_TAB = 4
-
     @Provides
     @Singleton
     fun provideJson(): Json =
@@ -58,27 +52,13 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideLoggingInterceptor(): HttpLoggingInterceptor {
+    fun provideLoggingInterceptor(json: Json): HttpLoggingInterceptor {
         return HttpLoggingInterceptor { message ->
-            when {
-                message.isJsonObject() ->
-                    try {
-                        Timber.tag("okhttp").d(JSONObject(message).toString(UNIT_TAB))
-                    } catch (e: JSONException) {
-                        Timber.tag("okhttp").d("CONNECTION INFO -> $message")
-                    }
-
-                message.isJsonArray() ->
-                    try {
-                        Timber.tag("okhttp").d(JSONArray(message).toString(UNIT_TAB))
-                    } catch (e: JSONException) {
-                        Timber.tag("okhttp").d("CONNECTION INFO -> $message")
-                    }
-
-                else -> {
-                    Timber.tag("okhttp").d("CONNECTION INFO -> $message")
-                }
-            }
+            val log = runCatching {
+                val jsonElement = json.decodeFromString(JsonElement.serializer(), message)
+                json.encodeToString(JsonElement.serializer(), jsonElement)
+            }.getOrElse { "CONNECTION INFO -> $message" }
+            Timber.tag("okhttp").d(log)
         }.apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
