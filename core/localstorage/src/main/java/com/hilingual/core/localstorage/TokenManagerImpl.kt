@@ -1,34 +1,14 @@
-/*
- * Copyright 2025 The Hilingual Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.hilingual.core.localstorage
 
-import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
-import javax.inject.Inject
 import javax.inject.Singleton
 
-val Context.dataStore by preferencesDataStore(name = "hilingual_prefs")
-
-@Singleton
-class TokenManagerImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+class TokenManagerImpl constructor(
+    private val dataStore: DataStore<Preferences>
 ) : TokenManager {
 
     @Volatile
@@ -41,38 +21,38 @@ class TokenManagerImpl @Inject constructor(
 
     override suspend fun saveAccessToken(token: String) {
         cachedAccessToken = token
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[PreferencesKeys.ACCESS_TOKEN] = token
         }
     }
 
     override suspend fun saveRefreshToken(token: String) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[PreferencesKeys.REFRESH_TOKEN] = token
         }
     }
 
     override suspend fun saveTokens(accessToken: String, refreshToken: String) {
         cachedAccessToken = accessToken
-        context.dataStore.edit {
+        dataStore.edit {
             it[PreferencesKeys.ACCESS_TOKEN] = accessToken
             it[PreferencesKeys.REFRESH_TOKEN] = refreshToken
         }
     }
 
     override suspend fun getAccessToken(): String? {
-        return cachedAccessToken ?: context.dataStore.data.first()[PreferencesKeys.ACCESS_TOKEN].also {
+        return cachedAccessToken ?: dataStore.data.first()[PreferencesKeys.ACCESS_TOKEN].also {
             cachedAccessToken = it
         }
     }
 
     override suspend fun getRefreshToken(): String? {
-        return context.dataStore.data.first()[PreferencesKeys.REFRESH_TOKEN]
+        return dataStore.data.first()[PreferencesKeys.REFRESH_TOKEN]
     }
 
     override suspend fun clearTokens() {
         cachedAccessToken = null
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences.remove(PreferencesKeys.ACCESS_TOKEN)
             preferences.remove(PreferencesKeys.REFRESH_TOKEN)
         }
