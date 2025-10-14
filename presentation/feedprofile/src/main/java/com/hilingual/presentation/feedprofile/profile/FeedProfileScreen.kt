@@ -109,16 +109,8 @@ internal fun FeedProfileRoute(
                 uiState = state.data,
                 initialTab = if (viewModel.showLikedDiaries) 1 else 0,
                 onBackClick = navigateUp,
-                onFollowClick = { isMine ->
-                    if (isMine) {
-                        navigateToFollowList()
-                    }
-                },
-                onActionButtonClick = { isCurrentlyFollowing ->
-                    if (isCurrentlyFollowing != null) {
-                        viewModel.updateFollowingState(isCurrentlyFollowing)
-                    }
-                },
+                onFollowClick = { if (viewModel.onFollowClick()) { navigateToFollowList() } },
+                onActionButtonClick = viewModel::onActionButtonClick,
                 onProfileClick = navigateToFeedProfile,
                 onContentDetailClick = navigateToFeedDiary,
                 onReportUserClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
@@ -141,7 +133,7 @@ private fun FeedProfileScreen(
     initialTab: Int,
     onBackClick: () -> Unit,
     onFollowClick: (Boolean) -> Unit,
-    onActionButtonClick: (Boolean?) -> Unit,
+    onActionButtonClick: () -> Unit,
     onProfileClick: (Long) -> Unit,
     onContentDetailClick: (Long) -> Unit,
     onLikeClick: (Long, Boolean, DiaryTabType) -> Unit,
@@ -229,13 +221,7 @@ private fun FeedProfileScreen(
                 isFollowing = profile.isFollowing,
                 isFollowed = profile.isFollowed,
                 isBlock = profile.isBlock,
-                onActionButtonClick = {
-                    if (profile.isBlock == true) {
-                        onBlockClick()
-                    } else {
-                        onActionButtonClick(profile.isFollowing)
-                    }
-                },
+                onActionButtonClick = onActionButtonClick,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
 
@@ -279,31 +265,31 @@ private fun FeedProfileScreen(
 
     ReportBlockBottomSheet(
         isVisible = isMenuBottomSheetVisible,
-        onDismiss = { !isMenuBottomSheetVisible },
+        onDismiss = { isMenuBottomSheetVisible = false },
         onReportClick = {
-            !isMenuBottomSheetVisible
+            isMenuBottomSheetVisible = false
             isReportUserDialogVisible = true
         },
         onBlockClick = {
-            !isMenuBottomSheetVisible
+            isMenuBottomSheetVisible = false
             isBlockBottomSheetVisible = true
         }
     )
 
     BlockBottomSheet(
         isVisible = isBlockBottomSheetVisible,
-        onDismiss = { !isBlockBottomSheetVisible },
+        onDismiss = { isBlockBottomSheetVisible = false },
         onBlockButtonClick = {
-            !isBlockBottomSheetVisible
+            isBlockBottomSheetVisible = false
             onBlockClick()
         }
     )
 
     ReportUserDialog(
         isVisible = isReportUserDialogVisible,
-        onDismiss = { !isReportUserDialogVisible },
+        onDismiss = { isReportUserDialogVisible = false },
         onReportClick = {
-            !isReportUserDialogVisible
+            isReportUserDialogVisible = false
             onReportUserClick()
         }
     )
