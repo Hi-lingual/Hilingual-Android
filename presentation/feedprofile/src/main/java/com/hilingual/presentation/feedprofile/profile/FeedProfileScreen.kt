@@ -170,6 +170,15 @@ private fun FeedProfileScreen(
 
     val profile = uiState.feedProfileInfo
 
+    fun scrollToTop() {
+        coroutineScope.launch {
+            when {
+                profile.isMine -> currentListState.animateScrollToItem(0)
+                profile.isBlock != true -> sharedDiaryListState.animateScrollToItem(0)
+            }
+        }
+    }
+
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }
             .distinctUntilChanged()
@@ -177,17 +186,7 @@ private fun FeedProfileScreen(
             .collect { pageIndex ->
                 val tabType = if (pageIndex == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
                 onTabRefresh(tabType)
-                coroutineScope.launch {
-                    when {
-                        profile.isMine -> {
-                            currentListState.animateScrollToItem(0)
-                        }
-
-                        profile.isBlock != true -> {
-                            sharedDiaryListState.animateScrollToItem(0)
-                        }
-                    }
-                }
+                scrollToTop()
             }
     }
 
@@ -243,19 +242,7 @@ private fun FeedProfileScreen(
 
         HilingualFloatingButton(
             isVisible = isFabVisible,
-            onClick = {
-                coroutineScope.launch {
-                    when {
-                        profile.isMine -> {
-                            currentListState.animateScrollToItem(0)
-                        }
-
-                        profile.isBlock != true -> {
-                            sharedDiaryListState.animateScrollToItem(0)
-                        }
-                    }
-                }
-            },
+            onClick = { scrollToTop() },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .navigationBarsPadding()
@@ -383,6 +370,13 @@ private fun MyFeedContent(
 ) {
     val coroutineScope = rememberCoroutineScope()
 
+    fun scrollToTopForTab(tabIndex: Int) {
+        coroutineScope.launch {
+            val targetListState = if (tabIndex == 0) sharedDiaryListState else likedDiaryListState
+            targetListState.animateScrollToItem(0)
+        }
+    }
+
     FeedProfileTabRow(
         tabIndex = pagerState.currentPage,
         onTabSelected = { index ->
@@ -390,6 +384,7 @@ private fun MyFeedContent(
                 val tabType = if (index == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
                 if (index == pagerState.currentPage) {
                     onTabRefresh(tabType)
+                    scrollToTopForTab(index)
                 } else {
                     pagerState.animateScrollToPage(index)
                 }
