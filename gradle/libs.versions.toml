@@ -76,7 +76,7 @@ profileinstaller = "1.4.1"
 runner = "1.7.0"
 
 # AboutLibraries
-aboutLibraries = "13.0.0"
+aboutLibraries = "13.1.0"
 
 [libraries]
 # Build Tools
