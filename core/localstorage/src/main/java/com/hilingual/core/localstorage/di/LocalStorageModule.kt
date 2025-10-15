@@ -15,25 +15,34 @@
  */
 package com.hilingual.core.localstorage.di
 
+import android.content.Context
+import androidx.datastore.preferences.preferencesDataStore
 import com.hilingual.core.localstorage.TokenManager
 import com.hilingual.core.localstorage.TokenManagerImpl
 import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.core.localstorage.UserInfoManagerImpl
-import dagger.Binds
+import com.hilingual.core.localstorage.constant.DataStoreConstant
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class LocalStorageModule {
+object LocalStorageModule {
 
-    @Binds
-    @Singleton
-    abstract fun bindTokenManager(tokenManagerImpl: TokenManagerImpl): TokenManager
+    private val Context.tokenDataStore by preferencesDataStore(name = DataStoreConstant.HILINGUAL_PREFS)
+    private val Context.userInfoDataStore by preferencesDataStore(name = DataStoreConstant.HILINGUAL_USER_INFO_PREFS)
 
-    @Binds
+    @Provides
     @Singleton
-    abstract fun bindUserInfoManager(userInfoManagerImpl: UserInfoManagerImpl): UserInfoManager
+    fun provideTokenManager(@ApplicationContext context: Context): TokenManager =
+        TokenManagerImpl(context.tokenDataStore)
+
+    @Provides
+    @Singleton
+    fun provideUserInfoManager(@ApplicationContext context: Context): UserInfoManager =
+        UserInfoManagerImpl(context.userInfoDataStore)
 }
