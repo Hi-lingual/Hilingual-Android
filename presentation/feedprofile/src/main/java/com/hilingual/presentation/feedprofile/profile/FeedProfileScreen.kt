@@ -226,7 +226,8 @@ private fun FeedProfileScreen(
 
             FeedProfileContent(
                 profile = profile,
-                uiState = uiState,
+                sharedDiaries = uiState.sharedDiaries,
+                likedDiaries = uiState.likedDiaries,
                 pagerState = pagerState,
                 sharedDiaryListState = sharedDiaryListState,
                 likedDiaryListState = likedDiaryListState,
@@ -303,7 +304,8 @@ private fun FeedProfileTopBar(
 @Composable
 private fun FeedProfileContent(
     profile: FeedProfileInfoModel,
-    uiState: FeedProfileUiState,
+    sharedDiaries: ImmutableList<FeedDiaryUIModel>,
+    likedDiaries: ImmutableList<FeedDiaryUIModel>,
     pagerState: PagerState,
     sharedDiaryListState: LazyListState,
     likedDiaryListState: LazyListState,
@@ -318,7 +320,8 @@ private fun FeedProfileContent(
     when {
         profile.isMine -> {
             MyFeedContent(
-                uiState = uiState,
+                sharedDiaries = sharedDiaries,
+                likedDiaries = likedDiaries,
                 pagerState = pagerState,
                 sharedDiaryListState = sharedDiaryListState,
                 likedDiaryListState = likedDiaryListState,
@@ -341,7 +344,7 @@ private fun FeedProfileContent(
 
         else -> {
             OtherUserFeedContent(
-                diaries = uiState.sharedDiaries,
+                diaries = sharedDiaries,
                 listState = sharedDiaryListState,
                 onProfileClick = onProfileClick,
                 onContentDetailClick = onContentDetailClick,
@@ -356,7 +359,8 @@ private fun FeedProfileContent(
 
 @Composable
 private fun MyFeedContent(
-    uiState: FeedProfileUiState,
+    sharedDiaries: ImmutableList<FeedDiaryUIModel>,
+    likedDiaries: ImmutableList<FeedDiaryUIModel>,
     pagerState: PagerState,
     sharedDiaryListState: LazyListState,
     likedDiaryListState: LazyListState,
@@ -402,13 +406,13 @@ private fun MyFeedContent(
         val tabType = DiaryTabType.entries[page]
         val (diaries, emptyCardType, listState) = when (tabType) {
             DiaryTabType.SHARED -> Triple(
-                uiState.sharedDiaries,
+                sharedDiaries,
                 FeedEmptyCardType.NOT_SHARED,
                 sharedDiaryListState
             )
 
             DiaryTabType.LIKED -> Triple(
-                uiState.likedDiaries,
+                likedDiaries,
                 FeedEmptyCardType.NOT_LIKED,
                 likedDiaryListState
             )
