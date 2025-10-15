@@ -144,6 +144,8 @@ private fun FeedProfileScreen(
     onTabRefresh: (DiaryTabType) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val profile = uiState.feedProfileInfo
+
     val pagerState = rememberPagerState(initialPage = initialTab, pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
     var isMenuBottomSheetVisible by remember { mutableStateOf(false) }
@@ -155,9 +157,11 @@ private fun FeedProfileScreen(
 
     val currentListState by remember {
         derivedStateOf {
-            when (pagerState.currentPage) {
-                0 -> sharedDiaryListState
-                else -> likedDiaryListState
+            when {
+                profile.isMine -> {
+                    if (pagerState.currentPage == 0) sharedDiaryListState else likedDiaryListState
+                }
+                else -> sharedDiaryListState
             }
         }
     }
@@ -168,14 +172,9 @@ private fun FeedProfileScreen(
         }
     }
 
-    val profile = uiState.feedProfileInfo
-
-    fun scrollToTop() {
+    fun scrollToTop(listState: LazyListState = currentListState) {
         coroutineScope.launch {
-            when {
-                profile.isMine -> currentListState.animateScrollToItem(0)
-                profile.isBlock != true -> sharedDiaryListState.animateScrollToItem(0)
-            }
+            listState.animateScrollToItem(0)
         }
     }
 
@@ -237,6 +236,13 @@ private fun FeedProfileScreen(
                 onUnpublishClick = onUnpublishClick,
                 onReportDiaryClick = onReportDiaryClick,
                 onTabRefresh = onTabRefresh,
+                onScrollToTop = { tabIndex ->
+                    val targetListState = when (tabIndex) {
+                        0 -> sharedDiaryListState
+                        else -> likedDiaryListState
+                    }
+                    scrollToTop(targetListState)
+                },
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -315,6 +321,7 @@ private fun FeedProfileContent(
     onUnpublishClick: (Long) -> Unit,
     onReportDiaryClick: () -> Unit,
     onTabRefresh: (DiaryTabType) -> Unit,
+    onScrollToTop: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     when {
@@ -331,6 +338,7 @@ private fun FeedProfileContent(
                 onUnpublishClick = onUnpublishClick,
                 onReportDiaryClick = onReportDiaryClick,
                 onTabRefresh = onTabRefresh,
+                onScrollToTop = onScrollToTop,
                 modifier = modifier
             )
         }
@@ -370,16 +378,10 @@ private fun MyFeedContent(
     onUnpublishClick: (Long) -> Unit,
     onReportDiaryClick: () -> Unit,
     onTabRefresh: (DiaryTabType) -> Unit,
+    onScrollToTop: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
-
-    fun scrollToTopForTab(tabIndex: Int) {
-        coroutineScope.launch {
-            val targetListState = if (tabIndex == 0) sharedDiaryListState else likedDiaryListState
-            targetListState.animateScrollToItem(0)
-        }
-    }
 
     FeedProfileTabRow(
         tabIndex = pagerState.currentPage,
@@ -388,7 +390,7 @@ private fun MyFeedContent(
                 val tabType = if (index == 0) DiaryTabType.SHARED else DiaryTabType.LIKED
                 if (index == pagerState.currentPage) {
                     onTabRefresh(tabType)
-                    scrollToTopForTab(index)
+                    onScrollToTop(index)
                 } else {
                     pagerState.animateScrollToPage(index)
                 }
