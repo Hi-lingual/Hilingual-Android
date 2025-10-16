@@ -12,8 +12,8 @@ androidGradlePlugin = "8.13.0"
 spotless = "8.0.0"
 
 # App version
-versionCode = "1000002"
-versionName = "1.0.0"
+versionCode = "1000100"
+versionName = "1.0.1"
 
 # Kotlin
 kotlin = "2.2.20"
@@ -76,7 +76,7 @@ profileinstaller = "1.4.1"
 runner = "1.7.0"
 
 # AboutLibraries
-aboutLibraries = "13.0.0"
+aboutLibraries = "13.1.0"
 
 [libraries]
 # Build Tools
