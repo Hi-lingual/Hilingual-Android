@@ -47,10 +47,12 @@ internal class CalendarState(
     val monthIndicesCount: Int = getMonthIndicesCount(startMonth, CALENDAR_END_MONTH)
 
     suspend fun scrollToMonth(month: YearMonth) {
-        listState.scrollToItem(getMonthIndex(startMonth, month))
+        val index = getMonthIndex(startMonth, month)
+        listState.scrollToItem(index.coerceIn(0, monthIndicesCount - 1))
     }
 
     suspend fun animateScrollToMonth(month: YearMonth) {
-        listState.animateScrollToItem(getMonthIndex(startMonth, month))
+        val index = getMonthIndex(startMonth, month)
+        listState.animateScrollToItem(index.coerceIn(0, monthIndicesCount - 1))
     }
 }

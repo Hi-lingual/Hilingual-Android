@@ -20,6 +20,8 @@ plugins {
     alias(libs.plugins.ktlint)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.aboutlibraries.android)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 val properties = Properties().apply {
@@ -104,6 +106,10 @@ dependencies {
 
     implementation(libs.androidx.profileinstaller)
     baselineProfile(projects.baselineprofile)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
 }
 
 ktlint {

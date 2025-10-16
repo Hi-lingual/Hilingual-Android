@@ -57,7 +57,7 @@ internal fun HomeDropDownMenu(
         onExpandedChange = onExpandedChange
     ) {
         HilingualDropdownMenuItem(
-            text = if (isPublished) "비공개하기" else "게시하기",
+            text = if (isPublished) "비공개하기" else "피드에 게시하기",
             iconResId = if (isPublished) R.drawable.ic_hide_24 else R.drawable.ic_upload_24,
             onClick = {
                 publishDialogVisible = true

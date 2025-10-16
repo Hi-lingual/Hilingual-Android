@@ -22,6 +22,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
 
 @Composable
 fun <T> Flow<T>.collectSideEffect(
@@ -44,5 +45,13 @@ fun <T> Flow<T>.collectLatestSideEffect(
     LaunchedEffect(key) {
         flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest(collector)
+    }
+}
+
+fun <T> Flow<T>.pairwise(): Flow<Pair<T?, T>> = flow {
+    var previous: T? = null
+    collect { current ->
+        emit(Pair(previous, current))
+        previous = current
     }
 }

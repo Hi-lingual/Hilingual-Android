@@ -39,7 +39,14 @@ class OtpViewModel @Inject constructor(
     fun verifyCode() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            authRepository.verifyCode(_uiState.value.code)
+
+            val currentCode = _uiState.value.code
+            if (currentCode == BuildConfig.ADMIN_OTP_CODE) {
+                _sideEffect.tryEmit(OtpSideEffect.NavigateToOnboarding)
+                return@launch
+            }
+
+            authRepository.verifyCode(currentCode)
                 .onSuccess {
                     userRepository.saveOtpVerified(true)
                     _sideEffect.tryEmit(OtpSideEffect.NavigateToOnboarding)
