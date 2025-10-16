@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.designsystem.component.content
+package com.hilingual.core.ui.component.feed
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

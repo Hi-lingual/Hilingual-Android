@@ -13,13 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.designsystem.model
+package com.hilingual.core.ui.model
 
 import androidx.compose.runtime.Immutable
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
-data class FeedbackContent(
-    val originalText: String,
-    val feedbackText: String,
-    val explain: String
+data class DiaryContent(
+    val originalText: String = "",
+    val aiText: String = "",
+    val diffRanges: ImmutableList<Pair<Int, Int>> = persistentListOf(),
+    val imageUrl: String? = null,
+    val isPublished: Boolean = false
 )

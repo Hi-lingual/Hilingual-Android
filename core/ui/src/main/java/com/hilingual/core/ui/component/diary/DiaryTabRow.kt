@@ -1,4 +1,4 @@
-package com.hilingual.core.designsystem.component.content.diary
+package com.hilingual.core.ui.component.diary
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
