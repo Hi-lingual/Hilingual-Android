@@ -272,25 +272,25 @@ internal class FeedProfileViewModel @Inject constructor(
     }
 
     fun onFollowClick() {
-        val currentState = _uiState.value
-        if (currentState !is UiState.Success) return
-
-        if (currentState.data.feedProfileInfo.isMine) {
-            viewModelScope.launch {
-                _sideEffect.emit(FeedProfileSideEffect.NavigateToFollowList)
+        _uiState.updateSuccess { currentState ->
+            if (currentState.feedProfileInfo.isMine) {
+                viewModelScope.launch {
+                    _sideEffect.emit(FeedProfileSideEffect.NavigateToFollowList)
+                }
             }
+            currentState
         }
     }
 
     fun onActionButtonClick() {
-        val currentState = _uiState.value
-        if (currentState !is UiState.Success) return
+        _uiState.updateSuccess { currentState ->
+            val profile = currentState.feedProfileInfo
 
-        val profile = currentState.data.feedProfileInfo
-
-        when {
-            profile.isBlock == true -> updateBlockState(isCurrentlyBlocked = true)
-            profile.isFollowing != null -> updateFollowingState(profile.isFollowing)
+            when {
+                profile.isBlock == true -> updateBlockState(isCurrentlyBlocked = true)
+                profile.isFollowing != null -> updateFollowingState(profile.isFollowing)
+            }
+            currentState
         }
     }
 
