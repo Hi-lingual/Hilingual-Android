@@ -1,4 +1,4 @@
-package com.hilingual.presentation.diarywrite
+package com.hilingual.presentation.diarywrite.feedback
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
