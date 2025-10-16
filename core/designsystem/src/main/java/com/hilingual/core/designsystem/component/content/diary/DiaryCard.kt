@@ -106,24 +106,31 @@ internal fun DiaryCard(
     }
 }
 
+private fun Pair<Int, Int>.isValid(textLength: Int): Boolean {
+    val (start, end) = this
+    return start in 0 until textLength && end <= textLength && start < end
+}
+
 @Composable
 private fun getAnnotatedString(
     content: String,
     diffRanges: ImmutableList<Pair<Int, Int>>
 ): AnnotatedString {
+    val contentLength = content.length
     return buildAnnotatedString {
         append(content)
-        diffRanges.forEach {
-            if (it.second >= MAX_AI) return@forEach
-            addStyle(
-                style = SpanStyle(
-                    color = HilingualTheme.colors.hilingualOrange,
-                    fontFamily = SuitMedium
-                ),
-                start = it.first,
-                end = it.second
-            )
-        }
+        diffRanges
+            .filter { it.isValid(contentLength) }
+            .forEach { (start, end) ->
+                addStyle(
+                    style = SpanStyle(
+                        color = HilingualTheme.colors.hilingualOrange,
+                        fontFamily = SuitMedium
+                    ),
+                    start = start,
+                    end = end
+                )
+            }
     }
 }
 
