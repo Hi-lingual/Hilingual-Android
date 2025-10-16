@@ -271,11 +271,15 @@ internal class FeedProfileViewModel @Inject constructor(
         }
     }
 
-    fun onFollowClick(): Boolean {
+    fun onFollowClick() {
         val currentState = _uiState.value
-        if (currentState !is UiState.Success) return false
+        if (currentState !is UiState.Success) return
 
-        return currentState.data.feedProfileInfo.isMine
+        if (currentState.data.feedProfileInfo.isMine) {
+            viewModelScope.launch {
+                _sideEffect.emit(FeedProfileSideEffect.NavigateToFollowList)
+            }
+        }
     }
 
     fun onActionButtonClick() {
@@ -296,6 +300,7 @@ internal class FeedProfileViewModel @Inject constructor(
 }
 
 sealed interface FeedProfileSideEffect {
+    data object NavigateToFollowList : FeedProfileSideEffect
     data class ShowDiaryLikeSnackbar(val message: String, val actionLabel: String) : FeedProfileSideEffect
     data class ShowToast(val message: String) : FeedProfileSideEffect
     data object ShowErrorDialog : FeedProfileSideEffect

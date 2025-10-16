@@ -83,6 +83,8 @@ internal fun FeedProfileRoute(
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
+            is FeedProfileSideEffect.NavigateToFollowList -> navigateToFollowList()
+
             is FeedProfileSideEffect.ShowDiaryLikeSnackbar ->
                 snackbarTrigger(
                     SnackbarRequest(
@@ -109,7 +111,7 @@ internal fun FeedProfileRoute(
                 uiState = state.data,
                 initialTab = if (viewModel.showLikedDiaries) 1 else 0,
                 onBackClick = navigateUp,
-                onFollowClick = { if (viewModel.onFollowClick()) { navigateToFollowList() } },
+                onFollowClick = { viewModel.onFollowClick() },
                 onActionButtonClick = viewModel::onActionButtonClick,
                 onProfileClick = navigateToFeedProfile,
                 onContentDetailClick = navigateToFeedDiary,
