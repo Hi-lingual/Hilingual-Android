@@ -77,7 +77,7 @@ fun NavGraphBuilder.feedProfileNavGraph(
                 viewModel = viewModel,
                 paddingValues = paddingValues,
                 navigateUp = navigateUp,
-                navigateToMyFeedProfile = { navigateToMyFeedProfile(false) },
+                navigateToMyFeedProfile = navigateToMyFeedProfile,
                 navigateToFollowList = { navController.navigateToFollowList(userId = 0L) },
                 navigateToFeedProfile = navigateToFeedProfile,
                 navigateToFeedDiary = navigateToFeedDiary
