@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.network.ext
+package com.hilingual.core.localstorage.constant
 
-fun String?.isJsonObject(): Boolean = this?.startsWith("{") == true && this.endsWith("}")
-
-fun String?.isJsonArray(): Boolean = this?.startsWith("[") == true && this.endsWith("]")
+object DataStoreConstant {
+    const val HILINGUAL_PREFS = "hilingual_prefs"
+    const val HILINGUAL_USER_INFO_PREFS = "hilingual_user_info_prefs"
+}
