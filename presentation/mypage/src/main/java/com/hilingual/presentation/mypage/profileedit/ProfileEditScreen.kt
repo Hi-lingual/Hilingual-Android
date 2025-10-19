@@ -45,6 +45,7 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualProfileImageBottomSheet
 import com.hilingual.core.designsystem.component.picker.ProfileImagePicker
@@ -66,6 +67,7 @@ internal fun ProfileEditRoute(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
+    val toastTrigger = LocalToastTrigger.current
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -73,7 +75,9 @@ internal fun ProfileEditRoute(
                 dialogTrigger.show(navigateUp)
             }
 
-            MyPageSideEffect.RestartApp -> {
+            is MyPageSideEffect.ShowToast -> toastTrigger(sideEffect.message)
+
+            is MyPageSideEffect.RestartApp -> {
                 ProcessPhoenix.triggerRebirth(context)
             }
         }
