@@ -71,15 +71,11 @@ internal fun MyPageRoute(
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is MyPageSideEffect.ShowErrorDialog -> {
-                dialogTrigger.show(sideEffect.onRetry)
-            }
+            is MyPageSideEffect.ShowErrorDialog -> dialogTrigger.show(sideEffect.onRetry)
 
             is MyPageSideEffect.ShowToast -> toastTrigger(sideEffect.message)
 
-            is MyPageSideEffect.RestartApp -> {
-                ProcessPhoenix.triggerRebirth(context)
-            }
+            is MyPageSideEffect.RestartApp -> ProcessPhoenix.triggerRebirth(context)
         }
     }
 

@@ -41,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
@@ -71,15 +72,11 @@ internal fun ProfileEditRoute(
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is MyPageSideEffect.ShowErrorDialog -> {
-                dialogTrigger.show(navigateUp)
-            }
+            is MyPageSideEffect.ShowErrorDialog -> dialogTrigger.show(navigateUp)
 
             is MyPageSideEffect.ShowToast -> toastTrigger(sideEffect.message)
 
-            is MyPageSideEffect.RestartApp -> {
-                ProcessPhoenix.triggerRebirth(context)
-            }
+            is MyPageSideEffect.RestartApp -> ProcessPhoenix.triggerRebirth(context)
         }
     }
 
