@@ -60,6 +60,7 @@ import com.jakewharton.processphoenix.ProcessPhoenix
 @Composable
 internal fun ProfileEditRoute(
     paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -69,7 +70,7 @@ internal fun ProfileEditRoute(
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is MyPageSideEffect.ShowErrorDialog -> {
-                dialogTrigger.show(sideEffect.onRetry)
+                dialogTrigger.show(navigateUp)
             }
 
             MyPageSideEffect.RestartApp -> {
