@@ -57,9 +57,7 @@ internal class BlockedUserViewModel @Inject constructor(
                     _uiState.update { it.copy(blockedUserList = UiState.Success(data = blockUiModel)) }
                 }
                 .onLogFailure {
-                    viewModelScope.launch {
-                        _sideEffect.emit(BlockedUserSideEffect.ShowErrorDialog)
-                    }
+                    _sideEffect.emit(BlockedUserSideEffect.ShowErrorDialog)
                 }
         }
     }
@@ -94,9 +92,7 @@ internal class BlockedUserViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    viewModelScope.launch {
-                        _sideEffect.emit(BlockedUserSideEffect.ShowErrorDialog)
-                    }
+                    _sideEffect.emit(BlockedUserSideEffect.ShowErrorDialog)
                 }
         }
     }

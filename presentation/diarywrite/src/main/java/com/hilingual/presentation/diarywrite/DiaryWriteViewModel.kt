@@ -89,9 +89,7 @@ internal class DiaryWriteViewModel @Inject constructor(
                     _uiState.update { it.copy(topicKo = topic.topicKor, topicEn = topic.topicEn) }
                 }
                 .onLogFailure {
-                    viewModelScope.launch {
-                        _sideEffect.emit(DiaryWriteSideEffect.ShowErrorDialog)
-                    }
+                    _sideEffect.emit(DiaryWriteSideEffect.ShowErrorDialog)
                 }
         }
     }
@@ -120,7 +118,8 @@ internal class DiaryWriteViewModel @Inject constructor(
                 runCatching {
                     withContext(Dispatchers.IO) {
                         val image = InputImage.fromFilePath(context, uri)
-                        val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+                        val recognizer =
+                            TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
                         recognizer.process(image).await().text
                     }
                 }.onSuccess { extractedText ->

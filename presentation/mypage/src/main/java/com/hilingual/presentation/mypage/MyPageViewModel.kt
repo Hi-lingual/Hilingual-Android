@@ -63,9 +63,7 @@ internal class MyPageViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    viewModelScope.launch {
-                        _sideEffect.emit(MyPageSideEffect.ShowErrorDialog(onRetry = ::getProfileInfo))
-                    }
+                    _sideEffect.emit(MyPageSideEffect.ShowErrorDialog(onRetry = ::getProfileInfo))
                 }
         }
     }
@@ -77,9 +75,7 @@ internal class MyPageViewModel @Inject constructor(
                     getProfileInfo()
                 }
                 .onLogFailure {
-                    viewModelScope.launch {
-                        _sideEffect.emit(MyPageSideEffect.ShowToast("프로필 이미지 업데이트에 실패했어요."))
-                    }
+                    _sideEffect.emit(MyPageSideEffect.ShowToast("프로필 이미지 업데이트에 실패했어요."))
                 }
         }
     }
@@ -91,9 +87,7 @@ internal class MyPageViewModel @Inject constructor(
                     _sideEffect.emit(MyPageSideEffect.RestartApp)
                 }
                 .onLogFailure {
-                    viewModelScope.launch {
-                        _sideEffect.emit(MyPageSideEffect.ShowToast("로그아웃에 실패했어요."))
-                    }
+                    _sideEffect.emit(MyPageSideEffect.ShowToast("로그아웃에 실패했어요."))
                 }
         }
     }
@@ -105,9 +99,7 @@ internal class MyPageViewModel @Inject constructor(
                     _sideEffect.emit(MyPageSideEffect.RestartApp)
                 }
                 .onLogFailure {
-                    viewModelScope.launch {
-                        _sideEffect.emit(MyPageSideEffect.ShowToast("회원 탈퇴에 실패했어요."))
-                    }
+                    _sideEffect.emit(MyPageSideEffect.ShowToast("회원 탈퇴에 실패했어요."))
                 }
         }
     }
