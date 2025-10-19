@@ -56,7 +56,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.advancedImePadding
+import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualLongTextField
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
@@ -94,6 +96,7 @@ internal fun DiaryWriteRoute(
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val dialogTrigger = LocalDialogTrigger.current
     val feedbackState by viewModel.feedbackState.collectAsStateWithLifecycle()
 
     var diaryTextImageUri by remember { mutableStateOf<Uri?>(null) }
@@ -126,6 +129,10 @@ internal fun DiaryWriteRoute(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
         uri?.let { viewModel.extractTextFromImage(it) }
+    }
+
+    viewModel.sideEffect.collectSideEffect { sideEffect ->
+        if (sideEffect is DiaryWriteSideEffect.ShowErrorDialog) dialogTrigger.show(navigateUp)
     }
 
     when (feedbackState) {
