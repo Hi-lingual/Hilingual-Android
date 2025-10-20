@@ -59,7 +59,7 @@ import com.hilingual.core.common.extension.advancedImePadding
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualLongTextField
-import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
+import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState

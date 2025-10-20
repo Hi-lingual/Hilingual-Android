@@ -35,6 +35,5 @@ dependencies {
     implementation(platform(libs.coil.bom))
     implementation(libs.bundles.coil)
     implementation(libs.kotlinx.immutable)
-    implementation(libs.lottie)
     implementation(libs.pebble)
 }

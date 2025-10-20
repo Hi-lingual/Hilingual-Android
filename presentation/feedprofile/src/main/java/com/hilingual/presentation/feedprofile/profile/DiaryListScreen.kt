@@ -30,7 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.ui.component.feed.FeedCard
+import com.hilingual.core.ui.component.item.feed.FeedCard
 import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCard
 import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType
 import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel

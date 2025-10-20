@@ -20,5 +20,6 @@ dependencies {
     // others
     implementation(platform(libs.coil.bom))
     implementation(libs.bundles.coil)
+    implementation(libs.lottie)
     implementation(libs.kotlinx.immutable)
 }

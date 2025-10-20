@@ -36,7 +36,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
-import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
+import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feedprofile.follow.component.FollowTabRow
 import com.hilingual.presentation.feedprofile.follow.model.FollowItemModel

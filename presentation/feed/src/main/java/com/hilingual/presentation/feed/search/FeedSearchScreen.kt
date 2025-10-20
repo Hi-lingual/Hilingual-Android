@@ -37,7 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.ui.component.feed.UserActionItem
+import com.hilingual.core.ui.component.item.feed.UserActionItem
 import com.hilingual.data.feed.model.FollowState
 import com.hilingual.presentation.feed.component.FeedSearchHeader
 import com.hilingual.presentation.feed.component.SearchEmptyCard

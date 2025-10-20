@@ -48,7 +48,7 @@ import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.trigger.rememberDialogTrigger
 import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
-import com.hilingual.core.designsystem.component.snackbar.DiarySnackbar
+import com.hilingual.core.designsystem.component.snackbar.HilingualActionSnackbar
 import com.hilingual.core.designsystem.component.toast.TextToast
 import com.hilingual.presentation.auth.navigation.authNavGraph
 import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
@@ -281,7 +281,7 @@ internal fun MainScreen(
                 SnackbarHost(hostState = snackBarHostState) { data ->
                     if (data.visuals.withDismissAction) {
                         currentSnackbarRequest?.let { request ->
-                            DiarySnackbar(
+                            HilingualActionSnackbar(
                                 message = data.visuals.message,
                                 buttonText = data.visuals.actionLabel ?: "",
                                 modifier = Modifier.padding(horizontal = 16.dp),

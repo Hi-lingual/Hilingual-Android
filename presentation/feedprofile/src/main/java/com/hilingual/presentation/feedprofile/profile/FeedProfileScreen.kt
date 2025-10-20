@@ -63,10 +63,10 @@ import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
-import com.hilingual.core.designsystem.component.dialog.report.ReportUserDialog
+import com.hilingual.core.ui.component.dialog.report.ReportUserDialog
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
-import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
-import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
+import com.hilingual.core.ui.component.topappbar.BackAndMoreTopAppBar
+import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feedprofile.profile.component.BlockBottomSheet
 import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType

@@ -46,9 +46,9 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.trigger.LocalDialogTrigger
-import com.hilingual.core.designsystem.component.bottomsheet.HilingualProfileImageBottomSheet
+import com.hilingual.core.ui.component.bottomsheet.HilingualProfileImageBottomSheet
 import com.hilingual.core.designsystem.component.button.HilingualButton
-import com.hilingual.core.designsystem.component.picker.ProfileImagePicker
+import com.hilingual.core.ui.component.picker.ProfileImagePicker
 import com.hilingual.core.designsystem.component.textfield.HilingualShortTextField
 import com.hilingual.core.designsystem.component.textfield.TextFieldState
 import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppBar
