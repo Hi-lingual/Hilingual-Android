@@ -132,7 +132,9 @@ internal fun DiaryWriteRoute(
     }
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
-        if (sideEffect is DiaryWriteSideEffect.ShowErrorDialog) dialogTrigger.show(navigateUp)
+        when (sideEffect) {
+            is DiaryWriteSideEffect.ShowErrorDialog -> dialogTrigger.show(navigateUp)
+        }
     }
 
     when (feedbackState) {

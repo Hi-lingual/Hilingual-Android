@@ -66,7 +66,9 @@ internal fun BlockedUserRoute(
     val dialogTrigger = LocalDialogTrigger.current
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
-        if (sideEffect is BlockedUserSideEffect.ShowErrorDialog) dialogTrigger.show(navigateUp)
+        when (sideEffect) {
+            is BlockedUserSideEffect.ShowErrorDialog -> dialogTrigger.show(navigateUp)
+        }
     }
 
     LaunchedEffect(Unit) {
