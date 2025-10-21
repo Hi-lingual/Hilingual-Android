@@ -48,9 +48,9 @@ import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
-import com.hilingual.core.designsystem.component.content.UserActionItem
-import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.ui.component.item.feed.UserActionItem
+import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList

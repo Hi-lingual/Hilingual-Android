@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.hilingual.core.designsystem.component.image.HilingualLottieAnimation
+import com.hilingual.core.ui.component.image.HilingualLottieAnimation
 import com.hilingual.presentation.diarywrite.R
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay

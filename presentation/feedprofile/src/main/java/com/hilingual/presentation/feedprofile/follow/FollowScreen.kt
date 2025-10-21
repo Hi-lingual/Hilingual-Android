@@ -29,9 +29,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.hilingual.core.designsystem.component.content.UserActionItem
 import com.hilingual.core.designsystem.component.pulltorefresh.HilingualPullToRefreshBox
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.ui.component.item.feed.UserActionItem
 import com.hilingual.presentation.feedprofile.follow.model.FollowItemModel
 import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCard
 import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType

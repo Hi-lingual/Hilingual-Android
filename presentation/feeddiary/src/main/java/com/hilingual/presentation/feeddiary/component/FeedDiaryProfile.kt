@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.util.formatRelativeTime
 import com.hilingual.core.designsystem.R
-import com.hilingual.core.designsystem.component.image.ProfileImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.ui.component.image.ProfileImage
 
 @Composable
 internal fun FeedDiaryProfile(
