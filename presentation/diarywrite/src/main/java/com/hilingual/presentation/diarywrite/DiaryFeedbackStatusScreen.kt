@@ -33,8 +33,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.hilingual.core.ui.component.image.HilingualLottieAnimation
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.ui.component.image.HilingualLottieAnimation
 import com.hilingual.presentation.diarywrite.component.FeedbackCompleteContent
 import com.hilingual.presentation.diarywrite.component.FeedbackFailureContent
 import com.hilingual.presentation.diarywrite.component.FeedbackMedia

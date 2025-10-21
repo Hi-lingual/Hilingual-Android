@@ -32,8 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.designsystem.component.textfield.HilingualSearchTextField
-import com.hilingual.core.ui.component.topappbar.TitleLeftAlignedTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.ui.component.topappbar.TitleLeftAlignedTopAppBar
 
 private val INPUT_FILTER_REGEX = Regex("""[^a-zA-Z -]""")
 

@@ -23,8 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.button.HilingualButton
-import com.hilingual.core.ui.component.topappbar.CloseOnlyTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.ui.component.topappbar.CloseOnlyTopAppBar
 
 @Composable
 internal fun FeedbackFailureContent(

@@ -31,9 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.button.UserActionButton
 import com.hilingual.core.ui.component.image.ProfileImage
-import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun UserActionItem(

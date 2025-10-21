@@ -26,9 +26,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
+import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.image.NetworkImage
 import com.hilingual.core.ui.component.topappbar.CloseOnlyTopAppBar
-import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun ModalImage(
