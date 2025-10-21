@@ -44,8 +44,8 @@ import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.dialog.TwoButtonDialog
-import com.hilingual.core.designsystem.component.topappbar.TitleCenterAlignedTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.ui.component.topappbar.TitleCenterAlignedTopAppBar
 import com.hilingual.presentation.otp.component.OtpTextField
 
 @Composable

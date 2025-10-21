@@ -48,8 +48,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import com.hilingual.core.common.extension.noRippleClickable
-import com.hilingual.core.designsystem.component.tag.WordPhraseTypeTag
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.ui.component.item.voca.WordPhraseTypeTag
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import com.hilingual.core.designsystem.R as DesignSystemR
