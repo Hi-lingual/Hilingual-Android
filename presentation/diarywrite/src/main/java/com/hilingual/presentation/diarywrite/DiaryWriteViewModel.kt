@@ -32,8 +32,11 @@ import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -60,6 +63,9 @@ internal class DiaryWriteViewModel @Inject constructor(
     )
     val uiState: StateFlow<DiaryWriteUiState> = _uiState.asStateFlow()
 
+    private val _sideEffect = MutableSharedFlow<DiaryWriteSideEffect>()
+    val sideEffect: SharedFlow<DiaryWriteSideEffect> = _sideEffect.asSharedFlow()
+
     private var _feedbackState: MutableStateFlow<DiaryFeedbackState> =
         MutableStateFlow(DiaryFeedbackState.Default)
     val feedbackState: StateFlow<DiaryFeedbackState> = _feedbackState.asStateFlow()
@@ -82,7 +88,9 @@ internal class DiaryWriteViewModel @Inject constructor(
                 .onSuccess { topic ->
                     _uiState.update { it.copy(topicKo = topic.topicKor, topicEn = topic.topicEn) }
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(DiaryWriteSideEffect.ShowErrorDialog)
+                }
         }
     }
 
@@ -110,7 +118,8 @@ internal class DiaryWriteViewModel @Inject constructor(
                 runCatching {
                     withContext(Dispatchers.IO) {
                         val image = InputImage.fromFilePath(context, uri)
-                        val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+                        val recognizer =
+                            TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
                         recognizer.process(image).await().text
                     }
                 }.onSuccess { extractedText ->
@@ -135,4 +144,8 @@ internal class DiaryWriteViewModel @Inject constructor(
     companion object {
         private const val MAX_DIARY_TEXT_LENGTH = 1000
     }
+}
+
+sealed interface DiaryWriteSideEffect {
+    data object ShowErrorDialog : DiaryWriteSideEffect
 }
