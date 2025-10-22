@@ -1,18 +1,3 @@
-/*
- * Copyright 2025 The Hilingual Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.hilingual.presentation.feedprofile.follow
 
 import androidx.lifecycle.SavedStateHandle
@@ -48,35 +33,11 @@ internal class FollowListViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(FollowListUiState())
     val uiState: StateFlow<FollowListUiState> = _uiState.asStateFlow()
 
-    private fun loadFollowers() {
+    fun refreshTab(tabType: FollowTabType) {
         viewModelScope.launch {
-            _uiState.update { it.copy(followerList = UiState.Loading) }
-
-            userRepository.getFollowers(targetUserId)
-                .onSuccess { followUserList ->
-                    val followerItems = followUserList.map { it.toState() }.toImmutableList()
-                    _uiState.update {
-                        it.copy(followerList = UiState.Success(followerItems))
-                    }
-                }
-                .onLogFailure {
-                }
-        }
-    }
-
-    private fun loadFollowings() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(followingList = UiState.Loading) }
-
-            userRepository.getFollowings(targetUserId)
-                .onSuccess { followUserList ->
-                    val followingItems = followUserList.map { it.toState() }.toImmutableList()
-                    _uiState.update {
-                        it.copy(followingList = UiState.Success(followingItems))
-                    }
-                }
-                .onLogFailure {
-                }
+            setRefreshing(tabType, true)
+            loadFollowList(tabType)
+            setRefreshing(tabType, false)
         }
     }
 
@@ -91,62 +52,82 @@ internal class FollowListViewModel @Inject constructor(
             result.onSuccess {
                 _uiState.update { currentState ->
                     when (tabType) {
-                        FollowTabType.FOLLOWER -> {
-                            currentState.copy(
-                                followerList = updateUiState(currentState.followerList, userId, isFollowing)
-                            )
-                        }
-                        FollowTabType.FOLLOWING -> {
-                            currentState.copy(
-                                followingList = updateUiState(currentState.followingList, userId, isFollowing)
-                            )
-                        }
+                        FollowTabType.FOLLOWER -> currentState.copy(
+                            followerList = currentState.followerList.updateFollowState(userId, isFollowing)
+                        )
+                        FollowTabType.FOLLOWING -> currentState.copy(
+                            followingList = currentState.followingList.updateFollowState(userId, isFollowing)
+                        )
                     }
                 }
+            }.onLogFailure { }
+        }
+    }
+
+    private fun loadFollowList(tabType: FollowTabType) {
+        viewModelScope.launch {
+            updateLoadingState(tabType, UiState.Loading)
+
+            val result = when (tabType) {
+                FollowTabType.FOLLOWER -> userRepository.getFollowers(targetUserId)
+                FollowTabType.FOLLOWING -> userRepository.getFollowings(targetUserId)
             }
-                .onLogFailure {
-                }
+
+            result.onSuccess { followUserList ->
+                val items = followUserList.map { it.toState() }.toImmutableList()
+                updateLoadingState(tabType, UiState.Success(items))
+            }.onLogFailure { }
         }
     }
 
-    fun refreshTab(tabType: FollowTabType) {
-        when (tabType) {
-            FollowTabType.FOLLOWER -> loadFollowers()
-            FollowTabType.FOLLOWING -> loadFollowings()
+    private fun updateLoadingState(
+        tabType: FollowTabType,
+        state: UiState<ImmutableList<FollowItemModel>>
+    ) {
+        _uiState.update { currentState ->
+            when (tabType) {
+                FollowTabType.FOLLOWER -> currentState.copy(followerList = state)
+                FollowTabType.FOLLOWING -> currentState.copy(followingList = state)
+            }
         }
     }
 
-    private fun updateUiState(
-        uiState: UiState<ImmutableList<FollowItemModel>>,
-        userId: Long,
-        currentIsFollowing: Boolean
-    ): UiState<ImmutableList<FollowItemModel>> {
-        return if (uiState is UiState.Success) {
-            val updatedList = updateFollowItemList(uiState.data, userId, currentIsFollowing)
+    private fun setRefreshing(tabType: FollowTabType, isRefreshing: Boolean) {
+        _uiState.update { currentState ->
+            when (tabType) {
+                FollowTabType.FOLLOWER -> currentState.copy(isFollowerRefreshing = isRefreshing)
+                FollowTabType.FOLLOWING -> currentState.copy(isFollowingRefreshing = isRefreshing)
+            }
+        }
+    }
+}
+
+private fun UiState<ImmutableList<FollowItemModel>>.updateFollowState(
+    userId: Long,
+    currentIsFollowing: Boolean
+): UiState<ImmutableList<FollowItemModel>> {
+    return when (this) {
+        is UiState.Success -> {
+            val updatedList = data.updateFollowItem(userId, currentIsFollowing)
             UiState.Success(updatedList)
-        } else {
-            uiState
         }
+        else -> this
     }
+}
 
-    private fun updateFollowItemList(
-        followList: ImmutableList<FollowItemModel>,
-        userId: Long,
-        currentIsFollowing: Boolean
-    ): ImmutableList<FollowItemModel> {
-        val targetIndex = followList.indexOfFirst { it.userId == userId }
-        if (targetIndex == -1) return followList
-
-        val targetItem = followList[targetIndex]
-        val newState = FollowState.getValueByFollowState(
-            isFollowing = !currentIsFollowing,
-            isFollowed = targetItem.followState.isFollowed
-        )
-
-        val updatedItem = targetItem.copy(followState = newState)
-
-        return followList.toMutableList().apply {
-            set(targetIndex, updatedItem)
-        }.toImmutableList()
-    }
+private fun ImmutableList<FollowItemModel>.updateFollowItem(
+    userId: Long,
+    currentIsFollowing: Boolean
+): ImmutableList<FollowItemModel> {
+    return map { item ->
+        if (item.userId == userId) {
+            val newState = FollowState.getValueByFollowState(
+                isFollowing = !currentIsFollowing,
+                isFollowed = item.followState.isFollowed
+            )
+            item.copy(followState = newState)
+        } else {
+            item
+        }
+    }.toImmutableList()
 }
