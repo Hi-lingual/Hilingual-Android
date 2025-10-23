@@ -36,7 +36,7 @@ desugarJdkLibs = "2.1.5"
 browser="1.9.0"
 
 # Room
-room = "2.8.2"
+room = "2.8.3"
 
 # Test
 junit = "4.13.2"
