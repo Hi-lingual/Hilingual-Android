@@ -53,10 +53,10 @@ internal class FollowListViewModel @Inject constructor(
                 _uiState.update { currentState ->
                     when (tabType) {
                         FollowTabType.FOLLOWER -> currentState.copy(
-                            followerList = currentState.followerList.updateFollowState(userId, isFollowing)
+                            followerList = updateFollowState(currentState.followerList, userId, isFollowing)
                         )
                         FollowTabType.FOLLOWING -> currentState.copy(
-                            followingList = currentState.followingList.updateFollowState(userId, isFollowing)
+                            followingList = updateFollowState(currentState.followingList, userId, isFollowing)
                         )
                     }
                 }
@@ -100,34 +100,37 @@ internal class FollowListViewModel @Inject constructor(
             }
         }
     }
-}
 
-private fun UiState<ImmutableList<FollowItemModel>>.updateFollowState(
-    userId: Long,
-    currentIsFollowing: Boolean
-): UiState<ImmutableList<FollowItemModel>> {
-    return when (this) {
-        is UiState.Success -> {
-            val updatedList = data.updateFollowItem(userId, currentIsFollowing)
-            UiState.Success(updatedList)
+    private fun updateFollowState(
+        uiState: UiState<ImmutableList<FollowItemModel>>,
+        userId: Long,
+        currentIsFollowing: Boolean
+    ): UiState<ImmutableList<FollowItemModel>> {
+        return when (uiState) {
+            is UiState.Success -> {
+                val updatedList = updateFollowItem(uiState.data, userId, currentIsFollowing)
+                UiState.Success(updatedList)
+            }
+            else -> uiState
         }
-        else -> this
     }
-}
 
-private fun ImmutableList<FollowItemModel>.updateFollowItem(
-    userId: Long,
-    currentIsFollowing: Boolean
-): ImmutableList<FollowItemModel> {
-    return map { item ->
-        if (item.userId == userId) {
-            val newState = FollowState.getValueByFollowState(
-                isFollowing = !currentIsFollowing,
-                isFollowed = item.followState.isFollowed
-            )
-            item.copy(followState = newState)
-        } else {
-            item
-        }
-    }.toImmutableList()
+    private fun updateFollowItem(
+        followList: ImmutableList<FollowItemModel>,
+        userId: Long,
+        currentIsFollowing: Boolean
+    ): ImmutableList<FollowItemModel> {
+        val targetIndex = followList.indexOfFirst { it.userId == userId }
+        if (targetIndex == -1) return followList
+
+        val targetItem = followList[targetIndex]
+        val newState = FollowState.getValueByFollowState(
+            isFollowing = !currentIsFollowing,
+            isFollowed = targetItem.followState.isFollowed
+        )
+
+        return followList.toMutableList().apply {
+            set(targetIndex, targetItem.copy(followState = newState))
+        }.toImmutableList()
+    }
 }
