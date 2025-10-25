@@ -29,6 +29,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -59,6 +60,7 @@ constructor(
 
     private var aTozGroupList: ImmutableList<GroupingVocaModel> = persistentListOf()
     private var latestGroupList: ImmutableList<GroupingVocaModel> = persistentListOf()
+    private var hasBookmarkChanged = false
 
     init {
         fetchInitialData()
@@ -78,44 +80,56 @@ constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(vocaGroupList = UiState.Loading) }
 
-            val aTozResult = vocaRepository.getVocaList(sort = WordSortType.AtoZ.sortParam)
-            val latestResult = vocaRepository.getVocaList(sort = WordSortType.Latest.sortParam)
+            val aTozDeferred = async { vocaRepository.getVocaList(sort = WordSortType.AtoZ.sortParam) }
+            val latestDeferred = async { vocaRepository.getVocaList(sort = WordSortType.Latest.sortParam) }
 
-            if (aTozResult.isSuccess && latestResult.isSuccess) {
-                val (count, aTozList) = aTozResult.getOrThrow()
-                val (_, latestList) = latestResult.getOrThrow()
+            val aTozResult = aTozDeferred.await()
+            val latestResult = latestDeferred.await()
 
-                aTozGroupList = aTozList.toImmutableList()
-                latestGroupList = latestList.toImmutableList()
-
-                val currentList = when (_uiState.value.sortType) {
-                    WordSortType.AtoZ -> aTozGroupList
-                    WordSortType.Latest -> latestGroupList
-                }
-
-                _uiState.update {
-                    it.copy(
-                        vocaGroupList = UiState.Success(currentList),
-                        vocaCount = count
-                    )
-                }
-            } else {
+            if (aTozResult.isFailure || latestResult.isFailure) {
+                aTozResult.onLogFailure {}
+                latestResult.onLogFailure {}
                 _sideEffect.emit(VocaSideEffect.ShowErrorDialog(onRetry = ::fetchInitialData))
+                return@launch
+            }
+
+            val (count, aTozList) = aTozResult.getOrThrow()
+            val (_, latestList) = latestResult.getOrThrow()
+
+            aTozGroupList = aTozList.toImmutableList()
+            latestGroupList = latestList.toImmutableList()
+
+            val currentList = when (_uiState.value.sortType) {
+                WordSortType.AtoZ -> aTozGroupList
+                WordSortType.Latest -> latestGroupList
+            }
+
+            _uiState.update {
+                it.copy(
+                    vocaGroupList = UiState.Success(currentList),
+                    vocaCount = count
+                )
             }
         }
     }
 
     fun updateSort(sort: WordSortType) {
-        val currentList = when (sort) {
-            WordSortType.AtoZ -> aTozGroupList
-            WordSortType.Latest -> latestGroupList
-        }
+        if (hasBookmarkChanged) {
+            _uiState.update { it.copy(sortType = sort) }
+            fetchInitialData()
+            hasBookmarkChanged = false
+        } else {
+            val currentList = when (sort) {
+                WordSortType.AtoZ -> aTozGroupList
+                WordSortType.Latest -> latestGroupList
+            }
 
-        _uiState.update {
-            it.copy(
-                sortType = sort,
-                vocaGroupList = UiState.Success(currentList)
-            )
+            _uiState.update {
+                it.copy(
+                    sortType = sort,
+                    vocaGroupList = UiState.Success(currentList)
+                )
+            }
         }
     }
 
@@ -181,6 +195,7 @@ constructor(
             )
                 .onSuccess {
                     updateLocalBookmarkState(phraseId, isMarked)
+                    hasBookmarkChanged = true
                 }
                 .onLogFailure {
                     _sideEffect.emit(VocaSideEffect.ShowErrorDialog {})
@@ -234,31 +249,37 @@ constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isRefreshing = true) }
 
-            val aTozResult = vocaRepository.getVocaList(sort = WordSortType.AtoZ.sortParam)
-            val latestResult = vocaRepository.getVocaList(sort = WordSortType.Latest.sortParam)
+            val aTozDeferred = async { vocaRepository.getVocaList(sort = WordSortType.AtoZ.sortParam) }
+            val latestDeferred = async { vocaRepository.getVocaList(sort = WordSortType.Latest.sortParam) }
 
-            if (aTozResult.isSuccess && latestResult.isSuccess) {
-                val (count, aTozList) = aTozResult.getOrThrow()
-                val (_, latestList) = latestResult.getOrThrow()
+            val aTozResult = aTozDeferred.await()
+            val latestResult = latestDeferred.await()
 
-                aTozGroupList = aTozList.toImmutableList()
-                latestGroupList = latestList.toImmutableList()
-
-                val currentList = when (_uiState.value.sortType) {
-                    WordSortType.AtoZ -> aTozGroupList
-                    WordSortType.Latest -> latestGroupList
-                }
-
-                _uiState.update {
-                    it.copy(
-                        vocaGroupList = UiState.Success(currentList),
-                        vocaCount = count,
-                        isRefreshing = false
-                    )
-                }
-            } else {
+            if (aTozResult.isFailure || latestResult.isFailure) {
+                aTozResult.onLogFailure {}
+                latestResult.onLogFailure {}
                 _uiState.update { it.copy(isRefreshing = false) }
                 _sideEffect.emit(VocaSideEffect.ShowErrorDialog(onRetry = ::refreshVocaList))
+                return@launch
+            }
+
+            val (count, aTozList) = aTozResult.getOrThrow()
+            val (_, latestList) = latestResult.getOrThrow()
+
+            aTozGroupList = aTozList.toImmutableList()
+            latestGroupList = latestList.toImmutableList()
+
+            val currentList = when (_uiState.value.sortType) {
+                WordSortType.AtoZ -> aTozGroupList
+                WordSortType.Latest -> latestGroupList
+            }
+
+            _uiState.update {
+                it.copy(
+                    vocaGroupList = UiState.Success(currentList),
+                    vocaCount = count,
+                    isRefreshing = false
+                )
             }
         }
     }
