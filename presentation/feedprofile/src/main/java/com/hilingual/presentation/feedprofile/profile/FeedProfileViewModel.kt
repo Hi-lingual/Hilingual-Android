@@ -286,12 +286,36 @@ internal class FeedProfileViewModel @Inject constructor(
         }
     }
 
+    fun onFollowClick() {
+        _uiState.updateSuccess { currentState ->
+            if (currentState.feedProfileInfo.isMine) {
+                viewModelScope.launch {
+                    _sideEffect.emit(FeedProfileSideEffect.NavigateToFollowList)
+                }
+            }
+            currentState
+        }
+    }
+
+    fun onActionButtonClick() {
+        _uiState.updateSuccess { currentState ->
+            val profile = currentState.feedProfileInfo
+
+            when {
+                profile.isBlock == true -> updateBlockState(isCurrentlyBlocked = true)
+                profile.isFollowing != null -> updateFollowingState(profile.isFollowing)
+            }
+            currentState
+        }
+    }
+
     private suspend fun showLikeSnackbar() {
         _sideEffect.emit(FeedProfileSideEffect.ShowDiaryLikeSnackbar(message = "공감한 일기에 추가되었어요.", actionLabel = "보러가기"))
     }
 }
 
 sealed interface FeedProfileSideEffect {
+    data object NavigateToFollowList : FeedProfileSideEffect
     data class ShowDiaryLikeSnackbar(val message: String, val actionLabel: String) : FeedProfileSideEffect
     data class ShowToast(val message: String) : FeedProfileSideEffect
     data object ShowErrorDialog : FeedProfileSideEffect

@@ -63,8 +63,10 @@ import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.advancedImePadding
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.provider.LocalTracker
+import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualLongTextField
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
@@ -102,6 +104,7 @@ internal fun DiaryWriteRoute(
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val dialogTrigger = LocalDialogTrigger.current
     val feedbackState by viewModel.feedbackState.collectAsStateWithLifecycle()
     val tracker = LocalTracker.current
 
@@ -135,6 +138,12 @@ internal fun DiaryWriteRoute(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
         uri?.let { viewModel.extractTextFromImage(it) }
+    }
+
+    viewModel.sideEffect.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is DiaryWriteSideEffect.ShowErrorDialog -> dialogTrigger.show(navigateUp)
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -455,7 +464,6 @@ private fun DiaryWriteScreen(
                 text = "피드백 요청하기",
                 enableProvider = { diaryText.length >= 10 },
                 onClick = onDiaryFeedbackRequestButtonClick
-
             )
         }
     }
