@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.analytics.FakeTracker
-import com.hilingual.core.common.analytics.Page
 import com.hilingual.core.common.analytics.Page.HOME
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.analytics.TriggerType
@@ -139,8 +138,27 @@ internal fun HomeRoute(
                 },
                 onDateSelected = viewModel::onDateSelected,
                 onMonthChanged = viewModel::onMonthChanged,
-                onWriteDiaryClick = navigateToDiaryWrite,
-                onDiaryPreviewClick = navigateToDiaryFeedback,
+                onWriteDiaryClick = { date ->
+                    tracker.logEvent(
+                        trigger = TriggerType.CLICK,
+                        page = HOME,
+                        event = "diary_write",
+                        properties = mapOf("open_time" to System.currentTimeMillis())
+                    )
+                    navigateToDiaryWrite(date)
+                },
+                onDiaryPreviewClick = { diaryId ->
+                    tracker.logEvent(
+                        trigger = TriggerType.VIEW,
+                        page = HOME,
+                        event = "opend_diary_view",
+                        properties = mapOf(
+                            "open_time" to System.currentTimeMillis(),
+                            "entry_id" to diaryId
+                        )
+                    )
+                    navigateToDiaryFeedback(diaryId)
+                },
                 onDeleteClick = viewModel::deleteDiary,
                 onPublishClick = viewModel::publishDiary,
                 onUnpublishClick = viewModel::unpublishDiary,
@@ -268,18 +286,7 @@ private fun HomeScreen(
                             DiaryPreviewCard(
                                 diaryText = diaryThumbnail.originalText,
                                 diaryId = diaryThumbnail.diaryId,
-                                onClick = {
-                                    tracker.logEvent(
-                                        trigger = TriggerType.VIEW,
-                                        page = HOME,
-                                        event = "opend_diary_view",
-                                        properties = mapOf(
-                                            "open_time" to System.currentTimeMillis(),
-                                            "entry_id" to it
-                                        )
-                                    )
-                                    onDiaryPreviewClick(it)
-                                },
+                                onClick = onDiaryPreviewClick,
                                 imageUrl = diaryThumbnail.imageUrl,
                                 modifier = Modifier.fillMaxWidth()
                             )
@@ -309,15 +316,7 @@ private fun HomeScreen(
                         }
                         Spacer(Modifier.height(12.dp))
                         WriteDiaryButton(
-                            onClick = {
-                                tracker.logEvent(
-                                    trigger = TriggerType.CLICK,
-                                    page = HOME,
-                                    event = "diary_write",
-                                    properties = mapOf("open_time" to System.currentTimeMillis())
-                                )
-                                onWriteDiaryClick(date)
-                            },
+                            onClick = { onWriteDiaryClick(date) },
                             modifier = Modifier.fillMaxWidth()
                         )
                     }

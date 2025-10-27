@@ -57,7 +57,6 @@ import androidx.core.content.FileProvider
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.analytics.FakeTracker
-import com.hilingual.core.common.analytics.Page
 import com.hilingual.core.common.analytics.Page.WRITE_DIARY
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.analytics.TriggerType
@@ -160,7 +159,18 @@ internal fun DiaryWriteRoute(
                 onBottomSheetGalleryClicked = {
                     galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 },
-                onDiaryFeedbackRequestButtonClick = viewModel::postDiaryFeedbackCreate,
+                onDiaryFeedbackRequestButtonClick = {
+                    tracker.logEvent(
+                        trigger = TriggerType.CLICK,
+                        page = WRITE_DIARY,
+                        event = "submit_cta",
+                        properties = mapOf(
+                            "has_photo" to (uiState.diaryImageUri != null),
+                            "char_count" to uiState.diaryText.length
+                        )
+                    )
+                    viewModel.postDiaryFeedbackCreate()
+                },
                 tracker = tracker
             )
         }
@@ -237,9 +247,13 @@ private fun DiaryWriteScreen(
 ) {
     val verticalScrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
+
     var isDialogVisible by remember { mutableStateOf(false) }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var isTextFieldFocused by remember { mutableStateOf(false) }
+
+    var dropdownClickCount by remember { mutableIntStateOf(0) }
+    var textFieldFocusedTime by remember { mutableLongStateOf(0L) }
 
     BackHandler {
         cancelDiaryWrite(
@@ -347,8 +361,6 @@ private fun DiaryWriteScreen(
                     )
                 }
 
-                var dropdownClickCount by remember { mutableIntStateOf(0) }
-
                 RecommendedTopicDropdown(
                     enTopic = topicEn,
                     koTopic = topicKo,
@@ -368,8 +380,6 @@ private fun DiaryWriteScreen(
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
-
-                var textFieldFocusedTime by remember { mutableLongStateOf(0L) }
 
                 HilingualLongTextField(
                     modifier = Modifier
@@ -444,18 +454,8 @@ private fun DiaryWriteScreen(
                     .navigationBarsPadding(),
                 text = "피드백 요청하기",
                 enableProvider = { diaryText.length >= 10 },
-                onClick = {
-                    tracker.logEvent(
-                        trigger = TriggerType.CLICK,
-                        page = WRITE_DIARY,
-                        event = "submit_cta",
-                        properties = mapOf(
-                            "has_photo" to (diaryImageUri != null),
-                            "char_count" to diaryText.length
-                        )
-                    )
-                    onDiaryFeedbackRequestButtonClick()
-                }
+                onClick = onDiaryFeedbackRequestButtonClick
+
             )
         }
     }

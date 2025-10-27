@@ -53,7 +53,7 @@ internal class FeedProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val routeData = savedStateHandle.toRoute<FeedProfileGraph>()
-    private val targetUserId: Long = routeData.userId
+    val targetUserId: Long = routeData.userId
     val showLikedDiaries: Boolean = routeData.showLikedDiaries
 
     private val _uiState = MutableStateFlow<UiState<FeedProfileUiState>>(UiState.Loading)

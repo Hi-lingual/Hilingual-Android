@@ -54,10 +54,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.analytics.Page
+import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
@@ -94,8 +97,18 @@ internal fun FeedProfileRoute(
     val snackbarTrigger = LocalSnackbarTrigger.current
     val toastTrigger = LocalToastTrigger.current
     val dialogTrigger = LocalDialogTrigger.current
+    val tracker = LocalTracker.current
 
     LaunchedEffect(Unit) {
+        tracker.logEvent(
+            trigger = TriggerType.VIEW,
+            page = Page.FEED,
+            event = "view_profile_user",
+            properties = mapOf(
+                "profile_user_id" to viewModel.targetUserId,
+                "page" to Page.FEED.pageName
+            )
+        )
         viewModel.loadFeedProfile()
     }
 
