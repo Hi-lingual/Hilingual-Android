@@ -46,10 +46,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.analytics.FakeTracker
 import com.hilingual.core.common.analytics.Page
 import com.hilingual.core.common.analytics.Page.HOME
+import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.SnackbarRequest
 import com.hilingual.core.common.provider.LocalTracker
@@ -140,7 +143,8 @@ internal fun HomeRoute(
                 onDiaryPreviewClick = navigateToDiaryFeedback,
                 onDeleteClick = viewModel::deleteDiary,
                 onPublishClick = viewModel::publishDiary,
-                onUnpublishClick = viewModel::unpublishDiary
+                onUnpublishClick = viewModel::unpublishDiary,
+                tracker = tracker
             )
         }
 
@@ -160,7 +164,8 @@ private fun HomeScreen(
     onDiaryPreviewClick: (diaryId: Long) -> Unit,
     onDeleteClick: (diaryId: Long) -> Unit,
     onPublishClick: (diaryId: Long) -> Unit,
-    onUnpublishClick: (diaryId: Long) -> Unit
+    onUnpublishClick: (diaryId: Long) -> Unit,
+    tracker: Tracker
 ) {
     val date = uiState.selectedDate
     val verticalScrollState = rememberScrollState()
@@ -231,7 +236,17 @@ private fun HomeScreen(
                             HomeDropDownMenu(
                                 isExpanded = isExpanded,
                                 isPublished = diary.isPublished,
-                                onExpandedChange = { isExpanded = it },
+                                onExpandedChange = {
+                                    isExpanded = it
+                                    if (it) {
+                                        tracker.logEvent(
+                                            trigger = TriggerType.CLICK,
+                                            page = HOME,
+                                            event = "more_menu",
+                                            properties = mapOf("menu_name" to "more_menu")
+                                        )
+                                    }
+                                },
                                 onDeleteClick = { onDeleteClick(diary.diaryId) },
                                 onPublishClick = { onPublishClick(diary.diaryId) },
                                 onUnpublishClick = { onUnpublishClick(diary.diaryId) }
@@ -253,7 +268,18 @@ private fun HomeScreen(
                             DiaryPreviewCard(
                                 diaryText = diaryThumbnail.originalText,
                                 diaryId = diaryThumbnail.diaryId,
-                                onClick = onDiaryPreviewClick,
+                                onClick = {
+                                    tracker.logEvent(
+                                        trigger = TriggerType.VIEW,
+                                        page = HOME,
+                                        event = "opend_diary_view",
+                                        properties = mapOf(
+                                            "open_time" to System.currentTimeMillis(),
+                                            "entry_id" to it
+                                        )
+                                    )
+                                    onDiaryPreviewClick(it)
+                                },
                                 imageUrl = diaryThumbnail.imageUrl,
                                 modifier = Modifier.fillMaxWidth()
                             )
@@ -269,11 +295,29 @@ private fun HomeScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .animateContentSize()
+                                    .noRippleClickable {
+                                        tracker.logEvent(
+                                            trigger = TriggerType.CLICK,
+                                            page = HOME,
+                                            event = "switch_language",
+                                            properties = mapOf(
+                                                "recommen_topic" to "${todayTopic.topicKo}/${todayTopic.topicEn}"
+                                            )
+                                        )
+                                    }
                             )
                         }
                         Spacer(Modifier.height(12.dp))
                         WriteDiaryButton(
-                            onClick = { onWriteDiaryClick(date) },
+                            onClick = {
+                                tracker.logEvent(
+                                    trigger = TriggerType.CLICK,
+                                    page = HOME,
+                                    event = "diary_write",
+                                    properties = mapOf("open_time" to System.currentTimeMillis())
+                                )
+                                onWriteDiaryClick(date)
+                            },
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -301,7 +345,8 @@ private fun HomeScreenPreview() {
             onDiaryPreviewClick = {},
             onDeleteClick = {},
             onPublishClick = {},
-            onUnpublishClick = {}
+            onUnpublishClick = {},
+            tracker = FakeTracker()
         )
     }
 }
