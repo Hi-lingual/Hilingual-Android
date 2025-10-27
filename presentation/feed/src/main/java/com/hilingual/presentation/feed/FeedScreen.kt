@@ -54,6 +54,7 @@ import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedTopAppBar
 import com.hilingual.presentation.feed.model.FeedItemUiModel
+import com.hilingual.presentation.feed.tab.FeedTabScreen
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
