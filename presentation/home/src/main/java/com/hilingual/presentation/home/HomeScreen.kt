@@ -46,9 +46,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.analytics.Page
+import com.hilingual.core.common.analytics.Page.HOME
+import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
@@ -84,6 +88,7 @@ internal fun HomeRoute(
     val dialogTrigger = LocalDialogTrigger.current
     val toastTrigger = LocalToastTrigger.current
     val snackbarTrigger = LocalSnackbarTrigger.current
+    val tracker = LocalTracker.current
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -105,6 +110,7 @@ internal fun HomeRoute(
 
     LaunchedEffect(Unit) {
         viewModel.loadInitialData()
+        tracker.logEvent(trigger = TriggerType.VIEW, page = HOME, event = "page")
     }
 
     when (val state = uiState) {
@@ -124,7 +130,10 @@ internal fun HomeRoute(
                 paddingValues = paddingValues,
                 uiState = state.data,
                 onAlarmClick = navigateToNotification,
-                onImageClick = { navigateToFeedProfile(0L) },
+                onImageClick = {
+                    tracker.logEvent(trigger = TriggerType.CLICK, page = HOME, event = "profile")
+                    navigateToFeedProfile(0L)
+                },
                 onDateSelected = viewModel::onDateSelected,
                 onMonthChanged = viewModel::onMonthChanged,
                 onWriteDiaryClick = navigateToDiaryWrite,

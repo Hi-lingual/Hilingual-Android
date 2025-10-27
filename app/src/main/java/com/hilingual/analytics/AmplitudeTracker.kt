@@ -6,6 +6,7 @@ import com.amplitude.android.Configuration
 import com.hilingual.BuildConfig
 import com.hilingual.core.common.analytics.Page
 import com.hilingual.core.common.analytics.Tracker
+import com.hilingual.core.common.analytics.TriggerType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -23,14 +24,15 @@ class AmplitudeTracker @Inject constructor(
         )
     )
 
-    override fun logEvent(page: Page, event: String, properties: Map<String, Any>?) {
-        val eventName = "${page.pageName}.$event"
-        Timber.tag("AmplitudeTracker").d("Tracking event: $eventName, properties: ${properties ?: "None"}")
+    override fun logEvent(trigger: TriggerType, page: Page, event: String) {
+        val eventName = "${trigger.value}_${page.pageName}.$event"
+        Timber.tag("AmplitudeTracker").d("Tracking event: $eventName, properties: None")
+        amplitude.track(eventName)
+    }
 
-        if (properties == null) {
-            amplitude.track(eventName)
-        } else {
-            amplitude.track(eventName, properties.toMutableMap())
-        }
+    override fun logEvent(trigger: TriggerType, page: Page, event: String, properties: Map<String, Any>) {
+        val eventName = "${trigger.value}_${page.pageName}.$event"
+        Timber.tag("AmplitudeTracker").d("Tracking event: $eventName, properties: $properties")
+        amplitude.track(eventName, properties.toMutableMap())
     }
 }
