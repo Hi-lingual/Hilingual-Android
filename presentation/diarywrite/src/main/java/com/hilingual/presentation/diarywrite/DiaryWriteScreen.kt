@@ -62,8 +62,8 @@ import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.advancedImePadding
-import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
