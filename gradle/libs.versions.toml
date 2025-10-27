@@ -1,7 +1,7 @@
 [versions]
 # Build Configuration
 compileSdk = "36"
-credentials = "1.6.0-beta02"
+credentials = "1.6.0-beta03"
 googleid = "1.1.1"
 googleServices = "4.4.4"
 minSdk = "30"
@@ -16,9 +16,9 @@ versionCode = "1000100"
 versionName = "1.0.1"
 
 # Kotlin
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 kotlinxImmutable = "0.4.0"
-ksp = "2.2.20-2.0.4"
+ksp = "2.3.0"
 
 # AndroidX
 coreKtx = "1.17.0"
@@ -27,7 +27,7 @@ androidxAppCompat = "1.7.1"
 lifecycleRuntimeKtx = "2.9.4"
 lifecycleRuntimeComposeAndroid = "2.9.4"
 activityCompose = "1.11.0"
-composeBom = "2025.10.00"
+composeBom = "2025.10.01"
 composeNavigation = "2.9.5"
 security = "1.1.0"
 datastorePreferences = "1.1.7"
@@ -36,7 +36,7 @@ desugarJdkLibs = "2.1.5"
 browser="1.9.0"
 
 # Room
-room = "2.8.2"
+room = "2.8.3"
 
 # Test
 junit = "4.13.2"
@@ -66,7 +66,6 @@ firebaseCrashlyticsPlugin = "3.0.6"
 # ML Kit
 mlkitTextRecognition = "16.0.1"
 coroutinesPlayServices = "1.10.2"
-espressoCore = "3.7.0"
 
 # Baseline Profile
 uiautomator = "2.3.0"
