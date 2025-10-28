@@ -82,8 +82,8 @@ internal class FeedProfileViewModel @Inject constructor(
             val sharedDiariesResult = sharedDiariesDeferred.await()
 
             if (feedProfileResult.isFailure || sharedDiariesResult.isFailure) {
-                feedProfileResult.onLogFailure {}
-                sharedDiariesResult.onLogFailure {}
+                feedProfileResult.onLogFailure { _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog) }
+                sharedDiariesResult.onLogFailure { _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog) }
                 _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
                 return@launch
             }
@@ -210,7 +210,9 @@ internal class FeedProfileViewModel @Inject constructor(
                         showLikeSnackbar()
                     }
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+                }
         }
     }
 
@@ -243,7 +245,9 @@ internal class FeedProfileViewModel @Inject constructor(
                     }
                     _sideEffect.emit(FeedProfileSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+                }
         }
     }
 
@@ -265,7 +269,9 @@ internal class FeedProfileViewModel @Inject constructor(
 
                     currentState.copy(feedProfileInfo = updatedProfile)
                 }
-            }.onLogFailure { }
+            }.onLogFailure {
+                _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+            }
         }
     }
 
@@ -282,7 +288,9 @@ internal class FeedProfileViewModel @Inject constructor(
                 } else {
                     loadFeedProfileInfo()
                 }
-            }.onLogFailure { }
+            }.onLogFailure {
+                _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+            }
         }
     }
 
