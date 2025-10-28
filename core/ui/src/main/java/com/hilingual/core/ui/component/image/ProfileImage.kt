@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import com.hilingual.core.designsystem.R
+import com.hilingual.core.designsystem.component.image.NetworkImage
 
 @Composable
 fun ProfileImage(

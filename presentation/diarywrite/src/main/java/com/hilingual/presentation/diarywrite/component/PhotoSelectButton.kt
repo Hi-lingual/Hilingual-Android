@@ -39,8 +39,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.ui.component.image.NetworkImage
 import com.hilingual.presentation.diarywrite.R
 import com.hilingual.core.designsystem.R as DesignSystemR
 

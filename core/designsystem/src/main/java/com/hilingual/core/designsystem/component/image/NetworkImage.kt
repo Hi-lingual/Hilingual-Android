@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.ui.component.image
+package com.hilingual.core.designsystem.component.image
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
