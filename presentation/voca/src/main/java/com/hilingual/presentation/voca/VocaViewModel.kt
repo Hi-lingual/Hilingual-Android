@@ -42,6 +42,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -59,18 +60,42 @@ constructor(
     private val _sideEffect = MutableSharedFlow<VocaSideEffect>()
     val sideEffect: SharedFlow<VocaSideEffect> = _sideEffect.asSharedFlow()
 
-    private var hasBookmarkChanged = false
+    private val _actions = MutableSharedFlow<VocaAction>()
 
     init {
         fetchInitialData()
+        setupSearchFlow()
+        setupActionStateMachine()
+    }
 
-        @OptIn(FlowPreview::class)
+    @OptIn(FlowPreview::class)
+    private fun setupSearchFlow() {
         _uiState
             .map { it.searchKeyword }
             .debounce(400L)
             .distinctUntilChanged()
             .onEach { keyword ->
                 performSearch(keyword)
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun setupActionStateMachine() {
+        _actions
+            .scan(false) { hasDataChanged, action ->
+                when (action) {
+                    is VocaAction.BookmarkChanged -> true
+                    is VocaAction.SortChanged -> {
+                        if (hasDataChanged) {
+                            fetchInitialData()
+                            false
+                        } else {
+                            updateSortWithLocalData(action.sortType)
+                            false
+                        }
+                    }
+                    is VocaAction.DataRefreshed -> false
+                }
             }
             .launchIn(viewModelScope)
     }
@@ -121,26 +146,30 @@ constructor(
                     isRefreshing = false
                 )
             }
+
+            _actions.emit(VocaAction.DataRefreshed)
         }
     }
 
     fun updateSort(sort: WordSortType) {
-        if (hasBookmarkChanged) {
-            _uiState.update { it.copy(sortType = sort) }
-            fetchInitialData()
-            hasBookmarkChanged = false
-        } else {
-            val currentList = when (sort) {
-                WordSortType.AtoZ -> _uiState.value.aTozList
-                WordSortType.Latest -> _uiState.value.latestList
-            }
+        _uiState.update { it.copy(sortType = sort) }
 
-            _uiState.update {
-                it.copy(
-                    sortType = sort,
-                    vocaGroupList = UiState.Success(currentList)
-                )
-            }
+        viewModelScope.launch {
+            _actions.emit(VocaAction.SortChanged(sort))
+        }
+    }
+
+    private fun updateSortWithLocalData(sort: WordSortType) {
+        val currentList = when (sort) {
+            WordSortType.AtoZ -> _uiState.value.aTozList
+            WordSortType.Latest -> _uiState.value.latestList
+        }
+
+        _uiState.update {
+            it.copy(
+                sortType = sort,
+                vocaGroupList = UiState.Success(currentList)
+            )
         }
     }
 
@@ -202,7 +231,7 @@ constructor(
             )
                 .onSuccess {
                     updateLocalBookmarkState(phraseId, isMarked)
-                    hasBookmarkChanged = true
+                    _actions.emit(VocaAction.BookmarkChanged)
                 }
                 .onLogFailure {
                     _sideEffect.emit(VocaSideEffect.ShowErrorDialog {})
@@ -259,9 +288,14 @@ constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isRefreshing = true) }
             loadVocaData(isRefreshing = true)
-            hasBookmarkChanged = false
         }
     }
+}
+
+private sealed interface VocaAction {
+    data object BookmarkChanged : VocaAction
+    data class SortChanged(val sortType: WordSortType) : VocaAction
+    data object DataRefreshed : VocaAction
 }
 
 sealed interface VocaSideEffect {
