@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.ui.component.item.diary
+package com.hilingual.core.ui.component.item.diary.tabrow
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

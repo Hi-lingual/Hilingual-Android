@@ -56,10 +56,10 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.dialog.diary.DiaryDeleteDialog
 import com.hilingual.core.ui.component.dialog.diary.DiaryPublishDialog
 import com.hilingual.core.ui.component.dialog.diary.DiaryUnpublishDialog
-import com.hilingual.core.ui.component.item.diary.DiaryTabRow
-import com.hilingual.core.ui.component.item.diary.GrammarSpellingTab
-import com.hilingual.core.ui.component.item.diary.ModalImage
-import com.hilingual.core.ui.component.item.diary.RecommendExpressionTab
+import com.hilingual.core.ui.component.item.diary.image.ModalImage
+import com.hilingual.core.ui.component.item.diary.tab.GrammarSpellingTab
+import com.hilingual.core.ui.component.item.diary.tab.RecommendExpressionTab
+import com.hilingual.core.ui.component.item.diary.tabrow.DiaryTabRow
 import com.hilingual.core.ui.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.presentation.diaryfeedback.component.FeedbackMenuBottomSheet
 import com.hilingual.presentation.diaryfeedback.component.FeedbackReportDialog
