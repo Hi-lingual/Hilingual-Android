@@ -30,8 +30,11 @@ import com.hilingual.presentation.feedprofile.profile.navigation.FollowList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -47,6 +50,9 @@ internal class FollowListViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(FollowListUiState())
     val uiState: StateFlow<FollowListUiState> = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<FollowListSideEffect>()
+    val sideEffect: SharedFlow<FollowListSideEffect> = _sideEffect.asSharedFlow()
 
     fun refreshTab(tabType: FollowTabType) {
         viewModelScope.launch {
@@ -75,7 +81,7 @@ internal class FollowListViewModel @Inject constructor(
                         )
                     }
                 }
-            }.onLogFailure { }
+            }.onLogFailure { _sideEffect.emit(FollowListSideEffect.ShowErrorDialog) }
         }
     }
 
@@ -90,7 +96,7 @@ internal class FollowListViewModel @Inject constructor(
         result.onSuccess { followUserList ->
             val items = followUserList.map { it.toState() }.toImmutableList()
             updateLoadingState(tabType, UiState.Success(items))
-        }.onLogFailure { }
+        }.onLogFailure { _sideEffect.emit(FollowListSideEffect.ShowErrorDialog) }
     }
 
     private fun updateLoadingState(
@@ -146,4 +152,8 @@ internal class FollowListViewModel @Inject constructor(
             set(targetIndex, targetItem.copy(followState = newState))
         }.toImmutableList()
     }
+}
+
+sealed interface FollowListSideEffect {
+    data object ShowErrorDialog : FollowListSideEffect
 }
