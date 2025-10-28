@@ -26,7 +26,7 @@ import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.feedprofile.follow.model.FollowItemModel
 import com.hilingual.presentation.feedprofile.follow.model.FollowTabType
 import com.hilingual.presentation.feedprofile.follow.model.toState
-import com.hilingual.presentation.feedprofile.profile.navigation.FollowList
+import com.hilingual.presentation.feedprofile.navigation.FollowList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList

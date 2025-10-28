@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.feedprofile.profile
+package com.hilingual.presentation.feedprofile.component.tab
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -31,9 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.content.FeedCard
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCard
-import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType
-import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
+import com.hilingual.presentation.feedprofile.component.card.FeedEmptyCard
+import com.hilingual.presentation.feedprofile.component.card.FeedEmptyCardType
+import com.hilingual.presentation.feedprofile.model.FeedDiaryUIModel
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable

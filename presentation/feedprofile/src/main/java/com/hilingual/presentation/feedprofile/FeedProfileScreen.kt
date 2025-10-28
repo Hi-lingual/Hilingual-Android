@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.feedprofile.profile
+package com.hilingual.presentation.feedprofile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -62,14 +62,15 @@ import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndic
 import com.hilingual.core.designsystem.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.feedprofile.profile.component.BlockBottomSheet
-import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType
-import com.hilingual.presentation.feedprofile.profile.component.FeedProfileInfo
-import com.hilingual.presentation.feedprofile.profile.component.FeedProfileTabRow
-import com.hilingual.presentation.feedprofile.profile.component.ReportBlockBottomSheet
-import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
-import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
-import com.hilingual.presentation.feedprofile.profile.model.FeedProfileInfoModel
+import com.hilingual.presentation.feedprofile.component.bottomsheet.BlockBottomSheet
+import com.hilingual.presentation.feedprofile.component.bottomsheet.ReportBlockBottomSheet
+import com.hilingual.presentation.feedprofile.component.card.FeedEmptyCardType
+import com.hilingual.presentation.feedprofile.component.card.FeedProfileInfo
+import com.hilingual.presentation.feedprofile.component.tab.DiaryListScreen
+import com.hilingual.presentation.feedprofile.component.tab.FeedProfileTabRow
+import com.hilingual.presentation.feedprofile.model.DiaryTabType
+import com.hilingual.presentation.feedprofile.model.FeedDiaryUIModel
+import com.hilingual.presentation.feedprofile.model.FeedProfileInfoModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -508,7 +509,7 @@ private fun FeedProfileScreenPreview() {
     HilingualTheme {
         FeedProfileScreen(
             paddingValues = PaddingValues(0.dp),
-            uiState = FeedProfileUiState.Fake,
+            uiState = FeedProfileUiState.Companion.Fake,
             initialTab = 0,
             onBackClick = {},
             onActionButtonClick = {},
