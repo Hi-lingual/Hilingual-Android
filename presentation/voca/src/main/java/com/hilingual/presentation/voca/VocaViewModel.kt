@@ -59,8 +59,6 @@ constructor(
     private val _sideEffect = MutableSharedFlow<VocaSideEffect>()
     val sideEffect: SharedFlow<VocaSideEffect> = _sideEffect.asSharedFlow()
 
-    private var aTozGroupList: ImmutableList<GroupingVocaModel> = persistentListOf()
-    private var latestGroupList: ImmutableList<GroupingVocaModel> = persistentListOf()
     private var hasBookmarkChanged = false
 
     init {
@@ -106,25 +104,23 @@ constructor(
             val (count, aTozList) = aTozResult.getOrThrow()
             val (_, latestList) = latestResult.getOrThrow()
 
-            aTozGroupList = aTozList.toImmutableList()
-            latestGroupList = latestList.toImmutableList()
+            val aTozGroupList = aTozList.toImmutableList()
+            val latestGroupList = latestList.toImmutableList()
 
-            val currentList = getCurrentSortedList()
+            val currentList = when (_uiState.value.sortType) {
+                WordSortType.AtoZ -> aTozGroupList
+                WordSortType.Latest -> latestGroupList
+            }
 
             _uiState.update {
                 it.copy(
                     vocaGroupList = UiState.Success(currentList),
+                    aTozList = aTozGroupList,
+                    latestList = latestGroupList,
                     vocaCount = count,
                     isRefreshing = false
                 )
             }
-        }
-    }
-
-    private fun getCurrentSortedList(): ImmutableList<GroupingVocaModel> {
-        return when (_uiState.value.sortType) {
-            WordSortType.AtoZ -> aTozGroupList
-            WordSortType.Latest -> latestGroupList
         }
     }
 
@@ -135,8 +131,8 @@ constructor(
             hasBookmarkChanged = false
         } else {
             val currentList = when (sort) {
-                WordSortType.AtoZ -> aTozGroupList
-                WordSortType.Latest -> latestGroupList
+                WordSortType.AtoZ -> _uiState.value.aTozList
+                WordSortType.Latest -> _uiState.value.latestList
             }
 
             _uiState.update {
@@ -175,7 +171,7 @@ constructor(
     private fun performSearch(searchKeyword: String) {
         _uiState.update { currentState ->
             val filteredList = if (searchKeyword.isNotBlank()) {
-                aTozGroupList.flatMap { it.words }
+                currentState.aTozList.flatMap { it.words }
                     .filter { it.phrase.contains(searchKeyword, ignoreCase = true) }
                     .toImmutableList()
             } else {
@@ -215,10 +211,10 @@ constructor(
     }
 
     private fun updateLocalBookmarkState(phraseId: Long, isMarked: Boolean) {
-        aTozGroupList = updateBookmarkInList(aTozGroupList, phraseId, isMarked)
-        latestGroupList = updateBookmarkInList(latestGroupList, phraseId, isMarked)
-
         _uiState.update { currentState ->
+            val updatedATozList = updateBookmarkInList(currentState.aTozList, phraseId, isMarked)
+            val updatedLatestList = updateBookmarkInList(currentState.latestList, phraseId, isMarked)
+
             val updatedSearchResults = currentState.searchResultList.map { item ->
                 if (item.phraseId == phraseId) {
                     item.copy(isBookmarked = isMarked)
@@ -227,8 +223,15 @@ constructor(
                 }
             }.toImmutableList()
 
+            val currentList = when (currentState.sortType) {
+                WordSortType.AtoZ -> updatedATozList
+                WordSortType.Latest -> updatedLatestList
+            }
+
             currentState.copy(
-                vocaGroupList = UiState.Success(getCurrentSortedList()),
+                aTozList = updatedATozList,
+                latestList = updatedLatestList,
+                vocaGroupList = UiState.Success(currentList),
                 searchResultList = updatedSearchResults
             )
         }

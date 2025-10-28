@@ -30,6 +30,8 @@ data class VocaUiState(
     val sortType: WordSortType = WordSortType.Latest,
     val vocaCount: Int = 0,
     val vocaGroupList: UiState<ImmutableList<GroupingVocaModel>> = UiState.Loading,
+    val aTozList: ImmutableList<GroupingVocaModel> = persistentListOf(),
+    val latestList: ImmutableList<GroupingVocaModel> = persistentListOf(),
     val searchKeyword: String = "",
     val searchResultList: ImmutableList<VocaItemModel> = persistentListOf(),
     val vocaItemDetail: UiState<VocaDetailModel> = UiState.Loading,
