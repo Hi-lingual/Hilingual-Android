@@ -91,8 +91,8 @@ constructor(
             val latestResult = latestDeferred.await()
 
             if (aTozResult.isFailure || latestResult.isFailure) {
-                aTozResult.onLogFailure {}
-                latestResult.onLogFailure {}
+                aTozResult.onLogFailure { VocaSideEffect.ShowErrorDialog(onRetry = ::refreshVocaList) }
+                latestResult.onLogFailure { VocaSideEffect.ShowErrorDialog(onRetry = ::refreshVocaList) }
 
                 if (isRefreshing) {
                     _uiState.update { it.copy(isRefreshing = false) }
