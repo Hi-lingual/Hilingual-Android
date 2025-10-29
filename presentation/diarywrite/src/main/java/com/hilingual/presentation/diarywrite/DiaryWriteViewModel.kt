@@ -94,7 +94,7 @@ internal class DiaryWriteViewModel @Inject constructor(
     }
 
     fun postDiaryFeedbackCreate() {
-        if(_feedbackUiState.value is UiState.Loading) return
+        if (_feedbackUiState.value is UiState.Loading) return
 
         _feedbackUiState.value = UiState.Loading
 
