@@ -59,12 +59,12 @@ import com.hilingual.core.common.extension.advancedImePadding
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualLongTextField
 import com.hilingual.core.designsystem.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
-import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
 import com.hilingual.presentation.diarywrite.component.DiaryWriteCancelDialog
 import com.hilingual.presentation.diarywrite.component.FeedbackCompleteContent
 import com.hilingual.presentation.diarywrite.component.FeedbackFailureContent
@@ -138,7 +138,7 @@ internal fun DiaryWriteRoute(
     }
 
     when (feedbackState) {
-        is DiaryFeedbackState.Default -> {
+        is UiState.Empty -> {
             DiaryWriteScreen(
                 paddingValues = paddingValues,
                 onBackClicked = navigateUp,
@@ -159,12 +159,12 @@ internal fun DiaryWriteRoute(
             )
         }
 
-        is DiaryFeedbackState.Loading -> {
+        is UiState.Loading -> {
             DiaryFeedbackLoadingScreen(paddingValues = paddingValues)
         }
 
-        is DiaryFeedbackState.Complete -> {
-            val diaryId = (feedbackState as DiaryFeedbackState.Complete).diaryId
+        is UiState.Success -> {
+            val diaryId = (feedbackState as UiState.Success).data
             DiaryFeedbackStatusScreen(
                 paddingValues = paddingValues,
                 uiData = FeedbackUIData(
@@ -192,7 +192,7 @@ internal fun DiaryWriteRoute(
             )
         }
 
-        is DiaryFeedbackState.Failure -> {
+        is UiState.Failure -> {
             DiaryFeedbackStatusScreen(
                 paddingValues = paddingValues,
                 uiData = FeedbackUIData(

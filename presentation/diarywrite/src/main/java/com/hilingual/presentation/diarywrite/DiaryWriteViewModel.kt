@@ -25,9 +25,9 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.util.UiState
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.repository.DiaryRepository
-import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -66,9 +66,8 @@ internal class DiaryWriteViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<DiaryWriteSideEffect>()
     val sideEffect: SharedFlow<DiaryWriteSideEffect> = _sideEffect.asSharedFlow()
 
-    private var _feedbackState: MutableStateFlow<DiaryFeedbackState> =
-        MutableStateFlow(DiaryFeedbackState.Default)
-    val feedbackState: StateFlow<DiaryFeedbackState> = _feedbackState.asStateFlow()
+    private var _feedbackState = MutableStateFlow<UiState<Long>>(UiState.Empty)
+    val feedbackState: StateFlow<UiState<Long>> = _feedbackState.asStateFlow()
 
     init {
         getTopic(route.selectedDate)
@@ -95,7 +94,7 @@ internal class DiaryWriteViewModel @Inject constructor(
     }
 
     fun postDiaryFeedbackCreate() {
-        _feedbackState.value = DiaryFeedbackState.Loading
+        _feedbackState.value = UiState.Loading
 
         viewModelScope.launch {
             val result = diaryRepository.postDiaryFeedbackCreate(
@@ -105,9 +104,9 @@ internal class DiaryWriteViewModel @Inject constructor(
             )
 
             result.onSuccess { response ->
-                _feedbackState.update { DiaryFeedbackState.Complete(response.diaryId) }
+                _feedbackState.update { UiState.Success(response.diaryId) }
             }.onLogFailure { throwable ->
-                _feedbackState.update { DiaryFeedbackState.Failure(throwable) }
+                _feedbackState.update { UiState.Failure }
             }
         }
     }

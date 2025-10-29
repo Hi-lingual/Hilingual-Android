@@ -20,12 +20,11 @@ import androidx.annotation.RawRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 
-sealed class DiaryFeedbackState() {
-    object Default : DiaryFeedbackState()
-    object Loading : DiaryFeedbackState()
-    data class Complete(val diaryId: Long) : DiaryFeedbackState()
-    data class Failure(val throwable: Throwable) : DiaryFeedbackState()
-}
+data class FeedbackUIData(
+    val title: String = "",
+    val description: (@Composable () -> Unit)? = null,
+    val media: FeedbackMedia
+)
 
 sealed class FeedbackMedia {
     data class Lottie(
@@ -38,9 +37,3 @@ sealed class FeedbackMedia {
         val heightDp: Dp
     ) : FeedbackMedia()
 }
-
-data class FeedbackUIData(
-    val title: String = "",
-    val description: (@Composable () -> Unit)? = null,
-    val media: FeedbackMedia
-)
