@@ -75,6 +75,8 @@ import com.hilingual.presentation.diarywrite.component.PhotoSelectButton
 import com.hilingual.presentation.diarywrite.component.RecommendedTopicDropdown
 import com.hilingual.presentation.diarywrite.component.TextScanButton
 import com.hilingual.presentation.diarywrite.component.WriteGuideTooltip
+import com.hilingual.presentation.diarywrite.screen.DiaryFeedbackLoadingScreen
+import com.hilingual.presentation.diarywrite.screen.DiaryFeedbackStatusScreen
 import com.skydoves.balloon.BalloonSizeSpec
 import com.skydoves.balloon.compose.Balloon
 import com.skydoves.balloon.compose.rememberBalloonBuilder
