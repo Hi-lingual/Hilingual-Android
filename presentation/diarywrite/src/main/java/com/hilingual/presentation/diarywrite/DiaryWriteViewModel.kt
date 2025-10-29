@@ -66,8 +66,8 @@ internal class DiaryWriteViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<DiaryWriteSideEffect>()
     val sideEffect: SharedFlow<DiaryWriteSideEffect> = _sideEffect.asSharedFlow()
 
-    private var _feedbackState = MutableStateFlow<UiState<Long>>(UiState.Empty)
-    val feedbackState: StateFlow<UiState<Long>> = _feedbackState.asStateFlow()
+    private var _feedbackUiState = MutableStateFlow<UiState<Long>>(UiState.Empty)
+    val feedbackUiState: StateFlow<UiState<Long>> = _feedbackUiState.asStateFlow()
 
     init {
         getTopic(route.selectedDate)
@@ -94,7 +94,7 @@ internal class DiaryWriteViewModel @Inject constructor(
     }
 
     fun postDiaryFeedbackCreate() {
-        _feedbackState.value = UiState.Loading
+        _feedbackUiState.value = UiState.Loading
 
         viewModelScope.launch {
             val result = diaryRepository.postDiaryFeedbackCreate(
@@ -104,9 +104,9 @@ internal class DiaryWriteViewModel @Inject constructor(
             )
 
             result.onSuccess { response ->
-                _feedbackState.update { UiState.Success(response.diaryId) }
+                _feedbackUiState.update { UiState.Success(response.diaryId) }
             }.onLogFailure { throwable ->
-                _feedbackState.update { UiState.Failure }
+                _feedbackUiState.update { UiState.Failure }
             }
         }
     }

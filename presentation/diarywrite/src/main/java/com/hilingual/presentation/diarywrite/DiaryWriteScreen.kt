@@ -97,7 +97,7 @@ internal fun DiaryWriteRoute(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
-    val feedbackState by viewModel.feedbackState.collectAsStateWithLifecycle()
+    val feedbackUiState by viewModel.feedbackUiState.collectAsStateWithLifecycle()
 
     var diaryTextImageUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -137,7 +137,7 @@ internal fun DiaryWriteRoute(
         }
     }
 
-    when (feedbackState) {
+    when (feedbackUiState) {
         is UiState.Empty -> {
             DiaryWriteScreen(
                 paddingValues = paddingValues,
@@ -164,7 +164,7 @@ internal fun DiaryWriteRoute(
         }
 
         is UiState.Success -> {
-            val diaryId = (feedbackState as UiState.Success).data
+            val diaryId = (feedbackUiState as UiState.Success).data
             DiaryFeedbackStatusScreen(
                 paddingValues = paddingValues,
                 uiData = FeedbackUIData(
