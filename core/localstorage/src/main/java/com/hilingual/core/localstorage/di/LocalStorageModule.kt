@@ -16,12 +16,16 @@
 package com.hilingual.core.localstorage.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.dataStore
 import androidx.datastore.preferences.preferencesDataStore
 import com.hilingual.core.localstorage.TokenManager
 import com.hilingual.core.localstorage.TokenManagerImpl
 import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.core.localstorage.UserInfoManagerImpl
 import com.hilingual.core.localstorage.constant.DataStoreConstant
+import com.hilingual.core.localstorage.model.UserPreferences
+import com.hilingual.core.localstorage.serializer.UserPreferencesSerializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,13 +37,16 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object LocalStorageModule {
 
-    private val Context.tokenDataStore by preferencesDataStore(name = DataStoreConstant.HILINGUAL_PREFS)
     private val Context.userInfoDataStore by preferencesDataStore(name = DataStoreConstant.HILINGUAL_USER_INFO_PREFS)
+    private val Context.encryptedDataStore: DataStore<UserPreferences> by dataStore(
+        fileName = DataStoreConstant.ENCRYPTED_USER_PREFS,
+        serializer = UserPreferencesSerializer
+    )
 
     @Provides
     @Singleton
     fun provideTokenManager(@ApplicationContext context: Context): TokenManager =
-        TokenManagerImpl(context.tokenDataStore)
+        TokenManagerImpl(context.encryptedDataStore)
 
     @Provides
     @Singleton
