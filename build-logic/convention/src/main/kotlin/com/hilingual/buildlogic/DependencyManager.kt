@@ -46,6 +46,7 @@ object DependencyManager {
             // 모듈
             add("implementation", project.project(":core:common"))
             add("implementation", project.project(":core:designsystem"))
+            add("implementation", project.project(":core:ui"))
             add("implementation", project.project(":core:navigation"))
 
             // AndroidX
