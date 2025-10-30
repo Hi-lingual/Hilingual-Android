@@ -83,21 +83,26 @@ constructor(
     private fun setupActionStateMachine() {
         _actions
             .scan(false) { hasDataChanged, action ->
-                when (action) {
-                    is VocaAction.BookmarkChanged -> true
-                    is VocaAction.SortChanged -> {
-                        if (hasDataChanged) {
-                            fetchInitialData()
-                            false
-                        } else {
-                            updateSortWithLocalData(action.sortType)
-                            false
-                        }
-                    }
-                    is VocaAction.DataRefreshed -> false
-                }
+                handleAction(hasDataChanged, action)
             }
             .launchIn(viewModelScope)
+    }
+
+    private fun handleAction(hasDataChanged: Boolean, action: VocaAction): Boolean {
+        return when (action) {
+            is VocaAction.BookmarkChanged -> true
+            is VocaAction.SortChanged -> handleSortChanged(hasDataChanged, action.sortType)
+            is VocaAction.DataRefreshed -> false
+        }
+    }
+
+    private fun handleSortChanged(hasDataChanged: Boolean, sortType: WordSortType): Boolean {
+        if (hasDataChanged) {
+            fetchInitialData()
+        } else {
+            updateSortWithLocalData(sortType)
+        }
+        return false
     }
 
     private fun fetchInitialData() {
