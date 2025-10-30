@@ -48,10 +48,10 @@ import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
-import com.hilingual.core.designsystem.component.bottomsheet.HilingualProfileImageBottomSheet
-import com.hilingual.core.designsystem.component.picker.ProfileImagePicker
-import com.hilingual.core.designsystem.component.topappbar.TitleCenterAlignedTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.ui.component.bottomsheet.HilingualProfileImageBottomSheet
+import com.hilingual.core.ui.component.picker.ProfileImagePicker
+import com.hilingual.core.ui.component.topappbar.TitleCenterAlignedTopAppBar
 import com.hilingual.presentation.mypage.MyPageSideEffect
 import com.hilingual.presentation.mypage.MyPageUiState
 import com.hilingual.presentation.mypage.MyPageViewModel
