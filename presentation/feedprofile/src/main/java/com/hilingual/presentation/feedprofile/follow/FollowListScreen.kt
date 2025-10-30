@@ -63,7 +63,7 @@ internal fun FollowListRoute(
         isFollowingRefreshing = uiState.isFollowingRefreshing,
         onBackClick = navigateUp,
         onProfileClick = navigateToFeedProfile,
-        onActionButtonClick = viewModel::updateFollowingState,
+        onActionButtonClick = viewModel::toggleFollow,
         onTabRefresh = viewModel::refreshTab
     )
 }
