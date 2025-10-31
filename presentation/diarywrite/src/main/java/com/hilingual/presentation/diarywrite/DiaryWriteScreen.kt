@@ -67,12 +67,12 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualLongTextField
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
-import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
 import com.hilingual.presentation.diarywrite.component.DiaryWriteCancelDialog
 import com.hilingual.presentation.diarywrite.component.FeedbackCompleteContent
 import com.hilingual.presentation.diarywrite.component.FeedbackFailureContent
@@ -83,6 +83,8 @@ import com.hilingual.presentation.diarywrite.component.PhotoSelectButton
 import com.hilingual.presentation.diarywrite.component.RecommendedTopicDropdown
 import com.hilingual.presentation.diarywrite.component.TextScanButton
 import com.hilingual.presentation.diarywrite.component.WriteGuideTooltip
+import com.hilingual.presentation.diarywrite.screen.DiaryFeedbackLoadingScreen
+import com.hilingual.presentation.diarywrite.screen.DiaryFeedbackStatusScreen
 import com.skydoves.balloon.BalloonSizeSpec
 import com.skydoves.balloon.compose.Balloon
 import com.skydoves.balloon.compose.rememberBalloonBuilder
@@ -105,7 +107,7 @@ internal fun DiaryWriteRoute(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
-    val feedbackState by viewModel.feedbackState.collectAsStateWithLifecycle()
+    val feedbackUiState by viewModel.feedbackUiState.collectAsStateWithLifecycle()
     val tracker = LocalTracker.current
 
     var diaryTextImageUri by remember { mutableStateOf<Uri?>(null) }
@@ -150,8 +152,8 @@ internal fun DiaryWriteRoute(
         tracker.logEvent(trigger = TriggerType.VIEW, page = WRITE_DIARY, event = "page")
     }
 
-    when (feedbackState) {
-        is DiaryFeedbackState.Default -> {
+    when (val feedbackState = feedbackUiState) {
+        is UiState.Empty -> {
             DiaryWriteScreen(
                 paddingValues = paddingValues,
                 onBackClicked = navigateUp,
@@ -184,12 +186,12 @@ internal fun DiaryWriteRoute(
             )
         }
 
-        is DiaryFeedbackState.Loading -> {
+        is UiState.Loading -> {
             DiaryFeedbackLoadingScreen(paddingValues = paddingValues)
         }
 
-        is DiaryFeedbackState.Complete -> {
-            val diaryId = (feedbackState as DiaryFeedbackState.Complete).diaryId
+        is UiState.Success -> {
+            val diaryId = feedbackState.data
             DiaryFeedbackStatusScreen(
                 paddingValues = paddingValues,
                 uiData = FeedbackUIData(
@@ -217,7 +219,7 @@ internal fun DiaryWriteRoute(
             )
         }
 
-        is DiaryFeedbackState.Failure -> {
+        is UiState.Failure -> {
             DiaryFeedbackStatusScreen(
                 paddingValues = paddingValues,
                 uiData = FeedbackUIData(
