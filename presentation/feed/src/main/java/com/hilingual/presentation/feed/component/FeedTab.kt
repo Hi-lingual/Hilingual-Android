@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.feed.tab
+package com.hilingual.presentation.feed.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -40,15 +40,13 @@ import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndic
 import com.hilingual.core.designsystem.component.pulltorefresh.HilingualPullToRefreshBox
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.item.feed.FeedCard
-import com.hilingual.presentation.feed.component.FeedEmptyCard
-import com.hilingual.presentation.feed.component.FeedEmptyCardType
 import com.hilingual.presentation.feed.model.FeedItemUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun FeedTabScreen(
+internal fun FeedTab(
     listState: LazyListState,
     feedListState: UiState<ImmutableList<FeedItemUiModel>>,
     isRefreshing: Boolean,
@@ -167,7 +165,7 @@ private fun FeedTabScreenPreview() {
     }
 
     HilingualTheme {
-        FeedTabScreen(
+        FeedTab(
             listState = rememberLazyListState(),
             feedListState = UiState.Success(sampleFeedList),
             isRefreshing = false,

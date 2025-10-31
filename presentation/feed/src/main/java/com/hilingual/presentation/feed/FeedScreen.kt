@@ -58,7 +58,7 @@ import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedTopAppBar
 import com.hilingual.presentation.feed.model.FeedItemUiModel
-import com.hilingual.presentation.feed.tab.FeedTabScreen
+import com.hilingual.presentation.feed.component.FeedTab
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
@@ -288,7 +288,7 @@ private fun FeedScreen(
                 modifier = Modifier.fillMaxSize()
             ) { page ->
                 when (val tab = FeedTab.entries[page]) {
-                    FeedTab.RECOMMEND -> FeedTabScreen(
+                    FeedTab.RECOMMEND -> FeedTab(
                         listState = recommendListState,
                         feedListState = recommendFeedList,
                         isRefreshing = recommendRefreshing,
@@ -301,7 +301,7 @@ private fun FeedScreen(
                         onReportClick = onReportClick
                     )
 
-                    FeedTab.FOLLOWING -> FeedTabScreen(
+                    FeedTab.FOLLOWING -> FeedTab(
                         listState = followingsListState,
                         feedListState = followingFeedList,
                         isRefreshing = followingRefreshing,
