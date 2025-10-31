@@ -26,6 +26,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             }
 
             DependencyManager.addAndroidLibraryDependencies(this)
+            DependencyManager.addTrackerDependency(this)
         }
     }
 }

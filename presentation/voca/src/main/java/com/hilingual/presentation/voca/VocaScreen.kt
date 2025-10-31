@@ -47,9 +47,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.analytics.Page.VOCABULARY
+import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -81,6 +84,11 @@ internal fun VocaRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
     val dialogTrigger = LocalDialogTrigger.current
+    val tracker = LocalTracker.current
+
+    LaunchedEffect(Unit) {
+        tracker.logEvent(trigger = TriggerType.VIEW, page = VOCABULARY, event = "page")
+    }
 
     LaunchedEffect(uiState.vocaItemDetail) {
         if (uiState.vocaItemDetail is UiState.Success) {
@@ -106,8 +114,28 @@ internal fun VocaRoute(
             searchResultList = searchResultList,
             searchText = searchKeyword,
             isRefreshing = isRefreshing,
-            onSortTypeChanged = viewModel::updateSort,
-            onCardClick = viewModel::fetchVocaDetail,
+            onSortTypeChanged = { newSortType ->
+                tracker.logEvent(
+                    trigger = TriggerType.CLICK,
+                    page = VOCABULARY,
+                    event = "voca_sort_changed",
+                    properties = mapOf(
+                        "previous_sort_type" to uiState.sortType.name,
+                        "sort_type" to newSortType.name
+                    )
+                )
+                viewModel.updateSort(newSortType)
+            },
+            onCardClick = { phraseId ->
+                tracker.logEvent(
+                    trigger = TriggerType.CLICK,
+                    page = VOCABULARY,
+                    event = "voca_lookup",
+                    properties = mapOf("page" to VOCABULARY.pageName)
+                )
+                viewModel.fetchVocaDetail(phraseId)
+            },
+
             onBookmarkClick = { phraseId, isMarked ->
                 viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
             },

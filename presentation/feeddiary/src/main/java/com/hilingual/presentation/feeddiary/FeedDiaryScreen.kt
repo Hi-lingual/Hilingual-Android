@@ -40,10 +40,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.analytics.FakeTracker
+import com.hilingual.core.common.analytics.Page
+import com.hilingual.core.common.analytics.Tracker
+import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
@@ -81,6 +86,7 @@ internal fun FeedDiaryRoute(
     val snackbarTrigger = LocalSnackbarTrigger.current
     val toastTrigger = LocalToastTrigger.current
     val dialogTrigger = LocalDialogTrigger.current
+    val tracker = LocalTracker.current
 
     BackHandler {
         if (isImageDetailVisible) {
@@ -133,6 +139,8 @@ internal fun FeedDiaryRoute(
             FeedDiaryScreen(
                 paddingValues = paddingValues,
                 uiState = state.data,
+                diaryId = viewModel.diaryId,
+                tracker = tracker,
                 onBackClick = navigateUp,
                 onMyProfileClick = navigateToMyFeedProfile,
                 onProfileClick = navigateToFeedProfile,
@@ -154,6 +162,8 @@ internal fun FeedDiaryRoute(
 private fun FeedDiaryScreen(
     paddingValues: PaddingValues,
     uiState: FeedDiaryUiState,
+    diaryId: Long,
+    tracker: Tracker,
     onBackClick: () -> Unit,
     onMyProfileClick: (showLikedDiaries: Boolean) -> Unit,
     onProfileClick: (Long) -> Unit,
@@ -172,6 +182,8 @@ private fun FeedDiaryScreen(
     var isReportConfirmDialogVisible by remember { mutableStateOf(false) }
     var isBlockConfirmBottomSheetVisible by remember { mutableStateOf(false) }
 
+    var isAIWrittenDiary by remember { mutableStateOf(true) }
+
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
     val grammarListState = rememberLazyListState()
@@ -186,12 +198,16 @@ private fun FeedDiaryScreen(
         }
     }
 
-    LaunchedEffect(pagerState.currentPage) {
-        if (pagerState.currentPage == 0) {
-            grammarListState.scrollToItem(0)
-        } else {
-            recommendListState.scrollToItem(0)
-        }
+    LaunchedEffect(Unit) {
+        tracker.logEvent(
+            trigger = TriggerType.VIEW,
+            page = Page.POSTED_DIARY,
+            event = "page",
+            properties = mapOf(
+                "entry_id" to diaryId,
+                "tab_name" to if (pagerState.currentPage == 0) "grammar_spelling" else "recommend_expression"
+            )
+        )
     }
 
     Column(
@@ -256,7 +272,9 @@ private fun FeedDiaryScreen(
                             writtenDate = writtenDate,
                             diaryContent = diaryContent,
                             feedbackList = feedbackList,
-                            onImageClick = onChangeImageDetailVisible
+                            isAIWrittenDiary = isAIWrittenDiary,
+                            onImageClick = onChangeImageDetailVisible,
+                            onToggleViewMode = { isAIWrittenDiary = it }
                         )
 
                         1 -> RecommendExpressionTab(
@@ -354,6 +372,8 @@ private fun FeedDiaryScreenPreview() {
     HilingualTheme {
         FeedDiaryScreen(
             paddingValues = PaddingValues(),
+            diaryId = 0L,
+            tracker = FakeTracker(),
             onBackClick = {},
             onMyProfileClick = {},
             onProfileClick = {},

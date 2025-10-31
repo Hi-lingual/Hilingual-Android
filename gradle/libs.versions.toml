@@ -76,8 +76,12 @@ runner = "1.7.0"
 
 # AboutLibraries
 aboutLibraries = "13.1.0"
+amplitude = "1.18.0"
 
 [libraries]
+# Analytics
+amplitude-analytics-android = { module = "com.amplitude:analytics-android", version.ref = "amplitude" }
+
 # Build Tools
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
