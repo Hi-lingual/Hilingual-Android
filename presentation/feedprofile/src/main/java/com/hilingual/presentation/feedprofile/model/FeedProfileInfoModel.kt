@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.feedprofile.profile.model
+package com.hilingual.presentation.feedprofile.model
 
 import androidx.compose.runtime.Immutable
 import com.hilingual.data.feed.model.FeedProfileModel
