@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.diarywrite
+package com.hilingual.presentation.diarywrite.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

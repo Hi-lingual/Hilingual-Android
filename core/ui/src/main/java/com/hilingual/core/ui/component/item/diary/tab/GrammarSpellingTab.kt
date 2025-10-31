@@ -57,11 +57,11 @@ fun GrammarSpellingTab(
     writtenDate: String,
     diaryContent: DiaryContent,
     feedbackList: ImmutableList<FeedbackContent>,
+    isAIWrittenDiary: Boolean,
     onImageClick: () -> Unit,
+    onToggleViewMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var isAIWrittenDiary by remember { mutableStateOf(true) }
-
     LazyColumn(
         state = listState,
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 40.dp),
@@ -82,7 +82,7 @@ fun GrammarSpellingTab(
                 )
                 DiaryViewModeToggle(
                     isAIWritten = isAIWrittenDiary,
-                    onToggle = { isAIWrittenDiary = it }
+                    onToggle = onToggleViewMode
                 )
             }
             Spacer(Modifier.height(12.dp))
@@ -149,13 +149,16 @@ private fun getFeedbackTitleAnnotatedString(
 @Preview(showBackground = true)
 @Composable
 private fun GrammarSpellingTabPreview() {
+    var isAIWritten by remember { mutableStateOf(true) }
     HilingualTheme {
         GrammarSpellingTab(
             listState = rememberLazyListState(),
             writtenDate = "7월 11일 금요일",
             diaryContent = DiaryContent(),
             feedbackList = persistentListOf(),
-            onImageClick = {}
+            isAIWrittenDiary = isAIWritten,
+            onImageClick = {},
+            onToggleViewMode = { isAIWritten = it }
         )
     }
 }

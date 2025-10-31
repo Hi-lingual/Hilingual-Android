@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -40,11 +41,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.analytics.FakeTracker
+import com.hilingual.core.common.analytics.Page.FEEDBACK
+import com.hilingual.core.common.analytics.Tracker
+import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
@@ -82,6 +88,7 @@ internal fun DiaryFeedbackRoute(
     val dialogTrigger = LocalDialogTrigger.current
     val snackbarTrigger = LocalSnackbarTrigger.current
     val toastTrigger = LocalToastTrigger.current
+    val tracker = LocalTracker.current
 
     BackHandler {
         if (isImageDetailVisible) {
@@ -100,7 +107,20 @@ internal fun DiaryFeedbackRoute(
                     SnackbarRequest(
                         message = it.message,
                         buttonText = it.actionLabel,
-                        onClick = navigateToFeed
+                        onClick = {
+                            tracker.logEvent(
+                                trigger = TriggerType.CLICK,
+                                page = FEEDBACK,
+                                event = "toast_action",
+                                properties = mapOf(
+                                    "toast_id" to "diary_post_success",
+                                    "toast_action" to "cta_click",
+                                    "entry_id" to viewModel.diaryId,
+                                    "page" to FEEDBACK.pageName
+                                )
+                            )
+                            navigateToFeed()
+                        }
                     )
                 )
             }
@@ -121,16 +141,43 @@ internal fun DiaryFeedbackRoute(
         }
     }
 
+    LaunchedEffect(Unit) {
+        tracker.logEvent(trigger = TriggerType.VIEW, page = FEEDBACK, event = "page")
+    }
+
     DiaryFeedbackScreen(
         paddingValues = paddingValues,
         uiState = state,
-        onBackClick = navigateUp,
+        diaryId = viewModel.diaryId,
+        onBackClick = {
+            tracker.logEvent(
+                trigger = TriggerType.CLICK,
+                page = FEEDBACK,
+                event = "back_feedback",
+                properties = mapOf(
+                    "entry_id" to viewModel.diaryId,
+                    "back_source" to "ui_button"
+                )
+            )
+            navigateUp()
+        },
         onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
         isImageDetailVisible = isImageDetailVisible,
         onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
-        onToggleIsPublished = viewModel::toggleIsPublished,
+        onToggleIsPublished = { isPublished ->
+            if (isPublished) {
+                tracker.logEvent(
+                    trigger = TriggerType.CLICK,
+                    page = FEEDBACK,
+                    event = "submitted_post_diary",
+                    properties = mapOf("entry_id" to viewModel.diaryId)
+                )
+            }
+            viewModel.toggleIsPublished(isPublished)
+        },
         onToggleBookmark = viewModel::toggleBookmark,
-        onDeleteDiary = viewModel::deleteDiary
+        onDeleteDiary = viewModel::deleteDiary,
+        tracker = tracker
     )
 }
 
@@ -138,6 +185,7 @@ internal fun DiaryFeedbackRoute(
 private fun DiaryFeedbackScreen(
     paddingValues: PaddingValues,
     uiState: UiState<DiaryFeedbackUiState>,
+    diaryId: Long,
     onBackClick: () -> Unit,
     onReportClick: () -> Unit,
     isImageDetailVisible: Boolean,
@@ -145,6 +193,7 @@ private fun DiaryFeedbackScreen(
     onToggleIsPublished: (Boolean) -> Unit,
     onToggleBookmark: (Long, Boolean) -> Unit,
     onDeleteDiary: () -> Unit,
+    tracker: Tracker,
     modifier: Modifier = Modifier
 ) {
     var isPublishDialogVisible by remember { mutableStateOf(false) }
@@ -152,6 +201,9 @@ private fun DiaryFeedbackScreen(
 
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
     var isReportDialogVisible by remember { mutableStateOf(false) }
+
+    var isAIWrittenDiary by remember { mutableStateOf(true) }
+    var toggleClickCount by remember { mutableIntStateOf(0) }
 
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -221,14 +273,42 @@ private fun DiaryFeedbackScreen(
                                 writtenDate = data.writtenDate,
                                 diaryContent = data.diaryContent,
                                 feedbackList = data.feedbackList,
-                                onImageClick = onChangeImageDetailVisible
+                                isAIWrittenDiary = isAIWrittenDiary,
+                                onImageClick = onChangeImageDetailVisible,
+                                onToggleViewMode = {
+                                    isAIWrittenDiary = it
+                                    toggleClickCount++
+                                    tracker.logEvent(
+                                        trigger = TriggerType.CLICK,
+                                        page = FEEDBACK,
+                                        event = "toggle",
+                                        properties = mapOf(
+                                            "entry_id" to diaryId,
+                                            "toggle_state" to it,
+                                            "toggle_click_count" to toggleClickCount
+                                        )
+                                    )
+                                }
                             )
 
                             1 -> RecommendExpressionTab(
                                 listState = recommendListState,
                                 writtenDate = data.writtenDate,
                                 recommendExpressionList = data.recommendExpressionList,
-                                onBookmarkClick = onToggleBookmark
+                                onBookmarkClick = { phraseId, isMarked ->
+                                    tracker.logEvent(
+                                        trigger = TriggerType.CLICK,
+                                        page = FEEDBACK,
+                                        event = "bookmark_action",
+                                        properties = mapOf(
+                                            "entry_id" to diaryId,
+                                            "bookmark_action" to if (isMarked) "add" else "remove",
+                                            "page" to FEEDBACK.pageName,
+                                            "tab_name" to "recommend_expression"
+                                        )
+                                    )
+                                    onToggleBookmark(phraseId, isMarked)
+                                }
                             )
                         }
                     }
@@ -329,13 +409,15 @@ private fun DiaryFeedbackScreenPreview() {
             uiState = UiState.Success(
                 DiaryFeedbackUiState.Fake
             ),
+            diaryId = 0L,
             isImageDetailVisible = false,
             onChangeImageDetailVisible = {},
             onBackClick = {},
             onReportClick = {},
             onToggleBookmark = { _, _ -> {} },
             onToggleIsPublished = {},
-            onDeleteDiary = {}
+            onDeleteDiary = {},
+            tracker = FakeTracker()
         )
     }
 }

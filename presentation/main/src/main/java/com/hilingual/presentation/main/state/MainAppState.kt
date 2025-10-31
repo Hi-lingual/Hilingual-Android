@@ -29,8 +29,8 @@ import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedba
 import com.hilingual.presentation.diarywrite.navigation.navigateToDiaryWrite
 import com.hilingual.presentation.feed.navigation.navigateToFeed
 import com.hilingual.presentation.feeddiary.navigation.navigateToFeedDiary
-import com.hilingual.presentation.feedprofile.profile.navigation.navigateToFeedProfile
-import com.hilingual.presentation.feedprofile.profile.navigation.navigateToMyFeedProfile
+import com.hilingual.presentation.feedprofile.navigation.navigateToFeedProfile
+import com.hilingual.presentation.feedprofile.navigation.navigateToMyFeedProfile
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.main.MainTab
 import com.hilingual.presentation.main.monitor.NetworkMonitor

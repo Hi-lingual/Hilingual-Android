@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.feedprofile.profile
+package com.hilingual.presentation.feedprofile
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -25,11 +25,11 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.feed.repository.FeedRepository
 import com.hilingual.data.user.repository.UserRepository
-import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
-import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
-import com.hilingual.presentation.feedprofile.profile.model.FeedProfileInfoModel
-import com.hilingual.presentation.feedprofile.profile.model.toState
-import com.hilingual.presentation.feedprofile.profile.navigation.FeedProfileGraph
+import com.hilingual.presentation.feedprofile.model.DiaryTabType
+import com.hilingual.presentation.feedprofile.model.FeedDiaryUIModel
+import com.hilingual.presentation.feedprofile.model.FeedProfileInfoModel
+import com.hilingual.presentation.feedprofile.model.toState
+import com.hilingual.presentation.feedprofile.navigation.FeedProfileGraph
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -53,7 +53,7 @@ internal class FeedProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val routeData = savedStateHandle.toRoute<FeedProfileGraph>()
-    private val targetUserId: Long = routeData.userId
+    val targetUserId: Long = routeData.userId
     val showLikedDiaries: Boolean = routeData.showLikedDiaries
 
     private val _uiState = MutableStateFlow<UiState<FeedProfileUiState>>(UiState.Loading)
@@ -82,8 +82,12 @@ internal class FeedProfileViewModel @Inject constructor(
             val sharedDiariesResult = sharedDiariesDeferred.await()
 
             if (feedProfileResult.isFailure || sharedDiariesResult.isFailure) {
-                feedProfileResult.onLogFailure {}
-                sharedDiariesResult.onLogFailure {}
+                feedProfileResult.onLogFailure {
+                    _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+                }
+                sharedDiariesResult.onLogFailure {
+                    _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+                }
                 _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
                 return@launch
             }
@@ -210,7 +214,9 @@ internal class FeedProfileViewModel @Inject constructor(
                         showLikeSnackbar()
                     }
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+                }
         }
     }
 
@@ -243,7 +249,9 @@ internal class FeedProfileViewModel @Inject constructor(
                     }
                     _sideEffect.emit(FeedProfileSideEffect.ShowToast(message = "일기가 비공개 되었어요."))
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+                }
         }
     }
 
@@ -265,7 +273,9 @@ internal class FeedProfileViewModel @Inject constructor(
 
                     currentState.copy(feedProfileInfo = updatedProfile)
                 }
-            }.onLogFailure { }
+            }.onLogFailure {
+                _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+            }
         }
     }
 
@@ -282,7 +292,9 @@ internal class FeedProfileViewModel @Inject constructor(
                 } else {
                     loadFeedProfileInfo()
                 }
-            }.onLogFailure { }
+            }.onLogFailure {
+                _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+            }
         }
     }
 

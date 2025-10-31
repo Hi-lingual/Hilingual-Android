@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.feedprofile.profile
+package com.hilingual.presentation.feedprofile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -48,10 +48,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.analytics.Page
+import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
@@ -62,14 +65,15 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.dialog.report.ReportUserDialog
 import com.hilingual.core.ui.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
-import com.hilingual.presentation.feedprofile.profile.component.BlockBottomSheet
-import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType
-import com.hilingual.presentation.feedprofile.profile.component.FeedProfileInfo
-import com.hilingual.presentation.feedprofile.profile.component.FeedProfileTabRow
-import com.hilingual.presentation.feedprofile.profile.component.ReportBlockBottomSheet
-import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
-import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
-import com.hilingual.presentation.feedprofile.profile.model.FeedProfileInfoModel
+import com.hilingual.presentation.feedprofile.component.bottomsheet.BlockBottomSheet
+import com.hilingual.presentation.feedprofile.component.bottomsheet.ReportBlockBottomSheet
+import com.hilingual.presentation.feedprofile.component.card.FeedEmptyCardType
+import com.hilingual.presentation.feedprofile.component.card.FeedProfileInfo
+import com.hilingual.presentation.feedprofile.component.tab.DiaryListScreen
+import com.hilingual.presentation.feedprofile.component.tab.FeedProfileTabRow
+import com.hilingual.presentation.feedprofile.model.DiaryTabType
+import com.hilingual.presentation.feedprofile.model.FeedDiaryUIModel
+import com.hilingual.presentation.feedprofile.model.FeedProfileInfoModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -92,8 +96,18 @@ internal fun FeedProfileRoute(
     val snackbarTrigger = LocalSnackbarTrigger.current
     val toastTrigger = LocalToastTrigger.current
     val dialogTrigger = LocalDialogTrigger.current
+    val tracker = LocalTracker.current
 
     LaunchedEffect(Unit) {
+        tracker.logEvent(
+            trigger = TriggerType.VIEW,
+            page = Page.FEED,
+            event = "view_profile_user",
+            properties = mapOf(
+                "profile_user_id" to viewModel.targetUserId,
+                "page" to Page.FEED.pageName
+            )
+        )
         viewModel.loadFeedProfile()
     }
 
