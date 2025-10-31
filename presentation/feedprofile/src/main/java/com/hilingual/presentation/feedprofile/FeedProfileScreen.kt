@@ -522,7 +522,7 @@ private fun FeedProfileScreenPreview() {
     HilingualTheme {
         FeedProfileScreen(
             paddingValues = PaddingValues(0.dp),
-            uiState = FeedProfileUiState.Companion.Fake,
+            uiState = FeedProfileUiState.Fake,
             initialTab = 0,
             onBackClick = {},
             onActionButtonClick = {},

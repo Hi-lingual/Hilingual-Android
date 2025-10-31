@@ -82,8 +82,12 @@ internal class FeedProfileViewModel @Inject constructor(
             val sharedDiariesResult = sharedDiariesDeferred.await()
 
             if (feedProfileResult.isFailure || sharedDiariesResult.isFailure) {
-                feedProfileResult.onLogFailure { _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog) }
-                sharedDiariesResult.onLogFailure { _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog) }
+                feedProfileResult.onLogFailure {
+                    _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+                }
+                sharedDiariesResult.onLogFailure {
+                    _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+                }
                 _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
                 return@launch
             }

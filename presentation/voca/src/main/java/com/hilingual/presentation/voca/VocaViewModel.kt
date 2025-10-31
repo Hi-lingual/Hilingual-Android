@@ -121,8 +121,12 @@ constructor(
             val latestResult = latestDeferred.await()
 
             if (aTozResult.isFailure || latestResult.isFailure) {
-                aTozResult.onLogFailure { _sideEffect.emit(VocaSideEffect.ShowErrorDialog(onRetry = ::fetchInitialData)) }
-                latestResult.onLogFailure { _sideEffect.emit(VocaSideEffect.ShowErrorDialog(onRetry = ::fetchInitialData)) }
+                aTozResult.onLogFailure {
+                    _sideEffect.emit(VocaSideEffect.ShowErrorDialog(onRetry = ::fetchInitialData))
+                }
+                latestResult.onLogFailure {
+                    _sideEffect.emit(VocaSideEffect.ShowErrorDialog(onRetry = ::fetchInitialData))
+                }
 
                 if (isRefreshing) {
                     _uiState.update { it.copy(isRefreshing = false) }
