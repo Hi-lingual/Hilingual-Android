@@ -42,7 +42,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
+import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
@@ -56,7 +58,7 @@ import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import com.hilingual.presentation.diarywrite.navigation.diaryWriteNavGraph
 import com.hilingual.presentation.feed.navigation.feedNavGraph
 import com.hilingual.presentation.feeddiary.navigation.feedDiaryNavGraph
-import com.hilingual.presentation.feedprofile.profile.navigation.feedProfileNavGraph
+import com.hilingual.presentation.feedprofile.navigation.feedProfileNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.main.state.MainAppState
@@ -74,7 +76,8 @@ private const val EXIT_MILLIS = 3000L
 
 @Composable
 internal fun MainScreen(
-    appState: MainAppState
+    appState: MainAppState,
+    tracker: Tracker
 ) {
     val isOffline by appState.isOffline.collectAsStateWithLifecycle()
     val isBottomBarVisible by appState.isBottomBarVisible.collectAsStateWithLifecycle()
@@ -142,7 +145,8 @@ internal fun MainScreen(
     CompositionLocalProvider(
         LocalDialogTrigger provides dialogTrigger,
         LocalToastTrigger provides onShowToast,
-        LocalSnackbarTrigger provides onShowSnackbar
+        LocalSnackbarTrigger provides onShowSnackbar,
+        LocalTracker provides tracker
     ) {
         Scaffold(
             bottomBar = {
