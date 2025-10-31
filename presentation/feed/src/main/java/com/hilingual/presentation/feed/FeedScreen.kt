@@ -56,9 +56,9 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.presentation.feed.component.FeedTab
 import com.hilingual.presentation.feed.component.FeedTopAppBar
 import com.hilingual.presentation.feed.model.FeedItemUiModel
-import com.hilingual.presentation.feed.component.FeedTab
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
