@@ -64,6 +64,12 @@ object DependencyManager {
         }
     }
 
+    fun addTrackerDependency(project: Project) {
+        project.dependencies {
+            add("implementation", project.libs.findLibrary("amplitude-analytics-android").get())
+        }
+    }
+
     fun addDataDependencies(project: Project) {
         project.dependencies {
             // 모듈

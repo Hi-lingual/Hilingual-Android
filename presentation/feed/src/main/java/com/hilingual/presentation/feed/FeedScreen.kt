@@ -39,12 +39,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.analytics.Page.FEED
+import com.hilingual.core.common.analytics.Page.MY_FEED
+import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.pairwise
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
@@ -75,6 +79,7 @@ internal fun FeedRoute(
     val snackbarTrigger = LocalSnackbarTrigger.current
     val dialogTrigger = LocalDialogTrigger.current
     val toastTrigger = LocalToastTrigger.current
+    val tracker = LocalTracker.current
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -99,6 +104,15 @@ internal fun FeedRoute(
     }
 
     LaunchedEffect(Unit) {
+        tracker.logEvent(
+            trigger = TriggerType.VIEW,
+            page = FEED,
+            event = "refresh",
+            properties = mapOf(
+                "refresh_method" to "auto",
+                "page" to FEED.pageName
+            )
+        )
         viewModel.loadInitialFeedData()
     }
 
@@ -110,12 +124,42 @@ internal fun FeedRoute(
             followingFeedList = followingFeedList,
             recommendRefreshing = isRecommendRefreshing,
             followingRefreshing = isFollowingRefreshing,
-            onFeedRefresh = viewModel::onFeedRefresh,
+            onFeedRefresh = { tab ->
+                tracker.logEvent(
+                    trigger = TriggerType.CLICK,
+                    page = FEED,
+                    event = "refresh",
+                    properties = mapOf(
+                        "refresh_method" to "pull_to_refresh",
+                        "page" to FEED.pageName
+                    )
+                )
+                viewModel.onFeedRefresh(tab)
+            },
             hasFollowing = hasFollowing,
             onSearchClick = navigateToFeedSearch,
-            onMyProfileClick = { navigateToMyFeedProfile(false) },
+            onMyProfileClick = {
+                tracker.logEvent(
+                    trigger = TriggerType.VIEW,
+                    page = MY_FEED,
+                    event = "page"
+                )
+                navigateToMyFeedProfile(false)
+            },
             onFeedProfileClick = navigateToFeedProfile,
-            onLikeClick = viewModel::toggleIsLiked,
+            onLikeClick = { diaryId, isLiked ->
+                tracker.logEvent(
+                    trigger = TriggerType.CLICK,
+                    page = FEED,
+                    event = "empathy_action",
+                    properties = mapOf(
+                        "entry_id" to diaryId,
+                        "empathy_action" to if (isLiked) "add" else "remove",
+                        "page" to FEED.pageName
+                    )
+                )
+                viewModel.toggleIsLiked(diaryId, isLiked)
+            },
             onContentDetailClick = navigateToFeedDiary,
             onUnpublishClick = viewModel::diaryUnpublish,
             onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
@@ -181,10 +225,12 @@ private fun FeedScreen(
                     if (feedList.isEmpty() || layoutInfo.totalItemsCount == 0) return@derivedStateOf false
 
                     val lastVisibleItem = visibleItemsInfo.last()
-                    val viewportHeight = layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
+                    val viewportHeight =
+                        layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
                     (lastVisibleItem.index == layoutInfo.totalItemsCount - 1) &&
                         (lastVisibleItem.offset + lastVisibleItem.size <= viewportHeight)
                 }
+
                 else -> false
             }
         }
@@ -254,6 +300,7 @@ private fun FeedScreen(
                         onUnpublishClick = onUnpublishClick,
                         onReportClick = onReportClick
                     )
+
                     FeedTab.FOLLOWING -> FeedTabScreen(
                         listState = followingsListState,
                         feedListState = followingFeedList,

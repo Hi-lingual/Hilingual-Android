@@ -29,6 +29,8 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -40,6 +42,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -57,12 +60,16 @@ constructor(
     private val _sideEffect = MutableSharedFlow<VocaSideEffect>()
     val sideEffect: SharedFlow<VocaSideEffect> = _sideEffect.asSharedFlow()
 
-    private var AtoZGroupList: ImmutableList<GroupingVocaModel> = persistentListOf()
+    private val _actions = MutableSharedFlow<VocaAction>()
 
     init {
-        fetchWords(_uiState.value.sortType)
+        fetchInitialData()
+        setupSearchFlow()
+        setupActionStateMachine()
+    }
 
-        @OptIn(FlowPreview::class)
+    @OptIn(FlowPreview::class)
+    private fun setupSearchFlow() {
         _uiState
             .map { it.searchKeyword }
             .debounce(400L)
@@ -73,67 +80,114 @@ constructor(
             .launchIn(viewModelScope)
     }
 
+    private fun setupActionStateMachine() {
+        _actions
+            .scan(false) { hasDataChanged, action ->
+                handleAction(hasDataChanged, action)
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun handleAction(hasDataChanged: Boolean, action: VocaAction): Boolean {
+        return when (action) {
+            is VocaAction.BookmarkChanged -> true
+            is VocaAction.SortChanged -> handleSortChanged(hasDataChanged, action.sortType)
+            is VocaAction.DataRefreshed -> false
+        }
+    }
+
+    private fun handleSortChanged(hasDataChanged: Boolean, sortType: WordSortType): Boolean {
+        if (hasDataChanged) {
+            fetchInitialData()
+        } else {
+            updateSortWithLocalData(sortType)
+        }
+        return false
+    }
+
+    private fun fetchInitialData() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(vocaGroupList = UiState.Loading) }
+            loadVocaData()
+        }
+    }
+
+    private suspend fun loadVocaData(isRefreshing: Boolean = false) {
+        coroutineScope {
+            val aTozDeferred = async { vocaRepository.getVocaList(sort = WordSortType.AtoZ.sortParam) }
+            val latestDeferred = async { vocaRepository.getVocaList(sort = WordSortType.Latest.sortParam) }
+
+            val aTozResult = aTozDeferred.await()
+            val latestResult = latestDeferred.await()
+
+            if (aTozResult.isFailure || latestResult.isFailure) {
+                aTozResult.onLogFailure {
+                    _sideEffect.emit(VocaSideEffect.ShowErrorDialog(onRetry = ::fetchInitialData))
+                }
+                latestResult.onLogFailure {
+                    _sideEffect.emit(VocaSideEffect.ShowErrorDialog(onRetry = ::fetchInitialData))
+                }
+
+                if (isRefreshing) {
+                    _uiState.update { it.copy(isRefreshing = false) }
+                }
+                _sideEffect.emit(VocaSideEffect.ShowErrorDialog(onRetry = ::fetchInitialData))
+                return@coroutineScope
+            }
+
+            val (count, aTozList) = aTozResult.getOrThrow()
+            val (_, latestList) = latestResult.getOrThrow()
+
+            val aTozGroupList = aTozList.toImmutableList()
+            val latestGroupList = latestList.toImmutableList()
+
+            val currentList = when (_uiState.value.sortType) {
+                WordSortType.AtoZ -> aTozGroupList
+                WordSortType.Latest -> latestGroupList
+            }
+
+            _uiState.update {
+                it.copy(
+                    vocaGroupList = UiState.Success(currentList),
+                    aTozList = aTozGroupList,
+                    latestList = latestGroupList,
+                    vocaCount = count,
+                    isRefreshing = false
+                )
+            }
+
+            _actions.emit(VocaAction.DataRefreshed)
+        }
+    }
+
     fun updateSort(sort: WordSortType) {
+        _uiState.update { it.copy(sortType = sort) }
+
+        viewModelScope.launch {
+            _actions.emit(VocaAction.SortChanged(sort))
+        }
+    }
+
+    private fun updateSortWithLocalData(sort: WordSortType) {
+        val currentList = when (sort) {
+            WordSortType.AtoZ -> _uiState.value.aTozList
+            WordSortType.Latest -> _uiState.value.latestList
+        }
+
         _uiState.update {
             it.copy(
                 sortType = sort,
-                vocaGroupList = UiState.Loading
+                vocaGroupList = UiState.Success(currentList)
             )
         }
-        fetchWords(sort, isRefresh = true)
     }
-
-    private fun fetchWords(sort: WordSortType, isRefresh: Boolean = false) {
-        viewModelScope.launch {
-            if (isRefresh) {
-                _uiState.update { it.copy(isRefreshing = true) }
-            }
-
-            loadVocaList(sort)
-                .onSuccess { (count, vocaLists) ->
-                    _uiState.update {
-                        it.copy(
-                            vocaGroupList = UiState.Success(vocaLists.toImmutableList()),
-                            vocaCount = count,
-                            isRefreshing = false
-                        )
-                    }
-
-                    AtoZDataForSearch(sort, vocaLists.toImmutableList())
-                }
-                .onLogFailure {
-                    _uiState.update { it.copy(isRefreshing = false) }
-                    _sideEffect.emit(VocaSideEffect.ShowErrorDialog {})
-                }
-        }
-    }
-
-    private suspend fun AtoZDataForSearch(
-        currentSort: WordSortType,
-        currentData: ImmutableList<GroupingVocaModel>
-    ) {
-        if (currentSort == WordSortType.AtoZ) {
-            AtoZGroupList = currentData
-        } else {
-            loadVocaList(WordSortType.AtoZ)
-                .onSuccess { (_, vocaLists) ->
-                    AtoZGroupList = vocaLists.toImmutableList()
-                }
-                .onLogFailure { }
-        }
-    }
-
-    private suspend fun loadVocaList(sort: WordSortType) =
-        vocaRepository.getVocaList(sort = sort.sortParam)
 
     fun fetchVocaDetail(phraseId: Long) {
         viewModelScope.launch {
             vocaRepository.getVocaDetail(phraseId = phraseId)
                 .onSuccess { vocaDetail ->
                     _uiState.update {
-                        it.copy(
-                            vocaItemDetail = UiState.Success(vocaDetail)
-                        )
+                        it.copy(vocaItemDetail = UiState.Success(vocaDetail))
                     }
                 }
                 .onLogFailure {
@@ -144,9 +198,7 @@ constructor(
 
     fun clearSelectedVocaDetail() {
         _uiState.update {
-            it.copy(
-                vocaItemDetail = UiState.Loading
-            )
+            it.copy(vocaItemDetail = UiState.Loading)
         }
     }
 
@@ -157,7 +209,7 @@ constructor(
     private fun performSearch(searchKeyword: String) {
         _uiState.update { currentState ->
             val filteredList = if (searchKeyword.isNotBlank()) {
-                AtoZGroupList.flatMap { it.words }
+                currentState.aTozList.flatMap { it.words }
                     .filter { it.phrase.contains(searchKeyword, ignoreCase = true) }
                     .toImmutableList()
             } else {
@@ -187,46 +239,8 @@ constructor(
                 bookmarkModel = PhraseBookmarkModel(isMarked)
             )
                 .onSuccess {
-                    _uiState.update { currentState ->
-                        val updatedGroupList = when (val groupState = currentState.vocaGroupList) {
-                            is UiState.Success -> {
-                                val updatedList = groupState.data.map { group ->
-                                    val updatedWords = group.words.map { item ->
-                                        if (item.phraseId == phraseId) {
-                                            item.copy(isBookmarked = isMarked)
-                                        } else {
-                                            item
-                                        }
-                                    }.toImmutableList()
-                                    group.copy(words = updatedWords)
-                                }.toImmutableList()
-
-                                UiState.Success(updatedList)
-                            }
-
-                            else -> groupState
-                        }
-
-                        val updatedSearchResults = currentState.searchResultList.map {
-                            if (it.phraseId == phraseId) it.copy(isBookmarked = isMarked) else it
-                        }.toImmutableList()
-
-                        AtoZGroupList = AtoZGroupList.map { group ->
-                            val updatedWords = group.words.map { item ->
-                                if (item.phraseId == phraseId) {
-                                    item.copy(isBookmarked = isMarked)
-                                } else {
-                                    item
-                                }
-                            }.toImmutableList()
-                            group.copy(words = updatedWords)
-                        }.toImmutableList()
-
-                        currentState.copy(
-                            vocaGroupList = updatedGroupList,
-                            searchResultList = updatedSearchResults
-                        )
-                    }
+                    updateLocalBookmarkState(phraseId, isMarked)
+                    _actions.emit(VocaAction.BookmarkChanged)
                 }
                 .onLogFailure {
                     _sideEffect.emit(VocaSideEffect.ShowErrorDialog {})
@@ -234,9 +248,63 @@ constructor(
         }
     }
 
-    fun refreshVocaList() {
-        fetchWords(_uiState.value.sortType, isRefresh = true)
+    private fun updateLocalBookmarkState(phraseId: Long, isMarked: Boolean) {
+        _uiState.update { currentState ->
+            val updatedATozList = updateBookmarkInList(currentState.aTozList, phraseId, isMarked)
+            val updatedLatestList = updateBookmarkInList(currentState.latestList, phraseId, isMarked)
+
+            val updatedSearchResults = currentState.searchResultList.map { item ->
+                if (item.phraseId == phraseId) {
+                    item.copy(isBookmarked = isMarked)
+                } else {
+                    item
+                }
+            }.toImmutableList()
+
+            val currentList = when (currentState.sortType) {
+                WordSortType.AtoZ -> updatedATozList
+                WordSortType.Latest -> updatedLatestList
+            }
+
+            currentState.copy(
+                aTozList = updatedATozList,
+                latestList = updatedLatestList,
+                vocaGroupList = UiState.Success(currentList),
+                searchResultList = updatedSearchResults
+            )
+        }
     }
+
+    private fun updateBookmarkInList(
+        list: ImmutableList<GroupingVocaModel>,
+        phraseId: Long,
+        isMarked: Boolean
+    ): ImmutableList<GroupingVocaModel> {
+        return list.map { group ->
+            group.copy(
+                words = group.words.map { item ->
+                    if (item.phraseId == phraseId) {
+                        item.copy(isBookmarked = isMarked)
+                    } else {
+                        item
+                    }
+                }.toImmutableList()
+            )
+        }.toImmutableList()
+    }
+
+    fun refreshVocaList() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isRefreshing = true) }
+            loadVocaData(isRefreshing = true)
+        }
+    }
+}
+
+private sealed interface VocaAction {
+    data object BookmarkChanged : VocaAction
+    data class SortChanged(val sortType: WordSortType) : VocaAction
+    data object DataRefreshed : VocaAction
 }
 
 sealed interface VocaSideEffect {
