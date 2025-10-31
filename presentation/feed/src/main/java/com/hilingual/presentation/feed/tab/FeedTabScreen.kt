@@ -36,10 +36,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.util.UiState
-import com.hilingual.core.designsystem.component.content.FeedCard
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.pulltorefresh.HilingualPullToRefreshBox
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.ui.component.item.feed.FeedCard
 import com.hilingual.presentation.feed.component.FeedEmptyCard
 import com.hilingual.presentation.feed.component.FeedEmptyCardType
 import com.hilingual.presentation.feed.model.FeedItemUiModel
