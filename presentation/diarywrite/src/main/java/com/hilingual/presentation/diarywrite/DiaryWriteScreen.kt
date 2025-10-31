@@ -139,7 +139,7 @@ internal fun DiaryWriteRoute(
         }
     }
 
-    when (feedbackUiState) {
+    when (val feedbackState = feedbackUiState) {
         is UiState.Empty -> {
             DiaryWriteScreen(
                 paddingValues = paddingValues,
@@ -166,7 +166,7 @@ internal fun DiaryWriteRoute(
         }
 
         is UiState.Success -> {
-            val diaryId = (feedbackUiState as UiState.Success).data
+            val diaryId = feedbackState.data
             DiaryFeedbackStatusScreen(
                 paddingValues = paddingValues,
                 uiData = FeedbackUIData(
