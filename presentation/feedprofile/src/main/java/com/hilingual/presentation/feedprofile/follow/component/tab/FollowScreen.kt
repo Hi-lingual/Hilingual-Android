@@ -32,9 +32,9 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.pulltorefresh.HilingualPullToRefreshBox
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.item.feed.UserActionItem
-import com.hilingual.presentation.feedprofile.follow.model.FollowItemModel
 import com.hilingual.presentation.feedprofile.component.card.FeedEmptyCard
 import com.hilingual.presentation.feedprofile.component.card.FeedEmptyCardType
+import com.hilingual.presentation.feedprofile.follow.model.FollowItemModel
 import kotlinx.collections.immutable.ImmutableList
 
 @OptIn(ExperimentalMaterial3Api::class)

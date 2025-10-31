@@ -66,11 +66,11 @@ import com.hilingual.core.ui.component.dialog.report.ReportUserDialog
 import com.hilingual.core.ui.component.topappbar.BackAndMoreTopAppBar
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.presentation.feedprofile.component.bottomsheet.BlockBottomSheet
+import com.hilingual.presentation.feedprofile.component.bottomsheet.ReportBlockBottomSheet
 import com.hilingual.presentation.feedprofile.component.card.FeedEmptyCardType
 import com.hilingual.presentation.feedprofile.component.card.FeedProfileInfo
-import com.hilingual.presentation.feedprofile.component.tab.FeedProfileTabRow
-import com.hilingual.presentation.feedprofile.component.bottomsheet.ReportBlockBottomSheet
 import com.hilingual.presentation.feedprofile.component.tab.DiaryListScreen
+import com.hilingual.presentation.feedprofile.component.tab.FeedProfileTabRow
 import com.hilingual.presentation.feedprofile.model.DiaryTabType
 import com.hilingual.presentation.feedprofile.model.FeedDiaryUIModel
 import com.hilingual.presentation.feedprofile.model.FeedProfileInfoModel

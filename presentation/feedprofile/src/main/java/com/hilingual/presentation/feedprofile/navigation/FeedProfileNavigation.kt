@@ -28,10 +28,10 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.hilingual.core.navigation.Route
-import com.hilingual.presentation.feedprofile.follow.FollowListRoute
-import com.hilingual.presentation.feedprofile.follow.FollowListViewModel
 import com.hilingual.presentation.feedprofile.FeedProfileRoute
 import com.hilingual.presentation.feedprofile.FeedProfileViewModel
+import com.hilingual.presentation.feedprofile.follow.FollowListRoute
+import com.hilingual.presentation.feedprofile.follow.FollowListViewModel
 import kotlinx.serialization.Serializable
 
 private const val ANIMATION_DURATION = 300
