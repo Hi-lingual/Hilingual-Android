@@ -58,7 +58,7 @@ import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import com.hilingual.presentation.diarywrite.navigation.diaryWriteNavGraph
 import com.hilingual.presentation.feed.navigation.feedNavGraph
 import com.hilingual.presentation.feeddiary.navigation.feedDiaryNavGraph
-import com.hilingual.presentation.feedprofile.profile.navigation.feedProfileNavGraph
+import com.hilingual.presentation.feedprofile.navigation.feedProfileNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.main.state.MainAppState

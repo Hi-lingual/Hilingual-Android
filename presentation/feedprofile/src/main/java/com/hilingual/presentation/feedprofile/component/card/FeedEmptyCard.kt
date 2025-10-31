@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.feedprofile.profile.component
+package com.hilingual.presentation.feedprofile.component.card
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

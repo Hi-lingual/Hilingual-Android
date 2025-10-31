@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.feedprofile.profile
+package com.hilingual.presentation.feedprofile
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -25,11 +25,11 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.feed.repository.FeedRepository
 import com.hilingual.data.user.repository.UserRepository
-import com.hilingual.presentation.feedprofile.profile.model.DiaryTabType
-import com.hilingual.presentation.feedprofile.profile.model.FeedDiaryUIModel
-import com.hilingual.presentation.feedprofile.profile.model.FeedProfileInfoModel
-import com.hilingual.presentation.feedprofile.profile.model.toState
-import com.hilingual.presentation.feedprofile.profile.navigation.FeedProfileGraph
+import com.hilingual.presentation.feedprofile.model.DiaryTabType
+import com.hilingual.presentation.feedprofile.model.FeedDiaryUIModel
+import com.hilingual.presentation.feedprofile.model.FeedProfileInfoModel
+import com.hilingual.presentation.feedprofile.model.toState
+import com.hilingual.presentation.feedprofile.navigation.FeedProfileGraph
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.feedprofile.profile.navigation
+package com.hilingual.presentation.feedprofile.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
@@ -30,8 +30,8 @@ import androidx.navigation.compose.navigation
 import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.feedprofile.follow.FollowListRoute
 import com.hilingual.presentation.feedprofile.follow.FollowListViewModel
-import com.hilingual.presentation.feedprofile.profile.FeedProfileRoute
-import com.hilingual.presentation.feedprofile.profile.FeedProfileViewModel
+import com.hilingual.presentation.feedprofile.FeedProfileRoute
+import com.hilingual.presentation.feedprofile.FeedProfileViewModel
 import kotlinx.serialization.Serializable
 
 private const val ANIMATION_DURATION = 300

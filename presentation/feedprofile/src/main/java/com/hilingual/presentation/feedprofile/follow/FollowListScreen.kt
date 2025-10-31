@@ -38,10 +38,11 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
-import com.hilingual.presentation.feedprofile.follow.component.FollowTabRow
+import com.hilingual.presentation.feedprofile.follow.component.tab.FollowTabRow
 import com.hilingual.presentation.feedprofile.follow.model.FollowItemModel
 import com.hilingual.presentation.feedprofile.follow.model.FollowTabType
-import com.hilingual.presentation.feedprofile.profile.component.FeedEmptyCardType
+import com.hilingual.presentation.feedprofile.component.card.FeedEmptyCardType
+import com.hilingual.presentation.feedprofile.follow.component.tab.FollowScreen
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
