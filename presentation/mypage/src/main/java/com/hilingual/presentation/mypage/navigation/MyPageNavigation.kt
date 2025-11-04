@@ -129,6 +129,7 @@ fun NavGraphBuilder.myPageNavGraph(
 
             ProfileEditRoute(
                 paddingValues = paddingValues,
+                navigateUp = navigateUp,
                 viewModel = viewModel
             )
         }

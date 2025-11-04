@@ -46,6 +46,7 @@ object DependencyManager {
             // 모듈
             add("implementation", project.project(":core:common"))
             add("implementation", project.project(":core:designsystem"))
+            add("implementation", project.project(":core:ui"))
             add("implementation", project.project(":core:navigation"))
 
             // AndroidX
@@ -60,6 +61,12 @@ object DependencyManager {
 
             // Immutable
             add("implementation", project.libs.findLibrary("kotlinx-immutable").get())
+        }
+    }
+
+    fun addTrackerDependency(project: Project) {
+        project.dependencies {
+            add("implementation", project.libs.findLibrary("amplitude-analytics-android").get())
         }
     }
 

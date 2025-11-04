@@ -46,9 +46,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.analytics.FakeTracker
+import com.hilingual.core.common.analytics.Page.HOME
+import com.hilingual.core.common.analytics.Tracker
+import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalSnackbarTrigger
 import com.hilingual.core.common.trigger.LocalToastTrigger
@@ -84,6 +90,7 @@ internal fun HomeRoute(
     val dialogTrigger = LocalDialogTrigger.current
     val toastTrigger = LocalToastTrigger.current
     val snackbarTrigger = LocalSnackbarTrigger.current
+    val tracker = LocalTracker.current
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -105,6 +112,7 @@ internal fun HomeRoute(
 
     LaunchedEffect(Unit) {
         viewModel.loadInitialData()
+        tracker.logEvent(trigger = TriggerType.VIEW, page = HOME, event = "page")
     }
 
     when (val state = uiState) {
@@ -124,14 +132,37 @@ internal fun HomeRoute(
                 paddingValues = paddingValues,
                 uiState = state.data,
                 onAlarmClick = navigateToNotification,
-                onImageClick = { navigateToFeedProfile(0L) },
+                onImageClick = {
+                    tracker.logEvent(trigger = TriggerType.CLICK, page = HOME, event = "profile")
+                    navigateToFeedProfile(0L)
+                },
                 onDateSelected = viewModel::onDateSelected,
                 onMonthChanged = viewModel::onMonthChanged,
-                onWriteDiaryClick = navigateToDiaryWrite,
-                onDiaryPreviewClick = navigateToDiaryFeedback,
+                onWriteDiaryClick = { date ->
+                    tracker.logEvent(
+                        trigger = TriggerType.CLICK,
+                        page = HOME,
+                        event = "diary_write",
+                        properties = mapOf("open_time" to System.currentTimeMillis())
+                    )
+                    navigateToDiaryWrite(date)
+                },
+                onDiaryPreviewClick = { diaryId ->
+                    tracker.logEvent(
+                        trigger = TriggerType.VIEW,
+                        page = HOME,
+                        event = "opend_diary_view",
+                        properties = mapOf(
+                            "open_time" to System.currentTimeMillis(),
+                            "entry_id" to diaryId
+                        )
+                    )
+                    navigateToDiaryFeedback(diaryId)
+                },
                 onDeleteClick = viewModel::deleteDiary,
                 onPublishClick = viewModel::publishDiary,
-                onUnpublishClick = viewModel::unpublishDiary
+                onUnpublishClick = viewModel::unpublishDiary,
+                tracker = tracker
             )
         }
 
@@ -151,7 +182,8 @@ private fun HomeScreen(
     onDiaryPreviewClick: (diaryId: Long) -> Unit,
     onDeleteClick: (diaryId: Long) -> Unit,
     onPublishClick: (diaryId: Long) -> Unit,
-    onUnpublishClick: (diaryId: Long) -> Unit
+    onUnpublishClick: (diaryId: Long) -> Unit,
+    tracker: Tracker
 ) {
     val date = uiState.selectedDate
     val verticalScrollState = rememberScrollState()
@@ -222,7 +254,17 @@ private fun HomeScreen(
                             HomeDropDownMenu(
                                 isExpanded = isExpanded,
                                 isPublished = diary.isPublished,
-                                onExpandedChange = { isExpanded = it },
+                                onExpandedChange = {
+                                    isExpanded = it
+                                    if (it) {
+                                        tracker.logEvent(
+                                            trigger = TriggerType.CLICK,
+                                            page = HOME,
+                                            event = "more_menu",
+                                            properties = mapOf("menu_name" to "more_menu")
+                                        )
+                                    }
+                                },
                                 onDeleteClick = { onDeleteClick(diary.diaryId) },
                                 onPublishClick = { onPublishClick(diary.diaryId) },
                                 onUnpublishClick = { onUnpublishClick(diary.diaryId) }
@@ -260,6 +302,16 @@ private fun HomeScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .animateContentSize()
+                                    .noRippleClickable {
+                                        tracker.logEvent(
+                                            trigger = TriggerType.CLICK,
+                                            page = HOME,
+                                            event = "switch_language",
+                                            properties = mapOf(
+                                                "recommen_topic" to "${todayTopic.topicKo}/${todayTopic.topicEn}"
+                                            )
+                                        )
+                                    }
                             )
                         }
                         Spacer(Modifier.height(12.dp))
@@ -292,7 +344,8 @@ private fun HomeScreenPreview() {
             onDiaryPreviewClick = {},
             onDeleteClick = {},
             onPublishClick = {},
-            onUnpublishClick = {}
+            onUnpublishClick = {},
+            tracker = FakeTracker()
         )
     }
 }

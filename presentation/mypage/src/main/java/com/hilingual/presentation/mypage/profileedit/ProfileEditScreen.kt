@@ -41,15 +41,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
-import com.hilingual.core.designsystem.component.bottomsheet.HilingualProfileImageBottomSheet
-import com.hilingual.core.designsystem.component.picker.ProfileImagePicker
-import com.hilingual.core.designsystem.component.topappbar.TitleCenterAlignedTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.ui.component.bottomsheet.HilingualProfileImageBottomSheet
+import com.hilingual.core.ui.component.picker.ProfileImagePicker
+import com.hilingual.core.ui.component.topappbar.TitleCenterAlignedTopAppBar
 import com.hilingual.presentation.mypage.MyPageSideEffect
 import com.hilingual.presentation.mypage.MyPageUiState
 import com.hilingual.presentation.mypage.MyPageViewModel
@@ -60,21 +62,21 @@ import com.jakewharton.processphoenix.ProcessPhoenix
 @Composable
 internal fun ProfileEditRoute(
     paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
+    val toastTrigger = LocalToastTrigger.current
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is MyPageSideEffect.ShowErrorDialog -> {
-                dialogTrigger.show(sideEffect.onRetry)
-            }
+            is MyPageSideEffect.ShowErrorDialog -> dialogTrigger.show(navigateUp)
 
-            MyPageSideEffect.RestartApp -> {
-                ProcessPhoenix.triggerRebirth(context)
-            }
+            is MyPageSideEffect.ShowToast -> toastTrigger(sideEffect.message)
+
+            is MyPageSideEffect.RestartApp -> ProcessPhoenix.triggerRebirth(context)
         }
     }
 

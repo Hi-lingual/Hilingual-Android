@@ -22,8 +22,11 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -35,6 +38,9 @@ internal class BlockedUserViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(BlockedUserUiState())
     val uiState: StateFlow<BlockedUserUiState> = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<BlockedUserSideEffect>()
+    val sideEffect: SharedFlow<BlockedUserSideEffect> = _sideEffect.asSharedFlow()
 
     fun getBlockList() {
         viewModelScope.launch {
@@ -50,7 +56,9 @@ internal class BlockedUserViewModel @Inject constructor(
 
                     _uiState.update { it.copy(blockedUserList = UiState.Success(data = blockUiModel)) }
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(BlockedUserSideEffect.ShowErrorDialog)
+                }
         }
     }
 
@@ -83,7 +91,13 @@ internal class BlockedUserViewModel @Inject constructor(
                         }
                     }
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(BlockedUserSideEffect.ShowErrorDialog)
+                }
         }
     }
+}
+
+sealed interface BlockedUserSideEffect {
+    data object ShowErrorDialog : BlockedUserSideEffect
 }

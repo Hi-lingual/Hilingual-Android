@@ -1,0 +1,1 @@
+-keepnames class com.hilingual.core.localstorage.model.UserPreferences { *; }

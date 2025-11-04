@@ -25,15 +25,18 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.util.UiState
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.repository.DiaryRepository
-import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -60,9 +63,11 @@ internal class DiaryWriteViewModel @Inject constructor(
     )
     val uiState: StateFlow<DiaryWriteUiState> = _uiState.asStateFlow()
 
-    private var _feedbackState: MutableStateFlow<DiaryFeedbackState> =
-        MutableStateFlow(DiaryFeedbackState.Default)
-    val feedbackState: StateFlow<DiaryFeedbackState> = _feedbackState.asStateFlow()
+    private val _sideEffect = MutableSharedFlow<DiaryWriteSideEffect>()
+    val sideEffect: SharedFlow<DiaryWriteSideEffect> = _sideEffect.asSharedFlow()
+
+    private var _feedbackUiState = MutableStateFlow<UiState<Long>>(UiState.Empty)
+    val feedbackUiState: StateFlow<UiState<Long>> = _feedbackUiState.asStateFlow()
 
     init {
         getTopic(route.selectedDate)
@@ -82,12 +87,16 @@ internal class DiaryWriteViewModel @Inject constructor(
                 .onSuccess { topic ->
                     _uiState.update { it.copy(topicKo = topic.topicKor, topicEn = topic.topicEn) }
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(DiaryWriteSideEffect.ShowErrorDialog)
+                }
         }
     }
 
     fun postDiaryFeedbackCreate() {
-        _feedbackState.value = DiaryFeedbackState.Loading
+        if (_feedbackUiState.value is UiState.Loading) return
+
+        _feedbackUiState.value = UiState.Loading
 
         viewModelScope.launch {
             val result = diaryRepository.postDiaryFeedbackCreate(
@@ -97,9 +106,9 @@ internal class DiaryWriteViewModel @Inject constructor(
             )
 
             result.onSuccess { response ->
-                _feedbackState.update { DiaryFeedbackState.Complete(response.diaryId) }
+                _feedbackUiState.update { UiState.Success(response.diaryId) }
             }.onLogFailure { throwable ->
-                _feedbackState.update { DiaryFeedbackState.Failure(throwable) }
+                _feedbackUiState.update { UiState.Failure }
             }
         }
     }
@@ -110,7 +119,8 @@ internal class DiaryWriteViewModel @Inject constructor(
                 runCatching {
                     withContext(Dispatchers.IO) {
                         val image = InputImage.fromFilePath(context, uri)
-                        val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+                        val recognizer =
+                            TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
                         recognizer.process(image).await().text
                     }
                 }.onSuccess { extractedText ->
@@ -135,4 +145,8 @@ internal class DiaryWriteViewModel @Inject constructor(
     companion object {
         private const val MAX_DIARY_TEXT_LENGTH = 1000
     }
+}
+
+sealed interface DiaryWriteSideEffect {
+    data object ShowErrorDialog : DiaryWriteSideEffect
 }

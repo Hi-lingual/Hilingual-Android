@@ -44,10 +44,11 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
-import com.hilingual.core.designsystem.component.topappbar.TitleLeftAlignedTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.ui.component.topappbar.TitleLeftAlignedTopAppBar
 import com.hilingual.presentation.mypage.component.LogoutDialog
 import com.hilingual.presentation.mypage.component.MyInfoBox
 import com.hilingual.presentation.mypage.component.SettingItem
@@ -66,16 +67,15 @@ internal fun MyPageRoute(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
+    val toastTrigger = LocalToastTrigger.current
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is MyPageSideEffect.ShowErrorDialog -> {
-                dialogTrigger.show(sideEffect.onRetry)
-            }
+            is MyPageSideEffect.ShowErrorDialog -> dialogTrigger.show(sideEffect.onRetry)
 
-            MyPageSideEffect.RestartApp -> {
-                ProcessPhoenix.triggerRebirth(context)
-            }
+            is MyPageSideEffect.ShowToast -> toastTrigger(sideEffect.message)
+
+            is MyPageSideEffect.RestartApp -> ProcessPhoenix.triggerRebirth(context)
         }
     }
 

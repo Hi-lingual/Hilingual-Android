@@ -63,9 +63,7 @@ internal class MyPageViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    viewModelScope.launch {
-                        _sideEffect.emit(MyPageSideEffect.ShowErrorDialog(onRetry = ::getProfileInfo))
-                    }
+                    _sideEffect.emit(MyPageSideEffect.ShowErrorDialog(onRetry = ::getProfileInfo))
                 }
         }
     }
@@ -76,7 +74,9 @@ internal class MyPageViewModel @Inject constructor(
                 .onSuccess {
                     getProfileInfo()
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(MyPageSideEffect.ShowToast("프로필 이미지 업데이트에 실패했어요."))
+                }
         }
     }
 
@@ -86,7 +86,9 @@ internal class MyPageViewModel @Inject constructor(
                 .onSuccess {
                     _sideEffect.emit(MyPageSideEffect.RestartApp)
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(MyPageSideEffect.ShowToast("로그아웃에 실패했어요."))
+                }
         }
     }
 
@@ -96,12 +98,15 @@ internal class MyPageViewModel @Inject constructor(
                 .onSuccess {
                     _sideEffect.emit(MyPageSideEffect.RestartApp)
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(MyPageSideEffect.ShowToast("회원 탈퇴에 실패했어요."))
+                }
         }
     }
 }
 
 sealed interface MyPageSideEffect {
     data class ShowErrorDialog(val onRetry: () -> Unit) : MyPageSideEffect
+    data class ShowToast(val message: String) : MyPageSideEffect
     data object RestartApp : MyPageSideEffect
 }

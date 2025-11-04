@@ -24,6 +24,7 @@ class AndroidPresentationConventionPlugin : Plugin<Project> {
 
             // presentation 모듈에 공통적으로 필요한 의존성들을 추가합니다.
             DependencyManager.addPresentationDependencies(this)
+            DependencyManager.addTrackerDependency(this)
         }
     }
 }
