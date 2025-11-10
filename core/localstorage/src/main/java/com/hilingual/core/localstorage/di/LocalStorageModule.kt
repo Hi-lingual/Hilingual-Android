@@ -52,5 +52,5 @@ object LocalStorageModule {
     @Provides
     @Singleton
     fun provideDiaryTempManager(@ApplicationContext context: Context): DiaryTempManager =
-        DiaryTempManagerImpl(context.diaryTempDataStore)
+        DiaryTempManagerImpl(dataStore = context.diaryTempDataStore, appContext = context)
 }
