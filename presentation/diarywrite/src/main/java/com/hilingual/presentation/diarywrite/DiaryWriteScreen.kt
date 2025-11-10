@@ -74,6 +74,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
+import com.hilingual.presentation.diarywrite.component.DiaryOverwriteDialog
 import com.hilingual.presentation.diarywrite.component.DiaryWriteCancelBottomSheet
 import com.hilingual.presentation.diarywrite.component.FeedbackCompleteContent
 import com.hilingual.presentation.diarywrite.component.FeedbackFailureContent
@@ -109,6 +110,8 @@ internal fun DiaryWriteRoute(
     val toastTrigger = LocalToastTrigger.current
     val feedbackState by viewModel.feedbackState.collectAsStateWithLifecycle()
     val tracker = LocalTracker.current
+
+    val hasDiaryTemp by viewModel.hasDiaryTemp.collectAsStateWithLifecycle()
 
     var diaryTextImageUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -158,8 +161,9 @@ internal fun DiaryWriteRoute(
         is DiaryFeedbackState.Default -> {
             DiaryWriteScreen(
                 paddingValues = paddingValues,
+                hasDiaryTemp = hasDiaryTemp,
                 onBackClicked = navigateUp,
-                onTempSaveClicked = viewModel::tempSaveDiary,
+                onTempSaveClicked = viewModel::saveDiaryTemp,
                 selectedDate = uiState.selectedDate,
                 topicKo = uiState.topicKo,
                 topicEn = uiState.topicEn,
@@ -246,6 +250,7 @@ internal fun DiaryWriteRoute(
 @Composable
 private fun DiaryWriteScreen(
     paddingValues: PaddingValues,
+    hasDiaryTemp: Boolean,
     onBackClicked: () -> Unit,
     onTempSaveClicked: () -> Unit,
     selectedDate: LocalDate,
@@ -264,6 +269,7 @@ private fun DiaryWriteScreen(
     val focusManager = LocalFocusManager.current
 
     var isCancelBottomSheetVisible by remember { mutableStateOf(false) }
+    var isOverwriteDialogVisible by remember { mutableStateOf(false) }
     var isImageBottomSheetVisible by remember { mutableStateOf(false) }
     var isTextFieldFocused by remember { mutableStateOf(false) }
 
@@ -272,6 +278,7 @@ private fun DiaryWriteScreen(
 
     BackHandler {
         cancelDiaryWrite(
+            hasDiaryTemp = hasDiaryTemp,
             diaryText = diaryText,
             diaryImageUri = diaryImageUri,
             onBackClicked = onBackClicked,
@@ -283,8 +290,23 @@ private fun DiaryWriteScreen(
         isVisible = isCancelBottomSheetVisible,
         onDismiss = { isCancelBottomSheetVisible = false },
         onCancelClick = onBackClicked,
-        onTempSaveClick = onTempSaveClicked
+        onTempSaveClick = {
+            if (hasDiaryTemp) {
+                isCancelBottomSheetVisible = false
+                isOverwriteDialogVisible = true
+            } else {
+                onTempSaveClicked()
+            }
+        }
     )
+
+    if (isOverwriteDialogVisible) {
+        DiaryOverwriteDialog(
+            onDismiss = { isOverwriteDialogVisible = false },
+            onNoClick = { isOverwriteDialogVisible = false },
+            onOverwriteClick = onTempSaveClicked
+        )
+    }
 
     ImageSelectBottomSheet(
         isVisible = isImageBottomSheetVisible,
@@ -320,6 +342,7 @@ private fun DiaryWriteScreen(
                         properties = mapOf("back_source" to "ui_button")
                     )
                     cancelDiaryWrite(
+                        hasDiaryTemp = hasDiaryTemp,
                         diaryText = diaryText,
                         diaryImageUri = diaryImageUri,
                         onBackClicked = onBackClicked,
@@ -459,12 +482,13 @@ private fun DiaryWriteScreen(
 }
 
 private fun cancelDiaryWrite(
+    hasDiaryTemp: Boolean,
     diaryText: String,
     diaryImageUri: Uri?,
     onBackClicked: () -> Unit,
     setBottomSheetVisible: (Boolean) -> Unit
 ) {
-    if (diaryText.isNotBlank() || diaryImageUri != null) {
+    if (hasDiaryTemp || diaryText.isNotBlank() || diaryImageUri != null) {
         setBottomSheetVisible(true)
     } else {
         onBackClicked()
@@ -510,6 +534,7 @@ private fun DiaryWriteScreenPreview() {
     HilingualTheme {
         DiaryWriteScreen(
             paddingValues = PaddingValues(0.dp),
+            hasDiaryTemp = false,
             onBackClicked = {},
             onTempSaveClicked = {},
             selectedDate = LocalDate.now(),

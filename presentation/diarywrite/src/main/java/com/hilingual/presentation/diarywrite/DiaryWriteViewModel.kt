@@ -25,6 +25,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.localstorage.DiaryTempManager
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
@@ -52,7 +53,8 @@ internal class DiaryWriteViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     @ApplicationContext private val context: Context,
     private val calendarRepository: CalendarRepository,
-    private val diaryRepository: DiaryRepository
+    private val diaryRepository: DiaryRepository,
+    private val diaryTempManager: DiaryTempManager
 ) : ViewModel() {
     private val route: DiaryWrite = savedStateHandle.toRoute<DiaryWrite>()
 
@@ -70,8 +72,12 @@ internal class DiaryWriteViewModel @Inject constructor(
         MutableStateFlow(DiaryFeedbackState.Default)
     val feedbackState: StateFlow<DiaryFeedbackState> = _feedbackState.asStateFlow()
 
+    private val _hasDiaryTemp = MutableStateFlow(false)
+    val hasDiaryTemp: StateFlow<Boolean> = _hasDiaryTemp.asStateFlow()
+
     init {
         getTopic(route.selectedDate)
+        loadDiaryTemp()
     }
 
     fun updateDiaryText(newText: String) {
@@ -94,10 +100,34 @@ internal class DiaryWriteViewModel @Inject constructor(
         }
     }
 
-    fun tempSaveDiary() {
+    fun saveDiaryTemp() {
         viewModelScope.launch {
+            diaryTempManager.saveDiary(
+                selectedDate = uiState.value.selectedDate,
+                text = uiState.value.diaryText,
+                imageUri = uiState.value.diaryImageUri
+            )
+            _hasDiaryTemp.value = true
+
             showToast("임시저장이 완료되었어요.")
             _sideEffect.emit(DiaryWriteSideEffect.NavigateToHome)
+        }
+    }
+
+    fun loadDiaryTemp() {
+        viewModelScope.launch {
+            val selectedDate = uiState.value.selectedDate
+            val hasDiaryTemp = diaryTempManager.hasDiaryTemp(selectedDate)
+            _hasDiaryTemp.value = hasDiaryTemp
+
+            if (hasDiaryTemp) {
+                _uiState.update {
+                    it.copy(
+                        diaryText = diaryTempManager.getDiaryText(selectedDate) ?: "",
+                        diaryImageUri = diaryTempManager.getDiaryImageUri(selectedDate)?.let(Uri::parse)
+                    )
+                }
+            }
         }
     }
 
@@ -112,6 +142,7 @@ internal class DiaryWriteViewModel @Inject constructor(
             )
 
             result.onSuccess { response ->
+                diaryTempManager.clear(uiState.value.selectedDate)
                 _feedbackState.update { DiaryFeedbackState.Complete(response.diaryId) }
             }.onLogFailure { throwable ->
                 _feedbackState.update { DiaryFeedbackState.Failure(throwable) }

@@ -17,6 +17,7 @@ import com.hilingual.buildlogic.setNamespace
 
 plugins {
     alias(libs.plugins.hilingual.android.presentation)
+    alias(libs.plugins.hilingual.hilt)
 }
 
 android {
@@ -31,4 +32,8 @@ dependencies {
     // ML Kit
     implementation(libs.mlkit.text.recognition)
     implementation(libs.kotlinx.coroutines.play.services)
+
+    // DataStore
+    implementation(projects.core.localstorage)
+    implementation(libs.androidx.datastore.preferences)
 }
