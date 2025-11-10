@@ -17,6 +17,8 @@ package com.hilingual.core.localstorage.di
 
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
+import com.hilingual.core.localstorage.DiaryTempManager
+import com.hilingual.core.localstorage.DiaryTempManagerImpl
 import com.hilingual.core.localstorage.TokenManager
 import com.hilingual.core.localstorage.TokenManagerImpl
 import com.hilingual.core.localstorage.UserInfoManager
@@ -35,6 +37,7 @@ object LocalStorageModule {
 
     private val Context.tokenDataStore by preferencesDataStore(name = DataStoreConstant.HILINGUAL_PREFS)
     private val Context.userInfoDataStore by preferencesDataStore(name = DataStoreConstant.HILINGUAL_USER_INFO_PREFS)
+    private val Context.diaryTempDataStore by preferencesDataStore(name = DataStoreConstant.HILINGUAL_DIARY_TEMP_PREFS)
 
     @Provides
     @Singleton
@@ -45,4 +48,9 @@ object LocalStorageModule {
     @Singleton
     fun provideUserInfoManager(@ApplicationContext context: Context): UserInfoManager =
         UserInfoManagerImpl(context.userInfoDataStore)
+
+    @Provides
+    @Singleton
+    fun provideDiaryTempManager(@ApplicationContext context: Context): DiaryTempManager =
+        DiaryTempManagerImpl(context.diaryTempDataStore)
 }
