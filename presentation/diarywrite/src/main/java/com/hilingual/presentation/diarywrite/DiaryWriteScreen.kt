@@ -67,13 +67,14 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.trigger.LocalToastTrigger
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualLongTextField
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
-import com.hilingual.presentation.diarywrite.component.DiaryWriteCancelDialog
+import com.hilingual.presentation.diarywrite.component.DiaryWriteCancelBottomSheet
 import com.hilingual.presentation.diarywrite.component.FeedbackCompleteContent
 import com.hilingual.presentation.diarywrite.component.FeedbackFailureContent
 import com.hilingual.presentation.diarywrite.component.FeedbackMedia
@@ -105,6 +106,7 @@ internal fun DiaryWriteRoute(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
+    val toastTrigger = LocalToastTrigger.current
     val feedbackState by viewModel.feedbackState.collectAsStateWithLifecycle()
     val tracker = LocalTracker.current
 
@@ -142,7 +144,9 @@ internal fun DiaryWriteRoute(
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
+            is DiaryWriteSideEffect.NavigateToHome -> navigateToHome()
             is DiaryWriteSideEffect.ShowErrorDialog -> dialogTrigger.show(navigateUp)
+            is DiaryWriteSideEffect.ShowToast -> toastTrigger(sideEffect.message)
         }
     }
 
@@ -155,6 +159,7 @@ internal fun DiaryWriteRoute(
             DiaryWriteScreen(
                 paddingValues = paddingValues,
                 onBackClicked = navigateUp,
+                onTempSaveClicked = viewModel::tempSaveDiary,
                 selectedDate = uiState.selectedDate,
                 topicKo = uiState.topicKo,
                 topicEn = uiState.topicEn,
@@ -242,6 +247,7 @@ internal fun DiaryWriteRoute(
 private fun DiaryWriteScreen(
     paddingValues: PaddingValues,
     onBackClicked: () -> Unit,
+    onTempSaveClicked: () -> Unit,
     selectedDate: LocalDate,
     topicKo: String,
     topicEn: String,
@@ -257,8 +263,8 @@ private fun DiaryWriteScreen(
     val verticalScrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
 
-    var isDialogVisible by remember { mutableStateOf(false) }
-    var isBottomSheetVisible by remember { mutableStateOf(false) }
+    var isCancelBottomSheetVisible by remember { mutableStateOf(false) }
+    var isImageBottomSheetVisible by remember { mutableStateOf(false) }
     var isTextFieldFocused by remember { mutableStateOf(false) }
 
     var dropdownClickCount by remember { mutableIntStateOf(0) }
@@ -269,44 +275,27 @@ private fun DiaryWriteScreen(
             diaryText = diaryText,
             diaryImageUri = diaryImageUri,
             onBackClicked = onBackClicked,
-            setDialogVisible = { isDialogVisible = it }
+            setBottomSheetVisible = { isCancelBottomSheetVisible = it }
         )
     }
 
-    if (isDialogVisible) {
-        DiaryWriteCancelDialog(
-            onDismiss = { isDialogVisible = false },
-            onNoClick = {
-                tracker.logEvent(
-                    trigger = TriggerType.CLICK,
-                    page = WRITE_DIARY,
-                    event = "modal",
-                    properties = mapOf("modal_action" to "continue_writing")
-                )
-                isDialogVisible = false
-            },
-            onCancelClick = {
-                tracker.logEvent(
-                    trigger = TriggerType.CLICK,
-                    page = WRITE_DIARY,
-                    event = "modal",
-                    properties = mapOf("modal_action" to "confirm_exit")
-                )
-                onBackClicked()
-            }
-        )
-    }
+    DiaryWriteCancelBottomSheet(
+        isVisible = isCancelBottomSheetVisible,
+        onDismiss = { isCancelBottomSheetVisible = false },
+        onCancelClick = onBackClicked,
+        onTempSaveClick = onTempSaveClicked
+    )
 
     ImageSelectBottomSheet(
-        isVisible = isBottomSheetVisible,
-        onDismiss = { isBottomSheetVisible = false },
+        isVisible = isImageBottomSheetVisible,
+        onDismiss = { isImageBottomSheetVisible = false },
         onCameraSelected = {
             onBottomSheetCameraClicked()
-            isBottomSheetVisible = false
+            isImageBottomSheetVisible = false
         },
         onGallerySelected = {
             onBottomSheetGalleryClicked()
-            isBottomSheetVisible = false
+            isImageBottomSheetVisible = false
         }
     )
 
@@ -334,7 +323,7 @@ private fun DiaryWriteScreen(
                         diaryText = diaryText,
                         diaryImageUri = diaryImageUri,
                         onBackClicked = onBackClicked,
-                        setDialogVisible = { isDialogVisible = it }
+                        setBottomSheetVisible = { isCancelBottomSheetVisible = it }
                     )
                 }
             )
@@ -365,7 +354,7 @@ private fun DiaryWriteScreen(
                                 page = WRITE_DIARY,
                                 event = "scan_text"
                             )
-                            isBottomSheetVisible = true
+                            isImageBottomSheetVisible = true
                         }
                     )
                 }
@@ -473,10 +462,10 @@ private fun cancelDiaryWrite(
     diaryText: String,
     diaryImageUri: Uri?,
     onBackClicked: () -> Unit,
-    setDialogVisible: (Boolean) -> Unit
+    setBottomSheetVisible: (Boolean) -> Unit
 ) {
     if (diaryText.isNotBlank() || diaryImageUri != null) {
-        setDialogVisible(true)
+        setBottomSheetVisible(true)
     } else {
         onBackClicked()
     }
@@ -522,6 +511,7 @@ private fun DiaryWriteScreenPreview() {
         DiaryWriteScreen(
             paddingValues = PaddingValues(0.dp),
             onBackClicked = {},
+            onTempSaveClicked = {},
             selectedDate = LocalDate.now(),
             topicKo = "오늘 당신을 놀라게 한 일이 있었나요?",
             topicEn = "What surprised you today?",

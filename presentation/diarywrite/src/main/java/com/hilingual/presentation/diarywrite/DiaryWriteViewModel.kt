@@ -94,6 +94,13 @@ internal class DiaryWriteViewModel @Inject constructor(
         }
     }
 
+    fun tempSaveDiary() {
+        viewModelScope.launch {
+            showToast("임시저장이 완료되었어요.")
+            _sideEffect.emit(DiaryWriteSideEffect.NavigateToHome)
+        }
+    }
+
     fun postDiaryFeedbackCreate() {
         _feedbackState.value = DiaryFeedbackState.Loading
 
@@ -144,8 +151,14 @@ internal class DiaryWriteViewModel @Inject constructor(
     companion object {
         private const val MAX_DIARY_TEXT_LENGTH = 1000
     }
+
+    private suspend fun showToast(message: String) {
+        _sideEffect.emit(DiaryWriteSideEffect.ShowToast(message = message))
+    }
 }
 
 sealed interface DiaryWriteSideEffect {
+    data object NavigateToHome : DiaryWriteSideEffect
     data object ShowErrorDialog : DiaryWriteSideEffect
+    data class ShowToast(val message: String) : DiaryWriteSideEffect
 }
