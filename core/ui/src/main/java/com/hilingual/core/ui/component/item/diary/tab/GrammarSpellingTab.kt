@@ -109,8 +109,8 @@ fun GrammarSpellingTab(
             }
         } else {
             itemsIndexed(
-                feedbackList,
-                key = { _, feedback -> Pair(feedback.originalText, feedback.feedbackText) }
+                items = feedbackList,
+                key = { index, feedback -> "$index-${feedback.hashCode()}" }
             ) { index, content ->
                 with(content) {
                     FeedbackCard(

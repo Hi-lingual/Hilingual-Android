@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.common.analytics
+package com.hilingual.core.localstorage.model
 
-interface Tracker {
-    fun logEvent(trigger: TriggerType, page: Page, event: String)
-    fun logEvent(trigger: TriggerType, page: Page, event: String, properties: Map<String, Any>)
-}
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class UserPreferences(
+    val token: String? = null,
+    val refreshToken: String? = null
+)

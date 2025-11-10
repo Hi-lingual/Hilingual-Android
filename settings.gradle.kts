@@ -26,6 +26,7 @@ include(":app")
 
 // core
 include(":core:common")
+include(":core:crypto")
 include(":core:designsystem")
 include(":core:localstorage")
 include(":core:navigation")
