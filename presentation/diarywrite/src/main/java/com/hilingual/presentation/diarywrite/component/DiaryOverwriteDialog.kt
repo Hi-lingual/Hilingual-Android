@@ -9,7 +9,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 internal fun DiaryOverwriteDialog(
     onDismiss: () -> Unit,
     onNoClick: () -> Unit,
-    onCancelClick: () -> Unit
+    onOverwriteClick: () -> Unit
 ) {
     TwoButtonDialog(
         title = "이미 임시저장한 일기가 있어요.",
@@ -17,7 +17,7 @@ internal fun DiaryOverwriteDialog(
         cancelText = "아니요",
         confirmText = "덮어쓰기",
         onNegative = onNoClick,
-        onPositive = onCancelClick,
+        onPositive = onOverwriteClick,
         onDismiss = onDismiss
     )
 }
@@ -29,7 +29,7 @@ private fun DiaryOverwriteDialogPreview() {
         DiaryOverwriteDialog(
             onDismiss = {},
             onNoClick = {},
-            onCancelClick = {}
+            onOverwriteClick = {}
         )
     }
 }
