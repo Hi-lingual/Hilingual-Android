@@ -67,15 +67,13 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
-import com.hilingual.core.common.util.UiState
 import com.hilingual.core.common.trigger.LocalToastTrigger
+import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualLongTextField
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
-import com.hilingual.presentation.diarywrite.component.DiaryWriteCancelDialog
-import com.hilingual.presentation.diarywrite.component.DiaryFeedbackState
 import com.hilingual.presentation.diarywrite.component.DiaryOverwriteDialog
 import com.hilingual.presentation.diarywrite.component.DiaryWriteCancelBottomSheet
 import com.hilingual.presentation.diarywrite.component.FeedbackCompleteContent
@@ -112,7 +110,7 @@ internal fun DiaryWriteRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
     val toastTrigger = LocalToastTrigger.current
-    val feedbackState by viewModel.feedbackUiState.collectAsStateWithLifecycle()
+    val feedbackUiState by viewModel.feedbackUiState.collectAsStateWithLifecycle()
     val tracker = LocalTracker.current
 
     val hasDiaryTemp by viewModel.hasDiaryTemp.collectAsStateWithLifecycle()
