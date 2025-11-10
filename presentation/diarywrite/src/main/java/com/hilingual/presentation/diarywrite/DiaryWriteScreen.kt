@@ -300,13 +300,12 @@ private fun DiaryWriteScreen(
         }
     )
 
-    if (isOverwriteDialogVisible) {
-        DiaryOverwriteDialog(
-            onDismiss = { isOverwriteDialogVisible = false },
-            onNoClick = { isOverwriteDialogVisible = false },
-            onOverwriteClick = onTempSaveClicked
-        )
-    }
+    DiaryOverwriteDialog(
+        isVisible = isOverwriteDialogVisible,
+        onDismiss = { isOverwriteDialogVisible = false },
+        onNoClick = { isOverwriteDialogVisible = false },
+        onOverwriteClick = onTempSaveClicked
+    )
 
     ImageSelectBottomSheet(
         isVisible = isImageBottomSheetVisible,

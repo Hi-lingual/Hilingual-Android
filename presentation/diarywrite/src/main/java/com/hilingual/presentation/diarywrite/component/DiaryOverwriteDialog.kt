@@ -7,19 +7,22 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 internal fun DiaryOverwriteDialog(
+    isVisible: Boolean,
     onDismiss: () -> Unit,
     onNoClick: () -> Unit,
     onOverwriteClick: () -> Unit
 ) {
-    TwoButtonDialog(
-        title = "이미 임시저장한 일기가 있어요.",
-        description = "일자 당 하나의 일기만 임시저장할 수 있어요.\n임시저장한 일기에 덮어쓰시겠어요?",
-        cancelText = "아니요",
-        confirmText = "덮어쓰기",
-        onNegative = onNoClick,
-        onPositive = onOverwriteClick,
-        onDismiss = onDismiss
-    )
+    if (isVisible) {
+        TwoButtonDialog(
+            title = "이미 임시저장한 일기가 있어요.",
+            description = "일자 당 하나의 일기만 임시저장할 수 있어요.\n임시저장한 일기에 덮어쓰시겠어요?",
+            cancelText = "아니요",
+            confirmText = "덮어쓰기",
+            onNegative = onNoClick,
+            onPositive = onOverwriteClick,
+            onDismiss = onDismiss
+        )
+    }
 }
 
 @Preview
@@ -27,6 +30,7 @@ internal fun DiaryOverwriteDialog(
 private fun DiaryOverwriteDialogPreview() {
     HilingualTheme {
         DiaryOverwriteDialog(
+            isVisible = true,
             onDismiss = {},
             onNoClick = {},
             onOverwriteClick = {}
