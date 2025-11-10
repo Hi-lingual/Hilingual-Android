@@ -62,6 +62,7 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
+import com.hilingual.presentation.home.component.DiaryContinueDialog
 import com.hilingual.presentation.home.component.HomeHeader
 import com.hilingual.presentation.home.component.calendar.HilingualCalendar
 import com.hilingual.presentation.home.component.footer.DiaryDateInfo
@@ -92,6 +93,16 @@ internal fun HomeRoute(
     val snackbarTrigger = LocalSnackbarTrigger.current
     val tracker = LocalTracker.current
 
+    var isDiaryContinueDialogVisible by remember { mutableStateOf(false) }
+    val selectedDate = (uiState as? UiState.Success)?.data?.selectedDate
+    var hasDiaryTemp by remember { mutableStateOf(false) }
+
+    LaunchedEffect(selectedDate) {
+        if (selectedDate != null) {
+            hasDiaryTemp = viewModel.hasDiaryTemp(selectedDate)
+        }
+    }
+
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is HomeSideEffect.ShowErrorDialog -> dialogTrigger.show(sideEffect.onRetry)
@@ -114,6 +125,24 @@ internal fun HomeRoute(
         viewModel.loadInitialData()
         tracker.logEvent(trigger = TriggerType.VIEW, page = HOME, event = "page")
     }
+
+    DiaryContinueDialog(
+        isVisible = isDiaryContinueDialogVisible,
+        onDismiss = { isDiaryContinueDialogVisible = false },
+        onNewClick = {
+            if (selectedDate != null) {
+                viewModel.clearDiaryTemp(selectedDate)
+                navigateToDiaryWrite(selectedDate)
+            }
+            isDiaryContinueDialogVisible = false
+        },
+        onContinueClick = {
+            if (selectedDate != null) {
+                navigateToDiaryWrite(selectedDate)
+            }
+            isDiaryContinueDialogVisible = false
+        }
+    )
 
     when (val state = uiState) {
         is UiState.Loading -> {
@@ -145,7 +174,11 @@ internal fun HomeRoute(
                         event = "diary_write",
                         properties = mapOf("open_time" to System.currentTimeMillis())
                     )
-                    navigateToDiaryWrite(date)
+                    if (hasDiaryTemp) {
+                        isDiaryContinueDialogVisible = true
+                    } else {
+                        navigateToDiaryWrite(date)
+                    }
                 },
                 onDiaryPreviewClick = { diaryId ->
                     tracker.logEvent(

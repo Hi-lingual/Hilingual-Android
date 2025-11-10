@@ -20,6 +20,7 @@ import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.localstorage.DiaryTempManager
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.user.repository.UserRepository
@@ -49,7 +50,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val calendarRepository: CalendarRepository,
-    private val diaryRepository: DiaryRepository
+    private val diaryRepository: DiaryRepository,
+    private val diaryTempManager: DiaryTempManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Loading)
@@ -68,7 +70,8 @@ class HomeViewModel @Inject constructor(
             val today = LocalDate.now()
 
             val userInfoDeferred = async { userRepository.getUserInfo() }
-            val calendarDeferred = async { calendarRepository.getCalendar(today.year, today.monthValue) }
+            val calendarDeferred =
+                async { calendarRepository.getCalendar(today.year, today.monthValue) }
 
             val userInfoResult = userInfoDeferred.await()
             val calendarResult = calendarDeferred.await()
@@ -137,6 +140,16 @@ class HomeViewModel @Inject constructor(
                 .onLogFailure {
                     emitErrorDialogSideEffect { onMonthChanged(yearMonth) }
                 }
+        }
+    }
+
+    suspend fun hasDiaryTemp(date: LocalDate): Boolean {
+        return diaryTempManager.hasDiaryTemp(date)
+    }
+
+    fun clearDiaryTemp(date: LocalDate) {
+        viewModelScope.launch {
+            diaryTempManager.clear(date)
         }
     }
 

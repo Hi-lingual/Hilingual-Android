@@ -17,6 +17,7 @@ import com.hilingual.buildlogic.setNamespace
 
 plugins {
     alias(libs.plugins.hilingual.android.presentation)
+    alias(libs.plugins.hilingual.hilt)
 }
 
 android {
@@ -27,4 +28,8 @@ dependencies {
     implementation(projects.data.user)
     implementation(projects.data.diary)
     implementation(projects.data.calendar)
+
+    // DataStore
+    implementation(projects.core.localstorage)
+    implementation(libs.androidx.datastore.preferences)
 }
