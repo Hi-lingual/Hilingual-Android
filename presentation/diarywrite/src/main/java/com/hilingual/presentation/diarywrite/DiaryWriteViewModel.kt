@@ -104,10 +104,13 @@ internal class DiaryWriteViewModel @Inject constructor(
                 imageUri = uiState.value.diaryImageUri
             )
             _uiState.update { it.copy(hasDiaryTemp = true) }
-
-            showToast("임시저장이 완료되었어요.")
-            _sideEffect.emit(DiaryWriteSideEffect.NavigateToHome)
+            onDiaryTempSaved()
         }
+    }
+
+    private suspend fun onDiaryTempSaved() {
+        showToast("임시저장이 완료되었어요.")
+        _sideEffect.emit(DiaryWriteSideEffect.NavigateToHome)
     }
 
     fun loadDiaryTemp() {
