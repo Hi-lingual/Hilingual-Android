@@ -113,8 +113,6 @@ internal fun DiaryWriteRoute(
     val feedbackUiState by viewModel.feedbackUiState.collectAsStateWithLifecycle()
     val tracker = LocalTracker.current
 
-    val hasDiaryTemp by viewModel.hasDiaryTemp.collectAsStateWithLifecycle()
-
     var diaryTextImageUri by remember { mutableStateOf<Uri?>(null) }
 
     var diaryTextImageFile by remember { mutableStateOf<File?>(null) }
@@ -163,7 +161,7 @@ internal fun DiaryWriteRoute(
         is UiState.Empty -> {
             DiaryWriteScreen(
                 paddingValues = paddingValues,
-                hasDiaryTemp = hasDiaryTemp,
+                hasDiaryTemp = uiState.hasDiaryTemp,
                 onBackClicked = navigateUp,
                 onTempSaveClicked = viewModel::saveDiaryTemp,
                 selectedDate = uiState.selectedDate,

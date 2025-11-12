@@ -71,9 +71,6 @@ internal class DiaryWriteViewModel @Inject constructor(
     private var _feedbackUiState = MutableStateFlow<UiState<Long>>(UiState.Empty)
     val feedbackUiState: StateFlow<UiState<Long>> = _feedbackUiState.asStateFlow()
 
-    private val _hasDiaryTemp = MutableStateFlow(false)
-    val hasDiaryTemp: StateFlow<Boolean> = _hasDiaryTemp.asStateFlow()
-
     init {
         getTopic(route.selectedDate)
         loadDiaryTemp()
@@ -106,7 +103,7 @@ internal class DiaryWriteViewModel @Inject constructor(
                 text = uiState.value.diaryText,
                 imageUri = uiState.value.diaryImageUri
             )
-            _hasDiaryTemp.value = true
+            _uiState.update { it.copy(hasDiaryTemp = true) }
 
             showToast("임시저장이 완료되었어요.")
             _sideEffect.emit(DiaryWriteSideEffect.NavigateToHome)
@@ -117,16 +114,19 @@ internal class DiaryWriteViewModel @Inject constructor(
         viewModelScope.launch {
             val selectedDate = uiState.value.selectedDate
             val hasDiaryTemp = diaryTempRepository.hasDiaryTemp(selectedDate)
-            _hasDiaryTemp.value = hasDiaryTemp
 
-            if (hasDiaryTemp) {
-                _uiState.update {
-                    it.copy(
-                        diaryText = diaryTempRepository.getDiaryText(selectedDate) ?: "",
-                        diaryImageUri = diaryTempRepository.getDiaryImageUri(selectedDate)
-                            ?.let(Uri::parse)
-                    )
-                }
+            if (!hasDiaryTemp) {
+                _uiState.update { it.copy(hasDiaryTemp = false) }
+                return@launch
+            }
+
+            _uiState.update {
+                it.copy(
+                    hasDiaryTemp = true,
+                    diaryText = diaryTempRepository.getDiaryText(selectedDate) ?: "",
+                    diaryImageUri = diaryTempRepository.getDiaryImageUri(selectedDate)
+                        ?.let(Uri::parse)
+                )
             }
         }
     }
