@@ -26,8 +26,8 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
-import com.hilingual.core.localstorage.DiaryTempManager
 import com.hilingual.data.calendar.repository.CalendarRepository
+import com.hilingual.data.diary.localstorage.DiaryTempRepository
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -54,7 +54,7 @@ internal class DiaryWriteViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val calendarRepository: CalendarRepository,
     private val diaryRepository: DiaryRepository,
-    private val diaryTempManager: DiaryTempManager
+    private val diaryTempRepository: DiaryTempRepository
 ) : ViewModel() {
     private val route: DiaryWrite = savedStateHandle.toRoute<DiaryWrite>()
 
@@ -101,7 +101,7 @@ internal class DiaryWriteViewModel @Inject constructor(
 
     fun saveDiaryTemp() {
         viewModelScope.launch {
-            diaryTempManager.saveDiary(
+            diaryTempRepository.saveDiary(
                 selectedDate = uiState.value.selectedDate,
                 text = uiState.value.diaryText,
                 imageUri = uiState.value.diaryImageUri
@@ -116,14 +116,14 @@ internal class DiaryWriteViewModel @Inject constructor(
     fun loadDiaryTemp() {
         viewModelScope.launch {
             val selectedDate = uiState.value.selectedDate
-            val hasDiaryTemp = diaryTempManager.hasDiaryTemp(selectedDate)
+            val hasDiaryTemp = diaryTempRepository.hasDiaryTemp(selectedDate)
             _hasDiaryTemp.value = hasDiaryTemp
 
             if (hasDiaryTemp) {
                 _uiState.update {
                     it.copy(
-                        diaryText = diaryTempManager.getDiaryText(selectedDate) ?: "",
-                        diaryImageUri = diaryTempManager.getDiaryImageUri(selectedDate)
+                        diaryText = diaryTempRepository.getDiaryText(selectedDate) ?: "",
+                        diaryImageUri = diaryTempRepository.getDiaryImageUri(selectedDate)
                             ?.let(Uri::parse)
                     )
                 }
@@ -144,7 +144,7 @@ internal class DiaryWriteViewModel @Inject constructor(
             )
 
             result.onSuccess { response ->
-                diaryTempManager.clear(uiState.value.selectedDate)
+                diaryTempRepository.clear(uiState.value.selectedDate)
                 _feedbackUiState.update { UiState.Success(response.diaryId) }
             }.onLogFailure { throwable ->
                 _feedbackUiState.update { UiState.Failure }
