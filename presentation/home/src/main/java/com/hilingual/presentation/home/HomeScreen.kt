@@ -93,16 +93,6 @@ internal fun HomeRoute(
     val snackbarTrigger = LocalSnackbarTrigger.current
     val tracker = LocalTracker.current
 
-    var isDiaryContinueDialogVisible by remember { mutableStateOf(false) }
-    val selectedDate = (uiState as? UiState.Success)?.data?.selectedDate
-    var hasDiaryTemp by remember { mutableStateOf(false) }
-
-    LaunchedEffect(selectedDate) {
-        if (selectedDate != null) {
-            hasDiaryTemp = viewModel.hasDiaryTemp(selectedDate)
-        }
-    }
-
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is HomeSideEffect.ShowErrorDialog -> dialogTrigger.show(sideEffect.onRetry)
@@ -125,24 +115,6 @@ internal fun HomeRoute(
         viewModel.loadInitialData()
         tracker.logEvent(trigger = TriggerType.VIEW, page = HOME, event = "page")
     }
-
-    DiaryContinueDialog(
-        isVisible = isDiaryContinueDialogVisible,
-        onDismiss = { isDiaryContinueDialogVisible = false },
-        onNewClick = {
-            if (selectedDate != null) {
-                viewModel.clearDiaryTemp(selectedDate)
-                navigateToDiaryWrite(selectedDate)
-            }
-            isDiaryContinueDialogVisible = false
-        },
-        onContinueClick = {
-            if (selectedDate != null) {
-                navigateToDiaryWrite(selectedDate)
-            }
-            isDiaryContinueDialogVisible = false
-        }
-    )
 
     when (val state = uiState) {
         is UiState.Loading -> {
@@ -174,12 +146,9 @@ internal fun HomeRoute(
                         event = "diary_write",
                         properties = mapOf("open_time" to System.currentTimeMillis())
                     )
-                    if (hasDiaryTemp) {
-                        isDiaryContinueDialogVisible = true
-                    } else {
-                        navigateToDiaryWrite(date)
-                    }
+                    navigateToDiaryWrite(date)
                 },
+                onClearDiaryTemp = viewModel::onClearDiaryTemp,
                 onDiaryPreviewClick = { diaryId ->
                     tracker.logEvent(
                         trigger = TriggerType.VIEW,
@@ -212,6 +181,7 @@ private fun HomeScreen(
     onDateSelected: (LocalDate) -> Unit,
     onMonthChanged: (YearMonth) -> Unit,
     onWriteDiaryClick: (LocalDate) -> Unit,
+    onClearDiaryTemp: (LocalDate) -> Unit,
     onDiaryPreviewClick: (diaryId: Long) -> Unit,
     onDeleteClick: (diaryId: Long) -> Unit,
     onPublishClick: (diaryId: Long) -> Unit,
@@ -221,6 +191,21 @@ private fun HomeScreen(
     val date = uiState.selectedDate
     val verticalScrollState = rememberScrollState()
     var isExpanded by remember { mutableStateOf(false) }
+    var isDiaryContinueDialogVisible by remember { mutableStateOf(false) }
+
+    DiaryContinueDialog(
+        isVisible = isDiaryContinueDialogVisible,
+        onDismiss = { isDiaryContinueDialogVisible = false },
+        onNewClick = {
+            onClearDiaryTemp(date)
+            onWriteDiaryClick(date)
+            isDiaryContinueDialogVisible = false
+        },
+        onContinueClick = {
+            onWriteDiaryClick(date)
+            isDiaryContinueDialogVisible = false
+        }
+    )
 
     Column(
         modifier = Modifier
@@ -349,7 +334,13 @@ private fun HomeScreen(
                         }
                         Spacer(Modifier.height(12.dp))
                         WriteDiaryButton(
-                            onClick = { onWriteDiaryClick(date) },
+                            onClick = {
+                                if (uiState.hasDiaryTemp) {
+                                    isDiaryContinueDialogVisible = true
+                                } else {
+                                    onWriteDiaryClick(date)
+                                }
+                            },
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -374,6 +365,7 @@ private fun HomeScreenPreview() {
             onDateSelected = {},
             onMonthChanged = {},
             onWriteDiaryClick = {},
+            onClearDiaryTemp = {},
             onDiaryPreviewClick = {},
             onDeleteClick = {},
             onPublishClick = {},
