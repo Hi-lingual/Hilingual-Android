@@ -21,6 +21,7 @@ import androidx.datastore.dataStore
 import androidx.datastore.preferences.preferencesDataStore
 import com.hilingual.core.localstorage.DiaryTempManager
 import com.hilingual.core.localstorage.DiaryTempManagerImpl
+import com.hilingual.core.localstorage.InternalImageStorage
 import com.hilingual.core.localstorage.TokenManager
 import com.hilingual.core.localstorage.TokenManagerImpl
 import com.hilingual.core.localstorage.UserInfoManager
@@ -59,5 +60,10 @@ object LocalStorageModule {
     @Provides
     @Singleton
     fun provideDiaryTempManager(@ApplicationContext context: Context): DiaryTempManager =
-        DiaryTempManagerImpl(dataStore = context.diaryTempDataStore, appContext = context)
+        DiaryTempManagerImpl(
+            dataStore = context.diaryTempDataStore,
+            imageStorage = InternalImageStorage(
+                context
+            )
+        )
 }

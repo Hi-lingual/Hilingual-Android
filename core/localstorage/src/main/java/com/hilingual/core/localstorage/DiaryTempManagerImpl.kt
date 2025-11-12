@@ -4,18 +4,25 @@ import android.content.Context
 import android.net.Uri
 import androidx.core.net.toUri
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.IOException
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.time.LocalDate
+import java.util.UUID
+import javax.inject.Inject
 
-class DiaryTempManagerImpl(
+class DiaryTempManagerImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>,
-    private val appContext: Context
+    private val imageStorage: InternalImageStorage
 ) : DiaryTempManager {
 
     private fun keyHasDiaryTemp(date: LocalDate) = booleanPreferencesKey("diary_${date}_has_temp")
@@ -33,29 +40,15 @@ class DiaryTempManagerImpl(
     ) {
         val hasDiaryContent = text.isNotBlank() || imageUri != null
 
+        if (!hasDiaryContent) {
+            clear(selectedDate)
+            return
+        }
+
         dataStore.edit { preferences ->
-            preferences[keyHasDiaryTemp(selectedDate)] = hasDiaryContent
-
-            if (hasDiaryContent) {
-                preferences[keyDiaryText(selectedDate)] = text
-
-                val oldImageUri = preferences[keyDiaryImageUri(selectedDate)]
-                if (oldImageUri != null && imageUri != null) {
-                    if (imageUri.scheme != "file") {
-                        deleteImageFromInternal(oldImageUri)
-                    }
-                }
-
-                if (imageUri != null) {
-                    val newImageUri = saveImageToInternal(imageUri)
-                    preferences[keyDiaryImageUri(selectedDate)] = newImageUri.toString()
-                } else {
-                    preferences.remove(keyDiaryImageUri(selectedDate))
-                }
-            } else {
-                preferences.remove(keyDiaryText(selectedDate))
-                preferences.remove(keyDiaryImageUri(selectedDate))
-            }
+            preferences[keyHasDiaryTemp(selectedDate)] = true
+            preferences[keyDiaryText(selectedDate)] = text
+            handleImageUpdate(preferences, selectedDate, imageUri)
         }
     }
 
@@ -68,36 +61,65 @@ class DiaryTempManagerImpl(
     }
 
     override suspend fun clear(selectedDate: LocalDate) {
-        val savedImageUri = dataStore.data.first()[keyDiaryImageUri(selectedDate)]
-        if (savedImageUri != null) {
-            deleteImageFromInternal(savedImageUri)
-        }
-
         dataStore.edit { preferences ->
             preferences[keyHasDiaryTemp(selectedDate)] = false
             preferences.remove(keyDiaryText(selectedDate))
             preferences.remove(keyDiaryImageUri(selectedDate))
         }
+
+        dataStore.data.first()[keyDiaryImageUri(selectedDate)]?.let {
+            imageStorage.deleteImageFromInternal(it)
+        }
     }
 
-    private fun saveImageToInternal(imageUri: Uri): Uri {
-        val directory = File(appContext.filesDir, "diary_images").apply { mkdirs() }
-        val destFile = File(directory, "img_${System.currentTimeMillis()}.jpg")
+    private suspend fun handleImageUpdate(
+        preferences: MutablePreferences,
+        date: LocalDate,
+        newUri: Uri?
+    ) {
+        val oldImageUriString = preferences[keyDiaryImageUri(date)]
 
-        appContext.contentResolver.openInputStream(imageUri).use { input ->
-            FileOutputStream(destFile).use { output ->
-                input?.copyTo(output)
-            }
+        if (newUri == null) {
+            imageStorage.deleteImageFromInternal(oldImageUriString)
+            preferences.remove(keyDiaryImageUri(date))
+            return
         }
 
-        return Uri.fromFile(destFile)
+        if (newUri.scheme != "file") {
+            val savedUri = imageStorage.saveImageToInternal(newUri)
+            preferences[keyDiaryImageUri(date)] =
+                savedUri.toString()
+            if (oldImageUriString != null && oldImageUriString != savedUri.toString()) {
+                imageStorage.deleteImageFromInternal(oldImageUriString)
+            }
+        }
+    }
+}
+
+class InternalImageStorage @Inject constructor(@ApplicationContext private val context: Context) {
+    suspend fun saveImageToInternal(imageUri: Uri): Uri? = withContext(Dispatchers.IO) {
+        val directory = File(context.filesDir, "diary_images").apply { mkdirs() }
+        val destFile = File(directory, "img_${UUID.randomUUID()}.jpg")
+
+        try {
+            context.contentResolver.openInputStream(imageUri).use { input ->
+                FileOutputStream(destFile).use { output ->
+                    input?.copyTo(output)
+                }
+            } ?: throw IOException()
+
+            Uri.fromFile(destFile)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            if (destFile.exists()) destFile.delete()
+            null
+        }
     }
 
-    private fun deleteImageFromInternal(imageUriString: String?) {
-        if (imageUriString == null) return
+    suspend fun deleteImageFromInternal(imageUriString: String?) = withContext(Dispatchers.IO) {
+        if (imageUriString == null) return@withContext
 
-        val fileUri = imageUriString.toUri()
-        val path = fileUri.path ?: return
+        val path = imageUriString.toUri().path ?: return@withContext
 
         val file = File(path)
         if (file.exists()) {
