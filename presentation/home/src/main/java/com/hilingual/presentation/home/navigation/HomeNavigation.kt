@@ -40,7 +40,7 @@ fun NavController.navigateToHome(
 fun NavGraphBuilder.homeNavGraph(
     paddingValues: PaddingValues,
     navigateToDiaryFeedback: (diaryId: Long) -> Unit,
-    navigateToDiaryWrite: (selectedDate: LocalDate) -> Unit,
+    navigateToDiaryWrite: (selectedDate: LocalDate, loadDiaryTemp: Boolean) -> Unit,
     navigateToNotification: () -> Unit,
     navigateToFeedProfile: (userId: Long) -> Unit,
     navigateToFeed: () -> Unit

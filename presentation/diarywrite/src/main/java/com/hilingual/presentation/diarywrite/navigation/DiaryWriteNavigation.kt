@@ -27,15 +27,17 @@ import java.time.LocalDate
 
 @Serializable
 data class DiaryWrite(
-    val selectedDate: String
+    val selectedDate: String,
+    val loadDiaryTemp: Boolean = true
 ) : Route
 
 fun NavController.navigateToDiaryWrite(
     selectedDate: LocalDate,
+    loadDiaryTemp: Boolean = true,
     navOptions: NavOptions? = null
 ) {
     navigate(
-        route = DiaryWrite(selectedDate.toString()),
+        route = DiaryWrite(selectedDate = selectedDate.toString(), loadDiaryTemp = loadDiaryTemp),
         navOptions = navOptions
     )
 }

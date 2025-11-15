@@ -73,7 +73,10 @@ internal class DiaryWriteViewModel @Inject constructor(
 
     init {
         getTopic(route.selectedDate)
-        loadDiaryTemp()
+
+        if (route.loadDiaryTemp) {
+            loadDiaryTemp()
+        }
     }
 
     fun updateDiaryText(newText: String) {

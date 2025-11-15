@@ -143,15 +143,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onClearDiaryTemp(date: LocalDate) {
-        viewModelScope.launch {
-            diaryTempRepository.clear(date)
-            _uiState.updateSuccess {
-                it.copy(hasDiaryTemp = false)
-            }
-        }
-    }
-
     fun publishDiary(diaryId: Long) {
         val currentState = uiState.value
         if (currentState !is UiState.Success) return
