@@ -99,19 +99,19 @@ internal class DiaryWriteViewModel @Inject constructor(
         }
     }
 
-    fun saveDiaryTemp() {
+    fun handleDiaryTempSavingFlow() {
         viewModelScope.launch {
             diaryTempRepository.saveDiary(
                 selectedDate = uiState.value.selectedDate,
                 text = uiState.value.diaryText,
                 imageUri = uiState.value.diaryImageUri
             )
-            _uiState.update { it.copy(hasDiaryTemp = true) }
-            onDiaryTempSaved()
+            _uiState.update { it.copy(isDiaryTempExist = true) }
+            handleDiaryTempSaved()
         }
     }
 
-    private suspend fun onDiaryTempSaved() {
+    private suspend fun handleDiaryTempSaved() {
         showToast("임시저장이 완료되었어요.")
         _sideEffect.emit(DiaryWriteSideEffect.NavigateToHome)
     }
@@ -119,16 +119,16 @@ internal class DiaryWriteViewModel @Inject constructor(
     fun loadDiaryTemp() {
         viewModelScope.launch {
             val selectedDate = uiState.value.selectedDate
-            val hasDiaryTemp = diaryTempRepository.hasDiaryTemp(selectedDate)
+            val isDiaryTempExist = diaryTempRepository.isDiaryTempExist(selectedDate)
 
-            if (!hasDiaryTemp) {
-                _uiState.update { it.copy(hasDiaryTemp = false) }
+            if (!isDiaryTempExist) {
+                _uiState.update { it.copy(isDiaryTempExist = false) }
                 return@launch
             }
 
             _uiState.update {
                 it.copy(
-                    hasDiaryTemp = true,
+                    isDiaryTempExist = true,
                     diaryText = diaryTempRepository.getDiaryText(selectedDate) ?: "",
                     diaryImageUri = diaryTempRepository.getDiaryImageUri(selectedDate)
                         ?.let(Uri::parse)
@@ -150,7 +150,7 @@ internal class DiaryWriteViewModel @Inject constructor(
             )
 
             result.onSuccess { response ->
-                diaryTempRepository.clear(uiState.value.selectedDate)
+                diaryTempRepository.clearDiaryTemp(uiState.value.selectedDate)
                 _feedbackUiState.update { UiState.Success(response.diaryId) }
             }.onLogFailure { throwable ->
                 _feedbackUiState.update { UiState.Failure }

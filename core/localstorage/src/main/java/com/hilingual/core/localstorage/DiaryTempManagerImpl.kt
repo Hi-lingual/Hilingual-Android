@@ -25,12 +25,12 @@ class DiaryTempManagerImpl @Inject constructor(
     private val imageStorage: InternalImageStorage
 ) : DiaryTempManager {
 
-    private fun keyHasDiaryTemp(date: LocalDate) = booleanPreferencesKey("diary_${date}_has_temp")
+    private fun keyIsDiaryTempExist(date: LocalDate) = booleanPreferencesKey("diary_${date}_has_temp")
     private fun keyDiaryText(date: LocalDate) = stringPreferencesKey("diary_${date}_text")
     private fun keyDiaryImageUri(date: LocalDate) = stringPreferencesKey("diary_${date}_image_uri")
 
-    override suspend fun hasDiaryTemp(selectedDate: LocalDate): Boolean {
-        return dataStore.data.first()[keyHasDiaryTemp(selectedDate)] ?: false
+    override suspend fun isDiaryTempExist(selectedDate: LocalDate): Boolean {
+        return dataStore.data.first()[keyIsDiaryTempExist(selectedDate)] ?: false
     }
 
     override suspend fun saveDiary(
@@ -38,15 +38,15 @@ class DiaryTempManagerImpl @Inject constructor(
         text: String,
         imageUri: Uri?
     ) {
-        val hasDiaryContent = text.isNotBlank() || imageUri != null
+        val isDiaryContentExist = text.isNotBlank() || imageUri != null
 
-        if (!hasDiaryContent) {
-            clear(selectedDate)
+        if (!isDiaryContentExist) {
+            clearDiaryTemp(selectedDate)
             return
         }
 
         dataStore.edit { preferences ->
-            preferences[keyHasDiaryTemp(selectedDate)] = true
+            preferences[keyIsDiaryTempExist(selectedDate)] = true
             preferences[keyDiaryText(selectedDate)] = text
             handleImageUpdate(preferences, selectedDate, imageUri)
         }
@@ -60,9 +60,9 @@ class DiaryTempManagerImpl @Inject constructor(
         return dataStore.data.first()[keyDiaryImageUri(selectedDate)]
     }
 
-    override suspend fun clear(selectedDate: LocalDate) {
+    override suspend fun clearDiaryTemp(selectedDate: LocalDate) {
         dataStore.edit { preferences ->
-            preferences[keyHasDiaryTemp(selectedDate)] = false
+            preferences[keyIsDiaryTempExist(selectedDate)] = false
             preferences.remove(keyDiaryText(selectedDate))
             preferences.remove(keyDiaryImageUri(selectedDate))
         }

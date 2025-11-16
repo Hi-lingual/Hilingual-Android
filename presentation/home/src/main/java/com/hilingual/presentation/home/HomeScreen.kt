@@ -332,7 +332,7 @@ private fun HomeScreen(
                         Spacer(Modifier.height(12.dp))
                         WriteDiaryButton(
                             onClick = {
-                                if (uiState.hasDiaryTemp) {
+                                if (uiState.isDiaryTempExist) {
                                     isDiaryContinueDialogVisible = true
                                 } else {
                                     onWriteDiaryClick(date, false)

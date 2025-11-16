@@ -161,9 +161,9 @@ internal fun DiaryWriteRoute(
         is UiState.Empty -> {
             DiaryWriteScreen(
                 paddingValues = paddingValues,
-                hasDiaryTemp = uiState.hasDiaryTemp,
+                isDiaryTempExist = uiState.isDiaryTempExist,
                 onBackClicked = navigateUp,
-                onTempSaveClicked = viewModel::saveDiaryTemp,
+                onTempSaveClick = viewModel::handleDiaryTempSavingFlow,
                 selectedDate = uiState.selectedDate,
                 topicKo = uiState.topicKo,
                 topicEn = uiState.topicEn,
@@ -250,9 +250,9 @@ internal fun DiaryWriteRoute(
 @Composable
 private fun DiaryWriteScreen(
     paddingValues: PaddingValues,
-    hasDiaryTemp: Boolean,
+    isDiaryTempExist: Boolean,
     onBackClicked: () -> Unit,
-    onTempSaveClicked: () -> Unit,
+    onTempSaveClick: () -> Unit,
     selectedDate: LocalDate,
     topicKo: String,
     topicEn: String,
@@ -278,7 +278,7 @@ private fun DiaryWriteScreen(
 
     BackHandler {
         cancelDiaryWrite(
-            hasDiaryTemp = hasDiaryTemp,
+            isDiaryTempExist = isDiaryTempExist,
             diaryText = diaryText,
             diaryImageUri = diaryImageUri,
             onBackClicked = onBackClicked,
@@ -299,11 +299,11 @@ private fun DiaryWriteScreen(
             onBackClicked()
         },
         onTempSaveClick = {
-            if (hasDiaryTemp) {
+            if (isDiaryTempExist) {
                 isCancelBottomSheetVisible = false
                 isOverwriteDialogVisible = true
             } else {
-                onTempSaveClicked()
+                onTempSaveClick()
             }
         }
     )
@@ -312,7 +312,7 @@ private fun DiaryWriteScreen(
         isVisible = isOverwriteDialogVisible,
         onDismiss = { isOverwriteDialogVisible = false },
         onNoClick = { isOverwriteDialogVisible = false },
-        onOverwriteClick = onTempSaveClicked
+        onOverwriteClick = onTempSaveClick
     )
 
     ImageSelectBottomSheet(
@@ -349,7 +349,7 @@ private fun DiaryWriteScreen(
                         properties = mapOf("back_source" to "ui_button")
                     )
                     cancelDiaryWrite(
-                        hasDiaryTemp = hasDiaryTemp,
+                        isDiaryTempExist = isDiaryTempExist,
                         diaryText = diaryText,
                         diaryImageUri = diaryImageUri,
                         onBackClicked = onBackClicked,
@@ -489,13 +489,13 @@ private fun DiaryWriteScreen(
 }
 
 private fun cancelDiaryWrite(
-    hasDiaryTemp: Boolean,
+    isDiaryTempExist: Boolean,
     diaryText: String,
     diaryImageUri: Uri?,
     onBackClicked: () -> Unit,
     setBottomSheetVisible: (Boolean) -> Unit
 ) {
-    if (hasDiaryTemp || diaryText.isNotBlank() || diaryImageUri != null) {
+    if (isDiaryTempExist || diaryText.isNotBlank() || diaryImageUri != null) {
         setBottomSheetVisible(true)
     } else {
         onBackClicked()
@@ -541,9 +541,9 @@ private fun DiaryWriteScreenPreview() {
     HilingualTheme {
         DiaryWriteScreen(
             paddingValues = PaddingValues(0.dp),
-            hasDiaryTemp = false,
+            isDiaryTempExist = false,
             onBackClicked = {},
-            onTempSaveClicked = {},
+            onTempSaveClick = {},
             selectedDate = LocalDate.now(),
             topicKo = "오늘 당신을 놀라게 한 일이 있었나요?",
             topicEn = "What surprised you today?",

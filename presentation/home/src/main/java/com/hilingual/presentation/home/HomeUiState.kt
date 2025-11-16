@@ -28,7 +28,7 @@ import java.time.LocalDate
 @Immutable
 data class HomeUiState(
     val userProfile: UserProfileUiModel = UserProfileUiModel(),
-    val hasDiaryTemp: Boolean = false,
+    val isDiaryTempExist: Boolean = false,
     val selectedDate: LocalDate = LocalDate.now(),
     val diaryThumbnail: DiaryThumbnailUiModel? = null,
     val dateList: ImmutableList<DateUiModel> = persistentListOf(),

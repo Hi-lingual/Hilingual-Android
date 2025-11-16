@@ -8,8 +8,8 @@ import javax.inject.Inject
 class DiaryTempRepository @Inject constructor(
     private val diaryTempManager: DiaryTempManager
 ) {
-    suspend fun hasDiaryTemp(selectedDate: LocalDate): Boolean =
-        diaryTempManager.hasDiaryTemp(selectedDate)
+    suspend fun isDiaryTempExist(selectedDate: LocalDate): Boolean =
+        diaryTempManager.isDiaryTempExist(selectedDate)
 
     suspend fun saveDiary(selectedDate: LocalDate, text: String, imageUri: Uri?) =
         diaryTempManager.saveDiary(selectedDate, text, imageUri)
@@ -20,5 +20,5 @@ class DiaryTempRepository @Inject constructor(
     suspend fun getDiaryImageUri(selectedDate: LocalDate): String? =
         diaryTempManager.getDiaryImageUri(selectedDate)
 
-    suspend fun clear(selectedDate: LocalDate) = diaryTempManager.clear(selectedDate)
+    suspend fun clearDiaryTemp(selectedDate: LocalDate) = diaryTempManager.clearDiaryTemp(selectedDate)
 }

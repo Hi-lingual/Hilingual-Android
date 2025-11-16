@@ -216,9 +216,9 @@ class HomeViewModel @Inject constructor(
         if (currentState !is UiState.Success) return
 
         viewModelScope.launch {
-            val hasDiaryTemp = diaryTempRepository.hasDiaryTemp(date)
+            val isDiaryTempExist = diaryTempRepository.isDiaryTempExist(date)
             _uiState.updateSuccess {
-                it.copy(hasDiaryTemp = hasDiaryTemp)
+                it.copy(isDiaryTempExist = isDiaryTempExist)
             }
 
             when {
