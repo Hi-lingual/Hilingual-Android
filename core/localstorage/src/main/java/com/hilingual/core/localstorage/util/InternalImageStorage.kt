@@ -6,6 +6,7 @@ import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -18,18 +19,21 @@ class InternalImageStorage @Inject constructor(@ApplicationContext private val c
         val destFile = File(directory, "img_${UUID.randomUUID()}.jpg")
 
         try {
-            context.contentResolver.openInputStream(imageUri).use { input ->
-                FileOutputStream(destFile).use { output ->
-                    input?.copyTo(output)
-                }
-            } ?: throw IOException()
-
+            copyImage(imageUri, destFile)
             Uri.fromFile(destFile)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.tag("InternalImageStorage").e(e, "Failed to save image to internal storage")
             if (destFile.exists()) destFile.delete()
             null
         }
+    }
+
+    private fun copyImage(imageUri: Uri, destFile: File) {
+        context.contentResolver.openInputStream(imageUri).use { input ->
+            FileOutputStream(destFile).use { output ->
+                input?.copyTo(output)
+            }
+        } ?: throw IOException()
     }
 
     suspend fun deleteImageFromInternal(imageUriString: String?) = withContext(Dispatchers.IO) {

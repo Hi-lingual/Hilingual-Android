@@ -59,11 +59,12 @@ object LocalStorageModule {
 
     @Provides
     @Singleton
-    fun provideDiaryTempManager(@ApplicationContext context: Context): DiaryTempManager =
+    fun provideDiaryTempManager(
+        @ApplicationContext context: Context,
+        imageStorage: InternalImageStorage
+    ): DiaryTempManager =
         DiaryTempManagerImpl(
             dataStore = context.diaryTempDataStore,
-            imageStorage = InternalImageStorage(
-                context
-            )
+            imageStorage = imageStorage
         )
 }

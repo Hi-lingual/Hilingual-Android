@@ -361,7 +361,7 @@ private fun HomeScreenPreview() {
             onImageClick = {},
             onDateSelected = {},
             onMonthChanged = {},
-            onWriteDiaryClick = {} as (LocalDate, Boolean) -> Unit,
+            onWriteDiaryClick = { _, _ -> },
             onDiaryPreviewClick = {},
             onDeleteClick = {},
             onPublishClick = {},
