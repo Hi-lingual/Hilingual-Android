@@ -53,14 +53,14 @@ class DiaryTempManagerImpl @Inject constructor(
     }
 
     override suspend fun clearDiaryTemp(selectedDate: LocalDate) {
+        dataStore.data.first()[keyDiaryImageUri(selectedDate)]?.let {
+            imageStorage.deleteImageFromInternal(it)
+        }
+
         dataStore.edit { preferences ->
             preferences[keyIsDiaryTempExist(selectedDate)] = false
             preferences.remove(keyDiaryText(selectedDate))
             preferences.remove(keyDiaryImageUri(selectedDate))
-        }
-
-        dataStore.data.first()[keyDiaryImageUri(selectedDate)]?.let {
-            imageStorage.deleteImageFromInternal(it)
         }
     }
 
