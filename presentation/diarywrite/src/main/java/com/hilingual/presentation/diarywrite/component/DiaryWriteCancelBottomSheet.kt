@@ -85,7 +85,7 @@ private fun DiaryWriteActionRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp)
-            .noRippleClickable { onClick() },
+            .noRippleClickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
