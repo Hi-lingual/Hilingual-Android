@@ -21,6 +21,7 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.calendar.repository.CalendarRepository
+import com.hilingual.data.diary.localstorage.DiaryTempRepository
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.home.model.toState
@@ -49,7 +50,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val calendarRepository: CalendarRepository,
-    private val diaryRepository: DiaryRepository
+    private val diaryRepository: DiaryRepository,
+    private val diaryTempRepository: DiaryTempRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Loading)
@@ -68,7 +70,8 @@ class HomeViewModel @Inject constructor(
             val today = LocalDate.now()
 
             val userInfoDeferred = async { userRepository.getUserInfo() }
-            val calendarDeferred = async { calendarRepository.getCalendar(today.year, today.monthValue) }
+            val calendarDeferred =
+                async { calendarRepository.getCalendar(today.year, today.monthValue) }
 
             val userInfoResult = userInfoDeferred.await()
             val calendarResult = calendarDeferred.await()
@@ -213,6 +216,12 @@ class HomeViewModel @Inject constructor(
         if (currentState !is UiState.Success) return
 
         viewModelScope.launch {
+            diaryTempRepository.isDiaryTempExist(date)
+                .onSuccess { isDiaryTempExist ->
+                    _uiState.updateSuccess { it.copy(isDiaryTempExist = isDiaryTempExist) }
+                }
+                .onLogFailure { }
+
             when {
                 isDateFuture(date) -> {
                     _uiState.updateSuccess {

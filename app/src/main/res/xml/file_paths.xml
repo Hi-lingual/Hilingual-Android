@@ -3,4 +3,8 @@
     <cache-path
         name="camera_images"
         path="." />
+
+    <files-path
+        name="diary_images"
+        path="diary_images/" />
 </paths>

@@ -160,11 +160,16 @@ internal class MainAppState(
 
     fun navigateToDiaryWrite(
         selectedDate: LocalDate,
+        loadDiaryTemp: Boolean,
         navOptions: NavOptions? = navOptions {
             launchSingleTop = true
         }
     ) {
-        navController.navigateToDiaryWrite(selectedDate, navOptions)
+        navController.navigateToDiaryWrite(
+            selectedDate = selectedDate,
+            loadDiaryTemp = loadDiaryTemp,
+            navOptions = navOptions
+        )
     }
 
     fun navigateToNotification(

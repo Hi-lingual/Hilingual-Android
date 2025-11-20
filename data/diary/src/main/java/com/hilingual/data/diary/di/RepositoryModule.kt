@@ -15,6 +15,8 @@
  */
 package com.hilingual.data.diary.di
 
+import com.hilingual.data.diary.localstorage.DiaryTempRepository
+import com.hilingual.data.diary.localstorage.DiaryTempRepositoryImpl
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.diary.repositoryimpl.DiaryRepositoryImpl
 import dagger.Binds
@@ -29,4 +31,8 @@ internal abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindDiaryRepository(impl: DiaryRepositoryImpl): DiaryRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindDiaryTempRepository(impl: DiaryTempRepositoryImpl): DiaryTempRepository
 }

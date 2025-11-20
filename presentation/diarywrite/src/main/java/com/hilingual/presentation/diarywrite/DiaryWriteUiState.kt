@@ -21,6 +21,7 @@ import java.time.LocalDate
 
 @Immutable
 internal data class DiaryWriteUiState(
+    val isDiaryTempExist: Boolean = false,
     val selectedDate: LocalDate = LocalDate.now(),
     val topicKo: String = "",
     val topicEn: String = "",

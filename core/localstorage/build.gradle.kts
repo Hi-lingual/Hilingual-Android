@@ -35,4 +35,7 @@ dependencies {
     // Room
     implementation(libs.bundles.room)
     ksp(libs.room.compiler)
+
+    // Timber
+    implementation(libs.timber)
 }
