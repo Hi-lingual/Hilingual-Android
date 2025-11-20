@@ -106,8 +106,11 @@ internal class DiaryWriteViewModel @Inject constructor(
                 text = uiState.value.diaryText,
                 imageUri = uiState.value.diaryImageUri
             )
-            _uiState.update { it.copy(isDiaryTempExist = true) }
-            handleDiaryTempSaved()
+                .onSuccess {
+                    _uiState.update { it.copy(isDiaryTempExist = true) }
+                    handleDiaryTempSaved()
+                }
+                .onLogFailure { }
         }
     }
 
@@ -119,21 +122,26 @@ internal class DiaryWriteViewModel @Inject constructor(
     fun loadDiaryTemp() {
         viewModelScope.launch {
             val selectedDate = uiState.value.selectedDate
-            val isDiaryTempExist = diaryTempRepository.isDiaryTempExist(selectedDate)
 
-            if (!isDiaryTempExist) {
-                _uiState.update { it.copy(isDiaryTempExist = false) }
-                return@launch
-            }
+            diaryTempRepository.isDiaryTempExist(selectedDate)
+                .onSuccess { isDiaryTempExist ->
+                    if (!isDiaryTempExist) {
+                        _uiState.update { it.copy(isDiaryTempExist = false) }
+                        return@launch
+                    }
 
-            _uiState.update {
-                it.copy(
-                    isDiaryTempExist = true,
-                    diaryText = diaryTempRepository.getDiaryText(selectedDate) ?: "",
-                    diaryImageUri = diaryTempRepository.getDiaryImageUri(selectedDate)
-                        ?.let(Uri::parse)
-                )
-            }
+                    diaryTempRepository.getDiaryText(selectedDate)
+                        .onSuccess { text ->
+                            _uiState.update { it.copy(diaryText = text ?: "") }
+                        }
+                        .onLogFailure { }
+
+                    diaryTempRepository.getDiaryImageUri(selectedDate)
+                        .onSuccess { imageUri ->
+                            _uiState.update { it.copy(diaryImageUri = imageUri?.let(Uri::parse)) }
+                        }
+                }
+                .onLogFailure { }
         }
     }
 
