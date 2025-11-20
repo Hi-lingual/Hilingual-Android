@@ -2,6 +2,7 @@ package com.hilingual.core.localstorage.util
 
 import android.content.Context
 import android.net.Uri
+import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +21,7 @@ class InternalImageStorage @Inject constructor(@ApplicationContext private val c
 
         try {
             copyImage(imageUri, destFile)
-            Uri.fromFile(destFile)
+            FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", destFile)
         } catch (e: Exception) {
             Timber.tag("InternalImageStorage").e(e, "Failed to save image to internal storage")
             if (destFile.exists()) destFile.delete()
@@ -39,9 +40,10 @@ class InternalImageStorage @Inject constructor(@ApplicationContext private val c
     suspend fun deleteImageFromInternal(imageUriString: String?) = withContext(Dispatchers.IO) {
         if (imageUriString == null) return@withContext
 
-        val path = imageUriString.toUri().path ?: return@withContext
+        val uri = imageUriString.toUri()
+        val fileName = uri.lastPathSegment ?: return@withContext
 
-        val file = File(path)
+        val file = File(context.filesDir, "diary_images/$fileName")
         if (file.exists()) {
             file.delete()
         }
