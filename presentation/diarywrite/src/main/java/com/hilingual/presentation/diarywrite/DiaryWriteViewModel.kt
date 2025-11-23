@@ -26,7 +26,9 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.data.calendar.repository.CalendarRepository
+import com.hilingual.data.diary.localstorage.DiaryTempRepository
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -52,7 +54,8 @@ internal class DiaryWriteViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     @ApplicationContext private val context: Context,
     private val calendarRepository: CalendarRepository,
-    private val diaryRepository: DiaryRepository
+    private val diaryRepository: DiaryRepository,
+    private val diaryTempRepository: DiaryTempRepository
 ) : ViewModel() {
     private val route: DiaryWrite = savedStateHandle.toRoute<DiaryWrite>()
 
@@ -71,6 +74,13 @@ internal class DiaryWriteViewModel @Inject constructor(
 
     init {
         getTopic(route.selectedDate)
+
+        when (route.mode) {
+            DiaryWriteMode.DEFAULT -> loadDiaryTemp()
+            DiaryWriteMode.NEW -> {
+                // Do nothing, start new diary to.Dalji
+            }
+        }
     }
 
     fun updateDiaryText(newText: String) {
@@ -93,6 +103,65 @@ internal class DiaryWriteViewModel @Inject constructor(
         }
     }
 
+    fun handleDiaryTempSavingFlow() {
+        viewModelScope.launch {
+            diaryTempRepository.saveDiary(
+                selectedDate = uiState.value.selectedDate,
+                text = uiState.value.diaryText,
+                imageUri = uiState.value.diaryImageUri
+            )
+                .onSuccess {
+                    _uiState.update { it.copy(isDiaryTempExist = true) }
+                    handleDiaryTempSaved()
+                }
+                .onLogFailure { }
+        }
+    }
+
+    private suspend fun handleDiaryTempSaved() {
+        showToast("임시저장이 완료되었어요.")
+        _sideEffect.emit(DiaryWriteSideEffect.NavigateToHome)
+    }
+
+    fun loadDiaryTemp() {
+        viewModelScope.launch {
+            val selectedDate = uiState.value.selectedDate
+
+            diaryTempRepository.isDiaryTempExist(selectedDate)
+                .onSuccess { isDiaryTempExist ->
+                    if (!isDiaryTempExist) {
+                        _uiState.update { it.copy(isDiaryTempExist = false) }
+                        return@launch
+                    }
+
+                    _uiState.update { it.copy(isDiaryTempExist = true) }
+
+                    diaryTempRepository.getDiaryText(selectedDate)
+                        .onSuccess { text ->
+                            _uiState.update {
+                                it.copy(
+                                    diaryText = text ?: "",
+                                    initialDiaryText = text ?: ""
+                                )
+                            }
+                        }
+                        .onLogFailure { }
+
+                    diaryTempRepository.getDiaryImageUri(selectedDate)
+                        .onSuccess { imageUri ->
+                            val uri = imageUri?.let(Uri::parse)
+                            _uiState.update {
+                                it.copy(
+                                    diaryImageUri = uri,
+                                    initialDiaryImageUri = uri
+                                )
+                            }
+                        }
+                }
+                .onLogFailure { }
+        }
+    }
+
     fun postDiaryFeedbackCreate() {
         if (_feedbackUiState.value is UiState.Loading) return
 
@@ -106,6 +175,7 @@ internal class DiaryWriteViewModel @Inject constructor(
             )
 
             result.onSuccess { response ->
+                diaryTempRepository.clearDiaryTemp(uiState.value.selectedDate)
                 _feedbackUiState.update { UiState.Success(response.diaryId) }
             }.onLogFailure { throwable ->
                 _feedbackUiState.update { UiState.Failure }
@@ -145,8 +215,14 @@ internal class DiaryWriteViewModel @Inject constructor(
     companion object {
         private const val MAX_DIARY_TEXT_LENGTH = 1000
     }
+
+    private suspend fun showToast(message: String) {
+        _sideEffect.emit(DiaryWriteSideEffect.ShowToast(message = message))
+    }
 }
 
 sealed interface DiaryWriteSideEffect {
+    data object NavigateToHome : DiaryWriteSideEffect
     data object ShowErrorDialog : DiaryWriteSideEffect
+    data class ShowToast(val message: String) : DiaryWriteSideEffect
 }
