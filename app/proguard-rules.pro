@@ -8,10 +8,9 @@
 -keep,includedescriptorclasses class kotlinx.serialization.** { *; }
 -dontwarn kotlinx.serialization.**
 
-# @Serializable 어노테이션이 붙은 모든 DTO와 Model 클래스 및 멤버를 유지합니다.
+# @Serializable 어노테이션이 붙은 모든 클래스 및 멤버를 유지합니다.
 # 이렇게 하면 R8이 직렬화에 필요한 생성자나 프로퍼티를 제거하는 것을 방지합니다.
--keep @kotlinx.serialization.Serializable class com.hilingual.**.dto.** { *; }
--keep @kotlinx.serialization.Serializable class com.hilingual.**.model.** { *; }
+-keep @kotlinx.serialization.Serializable class com.hilingual.** { *; }
 
 # 생성된 serializer 클래스를 유지합니다.
 -keep,includedescriptorclasses class **$serializer { *; }
