@@ -26,6 +26,7 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.localstorage.DiaryTempRepository
 import com.hilingual.data.diary.repository.DiaryRepository
@@ -74,8 +75,11 @@ internal class DiaryWriteViewModel @Inject constructor(
     init {
         getTopic(route.selectedDate)
 
-        if (route.loadDiaryTemp) {
-            loadDiaryTemp()
+        when (route.mode) {
+            DiaryWriteMode.DEFAULT -> loadDiaryTemp()
+            DiaryWriteMode.NEW -> {
+                // Do nothing, start new diary to.Dalji
+            }
         }
     }
 
@@ -130,15 +134,28 @@ internal class DiaryWriteViewModel @Inject constructor(
                         return@launch
                     }
 
+                    _uiState.update { it.copy(isDiaryTempExist = true) }
+
                     diaryTempRepository.getDiaryText(selectedDate)
                         .onSuccess { text ->
-                            _uiState.update { it.copy(diaryText = text ?: "") }
+                            _uiState.update {
+                                it.copy(
+                                    diaryText = text ?: "",
+                                    initialDiaryText = text ?: ""
+                                )
+                            }
                         }
                         .onLogFailure { }
 
                     diaryTempRepository.getDiaryImageUri(selectedDate)
                         .onSuccess { imageUri ->
-                            _uiState.update { it.copy(diaryImageUri = imageUri?.let(Uri::parse)) }
+                            val uri = imageUri?.let(Uri::parse)
+                            _uiState.update {
+                                it.copy(
+                                    diaryImageUri = uri,
+                                    initialDiaryImageUri = uri
+                                )
+                            }
                         }
                 }
                 .onLogFailure { }

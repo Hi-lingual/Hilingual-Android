@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.core.navigation.MainTabRoute
 import com.hilingual.presentation.home.HomeRoute
 import kotlinx.serialization.Serializable
@@ -40,7 +41,7 @@ fun NavController.navigateToHome(
 fun NavGraphBuilder.homeNavGraph(
     paddingValues: PaddingValues,
     navigateToDiaryFeedback: (diaryId: Long) -> Unit,
-    navigateToDiaryWrite: (selectedDate: LocalDate, loadDiaryTemp: Boolean) -> Unit,
+    navigateToDiaryWrite: (selectedDate: LocalDate, mode: DiaryWriteMode) -> Unit,
     navigateToNotification: () -> Unit,
     navigateToFeedProfile: (userId: Long) -> Unit,
     navigateToFeed: () -> Unit

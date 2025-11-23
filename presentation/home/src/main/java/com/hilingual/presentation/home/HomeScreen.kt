@@ -62,6 +62,7 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
+import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.presentation.home.component.DiaryContinueDialog
 import com.hilingual.presentation.home.component.HomeHeader
 import com.hilingual.presentation.home.component.calendar.HilingualCalendar
@@ -80,7 +81,7 @@ import java.time.YearMonth
 @Composable
 internal fun HomeRoute(
     paddingValues: PaddingValues,
-    navigateToDiaryWrite: (selectedDate: LocalDate, loadDiaryTemp: Boolean) -> Unit,
+    navigateToDiaryWrite: (selectedDate: LocalDate, mode: DiaryWriteMode) -> Unit,
     navigateToDiaryFeedback: (diaryId: Long) -> Unit,
     navigateToNotification: () -> Unit,
     navigateToFeedProfile: (userId: Long) -> Unit,
@@ -139,14 +140,14 @@ internal fun HomeRoute(
                 },
                 onDateSelected = viewModel::onDateSelected,
                 onMonthChanged = viewModel::onMonthChanged,
-                onWriteDiaryClick = { date, loadDiaryTemp ->
+                onWriteDiaryClick = { date, mode ->
                     tracker.logEvent(
                         trigger = TriggerType.CLICK,
                         page = HOME,
                         event = "diary_write",
                         properties = mapOf("open_time" to System.currentTimeMillis())
                     )
-                    navigateToDiaryWrite(date, loadDiaryTemp)
+                    navigateToDiaryWrite(date, mode)
                 },
                 onDiaryPreviewClick = { diaryId ->
                     tracker.logEvent(
@@ -179,7 +180,7 @@ private fun HomeScreen(
     onImageClick: () -> Unit,
     onDateSelected: (LocalDate) -> Unit,
     onMonthChanged: (YearMonth) -> Unit,
-    onWriteDiaryClick: (selectedDate: LocalDate, loadDiaryTemp: Boolean) -> Unit,
+    onWriteDiaryClick: (selectedDate: LocalDate, mode: DiaryWriteMode) -> Unit,
     onDiaryPreviewClick: (diaryId: Long) -> Unit,
     onDeleteClick: (diaryId: Long) -> Unit,
     onPublishClick: (diaryId: Long) -> Unit,
@@ -195,11 +196,11 @@ private fun HomeScreen(
         isVisible = isDiaryContinueDialogVisible,
         onDismiss = { isDiaryContinueDialogVisible = false },
         onNewClick = {
-            onWriteDiaryClick(date, false)
+            onWriteDiaryClick(date, DiaryWriteMode.NEW)
             isDiaryContinueDialogVisible = false
         },
         onContinueClick = {
-            onWriteDiaryClick(date, true)
+            onWriteDiaryClick(date, DiaryWriteMode.DEFAULT)
             isDiaryContinueDialogVisible = false
         }
     )
@@ -335,7 +336,7 @@ private fun HomeScreen(
                                 if (uiState.isDiaryTempExist) {
                                     isDiaryContinueDialogVisible = true
                                 } else {
-                                    onWriteDiaryClick(date, false)
+                                    onWriteDiaryClick(date, DiaryWriteMode.DEFAULT)
                                 }
                             },
                             modifier = Modifier.fillMaxWidth()

@@ -168,8 +168,10 @@ internal fun DiaryWriteRoute(
                 topicKo = uiState.topicKo,
                 topicEn = uiState.topicEn,
                 diaryText = uiState.diaryText,
+                initialDiaryText = uiState.initialDiaryText,
                 onDiaryTextChanged = viewModel::updateDiaryText,
                 diaryImageUri = uiState.diaryImageUri,
+                initialDiaryImageUri = uiState.initialDiaryImageUri,
                 onDiaryImageUriChanged = viewModel::updateDiaryImageUri,
                 onBottomSheetCameraClicked = {
                     cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
@@ -257,8 +259,10 @@ private fun DiaryWriteScreen(
     topicKo: String,
     topicEn: String,
     diaryText: String,
+    initialDiaryText: String,
     onDiaryTextChanged: (String) -> Unit,
     diaryImageUri: Uri?,
+    initialDiaryImageUri: Uri?,
     onDiaryImageUriChanged: (Uri?) -> Unit,
     onBottomSheetCameraClicked: () -> Unit,
     onBottomSheetGalleryClicked: () -> Unit,
@@ -278,9 +282,10 @@ private fun DiaryWriteScreen(
 
     BackHandler {
         cancelDiaryWrite(
-            isDiaryTempExist = isDiaryTempExist,
-            diaryText = diaryText,
-            diaryImageUri = diaryImageUri,
+            initialText = initialDiaryText,
+            currentText = diaryText,
+            initialImageUri = initialDiaryImageUri,
+            currentImageUri = diaryImageUri,
             onBackClicked = onBackClicked,
             setBottomSheetVisible = { isCancelBottomSheetVisible = it }
         )
@@ -349,9 +354,10 @@ private fun DiaryWriteScreen(
                         properties = mapOf("back_source" to "ui_button")
                     )
                     cancelDiaryWrite(
-                        isDiaryTempExist = isDiaryTempExist,
-                        diaryText = diaryText,
-                        diaryImageUri = diaryImageUri,
+                        initialText = initialDiaryText,
+                        currentText = diaryText,
+                        initialImageUri = initialDiaryImageUri,
+                        currentImageUri = diaryImageUri,
                         onBackClicked = onBackClicked,
                         setBottomSheetVisible = { isCancelBottomSheetVisible = it }
                     )
@@ -489,13 +495,15 @@ private fun DiaryWriteScreen(
 }
 
 private fun cancelDiaryWrite(
-    isDiaryTempExist: Boolean,
-    diaryText: String,
-    diaryImageUri: Uri?,
+    initialText: String,
+    currentText: String,
+    initialImageUri: Uri?,
+    currentImageUri: Uri?,
     onBackClicked: () -> Unit,
     setBottomSheetVisible: (Boolean) -> Unit
 ) {
-    if (isDiaryTempExist || diaryText.isNotBlank() || diaryImageUri != null) {
+    val isChanged = initialText != currentText || initialImageUri != currentImageUri
+    if (isChanged) {
         setBottomSheetVisible(true)
     } else {
         onBackClicked()
@@ -548,8 +556,10 @@ private fun DiaryWriteScreenPreview() {
             topicKo = "오늘 당신을 놀라게 한 일이 있었나요?",
             topicEn = "What surprised you today?",
             diaryText = diaryText,
+            initialDiaryText = "",
             onDiaryTextChanged = { diaryText = it },
             diaryImageUri = diaryImageUri,
+            initialDiaryImageUri = null,
             onDiaryImageUriChanged = { diaryImageUri = it },
             onBottomSheetCameraClicked = {},
             onBottomSheetGalleryClicked = {},

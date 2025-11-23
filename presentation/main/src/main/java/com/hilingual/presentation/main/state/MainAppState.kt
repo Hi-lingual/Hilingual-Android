@@ -24,6 +24,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.presentation.auth.navigation.navigateToAuth
 import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedback
 import com.hilingual.presentation.diarywrite.navigation.navigateToDiaryWrite
@@ -160,14 +161,14 @@ internal class MainAppState(
 
     fun navigateToDiaryWrite(
         selectedDate: LocalDate,
-        loadDiaryTemp: Boolean,
+        mode: DiaryWriteMode,
         navOptions: NavOptions? = navOptions {
             launchSingleTop = true
         }
     ) {
         navController.navigateToDiaryWrite(
             selectedDate = selectedDate,
-            loadDiaryTemp = loadDiaryTemp,
+            mode = mode,
             navOptions = navOptions
         )
     }
