@@ -17,7 +17,7 @@ jobs:
           fetch-depth: 0 # Git history를 모두 가져와야 git-commit-count, last_git_commit 등을 사용 가능
 
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
