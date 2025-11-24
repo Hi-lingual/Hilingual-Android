@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - 'release/**'
-  workflow_dispatch: # 수동 실행을 위한 트리거 추가
+  workflow_dispatch:
 
 jobs:
   deploy_qa:
@@ -14,7 +14,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Git history를 모두 가져와야 git-commit-count, last_git_commit 등을 사용 가능
+          fetch-depth: 0
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -25,11 +25,22 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
+      - name: Create required files from secrets
+        env:
+          GOOGLE_SERVICES_JSON_CONTENT: ${{ secrets.GOOGLE_SERVICES_JSON }}
+          DEBUG_KEYSTORE_BASE64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
+          LOCAL_PROPERTIES_CONTENT: ${{ secrets.LOCAL_PROPERTIES }} # 수정된 시크릿 이름
+        run: |
+          echo "$GOOGLE_SERVICES_JSON_CONTENT" > app/google-services.json
+          mkdir -p keystore
+          echo "$DEBUG_KEYSTORE_BASE64" | base64 --decode > keystore/hilingual-debug-key.jks
+          echo "$LOCAL_PROPERTIES_CONTENT" > local.properties
+
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.6' # 로컬 환경과 유사한 버전으로 설정
-          bundler-cache: true # bundle install 결과를 캐싱하여 속도 향상
+          ruby-version: '2.6'
+          bundler-cache: true
 
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest
@@ -39,9 +50,6 @@ jobs:
           FIREBASE_APP_ID_DEBUG: ${{ secrets.FIREBASE_APP_ID_DEBUG }}
           FIREBASE_SERVICE_ACCOUNT_JSON_CONTENT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
         run: |
-          # GitHub Secret의 내용을 임시 파일로 저장
           echo "$FIREBASE_SERVICE_ACCOUNT_JSON_CONTENT" > firebase_credentials.json
-          
-          # Fastlane 실행. Fastfile에 정의된 환경변수 이름(FIREBASE_SERVICE_CREDENTIALS_JSON_PATH)으로 파일 경로를 전달
           bundle exec fastlane android qa \
             FIREBASE_SERVICE_CREDENTIALS_JSON_PATH:$(pwd)/firebase_credentials.json
