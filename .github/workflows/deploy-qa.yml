@@ -51,5 +51,5 @@ jobs:
           FIREBASE_SERVICE_ACCOUNT_JSON_CONTENT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
         run: |
           echo "$FIREBASE_SERVICE_ACCOUNT_JSON_CONTENT" > firebase_credentials.json
-          bundle exec fastlane android qa \
-            FIREBASE_SERVICE_CREDENTIALS_JSON_PATH:$(pwd)/firebase_credentials.json
+          export FIREBASE_SERVICE_CREDENTIALS_JSON_PATH="$(pwd)/firebase_credentials.json"
+          bundle exec fastlane android qa
