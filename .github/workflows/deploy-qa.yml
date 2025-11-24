@@ -1,0 +1,50 @@
+# .github/workflows/deploy-qa.yml
+name: Deploy QA Build to Firebase
+
+on:
+  push:
+    branches:
+      - 'release/**'
+  workflow_dispatch: # 수동 실행을 위한 트리거 추가
+
+jobs:
+  deploy_qa:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Git history를 모두 가져와야 git-commit-count, last_git_commit 등을 사용 가능
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.6' # 로컬 환경과 유사한 버전으로 설정
+          bundler-cache: true # bundle install 결과를 캐싱하여 속도 향상
+
+      - name: Run code quality checks
+        run: ./gradlew spotlessCheck ktlintCheck
+
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest
+
+      - name: Deploy to Firebase App Distribution
+        env:
+          FIREBASE_APP_ID_DEBUG: ${{ secrets.FIREBASE_APP_ID_DEBUG }}
+          FIREBASE_SERVICE_ACCOUNT_JSON_CONTENT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          # GitHub Secret의 내용을 임시 파일로 저장
+          echo "$FIREBASE_SERVICE_ACCOUNT_JSON_CONTENT" > firebase_credentials.json
+          
+          # Fastlane 실행. Fastfile에 정의된 환경변수 이름(FIREBASE_SERVICE_CREDENTIALS_JSON_PATH)으로 파일 경로를 전달
+          bundle exec fastlane android qa \
+            FIREBASE_SERVICE_CREDENTIALS_JSON_PATH:$(pwd)/firebase_credentials.json
