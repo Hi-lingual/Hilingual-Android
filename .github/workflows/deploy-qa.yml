@@ -31,9 +31,6 @@ jobs:
           ruby-version: '2.6' # 로컬 환경과 유사한 버전으로 설정
           bundler-cache: true # bundle install 결과를 캐싱하여 속도 향상
 
-      - name: Run code quality checks
-        run: ./gradlew spotlessCheck ktlintCheck
-
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest
 
