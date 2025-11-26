@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 
 class TokenManagerImpl(
     private val dataStore: DataStore<UserPreferences>,
-    private val externalScope: CoroutineScope
+    externalScope: CoroutineScope
 ) : TokenManager {
 
     @Volatile
