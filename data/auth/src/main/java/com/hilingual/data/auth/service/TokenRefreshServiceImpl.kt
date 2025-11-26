@@ -50,8 +50,8 @@ internal class TokenRefreshServiceImpl @Inject constructor(
         val currentAccessToken = tokenManager.getAccessToken()
 
         val isRefreshed = currentRefreshToken != requestRefreshToken &&
-                currentRefreshToken != null &&
-                currentAccessToken != null
+            currentRefreshToken != null &&
+            currentAccessToken != null
 
         if (isRefreshed) Pair(currentAccessToken, currentRefreshToken)
 
