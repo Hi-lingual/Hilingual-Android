@@ -99,12 +99,12 @@ private fun FeedbackSentence(
     val (iconRes, color) = if (isFeedback) {
         Pair(
             R.drawable.chip_feedback_card_ai,
-            HilingualTheme.colors.hilingualOrange,
+            HilingualTheme.colors.hilingualOrange
         )
     } else {
         Pair(
             R.drawable.chip_feedback_card_me,
-            HilingualTheme.colors.gray700,
+            HilingualTheme.colors.gray700
         )
     }
 
