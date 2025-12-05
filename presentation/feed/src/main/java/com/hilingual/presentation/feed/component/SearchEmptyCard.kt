@@ -49,7 +49,7 @@ internal fun SearchEmptyCard(
 
         Text(
             text = "검색 결과가 없습니다.",
-            style = HilingualTheme.typography.headM18,
+            style = HilingualTheme.typography.headR18,
             color = HilingualTheme.colors.gray500,
             textAlign = TextAlign.Center
         )

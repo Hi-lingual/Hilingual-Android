@@ -361,7 +361,7 @@ private fun VocaListWithInfoSection(
 
                             Text(
                                 text = groupLabel,
-                                style = HilingualTheme.typography.bodySB16,
+                                style = HilingualTheme.typography.bodyM16,
                                 color = HilingualTheme.colors.black,
                                 modifier = Modifier.padding(bottom = 16.dp)
                             )

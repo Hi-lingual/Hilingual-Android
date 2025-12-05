@@ -41,7 +41,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
@@ -149,7 +148,7 @@ private fun ProfileEditScreen(
         Text(
             text = "회원탈퇴",
             color = HilingualTheme.colors.gray400,
-            style = HilingualTheme.typography.bodyM14,
+            style = HilingualTheme.typography.bodyR14,
             textDecoration = TextDecoration.Underline,
             modifier = Modifier
                 .padding(vertical = 4.dp)

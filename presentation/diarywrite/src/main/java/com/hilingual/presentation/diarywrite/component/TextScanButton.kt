@@ -66,7 +66,7 @@ internal fun TextScanButton(
         Text(
             text = "텍스트 스캔하기",
             color = HilingualTheme.colors.gray500,
-            style = HilingualTheme.typography.captionR14
+            style = HilingualTheme.typography.bodyR14
         )
     }
 }

@@ -65,7 +65,7 @@ internal fun FeedbackEmptyCard(
 
         Text(
             text = "추가 설명이 필요 없는 일기네요!",
-            style = HilingualTheme.typography.bodyM14,
+            style = HilingualTheme.typography.bodyR14,
             color = HilingualTheme.colors.hilingualBlack,
             modifier = Modifier.fillMaxWidth()
         )

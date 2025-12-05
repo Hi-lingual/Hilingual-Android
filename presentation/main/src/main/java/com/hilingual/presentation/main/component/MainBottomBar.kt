@@ -119,7 +119,7 @@ private fun RowScope.MainBottomBarItem(
             } else {
                 HilingualTheme.colors.gray200
             },
-            style = HilingualTheme.typography.captionM12
+            style = HilingualTheme.typography.captionR12
         )
     }
 }

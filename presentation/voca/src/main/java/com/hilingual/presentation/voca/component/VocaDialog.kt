@@ -116,13 +116,13 @@ internal fun VocaDialog(
 
                     Text(
                         text = phrase,
-                        style = HilingualTheme.typography.bodyM20,
+                        style = HilingualTheme.typography.headR20,
                         color = HilingualTheme.colors.black
                     )
 
                     Text(
                         text = explanation,
-                        style = HilingualTheme.typography.bodyM14,
+                        style = HilingualTheme.typography.bodyR14,
                         color = HilingualTheme.colors.black
                     )
                 }
@@ -148,7 +148,7 @@ internal fun VocaDialog(
 
                 Text(
                     text = writtenDate,
-                    style = HilingualTheme.typography.captionM12,
+                    style = HilingualTheme.typography.captionR12,
                     color = HilingualTheme.colors.gray400,
                     modifier = Modifier.align(Alignment.BottomEnd)
                 )

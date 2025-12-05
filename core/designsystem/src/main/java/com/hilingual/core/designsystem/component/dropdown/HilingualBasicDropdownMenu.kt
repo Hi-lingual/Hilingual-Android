@@ -134,7 +134,7 @@ fun HilingualDropdownMenuItem(
 
         Text(
             text = text,
-            style = HilingualTheme.typography.bodySB14,
+            style = HilingualTheme.typography.bodyM14,
             color = textColor
         )
     }

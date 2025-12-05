@@ -52,7 +52,7 @@ internal fun FeedTopAppBar(
     ) {
         Text(
             text = "피드",
-            style = HilingualTheme.typography.headB18,
+            style = HilingualTheme.typography.headSB18,
             color = HilingualTheme.colors.hilingualBlack
         )
 

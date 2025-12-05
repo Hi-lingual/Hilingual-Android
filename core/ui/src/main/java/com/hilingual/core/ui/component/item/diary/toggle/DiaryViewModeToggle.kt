@@ -43,7 +43,7 @@ internal fun DiaryViewModeToggle(
     ) {
         Text(
             text = "교정된 일기",
-            style = HilingualTheme.typography.captionR14,
+            style = HilingualTheme.typography.bodyR14,
             color = HilingualTheme.colors.gray500
         )
         HilingualBasicToggleSwitch(

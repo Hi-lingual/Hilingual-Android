@@ -63,7 +63,7 @@ internal fun WriteDiaryButton(
 
         Text(
             text = "일기 작성하기",
-            style = HilingualTheme.typography.bodySB16,
+            style = HilingualTheme.typography.bodyM16,
             color = HilingualTheme.colors.white
         )
     }

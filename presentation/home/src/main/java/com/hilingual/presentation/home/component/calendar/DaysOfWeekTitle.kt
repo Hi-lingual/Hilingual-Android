@@ -46,7 +46,7 @@ internal fun DaysOfWeekTitle(
                 modifier = Modifier.width(34.dp),
                 textAlign = TextAlign.Center,
                 text = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
-                style = HilingualTheme.typography.bodySB12,
+                style = HilingualTheme.typography.bodyM12,
                 color = when (dayOfWeek) {
                     DayOfWeek.SATURDAY -> HilingualTheme.colors.hilingualBlue
                     DayOfWeek.SUNDAY -> HilingualTheme.colors.alertRed

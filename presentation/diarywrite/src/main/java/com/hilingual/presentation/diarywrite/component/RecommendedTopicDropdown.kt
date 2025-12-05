@@ -71,7 +71,7 @@ internal fun RecommendedTopicDropdown(
         ) {
             Text(
                 text = "오늘의 추천 주제 참고하기",
-                style = HilingualTheme.typography.bodyM14,
+                style = HilingualTheme.typography.bodyR14,
                 color = HilingualTheme.colors.gray700
             )
             Icon(
@@ -105,7 +105,7 @@ internal fun RecommendedTopicDropdown(
                 Text(
                     modifier = Modifier.weight(1f),
                     text = if (isKo) koTopic else enTopic,
-                    style = HilingualTheme.typography.bodySB16,
+                    style = HilingualTheme.typography.bodyM16,
                     color = HilingualTheme.colors.gray700,
                     maxLines = 2
                 )

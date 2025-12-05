@@ -84,7 +84,7 @@ private fun HilingualBasicDialogPreview() {
         ) {
             Text(
                 text = "AI 피드백을 신고하시겠어요?",
-                style = HilingualTheme.typography.headB16,
+                style = HilingualTheme.typography.headSB16,
                 color = HilingualTheme.colors.gray850
             )
 
@@ -92,7 +92,7 @@ private fun HilingualBasicDialogPreview() {
 
             Text(
                 text = "신고된 AI 피드백은 확인 후\n서비스의 운영원칙에 따라 처리됩니다",
-                style = HilingualTheme.typography.captionM12,
+                style = HilingualTheme.typography.captionR12,
                 color = HilingualTheme.colors.gray400,
                 maxLines = 2,
                 minLines = 2,
@@ -116,7 +116,7 @@ private fun HilingualBasicDialogPreview() {
                 ) {
                     Text(
                         text = "취소",
-                        style = HilingualTheme.typography.bodySB16,
+                        style = HilingualTheme.typography.bodyM16,
                         color = HilingualTheme.colors.gray400
                     )
                 }
@@ -132,7 +132,7 @@ private fun HilingualBasicDialogPreview() {
                 ) {
                     Text(
                         text = "확인",
-                        style = HilingualTheme.typography.bodySB16,
+                        style = HilingualTheme.typography.bodyM16,
                         color = HilingualTheme.colors.white
                     )
                 }

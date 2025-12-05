@@ -80,14 +80,14 @@ internal fun NotificationItem(
                         )
                     }
                 },
-                style = typo.bodyM16,
+                style = typo.bodyR16,
                 color = colors.black,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = date,
-                style = typo.captionR14,
+                style = typo.bodyR14,
                 color = colors.gray300
             )
         }

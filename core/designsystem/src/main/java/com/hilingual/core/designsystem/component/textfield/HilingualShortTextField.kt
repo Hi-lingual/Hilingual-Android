@@ -63,8 +63,8 @@ fun HilingualShortTextField(
             value = text,
             placeholder = placeholder,
             maxLength = maxLength,
-            placeholderTextStyle = HilingualTheme.typography.bodyM16,
-            inputTextStyle = HilingualTheme.typography.bodySB16,
+            placeholderTextStyle = HilingualTheme.typography.bodyR16,
+            inputTextStyle = HilingualTheme.typography.bodyM16,
             onValueChanged = {
                 val filteredText = it.replace(INPUT_FILTER_REGEX, "")
                 val newText = filteredText.filter { !it.isWhitespace() }

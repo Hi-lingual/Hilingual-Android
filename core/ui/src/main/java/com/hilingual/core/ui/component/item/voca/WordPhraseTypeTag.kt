@@ -48,7 +48,7 @@ fun WordPhraseTypeTag(
 ) {
     Text(
         text = phraseType,
-        style = HilingualTheme.typography.captionM12,
+        style = HilingualTheme.typography.captionR12,
         color = PartOfSpeechType.getTypeByText(phraseType)?.textColor ?: HilingualTheme.colors.gray400,
         modifier = modifier
             .clip(CircleShape)

@@ -47,7 +47,7 @@ fun TextToast(
                 horizontal = 24.dp
             ),
         textAlign = TextAlign.Center,
-        style = HilingualTheme.typography.bodyM16,
+        style = HilingualTheme.typography.bodyR16,
         color = HilingualTheme.colors.white
     )
 }

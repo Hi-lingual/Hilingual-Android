@@ -100,7 +100,7 @@ private fun YearMonthPickerBottomSheetPreview() {
         ) {
             Text(
                 text = "${selectedYearMonth.year}년 ${selectedYearMonth.monthValue}월",
-                style = HilingualTheme.typography.bodyB14,
+                style = HilingualTheme.typography.bodySB14,
                 modifier = Modifier
                     .padding(5.dp)
                     .noRippleClickable(

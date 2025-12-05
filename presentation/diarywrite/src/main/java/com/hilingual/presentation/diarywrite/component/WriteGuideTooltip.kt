@@ -46,7 +46,7 @@ internal fun WriteGuideTooltip(
                 .background(HilingualTheme.colors.hilingualBlack)
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             text = text,
-            style = HilingualTheme.typography.bodyM16,
+            style = HilingualTheme.typography.bodyR16,
             color = HilingualTheme.colors.white
         )
 

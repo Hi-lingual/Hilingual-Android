@@ -41,7 +41,7 @@ fun DiaryWriteCancelBottomSheet(
         ) {
             Text(
                 text = "일기 작성을 취소하시겠어요?",
-                style = HilingualTheme.typography.headB16,
+                style = HilingualTheme.typography.headSB16,
                 color = HilingualTheme.colors.hilingualBlack
             )
 
@@ -49,7 +49,7 @@ fun DiaryWriteCancelBottomSheet(
 
             Text(
                 text = "임시저장하지 않은 내용은 모두 사라져요!",
-                style = HilingualTheme.typography.captionR14,
+                style = HilingualTheme.typography.bodyR14,
                 color = HilingualTheme.colors.gray400
             )
 
@@ -98,7 +98,7 @@ private fun DiaryWriteActionRow(
 
         Text(
             text = text,
-            style = HilingualTheme.typography.bodySB14,
+            style = HilingualTheme.typography.bodyM14,
             color = textColor
         )
     }

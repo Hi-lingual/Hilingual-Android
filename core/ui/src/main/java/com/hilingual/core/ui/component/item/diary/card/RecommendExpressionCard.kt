@@ -76,7 +76,7 @@ internal fun RecommendExpressionCard(
             )
             Text(
                 text = reason,
-                style = HilingualTheme.typography.captionM12,
+                style = HilingualTheme.typography.captionR12,
                 color = HilingualTheme.colors.gray700
             )
         }
@@ -109,12 +109,12 @@ private fun ExpressionTopContent(
         ExpressionTag(tagList)
         Text(
             text = phrase,
-            style = HilingualTheme.typography.bodySB16,
+            style = HilingualTheme.typography.bodyM16,
             color = HilingualTheme.colors.black
         )
         Text(
             text = explanation,
-            style = HilingualTheme.typography.bodyB14,
+            style = HilingualTheme.typography.bodySB14,
             color = HilingualTheme.colors.black
         )
     }

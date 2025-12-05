@@ -261,7 +261,7 @@ fun HilingualMainColorsPreview() {
         Column {
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.hilingualOrange,
                 modifier = Modifier.background(
                     color = HilingualTheme.colors.black
@@ -269,7 +269,7 @@ fun HilingualMainColorsPreview() {
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.hilingualBlue,
                 modifier = Modifier.background(
                     color = HilingualTheme.colors.black
@@ -277,7 +277,7 @@ fun HilingualMainColorsPreview() {
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.hilingualBlue50,
                 modifier = Modifier.background(
                     color = HilingualTheme.colors.black
@@ -294,47 +294,47 @@ private fun HilingualWordChipColorsPreview() {
         Column {
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.nounBg
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.pronounBg
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.adjBg
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.adverbBg
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.prepositionBg
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.interjectionBg
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.pronounText
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.adjText
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.adverbText
             )
         }
@@ -348,47 +348,47 @@ private fun HilingualGrayColorsPreview() {
         Column {
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.black
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.gray850
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.gray700
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.gray500
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.gray400
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.gray300
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.gray200
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.gray100
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.white,
                 modifier = Modifier.background(
                     color = HilingualTheme.colors.black
@@ -397,13 +397,13 @@ private fun HilingualGrayColorsPreview() {
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.dim1
 
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.dim2
 
             )
@@ -419,12 +419,12 @@ fun HilingualSymenticColorsPreview() {
         Column {
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.alertRed
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20,
+                style = HilingualTheme.typography.headR20,
                 color = HilingualTheme.colors.infoBlue
             )
         }

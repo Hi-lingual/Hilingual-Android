@@ -63,7 +63,7 @@ fun HilingualMenuBottomSheet(
             if (!title.isNullOrBlank()) {
                 Text(
                     text = title,
-                    style = HilingualTheme.typography.headB16,
+                    style = HilingualTheme.typography.headSB16,
                     color = HilingualTheme.colors.black,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -104,7 +104,7 @@ fun HilingualMenuBottomSheetItem(
 
         Text(
             text = text,
-            style = HilingualTheme.typography.bodySB14,
+            style = HilingualTheme.typography.bodyM14,
             color = textColor
         )
     }

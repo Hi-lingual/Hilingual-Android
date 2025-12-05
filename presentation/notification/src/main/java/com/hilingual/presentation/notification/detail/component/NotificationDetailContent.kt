@@ -60,12 +60,12 @@ internal fun NotificationDetailContent(
         ) {
             Text(
                 text = title,
-                style = HilingualTheme.typography.headB20,
+                style = HilingualTheme.typography.headSB20,
                 color = HilingualTheme.colors.black
             )
             Text(
                 text = date,
-                style = HilingualTheme.typography.captionR14,
+                style = HilingualTheme.typography.bodyR14,
                 color = HilingualTheme.colors.gray300
             )
         }
@@ -77,7 +77,7 @@ internal fun NotificationDetailContent(
         RichText(
             state = textState,
             modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp),
-            style = HilingualTheme.typography.bodyM14,
+            style = HilingualTheme.typography.bodyR14,
             color = HilingualTheme.colors.gray850
         )
     }

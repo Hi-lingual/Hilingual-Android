@@ -38,7 +38,7 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.image.ErrorImageSize
 import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.designsystem.theme.SuitMedium
+import com.hilingual.core.designsystem.theme.PretendardMedium
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -90,7 +90,7 @@ internal fun DiaryCard(
 
         Text(
             text = displayText,
-            style = HilingualTheme.typography.bodyR16,
+            style = HilingualTheme.typography.bodyR15,
             color = HilingualTheme.colors.black,
             modifier = Modifier.fillMaxWidth()
         )
@@ -125,7 +125,7 @@ private fun getAnnotatedString(
                 addStyle(
                     style = SpanStyle(
                         color = HilingualTheme.colors.hilingualOrange,
-                        fontFamily = SuitMedium
+                        fontFamily = PretendardMedium
                     ),
                     start = start,
                     end = end

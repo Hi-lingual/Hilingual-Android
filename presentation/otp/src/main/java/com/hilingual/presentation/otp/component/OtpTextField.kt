@@ -161,7 +161,7 @@ private fun OtpChar(
     ) {
         Text(
             text = char?.toString() ?: "",
-            style = HilingualTheme.typography.headSB20,
+            style = HilingualTheme.typography.headM20,
             color = textColor,
             textAlign = TextAlign.Center,
             modifier = Modifier.graphicsLayer {

@@ -127,13 +127,13 @@ private fun OtpScreen(
         ) {
             Text(
                 text = "Q. 인증 번호란?",
-                style = HilingualTheme.typography.headB16,
+                style = HilingualTheme.typography.headSB16,
                 color = HilingualTheme.colors.black
             )
             Text(
                 text = "사전 예약을 신청한 분들을 대상으로 가입 인증 번호가 발급되었어요. 인증 번호를 보유하신 경우에만 가입이 가능해요.\n\n" +
                     "알림을 신청한 이메일을 확인해주세요.",
-                style = HilingualTheme.typography.bodyM14,
+                style = HilingualTheme.typography.bodyR14,
                 color = HilingualTheme.colors.gray500
             )
         }
@@ -142,7 +142,7 @@ private fun OtpScreen(
 
         Text(
             text = "인증 번호가 오지 않았나요?",
-            style = HilingualTheme.typography.bodyM14,
+            style = HilingualTheme.typography.bodyR14,
             textDecoration = TextDecoration.Underline,
             color = HilingualTheme.colors.gray500,
             modifier = Modifier

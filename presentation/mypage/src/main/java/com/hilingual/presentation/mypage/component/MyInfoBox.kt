@@ -93,7 +93,7 @@ internal fun MyInfoBox(
                 modifier = Modifier.noRippleClickable(onClick = onEditButtonClick),
                 text = profileNickname,
                 color = HilingualTheme.colors.gray850,
-                style = HilingualTheme.typography.headB18
+                style = HilingualTheme.typography.headSB18
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -112,7 +112,7 @@ internal fun MyInfoBox(
         Text(
             text = "나의 피드",
             color = HilingualTheme.colors.white,
-            style = HilingualTheme.typography.bodySB14,
+            style = HilingualTheme.typography.bodyM14,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .noRippleClickable(onClick = onMyFeedButtonClick)

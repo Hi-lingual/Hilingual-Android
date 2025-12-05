@@ -51,13 +51,13 @@ fun HilingualActionSnackbar(
     ) {
         Text(
             text = message,
-            style = HilingualTheme.typography.bodyM16,
+            style = HilingualTheme.typography.bodyR16,
             color = HilingualTheme.colors.white
         )
 
         Text(
             text = buttonText,
-            style = HilingualTheme.typography.bodySB14,
+            style = HilingualTheme.typography.bodyM14,
             color = HilingualTheme.colors.white,
             modifier = Modifier
                 .clip(RoundedCornerShape(6.dp))
