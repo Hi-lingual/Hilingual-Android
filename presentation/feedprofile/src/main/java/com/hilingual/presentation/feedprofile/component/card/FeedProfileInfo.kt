@@ -112,13 +112,13 @@ internal fun FeedProfileInfo(
                     )
                     Text(
                         text = "$follower",
-                        style = HilingualTheme.typography.bodySB14,
+                        style = HilingualTheme.typography.bodyM14,
                         color = HilingualTheme.colors.gray400,
                         modifier = Modifier.padding(end = 8.dp)
                     )
                     Text(
                         text = "팔로잉",
-                        style = HilingualTheme.typography.bodyR14,
+                        style = HilingualTheme.typography.bodyM14,
                         color = HilingualTheme.colors.gray400,
                         modifier = Modifier.padding(end = 2.dp)
                     )

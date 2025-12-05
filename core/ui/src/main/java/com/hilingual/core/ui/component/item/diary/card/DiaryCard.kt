@@ -90,7 +90,7 @@ internal fun DiaryCard(
 
         Text(
             text = displayText,
-            style = HilingualTheme.typography.bodyR16,
+            style = HilingualTheme.typography.bodyR15,
             color = HilingualTheme.colors.black,
             modifier = Modifier.fillMaxWidth()
         )

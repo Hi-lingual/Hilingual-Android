@@ -120,7 +120,7 @@ fun FeedCard(
             ) {
                 Text(
                     text = content,
-                    style = HilingualTheme.typography.bodyR16,
+                    style = HilingualTheme.typography.bodyR15,
                     color = HilingualTheme.colors.black,
                     maxLines = 5,
                     overflow = TextOverflow.Ellipsis

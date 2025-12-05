@@ -80,7 +80,7 @@ internal fun VocaCard(
             }
             Text(
                 text = phrase,
-                style = HilingualTheme.typography.headR18,
+                style = HilingualTheme.typography.bodyR17,
                 color = HilingualTheme.colors.black
             )
         }

@@ -85,7 +85,7 @@ internal fun TodayTopic(
             text = (if (isKo) koTopic else enTopic).let {
                 if (it.length > 70) it.take(70) else it
             },
-            style = HilingualTheme.typography.bodyM16,
+            style = HilingualTheme.typography.bodyM15,
             color = HilingualTheme.colors.gray700,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
