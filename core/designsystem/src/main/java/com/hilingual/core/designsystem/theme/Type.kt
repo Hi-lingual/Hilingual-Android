@@ -255,71 +255,71 @@ private fun HilingualTypographyPreview() {
     HilingualTheme {
         Column {
             Text(
-                text = "HilingualTheme",
+                text = "head_sb_20",
                 style = HilingualTheme.typography.headSB20
             )
             Text(
-                text = "HilingualTheme",
+                text = "head_m_20",
                 style = HilingualTheme.typography.headM20
             )
             Text(
-                text = "HilingualTheme",
-                style = HilingualTheme.typography.headSB18
-            )
-            Text(
-                text = "HilingualTheme",
-                style = HilingualTheme.typography.headR18
-            )
-            Text(
-                text = "HilingualTheme",
-                style = HilingualTheme.typography.headSB16
-            )
-            Text(
-                text = "HilingualTheme",
+                text = "head_r_20",
                 style = HilingualTheme.typography.headR20
             )
             Text(
-                text = "HilingualTheme",
+                text = "head_sb_18",
+                style = HilingualTheme.typography.headSB18
+            )
+            Text(
+                text = "head_m_18",
+                style = HilingualTheme.typography.headM18
+            )
+            Text(
+                text = "head_r_18",
                 style = HilingualTheme.typography.headR18
             )
             Text(
-                text = "HilingualTheme",
+                text = "head_sb_16",
+                style = HilingualTheme.typography.headSB16
+            )
+            Text(
+                text = "body_r_17",
+                style = HilingualTheme.typography.bodyR17
+            )
+            Text(
+                text = "body_m_16",
                 style = HilingualTheme.typography.bodyM16
             )
             Text(
-                text = "HilingualTheme",
+                text = "body_r_16",
                 style = HilingualTheme.typography.bodyR16
             )
             Text(
-                text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyR16
+                text = "body_m_15",
+                style = HilingualTheme.typography.bodyM15
             )
             Text(
-                text = "HilingualTheme",
+                text = "body_r_15",
+                style = HilingualTheme.typography.bodyR15
+            )
+            Text(
+                text = "body_sb_14",
                 style = HilingualTheme.typography.bodySB14
             )
             Text(
-                text = "HilingualTheme",
+                text = "body_m_14",
                 style = HilingualTheme.typography.bodyM14
             )
             Text(
-                text = "HilingualTheme",
+                text = "body_r_14",
                 style = HilingualTheme.typography.bodyR14
             )
             Text(
-                text = "HilingualTheme",
+                text = "body_m_12",
                 style = HilingualTheme.typography.bodyM12
             )
             Text(
-                text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyR14
-            )
-            Text(
-                text = "HilingualTheme",
-                style = HilingualTheme.typography.captionR12
-            )
-            Text(
-                text = "HilingualTheme",
+                text = "caption_r_12",
                 style = HilingualTheme.typography.captionR12
             )
         }
