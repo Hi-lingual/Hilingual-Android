@@ -173,7 +173,7 @@ private fun FeedHeader(
     ) {
         Text(
             text = nickname,
-            style = HilingualTheme.typography.headB16,
+            style = HilingualTheme.typography.headSB16,
             color = HilingualTheme.colors.gray850
         )
 
@@ -189,14 +189,14 @@ private fun FeedHeader(
 
             Text(
                 text = "$streak",
-                style = HilingualTheme.typography.bodyM14,
+                style = HilingualTheme.typography.bodyR14,
                 color = HilingualTheme.colors.hilingualOrange
             )
         }
 
         Text(
             text = formattedDate,
-            style = HilingualTheme.typography.captionM12,
+            style = HilingualTheme.typography.captionR12,
             color = HilingualTheme.colors.gray400,
             modifier = Modifier
                 .padding(start = 8.dp)
@@ -272,7 +272,7 @@ private fun FeedFooter(
             )
             Text(
                 text = likeCount.toString(),
-                style = HilingualTheme.typography.bodySB14,
+                style = HilingualTheme.typography.bodyM14,
                 color = HilingualTheme.colors.black
             )
         }
@@ -282,7 +282,7 @@ private fun FeedFooter(
         ) {
             Text(
                 text = "상세보기",
-                style = HilingualTheme.typography.bodyM14,
+                style = HilingualTheme.typography.bodyR14,
                 color = HilingualTheme.colors.gray400
             )
             Icon(

@@ -191,7 +191,7 @@ private fun MyPageScreen(
                     Text(
                         text = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "",
                         color = HilingualTheme.colors.gray400,
-                        style = HilingualTheme.typography.captionR14,
+                        style = HilingualTheme.typography.bodyR14,
                         modifier = Modifier.padding(end = 4.dp)
                     )
                 }

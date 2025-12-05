@@ -32,121 +32,122 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.hilingual.core.designsystem.R
 
-val SuitBold = FontFamily(Font(R.font.suit_bold, FontWeight.Bold))
-val SuitSemiBold = FontFamily(Font(R.font.suit_semibold, FontWeight.SemiBold))
-val SuitMedium = FontFamily(Font(R.font.suit_medium, FontWeight.Medium))
-val SuitRegular = FontFamily(Font(R.font.suit_regular, FontWeight.Normal))
+val PretendardSemiBold = FontFamily(Font(R.font.pretendard_semibold, FontWeight.SemiBold))
+val PretendardMedium = FontFamily(Font(R.font.pretendard_medium, FontWeight.Medium))
+val PretendardRegular = FontFamily(Font(R.font.pretendard_regular, FontWeight.Normal))
 
 @Stable
 class HilingualTypography(
-    headB20: TextStyle,
     headSB20: TextStyle,
-    headB18: TextStyle,
+    headM20: TextStyle,
+    headR20: TextStyle,
+    headSB18: TextStyle,
     headM18: TextStyle,
-    headB16: TextStyle,
-    bodyM20: TextStyle,
-    bodyR18: TextStyle,
-    bodySB16: TextStyle,
+    headR18: TextStyle,
+    headSB16: TextStyle,
+    bodyR17: TextStyle,
     bodyM16: TextStyle,
     bodyR16: TextStyle,
-    bodyB14: TextStyle,
+    bodyM15: TextStyle,
+    bodyR15: TextStyle,
     bodySB14: TextStyle,
     bodyM14: TextStyle,
-    bodySB12: TextStyle,
-    captionR14: TextStyle,
-    captionM12: TextStyle,
+    bodyR14: TextStyle,
+    bodyM12: TextStyle,
     captionR12: TextStyle
 ) {
-    var headB20 by mutableStateOf(headB20)
-        private set
     var headSB20 by mutableStateOf(headSB20)
         private set
-    var headB18 by mutableStateOf(headB18)
+    var headM20 by mutableStateOf(headM20)
+        private set
+    var headR20 by mutableStateOf(headR20)
+        private set
+    var headSB18 by mutableStateOf(headSB18)
         private set
     var headM18 by mutableStateOf(headM18)
         private set
-    var headB16 by mutableStateOf(headB16)
+    var headR18 by mutableStateOf(headR18)
         private set
-    var bodyM20 by mutableStateOf(bodyM20)
+    var headSB16 by mutableStateOf(headSB16)
         private set
-    var bodyR18 by mutableStateOf(bodyR18)
-        private set
-    var bodySB16 by mutableStateOf(bodySB16)
+    var bodyR17 by mutableStateOf(bodyR17)
         private set
     var bodyM16 by mutableStateOf(bodyM16)
         private set
     var bodyR16 by mutableStateOf(bodyR16)
         private set
-    var bodyB14 by mutableStateOf(bodyB14)
+    var bodyM15 by mutableStateOf(bodyM15)
+        private set
+    var bodyR15 by mutableStateOf(bodyR15)
         private set
     var bodySB14 by mutableStateOf(bodySB14)
         private set
     var bodyM14 by mutableStateOf(bodyM14)
         private set
-    var bodySB12 by mutableStateOf(bodySB12)
+    var bodyR14 by mutableStateOf(bodyR14)
         private set
-    var captionR14 by mutableStateOf(captionR14)
-        private set
-    var captionM12 by mutableStateOf(captionM12)
+    var bodyM12 by mutableStateOf(bodyM12)
         private set
     var captionR12 by mutableStateOf(captionR12)
         private set
 
     fun copy(
-        headB20: TextStyle = this.headB20,
         headSB20: TextStyle = this.headSB20,
-        headB18: TextStyle = this.headB18,
+        headM20: TextStyle = this.headM20,
+        headR20: TextStyle = this.headR20,
+        headSB18: TextStyle = this.headSB18,
         headM18: TextStyle = this.headM18,
-        headB16: TextStyle = this.headB16,
-        bodyM20: TextStyle = this.bodyM20,
-        bodyR18: TextStyle = this.bodyR18,
-        bodySB16: TextStyle = this.bodySB16,
+        headR18: TextStyle = this.headR18,
+        headSB16: TextStyle = this.headSB16,
+        bodyR17: TextStyle = this.bodyR17,
         bodyM16: TextStyle = this.bodyM16,
         bodyR16: TextStyle = this.bodyR16,
-        bodyB14: TextStyle = this.bodyB14,
+        bodyM15: TextStyle = this.bodyM15,
+        bodyR15: TextStyle = this.bodyR15,
         bodySB14: TextStyle = this.bodySB14,
         bodyM14: TextStyle = this.bodyM14,
-        bodySB12: TextStyle = this.bodySB12,
-        captionR14: TextStyle = this.captionR14,
-        captionM12: TextStyle = this.captionM12,
+        bodyR14: TextStyle = this.bodyR14,
+        bodyM12: TextStyle = this.bodyM12,
         captionR12: TextStyle = this.captionR12
     ) = HilingualTypography(
-        headB20,
         headSB20,
-        headB18,
+        headM20,
+        headR20,
+        headSB18,
         headM18,
-        headB16,
-        bodyM20,
-        bodyR18,
-        bodySB16,
+        headR18,
+        headSB16,
+        bodyR17,
         bodyM16,
         bodyR16,
-        bodyB14,
+        bodyM15,
+        bodyR15,
         bodySB14,
         bodyM14,
-        bodySB12,
-        captionR14,
-        captionM12,
+        bodyR14,
+        bodyM12,
         captionR12
     )
 
     fun update(other: HilingualTypography) {
-        headB20 = other.headB20
         headSB20 = other.headSB20
-        headB18 = other.headB18
+        headM20 = other.headM20
+        headR20 = other.headR20
+        headSB18 = other.headSB18
         headM18 = other.headM18
-        headB16 = other.headB16
-        bodyM20 = other.bodyM20
-        bodyR18 = other.bodyR18
-        bodySB16 = other.bodySB16
+        headR18 = other.headR18
+        headSB16 = other.headSB16
+
+        bodyR17 = other.bodyR17
         bodyM16 = other.bodyM16
         bodyR16 = other.bodyR16
-        bodyB14 = other.bodyB14
+        bodyM15 = other.bodyM15
+        bodyR15 = other.bodyR15
         bodySB14 = other.bodySB14
         bodyM14 = other.bodyM14
-        bodySB12 = other.bodySB12
-        captionR14 = other.captionR14
-        captionM12 = other.captionM12
+        bodyR14 = other.bodyR14
+        bodyM12 = other.bodyM12
+
         captionR12 = other.captionR12
     }
 }
@@ -154,45 +155,41 @@ class HilingualTypography(
 @Composable
 fun HilingualTypography(): HilingualTypography {
     return HilingualTypography(
-        headB20 = TextStyle(
-            fontFamily = SuitBold,
-            fontSize = 20.sp
-        ),
         headSB20 = TextStyle(
-            fontFamily = SuitSemiBold,
+            fontFamily = PretendardSemiBold,
             fontSize = 20.sp
         ),
-        headB18 = TextStyle(
-            fontFamily = SuitBold,
-            fontSize = 18.sp
+        headM20 = TextStyle(
+            fontFamily = PretendardMedium,
+            fontSize = 20.sp
+        ),
+        headR20 = TextStyle(
+            fontFamily = PretendardRegular,
+            fontSize = 20.sp
+        ),
+        headSB18 = TextStyle(
+            fontFamily = PretendardSemiBold,
+            fontSize = 18.sp,
+            letterSpacing = 0.03.em
         ),
         headM18 = TextStyle(
-            fontFamily = SuitMedium,
+            fontFamily = PretendardMedium,
             fontSize = 18.sp
         ),
-        headB16 = TextStyle(
-            fontFamily = SuitBold,
+        headR18 = TextStyle(
+            fontFamily = PretendardRegular,
+            fontSize = 18.sp
+        ),
+        headSB16 = TextStyle(
+            fontFamily = PretendardSemiBold,
             fontSize = 16.sp
         ),
-        bodyM20 = TextStyle(
-            fontFamily = SuitMedium,
-            fontSize = 20.sp
-        ),
-        bodyR18 = TextStyle(
-            fontFamily = SuitRegular,
-            fontSize = 18.sp
-        ),
-        bodySB16 = TextStyle(
-            fontFamily = SuitSemiBold,
-            fontSize = 16.sp,
-            lineHeight = 1.4.em,
-            lineHeightStyle = LineHeightStyle(
-                alignment = LineHeightStyle.Alignment.Center,
-                trim = LineHeightStyle.Trim.None
-            )
+        bodyR17 = TextStyle(
+            fontFamily = PretendardRegular,
+            fontSize = 17.sp
         ),
         bodyM16 = TextStyle(
-            fontFamily = SuitMedium,
+            fontFamily = PretendardMedium,
             fontSize = 16.sp,
             lineHeight = 1.4.em,
             lineHeightStyle = LineHeightStyle(
@@ -201,7 +198,7 @@ fun HilingualTypography(): HilingualTypography {
             )
         ),
         bodyR16 = TextStyle(
-            fontFamily = SuitRegular,
+            fontFamily = PretendardRegular,
             fontSize = 16.sp,
             lineHeight = 1.4.em,
             lineHeightStyle = LineHeightStyle(
@@ -209,32 +206,44 @@ fun HilingualTypography(): HilingualTypography {
                 trim = LineHeightStyle.Trim.None
             )
         ),
-        bodyB14 = TextStyle(
-            fontFamily = SuitBold,
-            fontSize = 14.sp
+        bodyM15 = TextStyle(
+            fontFamily = PretendardMedium,
+            fontSize = 15.sp,
+            lineHeight = 1.4.em,
+            lineHeightStyle = LineHeightStyle(
+                alignment = LineHeightStyle.Alignment.Center,
+                trim = LineHeightStyle.Trim.None
+            ),
+            letterSpacing = 0.01.em
+        ),
+        bodyR15 = TextStyle(
+            fontFamily = PretendardRegular,
+            fontSize = 15.sp,
+            lineHeight = 1.4.em,
+            lineHeightStyle = LineHeightStyle(
+                alignment = LineHeightStyle.Alignment.Center,
+                trim = LineHeightStyle.Trim.None
+            ),
+            letterSpacing = 0.01.em
         ),
         bodySB14 = TextStyle(
-            fontFamily = SuitSemiBold,
+            fontFamily = PretendardSemiBold,
             fontSize = 14.sp
         ),
         bodyM14 = TextStyle(
-            fontFamily = SuitMedium,
+            fontFamily = PretendardMedium,
             fontSize = 14.sp
         ),
-        bodySB12 = TextStyle(
-            fontFamily = SuitSemiBold,
-            fontSize = 12.sp
-        ),
-        captionR14 = TextStyle(
-            fontFamily = SuitRegular,
+        bodyR14 = TextStyle(
+            fontFamily = PretendardRegular,
             fontSize = 14.sp
         ),
-        captionM12 = TextStyle(
-            fontFamily = SuitMedium,
+        bodyM12 = TextStyle(
+            fontFamily = PretendardMedium,
             fontSize = 12.sp
         ),
         captionR12 = TextStyle(
-            fontFamily = SuitRegular,
+            fontFamily = PretendardRegular,
             fontSize = 12.sp
         )
     )
@@ -247,35 +256,31 @@ private fun HilingualTypographyPreview() {
         Column {
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.headB20
-            )
-            Text(
-                text = "HilingualTheme",
                 style = HilingualTheme.typography.headSB20
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.headB18
+                style = HilingualTheme.typography.headM20
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.headM18
+                style = HilingualTheme.typography.headSB18
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.headB16
+                style = HilingualTheme.typography.headR18
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyM20
+                style = HilingualTheme.typography.headSB16
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyR18
+                style = HilingualTheme.typography.headR20
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodySB16
+                style = HilingualTheme.typography.headR18
             )
             Text(
                 text = "HilingualTheme",
@@ -287,7 +292,7 @@ private fun HilingualTypographyPreview() {
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodyB14
+                style = HilingualTheme.typography.bodyR16
             )
             Text(
                 text = "HilingualTheme",
@@ -299,15 +304,19 @@ private fun HilingualTypographyPreview() {
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.bodySB12
+                style = HilingualTheme.typography.bodyR14
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.captionR14
+                style = HilingualTheme.typography.bodyM12
             )
             Text(
                 text = "HilingualTheme",
-                style = HilingualTheme.typography.captionM12
+                style = HilingualTheme.typography.bodyR14
+            )
+            Text(
+                text = "HilingualTheme",
+                style = HilingualTheme.typography.captionR12
             )
             Text(
                 text = "HilingualTheme",

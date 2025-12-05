@@ -209,7 +209,7 @@ internal fun DiaryWriteRoute(
                         Text(
                             text = "틀린 부분을 고치고,\n더 나은 표현으로 수정했어요!",
                             color = HilingualTheme.colors.gray400,
-                            style = HilingualTheme.typography.bodyR18,
+                            style = HilingualTheme.typography.headR18,
                             textAlign = TextAlign.Center
                         )
                     },
@@ -522,7 +522,7 @@ private fun DateText(
 
     Text(
         text = formattedDate,
-        style = HilingualTheme.typography.bodySB16,
+        style = HilingualTheme.typography.bodyM16,
         color = HilingualTheme.colors.black
     )
 }

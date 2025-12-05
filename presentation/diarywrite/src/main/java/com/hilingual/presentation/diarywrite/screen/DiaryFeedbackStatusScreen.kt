@@ -62,7 +62,7 @@ internal fun DiaryFeedbackStatusScreen(
             Text(
                 text = uiData.title,
                 color = HilingualTheme.colors.gray850,
-                style = HilingualTheme.typography.headB20,
+                style = HilingualTheme.typography.headSB20,
                 textAlign = TextAlign.Center
             )
 

@@ -94,7 +94,7 @@ internal fun FeedProfileInfo(
             Column {
                 Text(
                     text = nickname,
-                    style = HilingualTheme.typography.headB18,
+                    style = HilingualTheme.typography.headSB18,
                     color = HilingualTheme.colors.gray850,
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
@@ -106,25 +106,25 @@ internal fun FeedProfileInfo(
                 ) {
                     Text(
                         text = "팔로워",
-                        style = HilingualTheme.typography.captionR14,
+                        style = HilingualTheme.typography.bodyR14,
                         color = HilingualTheme.colors.gray400,
                         modifier = Modifier.padding(end = 2.dp)
                     )
                     Text(
                         text = "$follower",
-                        style = HilingualTheme.typography.bodyB14,
+                        style = HilingualTheme.typography.bodySB14,
                         color = HilingualTheme.colors.gray400,
                         modifier = Modifier.padding(end = 8.dp)
                     )
                     Text(
                         text = "팔로잉",
-                        style = HilingualTheme.typography.captionR14,
+                        style = HilingualTheme.typography.bodyR14,
                         color = HilingualTheme.colors.gray400,
                         modifier = Modifier.padding(end = 2.dp)
                     )
                     Text(
                         text = "$following",
-                        style = HilingualTheme.typography.bodyB14,
+                        style = HilingualTheme.typography.bodySB14,
                         color = HilingualTheme.colors.gray400
                     )
                 }
@@ -141,7 +141,7 @@ internal fun FeedProfileInfo(
                     )
                     Text(
                         text = "${streak}일 연속 작성 중",
-                        style = HilingualTheme.typography.bodyM14,
+                        style = HilingualTheme.typography.bodyR14,
                         color = if (streak > 0) HilingualTheme.colors.hilingualOrange else HilingualTheme.colors.gray400
                     )
                 }

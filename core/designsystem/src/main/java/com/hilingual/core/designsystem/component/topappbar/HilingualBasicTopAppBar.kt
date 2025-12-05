@@ -57,7 +57,7 @@ fun HilingualBasicTopAppBar(
                 modifier = Modifier.align(Alignment.Center),
                 text = title,
                 color = HilingualTheme.colors.black,
-                style = HilingualTheme.typography.headB18
+                style = HilingualTheme.typography.headSB18
             )
         }
 

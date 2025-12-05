@@ -66,7 +66,7 @@ internal fun TodayTopic(
         ) {
             Text(
                 text = "오늘의 추천 주제",
-                style = HilingualTheme.typography.captionM12,
+                style = HilingualTheme.typography.captionR12,
                 color = HilingualTheme.colors.gray500
             )
 
@@ -85,7 +85,7 @@ internal fun TodayTopic(
             text = (if (isKo) koTopic else enTopic).let {
                 if (it.length > 70) it.take(70) else it
             },
-            style = HilingualTheme.typography.bodySB16,
+            style = HilingualTheme.typography.bodyM16,
             color = HilingualTheme.colors.gray700,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis

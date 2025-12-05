@@ -146,7 +146,7 @@ private fun AuthScreen(
             Text(
                 text = "개인정보처리방침",
                 color = HilingualTheme.colors.gray100,
-                style = HilingualTheme.typography.bodyM14,
+                style = HilingualTheme.typography.bodyR14,
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier.noRippleClickable(onClick = onPrivacyPolicyClick)
             )

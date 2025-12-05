@@ -66,7 +66,7 @@ internal fun DiaryTimeInfo(
             }
             Text(
                 text = annotatedString,
-                style = HilingualTheme.typography.bodySB14
+                style = HilingualTheme.typography.bodyM14
             )
         }
     }

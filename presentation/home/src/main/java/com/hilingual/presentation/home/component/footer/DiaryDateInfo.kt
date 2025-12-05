@@ -62,19 +62,19 @@ internal fun DiaryDateInfo(
     ) {
         Text(
             text = formattedDate,
-            style = HilingualTheme.typography.headB16,
+            style = HilingualTheme.typography.headSB16,
             color = HilingualTheme.colors.black
         )
 
         Text(
             text = "·",
-            style = HilingualTheme.typography.captionM12,
+            style = HilingualTheme.typography.captionR12,
             color = HilingualTheme.colors.gray300
         )
 
         Text(
             text = diaryStatusText,
-            style = HilingualTheme.typography.captionM12,
+            style = HilingualTheme.typography.captionR12,
             color = diaryStatusColor
         )
     }

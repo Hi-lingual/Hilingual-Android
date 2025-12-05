@@ -63,7 +63,7 @@ internal fun FeedbackCard(
 
         Text(
             text = explain,
-            style = HilingualTheme.typography.bodyM14,
+            style = HilingualTheme.typography.bodyR14,
             color = HilingualTheme.colors.hilingualBlack,
             modifier = Modifier.fillMaxWidth()
         )
@@ -100,7 +100,7 @@ private fun FeedbackSentence(
         Triple(
             R.drawable.chip_feedback_card_ai,
             HilingualTheme.colors.hilingualOrange,
-            HilingualTheme.typography.bodyM16
+            HilingualTheme.typography.bodyR16
         )
     } else {
         Triple(

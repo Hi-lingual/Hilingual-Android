@@ -69,7 +69,7 @@ fun BlockBottomSheet(
         ) {
             Text(
                 text = "정말 차단하실건가요?",
-                style = HilingualTheme.typography.headB18,
+                style = HilingualTheme.typography.headSB18,
                 color = HilingualTheme.colors.black
             )
 
@@ -78,7 +78,7 @@ fun BlockBottomSheet(
             Text(
                 text = "차단 시 상대방은 차단 여부를 알 수 없으며,\n" +
                     "언제든 차단을 해제 할 수 있어요.",
-                style = HilingualTheme.typography.bodyM14,
+                style = HilingualTheme.typography.bodyR14,
                 color = HilingualTheme.colors.gray400
             )
 
@@ -101,7 +101,7 @@ fun BlockBottomSheet(
 
                     Text(
                         text = text,
-                        style = HilingualTheme.typography.bodyM14,
+                        style = HilingualTheme.typography.bodyR14,
                         color = HilingualTheme.colors.gray850
                     )
                 }

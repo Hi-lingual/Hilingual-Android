@@ -127,7 +127,7 @@ private fun BlockedUserScreen(
                 )
                 Text(
                     text = "차단된 계정이 없습니다.",
-                    style = HilingualTheme.typography.headM18,
+                    style = HilingualTheme.typography.headR18,
                     color = HilingualTheme.colors.gray500,
                     textAlign = TextAlign.Center
                 )
