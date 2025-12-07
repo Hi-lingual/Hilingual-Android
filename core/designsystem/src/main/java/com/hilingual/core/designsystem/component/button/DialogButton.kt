@@ -53,7 +53,7 @@ fun DialogButton(
     ) {
         Text(
             text = text,
-            style = HilingualTheme.typography.bodySB16,
+            style = HilingualTheme.typography.bodyM16,
             color = if (isFilled) {
                 HilingualTheme.colors.white
             } else {

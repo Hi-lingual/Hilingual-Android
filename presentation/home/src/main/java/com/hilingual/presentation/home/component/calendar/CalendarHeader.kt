@@ -62,7 +62,7 @@ internal fun CalendarHeader(
                     Locale.getDefault()
                 )
                 }",
-                style = HilingualTheme.typography.headB18,
+                style = HilingualTheme.typography.headSB18,
                 color = HilingualTheme.colors.black
             )
             Icon(

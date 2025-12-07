@@ -63,7 +63,7 @@ fun HilingualErrorDialog(
 
                 Text(
                     text = "앗! 일시적인 오류가 발생했어요.",
-                    style = HilingualTheme.typography.headB16,
+                    style = HilingualTheme.typography.headSB16,
                     color = HilingualTheme.colors.gray850
                 )
             }

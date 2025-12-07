@@ -64,7 +64,7 @@ internal fun SettingItem(
         Text(
             text = title,
             color = HilingualTheme.colors.gray700,
-            style = HilingualTheme.typography.bodyM14
+            style = HilingualTheme.typography.bodyR14
 
         )
 
@@ -103,7 +103,7 @@ private fun SettingItemPreview() {
                     Text(
                         text = "1.01.01",
                         color = HilingualTheme.colors.gray400,
-                        style = HilingualTheme.typography.captionR14,
+                        style = HilingualTheme.typography.bodyR14,
                         modifier = Modifier.padding(end = 4.dp)
                     )
                 }

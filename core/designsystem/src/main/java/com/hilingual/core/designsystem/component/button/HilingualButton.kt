@@ -61,7 +61,7 @@ fun HilingualButton(
         Text(
             text = text,
             color = HilingualTheme.colors.white,
-            style = HilingualTheme.typography.bodySB16
+            style = HilingualTheme.typography.bodyM16
         )
     }
 }

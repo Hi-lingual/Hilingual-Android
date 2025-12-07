@@ -153,7 +153,7 @@ private fun OnboardingScreen(
 
         Text(
             text = "닉네임",
-            style = HilingualTheme.typography.bodySB16,
+            style = HilingualTheme.typography.bodyM16,
             color = HilingualTheme.colors.black,
             modifier = Modifier.align(Alignment.Start)
         )

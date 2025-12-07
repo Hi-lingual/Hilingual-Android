@@ -61,7 +61,7 @@ internal fun GoogleSignButton(
 
         Text(
             text = "Google로 계속하기",
-            style = HilingualTheme.typography.bodySB16,
+            style = HilingualTheme.typography.bodyM16,
             color = HilingualTheme.colors.hilingualBlack
         )
 
