@@ -118,13 +118,13 @@ internal fun FeedProfileInfo(
                     )
                     Text(
                         text = "팔로잉",
-                        style = HilingualTheme.typography.bodyM14,
+                        style = HilingualTheme.typography.bodyR14,
                         color = HilingualTheme.colors.gray400,
                         modifier = Modifier.padding(end = 2.dp)
                     )
                     Text(
                         text = "$following",
-                        style = HilingualTheme.typography.bodySB14,
+                        style = HilingualTheme.typography.bodyM14,
                         color = HilingualTheme.colors.gray400
                     )
                 }

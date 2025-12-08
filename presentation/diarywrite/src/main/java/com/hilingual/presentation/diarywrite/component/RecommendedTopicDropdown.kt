@@ -105,7 +105,7 @@ internal fun RecommendedTopicDropdown(
                 Text(
                     modifier = Modifier.weight(1f),
                     text = if (isKo) koTopic else enTopic,
-                    style = HilingualTheme.typography.bodyM16,
+                    style = HilingualTheme.typography.bodyM15,
                     color = HilingualTheme.colors.gray700,
                     maxLines = 2
                 )
