@@ -46,6 +46,7 @@ jobs:
         run: bundle install
 
       - name: Run unit tests
+        run: ./gradlew testDebugUnitTest
 
       - name: Deploy to Firebase App Distribution
         env:
