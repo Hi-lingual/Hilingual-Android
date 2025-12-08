@@ -32,17 +32,26 @@ class AmplitudeTracker @Inject constructor(
     @ApplicationContext private val context: Context
 ) : Tracker {
 
-    private val amplitude = Amplitude(
-        Configuration(
-            apiKey = BuildConfig.AMPLITUDE_API_KEY,
-            context = context
+    private val amplitude: Amplitude? = run {
+        if (BuildConfig.DEBUG) return@run null
+
+        Amplitude(
+            Configuration(
+                apiKey = BuildConfig.AMPLITUDE_API_KEY,
+                context = context
+            )
         )
-    )
+    }
 
     override fun logEvent(trigger: TriggerType, page: Page, event: String) {
         val eventName = "${trigger.value}_${page.pageName}.$event"
-        Timber.tag("AmplitudeTracker").d("Tracking event: $eventName, properties: None")
-        amplitude.track(eventName)
+
+        if (BuildConfig.DEBUG) {
+            Timber.tag("AmplitudeTracker").d("Tracking event: $eventName, properties: None")
+            return
+        }
+
+        amplitude?.track(eventName)
     }
 
     override fun logEvent(
@@ -52,7 +61,12 @@ class AmplitudeTracker @Inject constructor(
         properties: Map<String, Any>
     ) {
         val eventName = "${trigger.value}_${page.pageName}.$event"
-        Timber.tag("AmplitudeTracker").d("Tracking event: $eventName, properties: $properties")
-        amplitude.track(eventName, properties.toMutableMap())
+
+        if (BuildConfig.DEBUG) {
+            Timber.tag("AmplitudeTracker").d("Tracking event: $eventName, properties: $properties")
+            return
+        }
+
+        amplitude?.track(eventName, properties.toMutableMap())
     }
 }
