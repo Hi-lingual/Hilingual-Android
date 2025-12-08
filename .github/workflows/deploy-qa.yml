@@ -42,11 +42,10 @@ jobs:
           ruby-version: '3.3.6'
           bundler-cache: false
 
-      - name: Install Bundler
-        run: gem install bundler -v 2.5.23
+      - name: Install Bundler dependencies
+        run: bundle install
 
       - name: Run unit tests
-        run: ./gradlew testDebugUnitTest
 
       - name: Deploy to Firebase App Distribution
         env:
