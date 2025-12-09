@@ -144,7 +144,7 @@ fun HilingualBasicTextField(
                     if (isShowLength) {
                         Spacer(Modifier.height(12.dp))
                         Text(
-                            text = "${value.length} / $maxLength",
+                            text = "${value.length}/$maxLength",
                             style = HilingualTheme.typography.captionR12,
                             color = HilingualTheme.colors.gray400,
                             modifier = Modifier.align(Alignment.End)

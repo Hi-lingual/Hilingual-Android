@@ -152,7 +152,7 @@ internal fun TermsBottomSheet(
                 ) {
                     Text(
                         text = "전체 동의",
-                        style = HilingualTheme.typography.headSB18,
+                        style = HilingualTheme.typography.bodyM16,
                         color = HilingualTheme.colors.black
                     )
 

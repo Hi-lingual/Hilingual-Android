@@ -98,7 +98,7 @@ fun HilingualShortTextField(
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = "${text.graphemeLength} / $maxLength",
+                text = "${text.graphemeLength}/$maxLength",
                 style = HilingualTheme.typography.captionR12,
                 color = HilingualTheme.colors.gray300
             )
