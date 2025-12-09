@@ -72,7 +72,7 @@ internal fun SortBottomSheetContent(
     ) {
         Text(
             text = "단어 정렬",
-            style = HilingualTheme.typography.headB16,
+            style = HilingualTheme.typography.headSB16,
             color = HilingualTheme.colors.hilingualBlack
         )
 
@@ -99,7 +99,7 @@ internal fun SortBottomSheetContent(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = type.text,
-                        style = HilingualTheme.typography.bodySB14,
+                        style = HilingualTheme.typography.bodyM14,
                         color = contentColor
                     )
                     Spacer(modifier = Modifier.weight(1f))

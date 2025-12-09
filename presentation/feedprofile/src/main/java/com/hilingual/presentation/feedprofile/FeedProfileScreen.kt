@@ -468,7 +468,7 @@ private fun BlockedUserContent(
 
         Text(
             text = "${nickname}님의 글을 확인할 수 없어요.",
-            style = HilingualTheme.typography.headB18,
+            style = HilingualTheme.typography.headSB18,
             color = HilingualTheme.colors.black,
             textAlign = TextAlign.Center
         )
@@ -477,7 +477,7 @@ private fun BlockedUserContent(
 
         Text(
             text = "차단을 해제하면 글을 확인할 수 있어요.",
-            style = HilingualTheme.typography.bodyM16,
+            style = HilingualTheme.typography.bodyR16,
             color = HilingualTheme.colors.gray400,
             textAlign = TextAlign.Center
         )

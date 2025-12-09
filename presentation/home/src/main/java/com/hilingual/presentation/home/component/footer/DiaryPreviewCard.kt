@@ -62,7 +62,7 @@ internal fun DiaryPreviewCard(
 
         Text(
             text = diaryText,
-            style = HilingualTheme.typography.bodyM16,
+            style = HilingualTheme.typography.bodyR15,
             color = HilingualTheme.colors.black,
             maxLines = 3,
             overflow = TextOverflow.Ellipsis,

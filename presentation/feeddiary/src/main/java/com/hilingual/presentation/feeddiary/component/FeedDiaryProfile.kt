@@ -84,7 +84,7 @@ internal fun FeedDiaryProfile(
             ) {
                 Text(
                     text = nickname,
-                    style = HilingualTheme.typography.headB16,
+                    style = HilingualTheme.typography.headSB16,
                     color = HilingualTheme.colors.gray850
                 )
 
@@ -99,7 +99,7 @@ internal fun FeedDiaryProfile(
 
                 Text(
                     text = "$streak",
-                    style = HilingualTheme.typography.captionR14,
+                    style = HilingualTheme.typography.bodyR14,
                     color = HilingualTheme.colors.hilingualOrange,
                     modifier = Modifier.padding(end = 8.dp)
                 )
@@ -130,7 +130,7 @@ internal fun FeedDiaryProfile(
             )
             Text(
                 text = "$likeCount",
-                style = HilingualTheme.typography.captionM12,
+                style = HilingualTheme.typography.captionR12,
                 color = HilingualTheme.colors.gray850
             )
         }

@@ -62,7 +62,7 @@ internal fun FeedEmptyCard(
 
         Text(
             text = type.text,
-            style = HilingualTheme.typography.headM18,
+            style = HilingualTheme.typography.headR18,
             color = HilingualTheme.colors.gray500,
             textAlign = TextAlign.Center
         )

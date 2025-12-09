@@ -50,7 +50,7 @@ internal fun EmptyImage(
 
         Text(
             text = "아직 알림이 없어요.",
-            style = HilingualTheme.typography.headM18,
+            style = HilingualTheme.typography.headR18,
             color = HilingualTheme.colors.gray500
         )
 

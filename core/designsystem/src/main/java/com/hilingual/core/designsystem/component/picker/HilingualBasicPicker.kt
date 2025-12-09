@@ -84,7 +84,7 @@ fun HilingualBasicPicker(
     val flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
 
     val itemHeightDp = with(density) {
-        HilingualTheme.typography.bodySB14.fontSize.toDp() +
+        HilingualTheme.typography.bodyM14.fontSize.toDp() +
             itemContentPadding.calculateTopPadding() +
             itemContentPadding.calculateBottomPadding()
     }
@@ -150,7 +150,7 @@ fun HilingualBasicPicker(
                     text = currentItemText,
                     maxLines = 1,
                     color = textColor,
-                    style = HilingualTheme.typography.headSB20,
+                    style = HilingualTheme.typography.headM20,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .height(itemHeightDp)

@@ -37,7 +37,7 @@ internal fun AddVocaButton(
 ) {
     Text(
         text = "일기 쓰고 단어 추가하기",
-        style = HilingualTheme.typography.bodySB16,
+        style = HilingualTheme.typography.bodyM16,
         color = HilingualTheme.colors.white,
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))

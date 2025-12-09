@@ -56,7 +56,7 @@ fun RecommendExpressionTab(
         item {
             Text(
                 text = writtenDate,
-                style = HilingualTheme.typography.bodySB16,
+                style = HilingualTheme.typography.bodyM16,
                 color = HilingualTheme.colors.gray700,
                 modifier = Modifier
                     .heightIn(min = 28.dp)
