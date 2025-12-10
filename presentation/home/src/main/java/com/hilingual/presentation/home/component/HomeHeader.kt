@@ -114,7 +114,7 @@ private fun ProfileImage(
 private fun ProfileName(name: String) {
     Text(
         text = name,
-        style = HilingualTheme.typography.headB18,
+        style = HilingualTheme.typography.headSB18,
         color = HilingualTheme.colors.white,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis
@@ -161,7 +161,7 @@ private fun StatItem(@DrawableRes icon: Int, text: String) {
 
     Text(
         text = text,
-        style = HilingualTheme.typography.captionM12,
+        style = HilingualTheme.typography.captionR12,
         color = HilingualTheme.colors.white,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis
@@ -172,7 +172,7 @@ private fun StatItem(@DrawableRes icon: Int, text: String) {
 private fun StatSeparator() {
     Text(
         text = "·",
-        style = HilingualTheme.typography.captionM12,
+        style = HilingualTheme.typography.captionR12,
         color = HilingualTheme.colors.gray100
     )
 }

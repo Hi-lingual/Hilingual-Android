@@ -37,7 +37,6 @@ dependencies {
     implementation(projects.presentation.onboarding)
     implementation(projects.presentation.splash)
     implementation(projects.presentation.mypage)
-    implementation(projects.presentation.otp)
     implementation(projects.presentation.feed)
     implementation(projects.presentation.feeddiary)
     implementation(projects.presentation.feedprofile)

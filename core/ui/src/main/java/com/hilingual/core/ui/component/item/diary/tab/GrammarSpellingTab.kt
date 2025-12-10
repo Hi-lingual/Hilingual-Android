@@ -77,7 +77,7 @@ fun GrammarSpellingTab(
             ) {
                 Text(
                     text = writtenDate,
-                    style = HilingualTheme.typography.bodySB16,
+                    style = HilingualTheme.typography.bodyM16,
                     color = HilingualTheme.colors.gray700
                 )
                 DiaryViewModeToggle(
@@ -130,7 +130,7 @@ fun GrammarSpellingTab(
 private fun FeedbackTitle(feedbackSize: Int) {
     Text(
         text = if (feedbackSize == 0) AnnotatedString("일기에서 발견된 피드백 알려드릴게요!") else getFeedbackTitleAnnotatedString(feedbackSize),
-        style = HilingualTheme.typography.bodySB16,
+        style = HilingualTheme.typography.bodyM16,
         color = HilingualTheme.colors.black
     )
 }

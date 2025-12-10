@@ -51,7 +51,7 @@ internal fun NotificationSwitchItem(
     ) {
         Text(
             text = text,
-            style = HilingualTheme.typography.bodyM16,
+            style = HilingualTheme.typography.bodyR16,
             color = HilingualTheme.colors.black
         )
         HilingualBasicToggleSwitch(

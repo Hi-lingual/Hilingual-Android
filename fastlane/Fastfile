@@ -1,0 +1,44 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+
+default_platform(:android)
+
+platform :android do
+  # =================================================
+  # ============== QA Lane (Debug) ==================
+  # =================================================
+  desc "Build and deploy a new debug build to Firebase App Distribution"
+  lane :qa do
+    # Gradle을 사용해 Debug APK를 빌드합니다.
+    gradle(
+      task: "clean assembleDebug"
+    )
+
+    # Firebase App Distribution에 업로드합니다.
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID_DEBUG"], # .debug용 앱 ID
+      service_credentials_file: ENV["FIREBASE_SERVICE_CREDENTIALS_JSON_PATH"],
+      groups: "qa-team",
+      release_notes: "Git 마지막 커밋 메시지: #{last_git_commit[:message]}"
+    )
+  end
+
+  # =================================================
+  # ========= Production Lane (Release) =============
+  # =================================================
+  desc "Build and deploy a new release build to Google Play"
+  lane :deploy_production do
+    # Gradle을 사용해 Release AAB를 빌드합니다.
+    gradle(
+      task: "clean bundleRelease"
+      # Keystore 관련 설정은 GitHub Actions에서 환경변수로 주입 예정
+    )
+
+    # Google Play에 업로드합니다.
+    upload_to_play_store(
+      track: 'internal', # 또는 'alpha'
+      package_name: 'com.hilingual' # 릴리즈 패키지 이름 명시
+      # json_key는 GitHub Actions에서 환경변수로 주입 예정
+    )
+  end
+end

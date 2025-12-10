@@ -53,13 +53,13 @@ internal fun ProfileItem(
         Text(
             text = label,
             color = HilingualTheme.colors.black,
-            style = HilingualTheme.typography.bodySB16
+            style = HilingualTheme.typography.bodyM16
         )
 
         Text(
             text = value,
             color = HilingualTheme.colors.gray500,
-            style = HilingualTheme.typography.bodyM16
+            style = HilingualTheme.typography.bodyR16
         )
     }
 }

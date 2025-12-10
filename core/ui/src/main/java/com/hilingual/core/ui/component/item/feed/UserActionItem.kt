@@ -72,7 +72,7 @@ fun UserActionItem(
 
             Text(
                 text = nickname,
-                style = HilingualTheme.typography.headB16,
+                style = HilingualTheme.typography.headSB16,
                 color = HilingualTheme.colors.black
             )
         }

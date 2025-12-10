@@ -56,7 +56,7 @@ internal fun VocaInfo(
     ) {
         Text(
             text = "총 ${wordCount}개",
-            style = HilingualTheme.typography.bodyM14,
+            style = HilingualTheme.typography.bodyR14,
             color = HilingualTheme.colors.gray500
         )
         Row(
@@ -71,7 +71,7 @@ internal fun VocaInfo(
             )
             Text(
                 text = sortType.text,
-                style = HilingualTheme.typography.bodyM14,
+                style = HilingualTheme.typography.bodyR14,
                 color = HilingualTheme.colors.gray500
             )
         }

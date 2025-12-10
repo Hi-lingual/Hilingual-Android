@@ -63,7 +63,7 @@ internal fun DiaryEmptyCard(
         )
         Text(
             text = type.text,
-            style = HilingualTheme.typography.bodySB14,
+            style = HilingualTheme.typography.bodyM14,
             color = HilingualTheme.colors.gray400,
             textAlign = TextAlign.Center,
             maxLines = 2

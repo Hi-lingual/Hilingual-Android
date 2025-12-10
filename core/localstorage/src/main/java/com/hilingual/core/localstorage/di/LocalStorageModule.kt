@@ -19,6 +19,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
 import androidx.datastore.preferences.preferencesDataStore
+import com.hilingual.core.common.di.ApplicationScope
 import com.hilingual.core.localstorage.DiaryTempManager
 import com.hilingual.core.localstorage.DiaryTempManagerImpl
 import com.hilingual.core.localstorage.TokenManager
@@ -34,6 +35,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 @Module
@@ -49,8 +51,11 @@ object LocalStorageModule {
 
     @Provides
     @Singleton
-    fun provideTokenManager(@ApplicationContext context: Context): TokenManager =
-        TokenManagerImpl(context.encryptedDataStore)
+    fun provideTokenManager(
+        @ApplicationContext context: Context,
+        @ApplicationScope externalScope: CoroutineScope
+    ): TokenManager =
+        TokenManagerImpl(context.encryptedDataStore, externalScope)
 
     @Provides
     @Singleton

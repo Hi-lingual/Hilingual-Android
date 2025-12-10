@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -59,7 +60,6 @@ internal fun AuthRoute(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
     navigateToOnboarding: () -> Unit,
-    navigateToOtp: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
@@ -69,7 +69,6 @@ internal fun AuthRoute(
         when (event) {
             is AuthSideEffect.NavigateToHome -> navigateToHome()
             is AuthSideEffect.NavigateToOnboarding -> navigateToOnboarding()
-            is AuthSideEffect.NavigateToOtp -> navigateToOtp()
         }
     }
 
@@ -119,13 +118,15 @@ private fun AuthScreen(
             Image(
                 painter = painterResource(DesignSystemR.drawable.img_logo),
                 contentDescription = null,
-                modifier = Modifier.sharedElement(
-                    sharedContentState = rememberSharedContentState(key = "logo"),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    boundsTransform = { _, _ ->
-                        tween(durationMillis = 400)
-                    }
-                )
+                modifier = Modifier
+                    .sharedElement(
+                        sharedContentState = rememberSharedContentState(key = "logo"),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        boundsTransform = { _, _ ->
+                            tween(durationMillis = 400)
+                        }
+                    )
+                    .size(width = 200.dp, height = 50.dp)
             )
         }
 
@@ -146,7 +147,7 @@ private fun AuthScreen(
             Text(
                 text = "개인정보처리방침",
                 color = HilingualTheme.colors.gray100,
-                style = HilingualTheme.typography.bodyM14,
+                style = HilingualTheme.typography.bodyR14,
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier.noRippleClickable(onClick = onPrivacyPolicyClick)
             )

@@ -56,6 +56,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.hilingual.core.common.analytics.FakeTracker
 import com.hilingual.core.common.analytics.Page.WRITE_DIARY
 import com.hilingual.core.common.analytics.Tracker
@@ -91,6 +93,7 @@ import com.skydoves.balloon.BalloonSizeSpec
 import com.skydoves.balloon.compose.Balloon
 import com.skydoves.balloon.compose.rememberBalloonBuilder
 import com.skydoves.balloon.compose.setBackgroundColor
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import java.io.File
 import java.time.LocalDate
@@ -112,6 +115,20 @@ internal fun DiaryWriteRoute(
     val toastTrigger = LocalToastTrigger.current
     val feedbackUiState by viewModel.feedbackUiState.collectAsStateWithLifecycle()
     val tracker = LocalTracker.current
+
+    val lottieComposition1 by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.lottie_feedback_loading_1)
+    )
+    val lottieComposition2 by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.lottie_feedback_loading_2)
+    )
+    val lottieComposition3 by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.lottie_feedback_loading_3)
+    )
+
+    val lottieCompositions = remember(lottieComposition1, lottieComposition2, lottieComposition3) {
+        persistentListOf(lottieComposition1, lottieComposition2, lottieComposition3)
+    }
 
     var diaryTextImageUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -196,7 +213,10 @@ internal fun DiaryWriteRoute(
         }
 
         is UiState.Loading -> {
-            DiaryFeedbackLoadingScreen(paddingValues = paddingValues)
+            DiaryFeedbackLoadingScreen(
+                lottieCompositions = lottieCompositions,
+                paddingValues = paddingValues
+            )
         }
 
         is UiState.Success -> {
@@ -209,7 +229,7 @@ internal fun DiaryWriteRoute(
                         Text(
                             text = "틀린 부분을 고치고,\n더 나은 표현으로 수정했어요!",
                             color = HilingualTheme.colors.gray400,
-                            style = HilingualTheme.typography.bodyR18,
+                            style = HilingualTheme.typography.headR18,
                             textAlign = TextAlign.Center
                         )
                     },
@@ -522,7 +542,7 @@ private fun DateText(
 
     Text(
         text = formattedDate,
-        style = HilingualTheme.typography.bodySB16,
+        style = HilingualTheme.typography.bodyM16,
         color = HilingualTheme.colors.black
     )
 }

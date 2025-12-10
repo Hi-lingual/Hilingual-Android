@@ -64,7 +64,7 @@ fun HilingualBasicTabRow(
                         text = {
                             Text(
                                 text = title,
-                                style = if (selected) HilingualTheme.typography.headB18 else HilingualTheme.typography.headM18,
+                                style = if (selected) HilingualTheme.typography.headSB18 else HilingualTheme.typography.headM18,
                                 textAlign = TextAlign.Center
                             )
                         },

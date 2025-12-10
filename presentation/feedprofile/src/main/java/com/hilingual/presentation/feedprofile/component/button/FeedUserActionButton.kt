@@ -56,7 +56,7 @@ fun FeedUserActionButton(
     Text(
         text = buttonText,
         color = textColor,
-        style = HilingualTheme.typography.bodySB14,
+        style = HilingualTheme.typography.bodyM14,
         textAlign = TextAlign.Center,
         modifier = modifier
             .noRippleClickable(onClick = onClick)

@@ -18,12 +18,13 @@ package com.hilingual.data.auth.service
 import com.hilingual.core.network.constant.AUTHORIZATION
 import com.hilingual.core.network.model.BaseResponse
 import com.hilingual.data.auth.dto.response.ReissueTokenResponseDto
+import retrofit2.Call
 import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface ReissueService {
     @POST("api/v1/users/reissue")
-    suspend fun reissueToken(
+    fun reissueToken(
         @Header(AUTHORIZATION) refreshToken: String
-    ): BaseResponse<ReissueTokenResponseDto>
+    ): Call<BaseResponse<ReissueTokenResponseDto>>
 }

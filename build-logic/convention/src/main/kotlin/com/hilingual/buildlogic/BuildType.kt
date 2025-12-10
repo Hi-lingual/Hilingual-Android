@@ -28,11 +28,6 @@ fun Project.configureBuildTypes(
                     "GOOGLE_WEB_CLIENT_ID",
                     properties.getQuotedProperty("dev.google.client.id")
                 )
-                buildConfigField(
-                    "String",
-                    "ADMIN_OTP_CODE",
-                    properties.getQuotedProperty("otpcode")
-                )
             }
             release {
                 buildConfigField(
@@ -44,11 +39,6 @@ fun Project.configureBuildTypes(
                     "String",
                     "GOOGLE_WEB_CLIENT_ID",
                     properties.getQuotedProperty("prod.google.client.id")
-                )
-                buildConfigField(
-                    "String",
-                    "ADMIN_OTP_CODE",
-                    properties.getQuotedProperty("otpcode")
                 )
             }
         }

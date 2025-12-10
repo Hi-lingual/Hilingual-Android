@@ -16,5 +16,6 @@
       "matchDepNames": ["org.jlleitschuh.gradle.ktlint"],
       "enabled": false
     }
-  ]
+  ],
+  "postUpdateOptions": ["bundler"]
 }

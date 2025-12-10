@@ -1,0 +1,55 @@
+# .github/workflows/deploy-qa.yml
+name: Deploy QA Build to Firebase
+
+on:
+  push:
+    branches:
+      - 'release/**'
+  workflow_dispatch:
+
+jobs:
+  deploy_qa:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Create required files from secrets
+        env:
+          GOOGLE_SERVICES_JSON_CONTENT: ${{ secrets.GOOGLE_SERVICES_JSON }}
+          DEBUG_KEYSTORE_BASE64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
+          LOCAL_PROPERTIES_CONTENT: ${{ secrets.LOCAL_PROPERTIES }} # 수정된 시크릿 이름
+        run: |
+          echo "$GOOGLE_SERVICES_JSON_CONTENT" > app/google-services.json
+          mkdir -p keystore
+          echo "$DEBUG_KEYSTORE_BASE64" | base64 --decode > keystore/hilingual-debug-key.jks
+          echo "$LOCAL_PROPERTIES_CONTENT" > local.properties
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4.7'
+          bundler-cache: true
+
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest
+
+      - name: Deploy to Firebase App Distribution
+        env:
+          FIREBASE_APP_ID_DEBUG: ${{ secrets.FIREBASE_APP_ID_DEBUG }}
+          FIREBASE_SERVICE_ACCOUNT_JSON_CONTENT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          echo "$FIREBASE_SERVICE_ACCOUNT_JSON_CONTENT" > firebase_credentials.json
+          export FIREBASE_SERVICE_CREDENTIALS_JSON_PATH="$(pwd)/firebase_credentials.json"
+          bundle exec fastlane android qa

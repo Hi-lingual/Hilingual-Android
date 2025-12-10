@@ -64,8 +64,8 @@ fun HilingualBasicTextField(
     onValueChanged: (String) -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
-    placeholderTextStyle: TextStyle = HilingualTheme.typography.bodyM16,
-    inputTextStyle: TextStyle = HilingualTheme.typography.bodyM16,
+    placeholderTextStyle: TextStyle = HilingualTheme.typography.bodyR16,
+    inputTextStyle: TextStyle = HilingualTheme.typography.bodyR16,
     singleLine: Boolean = true,
     maxLength: Int = Int.MAX_VALUE,
     isShowLength: Boolean = false,
@@ -144,7 +144,7 @@ fun HilingualBasicTextField(
                     if (isShowLength) {
                         Spacer(Modifier.height(12.dp))
                         Text(
-                            text = "${value.length} / $maxLength",
+                            text = "${value.length}/$maxLength",
                             style = HilingualTheme.typography.captionR12,
                             color = HilingualTheme.colors.gray400,
                             modifier = Modifier.align(Alignment.End)

@@ -41,7 +41,7 @@ fun TitleLeftAlignedTopAppBar(
         textAlign = TextAlign.Start,
         text = title,
         color = textColor,
-        style = HilingualTheme.typography.headB18
+        style = HilingualTheme.typography.headSB18
     )
 }
 

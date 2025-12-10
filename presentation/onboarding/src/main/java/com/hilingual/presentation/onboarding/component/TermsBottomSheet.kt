@@ -123,7 +123,7 @@ internal fun TermsBottomSheet(
         ) {
             Text(
                 text = "하이링구얼이 처음이시군요!",
-                style = HilingualTheme.typography.headB18,
+                style = HilingualTheme.typography.headSB18,
                 color = HilingualTheme.colors.black
             )
 
@@ -131,7 +131,7 @@ internal fun TermsBottomSheet(
 
             Text(
                 text = "아래 약관에 동의 후 서비스 이용이 가능해요.",
-                style = HilingualTheme.typography.bodyM14,
+                style = HilingualTheme.typography.bodyR14,
                 color = HilingualTheme.colors.gray400
             )
 
@@ -152,7 +152,7 @@ internal fun TermsBottomSheet(
                 ) {
                     Text(
                         text = "전체 동의",
-                        style = HilingualTheme.typography.headB18,
+                        style = HilingualTheme.typography.bodyM16,
                         color = HilingualTheme.colors.black
                     )
 
@@ -205,7 +205,7 @@ private fun TermRow(
     ) {
         Text(
             text = text,
-            style = HilingualTheme.typography.bodySB14,
+            style = HilingualTheme.typography.bodyM14,
             color = HilingualTheme.colors.gray400,
             textDecoration = if (onTextClick != null) TextDecoration.Underline else TextDecoration.None,
             modifier = if (onTextClick != null) Modifier.noRippleClickable(onClick = onTextClick) else Modifier
