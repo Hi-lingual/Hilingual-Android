@@ -30,14 +30,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.LottieComposition
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.diarywrite.component.AnimatedLoadingLottie
 import com.hilingual.presentation.diarywrite.component.AnimatedLoadingText
 import com.hilingual.presentation.diarywrite.component.FeedbackLoadingContent
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun DiaryFeedbackLoadingScreen(
+    lottieCompositions: ImmutableList<LottieComposition?>,
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier
 ) {
@@ -70,7 +73,10 @@ internal fun DiaryFeedbackLoadingScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            AnimatedLoadingLottie(height = 194.dp)
+            AnimatedLoadingLottie(
+                lottieCompositions = lottieCompositions,
+                height = 194.dp
+            )
         }
 
         FeedbackLoadingContent()
@@ -81,6 +87,9 @@ internal fun DiaryFeedbackLoadingScreen(
 @Composable
 private fun DiaryFeedbackLoadingScreenPreview() {
     HilingualTheme {
-        DiaryFeedbackLoadingScreen(paddingValues = PaddingValues(0.dp))
+        DiaryFeedbackLoadingScreen(
+            lottieCompositions = persistentListOf(),
+            paddingValues = PaddingValues(0.dp)
+        )
     }
 }

@@ -31,4 +31,6 @@ dependencies {
     // ML Kit
     implementation(libs.mlkit.text.recognition)
     implementation(libs.kotlinx.coroutines.play.services)
+
+    implementation(libs.lottie)
 }
