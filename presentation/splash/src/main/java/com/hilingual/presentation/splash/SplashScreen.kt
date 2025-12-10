@@ -23,10 +23,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.hilingual.core.common.extension.collectLatestSideEffect
 import com.hilingual.core.common.extension.statusBarColor
@@ -74,13 +76,15 @@ private fun SplashScreen(
             Image(
                 painter = painterResource(DesignSystemR.drawable.img_logo),
                 contentDescription = null,
-                modifier = Modifier.sharedElement(
-                    sharedContentState = rememberSharedContentState(key = "logo"),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    boundsTransform = { _, _ ->
-                        tween(durationMillis = 400)
-                    }
-                )
+                modifier = Modifier
+                    .sharedElement(
+                        sharedContentState = rememberSharedContentState(key = "logo"),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        boundsTransform = { _, _ ->
+                            tween(durationMillis = 400)
+                        }
+                    )
+                    .size(width = 200.dp, height = 50.dp)
             )
         }
 

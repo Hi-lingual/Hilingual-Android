@@ -32,23 +32,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.LottieComposition
 import com.hilingual.core.designsystem.component.image.HilingualLottieAnimation
-import com.hilingual.presentation.diarywrite.R
-import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
 
 @Composable
 internal fun AnimatedLoadingLottie(
+    lottieCompositions: ImmutableList<LottieComposition?>,
     height: Dp,
     modifier: Modifier = Modifier
 ) {
-    val lottieFiles = remember {
-        persistentListOf(
-            R.raw.lottie_feedback_loading_1,
-            R.raw.lottie_feedback_loading_2,
-            R.raw.lottie_feedback_loading_3
-        )
-    }
     var currentIndex by remember { mutableIntStateOf(0) }
     val transition = rememberInfiniteTransition(label = "lottie fade transition")
 
@@ -65,7 +59,7 @@ internal fun AnimatedLoadingLottie(
     LaunchedEffect(Unit) {
         while (true) {
             delay(3000)
-            currentIndex = (currentIndex + 1) % lottieFiles.size
+            currentIndex = (currentIndex + 1) % lottieCompositions.size
         }
     }
 
@@ -74,7 +68,7 @@ internal fun AnimatedLoadingLottie(
             .width(200.dp)
             .height(height)
             .alpha(alpha),
-        rawResFile = lottieFiles[currentIndex],
+        composition = lottieCompositions[currentIndex],
         isInfinite = true
     )
 }
