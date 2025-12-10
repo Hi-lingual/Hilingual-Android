@@ -60,7 +60,6 @@ internal fun AuthRoute(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
     navigateToOnboarding: () -> Unit,
-    navigateToOtp: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
@@ -70,7 +69,6 @@ internal fun AuthRoute(
         when (event) {
             is AuthSideEffect.NavigateToHome -> navigateToHome()
             is AuthSideEffect.NavigateToOnboarding -> navigateToOnboarding()
-            is AuthSideEffect.NavigateToOtp -> navigateToOtp()
         }
     }
 

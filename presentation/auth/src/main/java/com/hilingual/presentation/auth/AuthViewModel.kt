@@ -49,11 +49,10 @@ class AuthViewModel @Inject constructor(
                     Timber.d("Google ID Token: $idToken")
                     authRepository.login(idToken)
                         .onSuccess { authResult ->
-                            val isOtpVerified = userRepository.isOtpVerified()
-                            val sideEffect = when {
-                                authResult.registerStatus -> AuthSideEffect.NavigateToHome
-                                isOtpVerified -> AuthSideEffect.NavigateToOnboarding
-                                else -> AuthSideEffect.NavigateToOtp
+                            val sideEffect = if (authResult.registerStatus) {
+                                AuthSideEffect.NavigateToHome
+                            } else {
+                                AuthSideEffect.NavigateToOnboarding
                             }
                             _navigationEvent.tryEmit(sideEffect)
                         }
@@ -67,5 +66,4 @@ class AuthViewModel @Inject constructor(
 sealed interface AuthSideEffect {
     data object NavigateToHome : AuthSideEffect
     data object NavigateToOnboarding : AuthSideEffect
-    data object NavigateToOtp : AuthSideEffect
 }
