@@ -52,7 +52,7 @@ internal fun DiaryFeedbackLoadingScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "일기 저장 중..",
+                text = "일기 저장 중...",
                 color = HilingualTheme.colors.gray850,
                 style = HilingualTheme.typography.headSB20,
                 textAlign = TextAlign.Center
