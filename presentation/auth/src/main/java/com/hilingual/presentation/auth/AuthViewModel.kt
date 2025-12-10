@@ -20,7 +20,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.auth.repository.AuthRepository
-import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -31,8 +30,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
-    private val userRepository: UserRepository
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _navigationEvent = MutableSharedFlow<AuthSideEffect>(
@@ -49,11 +47,10 @@ class AuthViewModel @Inject constructor(
                     Timber.d("Google ID Token: $idToken")
                     authRepository.login(idToken)
                         .onSuccess { authResult ->
-                            val isOtpVerified = userRepository.isOtpVerified()
-                            val sideEffect = when {
-                                authResult.registerStatus -> AuthSideEffect.NavigateToHome
-                                isOtpVerified -> AuthSideEffect.NavigateToOnboarding
-                                else -> AuthSideEffect.NavigateToOtp
+                            val sideEffect = if (authResult.registerStatus) {
+                                AuthSideEffect.NavigateToHome
+                            } else {
+                                AuthSideEffect.NavigateToOnboarding
                             }
                             _navigationEvent.tryEmit(sideEffect)
                         }
@@ -67,5 +64,4 @@ class AuthViewModel @Inject constructor(
 sealed interface AuthSideEffect {
     data object NavigateToHome : AuthSideEffect
     data object NavigateToOnboarding : AuthSideEffect
-    data object NavigateToOtp : AuthSideEffect
 }

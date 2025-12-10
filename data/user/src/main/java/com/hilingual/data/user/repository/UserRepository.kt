@@ -51,8 +51,10 @@ interface UserRepository {
 
     suspend fun getRegisterStatus(): Boolean
 
+    @Deprecated("OTP feature is removed")
     suspend fun saveOtpVerified(isVerified: Boolean)
 
+    @Deprecated("OTP feature is removed")
     suspend fun isOtpVerified(): Boolean
 
     suspend fun getFollowers(

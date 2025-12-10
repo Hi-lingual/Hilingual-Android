@@ -39,7 +39,6 @@ import com.hilingual.presentation.mypage.navigation.navigateToMyPage
 import com.hilingual.presentation.notification.navigation.navigateToNotification
 import com.hilingual.presentation.notification.navigation.navigateToNotificationSetting
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
-import com.hilingual.presentation.otp.navigation.navigateToOtp
 import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.voca.navigation.navigateToVoca
 import kotlinx.coroutines.CoroutineScope
@@ -130,10 +129,6 @@ internal class MainAppState(
             inclusive = true
         }
         launchSingleTop = true
-    }
-
-    fun navigateToOtp(navOptions: NavOptions? = clearStackNavOptions) {
-        navController.navigateToOtp(navOptions)
     }
 
     fun navigateToAuth(navOptions: NavOptions? = clearStackNavOptions) {

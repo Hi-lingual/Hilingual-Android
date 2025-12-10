@@ -107,12 +107,14 @@ internal class UserRepositoryImpl @Inject constructor(
         return userInfoManager.getRegisterStatus()
     }
 
+    @Deprecated("OTP feature is removed")
     override suspend fun saveOtpVerified(isVerified: Boolean) {
-        userInfoManager.saveOtpVerified(isVerified)
+        // No-op
     }
 
+    @Deprecated("OTP feature is removed")
     override suspend fun isOtpVerified(): Boolean {
-        return userInfoManager.isOtpVerified()
+        return true
     }
 
     override suspend fun getFollowers(targetUserId: Long): Result<List<FollowUserListResultModel>> =
