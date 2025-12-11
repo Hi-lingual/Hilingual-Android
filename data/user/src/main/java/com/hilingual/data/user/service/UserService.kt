@@ -36,7 +36,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-internal interface UserService {
+interface UserService {
     @GET("/api/v1/users/profile/check")
     suspend fun getNicknameAvailability(
         @Query("nickname") nickname: String
