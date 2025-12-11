@@ -17,28 +17,14 @@ package com.hilingual.core.localstorage
 
 import androidx.datastore.core.DataStore
 import com.hilingual.core.localstorage.model.UserPreferences
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 
-class TokenManagerImpl(
-    private val dataStore: DataStore<UserPreferences>,
-    externalScope: CoroutineScope
+class TokenManagerImpl constructor(
+    private val dataStore: DataStore<UserPreferences>
 ) : TokenManager {
 
     @Volatile
     private var cachedAccessToken: String? = null
-
-    @Volatile
-    private var cachedRefreshToken: String? = null
-
-    init {
-        externalScope.launch {
-            val preferences = dataStore.data.first()
-            cachedAccessToken = preferences.token
-            cachedRefreshToken = preferences.refreshToken
-        }
-    }
 
     override suspend fun saveAccessToken(token: String) {
         cachedAccessToken = token
@@ -48,31 +34,30 @@ class TokenManagerImpl(
     }
 
     override suspend fun saveRefreshToken(token: String) {
-        cachedRefreshToken = token
         dataStore.updateData { preferences ->
             preferences.copy(refreshToken = token)
         }
     }
 
     override suspend fun saveTokens(accessToken: String, refreshToken: String) {
-        updateTokensInCache(accessToken, refreshToken)
+        cachedAccessToken = accessToken
         dataStore.updateData {
             it.copy(token = accessToken, refreshToken = refreshToken)
         }
     }
 
-    override fun updateTokensInCache(accessToken: String, refreshToken: String) {
-        cachedAccessToken = accessToken
-        cachedRefreshToken = refreshToken
+    override suspend fun getAccessToken(): String? {
+        return cachedAccessToken ?: dataStore.data.first().token?.also {
+            cachedAccessToken = it
+        }
     }
 
-    override fun getAccessToken(): String? = cachedAccessToken
-
-    override fun getRefreshToken(): String? = cachedRefreshToken
+    override suspend fun getRefreshToken(): String? {
+        return dataStore.data.first().refreshToken
+    }
 
     override suspend fun clearTokens() {
         cachedAccessToken = null
-        cachedRefreshToken = null
         dataStore.updateData {
             it.copy(token = null, refreshToken = null)
         }

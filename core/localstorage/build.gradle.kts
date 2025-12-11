@@ -28,7 +28,6 @@ android {
 dependencies {
     // Core
     implementation(projects.core.crypto)
-    implementation(projects.core.common)
 
     // DataStore
     implementation(libs.androidx.datastore.preferences)

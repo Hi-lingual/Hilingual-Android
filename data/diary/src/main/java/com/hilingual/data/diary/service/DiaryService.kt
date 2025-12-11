@@ -29,7 +29,7 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-internal interface DiaryService {
+interface DiaryService {
     @GET("/api/v1/diaries/{diaryId}")
     suspend fun getDiaryContent(
         @Path(value = "diaryId") diaryId: Long
