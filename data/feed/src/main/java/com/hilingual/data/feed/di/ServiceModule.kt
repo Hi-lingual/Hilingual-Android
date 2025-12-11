@@ -25,7 +25,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal object ServiceModule {
+object ServiceModule {
     @Provides
     @Singleton
     fun provideFeedService(retrofit: Retrofit): FeedService = retrofit.create(FeedService::class.java)

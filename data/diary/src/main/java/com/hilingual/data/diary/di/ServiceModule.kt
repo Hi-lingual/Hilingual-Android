@@ -26,7 +26,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal object ServiceModule {
+object ServiceModule {
     @Provides
     @Singleton
     fun provideDiaryService(@LongTimeoutClient retrofit: Retrofit): DiaryService = retrofit.create(DiaryService::class.java)

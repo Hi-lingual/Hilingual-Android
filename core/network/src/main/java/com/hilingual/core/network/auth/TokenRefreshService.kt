@@ -16,5 +16,5 @@
 package com.hilingual.core.network.auth
 
 interface TokenRefreshService {
-    fun refreshToken(refreshToken: String): Result<Pair<String, String>>
+    suspend fun refreshToken(refreshToken: String): Result<Pair<String, String>>
 }

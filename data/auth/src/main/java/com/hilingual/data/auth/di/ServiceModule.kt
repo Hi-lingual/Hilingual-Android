@@ -31,7 +31,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal object ServiceModule {
+object ServiceModule {
     @Provides
     @Singleton
     fun provideLoginService(@NoAuthClient retrofit: Retrofit): LoginService =

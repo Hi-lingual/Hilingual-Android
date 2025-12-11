@@ -19,7 +19,6 @@ plugins {
     alias(libs.plugins.hilingual.android.library)
     alias(libs.plugins.hilingual.android.compose)
     alias(libs.plugins.hilingual.serialization)
-    alias(libs.plugins.hilingual.hilt)
 }
 
 android {
