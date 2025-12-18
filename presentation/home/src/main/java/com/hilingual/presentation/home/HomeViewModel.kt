@@ -15,6 +15,7 @@
  */
 package com.hilingual.presentation.home
 
+import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
@@ -26,6 +27,7 @@ import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.home.model.toState
 import com.hilingual.presentation.home.type.DiaryCardState
+import com.hilingual.presentation.home.type.NotificationPermissionState
 import com.hilingual.presentation.home.util.isDateFuture
 import com.hilingual.presentation.home.util.isDateWritable
 import com.hilingual.presentation.home.util.isDateWritten
@@ -100,6 +102,34 @@ class HomeViewModel @Inject constructor(
                 )
             }
             updateContentForDate(today)
+        }
+    }
+
+    fun checkNotificationPermission(permissionStatus: Int) {
+        val currentState = uiState.value
+        if (currentState !is UiState.Success) return
+
+        val currentPermissionState = when (permissionStatus) {
+            PackageManager.PERMISSION_GRANTED -> NotificationPermissionState.GRANTED
+            else -> currentState.data.notificationPermissionState
+        }
+
+        if (currentPermissionState == NotificationPermissionState.NOT_DETERMINED) {
+            viewModelScope.launch {
+                _sideEffect.emit(HomeSideEffect.RequestNotificationPermission)
+            }
+        }
+    }
+
+    fun onNotificationPermissionResult(isGranted: Boolean) {
+        val newState = if (isGranted) {
+            NotificationPermissionState.GRANTED
+        } else {
+            NotificationPermissionState.DENIED
+        }
+
+        _uiState.updateSuccess {
+            it.copy(notificationPermissionState = newState)
         }
     }
 
@@ -303,4 +333,6 @@ sealed interface HomeSideEffect {
     data class ShowToast(val text: String) : HomeSideEffect
 
     data class ShowSnackBar(val message: String, val actionLabel: String) : HomeSideEffect
+
+    data object RequestNotificationPermission : HomeSideEffect
 }
