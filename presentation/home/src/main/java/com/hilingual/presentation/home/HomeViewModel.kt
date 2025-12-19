@@ -112,13 +112,13 @@ class HomeViewModel @Inject constructor(
         if (currentState !is UiState.Success) return
 
         val previousState = currentState.data.notificationPermissionState
-        val isPermissionGranted = shouldGrantPermission(isGranted, requiresPermission)
+        val isPermissionGranted = isPermissionGranted(isGranted, requiresPermission)
 
         updateNotificationPermissionState(isPermissionGranted)
         requestPermissionIfNeeded(previousState, isPermissionGranted)
     }
 
-    private fun shouldGrantPermission(
+    private fun isPermissionGranted(
         isGranted: Boolean,
         requiresPermission: Boolean
     ): Boolean {
