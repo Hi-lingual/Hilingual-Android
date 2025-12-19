@@ -16,6 +16,7 @@
 package com.hilingual.presentation.home
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -38,6 +39,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +53,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.analytics.FakeTracker
 import com.hilingual.core.common.analytics.Page.HOME
@@ -81,7 +86,6 @@ import com.hilingual.presentation.home.component.footer.HomeDropDownMenu
 import com.hilingual.presentation.home.component.footer.TodayTopic
 import com.hilingual.presentation.home.component.footer.WriteDiaryButton
 import com.hilingual.presentation.home.type.DiaryCardState
-import com.hilingual.presentation.home.type.NotificationPermissionState
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -101,11 +105,12 @@ internal fun HomeRoute(
     val snackbarTrigger = LocalSnackbarTrigger.current
     val tracker = LocalTracker.current
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        viewModel.onNotificationPermissionResult(isGranted)
+        viewModel.onNotificationPermissionResult(isGranted = isGranted)
     }
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
@@ -125,7 +130,7 @@ internal fun HomeRoute(
             }
 
             is HomeSideEffect.RequestNotificationPermission -> {
-                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                notificationPermissionLauncher.launch(sideEffect.permission)
             }
         }
     }
@@ -148,15 +153,27 @@ internal fun HomeRoute(
         }
 
         is UiState.Success -> {
-            LaunchedEffect(state.data.notificationPermissionState) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                    state.data.notificationPermissionState == NotificationPermissionState.NOT_DETERMINED
-                ) {
-                    val permissionState = ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.POST_NOTIFICATIONS
-                    )
-                    viewModel.checkNotificationPermission(permissionState)
+            DisposableEffect(lifecycleOwner) {
+                val observer = LifecycleEventObserver { _, event ->
+                    if (event == Lifecycle.Event.ON_RESUME) {
+                        val permissionState = ContextCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.POST_NOTIFICATIONS
+                        )
+                        val isGranted = permissionState == PackageManager.PERMISSION_GRANTED
+                        val requiresPermission = Build.VERSION.SDK_INT >= 33
+
+                        viewModel.handleNotificationPermission(
+                            isGranted = isGranted,
+                            requiresPermission = requiresPermission
+                        )
+                    }
+                }
+
+                lifecycleOwner.lifecycle.addObserver(observer)
+
+                onDispose {
+                    lifecycleOwner.lifecycle.removeObserver(observer)
                 }
             }
 

@@ -15,7 +15,6 @@
  */
 package com.hilingual.presentation.home
 
-import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
@@ -105,31 +104,66 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun checkNotificationPermission(permissionStatus: Int) {
+    fun handleNotificationPermission(
+        isGranted: Boolean,
+        requiresPermission: Boolean
+    ) {
         val currentState = uiState.value
         if (currentState !is UiState.Success) return
 
-        val currentPermissionState = when (permissionStatus) {
-            PackageManager.PERMISSION_GRANTED -> NotificationPermissionState.GRANTED
-            else -> currentState.data.notificationPermissionState
-        }
+        val previousState = currentState.data.notificationPermissionState
+        val isPermissionGranted = shouldGrantPermission(isGranted, requiresPermission)
 
-        if (currentPermissionState == NotificationPermissionState.NOT_DETERMINED) {
-            viewModelScope.launch {
-                _sideEffect.emit(HomeSideEffect.RequestNotificationPermission)
-            }
+        updateNotificationPermissionState(isPermissionGranted)
+        requestPermissionIfNeeded(previousState, isPermissionGranted)
+    }
+
+    private fun shouldGrantPermission(
+        isGranted: Boolean,
+        requiresPermission: Boolean
+    ): Boolean {
+        return if (requiresPermission) {
+            isGranted
+        } else {
+            true
+        }
+    }
+
+    private fun requestPermissionIfNeeded(
+        previousState: NotificationPermissionState,
+        isGranted: Boolean
+    ) {
+        if (previousState == NotificationPermissionState.NOT_DETERMINED && !isGranted) {
+            requestNotificationPermission()
         }
     }
 
     fun onNotificationPermissionResult(isGranted: Boolean) {
-        val newState = if (isGranted) {
+        val currentState = uiState.value
+        if (currentState !is UiState.Success) return
+
+        updateNotificationPermissionState(isGranted)
+    }
+
+    private fun updateNotificationPermissionState(isGranted: Boolean) {
+        val newPermissionState = if (isGranted) {
             NotificationPermissionState.GRANTED
         } else {
             NotificationPermissionState.DENIED
         }
 
         _uiState.updateSuccess {
-            it.copy(notificationPermissionState = newState)
+            it.copy(notificationPermissionState = newPermissionState)
+        }
+    }
+
+    private fun requestNotificationPermission() {
+        viewModelScope.launch {
+            _sideEffect.emit(
+                HomeSideEffect.RequestNotificationPermission(
+                    permission = "android.permission.POST_NOTIFICATIONS"
+                )
+            )
         }
     }
 
@@ -334,5 +368,5 @@ sealed interface HomeSideEffect {
 
     data class ShowSnackBar(val message: String, val actionLabel: String) : HomeSideEffect
 
-    data object RequestNotificationPermission : HomeSideEffect
+    data class RequestNotificationPermission(val permission: String) : HomeSideEffect
 }
