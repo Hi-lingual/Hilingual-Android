@@ -75,7 +75,7 @@ profileinstaller = "1.4.1"
 runner = "1.7.0"
 
 # AboutLibraries
-aboutLibraries = "13.1.0"
+aboutLibraries = "13.2.1"
 amplitude = "1.22.4"
 
 [libraries]
