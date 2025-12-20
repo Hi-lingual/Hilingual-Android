@@ -15,6 +15,7 @@
  */
 package com.hilingual.presentation.home
 
+import android.Manifest
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
@@ -112,28 +113,20 @@ class HomeViewModel @Inject constructor(
         if (currentState !is UiState.Success) return
 
         val previousState = currentState.data.notificationPermissionState
-        val isPermissionGranted = isPermissionGranted(isGranted, requiresPermission)
 
-        updateNotificationPermissionState(isPermissionGranted)
-        requestPermissionIfNeeded(previousState, isPermissionGranted)
-    }
+        val isPermissionGranted = !requiresPermission || isGranted
 
-    private fun isPermissionGranted(
-        isGranted: Boolean,
-        requiresPermission: Boolean
-    ): Boolean {
-        return if (requiresPermission) {
-            isGranted
+        val newPermissionState = if (isPermissionGranted) {
+            NotificationPermissionState.GRANTED
         } else {
-            true
+            NotificationPermissionState.DENIED
         }
-    }
 
-    private fun requestPermissionIfNeeded(
-        previousState: NotificationPermissionState,
-        isGranted: Boolean
-    ) {
-        if (previousState == NotificationPermissionState.NOT_DETERMINED && !isGranted) {
+        _uiState.updateSuccess {
+            it.copy(notificationPermissionState = newPermissionState)
+        }
+
+        if (previousState == NotificationPermissionState.NOT_DETERMINED && !isPermissionGranted) {
             requestNotificationPermission()
         }
     }
@@ -142,10 +135,6 @@ class HomeViewModel @Inject constructor(
         val currentState = uiState.value
         if (currentState !is UiState.Success) return
 
-        updateNotificationPermissionState(isGranted)
-    }
-
-    private fun updateNotificationPermissionState(isGranted: Boolean) {
         val newPermissionState = if (isGranted) {
             NotificationPermissionState.GRANTED
         } else {
@@ -161,7 +150,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _sideEffect.emit(
                 HomeSideEffect.RequestNotificationPermission(
-                    permission = "android.permission.POST_NOTIFICATIONS"
+                    permission = Manifest.permission.POST_NOTIFICATIONS
                 )
             )
         }
