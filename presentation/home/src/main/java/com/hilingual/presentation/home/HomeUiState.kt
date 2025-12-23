@@ -21,6 +21,7 @@ import com.hilingual.presentation.home.model.DiaryThumbnailUiModel
 import com.hilingual.presentation.home.model.TodayTopicUiModel
 import com.hilingual.presentation.home.model.UserProfileUiModel
 import com.hilingual.presentation.home.type.DiaryCardState
+import com.hilingual.presentation.home.type.NotificationPermissionState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import java.time.LocalDate
@@ -33,7 +34,8 @@ data class HomeUiState(
     val diaryThumbnail: DiaryThumbnailUiModel? = null,
     val dateList: ImmutableList<DateUiModel> = persistentListOf(),
     val todayTopic: TodayTopicUiModel? = null,
-    val cardState: DiaryCardState = DiaryCardState.PAST
+    val cardState: DiaryCardState = DiaryCardState.PAST,
+    val notificationPermissionState: NotificationPermissionState = NotificationPermissionState.NOT_DETERMINED
 ) {
     companion object {
         val Fake = HomeUiState(

@@ -15,6 +15,7 @@
  */
 package com.hilingual.presentation.home
 
+import android.Manifest
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
@@ -26,6 +27,7 @@ import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.home.model.toState
 import com.hilingual.presentation.home.type.DiaryCardState
+import com.hilingual.presentation.home.type.NotificationPermissionState
 import com.hilingual.presentation.home.util.isDateFuture
 import com.hilingual.presentation.home.util.isDateWritable
 import com.hilingual.presentation.home.util.isDateWritten
@@ -64,6 +66,8 @@ class HomeViewModel @Inject constructor(
     )
     val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
 
+    private var lastKnownPermissionGranted: Boolean? = null
+
     fun loadInitialData() {
         viewModelScope.launch {
             _uiState.update { UiState.Loading }
@@ -100,6 +104,65 @@ class HomeViewModel @Inject constructor(
                 )
             }
             updateContentForDate(today)
+        }
+    }
+
+    fun handleNotificationPermission(
+        isGranted: Boolean,
+        requiresPermission: Boolean
+    ) {
+        val currentState = uiState.value
+        if (currentState !is UiState.Success) return
+
+        val isPermissionGranted = !requiresPermission || isGranted
+
+        if (lastKnownPermissionGranted == isPermissionGranted) {
+            return
+        }
+
+        lastKnownPermissionGranted = isPermissionGranted
+
+        val previousState = currentState.data.notificationPermissionState
+
+        val newPermissionState = if (isPermissionGranted) {
+            NotificationPermissionState.GRANTED
+        } else {
+            NotificationPermissionState.DENIED
+        }
+
+        _uiState.updateSuccess {
+            it.copy(notificationPermissionState = newPermissionState)
+        }
+
+        if (previousState == NotificationPermissionState.NOT_DETERMINED && !isPermissionGranted) {
+            requestNotificationPermission()
+        }
+    }
+
+    fun onNotificationPermissionResult(isGranted: Boolean) {
+        val currentState = uiState.value
+        if (currentState !is UiState.Success) return
+
+        lastKnownPermissionGranted = isGranted
+
+        val newPermissionState = if (isGranted) {
+            NotificationPermissionState.GRANTED
+        } else {
+            NotificationPermissionState.DENIED
+        }
+
+        _uiState.updateSuccess {
+            it.copy(notificationPermissionState = newPermissionState)
+        }
+    }
+
+    private fun requestNotificationPermission() {
+        viewModelScope.launch {
+            _sideEffect.emit(
+                HomeSideEffect.RequestNotificationPermission(
+                    permission = Manifest.permission.POST_NOTIFICATIONS
+                )
+            )
         }
     }
 
@@ -303,4 +366,6 @@ sealed interface HomeSideEffect {
     data class ShowToast(val text: String) : HomeSideEffect
 
     data class ShowSnackBar(val message: String, val actionLabel: String) : HomeSideEffect
+
+    data class RequestNotificationPermission(val permission: String) : HomeSideEffect
 }
