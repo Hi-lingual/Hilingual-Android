@@ -44,7 +44,7 @@ class HilingualWorkManagerConfigurator @Inject constructor(
 
         workManager.enqueueUniquePeriodicWork(
             "DailyNotification",
-            ExistingPeriodicWorkPolicy.REPLACE,
+            ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
     }
@@ -58,7 +58,7 @@ class HilingualWorkManagerConfigurator @Inject constructor(
 
         workManager.enqueueUniquePeriodicWork(
             "WeeklyNotification",
-            ExistingPeriodicWorkPolicy.REPLACE,
+            ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
     }
