@@ -53,7 +53,10 @@ class HilingualWorkManagerConfigurator @Inject constructor(
         val workRequest = PeriodicWorkRequestBuilder<WeeklyNotificationWorker>(
             repeatInterval = 7,
             repeatIntervalTimeUnit = TimeUnit.DAYS
-        ).setInitialDelay(calculateInitialDelay(targetDay = Calendar.SUNDAY, targetHour = 19), TimeUnit.MILLISECONDS)
+        ).setInitialDelay(
+            calculateInitialDelay(targetDay = Calendar.SUNDAY, targetHour = 19),
+            TimeUnit.MILLISECONDS
+        )
             .build()
 
         workManager.enqueueUniquePeriodicWork(
@@ -72,9 +75,7 @@ class HilingualWorkManagerConfigurator @Inject constructor(
             set(Calendar.MILLISECOND, 0)
         }
 
-        if (now.after(target)) {
-            target.add(Calendar.DAY_OF_YEAR, 1)
-        }
+        if (now.after(target)) target.add(Calendar.DAY_OF_YEAR, 1)
 
         return target.timeInMillis - now.timeInMillis
     }
@@ -89,9 +90,7 @@ class HilingualWorkManagerConfigurator @Inject constructor(
             set(Calendar.MILLISECOND, 0)
         }
 
-        if (now.after(target)) {
-            target.add(Calendar.WEEK_OF_YEAR, 1)
-        }
+        if (now.after(target)) target.add(Calendar.WEEK_OF_YEAR, 1)
 
         return target.timeInMillis - now.timeInMillis
     }
