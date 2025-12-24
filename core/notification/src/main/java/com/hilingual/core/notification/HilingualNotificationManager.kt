@@ -105,7 +105,7 @@ class HilingualNotificationManager @Inject constructor(
     companion object {
         private const val CHANNEL_ID_DAILY = "channel_daily_notification"
         private const val CHANNEL_ID_WEEKLY = "channel_weekly_notification"
-        
+
         private const val NOTIFICATION_ID_DAILY = 1001
         private const val NOTIFICATION_ID_WEEKLY = 1002
     }
