@@ -78,7 +78,7 @@ class HilingualWorkManagerConfigurator @Inject constructor(
 
         return target.timeInMillis - now.timeInMillis
     }
-    
+
     private fun calculateInitialDelay(targetDay: Int, targetHour: Int): Long {
         val now = Calendar.getInstance()
         val target = Calendar.getInstance().apply {
@@ -88,7 +88,7 @@ class HilingualWorkManagerConfigurator @Inject constructor(
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }
-        
+
         if (now.after(target)) {
             target.add(Calendar.WEEK_OF_YEAR, 1)
         }
