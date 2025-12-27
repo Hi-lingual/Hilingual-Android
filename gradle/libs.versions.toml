@@ -38,6 +38,10 @@ browser="1.9.0"
 # Room
 room = "2.8.4"
 
+# WorkManager
+work = "2.11.0"
+startup = "1.2.0"
+
 # Test
 junit = "4.13.2"
 junitVersion = "1.3.0"
@@ -49,6 +53,7 @@ retrofit = "3.0.0"
 kotlinxSerializationJson = "1.9.0"
 daggerHilt = "2.57.2"
 hiltNavigationCompose = "1.3.0"
+hiltWork = "1.2.0"
 coil = "3.3.0"
 timber = "5.0.1"
 lottieCompose = "6.7.1"
@@ -154,6 +159,8 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "daggerHilt" }
 hilt-android-gradle-plugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "daggerHilt" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltWork" }
+hilt-compiler-androidx = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltWork" }
 
 # UI & Animation
 coil-bom = { group = "io.coil-kt.coil3", name = "coil-bom", version.ref = "coil" }
@@ -172,6 +179,11 @@ pebble = { group = "io.github.chattymin", name = "pebble", version.ref = "pebble
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+
+# WorkManager
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
+androidx-work-testing = { group = "androidx.work", name = "work-testing", version.ref = "work" }
+androidx-startup = { group = "androidx.startup", name = "startup-runtime", version.ref = "startup" }
 
 # ML Kit
 mlkit-text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "mlkitTextRecognition" }

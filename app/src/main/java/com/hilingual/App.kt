@@ -20,6 +20,7 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
+import com.hilingual.core.work.scheduler.HilingualWorkManagerConfigurator
 import dagger.Lazy
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -30,12 +31,16 @@ class App : Application(), SingletonImageLoader.Factory {
     @Inject
     lateinit var imageLoader: Lazy<ImageLoader>
 
+    @Inject
+    lateinit var workConfigurator: HilingualWorkManagerConfigurator
+
     override fun onCreate() {
         super.onCreate()
         SingletonImageLoader.setSafe { imageLoader.get() }
 
         setDayMode()
         initTimber()
+        initWorkManager()
     }
 
     override fun newImageLoader(context: Context): ImageLoader = imageLoader.get()
@@ -46,5 +51,9 @@ class App : Application(), SingletonImageLoader.Factory {
 
     private fun initTimber() {
         if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
+    }
+
+    private fun initWorkManager() {
+        workConfigurator.initialize()
     }
 }
