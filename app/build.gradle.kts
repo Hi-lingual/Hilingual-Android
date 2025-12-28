@@ -83,6 +83,7 @@ android {
 dependencies {
     // core
     implementation(projects.core.common)
+    implementation(projects.core.work)
 
     // presentation
     implementation(projects.presentation.main)

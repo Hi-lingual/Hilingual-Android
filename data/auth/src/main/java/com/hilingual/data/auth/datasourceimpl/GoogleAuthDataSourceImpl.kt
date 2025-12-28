@@ -18,7 +18,7 @@ package com.hilingual.data.auth.datasourceimpl
 import android.content.Context
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.data.auth.BuildConfig
@@ -30,14 +30,12 @@ internal class GoogleAuthDataSourceImpl @Inject constructor(
 ) : GoogleAuthDataSource {
     override suspend fun signIn(context: Context): Result<GoogleIdTokenCredential> =
         suspendRunCatching {
-            val googleIdOption = GetGoogleIdOption.Builder()
-                .setFilterByAuthorizedAccounts(false)
-                .setAutoSelectEnabled(false)
-                .setServerClientId(BuildConfig.GOOGLE_WEB_CLIENT_ID)
-                .build()
+            val signInWithGoogleOption = GetSignInWithGoogleOption.Builder(
+                serverClientId = BuildConfig.GOOGLE_WEB_CLIENT_ID
+            ).build()
 
             val request = GetCredentialRequest.Builder()
-                .addCredentialOption(googleIdOption)
+                .addCredentialOption(signInWithGoogleOption)
                 .build()
 
             val response = credentialManager.getCredential(context, request)
