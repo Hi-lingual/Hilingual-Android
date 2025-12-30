@@ -90,8 +90,9 @@ import com.hilingual.presentation.diarywrite.component.WriteGuideTooltip
 import com.hilingual.presentation.diarywrite.screen.DiaryFeedbackLoadingScreen
 import com.hilingual.presentation.diarywrite.screen.DiaryFeedbackStatusScreen
 import com.skydoves.balloon.BalloonSizeSpec
-import com.skydoves.balloon.compose.Balloon
+import com.skydoves.balloon.compose.balloon
 import com.skydoves.balloon.compose.rememberBalloonBuilder
+import com.skydoves.balloon.compose.rememberBalloonState
 import com.skydoves.balloon.compose.setBackgroundColor
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
@@ -473,43 +474,46 @@ private fun DiaryWriteScreen(
             }
         }
 
-        Balloon(
-            builder = rememberBalloonBuilder {
-                setWidth(BalloonSizeSpec.WRAP)
-                setHeight(BalloonSizeSpec.WRAP)
-                setBackgroundColor(Color.Transparent)
-                setIsVisibleArrow(false)
-                setArrowSize(0)
-                setDismissWhenTouchOutside(false)
-                setIsAttachedInDecor(false)
-            },
-            balloonContent = {
-                WriteGuideTooltip(
-                    text = "10자 이상 작성해야 피드백 요청이 가능해요!"
-                )
-            },
-            modifier = Modifier.align(Alignment.BottomCenter)
-        ) { balloon ->
-            LaunchedEffect(Unit) {
-                balloon.showAlignTop()
-                delay(5000)
-                balloon.dismiss()
-            }
+        val balloonBuilder = rememberBalloonBuilder {
+            setWidth(BalloonSizeSpec.WRAP)
+            setHeight(BalloonSizeSpec.WRAP)
+            setBackgroundColor(Color.Transparent)
+            setIsVisibleArrow(false)
+            setArrowSize(0)
+            setDismissWhenTouchOutside(false)
+            setIsAttachedInDecor(false)
+        }
 
-            LaunchedEffect(isTextFieldFocused) {
-                if (isTextFieldFocused) balloon.dismiss()
-            }
+        val balloonState = rememberBalloonState(balloonBuilder)
 
-            HilingualButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 16.dp)
-                    .navigationBarsPadding(),
-                text = "피드백 요청하기",
-                enableProvider = { diaryText.length >= 10 },
-                onClick = onDiaryFeedbackRequestButtonClick
-            )
+        HilingualButton(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 16.dp)
+                .navigationBarsPadding()
+                .balloon(
+                    state = balloonState,
+                    balloonContent = {
+                        WriteGuideTooltip(
+                            text = "10자 이상 작성해야 피드백 요청이 가능해요!"
+                        )
+                    }
+                ),
+            text = "피드백 요청하기",
+            enableProvider = { diaryText.length >= 10 },
+            onClick = onDiaryFeedbackRequestButtonClick
+        )
+
+        LaunchedEffect(Unit) {
+            balloonState.showAlignTop()
+            delay(5000)
+            balloonState.dismiss()
+        }
+
+        LaunchedEffect(isTextFieldFocused) {
+            if (isTextFieldFocused) balloonState.dismiss()
         }
     }
 }
