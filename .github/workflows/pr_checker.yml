@@ -3,6 +3,8 @@ name: Hilingual PR CI
 on:
   pull_request:
     branches: [ develop, main ]
+  push:
+    branches: [ develop ]
 
 jobs:
   lint:
