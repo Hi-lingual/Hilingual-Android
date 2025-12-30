@@ -32,6 +32,8 @@ include(":core:localstorage")
 include(":core:navigation")
 include(":core:network")
 include(":core:ui")
+include(":core:notification")
+include(":core:work")
 
 // data
 include(":data:auth")

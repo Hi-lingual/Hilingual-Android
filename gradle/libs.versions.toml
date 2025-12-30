@@ -1,7 +1,7 @@
 [versions]
 # Build Configuration
 compileSdk = "36"
-credentials = "1.6.0-beta03"
+credentials = "1.6.0-rc01"
 googleid = "1.1.1"
 googleServices = "4.4.4"
 minSdk = "30"
@@ -12,13 +12,13 @@ androidGradlePlugin = "8.13.2"
 spotless = "8.1.0"
 
 # App version
-versionCode = "2000100"
-versionName = "2.0.1"
+versionCode = "2010000"
+versionName = "2.1.0"
 
 # Kotlin
 kotlin = "2.3.0"
 kotlinxImmutable = "0.4.0"
-ksp = "2.3.3"
+ksp = "2.3.4"
 
 # AndroidX
 coreKtx = "1.17.0"
@@ -26,8 +26,8 @@ coreSplachscreen = "1.2.0"
 androidxAppCompat = "1.7.1"
 lifecycleRuntimeKtx = "2.10.0"
 lifecycleRuntimeComposeAndroid = "2.10.0"
-activityCompose = "1.12.1"
-composeBom = "2025.12.00"
+activityCompose = "1.12.2"
+composeBom = "2025.12.01"
 composeNavigation = "2.9.6"
 security = "1.1.0"
 datastorePreferences = "1.2.0"
@@ -37,6 +37,10 @@ browser="1.9.0"
 
 # Room
 room = "2.8.4"
+
+# WorkManager
+work = "2.11.0"
+startup = "1.2.0"
 
 # Test
 junit = "4.13.2"
@@ -49,6 +53,7 @@ retrofit = "3.0.0"
 kotlinxSerializationJson = "1.9.0"
 daggerHilt = "2.57.2"
 hiltNavigationCompose = "1.3.0"
+hiltWork = "1.3.0"
 coil = "3.3.0"
 timber = "5.0.1"
 lottieCompose = "6.7.1"
@@ -56,7 +61,7 @@ coroutine = "1.10.2"
 ktlint = "11.5.1"
 pebble = "0.1.0"
 phoenix = "3.0.0"
-balloonCompose = "1.6.13"
+balloonCompose = "1.7.1"
 richeditorCompose = "1.0.0-rc13"
 
 # Firebase
@@ -75,7 +80,7 @@ profileinstaller = "1.4.1"
 runner = "1.7.0"
 
 # AboutLibraries
-aboutLibraries = "13.1.0"
+aboutLibraries = "13.2.1"
 amplitude = "1.22.4"
 
 [libraries]
@@ -154,6 +159,8 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "daggerHilt" }
 hilt-android-gradle-plugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "daggerHilt" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltWork" }
+hilt-compiler-androidx = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltWork" }
 
 # UI & Animation
 coil-bom = { group = "io.coil-kt.coil3", name = "coil-bom", version.ref = "coil" }
@@ -172,6 +179,11 @@ pebble = { group = "io.github.chattymin", name = "pebble", version.ref = "pebble
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+
+# WorkManager
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
+androidx-work-testing = { group = "androidx.work", name = "work-testing", version.ref = "work" }
+androidx-startup = { group = "androidx.startup", name = "startup-runtime", version.ref = "startup" }
 
 # ML Kit
 mlkit-text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "mlkitTextRecognition" }
