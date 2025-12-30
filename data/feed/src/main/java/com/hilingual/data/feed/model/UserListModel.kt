@@ -37,7 +37,7 @@ private fun UserItemDto.toModel(): UserModel = UserModel(
     userId = this.userId,
     nickname = this.nickname,
     profileImg = this.profileImg,
-    followState = FollowState.getValueByFollowState(this.isFollowing, this.isFollowed)!!
+    followState = FollowState.getValueByFollowState(this.isFollowing, this.isFollowed)
 )
 
 enum class FollowState(

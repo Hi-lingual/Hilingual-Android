@@ -135,7 +135,7 @@ fun HilingualBasicPicker(
                 listScrollCount,
                 key = { it }
             ) { index ->
-                val currentItemText = getItem(index)?.toString().orEmpty()
+                val currentItemText = getItem(index).orEmpty()
                 val isSelected = index == currentCenterIndex
 
                 val textColor = remember(isSelected) {
