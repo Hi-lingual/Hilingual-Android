@@ -34,11 +34,11 @@ platform :android do
       track: 'production',
       release_status: 'draft',
       package_name: 'com.hilingual',
-      aab: '../app/build/outputs/bundle/release/app-release.aab',
+      aab: ENV['PLAY_STORE_AAB_FILE'],
       json_key: ENV['PLAY_STORE_JSON_KEY_FILE'],
       skip_upload_screenshots: true,
       skip_upload_images: true,
-      metadata_path: './metadata'
+      metadata_path: 'fastlane/metadata/android'
     )
   end
 end
