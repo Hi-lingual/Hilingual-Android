@@ -50,3 +50,8 @@
 # 모든 Data 모듈의 Retrofit Service 인터페이스를 유지하여 R8 난독화로 인한 Retrofit 프록시 생성 실패 방지
 -keep interface com.hilingual.data.*.service.** { *; }
 ##---------------종료: Data Layer Services ----------
+
+##---------------시작: Amplitude ----------
+-keep class com.amplitude.** { *; }
+-dontwarn com.amplitude.**
+##---------------종료: Amplitude ----------

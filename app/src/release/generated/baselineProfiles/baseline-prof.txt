@@ -520,6 +520,7 @@ SPLandroidx/collection/MutableScatterSet;->addAll(Landroidx/collection/ScatterSe
 SPLandroidx/collection/MutableScatterSet;->adjustStorage$collection()V
 SPLandroidx/collection/MutableScatterSet;->asMutableSet()Ljava/util/Set;
 HSPLandroidx/collection/MutableScatterSet;->clear()V
+SPLandroidx/collection/MutableScatterSet;->dropDeletes$collection()V
 HSPLandroidx/collection/MutableScatterSet;->findAbsoluteInsertIndex(Ljava/lang/Object;)I
 SPLandroidx/collection/MutableScatterSet;->findFirstAvailableSlot(I)I
 SPLandroidx/collection/MutableScatterSet;->initializeGrowth()V
@@ -4821,6 +4822,7 @@ SPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementatio
 SPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode$ModificationResult;-><init>(Landroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode;I)V
 SPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode$ModificationResult;->getNode()Landroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode;
 SPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode$ModificationResult;->getSizeDelta()I
+SPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode$ModificationResult;->setNode(Landroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNode;)V
 Landroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNodeBaseIterator;
 SPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNodeBaseIterator;-><clinit>()V
 SPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNodeBaseIterator;-><init>()V
@@ -5333,7 +5335,7 @@ SPLandroidx/compose/runtime/snapshots/SnapshotKt;->takeNewSnapshot$lambda$0(Lkot
 SPLandroidx/compose/runtime/snapshots/SnapshotKt;->takeNewSnapshot(Lkotlin/jvm/functions/Function1;)Landroidx/compose/runtime/snapshots/Snapshot;
 SPLandroidx/compose/runtime/snapshots/SnapshotKt;->trackPinning(JLandroidx/compose/runtime/snapshots/SnapshotIdSet;)I
 SPLandroidx/compose/runtime/snapshots/SnapshotKt;->usedLocked(Landroidx/compose/runtime/snapshots/StateObject;)Landroidx/compose/runtime/snapshots/StateRecord;
-SPLandroidx/compose/runtime/snapshots/SnapshotKt;->valid(JJLandroidx/compose/runtime/snapshots/SnapshotIdSet;)Z
+HSPLandroidx/compose/runtime/snapshots/SnapshotKt;->valid(JJLandroidx/compose/runtime/snapshots/SnapshotIdSet;)Z
 SPLandroidx/compose/runtime/snapshots/SnapshotKt;->valid(Landroidx/compose/runtime/snapshots/StateRecord;JLandroidx/compose/runtime/snapshots/SnapshotIdSet;)Z
 SPLandroidx/compose/runtime/snapshots/SnapshotKt;->validateOpen(Landroidx/compose/runtime/snapshots/Snapshot;)V
 SPLandroidx/compose/runtime/snapshots/SnapshotKt;->writableRecord(Landroidx/compose/runtime/snapshots/StateRecord;Landroidx/compose/runtime/snapshots/StateObject;Landroidx/compose/runtime/snapshots/Snapshot;)Landroidx/compose/runtime/snapshots/StateRecord;
@@ -11271,7 +11273,6 @@ Landroidx/concurrent/futures/CallbackToFutureAdapter;
 SPLandroidx/concurrent/futures/CallbackToFutureAdapter;->getFuture(Landroidx/concurrent/futures/CallbackToFutureAdapter$Resolver;)Lcom/google/common/util/concurrent/ListenableFuture;
 Landroidx/concurrent/futures/CallbackToFutureAdapter$Completer;
 SPLandroidx/concurrent/futures/CallbackToFutureAdapter$Completer;-><init>()V
-PLandroidx/concurrent/futures/CallbackToFutureAdapter$Completer;->finalize()V
 SPLandroidx/concurrent/futures/CallbackToFutureAdapter$Completer;->set(Ljava/lang/Object;)Z
 SPLandroidx/concurrent/futures/CallbackToFutureAdapter$Completer;->setCompletedNormally()V
 Landroidx/concurrent/futures/CallbackToFutureAdapter$Resolver;
@@ -11844,6 +11845,7 @@ SPLandroidx/datastore/core/DataStoreImpl$incrementCollector$2$1$1;->emit(Ljava/l
 SPLandroidx/datastore/core/DataStoreImpl$incrementCollector$2$1$1;->emit(Lkotlin/Unit;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 Landroidx/datastore/core/DataStoreImpl$readAndInitOrPropagateAndThrowFailure$1;
 SPLandroidx/datastore/core/DataStoreImpl$readAndInitOrPropagateAndThrowFailure$1;-><init>(Landroidx/datastore/core/DataStoreImpl;Lkotlin/coroutines/Continuation;)V
+SPLandroidx/datastore/core/DataStoreImpl$readAndInitOrPropagateAndThrowFailure$1;->invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
 Landroidx/datastore/core/DataStoreImpl$readDataAndUpdateCache$1;
 SPLandroidx/datastore/core/DataStoreImpl$readDataAndUpdateCache$1;-><init>(Landroidx/datastore/core/DataStoreImpl;Lkotlin/coroutines/Continuation;)V
 Landroidx/datastore/core/DataStoreImpl$readDataOrHandleCorruption$1;
@@ -11959,7 +11961,6 @@ Landroidx/datastore/core/Message$Update;
 SPLandroidx/datastore/core/Message$Update;-><init>(Lkotlin/jvm/functions/Function2;Lkotlinx/coroutines/CompletableDeferred;Landroidx/datastore/core/State;Lkotlin/coroutines/CoroutineContext;)V
 SPLandroidx/datastore/core/Message$Update;->getAck()Lkotlinx/coroutines/CompletableDeferred;
 SPLandroidx/datastore/core/Message$Update;->getCallerContext()Lkotlin/coroutines/CoroutineContext;
-SPLandroidx/datastore/core/Message$Update;->getLastState()Landroidx/datastore/core/State;
 SPLandroidx/datastore/core/Message$Update;->getTransform()Lkotlin/jvm/functions/Function2;
 Landroidx/datastore/core/MultiProcessCoordinator;
 SPLandroidx/datastore/core/MultiProcessCoordinator;->$r8$lambda$8nebcyVEpUdIwMVxAv4LSQ2E8sM(Landroidx/datastore/core/MultiProcessCoordinator;)Ljava/io/File;
@@ -12058,6 +12059,7 @@ SPLandroidx/datastore/core/RunOnce;->awaitComplete(Lkotlin/coroutines/Continuati
 SPLandroidx/datastore/core/RunOnce;->runIfNeeded(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 Landroidx/datastore/core/RunOnce$runIfNeeded$1;
 SPLandroidx/datastore/core/RunOnce$runIfNeeded$1;-><init>(Landroidx/datastore/core/RunOnce;Lkotlin/coroutines/Continuation;)V
+SPLandroidx/datastore/core/RunOnce$runIfNeeded$1;->invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
 Landroidx/datastore/core/Serializer;
 Landroidx/datastore/core/SharedCounter;
 SPLandroidx/datastore/core/SharedCounter;-><clinit>()V
@@ -19461,7 +19463,6 @@ SPLcom/google/firebase/sessions/SharedSessionRepositoryImpl$appForeground$1$1;->
 SPLcom/google/firebase/sessions/SharedSessionRepositoryImpl$appForeground$1$1;->invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
 Lcom/google/firebase/sessions/SharedSessionRepositoryImpl$notifySubscribers$1;
 SPLcom/google/firebase/sessions/SharedSessionRepositoryImpl$notifySubscribers$1;-><init>(Lcom/google/firebase/sessions/SharedSessionRepositoryImpl;Lkotlin/coroutines/Continuation;)V
-SPLcom/google/firebase/sessions/SharedSessionRepositoryImpl$notifySubscribers$1;->invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
 Lcom/google/firebase/sessions/SharedSessionRepositoryImpl_Factory;
 SPLcom/google/firebase/sessions/SharedSessionRepositoryImpl_Factory;-><init>(Ljavax/inject/Provider;Ljavax/inject/Provider;Ljavax/inject/Provider;Ljavax/inject/Provider;Ljavax/inject/Provider;Ljavax/inject/Provider;Ljavax/inject/Provider;)V
 SPLcom/google/firebase/sessions/SharedSessionRepositoryImpl_Factory;->create(Ljavax/inject/Provider;Ljavax/inject/Provider;Ljavax/inject/Provider;Ljavax/inject/Provider;Ljavax/inject/Provider;Ljavax/inject/Provider;Ljavax/inject/Provider;)Lcom/google/firebase/sessions/SharedSessionRepositoryImpl_Factory;
@@ -19502,7 +19503,6 @@ SPLcom/google/firebase/sessions/api/FirebaseSessionsDependencies$Dependency;->ge
 SPLcom/google/firebase/sessions/api/FirebaseSessionsDependencies$Dependency;->setSubscriber(Lcom/google/firebase/sessions/api/SessionSubscriber;)V
 Lcom/google/firebase/sessions/api/FirebaseSessionsDependencies$getRegisteredSubscribers$1;
 SPLcom/google/firebase/sessions/api/FirebaseSessionsDependencies$getRegisteredSubscribers$1;-><init>(Lcom/google/firebase/sessions/api/FirebaseSessionsDependencies;Lkotlin/coroutines/Continuation;)V
-SPLcom/google/firebase/sessions/api/FirebaseSessionsDependencies$getRegisteredSubscribers$1;->invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
 Lcom/google/firebase/sessions/api/SessionSubscriber;
 Lcom/google/firebase/sessions/api/SessionSubscriber$Name;
 SPLcom/google/firebase/sessions/api/SessionSubscriber$Name;->$values()[Lcom/google/firebase/sessions/api/SessionSubscriber$Name;
@@ -21445,6 +21445,7 @@ SPLkotlin/collections/ArraysKt___ArraysKt;->filterNotNull([Ljava/lang/Object;)Lj
 SPLkotlin/collections/ArraysKt___ArraysKt;->filterNotNullTo([Ljava/lang/Object;Ljava/util/Collection;)Ljava/util/Collection;
 SPLkotlin/collections/ArraysKt___ArraysKt;->firstOrNull([Ljava/lang/Object;)Ljava/lang/Object;
 SPLkotlin/collections/ArraysKt___ArraysKt;->getLastIndex([I)I
+SPLkotlin/collections/ArraysKt___ArraysKt;->getLastIndex([J)I
 SPLkotlin/collections/ArraysKt___ArraysKt;->getLastIndex([Ljava/lang/Object;)I
 SPLkotlin/collections/ArraysKt___ArraysKt;->getOrNull([Ljava/lang/Object;I)Ljava/lang/Object;
 SPLkotlin/collections/ArraysKt___ArraysKt;->indexOf([Ljava/lang/Object;Ljava/lang/Object;)I
@@ -21763,7 +21764,7 @@ SPLkotlin/coroutines/CoroutineContext$DefaultImpls$$ExternalSyntheticLambda0;->i
 Lkotlin/coroutines/CoroutineContext$Element;
 Lkotlin/coroutines/CoroutineContext$Element$DefaultImpls;
 SPLkotlin/coroutines/CoroutineContext$Element$DefaultImpls;->fold(Lkotlin/coroutines/CoroutineContext$Element;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-SPLkotlin/coroutines/CoroutineContext$Element$DefaultImpls;->get(Lkotlin/coroutines/CoroutineContext$Element;Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
+HSPLkotlin/coroutines/CoroutineContext$Element$DefaultImpls;->get(Lkotlin/coroutines/CoroutineContext$Element;Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
 SPLkotlin/coroutines/CoroutineContext$Element$DefaultImpls;->minusKey(Lkotlin/coroutines/CoroutineContext$Element;Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext;
 SPLkotlin/coroutines/CoroutineContext$Element$DefaultImpls;->plus(Lkotlin/coroutines/CoroutineContext$Element;Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
 Lkotlin/coroutines/CoroutineContext$Key;
@@ -21914,6 +21915,7 @@ Lkotlin/jvm/internal/IntCompanionObject;
 SPLkotlin/jvm/internal/IntCompanionObject;-><clinit>()V
 SPLkotlin/jvm/internal/IntCompanionObject;-><init>()V
 Lkotlin/jvm/internal/Intrinsics;
+HSPLkotlin/jvm/internal/Intrinsics;->areEqual(Ljava/lang/Object;Ljava/lang/Object;)Z
 SPLkotlin/jvm/internal/Intrinsics;->checkNotNull(Ljava/lang/Object;)V
 SPLkotlin/jvm/internal/Intrinsics;->checkNotNull(Ljava/lang/Object;Ljava/lang/String;)V
 SPLkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
@@ -23094,7 +23096,6 @@ SPLkotlinx/coroutines/flow/FlowKt__ErrorsKt$catchImpl$2;-><init>(Lkotlinx/corout
 SPLkotlinx/coroutines/flow/FlowKt__ErrorsKt$catchImpl$2;->emit(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 Lkotlinx/coroutines/flow/FlowKt__ErrorsKt$catchImpl$2$emit$1;
 SPLkotlinx/coroutines/flow/FlowKt__ErrorsKt$catchImpl$2$emit$1;-><init>(Lkotlinx/coroutines/flow/FlowKt__ErrorsKt$catchImpl$2;Lkotlin/coroutines/Continuation;)V
-SPLkotlinx/coroutines/flow/FlowKt__ErrorsKt$catchImpl$2$emit$1;->invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
 Lkotlinx/coroutines/flow/FlowKt__ErrorsKt$retryWhen$$inlined$unsafeFlow$1;
 SPLkotlinx/coroutines/flow/FlowKt__ErrorsKt$retryWhen$$inlined$unsafeFlow$1;-><init>(Lkotlinx/coroutines/flow/Flow;Lkotlin/jvm/functions/Function4;)V
 SPLkotlinx/coroutines/flow/FlowKt__ErrorsKt$retryWhen$$inlined$unsafeFlow$1;->collect(Lkotlinx/coroutines/flow/FlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -23409,7 +23410,6 @@ SPLkotlinx/coroutines/flow/internal/SafeCollector;->collectContextSize$lambda$0(
 SPLkotlinx/coroutines/flow/internal/SafeCollector;->emit(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 SPLkotlinx/coroutines/flow/internal/SafeCollector;->emit(Lkotlin/coroutines/Continuation;Ljava/lang/Object;)Ljava/lang/Object;
 SPLkotlinx/coroutines/flow/internal/SafeCollector;->getContext()Lkotlin/coroutines/CoroutineContext;
-SPLkotlinx/coroutines/flow/internal/SafeCollector;->invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
 SPLkotlinx/coroutines/flow/internal/SafeCollector;->releaseIntercepted()V
 Lkotlinx/coroutines/flow/internal/SafeCollector$$ExternalSyntheticLambda0;
 SPLkotlinx/coroutines/flow/internal/SafeCollector$$ExternalSyntheticLambda0;-><init>()V

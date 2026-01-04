@@ -31,7 +31,9 @@ object DependencyManager {
         project.dependencies {
             add("implementation", project.libs.findLibrary("hilt.android").get())
             add("ksp", project.libs.findLibrary("hilt.compiler").get())
+            add("ksp", project.libs.findLibrary("kotlin.metadata.jvm").get())
             add("kspAndroidTest", project.libs.findLibrary("hilt.compiler").get())
+            add("kspAndroidTest", project.libs.findLibrary("kotlin.metadata.jvm").get())
         }
     }
 
