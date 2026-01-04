@@ -26,19 +26,19 @@ platform :android do
   # =================================================
   # ========= Production Lane (Release) =============
   # =================================================
-  desc "Build and deploy a new release build to Google Play"
-  lane :deploy_production do
-    # Gradle을 사용해 Release AAB를 빌드합니다.
-    gradle(
-      task: "clean bundleRelease"
-      # Keystore 관련 설정은 GitHub Actions에서 환경변수로 주입 예정
-    )
+  desc "Upload Release AAB to Google Play Store (Production Track)"
+  lane :upload_production do
+    # Fastlane은 오직 '업로드' 역할만 수행합니다.
 
-    # Google Play에 업로드합니다.
     upload_to_play_store(
-      track: 'internal', # 또는 'alpha'
-      package_name: 'com.hilingual' # 릴리즈 패키지 이름 명시
-      # json_key는 GitHub Actions에서 환경변수로 주입 예정
+      track: 'production',
+      release_status: 'draft',
+      package_name: 'com.hilingual',
+      aab: '../app/build/outputs/bundle/release/app-release.aab',
+      json_key: ENV['PLAY_STORE_JSON_KEY_FILE'],
+      skip_upload_screenshots: true,
+      skip_upload_images: true,
+      metadata_path: './metadata'
     )
   end
 end
