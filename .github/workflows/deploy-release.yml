@@ -51,3 +51,5 @@ jobs:
         run: bundle exec fastlane android upload_production
         env:
           PLAY_STORE_JSON_KEY_FILE: "${{ github.workspace }}/play_store_api_key.json"
+          # [수정] AAB 파일 절대 경로 환경변수 추가
+          PLAY_STORE_AAB_FILE: "${{ github.workspace }}/app/build/outputs/bundle/release/app-release.aab"
