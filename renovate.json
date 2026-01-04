@@ -15,6 +15,11 @@
     {
       "matchDepNames": ["org.jlleitschuh.gradle.ktlint"],
       "enabled": false
+    },
+    {
+      "description": "Ignore updates for Ruby and Fastlane to prevent CI breakage",
+      "matchPackagePatterns": ["^ruby", "^fastlane"],
+      "enabled": false
     }
   ],
   "postUpdateOptions": ["bundler"]
