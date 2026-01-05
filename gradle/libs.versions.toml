@@ -61,7 +61,7 @@ coroutine = "1.10.2"
 ktlint = "11.5.1"
 pebble = "0.1.0"
 phoenix = "3.0.0"
-balloonCompose = "1.7.1"
+balloonCompose = "1.7.2"
 richeditorCompose = "1.0.0-rc13"
 
 # Firebase
