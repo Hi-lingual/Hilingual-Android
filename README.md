@@ -1,6 +1,6 @@
 # Hi-lingual
 
-![Kotlin](https://img.shields.io/badge/Kotlin-2.2.21-7F52FF?style=flat&logo=kotlin&logoColor=white)
+![Kotlin](https://img.shields.io/badge/Kotlin-2.3.0-7F52FF?style=flat&logo=kotlin&logoColor=white)
 ![Android](https://img.shields.io/badge/Android-34A853?style=flat&logo=android&logoColor=white)
 ![MinSDK](https://img.shields.io/badge/minSdk-30-3DDC84?style=flat&logo=android&logoColor=white)
 
@@ -66,7 +66,6 @@ graph TD
         mypage["mypage"]
         notification["notification"]
         onboarding["onboarding"]
-        otp["otp"]
         splash["splash"]
         voca["voca"]
     end
@@ -101,8 +100,6 @@ graph TD
     mypage --> data_auth
     notification --> data_user
     onboarding --> data_user
-    otp --> data_user
-    otp --> data_auth
     splash --> data_auth
     splash --> data_user
     voca --> data_voca
@@ -172,6 +169,8 @@ graph TD
         common["common"]
         crypto["crypto"]
         navigation["navigation"]
+        work["work"]
+        notification["notification"]
     end
 
     ui --> designsystem
@@ -180,6 +179,8 @@ graph TD
     network --> localstorage
     network --> common
     localstorage --> crypto
+    work --> notification
+    notification --> designsystem
 ```
 
 ## Contributors
