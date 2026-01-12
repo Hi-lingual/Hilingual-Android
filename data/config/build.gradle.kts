@@ -9,8 +9,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.common)
-
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.remote.config)
     implementation(libs.firebase.analytics)
     implementation(libs.kotlinx.coroutines.play.services)
