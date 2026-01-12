@@ -13,4 +13,5 @@ dependencies {
 
     implementation(libs.firebase.remote.config)
     implementation(libs.firebase.analytics)
+    implementation(libs.kotlinx.coroutines.play.services)
 }
