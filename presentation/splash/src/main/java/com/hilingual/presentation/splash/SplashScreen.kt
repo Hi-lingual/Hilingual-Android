@@ -83,14 +83,9 @@ internal fun SplashRoute(
         }
 
         UpdateState.OPTIONAL -> {
-            TwoButtonDialog(
-                title = "업데이트",
-                description = "새로운 기능이 추가되었습니다.\n지금 업데이트 하시겠습니까?",
-                cancelText = "나중에",
-                confirmText = "업데이트",
+            OptionalDialog(
                 onPositive = viewModel::onUpdateConfirm,
-                onNegative = viewModel::onUpdateSkip,
-                onDismiss = viewModel::onUpdateSkip
+                onNegative = viewModel::onUpdateSkip
             )
         }
 
@@ -165,10 +160,41 @@ private fun ForceDialog(
     )
 }
 
+@Composable
+private fun OptionalDialog(
+    onPositive: () -> Unit,
+    onNegative: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TwoButtonDialog(
+        title = "업데이트",
+        description = "새로운 기능이 추가되었습니다.\n지금 업데이트 하시겠습니까?",
+        cancelText = "나중에",
+        confirmText = "업데이트",
+        onPositive = onPositive,
+        onNegative = onNegative,
+        onDismiss = { },
+        modifier = modifier
+    )
+}
+
 @Preview
 @Composable
 private fun ForceDialogPreview() {
     HilingualTheme {
-        ForceDialog(onConfirm = { })
+        ForceDialog(
+            onConfirm = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun OptionalDialogPreview() {
+    HilingualTheme {
+        OptionalDialog(
+            onPositive = {},
+            onNegative = {}
+        )
     }
 }
