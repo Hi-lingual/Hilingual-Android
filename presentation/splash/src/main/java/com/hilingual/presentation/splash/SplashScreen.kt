@@ -16,7 +16,6 @@
 package com.hilingual.presentation.splash
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.tween
@@ -25,6 +24,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +34,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectLatestSideEffect
@@ -63,7 +65,7 @@ internal fun SplashRoute(
             is SplashSideEffect.NavigateToAuth -> navigateToAuth()
             is SplashSideEffect.NavigateToStore -> {
                 val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse("market://details?id=${context.packageName}")
+                    data = "market://details?id=${context.packageName}".toUri()
                     setPackage("com.android.vending")
                 }
                 context.startActivity(intent)
@@ -77,20 +79,7 @@ internal fun SplashRoute(
 
     when (uiState.updateState) {
         UpdateState.FORCE -> {
-            OneButtonDialog(
-                confirmText = "업데이트 하러 가기",
-                onConfirm = viewModel::onUpdateConfirm,
-                onDismiss = {},
-                content = {
-                    Text(
-                        text = "새로운 버전이 출시되었습니다.\n업데이트 후 이용해주세요.",
-                        style = HilingualTheme.typography.bodyR14,
-                        color = HilingualTheme.colors.gray850,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            )
+            ForceDialog(onConfirm = viewModel::onUpdateConfirm)
         }
 
         UpdateState.OPTIONAL -> {
@@ -105,7 +94,7 @@ internal fun SplashRoute(
             )
         }
 
-        UpdateState.NONE -> { }
+        UpdateState.NONE -> {}
     }
 }
 
@@ -144,5 +133,42 @@ private fun SplashScreen(
         Spacer(
             modifier = Modifier.weight(29f)
         )
+    }
+}
+
+@Composable
+fun ForceDialog(
+    onConfirm: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OneButtonDialog(
+        confirmText = "업데이트 하러 가기",
+        onConfirm = onConfirm,
+        modifier = modifier,
+        onDismiss = {},
+        content = {
+            Text(
+                text = "업데이트",
+                style = HilingualTheme.typography.headSB16,
+                color = HilingualTheme.colors.gray850
+            )
+            Spacer(Modifier.height(8.dp))
+
+            Text(
+                text = "새로운 버전이 출시되었습니다.\n업데이트 후 이용해주세요.",
+                style = HilingualTheme.typography.bodyR14,
+                color = HilingualTheme.colors.gray400,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    )
+}
+
+@Preview
+@Composable
+private fun ForceDialogPreview() {
+    HilingualTheme {
+        ForceDialog(onConfirm = { })
     }
 }
