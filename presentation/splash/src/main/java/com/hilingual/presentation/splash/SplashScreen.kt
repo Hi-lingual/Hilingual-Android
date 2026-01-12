@@ -15,6 +15,8 @@
  */
 package com.hilingual.presentation.splash
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.tween
@@ -24,17 +26,25 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectLatestSideEffect
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.provider.LocalSharedTransitionScope
+import com.hilingual.core.designsystem.component.dialog.OneButtonDialog
+import com.hilingual.core.designsystem.component.dialog.TwoButtonDialog
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualOrange
+import com.hilingual.data.config.model.UpdateState
 import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
@@ -44,16 +54,59 @@ internal fun SplashRoute(
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: SplashViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
     viewModel.sideEffect.collectLatestSideEffect { event ->
         when (event) {
             is SplashSideEffect.NavigateToHome -> navigateToHome()
             is SplashSideEffect.NavigateToAuth -> navigateToAuth()
+            is SplashSideEffect.NavigateToStore -> {
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse("market://details?id=${context.packageName}")
+                    setPackage("com.android.vending")
+                }
+                context.startActivity(intent)
+            }
         }
     }
 
     SplashScreen(
         animatedVisibilityScope = animatedVisibilityScope
     )
+
+    when (uiState.updateState) {
+        UpdateState.FORCE -> {
+            OneButtonDialog(
+                confirmText = "업데이트 하러 가기",
+                onConfirm = viewModel::onUpdateConfirm,
+                onDismiss = {},
+                content = {
+                    Text(
+                        text = "새로운 버전이 출시되었습니다.\n업데이트 후 이용해주세요.",
+                        style = HilingualTheme.typography.bodyR14,
+                        color = HilingualTheme.colors.gray850,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            )
+        }
+
+        UpdateState.OPTIONAL -> {
+            TwoButtonDialog(
+                title = "업데이트",
+                description = "새로운 기능이 추가되었습니다.\n지금 업데이트 하시겠습니까?",
+                cancelText = "나중에",
+                confirmText = "업데이트",
+                onPositive = viewModel::onUpdateConfirm,
+                onNegative = viewModel::onUpdateSkip,
+                onDismiss = viewModel::onUpdateSkip
+            )
+        }
+
+        UpdateState.NONE -> { }
+    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
