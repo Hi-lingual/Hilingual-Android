@@ -2,15 +2,14 @@ package com.hilingual.data.config.datasourceimpl
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.data.config.constant.DEFAULT_VERSION
+import com.hilingual.data.config.constant.KEY_LATEST_VERSION
+import com.hilingual.data.config.constant.KEY_MIN_FORCE_VERSION
 import com.hilingual.data.config.datasource.ConfigRemoteDataSource
 import com.hilingual.data.config.model.AppVersion
 import com.hilingual.data.config.model.AppVersionInfo
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
-
-private const val KEY_MIN_FORCE_VERSION = "min_force_version"
-private const val KEY_LATEST_VERSION = "latest_version"
-private const val DEFAULT_VERSION = "0.0.0"
 
 internal class RemoteConfigDataSourceImpl @Inject constructor(
     private val remoteConfig: FirebaseRemoteConfig
