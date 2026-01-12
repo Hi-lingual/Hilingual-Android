@@ -43,6 +43,7 @@ include(":data:user")
 include(":data:voca")
 include(":data:feed")
 include(":data:presigned")
+include(":data:config")
 
 //presentation
 include(":presentation:auth")
