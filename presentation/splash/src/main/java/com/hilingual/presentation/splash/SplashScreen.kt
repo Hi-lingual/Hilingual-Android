@@ -137,7 +137,7 @@ private fun SplashScreen(
 }
 
 @Composable
-fun ForceDialog(
+private fun ForceDialog(
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier
 ) {
