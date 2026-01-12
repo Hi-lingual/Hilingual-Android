@@ -68,13 +68,9 @@ internal class SplashViewModel @Inject constructor(
                     val state = info.checkUpdateStatus(currentVersion)
                     _uiState.update { it.copy(updateState = state) }
 
-                    if (state == UpdateState.NONE) {
-                        checkLoginStatus()
-                    }
+                    if (state == UpdateState.NONE) checkLoginStatus()
                 }
-                .onLogFailure {
-                    checkLoginStatus()
-                }
+                .onLogFailure { checkLoginStatus() }
         }
     }
 
