@@ -10,4 +10,7 @@ android {
 
 dependencies {
     implementation(projects.core.common)
+
+    implementation(libs.firebase.remote.config)
+    implementation(libs.firebase.analytics)
 }

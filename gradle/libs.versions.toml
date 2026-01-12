@@ -153,6 +153,8 @@ googleid = { module = "com.google.android.libraries.identity.googleid:googleid",
 # Firebase
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-remote-config = { group = "com.google.firebase", name = "firebase-config" }
 
 # Dependency Injection
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "daggerHilt" }
