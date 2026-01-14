@@ -5,7 +5,7 @@ import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.runtime.Immutable
 
 enum class MessageDuration(val millis: Long) {
-    DEFAULT(3000L) 
+    DEFAULT(3000L)
 }
 
 @Immutable
@@ -21,7 +21,7 @@ sealed interface HilingualMessage : SnackbarVisuals {
      */
     data class Toast(
         override val message: String,
-        override val messageDuration: MessageDuration = MessageDuration.DEFAULT,
+        override val messageDuration: MessageDuration = MessageDuration.DEFAULT
     ) : HilingualMessage {
         override val id: Long = System.nanoTime()
         override val actionLabel: String? = null
@@ -34,7 +34,7 @@ sealed interface HilingualMessage : SnackbarVisuals {
         override val message: String,
         val actionLabelText: String,
         val onAction: () -> Unit,
-        override val messageDuration: MessageDuration = MessageDuration.DEFAULT,
+        override val messageDuration: MessageDuration = MessageDuration.DEFAULT
     ) : HilingualMessage {
         override val id: Long = System.nanoTime()
         override val actionLabel: String = actionLabelText
