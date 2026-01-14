@@ -115,7 +115,7 @@ class HomeViewModel @Inject constructor(
         if (currentState !is UiState.Success) return
 
         val isPermissionGranted = !requiresPermission || isGranted
-        val previousState = currentState.data.notificationPermissionState
+        val previousState = currentState.data.header.notificationPermissionState
 
         val newPermissionState = if (isPermissionGranted) {
             NotificationPermissionState.GRANTED
