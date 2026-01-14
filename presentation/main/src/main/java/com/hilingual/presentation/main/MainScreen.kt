@@ -15,8 +15,8 @@
  */
 package com.hilingual.presentation.main
 
-import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
@@ -31,23 +31,23 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.hilingual.core.common.analytics.Tracker
-import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.model.HilingualMessage.Snackbar
+import com.hilingual.core.common.model.HilingualMessage.Toast
+import com.hilingual.core.common.model.MessageDuration
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
-import com.hilingual.core.common.trigger.LocalSnackbarTrigger
-import com.hilingual.core.common.trigger.LocalToastTrigger
+import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.trigger.rememberDialogTrigger
 import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
 import com.hilingual.core.designsystem.component.snackbar.HilingualActionSnackbar
@@ -71,8 +71,6 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private const val EXIT_MILLIS = 3000L
-
 @Composable
 internal fun MainScreen(
     appState: MainAppState,
@@ -89,45 +87,23 @@ internal fun MainScreen(
     )
 
     val snackBarHostState = remember { SnackbarHostState() }
-    var currentSnackbarRequest by remember { mutableStateOf<SnackbarRequest?>(null) }
 
-    val onShowToast: (String) -> Unit = remember(coroutineScope, snackBarHostState) {
-        { message ->
-            coroutineScope.launch {
-                snackBarHostState.currentSnackbarData?.dismiss()
-                val job = launch {
-                    snackBarHostState.showSnackbar(
-                        message = message,
-                        withDismissAction = false
-                    )
-                }
-                delay(EXIT_MILLIS)
-                job.cancel()
-            }
-        }
-    }
-    val onShowSnackbar: (SnackbarRequest) -> Unit = remember(coroutineScope, snackBarHostState) {
-        { request ->
-            currentSnackbarRequest = request
-            coroutineScope.launch {
-                snackBarHostState.currentSnackbarData?.dismiss()
-                val job = launch {
-                    snackBarHostState.showSnackbar(
-                        message = request.message,
-                        actionLabel = request.buttonText,
-                        withDismissAction = true
-                    )
-                }
-                job.invokeOnCompletion {
-                    if (currentSnackbarRequest == request) {
-                        currentSnackbarRequest = null
+    val onShowMessage: (HilingualMessage) -> Unit =
+        remember(
+            key1 = coroutineScope,
+            key2 = snackBarHostState
+        ) {
+            { message ->
+                coroutineScope.launch {
+                    snackBarHostState.currentSnackbarData?.dismiss()
+                    val job = launch {
+                        snackBarHostState.showSnackbar(visuals = message)
                     }
+                    delay(message.messageDuration.millis)
+                    job.cancel()
                 }
-                delay(EXIT_MILLIS)
-                job.cancel()
             }
         }
-    }
 
     LaunchedEffect(isOffline, appState.dialogStateHolder.dialogState.isVisible) {
         if (isOffline && !appState.dialogStateHolder.dialogState.isVisible) {
@@ -136,15 +112,12 @@ internal fun MainScreen(
     }
 
     HandleBackPressToExit(
-        onShowToast = {
-            onShowToast("버튼을 한번 더 누르면 앱이 종료됩니다.")
-        }
+        onShowMessage = { onShowMessage(Toast("버튼을 한번 더 누르면 앱이 종료됩니다.")) }
     )
 
     CompositionLocalProvider(
         LocalDialogTrigger provides dialogTrigger,
-        LocalToastTrigger provides onShowToast,
-        LocalSnackbarTrigger provides onShowSnackbar,
+        LocalMessageController provides onShowMessage,
         LocalTracker provides tracker
     ) {
         Scaffold(
@@ -276,20 +249,22 @@ internal fun MainScreen(
                     .padding(bottom = 82.dp)
             ) {
                 SnackbarHost(hostState = snackBarHostState) { data ->
-                    if (data.visuals.withDismissAction) {
-                        currentSnackbarRequest?.let { request ->
+                    when (val visuals = data.visuals) {
+                        is Snackbar -> {
                             HilingualActionSnackbar(
-                                message = data.visuals.message,
-                                buttonText = data.visuals.actionLabel ?: "",
+                                message = visuals,
                                 modifier = Modifier.padding(horizontal = 16.dp),
-                                onClick = {
-                                    request.onClick()
-                                    data.dismiss()
-                                }
+                                onDismiss = { data.dismiss() }
                             )
                         }
-                    } else {
-                        TextToast(text = data.visuals.message)
+
+                        is Toast -> {
+                            TextToast(text = visuals.message)
+                        }
+
+                        else -> {
+                            TextToast(text = visuals.message)
+                        }
                     }
                 }
             }
@@ -300,17 +275,14 @@ internal fun MainScreen(
 @Composable
 private fun HandleBackPressToExit(
     enabled: Boolean = true,
-    onShowToast: () -> Unit = {}
+    onShowMessage: () -> Unit = {}
 ) {
-    val context = LocalContext.current
+    val context = LocalActivity.current
     var backPressedTime by remember { mutableLongStateOf(0L) }
+    val condition = System.currentTimeMillis() - backPressedTime <= MessageDuration.DEFAULT.millis
 
     BackHandler(enabled = enabled) {
-        if (System.currentTimeMillis() - backPressedTime <= EXIT_MILLIS) {
-            (context as? Activity)?.finish()
-        } else {
-            onShowToast()
-        }
+        if (condition) context?.finish() else onShowMessage()
         backPressedTime = System.currentTimeMillis()
     }
 }
