@@ -64,11 +64,10 @@ import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
-import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
-import com.hilingual.core.common.trigger.LocalSnackbarTrigger
-import com.hilingual.core.common.trigger.LocalToastTrigger
+import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
@@ -101,8 +100,7 @@ internal fun HomeRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
-    val toastTrigger = LocalToastTrigger.current
-    val snackbarTrigger = LocalSnackbarTrigger.current
+    val messageController = LocalMessageController.current
     val tracker = LocalTracker.current
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -117,14 +115,14 @@ internal fun HomeRoute(
         when (sideEffect) {
             is HomeSideEffect.ShowErrorDialog -> dialogTrigger.show(sideEffect.onRetry)
 
-            is HomeSideEffect.ShowToast -> toastTrigger(sideEffect.text)
+            is HomeSideEffect.ShowToast -> messageController(HilingualMessage.Toast(sideEffect.text))
 
             is HomeSideEffect.ShowSnackBar -> {
-                snackbarTrigger(
-                    SnackbarRequest(
+                messageController(
+                    HilingualMessage.Snackbar(
                         message = sideEffect.message,
-                        buttonText = sideEffect.actionLabel,
-                        onClick = navigateToFeed
+                        actionLabelText = sideEffect.actionLabel,
+                        onAction = navigateToFeed
                     )
                 )
             }
