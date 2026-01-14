@@ -26,11 +26,7 @@ import com.hilingual.data.diary.localstorage.DiaryTempRepository
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.home.model.toState
-import com.hilingual.presentation.home.type.DiaryCardState
 import com.hilingual.presentation.home.type.NotificationPermissionState
-import com.hilingual.presentation.home.util.isDateFuture
-import com.hilingual.presentation.home.util.isDateWritable
-import com.hilingual.presentation.home.util.isDateWritten
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
@@ -73,9 +69,12 @@ class HomeViewModel @Inject constructor(
             _uiState.update { UiState.Loading }
             val today = LocalDate.now()
 
-            val userInfoDeferred = async { userRepository.getUserInfo() }
-            val calendarDeferred =
-                async { calendarRepository.getCalendar(today.year, today.monthValue) }
+            val userInfoDeferred = async {
+                userRepository.getUserInfo()
+            }
+            val calendarDeferred = async {
+                calendarRepository.getCalendar(today.year, today.monthValue)
+            }
 
             val userInfoResult = userInfoDeferred.await()
             val calendarResult = calendarDeferred.await()
@@ -83,8 +82,8 @@ class HomeViewModel @Inject constructor(
             delay(200)
 
             if (userInfoResult.isFailure || calendarResult.isFailure) {
-                userInfoResult.onLogFailure {}
-                calendarResult.onLogFailure {}
+                userInfoResult.onLogFailure { }
+                calendarResult.onLogFailure { }
                 emitErrorDialogSideEffect { loadInitialData() }
                 return@launch
             }
@@ -95,11 +94,14 @@ class HomeViewModel @Inject constructor(
             _uiState.update {
                 UiState.Success(
                     HomeUiState(
-                        userProfile = userInfo.toState(),
-                        dateList = calendarData.dateList.map { it.toState() }.toImmutableList(),
-                        selectedDate = today,
-                        diaryThumbnail = null,
-                        todayTopic = null
+                        header = HomeHeaderUiState(
+                            userProfile = userInfo.toState()
+                        ),
+                        calendar = HomeCalendarUiState(
+                            dates = calendarData.dateList.map { it.toState() }.toImmutableList(),
+                            selectedDate = today
+                        ),
+                        diaryContent = HomeDiaryUiState()
                     )
                 )
             }
@@ -122,7 +124,7 @@ class HomeViewModel @Inject constructor(
 
         lastKnownPermissionGranted = isPermissionGranted
 
-        val previousState = currentState.data.notificationPermissionState
+        val previousState = currentState.data.header.notificationPermissionState
 
         val newPermissionState = if (isPermissionGranted) {
             NotificationPermissionState.GRANTED
@@ -130,8 +132,10 @@ class HomeViewModel @Inject constructor(
             NotificationPermissionState.DENIED
         }
 
-        _uiState.updateSuccess {
-            it.copy(notificationPermissionState = newPermissionState)
+        _uiState.updateSuccess { state ->
+            state.copy(
+                header = state.header.copy(notificationPermissionState = newPermissionState)
+            )
         }
 
         if (previousState == NotificationPermissionState.NOT_DETERMINED && !isPermissionGranted) {
@@ -151,8 +155,10 @@ class HomeViewModel @Inject constructor(
             NotificationPermissionState.DENIED
         }
 
-        _uiState.updateSuccess {
-            it.copy(notificationPermissionState = newPermissionState)
+        _uiState.updateSuccess { state ->
+            state.copy(
+                header = state.header.copy(notificationPermissionState = newPermissionState)
+            )
         }
     }
 
@@ -168,17 +174,19 @@ class HomeViewModel @Inject constructor(
 
     fun onDateSelected(date: LocalDate) {
         val currentState = uiState.value
-        if (currentState !is UiState.Success || currentState.data.selectedDate == date) return
+        if (currentState !is UiState.Success || currentState.data.calendar.selectedDate == date) return
 
-        _uiState.updateSuccess {
-            it.copy(selectedDate = date)
+        _uiState.updateSuccess { state ->
+            state.copy(calendar = state.calendar.selectDate(date))
         }
         updateContentForDate(date)
     }
 
     fun onMonthChanged(yearMonth: YearMonth) {
         val currentState = uiState.value
-        if (currentState !is UiState.Success || YearMonth.from(currentState.data.selectedDate) == yearMonth) return
+        if (currentState !is UiState.Success) return
+
+        if (YearMonth.from(currentState.data.calendar.selectedDate) == yearMonth) return
 
         viewModelScope.launch {
             calendarRepository.getCalendar(yearMonth.year, yearMonth.monthValue)
@@ -189,13 +197,14 @@ class HomeViewModel @Inject constructor(
                     } else {
                         yearMonth.atDay(1)
                     }
-                    _uiState.updateSuccess {
-                        it.copy(
-                            dateList = calendarModel.dateList.map { data -> data.toState() }
-                                .toImmutableList(),
-                            selectedDate = newDate,
-                            diaryThumbnail = null,
-                            todayTopic = null
+                    _uiState.updateSuccess { state ->
+                        state.copy(
+                            calendar = HomeCalendarUiState(
+                                dates = calendarModel.dateList.map { data -> data.toState() }
+                                    .toImmutableList(),
+                                selectedDate = newDate
+                            ),
+                            diaryContent = HomeDiaryUiState()
                         )
                     }
                     updateContentForDate(newDate)
@@ -213,9 +222,11 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             diaryRepository.patchDiaryPublish(diaryId)
                 .onSuccess {
-                    _uiState.updateSuccess {
-                        it.copy(
-                            diaryThumbnail = it.diaryThumbnail?.copy(isPublished = true)
+                    _uiState.updateSuccess { state ->
+                        state.copy(
+                            diaryContent = state.diaryContent.copy(
+                                diaryThumbnail = state.diaryContent.diaryThumbnail?.copy(isPublished = true)
+                            )
                         )
                     }
                     emitSnackBarSideEffect(
@@ -236,9 +247,11 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             diaryRepository.patchDiaryUnpublish(diaryId)
                 .onSuccess {
-                    _uiState.updateSuccess {
-                        it.copy(
-                            diaryThumbnail = it.diaryThumbnail?.copy(isPublished = false)
+                    _uiState.updateSuccess { state ->
+                        state.copy(
+                            diaryContent = state.diaryContent.copy(
+                                diaryThumbnail = state.diaryContent.diaryThumbnail?.copy(isPublished = false)
+                            )
                         )
                     }
                     emitToastSideEffect("일기가 비공개 되었어요.")
@@ -252,17 +265,17 @@ class HomeViewModel @Inject constructor(
     fun deleteDiary(diaryId: Long) {
         val currentState = uiState.value
         if (currentState !is UiState.Success) return
-        val selectedDate = currentState.data.selectedDate
+        val selectedDate = currentState.data.calendar.selectedDate
 
         viewModelScope.launch {
             diaryRepository.deleteDiary(diaryId)
                 .onSuccess {
                     _uiState.updateSuccess { state ->
-                        val newDateList =
-                            state.dateList.filter { it.date != selectedDate.toString() }
-                                .toImmutableList()
+                        val newDates = state.calendar.dates
+                            .filter { it.date != selectedDate.toString() }
+                            .toImmutableList()
                         state.copy(
-                            dateList = newDateList
+                            calendar = state.calendar.copy(dates = newDates)
                         )
                     }
                     updateContentForDate(selectedDate)
@@ -279,73 +292,32 @@ class HomeViewModel @Inject constructor(
         if (currentState !is UiState.Success) return
 
         viewModelScope.launch {
-            diaryTempRepository.isDiaryTempExist(date)
-                .onSuccess { isDiaryTempExist ->
-                    _uiState.updateSuccess { it.copy(isDiaryTempExist = isDiaryTempExist) }
-                }
-                .onLogFailure { }
+            val tempExistResult = diaryTempRepository.isDiaryTempExist(date)
+            val thumbnailResult = calendarRepository.getDiaryThumbnail(date.toString())
+            val topicResult = calendarRepository.getTopic(date.toString())
 
-            when {
-                isDateFuture(date) -> {
-                    _uiState.updateSuccess {
-                        it.copy(
-                            cardState = DiaryCardState.FUTURE,
-                            diaryThumbnail = null,
-                            todayTopic = null
-                        )
-                    }
-                }
+            val isTempExist = tempExistResult.getOrDefault(false)
+            val thumbnail = thumbnailResult.getOrNull()?.toState()
+            val topic = topicResult.getOrNull()?.toState()
 
-                isDateWritten(date, currentState.data.dateList) -> {
-                    calendarRepository.getDiaryThumbnail(date.toString())
-                        .onSuccess { thumbnail ->
-                            _uiState.updateSuccess {
-                                it.copy(
-                                    cardState = DiaryCardState.WRITTEN,
-                                    diaryThumbnail = thumbnail.toState(),
-                                    todayTopic = null
-                                )
-                            }
-                        }
-                        .onLogFailure { emitErrorDialogSideEffect { updateContentForDate(date) } }
-                }
+            _uiState.updateSuccess { state ->
+                state.copy(
+                    diaryContent = state.diaryContent.update(
+                        selectedDate = date,
+                        dates = state.calendar.dates,
+                        fetchedThumbnail = thumbnail,
+                        fetchedTopic = topic,
+                        isTempExist = isTempExist
+                    )
+                )
+            }
 
-                isDateWritable(date) -> {
-                    calendarRepository.getTopic(date.toString())
-                        .onSuccess { topic ->
-                            val cardState = if (topic.remainingTime == -1) {
-                                DiaryCardState.REWRITE_DISABLED
-                            } else {
-                                DiaryCardState.WRITABLE
-                            }
-                            _uiState.updateSuccess {
-                                it.copy(
-                                    cardState = cardState,
-                                    diaryThumbnail = null,
-                                    todayTopic = topic.toState()
-                                )
-                            }
-                        }
-                        .onLogFailure {
-                            _uiState.updateSuccess {
-                                it.copy(
-                                    cardState = DiaryCardState.PAST,
-                                    diaryThumbnail = null,
-                                    todayTopic = null
-                                )
-                            }
-                        }
-                }
-
-                else -> {
-                    _uiState.updateSuccess {
-                        it.copy(
-                            cardState = DiaryCardState.PAST,
-                            diaryThumbnail = null,
-                            todayTopic = null
-                        )
-                    }
-                }
+            if (thumbnailResult.isFailure && currentState.data.calendar.dates.any {
+                    it.isSameDate(
+                        date
+                    )
+                }) {
+                emitErrorDialogSideEffect { updateContentForDate(date) }
             }
         }
     }
