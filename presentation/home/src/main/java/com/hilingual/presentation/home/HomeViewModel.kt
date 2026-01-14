@@ -66,8 +66,6 @@ class HomeViewModel @Inject constructor(
     )
     val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
 
-    private var lastKnownPermissionGranted: Boolean? = null
-
     fun loadInitialData() {
         viewModelScope.launch {
             _uiState.update { UiState.Loading }
@@ -115,13 +113,6 @@ class HomeViewModel @Inject constructor(
         if (currentState !is UiState.Success) return
 
         val isPermissionGranted = !requiresPermission || isGranted
-
-        if (lastKnownPermissionGranted == isPermissionGranted) {
-            return
-        }
-
-        lastKnownPermissionGranted = isPermissionGranted
-
         val previousState = currentState.data.notificationPermissionState
 
         val newPermissionState = if (isPermissionGranted) {
@@ -129,6 +120,8 @@ class HomeViewModel @Inject constructor(
         } else {
             NotificationPermissionState.DENIED
         }
+
+        if (previousState == newPermissionState) return
 
         _uiState.updateSuccess {
             it.copy(notificationPermissionState = newPermissionState)
@@ -142,8 +135,6 @@ class HomeViewModel @Inject constructor(
     fun onNotificationPermissionResult(isGranted: Boolean) {
         val currentState = uiState.value
         if (currentState !is UiState.Success) return
-
-        lastKnownPermissionGranted = isGranted
 
         val newPermissionState = if (isGranted) {
             NotificationPermissionState.GRANTED
