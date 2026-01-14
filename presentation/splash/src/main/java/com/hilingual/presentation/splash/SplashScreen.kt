@@ -91,7 +91,8 @@ internal fun SplashRoute(
         UpdateState.OPTIONAL -> {
             OptionalDialog(
                 onPositive = viewModel::onUpdateConfirm,
-                onNegative = viewModel::onUpdateSkip
+                onNegative = viewModel::onUpdateSkip,
+                onDismiss = viewModel::onUpdateSkip
             )
         }
 
@@ -172,6 +173,7 @@ private fun ForceDialog(
 private fun OptionalDialog(
     onPositive: () -> Unit,
     onNegative: () -> Unit,
+    onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     TwoButtonDialog(
@@ -182,7 +184,7 @@ private fun OptionalDialog(
         confirmText = "업데이트 하기",
         onPositive = onPositive,
         onNegative = onNegative,
-        onDismiss = { },
+        onDismiss = onDismiss,
         modifier = modifier
     )
 }
@@ -204,7 +206,8 @@ private fun OptionalDialogPreview() {
     HilingualTheme {
         OptionalDialog(
             onPositive = {},
-            onNegative = {}
+            onNegative = {},
+            onDismiss = {}
         )
     }
 }
