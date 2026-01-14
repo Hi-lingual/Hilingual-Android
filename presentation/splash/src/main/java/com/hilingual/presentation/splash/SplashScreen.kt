@@ -16,6 +16,7 @@
 package com.hilingual.presentation.splash
 
 import android.content.Intent
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.tween
@@ -36,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -58,6 +60,7 @@ internal fun SplashRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val activity = LocalActivity.current
 
     viewModel.sideEffect.collectLatestSideEffect { event ->
         when (event) {
@@ -79,7 +82,10 @@ internal fun SplashRoute(
 
     when (uiState.updateState) {
         UpdateState.FORCE -> {
-            ForceDialog(onConfirm = viewModel::onUpdateConfirm)
+            ForceDialog(
+                onConfirm = viewModel::onUpdateConfirm,
+                onDismiss = { activity?.finish() }
+            )
         }
 
         UpdateState.OPTIONAL -> {
@@ -134,13 +140,14 @@ private fun SplashScreen(
 @Composable
 private fun ForceDialog(
     onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     OneButtonDialog(
         confirmText = "업데이트 하기",
         onConfirm = onConfirm,
         modifier = modifier,
-        onDismiss = {},
+        onDismiss = onDismiss,
         content = {
             Text(
                 text = "최신 버전의 앱이 출시 되었습니다",
@@ -185,7 +192,8 @@ private fun OptionalDialog(
 private fun ForceDialogPreview() {
     HilingualTheme {
         ForceDialog(
-            onConfirm = {}
+            onConfirm = {},
+            onDismiss = {}
         )
     }
 }
