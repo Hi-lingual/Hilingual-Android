@@ -37,7 +37,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -159,7 +158,7 @@ private fun ForceDialog(
 
             Text(
                 text = "안정적인 서비스 사용을 위해\n" +
-                        "최신 버전의 앱으로 업데이트 해주세요.",
+                    "최신 버전의 앱으로 업데이트 해주세요.",
                 style = HilingualTheme.typography.bodyR14,
                 color = HilingualTheme.colors.gray400,
                 textAlign = TextAlign.Center,
@@ -179,7 +178,7 @@ private fun OptionalDialog(
     TwoButtonDialog(
         title = "최신 버전의 앱이 출시 되었습니다",
         description = "지금 바로 업데이트 하고 \n" +
-                "최적의 사용 환경을 이용해보세요.",
+            "최적의 사용 환경을 이용해보세요.",
         cancelText = "다음에 하기",
         confirmText = "업데이트 하기",
         onPositive = onPositive,
