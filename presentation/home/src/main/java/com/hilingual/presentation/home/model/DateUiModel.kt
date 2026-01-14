@@ -17,11 +17,17 @@ package com.hilingual.presentation.home.model
 
 import androidx.compose.runtime.Immutable
 import com.hilingual.data.calendar.model.DateModel
+import java.time.LocalDate
 
 @Immutable
 data class DateUiModel(
     val date: String
-)
+) {
+    fun isSameDate(other: LocalDate): Boolean {
+        return runCatching { LocalDate.parse(date) }
+            .getOrNull() == other
+    }
+}
 
 internal fun DateModel.toState() = DateUiModel(
     date = this.date
