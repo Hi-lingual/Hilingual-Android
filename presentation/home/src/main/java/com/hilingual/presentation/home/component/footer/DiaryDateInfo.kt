@@ -27,7 +27,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.home.util.isDateFuture
+import com.hilingual.presentation.home.component.calendar.util.isFuture
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -46,7 +46,7 @@ internal fun DiaryDateInfo(
         selectedDate.format(DATE_FORMATTER)
     }
 
-    val isFuture = remember(selectedDate) { isDateFuture(selectedDate) }
+    val isFuture = remember(selectedDate) { selectedDate.isFuture }
 
     val (diaryStatusText, diaryStatusColor) = when {
         isFuture -> "작성 불가" to HilingualTheme.colors.gray300
