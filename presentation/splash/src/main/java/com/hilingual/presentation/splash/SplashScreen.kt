@@ -137,20 +137,21 @@ private fun ForceDialog(
     modifier: Modifier = Modifier
 ) {
     OneButtonDialog(
-        confirmText = "업데이트 하러 가기",
+        confirmText = "업데이트 하기",
         onConfirm = onConfirm,
         modifier = modifier,
         onDismiss = {},
         content = {
             Text(
-                text = "업데이트",
+                text = "최신 버전의 앱이 출시 되었습니다",
                 style = HilingualTheme.typography.headSB16,
                 color = HilingualTheme.colors.gray850
             )
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "새로운 버전이 출시되었습니다.\n업데이트 후 이용해주세요.",
+                text = "안정적인 서비스 사용을 위해\n" +
+                        "최신 버전의 앱으로 업데이트 해주세요.",
                 style = HilingualTheme.typography.bodyR14,
                 color = HilingualTheme.colors.gray400,
                 textAlign = TextAlign.Center,
@@ -167,10 +168,11 @@ private fun OptionalDialog(
     modifier: Modifier = Modifier
 ) {
     TwoButtonDialog(
-        title = "업데이트",
-        description = "새로운 기능이 추가되었습니다.\n지금 업데이트 하시겠습니까?",
-        cancelText = "나중에",
-        confirmText = "업데이트",
+        title = "최신 버전의 앱이 출시 되었습니다",
+        description = "지금 바로 업데이트 하고 \n" +
+                "최적의 사용 환경을 이용해보세요.",
+        cancelText = "다음에 하기",
+        confirmText = "업데이트 하기",
         onPositive = onPositive,
         onNegative = onNegative,
         onDismiss = { },
