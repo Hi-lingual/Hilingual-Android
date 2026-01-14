@@ -279,10 +279,13 @@ private fun HandleBackPressToExit(
 ) {
     val context = LocalActivity.current
     var backPressedTime by remember { mutableLongStateOf(0L) }
-    val condition = System.currentTimeMillis() - backPressedTime <= MessageDuration.DEFAULT.millis
 
     BackHandler(enabled = enabled) {
-        if (condition) context?.finish() else onShowMessage()
+        if (System.currentTimeMillis() - backPressedTime <= MessageDuration.DEFAULT.millis) {
+            context?.finish()
+        } else {
+            onShowMessage()
+        }
         backPressedTime = System.currentTimeMillis()
     }
 }
