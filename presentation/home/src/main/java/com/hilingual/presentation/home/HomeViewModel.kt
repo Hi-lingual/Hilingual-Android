@@ -25,6 +25,7 @@ import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.localstorage.DiaryTempRepository
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.user.repository.UserRepository
+import com.hilingual.presentation.home.model.DateUiModel
 import com.hilingual.presentation.home.model.toState
 import com.hilingual.presentation.home.type.NotificationPermissionState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -89,6 +90,9 @@ class HomeViewModel @Inject constructor(
             val userInfo = userInfoResult.getOrThrow()
             val calendarData = calendarResult.getOrThrow()
 
+            val initialDates = calendarData.dateList.map { it.toState() }.toImmutableList()
+            val initialDiaryContent = fetchDiaryState(today, initialDates)
+
             _uiState.update {
                 UiState.Success(
                     HomeUiState(
@@ -96,14 +100,13 @@ class HomeViewModel @Inject constructor(
                             userProfile = userInfo.toState()
                         ),
                         calendar = HomeCalendarUiState(
-                            dates = calendarData.dateList.map { it.toState() }.toImmutableList(),
+                            dates = initialDates,
                             selectedDate = today
                         ),
-                        diaryContent = HomeDiaryUiState()
+                        diaryContent = initialDiaryContent
                     )
                 )
             }
-            updateContentForDate(today)
         }
     }
 
@@ -188,17 +191,19 @@ class HomeViewModel @Inject constructor(
                     } else {
                         yearMonth.atDay(1)
                     }
+
+                    val newDates = calendarModel.dateList.map { data -> data.toState() }.toImmutableList()
+                    val newDiaryContent = fetchDiaryState(newDate, newDates)
+
                     _uiState.updateSuccess { state ->
                         state.copy(
                             calendar = HomeCalendarUiState(
-                                dates = calendarModel.dateList.map { data -> data.toState() }
-                                    .toImmutableList(),
+                                dates = newDates,
                                 selectedDate = newDate
                             ),
-                            diaryContent = HomeDiaryUiState()
+                            diaryContent = newDiaryContent
                         )
                     }
-                    updateContentForDate(newDate)
                 }
                 .onLogFailure {
                     emitErrorDialogSideEffect { onMonthChanged(yearMonth) }
@@ -283,34 +288,35 @@ class HomeViewModel @Inject constructor(
         if (currentState !is UiState.Success) return
 
         viewModelScope.launch {
-            val tempExistResult = diaryTempRepository.isDiaryTempExist(date)
-            val thumbnailResult = calendarRepository.getDiaryThumbnail(date.toString())
-            val topicResult = calendarRepository.getTopic(date.toString())
-
-            val isTempExist = tempExistResult.getOrDefault(false)
-            val thumbnail = thumbnailResult.getOrNull()?.toState()
-            val topic = topicResult.getOrNull()?.toState()
+            val newDiaryContent = fetchDiaryState(date, currentState.data.calendar.dates)
 
             _uiState.updateSuccess { state ->
-                state.copy(
-                    diaryContent = state.diaryContent.update(
-                        selectedDate = date,
-                        dates = state.calendar.dates,
-                        fetchedThumbnail = thumbnail,
-                        fetchedTopic = topic,
-                        isTempExist = isTempExist
-                    )
-                )
+                state.copy(diaryContent = newDiaryContent)
             }
 
-            if (thumbnailResult.isFailure && currentState.data.calendar.dates.any {
-                    it.isSameDate(
-                        date
-                    )
-                }) {
+            val thumbnailResult = calendarRepository.getDiaryThumbnail(date.toString())
+            if (thumbnailResult.isFailure && currentState.data.calendar.dates.any { it.isSameDate(date) }) {
                 emitErrorDialogSideEffect { updateContentForDate(date) }
             }
         }
+    }
+
+    private suspend fun fetchDiaryState(date: LocalDate, dates: List<DateUiModel>): HomeDiaryUiState {
+        val tempExistDeferred = viewModelScope.async { diaryTempRepository.isDiaryTempExist(date) }
+        val thumbnailDeferred = viewModelScope.async { calendarRepository.getDiaryThumbnail(date.toString()) }
+        val topicDeferred = viewModelScope.async { calendarRepository.getTopic(date.toString()) }
+
+        val isTempExist = tempExistDeferred.await().getOrDefault(false)
+        val thumbnail = thumbnailDeferred.await().getOrNull()?.toState()
+        val topic = topicDeferred.await().getOrNull()?.toState()
+
+        return HomeDiaryUiState().update(
+            selectedDate = date,
+            dates = dates,
+            fetchedThumbnail = thumbnail,
+            fetchedTopic = topic,
+            isTempExist = isTempExist
+        )
     }
 
     private suspend fun emitErrorDialogSideEffect(onRetry: () -> Unit) =
