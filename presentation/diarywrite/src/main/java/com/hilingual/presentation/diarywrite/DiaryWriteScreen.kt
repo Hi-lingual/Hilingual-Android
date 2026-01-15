@@ -67,9 +67,10 @@ import com.hilingual.core.common.extension.advancedImePadding
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
-import com.hilingual.core.common.trigger.LocalToastTrigger
+import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualLongTextField
@@ -113,7 +114,7 @@ internal fun DiaryWriteRoute(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
-    val toastTrigger = LocalToastTrigger.current
+    val messageController = LocalMessageController.current
     val feedbackUiState by viewModel.feedbackUiState.collectAsStateWithLifecycle()
     val tracker = LocalTracker.current
 
@@ -167,7 +168,7 @@ internal fun DiaryWriteRoute(
         when (sideEffect) {
             is DiaryWriteSideEffect.NavigateToHome -> navigateToHome()
             is DiaryWriteSideEffect.ShowErrorDialog -> dialogTrigger.show(navigateUp)
-            is DiaryWriteSideEffect.ShowToast -> toastTrigger(sideEffect.message)
+            is DiaryWriteSideEffect.ShowToast -> messageController(HilingualMessage.Toast(sideEffect.message))
         }
     }
 
