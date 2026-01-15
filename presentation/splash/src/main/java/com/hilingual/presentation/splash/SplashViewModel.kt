@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.auth.repository.AuthRepository
+import com.hilingual.data.config.constant.DEFAULT_VERSION
 import com.hilingual.data.config.model.AppVersion
 import com.hilingual.data.config.model.UpdateState
 import com.hilingual.data.config.repository.ConfigRepository
@@ -77,7 +78,7 @@ internal class SplashViewModel @Inject constructor(
     private fun getAppVersionName(): String =
         runCatching {
             context.packageManager.getPackageInfo(context.packageName, 0).versionName
-        }.onFailure { Timber.e(it) }.getOrNull() ?: "0.0.0"
+        }.onFailure { Timber.e(it) }.getOrNull() ?: DEFAULT_VERSION
 
     private fun checkLoginStatus() {
         viewModelScope.launch {
