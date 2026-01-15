@@ -53,11 +53,10 @@ import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
-import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
-import com.hilingual.core.common.trigger.LocalSnackbarTrigger
-import com.hilingual.core.common.trigger.LocalToastTrigger
+import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
@@ -93,8 +92,7 @@ internal fun FeedProfileRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    val snackbarTrigger = LocalSnackbarTrigger.current
-    val toastTrigger = LocalToastTrigger.current
+    val messageController = LocalMessageController.current
     val dialogTrigger = LocalDialogTrigger.current
     val tracker = LocalTracker.current
 
@@ -116,15 +114,15 @@ internal fun FeedProfileRoute(
             is FeedProfileSideEffect.NavigateToFollowList -> navigateToFollowList()
 
             is FeedProfileSideEffect.ShowDiaryLikeSnackbar ->
-                snackbarTrigger(
-                    SnackbarRequest(
+                messageController(
+                    HilingualMessage.Snackbar(
                         message = sideEffect.message,
-                        buttonText = sideEffect.actionLabel,
-                        onClick = { navigateToMyFeedProfile(true) }
+                        actionLabelText = sideEffect.actionLabel,
+                        onAction = { navigateToMyFeedProfile(true) }
                     )
                 )
 
-            is FeedProfileSideEffect.ShowToast -> toastTrigger(sideEffect.message)
+            is FeedProfileSideEffect.ShowToast -> messageController(HilingualMessage.Toast(sideEffect.message))
 
             is FeedProfileSideEffect.ShowErrorDialog -> dialogTrigger.show(navigateUp)
         }

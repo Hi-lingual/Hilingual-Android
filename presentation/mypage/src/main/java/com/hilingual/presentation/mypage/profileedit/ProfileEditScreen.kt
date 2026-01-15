@@ -44,8 +44,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.trigger.LocalDialogTrigger
-import com.hilingual.core.common.trigger.LocalToastTrigger
+import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.bottomsheet.HilingualProfileImageBottomSheet
@@ -67,13 +68,13 @@ internal fun ProfileEditRoute(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
-    val toastTrigger = LocalToastTrigger.current
+    val messageController = LocalMessageController.current
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is MyPageSideEffect.ShowErrorDialog -> dialogTrigger.show(navigateUp)
 
-            is MyPageSideEffect.ShowToast -> toastTrigger(sideEffect.message)
+            is MyPageSideEffect.ShowToast -> messageController(HilingualMessage.Toast(sideEffect.message))
 
             is MyPageSideEffect.RestartApp -> ProcessPhoenix.triggerRebirth(context)
         }
