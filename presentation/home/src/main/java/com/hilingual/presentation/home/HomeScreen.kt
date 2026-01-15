@@ -48,7 +48,6 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.analytics.FakeTracker
 import com.hilingual.core.common.analytics.Page.HOME
@@ -100,7 +99,6 @@ internal fun HomeRoute(
     val snackbarTrigger = LocalSnackbarTrigger.current
     val tracker = LocalTracker.current
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
 
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -148,7 +146,7 @@ internal fun HomeRoute(
             Manifest.permission.POST_NOTIFICATIONS
         )
         val isGranted = permissionState == PackageManager.PERMISSION_GRANTED
-        val requiresPermission = Build.VERSION.SDK_INT >= 33
+        val requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 
         viewModel.handleNotificationPermission(
             isGranted = isGranted,
@@ -261,7 +259,7 @@ private fun HomeScreen(
         with(uiState.calendar) {
             HilingualCalendar(
                 selectedDate = selectedDate,
-                writtenDates = dates.map { LocalDate.parse(it.date) }.toSet(),
+                writtenDates = dates.map { it.date }.toSet(),
                 onDateClick = onDateSelected,
                 onMonthChanged = onMonthChanged,
                 modifier = Modifier
