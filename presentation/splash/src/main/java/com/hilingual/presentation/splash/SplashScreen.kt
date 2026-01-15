@@ -15,6 +15,8 @@
  */
 package com.hilingual.presentation.splash
 
+import android.content.Intent
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.tween
@@ -23,18 +25,29 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectLatestSideEffect
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.provider.LocalSharedTransitionScope
+import com.hilingual.core.designsystem.component.dialog.OneButtonDialog
+import com.hilingual.core.designsystem.component.dialog.TwoButtonDialog
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualOrange
+import com.hilingual.data.config.model.UpdateState
 import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
@@ -44,16 +57,46 @@ internal fun SplashRoute(
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: SplashViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val activity = LocalActivity.current
+
     viewModel.sideEffect.collectLatestSideEffect { event ->
         when (event) {
             is SplashSideEffect.NavigateToHome -> navigateToHome()
             is SplashSideEffect.NavigateToAuth -> navigateToAuth()
+            is SplashSideEffect.NavigateToStore -> {
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = "market://details?id=${context.packageName}".toUri()
+                    setPackage("com.android.vending")
+                }
+                context.startActivity(intent)
+            }
         }
     }
 
     SplashScreen(
         animatedVisibilityScope = animatedVisibilityScope
     )
+
+    when (uiState.updateState) {
+        UpdateState.FORCE -> {
+            ForceDialog(
+                onConfirm = viewModel::onUpdateConfirm,
+                onDismiss = { activity?.finish() }
+            )
+        }
+
+        UpdateState.OPTIONAL -> {
+            OptionalDialog(
+                onPositive = viewModel::onUpdateConfirm,
+                onNegative = viewModel::onUpdateSkip,
+                onDismiss = viewModel::onUpdateSkip
+            )
+        }
+
+        UpdateState.NONE -> {}
+    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -90,6 +133,80 @@ private fun SplashScreen(
 
         Spacer(
             modifier = Modifier.weight(29f)
+        )
+    }
+}
+
+@Composable
+private fun ForceDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OneButtonDialog(
+        confirmText = "업데이트 하기",
+        onConfirm = onConfirm,
+        modifier = modifier,
+        onDismiss = onDismiss,
+        content = {
+            Text(
+                text = "최신 버전의 앱이 출시 되었습니다",
+                style = HilingualTheme.typography.headSB16,
+                color = HilingualTheme.colors.gray850
+            )
+            Spacer(Modifier.height(8.dp))
+
+            Text(
+                text = "안정적인 서비스 사용을 위해\n" +
+                    "최신 버전의 앱으로 업데이트 해주세요.",
+                style = HilingualTheme.typography.bodyR14,
+                color = HilingualTheme.colors.gray400,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    )
+}
+
+@Composable
+private fun OptionalDialog(
+    onPositive: () -> Unit,
+    onNegative: () -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TwoButtonDialog(
+        title = "최신 버전의 앱이 출시 되었습니다",
+        description = "지금 바로 업데이트 하고 \n" +
+            "최적의 사용 환경을 이용해보세요.",
+        cancelText = "다음에 하기",
+        confirmText = "업데이트 하기",
+        onPositive = onPositive,
+        onNegative = onNegative,
+        onDismiss = onDismiss,
+        modifier = modifier
+    )
+}
+
+@Preview
+@Composable
+private fun ForceDialogPreview() {
+    HilingualTheme {
+        ForceDialog(
+            onConfirm = {},
+            onDismiss = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun OptionalDialogPreview() {
+    HilingualTheme {
+        OptionalDialog(
+            onPositive = {},
+            onNegative = {},
+            onDismiss = {}
         )
     }
 }
