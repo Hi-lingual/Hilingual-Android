@@ -268,7 +268,7 @@ class HomeViewModel @Inject constructor(
                 .onSuccess {
                     _uiState.updateSuccess { state ->
                         val newDates = state.calendar.dates
-                            .filter { it.date != selectedDate.toString() }
+                            .filter { it.date != selectedDate }
                             .toImmutableList()
                         state.copy(
                             calendar = state.calendar.copy(dates = newDates)
@@ -295,7 +295,7 @@ class HomeViewModel @Inject constructor(
             }
 
             val thumbnailResult = calendarRepository.getDiaryThumbnail(date.toString())
-            if (thumbnailResult.isFailure && currentState.data.calendar.dates.any { it.isSameDate(date) }) {
+            if (thumbnailResult.isFailure && currentState.data.calendar.dates.any { it.date == date }) {
                 emitErrorDialogSideEffect { updateContentForDate(date) }
             }
         }
