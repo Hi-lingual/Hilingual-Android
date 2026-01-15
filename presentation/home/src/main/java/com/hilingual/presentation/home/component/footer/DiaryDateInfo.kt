@@ -27,7 +27,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.home.component.calendar.util.isFuture
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -46,7 +45,9 @@ internal fun DiaryDateInfo(
         selectedDate.format(DATE_FORMATTER)
     }
 
-    val isFuture = remember(selectedDate) { selectedDate.isFuture }
+    val isFuture = remember(selectedDate) {
+        selectedDate.isAfter(LocalDate.now())
+    }
 
     val (diaryStatusText, diaryStatusColor) = when {
         isFuture -> "작성 불가" to HilingualTheme.colors.gray300
@@ -91,8 +92,16 @@ private class DateDiaryInfoPreviewProvider : PreviewParameterProvider<DateDiaryI
         DateDiaryInfoPreviewState(LocalDate.now(), isWritten = true, isPublished = true),
         DateDiaryInfoPreviewState(LocalDate.now(), isWritten = true, isPublished = false),
         DateDiaryInfoPreviewState(LocalDate.now(), isWritten = false, isPublished = false),
-        DateDiaryInfoPreviewState(LocalDate.now().plusDays(1), isWritten = false, isPublished = false),
-        DateDiaryInfoPreviewState(LocalDate.now().minusDays(1), isWritten = false, isPublished = false)
+        DateDiaryInfoPreviewState(
+            LocalDate.now().plusDays(1),
+            isWritten = false,
+            isPublished = false
+        ),
+        DateDiaryInfoPreviewState(
+            LocalDate.now().minusDays(1),
+            isWritten = false,
+            isPublished = false
+        )
     )
 }
 
