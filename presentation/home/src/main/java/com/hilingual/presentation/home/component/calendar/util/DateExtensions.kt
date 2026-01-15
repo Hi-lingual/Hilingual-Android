@@ -40,12 +40,3 @@ internal val YearMonth.nextMonth: YearMonth
 
 internal val YearMonth.previousMonth: YearMonth
     get() = this.minusMonths(1)
-
-internal val LocalDate.isFuture: Boolean
-    get() = this.isAfter(LocalDate.now())
-
-internal val LocalDate.isWritable: Boolean
-    get() {
-        val today = LocalDate.now()
-        return !this.isAfter(today) && this.isAfter(today.minusDays(2))
-    }
