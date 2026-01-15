@@ -16,8 +16,6 @@
 package com.hilingual.presentation.home
 
 import androidx.compose.runtime.Immutable
-import com.hilingual.presentation.home.component.calendar.util.isFuture
-import com.hilingual.presentation.home.component.calendar.util.isWritable
 import com.hilingual.presentation.home.model.DateUiModel
 import com.hilingual.presentation.home.model.DiaryThumbnailUiModel
 import com.hilingual.presentation.home.model.TodayTopicUiModel
@@ -48,10 +46,10 @@ data class HomeUiState(
             calendar = HomeCalendarUiState(
                 selectedDate = LocalDate.now(),
                 dates = persistentListOf(
-                    DateUiModel(date = "2025-09-01"),
-                    DateUiModel(date = "2025-09-05"),
-                    DateUiModel(date = "2025-09-12"),
-                    DateUiModel(date = "2025-09-23")
+                    DateUiModel(date = LocalDate.of(2025, 9, 1)),
+                    DateUiModel(date = LocalDate.of(2025, 9, 5)),
+                    DateUiModel(date = LocalDate.of(2025, 9, 12)),
+                    DateUiModel(date = LocalDate.of(2025, 9, 23))
                 )
             ),
             diaryContent = HomeDiaryUiState(
@@ -102,7 +100,10 @@ data class HomeDiaryUiState(
         fetchedTopic: TodayTopicUiModel? = null,
         isTempExist: Boolean = this.isDiaryTempExist
     ): HomeDiaryUiState {
-        if (selectedDate.isFuture) {
+        // Use Rich Model Logic
+        val selectedDateModel = DateUiModel(selectedDate)
+
+        if (selectedDateModel.isFuture) {
             return copy(
                 cardState = DiaryCardState.FUTURE,
                 diaryThumbnail = null,
@@ -111,7 +112,7 @@ data class HomeDiaryUiState(
             )
         }
 
-        val isWritten = dates.any { it.isSameDate(selectedDate) }
+        val isWritten = dates.any { it.date == selectedDate }
         if (isWritten) {
             return copy(
                 cardState = DiaryCardState.WRITTEN,
@@ -121,7 +122,7 @@ data class HomeDiaryUiState(
             )
         }
 
-        if (selectedDate.isWritable) {
+        if (selectedDateModel.isWritable) {
             val topicState = if (fetchedTopic?.remainingTime == -1) {
                 DiaryCardState.REWRITE_DISABLED
             } else {
