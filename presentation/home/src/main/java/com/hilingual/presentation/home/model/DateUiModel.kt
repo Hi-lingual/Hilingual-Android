@@ -21,14 +21,18 @@ import java.time.LocalDate
 
 @Immutable
 data class DateUiModel(
-    val date: String
+    val date: LocalDate
 ) {
-    fun isSameDate(other: LocalDate): Boolean {
-        return runCatching { LocalDate.parse(date) }
-            .getOrNull() == other
-    }
+    val isFuture: Boolean
+        get() = date.isAfter(LocalDate.now())
+
+    val isWritable: Boolean
+        get() {
+            val today = LocalDate.now()
+            return !date.isAfter(today) && date.isAfter(today.minusDays(2))
+        }
 }
 
 internal fun DateModel.toState() = DateUiModel(
-    date = this.date
+    date = LocalDate.parse(this.date)
 )
