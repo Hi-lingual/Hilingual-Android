@@ -321,15 +321,15 @@ private fun HomeScreen(
                     }
 
                     DiaryCardState.WRITABLE -> {
-                         DiaryTimeInfo(remainingTime = contentState.todayTopic?.remainingTime)
+                        DiaryTimeInfo(remainingTime = contentState.todayTopic?.remainingTime)
                     }
-                    
+
                     else -> {}
                 }
             }
 
             Spacer(Modifier.height(16.dp))
-            
+
             with(contentState) {
                 when (cardState) {
                     DiaryCardState.WRITTEN -> {
@@ -345,7 +345,7 @@ private fun HomeScreen(
                     }
 
                     DiaryCardState.FUTURE -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
-                    
+
                     DiaryCardState.WRITABLE -> {
                         if (todayTopic != null) {
                             TodayTopic(

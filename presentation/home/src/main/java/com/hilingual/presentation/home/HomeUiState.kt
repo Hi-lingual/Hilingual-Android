@@ -128,7 +128,7 @@ data class HomeDiaryUiState(
             } else {
                 DiaryCardState.WRITABLE
             }
-            
+
             return copy(
                 cardState = topicState,
                 diaryThumbnail = null,

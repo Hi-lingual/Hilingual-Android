@@ -57,11 +57,11 @@ class HomeState(
         isErrorDialogVisible = false
         onErrorRetry = null
     }
-    
+
     fun showMoreMenu() {
         isMoreMenuExpanded = true
     }
-    
+
     fun hideMoreMenu() {
         isMoreMenuExpanded = false
     }
