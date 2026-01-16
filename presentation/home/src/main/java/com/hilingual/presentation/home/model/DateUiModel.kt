@@ -17,12 +17,22 @@ package com.hilingual.presentation.home.model
 
 import androidx.compose.runtime.Immutable
 import com.hilingual.data.calendar.model.DateModel
+import java.time.LocalDate
 
 @Immutable
 data class DateUiModel(
-    val date: String
-)
+    val date: LocalDate
+) {
+    val isFuture: Boolean
+        get() = date.isAfter(LocalDate.now())
+
+    val isWritable: Boolean
+        get() {
+            val today = LocalDate.now()
+            return !date.isAfter(today) && date.isAfter(today.minusDays(2))
+        }
+}
 
 internal fun DateModel.toState() = DateUiModel(
-    date = this.date
+    date = LocalDate.parse(this.date)
 )
