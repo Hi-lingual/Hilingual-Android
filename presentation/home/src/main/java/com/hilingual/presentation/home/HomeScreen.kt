@@ -23,7 +23,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -33,18 +32,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,8 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.analytics.FakeTracker
 import com.hilingual.core.common.analytics.Page.HOME
@@ -69,6 +61,7 @@ import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
@@ -96,14 +89,14 @@ internal fun HomeRoute(
     navigateToNotification: () -> Unit,
     navigateToFeedProfile: (userId: Long) -> Unit,
     navigateToFeed: () -> Unit,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    homeState: HomeState = rememberHomeState()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
     val messageController = LocalMessageController.current
     val tracker = LocalTracker.current
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
 
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -111,9 +104,16 @@ internal fun HomeRoute(
         viewModel.onNotificationPermissionResult(isGranted = isGranted)
     }
 
+    if (homeState.isErrorDialogVisible) {
+        dialogTrigger.show {
+            homeState.onErrorRetry?.invoke()
+            homeState.hideErrorDialog()
+        }
+    }
+
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is HomeSideEffect.ShowErrorDialog -> dialogTrigger.show(sideEffect.onRetry)
+            is HomeSideEffect.ShowErrorDialog -> homeState.showErrorDialog(sideEffect.onRetry)
 
             is HomeSideEffect.ShowToast -> messageController(HilingualMessage.Toast(sideEffect.text))
 
@@ -138,46 +138,28 @@ internal fun HomeRoute(
         tracker.logEvent(trigger = TriggerType.VIEW, page = HOME, event = "page")
     }
 
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        val permissionState = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.POST_NOTIFICATIONS
+        )
+        val isGranted = permissionState == PackageManager.PERMISSION_GRANTED
+        val requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+
+        viewModel.handleNotificationPermission(
+            isGranted = isGranted,
+            requiresPermission = requiresPermission
+        )
+    }
+
     when (val state = uiState) {
-        is UiState.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(white),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
+        is UiState.Loading -> HilingualLoadingIndicator()
 
         is UiState.Success -> {
-            DisposableEffect(lifecycleOwner) {
-                val observer = LifecycleEventObserver { _, event ->
-                    if (event == Lifecycle.Event.ON_RESUME) {
-                        val permissionState = ContextCompat.checkSelfPermission(
-                            context,
-                            Manifest.permission.POST_NOTIFICATIONS
-                        )
-                        val isGranted = permissionState == PackageManager.PERMISSION_GRANTED
-                        val requiresPermission = Build.VERSION.SDK_INT >= 33
-
-                        viewModel.handleNotificationPermission(
-                            isGranted = isGranted,
-                            requiresPermission = requiresPermission
-                        )
-                    }
-                }
-
-                lifecycleOwner.lifecycle.addObserver(observer)
-
-                onDispose {
-                    lifecycleOwner.lifecycle.removeObserver(observer)
-                }
-            }
-
             HomeScreen(
                 paddingValues = paddingValues,
                 uiState = state.data,
+                homeState = homeState,
                 onAlarmClick = navigateToNotification,
                 onImageClick = {
                     tracker.logEvent(trigger = TriggerType.CLICK, page = HOME, event = "profile")
@@ -221,6 +203,7 @@ internal fun HomeRoute(
 private fun HomeScreen(
     paddingValues: PaddingValues,
     uiState: HomeUiState,
+    homeState: HomeState,
     onAlarmClick: () -> Unit,
     onImageClick: () -> Unit,
     onDateSelected: (LocalDate) -> Unit,
@@ -232,21 +215,18 @@ private fun HomeScreen(
     onUnpublishClick: (diaryId: Long) -> Unit,
     tracker: Tracker
 ) {
-    val date = uiState.selectedDate
-    val verticalScrollState = rememberScrollState()
-    var isExpanded by remember { mutableStateOf(false) }
-    var isDiaryContinueDialogVisible by remember { mutableStateOf(false) }
+    val date = uiState.calendar.selectedDate
 
     DiaryContinueDialog(
-        isVisible = isDiaryContinueDialogVisible,
-        onDismiss = { isDiaryContinueDialogVisible = false },
+        isVisible = homeState.isDiaryContinueDialogVisible,
+        onDismiss = homeState::hideDiaryContinueDialog,
         onNewClick = {
             onWriteDiaryClick(date, DiaryWriteMode.NEW)
-            isDiaryContinueDialogVisible = false
+            homeState.hideDiaryContinueDialog()
         },
         onContinueClick = {
             onWriteDiaryClick(date, DiaryWriteMode.DEFAULT)
-            isDiaryContinueDialogVisible = false
+            homeState.hideDiaryContinueDialog()
         }
     )
 
@@ -256,9 +236,9 @@ private fun HomeScreen(
             .statusBarColor(hilingualBlack)
             .fillMaxSize()
             .padding(paddingValues)
-            .verticalScroll(verticalScrollState)
+            .verticalScroll(homeState.scrollState)
     ) {
-        with(uiState) {
+        with(uiState.header) {
             HomeHeader(
                 imageUrl = userProfile.profileImg,
                 nickname = userProfile.nickname,
@@ -274,18 +254,20 @@ private fun HomeScreen(
             )
         }
 
-        HilingualCalendar(
-            selectedDate = uiState.selectedDate,
-            writtenDates = uiState.dateList.map { LocalDate.parse(it.date) }.toSet(),
-            onDateClick = onDateSelected,
-            onMonthChanged = onMonthChanged,
-            modifier = Modifier
-                .background(HilingualTheme.colors.hilingualBlack)
-                .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
-                .background(white)
-                .padding(16.dp)
-                .animateContentSize()
-        )
+        with(uiState.calendar) {
+            HilingualCalendar(
+                selectedDate = selectedDate,
+                writtenDates = dates.map { it.date }.toSet(),
+                onDateClick = onDateSelected,
+                onMonthChanged = onMonthChanged,
+                modifier = Modifier
+                    .background(HilingualTheme.colors.hilingualBlack)
+                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
+                    .background(white)
+                    .padding(16.dp)
+                    .animateContentSize()
+            )
+        }
 
         HorizontalDivider(
             thickness = 4.dp,
@@ -298,6 +280,8 @@ private fun HomeScreen(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
+            val contentState = uiState.diaryContent
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -305,25 +289,28 @@ private fun HomeScreen(
             ) {
                 DiaryDateInfo(
                     selectedDate = date,
-                    isPublished = uiState.diaryThumbnail?.isPublished ?: false,
-                    isWritten = uiState.cardState == DiaryCardState.WRITTEN,
+                    isPublished = contentState.diaryThumbnail?.isPublished ?: false,
+                    isWritten = contentState.cardState == DiaryCardState.WRITTEN,
                     modifier = Modifier.heightIn(min = 20.dp)
                 )
-                when (uiState.cardState) {
+
+                when (contentState.cardState) {
                     DiaryCardState.WRITTEN -> {
-                        uiState.diaryThumbnail?.let { diary ->
+                        contentState.diaryThumbnail?.let { diary ->
                             HomeDropDownMenu(
-                                isExpanded = isExpanded,
+                                isExpanded = homeState.isMoreMenuExpanded,
                                 isPublished = diary.isPublished,
-                                onExpandedChange = {
-                                    isExpanded = it
-                                    if (it) {
+                                onExpandedChange = { isExpanded ->
+                                    if (isExpanded) {
+                                        homeState.showMoreMenu()
                                         tracker.logEvent(
                                             trigger = TriggerType.CLICK,
                                             page = HOME,
                                             event = "more_menu",
                                             properties = mapOf("menu_name" to "more_menu")
                                         )
+                                    } else {
+                                        homeState.hideMoreMenu()
                                     }
                                 },
                                 onDeleteClick = { onDeleteClick(diary.diaryId) },
@@ -333,14 +320,17 @@ private fun HomeScreen(
                         }
                     }
 
-                    DiaryCardState.WRITABLE -> DiaryTimeInfo(remainingTime = uiState.todayTopic?.remainingTime)
+                    DiaryCardState.WRITABLE -> {
+                        DiaryTimeInfo(remainingTime = contentState.todayTopic?.remainingTime)
+                    }
+
                     else -> {}
                 }
             }
 
             Spacer(Modifier.height(16.dp))
 
-            with(uiState) {
+            with(contentState) {
                 when (cardState) {
                     DiaryCardState.WRITTEN -> {
                         if (diaryThumbnail != null) {
@@ -355,6 +345,7 @@ private fun HomeScreen(
                     }
 
                     DiaryCardState.FUTURE -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
+
                     DiaryCardState.WRITABLE -> {
                         if (todayTopic != null) {
                             TodayTopic(
@@ -378,8 +369,8 @@ private fun HomeScreen(
                         Spacer(Modifier.height(12.dp))
                         WriteDiaryButton(
                             onClick = {
-                                if (uiState.isDiaryTempExist) {
-                                    isDiaryContinueDialogVisible = true
+                                if (contentState.isDiaryTempExist) {
+                                    homeState.showDiaryContinueDialog()
                                 } else {
                                     onWriteDiaryClick(date, DiaryWriteMode.DEFAULT)
                                 }
@@ -403,6 +394,7 @@ private fun HomeScreenPreview() {
         HomeScreen(
             paddingValues = PaddingValues(),
             uiState = HomeUiState.Fake,
+            homeState = rememberHomeState(),
             onAlarmClick = {},
             onImageClick = {},
             onDateSelected = {},
