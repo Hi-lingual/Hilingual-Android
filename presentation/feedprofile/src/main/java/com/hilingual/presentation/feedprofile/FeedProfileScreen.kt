@@ -124,7 +124,7 @@ internal fun FeedProfileRoute(
 
             is FeedProfileSideEffect.ShowToast -> messageController(HilingualMessage.Toast(sideEffect.message))
 
-            is FeedProfileSideEffect.ShowErrorDialog -> dialogTrigger.show(navigateUp)
+            is FeedProfileSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = navigateUp)
         }
     }
 

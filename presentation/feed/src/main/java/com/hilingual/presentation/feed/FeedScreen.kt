@@ -86,7 +86,7 @@ internal fun FeedRoute(
             }
 
             is FeedSideEffect.ShowErrorDialog -> {
-                dialogTrigger.show(sideEffect.onRetry)
+                dialogTrigger.show(onClick = sideEffect.onRetry)
             }
 
             is FeedSideEffect.ShowDiaryLikeSnackbar -> {

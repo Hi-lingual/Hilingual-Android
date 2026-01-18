@@ -82,7 +82,7 @@ internal fun OnboardingRoute(
         when (it) {
             is OnboardingSideEffect.NavigateToHome -> navigateToHome()
             is OnboardingSideEffect.ShowRetryDialog -> {
-                dialogTrigger.show(it.onRetry)
+                dialogTrigger.show(onClick = it.onRetry)
             }
         }
     }

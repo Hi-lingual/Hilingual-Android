@@ -72,7 +72,7 @@ internal fun MyPageRoute(
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is MyPageSideEffect.ShowErrorDialog -> dialogTrigger.show(sideEffect.onRetry)
+            is MyPageSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = sideEffect.onRetry)
 
             is MyPageSideEffect.ShowToast -> messageController(HilingualMessage.Toast(sideEffect.message))
 

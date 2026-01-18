@@ -82,8 +82,7 @@ internal fun MainScreen(
     val coroutineScope = rememberCoroutineScope()
 
     val dialogTrigger = rememberDialogTrigger(
-        show = appState.dialogStateHolder::showDialog,
-        dismiss = appState.dialogStateHolder::dismissDialog
+        show = appState.dialogStateHolder::showDialog
     )
 
     val snackBarHostState = remember { SnackbarHostState() }
