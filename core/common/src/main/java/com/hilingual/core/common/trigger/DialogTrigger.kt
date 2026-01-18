@@ -28,14 +28,12 @@ data class DialogState(
 
 @Stable
 class DialogTrigger(
-    val show: (() -> Unit) -> Unit,
-    val dismiss: () -> Unit
+    val show: (() -> Unit) -> Unit
 )
 
 @Composable
 fun rememberDialogTrigger(
-    show: (() -> Unit) -> Unit,
-    dismiss: () -> Unit
-): DialogTrigger = remember(show, dismiss) {
-    DialogTrigger(show, dismiss)
+    show: (() -> Unit) -> Unit
+): DialogTrigger = remember(show) {
+    DialogTrigger(show)
 }
