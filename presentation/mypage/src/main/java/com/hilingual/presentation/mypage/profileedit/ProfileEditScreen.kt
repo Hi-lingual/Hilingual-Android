@@ -72,7 +72,7 @@ internal fun ProfileEditRoute(
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is MyPageSideEffect.ShowErrorDialog -> dialogTrigger.show(navigateUp)
+            is MyPageSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = navigateUp)
 
             is MyPageSideEffect.ShowToast -> messageController(HilingualMessage.Toast(sideEffect.message))
 

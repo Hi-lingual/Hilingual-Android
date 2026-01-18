@@ -105,10 +105,12 @@ internal fun HomeRoute(
     }
 
     if (homeState.isErrorDialogVisible) {
-        dialogTrigger.show {
-            homeState.onErrorRetry?.invoke()
-            homeState.hideErrorDialog()
-        }
+        dialogTrigger.show(
+            onClick = {
+                homeState.onErrorRetry?.invoke()
+                homeState.hideErrorDialog()
+            }
+        )
     }
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->

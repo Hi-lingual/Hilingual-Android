@@ -167,7 +167,7 @@ internal fun DiaryWriteRoute(
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is DiaryWriteSideEffect.NavigateToHome -> navigateToHome()
-            is DiaryWriteSideEffect.ShowErrorDialog -> dialogTrigger.show(navigateUp)
+            is DiaryWriteSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = navigateUp)
             is DiaryWriteSideEffect.ShowToast -> messageController(HilingualMessage.Toast(sideEffect.message))
         }
     }
