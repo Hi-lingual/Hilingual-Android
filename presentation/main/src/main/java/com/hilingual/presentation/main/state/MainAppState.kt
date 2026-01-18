@@ -34,7 +34,7 @@ import com.hilingual.presentation.feedprofile.navigation.navigateToFeedProfile
 import com.hilingual.presentation.feedprofile.navigation.navigateToMyFeedProfile
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.main.MainTab
-import com.hilingual.presentation.main.monitor.NetworkMonitor
+import com.hilingual.core.network.monitor.NetworkMonitor
 import com.hilingual.presentation.mypage.navigation.navigateToMyPage
 import com.hilingual.presentation.notification.navigation.navigateToNotification
 import com.hilingual.presentation.notification.navigation.navigateToNotificationSetting

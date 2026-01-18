@@ -13,21 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.main.monitor
+package com.hilingual.core.network.di
 
+import com.hilingual.core.network.monitor.NetworkMonitor
+import com.hilingual.core.network.monitor.NetworkMonitorImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class NetworkMonitorModule {
-
+interface MonitorModule {
     @Binds
-    @Singleton
-    internal abstract fun bindNetworkMonitor(
+    fun bindNetworkMonitor(
         networkMonitor: NetworkMonitorImpl
     ): NetworkMonitor
 }

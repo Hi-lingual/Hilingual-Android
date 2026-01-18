@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.main.monitor
+package com.hilingual.core.network.monitor
 
 import kotlinx.coroutines.flow.Flow
 

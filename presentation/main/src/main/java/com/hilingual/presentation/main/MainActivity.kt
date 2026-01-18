@@ -23,7 +23,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.main.monitor.NetworkMonitor
+import com.hilingual.core.network.monitor.NetworkMonitor
 import com.hilingual.presentation.main.state.rememberMainAppState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -44,6 +44,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             HilingualTheme {
                 val appState = rememberMainAppState(networkMonitor = networkMonitor)
+
                 MainScreen(
                     appState = appState,
                     tracker = tracker
