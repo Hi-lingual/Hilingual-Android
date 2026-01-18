@@ -27,7 +27,7 @@ androidxAppCompat = "1.7.1"
 lifecycleRuntimeKtx = "2.10.0"
 lifecycleRuntimeComposeAndroid = "2.10.0"
 activityCompose = "1.12.2"
-composeBom = "2025.12.01"
+composeBom = "2026.01.00"
 composeNavigation = "2.9.6"
 security = "1.1.0"
 datastorePreferences = "1.2.0"
@@ -65,7 +65,7 @@ balloonCompose = "1.7.3"
 richeditorCompose = "1.0.0-rc13"
 
 # Firebase
-firebaseBom = "34.7.0"
+firebaseBom = "34.8.0"
 firebaseCrashlyticsPlugin = "3.0.6"
 
 # ML Kit
@@ -81,7 +81,7 @@ runner = "1.7.0"
 
 # AboutLibraries
 aboutLibraries = "13.2.1"
-amplitude = "1.22.4"
+amplitude = "1.23.0"
 
 [libraries]
 # Analytics
