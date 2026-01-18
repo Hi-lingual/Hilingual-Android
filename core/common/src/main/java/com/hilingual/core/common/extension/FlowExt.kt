@@ -20,9 +20,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 
 @Composable
 fun <T> Flow<T>.collectSideEffect(
@@ -55,3 +59,13 @@ fun <T> Flow<T>.pairwise(): Flow<Pair<T?, T>> = flow {
         previous = current
     }
 }
+
+fun <T> Flow<T>.stateInWhileSubscribed(
+    scope: CoroutineScope,
+    initialValue: T,
+    stopTimeoutMillis: Long = 5_000
+): StateFlow<T> = stateIn(
+    scope = scope,
+    started = SharingStarted.WhileSubscribed(stopTimeoutMillis),
+    initialValue = initialValue
+)

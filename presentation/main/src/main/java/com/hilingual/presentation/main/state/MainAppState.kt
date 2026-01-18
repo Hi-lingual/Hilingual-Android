@@ -24,6 +24,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.hilingual.core.common.extension.stateInWhileSubscribed
 import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.presentation.auth.navigation.navigateToAuth
 import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedback
@@ -59,17 +60,15 @@ internal class MainAppState(
 
     val isOffline: StateFlow<Boolean> = networkMonitor.isOnline
         .map(Boolean::not)
-        .stateIn(
+        .stateInWhileSubscribed(
             scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(5_000),
             initialValue = false
         )
 
     private val currentDestination = navController.currentBackStackEntryFlow
         .map { it.destination }
-        .stateIn(
+        .stateInWhileSubscribed(
             scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(5_000),
             initialValue = null
         )
 
@@ -79,9 +78,8 @@ internal class MainAppState(
                 destination?.hasRoute(tab::class) == true
             }
         }
-        .stateIn(
+        .stateInWhileSubscribed(
             scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(5_000),
             initialValue = null
         )
 
@@ -91,9 +89,8 @@ internal class MainAppState(
                 destination?.hasRoute(tab::class) == true
             }
         }
-        .stateIn(
+        .stateInWhileSubscribed(
             scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(5_000),
             initialValue = false
         )
 
