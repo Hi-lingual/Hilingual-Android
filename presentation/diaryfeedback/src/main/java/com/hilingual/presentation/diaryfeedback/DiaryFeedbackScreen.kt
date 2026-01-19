@@ -49,11 +49,10 @@ import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.statusBarColor
-import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
-import com.hilingual.core.common.trigger.LocalSnackbarTrigger
-import com.hilingual.core.common.trigger.LocalToastTrigger
+import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -86,8 +85,7 @@ internal fun DiaryFeedbackRoute(
     var isImageDetailVisible by remember { mutableStateOf(false) }
 
     val dialogTrigger = LocalDialogTrigger.current
-    val snackbarTrigger = LocalSnackbarTrigger.current
-    val toastTrigger = LocalToastTrigger.current
+    val messageController = LocalMessageController.current
     val tracker = LocalTracker.current
 
     BackHandler {
@@ -100,14 +98,14 @@ internal fun DiaryFeedbackRoute(
 
     viewModel.sideEffect.collectSideEffect {
         when (it) {
-            is DiaryFeedbackSideEffect.ShowErrorDialog -> dialogTrigger.show(navigateUp)
+            is DiaryFeedbackSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = navigateUp)
 
             is DiaryFeedbackSideEffect.ShowDiaryPublishSnackbar -> {
-                snackbarTrigger(
-                    SnackbarRequest(
+                messageController(
+                    HilingualMessage.Snackbar(
                         message = it.message,
-                        buttonText = it.actionLabel,
-                        onClick = {
+                        actionLabelText = it.actionLabel,
+                        onAction = {
                             tracker.logEvent(
                                 trigger = TriggerType.CLICK,
                                 page = FEEDBACK,
@@ -126,16 +124,16 @@ internal fun DiaryFeedbackRoute(
             }
 
             is DiaryFeedbackSideEffect.ShowVocaOverflowSnackbar -> {
-                snackbarTrigger(
-                    SnackbarRequest(
+                messageController(
+                    HilingualMessage.Snackbar(
                         message = it.message,
-                        buttonText = it.actionLabel,
-                        onClick = navigateToVoca
+                        actionLabelText = it.actionLabel,
+                        onAction = navigateToVoca
                     )
                 )
             }
 
-            is DiaryFeedbackSideEffect.ShowToast -> toastTrigger(it.message)
+            is DiaryFeedbackSideEffect.ShowToast -> messageController(HilingualMessage.Toast(it.message))
 
             is DiaryFeedbackSideEffect.NavigateToHome -> navigateToHome()
         }

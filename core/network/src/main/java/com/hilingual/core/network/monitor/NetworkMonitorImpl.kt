@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.main.monitor
+package com.hilingual.core.network.monitor
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
 import javax.inject.Inject
 
-internal class NetworkMonitorImpl @Inject constructor(
+class NetworkMonitorImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : NetworkMonitor {
 

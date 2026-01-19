@@ -28,14 +28,16 @@ data class DialogState(
 
 @Stable
 class DialogTrigger(
-    val show: (() -> Unit) -> Unit,
-    val dismiss: () -> Unit
-)
+    private val onShow: (() -> Unit) -> Unit
+) {
+    fun show(onClick: () -> Unit) {
+        onShow(onClick)
+    }
+}
 
 @Composable
 fun rememberDialogTrigger(
-    show: (() -> Unit) -> Unit,
-    dismiss: () -> Unit
-): DialogTrigger = remember(show, dismiss) {
-    DialogTrigger(show, dismiss)
+    show: (() -> Unit) -> Unit
+): DialogTrigger = remember(show) {
+    DialogTrigger(show)
 }

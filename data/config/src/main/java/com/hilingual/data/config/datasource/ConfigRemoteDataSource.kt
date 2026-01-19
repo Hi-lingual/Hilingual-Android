@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Hilingual Project
+ * Copyright 2026 The Hilingual Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.main.monitor
+package com.hilingual.data.config.datasource
 
-import kotlinx.coroutines.flow.Flow
+import com.hilingual.data.config.model.AppVersionInfo
 
-interface NetworkMonitor {
-    val isOnline: Flow<Boolean>
+interface ConfigRemoteDataSource {
+    suspend fun getAppVersionInfo(): AppVersionInfo
 }

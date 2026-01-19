@@ -67,7 +67,7 @@ internal fun BlockedUserRoute(
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is BlockedUserSideEffect.ShowErrorDialog -> dialogTrigger.show(navigateUp)
+            is BlockedUserSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = navigateUp)
         }
     }
 

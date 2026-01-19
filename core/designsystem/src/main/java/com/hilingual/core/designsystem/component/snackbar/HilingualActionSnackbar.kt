@@ -31,14 +31,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun HilingualActionSnackbar(
-    message: String,
-    buttonText: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    message: HilingualMessage.Snackbar,
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -50,19 +50,24 @@ fun HilingualActionSnackbar(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = message,
+            text = message.message,
             style = HilingualTheme.typography.bodyR16,
             color = HilingualTheme.colors.white
         )
 
         Text(
-            text = buttonText,
+            text = message.actionLabelText,
             style = HilingualTheme.typography.bodyM14,
             color = HilingualTheme.colors.white,
             modifier = Modifier
                 .clip(RoundedCornerShape(6.dp))
                 .background(HilingualTheme.colors.gray700)
-                .noRippleClickable(onClick = onClick)
+                .noRippleClickable(
+                    onClick = {
+                        message.onAction()
+                        onDismiss()
+                    }
+                )
                 .padding(vertical = 7.dp, horizontal = 11.dp)
         )
     }
@@ -78,9 +83,12 @@ private fun DiarySnackbarPreview() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             HilingualActionSnackbar(
-                message = "일기가 게시되었어요!",
-                buttonText = "보러가기",
-                onClick = {},
+                message = HilingualMessage.Snackbar(
+                    message = "일기가 게시되었어요!",
+                    actionLabelText = "보러가기",
+                    onAction = {}
+                ),
+                onDismiss = {},
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 23.dp)
