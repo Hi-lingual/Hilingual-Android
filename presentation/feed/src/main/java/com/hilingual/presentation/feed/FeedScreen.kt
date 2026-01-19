@@ -47,11 +47,10 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.pairwise
 import com.hilingual.core.common.extension.statusBarColor
-import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
-import com.hilingual.core.common.trigger.LocalSnackbarTrigger
-import com.hilingual.core.common.trigger.LocalToastTrigger
+import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
@@ -76,27 +75,26 @@ internal fun FeedRoute(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val snackbarTrigger = LocalSnackbarTrigger.current
+    val messageController = LocalMessageController.current
     val dialogTrigger = LocalDialogTrigger.current
-    val toastTrigger = LocalToastTrigger.current
     val tracker = LocalTracker.current
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is FeedSideEffect.ShowToast -> {
-                toastTrigger(sideEffect.message)
+                messageController(HilingualMessage.Toast(sideEffect.message))
             }
 
             is FeedSideEffect.ShowErrorDialog -> {
-                dialogTrigger.show(sideEffect.onRetry)
+                dialogTrigger.show(onClick = sideEffect.onRetry)
             }
 
             is FeedSideEffect.ShowDiaryLikeSnackbar -> {
-                snackbarTrigger(
-                    SnackbarRequest(
+                messageController(
+                    HilingualMessage.Snackbar(
                         message = sideEffect.message,
-                        buttonText = sideEffect.actionLabel,
-                        onClick = { navigateToMyFeedProfile(true) }
+                        actionLabelText = sideEffect.actionLabel,
+                        onAction = { navigateToMyFeedProfile(true) }
                     )
                 )
             }

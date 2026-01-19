@@ -13,19 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.home.util
+package com.hilingual.core.network.monitor
 
-import com.hilingual.presentation.home.model.DateUiModel
-import java.time.LocalDate
+import kotlinx.coroutines.flow.Flow
 
-internal fun isDateWritten(date: LocalDate, dateList: List<DateUiModel>): Boolean =
-    dateList.any {
-        runCatching { LocalDate.parse(it.date) }.getOrNull() == date
-    }
-
-internal fun isDateFuture(date: LocalDate): Boolean = date.isAfter(LocalDate.now())
-
-internal fun isDateWritable(date: LocalDate): Boolean {
-    val today = LocalDate.now()
-    return !date.isAfter(today) && date.isAfter(today.minusDays(2))
+interface NetworkMonitor {
+    val isOnline: Flow<Boolean>
 }

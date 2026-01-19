@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Hilingual Project
+ * Copyright 2026 The Hilingual Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.common.model
+package com.hilingual.data.config.repository
 
-import androidx.compose.runtime.Immutable
+import com.hilingual.data.config.model.AppVersionInfo
 
-@Immutable
-data class SnackbarRequest(
-    val message: String,
-    val buttonText: String,
-    val onClick: () -> Unit
-)
+interface ConfigRepository {
+    suspend fun getAppVersionInfo(): Result<AppVersionInfo>
+}

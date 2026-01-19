@@ -24,7 +24,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.hilingual.core.common.extension.stateInWhileSubscribed
 import com.hilingual.core.navigation.DiaryWriteMode
+import com.hilingual.core.network.monitor.NetworkMonitor
 import com.hilingual.presentation.auth.navigation.navigateToAuth
 import com.hilingual.presentation.diaryfeedback.navigation.navigateToDiaryFeedback
 import com.hilingual.presentation.diarywrite.navigation.navigateToDiaryWrite
@@ -34,7 +36,6 @@ import com.hilingual.presentation.feedprofile.navigation.navigateToFeedProfile
 import com.hilingual.presentation.feedprofile.navigation.navigateToMyFeedProfile
 import com.hilingual.presentation.home.navigation.navigateToHome
 import com.hilingual.presentation.main.MainTab
-import com.hilingual.presentation.main.monitor.NetworkMonitor
 import com.hilingual.presentation.mypage.navigation.navigateToMyPage
 import com.hilingual.presentation.notification.navigation.navigateToNotification
 import com.hilingual.presentation.notification.navigation.navigateToNotificationSetting
@@ -42,10 +43,8 @@ import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.voca.navigation.navigateToVoca
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import java.time.LocalDate
 
 @Stable
@@ -59,17 +58,15 @@ internal class MainAppState(
 
     val isOffline: StateFlow<Boolean> = networkMonitor.isOnline
         .map(Boolean::not)
-        .stateIn(
+        .stateInWhileSubscribed(
             scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(5_000),
             initialValue = false
         )
 
     private val currentDestination = navController.currentBackStackEntryFlow
         .map { it.destination }
-        .stateIn(
+        .stateInWhileSubscribed(
             scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(5_000),
             initialValue = null
         )
 
@@ -79,9 +76,8 @@ internal class MainAppState(
                 destination?.hasRoute(tab::class) == true
             }
         }
-        .stateIn(
+        .stateInWhileSubscribed(
             scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(5_000),
             initialValue = null
         )
 
@@ -91,9 +87,8 @@ internal class MainAppState(
                 destination?.hasRoute(tab::class) == true
             }
         }
-        .stateIn(
+        .stateInWhileSubscribed(
             scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(5_000),
             initialValue = false
         )
 

@@ -47,11 +47,10 @@ import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
-import com.hilingual.core.common.model.SnackbarRequest
+import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
-import com.hilingual.core.common.trigger.LocalSnackbarTrigger
-import com.hilingual.core.common.trigger.LocalToastTrigger
+import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
@@ -83,8 +82,7 @@ internal fun FeedDiaryRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var isImageDetailVisible by remember { mutableStateOf(false) }
 
-    val snackbarTrigger = LocalSnackbarTrigger.current
-    val toastTrigger = LocalToastTrigger.current
+    val messageController = LocalMessageController.current
     val dialogTrigger = LocalDialogTrigger.current
     val tracker = LocalTracker.current
 
@@ -103,31 +101,31 @@ internal fun FeedDiaryRoute(
             is FeedDiarySideEffect.NavigateToFeedProfile -> navigateToFeedProfile(it.userId)
 
             is FeedDiarySideEffect.ShowVocaOverflowSnackbar -> {
-                snackbarTrigger(
-                    SnackbarRequest(
+                messageController(
+                    HilingualMessage.Snackbar(
                         message = it.message,
-                        buttonText = it.actionLabel,
-                        onClick = navigateToVoca
+                        actionLabelText = it.actionLabel,
+                        onAction = navigateToVoca
                     )
                 )
             }
 
             is FeedDiarySideEffect.ShowDiaryLikeSnackbar -> {
-                snackbarTrigger(
-                    SnackbarRequest(
+                messageController(
+                    HilingualMessage.Snackbar(
                         message = it.message,
-                        buttonText = it.actionLabel,
-                        onClick = { navigateToMyFeedProfile(true) }
+                        actionLabelText = it.actionLabel,
+                        onAction = { navigateToMyFeedProfile(true) }
                     )
                 )
             }
 
             is FeedDiarySideEffect.ShowToast -> {
-                toastTrigger(it.message)
+                messageController(HilingualMessage.Toast(it.message))
             }
 
             is FeedDiarySideEffect.ShowErrorDialog -> {
-                dialogTrigger.show(navigateUp)
+                dialogTrigger.show(onClick = navigateUp)
             }
         }
     }

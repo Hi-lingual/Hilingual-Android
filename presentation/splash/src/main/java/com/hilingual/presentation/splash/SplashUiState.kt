@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Hilingual Project
+ * Copyright 2026 The Hilingual Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.common.trigger
+package com.hilingual.presentation.splash
 
-import androidx.compose.runtime.staticCompositionLocalOf
-import com.hilingual.core.common.model.SnackbarRequest
+import androidx.compose.runtime.Immutable
+import com.hilingual.data.config.model.UpdateState
 
-val LocalSnackbarTrigger = staticCompositionLocalOf<(SnackbarRequest) -> Unit> {
-    error("No SnackBar provided")
-}
+@Immutable
+data class SplashUiState(
+    val updateState: UpdateState = UpdateState.NONE
+)

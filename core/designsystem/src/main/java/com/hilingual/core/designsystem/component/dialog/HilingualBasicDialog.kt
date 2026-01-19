@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
@@ -48,6 +49,7 @@ fun HilingualBasicDialog(
     ),
     content: @Composable () -> Unit
 ) {
+    val dimCondition = properties.dismissOnClickOutside
     Dialog(
         onDismissRequest = onDismiss,
         properties = properties
@@ -55,6 +57,7 @@ fun HilingualBasicDialog(
         Box(
             modifier = modifier
                 .fillMaxSize()
+                .then(if (dimCondition) Modifier.noRippleClickable(onClick = onDismiss) else Modifier)
                 .background(HilingualTheme.colors.dim2)
                 .padding(horizontal = 16.dp),
             contentAlignment = Alignment.Center
@@ -63,6 +66,7 @@ fun HilingualBasicDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
+                    .noRippleClickable { /* 클릭 이벤트 소비 */ }
                     .background(
                         color = HilingualTheme.colors.white,
                         shape = RoundedCornerShape(12.dp)

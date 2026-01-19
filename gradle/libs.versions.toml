@@ -12,8 +12,8 @@ androidGradlePlugin = "8.13.2"
 spotless = "8.1.0"
 
 # App version
-versionCode = "2010100"
-versionName = "2.1.1"
+versionCode = "2020000"
+versionName = "2.2.0"
 
 # Kotlin
 kotlin = "2.3.0"
@@ -27,7 +27,7 @@ androidxAppCompat = "1.7.1"
 lifecycleRuntimeKtx = "2.10.0"
 lifecycleRuntimeComposeAndroid = "2.10.0"
 activityCompose = "1.12.2"
-composeBom = "2025.12.01"
+composeBom = "2026.01.00"
 composeNavigation = "2.9.6"
 security = "1.1.0"
 datastorePreferences = "1.2.0"
@@ -51,7 +51,7 @@ mockk = "1.14.7"
 okhttp = "5.3.2"
 retrofit = "3.0.0"
 kotlinxSerializationJson = "1.9.0"
-daggerHilt = "2.57.2"
+daggerHilt = "2.58"
 hiltNavigationCompose = "1.3.0"
 hiltWork = "1.3.0"
 coil = "3.3.0"
@@ -61,11 +61,11 @@ coroutine = "1.10.2"
 ktlint = "11.5.1"
 pebble = "0.1.0"
 phoenix = "3.0.0"
-balloonCompose = "1.7.1"
+balloonCompose = "1.7.3"
 richeditorCompose = "1.0.0-rc13"
 
 # Firebase
-firebaseBom = "34.7.0"
+firebaseBom = "34.8.0"
 firebaseCrashlyticsPlugin = "3.0.6"
 
 # ML Kit
@@ -81,7 +81,7 @@ runner = "1.7.0"
 
 # AboutLibraries
 aboutLibraries = "13.2.1"
-amplitude = "1.22.4"
+amplitude = "1.23.0"
 
 [libraries]
 # Analytics
@@ -153,6 +153,8 @@ googleid = { module = "com.google.android.libraries.identity.googleid:googleid",
 # Firebase
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-remote-config = { group = "com.google.firebase", name = "firebase-config" }
 
 # Dependency Injection
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "daggerHilt" }

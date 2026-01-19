@@ -28,6 +28,9 @@ android {
 }
 
 dependencies {
+    // core
+    implementation(projects.core.network)
+
     // feature
     implementation(projects.presentation.home)
     implementation(projects.presentation.auth)
