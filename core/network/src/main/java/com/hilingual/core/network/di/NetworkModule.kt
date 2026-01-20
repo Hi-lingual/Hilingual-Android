@@ -15,6 +15,7 @@
  */
 package com.hilingual.core.network.di
 
+import com.hilingual.core.network.BuildConfig
 import com.hilingual.core.network.BuildConfig.BASE_URL
 import com.hilingual.core.network.auth.AuthInterceptor
 import com.hilingual.core.network.auth.TokenAuthenticator
@@ -53,15 +54,29 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideLoggingInterceptor(json: Json): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor { message ->
-            val log = runCatching {
-                val jsonElement = json.decodeFromString(JsonElement.serializer(), message)
-                json.encodeToString(JsonElement.serializer(), jsonElement)
-            }.getOrElse { "CONNECTION INFO -> $message" }
-            Timber.tag("okhttp").d(log)
-        }.apply {
+        if (!BuildConfig.DEBUG) {
+            return HttpLoggingInterceptor { }.apply { level = HttpLoggingInterceptor.Level.NONE }
+        }
+        return HttpLoggingInterceptor(createSmartLogger(json)).apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
+    }
+
+    private fun createSmartLogger(json: Json) = HttpLoggingInterceptor.Logger { message ->
+        val log = if (isPotentialJson(message)) prettyPrintJson(json, message) else message
+        Timber.tag("okhttp").d(log)
+    }
+
+    private fun isPotentialJson(message: String): Boolean {
+        val trimmed = message.trim()
+        return trimmed.startsWith("{") || trimmed.startsWith("[")
+    }
+
+    private fun prettyPrintJson(json: Json, message: String): String {
+        return runCatching {
+            val jsonElement = json.decodeFromString(JsonElement.serializer(), message)
+            json.encodeToString(JsonElement.serializer(), jsonElement)
+        }.getOrElse { message }
     }
 
     @Provides
