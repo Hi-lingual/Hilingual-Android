@@ -8,7 +8,7 @@ minSdk = "30"
 targetSdk = "35"
 jvmTarget = "17"
 kotlinCompilerExtensionVersion = "1.5.15"
-androidGradlePlugin = "8.13.2"
+androidGradlePlugin = "9.0.0"
 spotless = "8.1.0"
 
 # App version
@@ -72,10 +72,9 @@ firebaseCrashlyticsPlugin = "3.0.6"
 mlkitTextRecognition = "16.0.1"
 coroutinesPlayServices = "1.10.2"
 
-# Baseline Profile
 uiautomator = "2.3.0"
 benchmarkMacroJunit4 = "1.4.1"
-baselineprofile = "1.4.1"
+baselineprofile = "1.5.0-alpha01"
 profileinstaller = "1.4.1"
 runner = "1.7.0"
 
