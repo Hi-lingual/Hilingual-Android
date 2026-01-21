@@ -11,7 +11,7 @@ import org.gradle.kotlin.dsl.getByType
 val Project.libs: VersionCatalog
     get() = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
-val Project.androidExtension: CommonExtension<*, *, *, *, *, *>
+val Project.androidExtension: CommonExtension
     get() = runCatching { extensions.getByType<LibraryExtension>() }
         .recoverCatching { extensions.getByType<ApplicationExtension>() }
         .onFailure { println("Could not find Library or Application extension from this project") }
