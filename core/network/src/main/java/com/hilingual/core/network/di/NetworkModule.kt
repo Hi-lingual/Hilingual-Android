@@ -54,11 +54,13 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideLoggingInterceptor(json: Json): HttpLoggingInterceptor {
-        if (!BuildConfig.DEBUG) {
-            return HttpLoggingInterceptor { }.apply { level = HttpLoggingInterceptor.Level.NONE }
+        if (BuildConfig.DEBUG) {
+            return HttpLoggingInterceptor(createSmartLogger(json)).apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            }
         }
-        return HttpLoggingInterceptor(createSmartLogger(json)).apply {
-            level = HttpLoggingInterceptor.Level.BODY
+        return HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.NONE
         }
     }
 
