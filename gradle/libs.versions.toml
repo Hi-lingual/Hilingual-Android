@@ -9,7 +9,7 @@ targetSdk = "35"
 jvmTarget = "17"
 kotlinCompilerExtensionVersion = "1.5.15"
 androidGradlePlugin = "9.0.0"
-spotless = "8.1.0"
+spotless = "8.2.0"
 
 # App version
 versionCode = "2020000"
