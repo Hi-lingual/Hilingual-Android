@@ -74,7 +74,7 @@ coroutinesPlayServices = "1.10.2"
 
 uiautomator = "2.3.0"
 benchmarkMacroJunit4 = "1.4.1"
-baselineprofile = "1.5.0-alpha01"
+baselineprofile = "1.5.0-alpha02"
 profileinstaller = "1.4.1"
 runner = "1.7.0"
 
