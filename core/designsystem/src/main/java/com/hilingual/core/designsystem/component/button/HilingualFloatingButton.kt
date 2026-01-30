@@ -70,7 +70,8 @@ fun BoxScope.HilingualFloatingButton(
                 .noRippleClickable(onClick = onClick)
                 .dropShadow(
                     shape = CircleShape,
-                    color = HilingualTheme.colors.black.copy(alpha = 0.2f),
+                    color = HilingualTheme.colors.black,
+                    alpha = 0.2f,
                     offsetX = 0.dp,
                     offsetY = 2.dp,
                     blur = 4.dp,
