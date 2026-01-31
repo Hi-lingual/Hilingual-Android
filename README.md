@@ -192,12 +192,12 @@ graph TD
 
 ## Contributors
 
-| 🤴한민재<br/>[@angryPodo](https://github.com/angryPodo) | 🦔김나현<br/>[@nahy-512](https://github.com/nahy-512) | 😻김나현<br/>[@nhyeonii](https://github.com/nhyeonii) | 🐻문지영<br/>[@Daljyeong](https://github.com/Daljyeong) | 🎓박효빈<br/>[@Hyobeen-Park](https://github.com/Hyobeen-Park) |
-| --- | --- | --- | --- | --- |
-| <img src="https://github.com/user-attachments/assets/4a0a822a-f7ea-47c5-83ca-563ea3b90cc4" height="280" /> | <img src="https://github.com/user-attachments/assets/612c32be-c117-45a6-9392-958ff11de010" height="280" /> | <img src="https://github.com/user-attachments/assets/7af7e584-b763-407c-8628-bdccf731d8b7" height="280" /> | <img src="https://github.com/user-attachments/assets/fc497adb-66b1-4748-b864-7c5e2a18d82f" height="280" /> | <img src="https://github.com/user-attachments/assets/6bedede6-fd60-4514-90ad-7c596ce41fbb" height="280" /> |
-| `스플래시` `온보딩`<br/>`로그인` `홈(캘린더)` | `일기 상세` | `단어장` | `일기 작성` | `멘토` |
-
----
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 <p align="center">
   Made with by Hi-lingual Team
