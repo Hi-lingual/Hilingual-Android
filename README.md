@@ -73,6 +73,7 @@ graph TD
     subgraph Data Layer
         data_auth["data:auth"]
         data_calendar["data:calendar"]
+        data_config["data:config"]
         data_diary["data:diary"]
         data_feed["data:feed"]
         data_user["data:user"]
@@ -102,6 +103,7 @@ graph TD
     onboarding --> data_user
     splash --> data_auth
     splash --> data_user
+    splash --> data_config
     voca --> data_voca
     voca --> data_diary
 ```
@@ -113,6 +115,7 @@ graph TD
     subgraph Data Layer
         auth["auth"]
         calendar["calendar"]
+        config["config"]
         diary["diary"]
         feed["feed"]
         presigned["presigned"]
@@ -133,6 +136,10 @@ graph TD
     calendar --> core_network
     calendar --> core_localstorage
     calendar --> core_common
+
+    config --> core_network
+    config --> core_localstorage
+    config --> core_common
 
     diary --> presigned
     diary --> core_network
