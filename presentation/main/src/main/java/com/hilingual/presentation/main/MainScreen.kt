@@ -41,6 +41,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.hilingual.core.common.analytics.Tracker
+import com.hilingual.core.common.app.AppRestarter
+import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.model.HilingualMessage.Snackbar
 import com.hilingual.core.common.model.HilingualMessage.Toast
@@ -74,7 +76,8 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun MainScreen(
     appState: MainAppState,
-    tracker: Tracker
+    tracker: Tracker,
+    appRestarter: AppRestarter
 ) {
     val isOffline by appState.isOffline.collectAsStateWithLifecycle()
     val isBottomBarVisible by appState.isBottomBarVisible.collectAsStateWithLifecycle()
@@ -117,7 +120,8 @@ internal fun MainScreen(
     CompositionLocalProvider(
         LocalDialogTrigger provides dialogTrigger,
         LocalMessageController provides onShowMessage,
-        LocalTracker provides tracker
+        LocalTracker provides tracker,
+        LocalAppRestarter provides appRestarter
     ) {
         Scaffold(
             bottomBar = {

@@ -22,6 +22,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.hilingual.core.common.analytics.Tracker
+import com.hilingual.core.common.app.AppRestarter
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.network.monitor.NetworkMonitor
 import com.hilingual.presentation.main.state.rememberMainAppState
@@ -36,6 +37,9 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var tracker: Tracker
 
+    @Inject
+    lateinit var appRestarter: AppRestarter
+
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +51,8 @@ class MainActivity : ComponentActivity() {
 
                 MainScreen(
                     appState = appState,
-                    tracker = tracker
+                    tracker = tracker,
+                    appRestarter = appRestarter
                 )
             }
         }

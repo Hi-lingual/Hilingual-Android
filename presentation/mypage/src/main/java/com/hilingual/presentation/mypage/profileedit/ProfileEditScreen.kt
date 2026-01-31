@@ -35,7 +35,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,6 +44,7 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
@@ -57,7 +57,6 @@ import com.hilingual.presentation.mypage.MyPageUiState
 import com.hilingual.presentation.mypage.MyPageViewModel
 import com.hilingual.presentation.mypage.component.ProfileItem
 import com.hilingual.presentation.mypage.component.WithdrawDialog
-import com.jakewharton.processphoenix.ProcessPhoenix
 
 @Composable
 internal fun ProfileEditRoute(
@@ -65,10 +64,10 @@ internal fun ProfileEditRoute(
     navigateUp: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
     val messageController = LocalMessageController.current
+    val appRestarter = LocalAppRestarter.current
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -76,7 +75,7 @@ internal fun ProfileEditRoute(
 
             is MyPageSideEffect.ShowToast -> messageController(HilingualMessage.Toast(sideEffect.message))
 
-            is MyPageSideEffect.RestartApp -> ProcessPhoenix.triggerRebirth(context)
+            is MyPageSideEffect.RestartApp -> appRestarter.restartApp()
         }
     }
 
