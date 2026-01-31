@@ -1,6 +1,6 @@
 {
-  "projectName": "Hilingual",
-  "projectOwner": "angryPodo",
+  "projectName": "Hilingual-Android",
+  "projectOwner": "Hi-lingual",
   "repoType": "github",
   "repoHost": "https://github.com",
   "files": [
@@ -19,7 +19,8 @@
         "code",
         "infra",
         "maintenance",
-        "review"
+        "review",
+        "projectManagement"
       ]
     },
     {
@@ -64,5 +65,6 @@
     }
   ],
   "contributorsPerLine": 7,
-  "linkToUsage": true
+  "linkToUsage": true,
+  "commitType": "docs"
 }
