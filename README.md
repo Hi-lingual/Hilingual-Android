@@ -195,8 +195,30 @@ graph TD
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
-<!-- markdownlint-enable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/angryPodo"><img src="https://github.com/angryPodo.png?s=100" width="100px;" alt="Han Minjae"/><br /><sub><b>Han Minjae</b></sub></a><br /><a href="https://github.com/Hi-lingual/Hilingual-Android/commits?author=angryPodo" title="Code">💻</a> <a href="#infra-angryPodo" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#maintenance-angryPodo" title="Maintenance">🚧</a> <a href="https://github.com/Hi-lingual/Hilingual-Android/pulls?q=is%3Apr+reviewed-by%3AangryPodo" title="Reviewed Pull Requests">👀</a> <a href="#projectManagement-angryPodo" title="Project Management">📆</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/nahy-512"><img src="https://github.com/nahy-512.png?s=100" width="100px;" alt="Kim Nahyun"/><br /><sub><b>Kim Nahyun</b></sub></a><br /><a href="https://github.com/Hi-lingual/Hilingual-Android/commits?author=nahy-512" title="Code">💻</a> <a href="https://github.com/Hi-lingual/Hilingual-Android/pulls?q=is%3Apr+reviewed-by%3Anahy-512" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/nhyeonii"><img src="https://github.com/nhyeonii.png?s=100" width="100px;" alt="Kim Nahyun"/><br /><sub><b>Kim Nahyun</b></sub></a><br /><a href="https://github.com/Hi-lingual/Hilingual-Android/commits?author=nhyeonii" title="Code">💻</a> <a href="https://github.com/Hi-lingual/Hilingual-Android/pulls?q=is%3Apr+reviewed-by%3Anhyeonii" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Daljyeong"><img src="https://github.com/Daljyeong.png?s=100" width="100px;" alt="Moon Jiyoung"/><br /><sub><b>Moon Jiyoung</b></sub></a><br /><a href="https://github.com/Hi-lingual/Hilingual-Android/commits?author=Daljyeong" title="Code">💻</a> <a href="https://github.com/Hi-lingual/Hilingual-Android/pulls?q=is%3Apr+reviewed-by%3ADaljyeong" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Hyobeen-Park"><img src="https://github.com/Hyobeen-Park.png?s=100" width="100px;" alt="Park Hyobeen"/><br /><sub><b>Park Hyobeen</b></sub></a><br /><a href="https://github.com/Hi-lingual/Hilingual-Android/commits?author=Hyobeen-Park" title="Code">💻</a> <a href="https://github.com/Hi-lingual/Hilingual-Android/pulls?q=is%3Apr+reviewed-by%3AHyobeen-Park" title="Reviewed Pull Requests">👀</a></td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td align="center" size="13px" colspan="7">
+        <img src="https://raw.githubusercontent.com/all-contributors/all-contributors-cli/1b8533af435da9854653492b1327a23a4dbd0a10/assets/logo-small.svg">
+          <a href="https://all-contributors.js.org/docs/en/bot/usage">Add your contributions</a>
+        </img>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+
+<!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 <p align="center">
