@@ -5,11 +5,10 @@ credentials = "1.6.0-rc01"
 googleid = "1.2.0"
 googleServices = "4.4.4"
 minSdk = "30"
-targetSdk = "35"
+targetSdk = "36"
 jvmTarget = "17"
-kotlinCompilerExtensionVersion = "1.5.15"
 androidGradlePlugin = "9.0.0"
-spotless = "8.2.0"
+spotless = "8.2.1"
 
 # App version
 versionCode = "2020000"
@@ -18,7 +17,7 @@ versionName = "2.2.0"
 # Kotlin
 kotlin = "2.3.0"
 kotlinxImmutable = "0.4.0"
-ksp = "2.3.4"
+ksp = "2.3.5"
 
 # AndroidX
 coreKtx = "1.17.0"
@@ -26,9 +25,9 @@ coreSplachscreen = "1.2.0"
 androidxAppCompat = "1.7.1"
 lifecycleRuntimeKtx = "2.10.0"
 lifecycleRuntimeComposeAndroid = "2.10.0"
-activityCompose = "1.12.2"
-composeBom = "2026.01.00"
-composeNavigation = "2.9.6"
+activityCompose = "1.12.3"
+composeBom = "2026.01.01"
+composeNavigation = "2.9.7"
 security = "1.1.0"
 datastorePreferences = "1.2.0"
 material = "1.13.0"
@@ -39,7 +38,7 @@ browser="1.9.0"
 room = "2.8.4"
 
 # WorkManager
-work = "2.11.0"
+work = "2.11.1"
 startup = "1.2.0"
 
 # Test
@@ -74,7 +73,7 @@ coroutinesPlayServices = "1.10.2"
 
 uiautomator = "2.3.0"
 benchmarkMacroJunit4 = "1.4.1"
-baselineprofile = "1.5.0-alpha01"
+baselineprofile = "1.5.0-alpha02"
 profileinstaller = "1.4.1"
 runner = "1.7.0"
 
