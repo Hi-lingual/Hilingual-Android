@@ -16,23 +16,22 @@
 package com.hilingual.data.auth.repositoryimpl
 
 import android.content.Context
-import android.os.Build
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.localstorage.TokenManager
 import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.data.auth.datasource.AuthRemoteDataSource
 import com.hilingual.data.auth.datasource.GoogleAuthDataSource
+import com.hilingual.data.auth.datasource.SystemDataSource
 import com.hilingual.data.auth.dto.request.LoginRequestDto
 import com.hilingual.data.auth.dto.request.VerifyCodeRequestDto
 import com.hilingual.data.auth.model.LoginModel
 import com.hilingual.data.auth.repository.AuthRepository
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 internal class AuthRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val authRemoteDataSource: AuthRemoteDataSource,
     private val googleAuthDataSource: GoogleAuthDataSource,
+    private val systemDataSource: SystemDataSource,
     private val tokenManager: TokenManager,
     private val userInfoManager: UserInfoManager
 ) : AuthRepository {
@@ -40,16 +39,10 @@ internal class AuthRepositoryImpl @Inject constructor(
         googleAuthDataSource.signIn(context).map { it.idToken }
 
     override suspend fun login(providerToken: String): Result<LoginModel> = suspendRunCatching {
-        val loginRequestDto = LoginRequestDto(
-            provider = "GOOGLE",
-            role = "USER",
-            deviceName = Build.MODEL,
-            deviceType = "PHONE",
-            osType = "Android",
-            osVersion = Build.VERSION.RELEASE,
-            appVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: ""
-        )
-        val loginResponse = authRemoteDataSource.login(providerToken, loginRequestDto).data!!
+        val loginResponse = authRemoteDataSource.login(
+            providerToken = providerToken,
+            loginRequestDto = systemDataSource.toLoginRequestDto()
+        ).data!!
 
         tokenManager.saveTokens(loginResponse.accessToken, loginResponse.refreshToken)
         userInfoManager.saveRegisterStatus(loginResponse.registerStatus)
@@ -76,4 +69,14 @@ internal class AuthRepositoryImpl @Inject constructor(
         tokenManager.clearTokens()
         userInfoManager.clear()
     }
+
+    private fun SystemDataSource.toLoginRequestDto() = LoginRequestDto(
+        provider = this.getProvider(),
+        role = this.getRole(),
+        deviceName = this.getDeviceName(),
+        deviceType = this.getDeviceType(),
+        osType = this.getOsType(),
+        osVersion = this.getOsVersion(),
+        appVersion = this.getAppVersion()
+    )
 }
