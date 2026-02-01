@@ -59,7 +59,6 @@ lottieCompose = "6.7.1"
 coroutine = "1.10.2"
 ktlint = "11.5.1"
 pebble = "0.1.0"
-phoenix = "3.0.0"
 balloonCompose = "1.7.3"
 richeditorCompose = "1.0.0-rc13"
 
@@ -173,7 +172,6 @@ balloon-compose = { group = "com.github.skydoves", name = "balloon-compose", ver
 # Utilities
 richeditor-compose = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "richeditorCompose" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
-jakewharton-process-phoenix = { group = "com.jakewharton", name = "process-phoenix", version.ref = "phoenix" }
 pebble = { group = "io.github.chattymin", name = "pebble", version.ref = "pebble" }
 
 # Room

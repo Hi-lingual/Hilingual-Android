@@ -39,6 +39,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
@@ -53,7 +54,6 @@ import com.hilingual.core.ui.component.topappbar.TitleLeftAlignedTopAppBar
 import com.hilingual.presentation.mypage.component.LogoutDialog
 import com.hilingual.presentation.mypage.component.MyInfoBox
 import com.hilingual.presentation.mypage.component.SettingItem
-import com.jakewharton.processphoenix.ProcessPhoenix
 
 @Composable
 internal fun MyPageRoute(
@@ -69,6 +69,7 @@ internal fun MyPageRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
     val messageController = LocalMessageController.current
+    val appRestarter = LocalAppRestarter.current
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -76,7 +77,7 @@ internal fun MyPageRoute(
 
             is MyPageSideEffect.ShowToast -> messageController(HilingualMessage.Toast(sideEffect.message))
 
-            is MyPageSideEffect.RestartApp -> ProcessPhoenix.triggerRebirth(context)
+            is MyPageSideEffect.RestartApp -> appRestarter.restartApp()
         }
     }
 

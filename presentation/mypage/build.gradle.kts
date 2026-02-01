@@ -25,7 +25,6 @@ android {
 
 dependencies {
     implementation(libs.aboutlibraries.compose.m3)
-    implementation(libs.jakewharton.process.phoenix)
     implementation(projects.data.user)
     implementation(projects.data.auth)
 }
