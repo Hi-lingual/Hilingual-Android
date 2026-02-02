@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -58,8 +59,6 @@ internal class DiaryFeedbackViewModel @Inject constructor(
 
     private fun loadInitialData() {
         viewModelScope.launch {
-            _uiState.value = UiState.Loading
-
             suspendRunCatching {
                 val contentDeferred = async {
                     diaryRepository.getDiaryContent(diaryId).getOrThrow()
@@ -84,9 +83,12 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                         .toImmutableList()
                 )
             }.onSuccess { newUiState ->
-                _uiState.value = UiState.Success(newUiState)
+                _uiState.update { UiState.Success(newUiState) }
             }.onLogFailure {
-                _uiState.value = UiState.Failure
+                _uiState.update { UiState.Failure }
+                _sideEffect.emit(
+                    DiaryFeedbackSideEffect.ShowErrorDialog
+                )
             }
         }
     }
@@ -112,7 +114,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                     showToast("일기가 비공개되었어요!")
                 }
             }.onLogFailure {
-                _uiState.value = UiState.Failure
+                _uiState.update { UiState.Failure }
                 _sideEffect.emit(
                     DiaryFeedbackSideEffect.ShowErrorDialog
                 )
