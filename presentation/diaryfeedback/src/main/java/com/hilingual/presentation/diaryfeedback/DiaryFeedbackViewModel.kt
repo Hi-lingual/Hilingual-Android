@@ -22,6 +22,7 @@ import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
@@ -29,7 +30,6 @@ import com.hilingual.presentation.diaryfeedback.navigation.DiaryFeedback
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -56,46 +56,37 @@ internal class DiaryFeedbackViewModel @Inject constructor(
         loadInitialData()
     }
 
-    private suspend fun requestDiaryFeedbackData() {
-        val (contentResult, feedbacksResult, recommendExpressionsResult) = coroutineScope {
-            val contentDeferred = async { diaryRepository.getDiaryContent(diaryId) }
-            val feedbacksDeferred = async { diaryRepository.getDiaryFeedbacks(diaryId) }
-            val recommendExpressionsDeferred = async { diaryRepository.getDiaryRecommendExpressions(diaryId) }
-
-            Triple(contentDeferred.await(), feedbacksDeferred.await(), recommendExpressionsDeferred.await())
-        }
-
-        if (
-            contentResult.isSuccess &&
-            feedbacksResult.isSuccess &&
-            recommendExpressionsResult.isSuccess
-        ) {
-            val diaryResult = contentResult.getOrThrow()
-            val feedbacks = feedbacksResult.getOrThrow()
-            val recommendExpressions = recommendExpressionsResult.getOrThrow()
-
-            val newUiState = DiaryFeedbackUiState(
-                isPublished = diaryResult.isPublished,
-                writtenDate = diaryResult.writtenDate,
-                diaryContent = diaryResult.toState(),
-                feedbackList = feedbacks.map { it.toState() }.toImmutableList(),
-                recommendExpressionList = recommendExpressions.map { it.toState() }.toImmutableList()
-            )
-            _uiState.value = UiState.Success(newUiState)
-        } else {
-            throw Exception()
-        }
-    }
-
     private fun loadInitialData() {
         viewModelScope.launch {
-            runCatching {
-                requestDiaryFeedbackData()
-            }.onFailure {
-                _uiState.value = UiState.Failure
-                _sideEffect.emit(
-                    DiaryFeedbackSideEffect.ShowErrorDialog
+            _uiState.value = UiState.Loading
+
+            suspendRunCatching {
+                val contentDeferred = async {
+                    diaryRepository.getDiaryContent(diaryId).getOrThrow()
+                }
+                val feedbacksDeferred = async {
+                    diaryRepository.getDiaryFeedbacks(diaryId).getOrThrow()
+                }
+                val recommendExpressionsDeferred = async {
+                    diaryRepository.getDiaryRecommendExpressions(diaryId).getOrThrow()
+                }
+
+                val diaryResult = contentDeferred.await()
+                val feedbacksResult = feedbacksDeferred.await()
+                val recommendExpressionsResult = recommendExpressionsDeferred.await()
+
+                DiaryFeedbackUiState(
+                    isPublished = diaryResult.isPublished,
+                    writtenDate = diaryResult.writtenDate,
+                    diaryContent = diaryResult.toState(),
+                    feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),
+                    recommendExpressionList = recommendExpressionsResult.map { it.toState() }
+                        .toImmutableList()
                 )
+            }.onSuccess { newUiState ->
+                _uiState.value = UiState.Success(newUiState)
+            }.onLogFailure {
+                _uiState.value = UiState.Failure
             }
         }
     }
