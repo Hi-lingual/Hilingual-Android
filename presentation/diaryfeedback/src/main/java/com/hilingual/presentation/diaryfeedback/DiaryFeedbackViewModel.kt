@@ -88,8 +88,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                 writtenDate = diaryResult.writtenDate,
                 diaryContent = diaryResult.toState(),
                 feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),
-                recommendExpressionList = recommendExpressionsResult.map { it.toState() }
-                    .toImmutableList()
+                recommendExpressionList = recommendExpressionsResult.map { it.toState() }.toImmutableList()
             )
         }
 
