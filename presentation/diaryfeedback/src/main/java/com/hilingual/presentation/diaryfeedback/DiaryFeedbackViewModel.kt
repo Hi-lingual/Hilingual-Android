@@ -75,19 +75,13 @@ internal class DiaryFeedbackViewModel @Inject constructor(
 
     private suspend fun requestDiaryFeedbackData(): DiaryFeedbackUiState =
         coroutineScope {
-            val contentDeferred = async {
-                diaryRepository.getDiaryContent(diaryId).getOrThrow()
-            }
-            val feedbacksDeferred = async {
-                diaryRepository.getDiaryFeedbacks(diaryId).getOrThrow()
-            }
-            val recommendExpressionsDeferred = async {
-                diaryRepository.getDiaryRecommendExpressions(diaryId).getOrThrow()
-            }
+            val contentDeferred = async { diaryRepository.getDiaryContent(diaryId) }
+            val feedbacksDeferred = async { diaryRepository.getDiaryFeedbacks(diaryId) }
+            val recommendExpressionsDeferred = async { diaryRepository.getDiaryRecommendExpressions(diaryId) }
 
-            val diaryResult = contentDeferred.await()
-            val feedbacksResult = feedbacksDeferred.await()
-            val recommendExpressionsResult = recommendExpressionsDeferred.await()
+            val diaryResult = contentDeferred.await().getOrThrow()
+            val feedbacksResult = feedbacksDeferred.await().getOrThrow()
+            val recommendExpressionsResult = recommendExpressionsDeferred.await().getOrThrow()
 
             DiaryFeedbackUiState(
                 isPublished = diaryResult.isPublished,
