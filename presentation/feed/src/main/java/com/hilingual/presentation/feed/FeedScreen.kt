@@ -162,7 +162,6 @@ internal fun FeedRoute(
             onUnpublishClick = viewModel::diaryUnpublish,
             onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
             readAllFeed = viewModel::readAllFeed,
-            isScrollingDown = viewModel::isScrollingDown
         )
     }
 }
@@ -185,7 +184,6 @@ private fun FeedScreen(
     onReportClick: () -> Unit,
     readAllFeed: () -> Unit,
     onFeedRefresh: (FeedTab) -> Unit,
-    isScrollingDown: (FeedScrollState?, FeedScrollState) -> Boolean,
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -238,15 +236,17 @@ private fun FeedScreen(
 
     LaunchedEffect(pagerState.currentPage) {
         snapshotFlow {
-            FeedScrollState(
-                firstVisibleItemIndex = currentListState.firstVisibleItemIndex,
-                firstVisibleItemScrollOffset = currentListState.firstVisibleItemScrollOffset
-            )
+            Pair(currentListState.firstVisibleItemIndex, currentListState.firstVisibleItemScrollOffset)
         }
             .pairwise()
             .collect { (previous, current) ->
+                val isScrollingDown = previous != null && (
+                    current.first > previous.first ||
+                    (current.first == previous.first && current.second > previous.second)
+                    )
+
                 if (currentListState.isScrollInProgress &&
-                    isScrollingDown(previous, current) &&
+                    isScrollingDown &&
                     isAtBottom
                 ) {
                     latestReadAllFeed()
@@ -349,8 +349,7 @@ private fun FeedScreenPreview() {
             hasFollowing = false,
             recommendRefreshing = false,
             followingRefreshing = false,
-            onFeedRefresh = {},
-            isScrollingDown = { _, _ -> false }
+            onFeedRefresh = {}
         )
     }
 }
