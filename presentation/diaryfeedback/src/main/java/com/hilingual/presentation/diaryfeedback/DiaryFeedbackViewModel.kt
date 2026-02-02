@@ -30,6 +30,7 @@ import com.hilingual.presentation.diaryfeedback.navigation.DiaryFeedback
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -60,28 +61,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
     private fun loadInitialData() {
         viewModelScope.launch {
             suspendRunCatching {
-                val contentDeferred = async {
-                    diaryRepository.getDiaryContent(diaryId).getOrThrow()
-                }
-                val feedbacksDeferred = async {
-                    diaryRepository.getDiaryFeedbacks(diaryId).getOrThrow()
-                }
-                val recommendExpressionsDeferred = async {
-                    diaryRepository.getDiaryRecommendExpressions(diaryId).getOrThrow()
-                }
-
-                val diaryResult = contentDeferred.await()
-                val feedbacksResult = feedbacksDeferred.await()
-                val recommendExpressionsResult = recommendExpressionsDeferred.await()
-
-                DiaryFeedbackUiState(
-                    isPublished = diaryResult.isPublished,
-                    writtenDate = diaryResult.writtenDate,
-                    diaryContent = diaryResult.toState(),
-                    feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),
-                    recommendExpressionList = recommendExpressionsResult.map { it.toState() }
-                        .toImmutableList()
-                )
+                requestDiaryFeedbackData()
             }.onSuccess { newUiState ->
                 _uiState.update { UiState.Success(newUiState) }
             }.onLogFailure {
@@ -92,6 +72,32 @@ internal class DiaryFeedbackViewModel @Inject constructor(
             }
         }
     }
+
+    private suspend fun requestDiaryFeedbackData(): DiaryFeedbackUiState =
+        coroutineScope {
+            val contentDeferred = async {
+                diaryRepository.getDiaryContent(diaryId).getOrThrow()
+            }
+            val feedbacksDeferred = async {
+                diaryRepository.getDiaryFeedbacks(diaryId).getOrThrow()
+            }
+            val recommendExpressionsDeferred = async {
+                diaryRepository.getDiaryRecommendExpressions(diaryId).getOrThrow()
+            }
+
+            val diaryResult = contentDeferred.await()
+            val feedbacksResult = feedbacksDeferred.await()
+            val recommendExpressionsResult = recommendExpressionsDeferred.await()
+
+            DiaryFeedbackUiState(
+                isPublished = diaryResult.isPublished,
+                writtenDate = diaryResult.writtenDate,
+                diaryContent = diaryResult.toState(),
+                feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),
+                recommendExpressionList = recommendExpressionsResult.map { it.toState() }
+                    .toImmutableList()
+            )
+        }
 
     fun toggleIsPublished(isPublished: Boolean) {
         val currentState = _uiState.value
