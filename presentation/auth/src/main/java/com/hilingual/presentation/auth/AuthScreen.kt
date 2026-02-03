@@ -17,6 +17,7 @@ package com.hilingual.presentation.auth
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -24,8 +25,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectLatestSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
@@ -49,6 +53,7 @@ internal fun AuthRoute(
     navigateToOnboarding: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     viewModel.navigationEvent.collectLatestSideEffect { event ->
@@ -63,6 +68,10 @@ internal fun AuthRoute(
         onGoogleSignClick = { viewModel.onGoogleSignClick(context) },
         onPrivacyPolicyClick = { context.launchCustomTabs(UrlConstant.PRIVACY_POLICY) }
     )
+
+    if (isLoading) {
+        LoadingIndicator()
+    }
 }
 
 @Composable
@@ -99,7 +108,7 @@ private fun AuthScreen(
                 .size(width = 200.dp, height = 50.dp)
         )
 
-        Spacer(Modifier.weight(56f))
+        Spacer(Modifier.height(56.dp))
 
         Image(
             painter = painterResource(DesignSystemR.drawable.img_login),
@@ -119,5 +128,17 @@ private fun AuthScreen(
             textDecoration = TextDecoration.Underline,
             modifier = Modifier.noRippleClickable(onClick = onPrivacyPolicyClick)
         )
+    }
+}
+
+@Composable
+private fun LoadingIndicator() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(HilingualTheme.colors.dim1),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
     }
 }
