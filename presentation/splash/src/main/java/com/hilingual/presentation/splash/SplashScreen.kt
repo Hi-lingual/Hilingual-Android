@@ -18,8 +18,6 @@ package com.hilingual.presentation.splash
 import android.content.Intent
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -42,7 +40,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectLatestSideEffect
 import com.hilingual.core.common.extension.statusBarColor
-import com.hilingual.core.common.provider.LocalSharedTransitionScope
 import com.hilingual.core.designsystem.component.dialog.OneButtonDialog
 import com.hilingual.core.designsystem.component.dialog.TwoButtonDialog
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -99,7 +96,6 @@ internal fun SplashRoute(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun SplashScreen(
     animatedVisibilityScope: AnimatedVisibilityScope
@@ -115,21 +111,12 @@ private fun SplashScreen(
             modifier = Modifier.weight(18f)
         )
 
-        with(LocalSharedTransitionScope.current) {
-            Image(
-                painter = painterResource(DesignSystemR.drawable.img_logo),
-                contentDescription = null,
-                modifier = Modifier
-                    .sharedElement(
-                        sharedContentState = rememberSharedContentState(key = "logo"),
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        boundsTransform = { _, _ ->
-                            tween(durationMillis = 400)
-                        }
-                    )
-                    .size(width = 200.dp, height = 50.dp)
-            )
-        }
+        Image(
+            painter = painterResource(DesignSystemR.drawable.img_logo),
+            contentDescription = null,
+            modifier = Modifier
+                .size(width = 200.dp, height = 50.dp)
+        )
 
         Spacer(
             modifier = Modifier.weight(29f)
@@ -158,7 +145,7 @@ private fun ForceDialog(
 
             Text(
                 text = "안정적인 서비스 사용을 위해\n" +
-                    "최신 버전의 앱으로 업데이트 해주세요.",
+                        "최신 버전의 앱으로 업데이트 해주세요.",
                 style = HilingualTheme.typography.bodyR14,
                 color = HilingualTheme.colors.gray400,
                 textAlign = TextAlign.Center,
@@ -178,7 +165,7 @@ private fun OptionalDialog(
     TwoButtonDialog(
         title = "최신 버전의 앱이 출시 되었습니다",
         description = "지금 바로 업데이트 하고 \n" +
-            "최적의 사용 환경을 이용해보세요.",
+                "최적의 사용 환경을 이용해보세요.",
         cancelText = "다음에 하기",
         confirmText = "업데이트 하기",
         onPositive = onPositive,
