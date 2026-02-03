@@ -16,6 +16,7 @@
 package com.hilingual.presentation.auth
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -38,7 +39,6 @@ import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.auth.component.GoogleSignButton
 import com.hilingual.core.designsystem.R as DesignSystemR
 
@@ -75,7 +75,8 @@ private fun AuthScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .statusBarColor(white)
+            .statusBarColor(HilingualTheme.colors.white)
+            .background(HilingualTheme.colors.white)
             .padding(paddingValues)
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp),
