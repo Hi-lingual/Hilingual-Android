@@ -16,7 +16,6 @@
 package com.hilingual.presentation.auth
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -39,7 +38,7 @@ import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.designsystem.theme.hilingualOrange
+import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.auth.component.GoogleSignButton
 import com.hilingual.core.designsystem.R as DesignSystemR
 
@@ -76,35 +75,45 @@ private fun AuthScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .statusBarColor(hilingualOrange)
-            .background(HilingualTheme.colors.hilingualOrange)
+            .statusBarColor(white)
             .padding(paddingValues)
-            .padding(horizontal = 15.dp)
+            .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(Modifier.weight(0.47f))
+        Spacer(Modifier.weight(132f))
+
+        Text(
+            text = "일기로 시작하는 일상 속 영어 습관",
+            color = HilingualTheme.colors.hilingualBlack,
+            style = HilingualTheme.typography.headSB16
+        )
+
+        Spacer(Modifier.height(4.dp))
 
         Image(
-            painter = painterResource(DesignSystemR.drawable.img_logo),
+            painter = painterResource(R.drawable.img_logo_black),
             contentDescription = null,
             modifier = Modifier
                 .size(width = 200.dp, height = 50.dp)
         )
 
-        Spacer(Modifier.weight(0.53f))
+        Spacer(Modifier.weight(56f))
 
         Image(
             painter = painterResource(DesignSystemR.drawable.img_login),
             contentDescription = null
         )
+
+        Spacer(Modifier.weight(95f))
+
         GoogleSignButton(onClick = onGoogleSignClick)
 
         Spacer(Modifier.height(16.dp))
 
         Text(
             text = "개인정보처리방침",
-            color = HilingualTheme.colors.gray100,
+            color = HilingualTheme.colors.gray400,
             style = HilingualTheme.typography.bodyR14,
             textDecoration = TextDecoration.Underline,
             modifier = Modifier.noRippleClickable(onClick = onPrivacyPolicyClick)
