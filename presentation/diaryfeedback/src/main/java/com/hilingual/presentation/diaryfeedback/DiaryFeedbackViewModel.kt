@@ -22,6 +22,7 @@ import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
@@ -36,6 +37,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -56,49 +58,39 @@ internal class DiaryFeedbackViewModel @Inject constructor(
         loadInitialData()
     }
 
-    private suspend fun requestDiaryFeedbackData() {
-        val (contentResult, feedbacksResult, recommendExpressionsResult) = coroutineScope {
-            val contentDeferred = async { diaryRepository.getDiaryContent(diaryId) }
-            val feedbacksDeferred = async { diaryRepository.getDiaryFeedbacks(diaryId) }
-            val recommendExpressionsDeferred = async { diaryRepository.getDiaryRecommendExpressions(diaryId) }
-
-            Triple(contentDeferred.await(), feedbacksDeferred.await(), recommendExpressionsDeferred.await())
-        }
-
-        if (
-            contentResult.isSuccess &&
-            feedbacksResult.isSuccess &&
-            recommendExpressionsResult.isSuccess
-        ) {
-            val diaryResult = contentResult.getOrThrow()
-            val feedbacks = feedbacksResult.getOrThrow()
-            val recommendExpressions = recommendExpressionsResult.getOrThrow()
-
-            val newUiState = DiaryFeedbackUiState(
-                isPublished = diaryResult.isPublished,
-                writtenDate = diaryResult.writtenDate,
-                diaryContent = diaryResult.toState(),
-                feedbackList = feedbacks.map { it.toState() }.toImmutableList(),
-                recommendExpressionList = recommendExpressions.map { it.toState() }.toImmutableList()
-            )
-            _uiState.value = UiState.Success(newUiState)
-        } else {
-            throw Exception()
-        }
-    }
-
     private fun loadInitialData() {
         viewModelScope.launch {
-            runCatching {
+            suspendRunCatching {
                 requestDiaryFeedbackData()
-            }.onFailure {
-                _uiState.value = UiState.Failure
+            }.onSuccess { newUiState ->
+                _uiState.update { UiState.Success(newUiState) }
+            }.onLogFailure {
+                _uiState.update { UiState.Failure }
                 _sideEffect.emit(
                     DiaryFeedbackSideEffect.ShowErrorDialog
                 )
             }
         }
     }
+
+    private suspend fun requestDiaryFeedbackData(): DiaryFeedbackUiState =
+        coroutineScope {
+            val contentDeferred = async { diaryRepository.getDiaryContent(diaryId) }
+            val feedbacksDeferred = async { diaryRepository.getDiaryFeedbacks(diaryId) }
+            val recommendExpressionsDeferred = async { diaryRepository.getDiaryRecommendExpressions(diaryId) }
+
+            val diaryResult = contentDeferred.await().getOrThrow()
+            val feedbacksResult = feedbacksDeferred.await().getOrThrow()
+            val recommendExpressionsResult = recommendExpressionsDeferred.await().getOrThrow()
+
+            DiaryFeedbackUiState(
+                isPublished = diaryResult.isPublished,
+                writtenDate = diaryResult.writtenDate,
+                diaryContent = diaryResult.toState(),
+                feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),
+                recommendExpressionList = recommendExpressionsResult.map { it.toState() }.toImmutableList()
+            )
+        }
 
     fun toggleIsPublished(isPublished: Boolean) {
         val currentState = _uiState.value
@@ -121,7 +113,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                     showToast("일기가 비공개되었어요!")
                 }
             }.onLogFailure {
-                _uiState.value = UiState.Failure
+                _uiState.update { UiState.Failure }
                 _sideEffect.emit(
                     DiaryFeedbackSideEffect.ShowErrorDialog
                 )
