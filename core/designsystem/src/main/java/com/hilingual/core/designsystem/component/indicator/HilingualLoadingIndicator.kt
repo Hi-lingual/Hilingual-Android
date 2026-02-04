@@ -22,14 +22,18 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-fun HilingualLoadingIndicator() {
+fun HilingualLoadingIndicator(
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = HilingualTheme.colors.white
+) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .background(HilingualTheme.colors.white),
+            .background(backgroundColor),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator()
