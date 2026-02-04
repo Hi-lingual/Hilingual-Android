@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
@@ -33,7 +34,8 @@ fun HilingualLoadingIndicator(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(backgroundColor),
+            .background(backgroundColor)
+            .noRippleClickable { },
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator()
