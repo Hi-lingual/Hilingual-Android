@@ -17,7 +17,6 @@ package com.hilingual.presentation.splash
 
 import android.content.Intent
 import androidx.activity.compose.LocalActivity
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -51,7 +50,6 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 internal fun SplashRoute(
     navigateToAuth: () -> Unit,
     navigateToHome: () -> Unit,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: SplashViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -72,9 +70,7 @@ internal fun SplashRoute(
         }
     }
 
-    SplashScreen(
-        animatedVisibilityScope = animatedVisibilityScope
-    )
+    SplashScreen()
 
     when (uiState.updateState) {
         UpdateState.FORCE -> {
@@ -97,9 +93,7 @@ internal fun SplashRoute(
 }
 
 @Composable
-private fun SplashScreen(
-    animatedVisibilityScope: AnimatedVisibilityScope
-) {
+private fun SplashScreen() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier

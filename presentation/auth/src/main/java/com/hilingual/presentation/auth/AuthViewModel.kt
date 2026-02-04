@@ -25,7 +25,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -37,8 +36,7 @@ class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean>
-        get() = _isLoading.asStateFlow()
+    val isLoading = _isLoading.asStateFlow()
 
     private val _navigationEvent = MutableSharedFlow<AuthSideEffect>(
         replay = 0,
