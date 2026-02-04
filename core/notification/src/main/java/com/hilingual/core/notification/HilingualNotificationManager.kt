@@ -19,7 +19,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import com.hilingual.core.designsystem.R
@@ -43,7 +42,7 @@ class HilingualNotificationManager @Inject constructor(
         val dailyChannel = NotificationChannel(
             CHANNEL_ID_DAILY,
             "일간 알림",
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_HIGH
         ).apply {
             description = "하루를 정리하는 알림"
         }
@@ -51,7 +50,7 @@ class HilingualNotificationManager @Inject constructor(
         val weeklyChannel = NotificationChannel(
             CHANNEL_ID_WEEKLY,
             "주간 알림",
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_HIGH
         ).apply {
             description = "한 주를 정리하는 알림"
         }
@@ -92,7 +91,7 @@ class HilingualNotificationManager @Inject constructor(
             .setContentTitle(title)
             .setContentText(message)
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
 
         if (pendingIntent != null) {
