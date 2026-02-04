@@ -112,7 +112,8 @@ private fun AuthScreen(
 
         Image(
             painter = painterResource(DesignSystemR.drawable.img_login),
-            contentDescription = null
+            contentDescription = null,
+            modifier = Modifier.size(width = 360.dp, height = 245.dp)
         )
 
         Spacer(Modifier.weight(95f))
