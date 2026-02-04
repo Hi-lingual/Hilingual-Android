@@ -59,28 +59,10 @@ class HilingualNotificationManager @Inject constructor(
         notificationManager?.createNotificationChannels(listOf(dailyChannel, weeklyChannel))
     }
 
-    fun sendDailyNotification() {
-        sendNotification(
-            channelId = CHANNEL_ID_DAILY,
-            notificationId = NOTIFICATION_ID_DAILY,
-            title = "하루를 정리해 볼 시간 ✏️",
-            message = "오늘 하루를 돌아보며 떠오르는 생각들을 자유롭게 적어보세요."
-        )
-    }
-
-    fun sendWeeklyNotification() {
-        sendNotification(
-            channelId = CHANNEL_ID_WEEKLY,
-            notificationId = NOTIFICATION_ID_WEEKLY,
-            title = "한 주를 정리해보는 시간 ✍️",
-            message = "특별한 주제가 없어도 괜찮아요. 지금 생각나는 걸 써보세요."
-        )
-    }
-
     fun sendReminderNotification(channelId: String?, title: String, message: String) {
         // 채널 ID가 없을 경우 기본값으로 데일리 채널 사용
         val targetChannelId = channelId ?: CHANNEL_ID_DAILY
-        sendNotification(
+        showReminderNotification(
             channelId = targetChannelId,
             notificationId = System.currentTimeMillis().toInt(),
             title = title,
@@ -88,20 +70,18 @@ class HilingualNotificationManager @Inject constructor(
         )
     }
 
-    private fun sendNotification(
+    private fun showReminderNotification(
         channelId: String,
         notificationId: Int,
         title: String,
         message: String
     ) {
-        val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
-        }
+        val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
 
         val pendingIntent = launchIntent?.let {
             PendingIntent.getActivity(
                 context,
-                0,
+                notificationId,
                 it,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
@@ -131,8 +111,5 @@ class HilingualNotificationManager @Inject constructor(
     companion object {
         private const val CHANNEL_ID_DAILY = "channel_daily_notification"
         private const val CHANNEL_ID_WEEKLY = "channel_weekly_notification"
-
-        private const val NOTIFICATION_ID_DAILY = 1001
-        private const val NOTIFICATION_ID_WEEKLY = 1002
     }
 }
