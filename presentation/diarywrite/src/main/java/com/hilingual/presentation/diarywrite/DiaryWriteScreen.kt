@@ -72,6 +72,7 @@ import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.common.util.toKoreanFullDate
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualLongTextField
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -542,7 +543,7 @@ private fun DateText(
     val selectedDate = selectedDateProvider()
 
     val formattedDate = remember(selectedDate) {
-        selectedDate.format(DATE_FORMATTER)
+        selectedDate.toKoreanFullDate()
     }
 
     Text(
@@ -551,9 +552,6 @@ private fun DateText(
         color = HilingualTheme.colors.black
     )
 }
-
-private val DATE_FORMATTER: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("M월 d일 EEEE", Locale.KOREAN)
 
 private fun createTempImageFile(context: Context): Pair<Uri, File> {
     val imageFile = File.createTempFile("camera_", ".jpg", context.cacheDir)
