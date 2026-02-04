@@ -77,6 +77,17 @@ class HilingualNotificationManager @Inject constructor(
         )
     }
 
+    fun sendReminderNotification(channelId: String?, title: String, message: String) {
+        // 채널 ID가 없을 경우 기본값으로 데일리 채널 사용
+        val targetChannelId = channelId ?: CHANNEL_ID_DAILY
+        sendNotification(
+            channelId = targetChannelId,
+            notificationId = System.currentTimeMillis().toInt(),
+            title = title,
+            message = message
+        )
+    }
+
     private fun sendNotification(
         channelId: String,
         notificationId: Int,
@@ -84,7 +95,7 @@ class HilingualNotificationManager @Inject constructor(
         message: String
     ) {
         val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
 
         val pendingIntent = launchIntent?.let {
