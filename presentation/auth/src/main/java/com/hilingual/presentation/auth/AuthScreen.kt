@@ -17,7 +17,6 @@ package com.hilingual.presentation.auth
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -25,7 +24,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,6 +40,7 @@ import com.hilingual.core.common.extension.collectLatestSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.auth.component.GoogleSignButton
 import com.hilingual.core.designsystem.R as DesignSystemR
@@ -70,7 +69,9 @@ internal fun AuthRoute(
     )
 
     if (isLoading) {
-        LoadingIndicator()
+        HilingualLoadingIndicator(
+            backgroundColor = HilingualTheme.colors.dim1
+        )
     }
 }
 
@@ -104,8 +105,7 @@ private fun AuthScreen(
         Image(
             painter = painterResource(R.drawable.img_logo_black),
             contentDescription = null,
-            modifier = Modifier
-                .size(width = 200.dp, height = 50.dp)
+            modifier = Modifier.size(width = 200.dp, height = 50.dp)
         )
 
         Spacer(Modifier.height(56.dp))
@@ -128,17 +128,5 @@ private fun AuthScreen(
             textDecoration = TextDecoration.Underline,
             modifier = Modifier.noRippleClickable(onClick = onPrivacyPolicyClick)
         )
-    }
-}
-
-@Composable
-private fun LoadingIndicator() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(HilingualTheme.colors.dim1),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
     }
 }
