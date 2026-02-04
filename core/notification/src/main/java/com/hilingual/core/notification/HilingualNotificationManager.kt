@@ -59,7 +59,6 @@ class HilingualNotificationManager @Inject constructor(
     }
 
     fun sendReminderNotification(channelId: String?, title: String, message: String) {
-        // 채널 ID가 없을 경우 기본값으로 데일리 채널 사용
         val targetChannelId = channelId ?: CHANNEL_ID_DAILY
         showReminderNotification(
             channelId = targetChannelId,
