@@ -15,7 +15,7 @@ versionCode = "2020000"
 versionName = "2.2.0"
 
 # Kotlin
-kotlin = "2.3.0"
+kotlin = "2.3.10"
 kotlinxImmutable = "0.4.0"
 ksp = "2.3.5"
 
