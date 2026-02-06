@@ -21,17 +21,22 @@ import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.auth.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
 
     private val _navigationEvent = MutableSharedFlow<AuthSideEffect>(
         replay = 0,
@@ -41,7 +46,11 @@ class AuthViewModel @Inject constructor(
     val navigationEvent = _navigationEvent.asSharedFlow()
 
     fun onGoogleSignClick(context: Context) {
+        if (_isLoading.value) return
+
         viewModelScope.launch {
+            setIsLoading(true)
+
             authRepository.signInWithGoogle(context)
                 .onSuccess { idToken ->
                     Timber.d("Google ID Token: $idToken")
@@ -57,7 +66,13 @@ class AuthViewModel @Inject constructor(
                         .onLogFailure { }
                 }
                 .onLogFailure { }
+
+            setIsLoading(false)
         }
+    }
+
+    private fun setIsLoading(isLoading: Boolean) {
+        _isLoading.update { isLoading }
     }
 }
 

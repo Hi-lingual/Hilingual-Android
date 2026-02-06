@@ -49,8 +49,7 @@ fun NavGraphBuilder.splashNavGraph(
     ) {
         SplashRoute(
             navigateToAuth = navigateToAuth,
-            navigateToHome = navigateToHome,
-            animatedVisibilityScope = this
+            navigateToHome = navigateToHome
         )
     }
 }

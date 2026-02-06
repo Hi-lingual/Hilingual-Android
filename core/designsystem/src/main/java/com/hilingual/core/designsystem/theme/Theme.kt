@@ -16,7 +16,6 @@
 package com.hilingual.core.designsystem.theme
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -24,7 +23,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.hilingual.core.common.provider.LocalSharedTransitionScope
 
 private val LocalHilingualColors = staticCompositionLocalOf<HilingualColors> {
     error("No HilingualColors provided")
@@ -75,13 +73,7 @@ fun HilingualTheme(content: @Composable () -> Unit) {
     ProvideHilingualColorsAndTypography(colors, typography) {
         MaterialTheme(
             colorScheme = colorScheme,
-            content = {
-                SharedTransitionLayout {
-                    CompositionLocalProvider(LocalSharedTransitionScope provides this) {
-                        content()
-                    }
-                }
-            }
+            content = content
         )
     }
 }

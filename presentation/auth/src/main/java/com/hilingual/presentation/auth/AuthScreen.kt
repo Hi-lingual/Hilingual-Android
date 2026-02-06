@@ -15,10 +15,6 @@
  */
 package com.hilingual.presentation.auth
 
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -30,29 +26,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectLatestSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
-import com.hilingual.core.common.provider.LocalSharedTransitionScope
+import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.designsystem.theme.hilingualOrange
 import com.hilingual.presentation.auth.component.GoogleSignButton
-import kotlinx.coroutines.delay
 import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
@@ -60,9 +50,9 @@ internal fun AuthRoute(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
     navigateToOnboarding: () -> Unit,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     viewModel.navigationEvent.collectLatestSideEffect { event ->
@@ -75,82 +65,69 @@ internal fun AuthRoute(
     AuthScreen(
         paddingValues = paddingValues,
         onGoogleSignClick = { viewModel.onGoogleSignClick(context) },
-        onPrivacyPolicyClick = { context.launchCustomTabs(UrlConstant.PRIVACY_POLICY) },
-        animatedVisibilityScope = animatedVisibilityScope
+        onPrivacyPolicyClick = { context.launchCustomTabs(UrlConstant.PRIVACY_POLICY) }
     )
+
+    if (isLoading) {
+        HilingualLoadingIndicator(
+            backgroundColor = HilingualTheme.colors.dim1
+        )
+    }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun AuthScreen(
     paddingValues: PaddingValues,
     onGoogleSignClick: () -> Unit,
     onPrivacyPolicyClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    modifier: Modifier = Modifier
 ) {
-    var visible by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        delay(500)
-        visible = true
-    }
-
-    val alpha by animateFloatAsState(
-        targetValue = if (visible) 1f else 0f,
-        animationSpec = tween(durationMillis = 400),
-        label = "auth_alpha"
-    )
-
     Column(
         modifier = modifier
             .fillMaxSize()
-            .statusBarColor(hilingualOrange)
-            .background(HilingualTheme.colors.hilingualOrange)
+            .statusBarColor(HilingualTheme.colors.white)
+            .background(HilingualTheme.colors.white)
             .padding(paddingValues)
-            .padding(horizontal = 15.dp)
+            .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(Modifier.weight(0.47f))
+        Spacer(Modifier.weight(132f))
 
-        with(LocalSharedTransitionScope.current) {
-            Image(
-                painter = painterResource(DesignSystemR.drawable.img_logo),
-                contentDescription = null,
-                modifier = Modifier
-                    .sharedElement(
-                        sharedContentState = rememberSharedContentState(key = "logo"),
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        boundsTransform = { _, _ ->
-                            tween(durationMillis = 400)
-                        }
-                    )
-                    .size(width = 200.dp, height = 50.dp)
-            )
-        }
+        Text(
+            text = "일기로 시작하는 일상 속 영어 습관",
+            color = HilingualTheme.colors.hilingualBlack,
+            style = HilingualTheme.typography.headSB16
+        )
 
-        Spacer(Modifier.weight(0.53f))
+        Spacer(Modifier.height(4.dp))
 
-        Column(
-            modifier = Modifier.graphicsLayer { this.alpha = alpha },
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                painter = painterResource(DesignSystemR.drawable.img_login),
-                contentDescription = null
-            )
-            GoogleSignButton(onClick = onGoogleSignClick)
+        Image(
+            painter = painterResource(R.drawable.img_logo_black),
+            contentDescription = null,
+            modifier = Modifier.size(width = 200.dp, height = 50.dp)
+        )
 
-            Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(56.dp))
 
-            Text(
-                text = "개인정보처리방침",
-                color = HilingualTheme.colors.gray100,
-                style = HilingualTheme.typography.bodyR14,
-                textDecoration = TextDecoration.Underline,
-                modifier = Modifier.noRippleClickable(onClick = onPrivacyPolicyClick)
-            )
-        }
+        Image(
+            painter = painterResource(DesignSystemR.drawable.img_login),
+            contentDescription = null,
+            modifier = Modifier.size(width = 360.dp, height = 245.dp)
+        )
+
+        Spacer(Modifier.weight(95f))
+
+        GoogleSignButton(onClick = onGoogleSignClick)
+
+        Spacer(Modifier.height(16.dp))
+
+        Text(
+            text = "개인정보처리방침",
+            color = HilingualTheme.colors.gray400,
+            style = HilingualTheme.typography.bodyR14,
+            textDecoration = TextDecoration.Underline,
+            modifier = Modifier.noRippleClickable(onClick = onPrivacyPolicyClick)
+        )
     }
 }

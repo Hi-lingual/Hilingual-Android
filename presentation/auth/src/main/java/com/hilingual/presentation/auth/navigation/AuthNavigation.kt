@@ -45,8 +45,7 @@ fun NavGraphBuilder.authNavGraph(
         AuthRoute(
             paddingValues = paddingValues,
             navigateToHome = navigateToHome,
-            navigateToOnboarding = navigateToOnboarding,
-            animatedVisibilityScope = this
+            navigateToOnboarding = navigateToOnboarding
         )
     }
 }
