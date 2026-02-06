@@ -37,7 +37,7 @@ fun formatRelativeTime(minutesAgo: Long): String {
             val pastTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(minutesAgo)
             val instant = Instant.ofEpochMilli(pastTime)
             val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
-            DateFormatters.KOREAN_SHORT_DATE.format(localDateTime)
+            localDateTime.toKoreanShortDate()
         }
     }
 }
