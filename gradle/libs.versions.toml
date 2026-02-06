@@ -15,7 +15,7 @@ versionCode = "2020000"
 versionName = "2.2.0"
 
 # Kotlin
-kotlin = "2.3.0"
+kotlin = "2.3.10"
 kotlinxImmutable = "0.4.0"
 ksp = "2.3.5"
 
@@ -50,7 +50,7 @@ mockk = "1.14.9"
 okhttp = "5.3.2"
 retrofit = "3.0.0"
 kotlinxSerializationJson = "1.10.0"
-daggerHilt = "2.59"
+daggerHilt = "2.59.1"
 hiltNavigationCompose = "1.3.0"
 hiltWork = "1.3.0"
 coil = "3.3.0"
@@ -78,7 +78,7 @@ runner = "1.7.0"
 
 # AboutLibraries
 aboutLibraries = "14.0.0-b02"
-amplitude = "1.23.1"
+amplitude = "1.24.0"
 
 [libraries]
 # Analytics
