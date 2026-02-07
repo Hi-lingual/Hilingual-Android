@@ -150,7 +150,7 @@ internal fun MainScreen(
                 authNavGraph(
                     paddingValues = innerPadding,
                     navigateToHome = appState::navigateToHome,
-                    navigateToOnboarding = appState::navigateToSignUp
+                    navigateToSignUp = appState::navigateToSignUp
                 )
 
                 signUpGraph(

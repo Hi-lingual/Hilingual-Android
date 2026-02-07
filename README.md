@@ -65,7 +65,7 @@ graph TD
         home["home"]
         mypage["mypage"]
         notification["notification"]
-        onboarding["onboarding"]
+        signup["signup"]
         splash["splash"]
         voca["voca"]
     end
@@ -100,7 +100,7 @@ graph TD
     mypage --> data_user
     mypage --> data_auth
     notification --> data_user
-    onboarding --> data_user
+    signup --> data_user
     splash --> data_auth
     splash --> data_user
     splash --> data_config

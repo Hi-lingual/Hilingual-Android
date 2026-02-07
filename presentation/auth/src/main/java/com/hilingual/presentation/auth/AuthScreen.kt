@@ -49,7 +49,7 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 internal fun AuthRoute(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
-    navigateToOnboarding: () -> Unit,
+    navigateToSignUp: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
@@ -58,7 +58,7 @@ internal fun AuthRoute(
     viewModel.navigationEvent.collectLatestSideEffect { event ->
         when (event) {
             is AuthSideEffect.NavigateToHome -> navigateToHome()
-            is AuthSideEffect.NavigateToOnboarding -> navigateToOnboarding()
+            is AuthSideEffect.NavigateToSignUp -> navigateToSignUp()
         }
     }
 

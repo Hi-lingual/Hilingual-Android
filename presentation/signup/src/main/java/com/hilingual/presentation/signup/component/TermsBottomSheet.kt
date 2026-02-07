@@ -75,7 +75,7 @@ private val terms = persistentListOf(
     Term(
         text = "개인정보 수집 및 이용 동의 (필수)",
         type = TermType.REQUIRED,
-        link = UrlConstant.ONBOARDING_PRIVACY_POLICY
+        link = UrlConstant.SIGNUP_PRIVACY_POLICY
     ),
     Term(
         text = "앱 내 광고성 정보 수신 동의 (선택)",
