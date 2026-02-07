@@ -100,8 +100,6 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import java.io.File
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
