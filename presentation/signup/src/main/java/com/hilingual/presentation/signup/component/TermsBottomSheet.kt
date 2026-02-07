@@ -48,7 +48,7 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualBasicBottomSheet
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.presentation.onboarding.R
+import com.hilingual.presentation.signup.R
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentMap
 
