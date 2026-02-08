@@ -1,8 +1,8 @@
 package com.hilingual.data.auth.datasourceimpl
 
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Build
+import com.hilingual.core.common.extension.appVersionName
 import com.hilingual.data.auth.datasource.SystemDataSource
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -18,18 +18,7 @@ internal class SystemDataSourceImpl @Inject constructor(
 
     override fun getOsVersion(): String = Build.VERSION.RELEASE
 
-    override fun getAppVersion(): String {
-        val packageManager = context.packageManager
-        val packageName = context.packageName
-        
-        val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
-        } else {
-            packageManager.getPackageInfo(packageName, 0)
-        }
-        
-        return packageInfo.versionName ?: "2.0.0"
-    }
+    override fun getAppVersion(): String = context.appVersionName
 
     override fun getProvider(): String = "GOOGLE"
 

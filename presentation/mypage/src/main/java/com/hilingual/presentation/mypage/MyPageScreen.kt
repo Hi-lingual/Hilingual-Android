@@ -39,12 +39,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.constant.UrlConstant
+import com.hilingual.core.common.extension.appVersionName
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
@@ -191,7 +192,7 @@ private fun MyPageScreen(
                 title = "버전 정보",
                 trailingContent = {
                     Text(
-                        text = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "",
+                        text = context.appVersionName,
                         color = HilingualTheme.colors.gray400,
                         style = HilingualTheme.typography.bodyR14,
                         modifier = Modifier.padding(end = 4.dp)
