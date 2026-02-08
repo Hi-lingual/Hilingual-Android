@@ -57,7 +57,11 @@ internal class SplashViewModel @Inject constructor(
     )
     val sideEffect = _sideEffect.asSharedFlow()
 
-    fun checkAppVersion() {
+    init {
+        checkAppVersion()
+    }
+
+    private fun checkAppVersion() {
         val currentVersion = AppVersion(deviceInfoProvider.getAppVersion())
 
         viewModelScope.launch {

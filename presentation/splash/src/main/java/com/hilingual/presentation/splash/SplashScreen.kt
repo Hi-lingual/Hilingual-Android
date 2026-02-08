@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,10 +55,6 @@ internal fun SplashRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val activity = LocalActivity.current
-
-    LaunchedEffect(Unit) {
-        viewModel.checkAppVersion()
-    }
 
     viewModel.sideEffect.collectLatestSideEffect { event ->
         when (event) {
