@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hilingual.core.common.extension.appVersionName
 import com.hilingual.core.common.extension.collectLatestSideEffect
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.designsystem.component.dialog.OneButtonDialog
@@ -59,7 +58,7 @@ internal fun SplashRoute(
     val activity = LocalActivity.current
 
     LaunchedEffect(Unit) {
-        viewModel.checkAppVersion(context.appVersionName)
+        viewModel.checkAppVersion()
     }
 
     viewModel.sideEffect.collectLatestSideEffect { event ->

@@ -16,10 +16,12 @@
 package com.hilingual.presentation.mypage
 
 import androidx.compose.runtime.Immutable
+import com.hilingual.core.common.constant.STABLE_VERSION
 
 @Immutable
 internal data class MyPageUiState(
     val profileImageUrl: String = "",
     val profileNickname: String = "",
-    val profileProvider: String = ""
+    val profileProvider: String = "",
+    val appVersion: String = STABLE_VERSION
 )

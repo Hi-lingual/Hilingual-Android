@@ -18,6 +18,7 @@ package com.hilingual.presentation.splash
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.provider.DeviceInfoProvider
 import com.hilingual.data.auth.repository.AuthRepository
 import com.hilingual.data.config.model.AppVersion
 import com.hilingual.data.config.model.UpdateState
@@ -42,7 +43,8 @@ import javax.inject.Inject
 internal class SplashViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
-    private val configRepository: ConfigRepository
+    private val configRepository: ConfigRepository,
+    private val deviceInfoProvider: DeviceInfoProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SplashUiState())
@@ -55,8 +57,8 @@ internal class SplashViewModel @Inject constructor(
     )
     val sideEffect = _sideEffect.asSharedFlow()
 
-    fun checkAppVersion(currentVersionName: String) {
-        val currentVersion = AppVersion(currentVersionName)
+    fun checkAppVersion() {
+        val currentVersion = AppVersion(deviceInfoProvider.getAppVersion())
 
         viewModelScope.launch {
             configRepository.getAppVersionInfo()
