@@ -3,7 +3,7 @@ package com.hilingual.app
 import android.content.Context
 import android.os.Build
 import com.hilingual.core.common.extension.appVersionName
-import com.hilingual.core.common.provider.DeviceInfoProvider
+import com.hilingual.core.common.app.DeviceInfoProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 

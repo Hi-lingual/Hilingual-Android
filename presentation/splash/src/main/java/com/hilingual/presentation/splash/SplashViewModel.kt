@@ -18,7 +18,7 @@ package com.hilingual.presentation.splash
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
-import com.hilingual.core.common.provider.DeviceInfoProvider
+import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.data.auth.repository.AuthRepository
 import com.hilingual.data.config.model.AppVersion
 import com.hilingual.data.config.model.UpdateState

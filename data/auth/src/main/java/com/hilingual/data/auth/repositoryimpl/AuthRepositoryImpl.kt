@@ -16,7 +16,7 @@
 package com.hilingual.data.auth.repositoryimpl
 
 import android.content.Context
-import com.hilingual.core.common.provider.DeviceInfoProvider
+import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.localstorage.TokenManager
 import com.hilingual.core.localstorage.UserInfoManager

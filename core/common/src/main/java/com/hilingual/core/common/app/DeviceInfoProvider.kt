@@ -1,4 +1,4 @@
-package com.hilingual.core.common.provider
+package com.hilingual.core.common.app
 
 interface DeviceInfoProvider {
     fun getDeviceName(): String
