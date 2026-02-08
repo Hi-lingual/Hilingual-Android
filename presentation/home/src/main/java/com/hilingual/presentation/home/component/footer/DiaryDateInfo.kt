@@ -26,13 +26,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.common.util.toKoreanFullDate
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
-
-private val DATE_FORMATTER: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("M월 d일 EEEE", Locale.KOREAN)
 
 @Composable
 internal fun DiaryDateInfo(
@@ -42,7 +38,7 @@ internal fun DiaryDateInfo(
     modifier: Modifier = Modifier
 ) {
     val formattedDate = remember(selectedDate) {
-        selectedDate.format(DATE_FORMATTER)
+        selectedDate.toKoreanFullDate()
     }
 
     val isFuture = remember(selectedDate) {

@@ -17,6 +17,7 @@ package com.hilingual.data.diary.repositoryimpl
 
 import android.net.Uri
 import com.hilingual.core.common.util.suspendRunCatching
+import com.hilingual.core.common.util.toIsoDate
 import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
 import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.DiaryContentModel
@@ -29,10 +30,7 @@ import com.hilingual.data.diary.model.toModel
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.presigned.repository.FileUploaderRepository
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
-
-private val DATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 
 internal class DiaryRepositoryImpl @Inject constructor(
     private val diaryRemoteDataSource: DiaryRemoteDataSource,
@@ -82,7 +80,7 @@ internal class DiaryRepositoryImpl @Inject constructor(
 
         diaryRemoteDataSource.postDiaryFeedbackCreate(
             originalText = originalText,
-            date = date.format(DATE_FORMATTER),
+            date = date.toIsoDate(),
             fileKey = fileKey
         ).data!!.toModel()
     }
