@@ -1,4 +1,4 @@
-package com.hilingual.provider
+package com.hilingual.app
 
 import android.content.Context
 import android.os.Build
@@ -7,7 +7,7 @@ import com.hilingual.core.common.provider.DeviceInfoProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-internal class AndroidDeviceInfoProvider @Inject constructor(
+internal class DeviceInfoProviderImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : DeviceInfoProvider {
 
