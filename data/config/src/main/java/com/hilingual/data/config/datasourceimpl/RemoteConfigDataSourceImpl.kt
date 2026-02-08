@@ -31,9 +31,7 @@ internal class RemoteConfigDataSourceImpl @Inject constructor(
 ) : ConfigRemoteDataSource {
 
     override suspend fun getAppVersionInfo(): AppVersionInfo {
-        runCatching {
-            remoteConfig.fetchAndActivate().await()
-        }.onLogFailure { }
+        remoteConfig.fetchAndActivate().await()
 
         val minForceVersionStr = remoteConfig.getString(KEY_MIN_FORCE_VERSION)
             .takeIf { it.isNotBlank() } ?: DEFAULT_VERSION
