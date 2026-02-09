@@ -24,6 +24,7 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.localstorage.DiaryTempRepository
 import com.hilingual.data.diary.repository.DiaryRepository
+import com.hilingual.data.onboarding.repository.OnboardingRepository
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.home.model.DateUiModel
 import com.hilingual.presentation.home.model.toState
@@ -50,7 +51,8 @@ class HomeViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val calendarRepository: CalendarRepository,
     private val diaryRepository: DiaryRepository,
-    private val diaryTempRepository: DiaryTempRepository
+    private val diaryTempRepository: DiaryTempRepository,
+    private val onboardingRepository: OnboardingRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Loading)
@@ -330,14 +332,14 @@ class HomeViewModel @Inject constructor(
 
     private fun checkOnboardingCompleted() {
         viewModelScope.launch {
-            userRepository.getIsHomeOnboardingCompleted()
+            onboardingRepository.getIsHomeOnboardingCompleted()
                 .onSuccess { isCompleted ->
                     if (!isCompleted) {
                         emitOnboardingSideEffect()
                     }
                 }.onLogFailure { }
 
-            userRepository.updateIsHomeOnboardingCompleted(true)
+            onboardingRepository.updateIsHomeOnboardingCompleted(true)
         }
     }
 
