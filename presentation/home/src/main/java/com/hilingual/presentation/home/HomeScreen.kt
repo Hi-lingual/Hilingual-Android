@@ -39,7 +39,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -79,6 +81,8 @@ import com.hilingual.presentation.home.component.footer.DiaryTimeInfo
 import com.hilingual.presentation.home.component.footer.HomeDropDownMenu
 import com.hilingual.presentation.home.component.footer.TodayTopic
 import com.hilingual.presentation.home.component.footer.WriteDiaryButton
+import com.hilingual.presentation.home.component.onboarding.HomeOnboardingBottomSheet
+import com.hilingual.presentation.home.component.onboarding.HomeOnboardingContent
 import com.hilingual.presentation.home.type.DiaryCardState
 import java.time.LocalDate
 import java.time.YearMonth
@@ -100,6 +104,8 @@ internal fun HomeRoute(
     val tracker = LocalTracker.current
     val context = LocalContext.current
     val isSuccess = uiState is UiState.Success
+
+    var isOnboardingVisible by remember { mutableStateOf(false) }
 
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -134,6 +140,10 @@ internal fun HomeRoute(
 
             is HomeSideEffect.RequestNotificationPermission -> {
                 notificationPermissionLauncher.launch(sideEffect.permission)
+            }
+
+            is HomeSideEffect.ShowOnboarding -> {
+                isOnboardingVisible = true
             }
         }
     }
@@ -193,6 +203,15 @@ internal fun HomeRoute(
         }
 
         else -> {}
+    }
+
+    HomeOnboardingBottomSheet(
+        isVisible = isOnboardingVisible,
+        onCloseButtonClick = { isOnboardingVisible = false }
+    ) {
+        HomeOnboardingContent(
+            onStartButtonClick = { isOnboardingVisible = false }
+        )
     }
 }
 
@@ -400,6 +419,7 @@ private fun CheckNotificationPermission(
                     Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED
             }
+
             else -> true
         }
         onCheck(isGranted, requiresPermission)

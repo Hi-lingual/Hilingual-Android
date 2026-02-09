@@ -88,6 +88,7 @@ internal class SignUpViewModel @Inject constructor(
             userRepository.postUserProfile(userProfile)
                 .onSuccess {
                     userRepository.saveRegisterStatus(true)
+                    userRepository.updateIsHomeOnboardingCompleted(false)
                     _sideEffect.emit(SignUpSideEffect.NavigateToHome)
                 }
                 .onLogFailure {
