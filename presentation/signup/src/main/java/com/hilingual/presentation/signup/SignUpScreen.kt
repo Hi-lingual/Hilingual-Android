@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.onboarding
+package com.hilingual.presentation.signup
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -54,13 +54,13 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.ui.component.bottomsheet.HilingualProfileImageBottomSheet
 import com.hilingual.core.ui.component.picker.ProfileImagePicker
-import com.hilingual.presentation.onboarding.component.TermsBottomSheet
+import com.hilingual.presentation.signup.component.TermsBottomSheet
 
 @Composable
-internal fun OnboardingRoute(
+internal fun SignUpRoute(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
-    viewModel: OnboardingViewModel = hiltViewModel()
+    viewModel: SignUpViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
@@ -80,14 +80,14 @@ internal fun OnboardingRoute(
 
     viewModel.sideEffect.collectSideEffect {
         when (it) {
-            is OnboardingSideEffect.NavigateToHome -> navigateToHome()
-            is OnboardingSideEffect.ShowRetryDialog -> {
+            is SignUpSideEffect.NavigateToHome -> navigateToHome()
+            is SignUpSideEffect.ShowRetryDialog -> {
                 dialogTrigger.show(onClick = it.onRetry)
             }
         }
     }
 
-    OnboardingScreen(
+    SignUpScreen(
         paddingValues = paddingValues,
         nickname = { uiState.nickname },
         onNicknameChanged = {
@@ -105,7 +105,7 @@ internal fun OnboardingRoute(
 }
 
 @Composable
-private fun OnboardingScreen(
+private fun SignUpScreen(
     paddingValues: PaddingValues,
     nickname: () -> String,
     onNicknameChanged: (String) -> Unit,
@@ -221,9 +221,9 @@ private fun OnboardingScreen(
 
 @Preview
 @Composable
-private fun OnboardingScreenPreview() {
+private fun SignUpScreenPreview() {
     HilingualTheme {
-        OnboardingScreen(
+        SignUpScreen(
             paddingValues = PaddingValues(0.dp),
             nickname = { "" },
             onNicknameChanged = {},

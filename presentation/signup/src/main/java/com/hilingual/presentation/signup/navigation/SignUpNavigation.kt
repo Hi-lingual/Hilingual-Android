@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.onboarding.navigation
+package com.hilingual.presentation.signup.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
@@ -21,24 +21,24 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.hilingual.core.navigation.Route
-import com.hilingual.presentation.onboarding.OnboardingRoute
+import com.hilingual.presentation.signup.SignUpRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object Onboarding : Route
+data object SignUp : Route
 
-fun NavController.navigateToOnboarding(
+fun NavController.navigateToSignUp(
     navOptions: NavOptions? = null
 ) {
-    navigate(route = Onboarding, navOptions = navOptions)
+    navigate(route = SignUp, navOptions = navOptions)
 }
 
-fun NavGraphBuilder.onboardingGraph(
+fun NavGraphBuilder.signUpGraph(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit
 ) {
-    composable<Onboarding> {
-        OnboardingRoute(
+    composable<SignUp> {
+        SignUpRoute(
             paddingValues = paddingValues,
             navigateToHome = navigateToHome
         )

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.onboarding
+package com.hilingual.presentation.signup
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
@@ -23,6 +23,7 @@ import com.hilingual.data.user.model.user.NicknameValidationResult
 import com.hilingual.data.user.model.user.UserProfileModel
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,20 +38,19 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 private val specialCharRegex = Regex("[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]")
 
 @HiltViewModel
-internal class OnboardingViewModel @Inject constructor(
+internal class SignUpViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(OnboardingUiState())
-    val uiState: StateFlow<OnboardingUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(SignUpUiState())
+    val uiState: StateFlow<SignUpUiState> = _uiState.asStateFlow()
 
-    private val _sideEffect = MutableSharedFlow<OnboardingSideEffect>()
-    val sideEffect: SharedFlow<OnboardingSideEffect> = _sideEffect.asSharedFlow()
+    private val _sideEffect = MutableSharedFlow<SignUpSideEffect>()
+    val sideEffect: SharedFlow<SignUpSideEffect> = _sideEffect.asSharedFlow()
 
     init {
         @OptIn(FlowPreview::class)
@@ -88,11 +88,17 @@ internal class OnboardingViewModel @Inject constructor(
             userRepository.postUserProfile(userProfile)
                 .onSuccess {
                     userRepository.saveRegisterStatus(true)
-                    _sideEffect.emit(OnboardingSideEffect.NavigateToHome)
+                    _sideEffect.emit(SignUpSideEffect.NavigateToHome)
                 }
                 .onLogFailure {
                     _uiState.update { it.copy(isLoading = false) }
-                    _sideEffect.emit(OnboardingSideEffect.ShowRetryDialog { onRegisterClick(nickname, isMarketingAgreed, imageUri) })
+                    _sideEffect.emit(SignUpSideEffect.ShowRetryDialog {
+                        onRegisterClick(
+                            nickname,
+                            isMarketingAgreed,
+                            imageUri
+                        )
+                    })
                 }
         }
     }
@@ -139,6 +145,7 @@ internal class OnboardingViewModel @Inject constructor(
                                 )
                             }
                         }
+
                         NicknameValidationResult.DUPLICATE -> {
                             _uiState.update {
                                 it.copy(
@@ -147,6 +154,7 @@ internal class OnboardingViewModel @Inject constructor(
                                 )
                             }
                         }
+
                         NicknameValidationResult.FORBIDDEN_WORD -> {
                             _uiState.update {
                                 it.copy(
@@ -163,13 +171,13 @@ internal class OnboardingViewModel @Inject constructor(
                             isNicknameValid = false
                         )
                     }
-                    _sideEffect.emit(OnboardingSideEffect.ShowRetryDialog { validateNickname(nickname) })
+                    _sideEffect.emit(SignUpSideEffect.ShowRetryDialog { validateNickname(nickname) })
                 }
         }
     }
 }
 
-sealed interface OnboardingSideEffect {
-    data object NavigateToHome : OnboardingSideEffect
-    data class ShowRetryDialog(val onRetry: () -> Unit) : OnboardingSideEffect
+sealed interface SignUpSideEffect {
+    data object NavigateToHome : SignUpSideEffect
+    data class ShowRetryDialog(val onRetry: () -> Unit) : SignUpSideEffect
 }

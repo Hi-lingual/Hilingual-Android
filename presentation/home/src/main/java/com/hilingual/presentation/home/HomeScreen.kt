@@ -16,6 +16,7 @@
 package com.hilingual.presentation.home
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -38,6 +39,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -97,6 +99,7 @@ internal fun HomeRoute(
     val messageController = LocalMessageController.current
     val tracker = LocalTracker.current
     val context = LocalContext.current
+    val isSuccess = uiState is UiState.Success
 
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -140,19 +143,11 @@ internal fun HomeRoute(
         tracker.logEvent(trigger = TriggerType.VIEW, page = HOME, event = "page")
     }
 
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-        val permissionState = ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.POST_NOTIFICATIONS
-        )
-        val isGranted = permissionState == PackageManager.PERMISSION_GRANTED
-        val requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-
-        viewModel.handleNotificationPermission(
-            isGranted = isGranted,
-            requiresPermission = requiresPermission
-        )
-    }
+    CheckNotificationPermission(
+        context = context,
+        isDataLoaded = isSuccess,
+        onCheck = viewModel::handleNotificationPermission
+    )
 
     when (val state = uiState) {
         is UiState.Loading -> HilingualLoadingIndicator()
@@ -386,6 +381,36 @@ private fun HomeScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun CheckNotificationPermission(
+    context: Context,
+    isDataLoaded: Boolean,
+    onCheck: (isGranted: Boolean, requiresPermission: Boolean) -> Unit
+) {
+    val requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+
+    fun checkPermission() {
+        val isGranted = when {
+            requiresPermission -> {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            }
+            else -> true
+        }
+        onCheck(isGranted, requiresPermission)
+    }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        checkPermission()
+    }
+
+    LaunchedEffect(isDataLoaded) {
+        if (isDataLoaded) checkPermission()
     }
 }
 

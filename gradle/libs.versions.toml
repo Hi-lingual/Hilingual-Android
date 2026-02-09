@@ -63,7 +63,7 @@ balloonCompose = "1.7.3"
 richeditorCompose = "1.0.0-rc13"
 
 # Firebase
-firebaseBom = "34.8.0"
+firebaseBom = "34.9.0"
 firebaseCrashlyticsPlugin = "3.0.6"
 
 # ML Kit
@@ -152,6 +152,7 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-remote-config = { group = "com.google.firebase", name = "firebase-config" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
 
 # Dependency Injection
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "daggerHilt" }

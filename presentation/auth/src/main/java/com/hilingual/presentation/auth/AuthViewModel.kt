@@ -59,7 +59,7 @@ class AuthViewModel @Inject constructor(
                             val sideEffect = if (authResult.registerStatus) {
                                 AuthSideEffect.NavigateToHome
                             } else {
-                                AuthSideEffect.NavigateToOnboarding
+                                AuthSideEffect.NavigateToSignUp
                             }
                             _navigationEvent.tryEmit(sideEffect)
                         }
@@ -78,5 +78,5 @@ class AuthViewModel @Inject constructor(
 
 sealed interface AuthSideEffect {
     data object NavigateToHome : AuthSideEffect
-    data object NavigateToOnboarding : AuthSideEffect
+    data object NavigateToSignUp : AuthSideEffect
 }
