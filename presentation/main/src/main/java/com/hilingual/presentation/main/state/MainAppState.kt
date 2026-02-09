@@ -39,6 +39,7 @@ import com.hilingual.presentation.main.MainTab
 import com.hilingual.presentation.mypage.navigation.navigateToMyPage
 import com.hilingual.presentation.notification.navigation.navigateToNotification
 import com.hilingual.presentation.notification.navigation.navigateToNotificationSetting
+import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.signup.navigation.navigateToSignUp
 import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.voca.navigation.navigateToVoca
@@ -199,6 +200,10 @@ internal class MainAppState(
 
     fun navigateToMyFeedProfile(showLikedDiaries: Boolean = false, navOptions: NavOptions? = null) {
         navController.navigateToMyFeedProfile(showLikedDiaries, navOptions)
+    }
+
+    fun navigateToOnboarding(navOptions: NavOptions? = null) {
+        navController.navigateToOnboarding(navOptions)
     }
 
     fun navigateUp() {

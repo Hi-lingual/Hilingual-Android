@@ -12,6 +12,7 @@ class OnboardingStateManagerImpl @Inject constructor(
 ) : OnboardingStateManager {
     private object PreferencesKeys {
         val IS_HOME_ONBOARDING_COMPLETED = booleanPreferencesKey("is_home_onboarding_completed")
+        val IS_SPLASH_ONBOARDING_COMPLETED = booleanPreferencesKey("is_splash_onboarding_completed")
     }
 
     override suspend fun getIsHomeOnboardingCompleted(): Boolean =
@@ -20,6 +21,15 @@ class OnboardingStateManagerImpl @Inject constructor(
     override suspend fun updateIsHomeOnboardingCompleted(isCompleted: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.IS_HOME_ONBOARDING_COMPLETED] = isCompleted
+        }
+    }
+
+    override suspend fun getIsSplashOnboardingCompleted(): Boolean =
+        dataStore.data.first()[PreferencesKeys.IS_SPLASH_ONBOARDING_COMPLETED] ?: false
+
+    override suspend fun updateIsSplashOnboardingCompleted(isCompleted: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.IS_SPLASH_ONBOARDING_COMPLETED] = isCompleted
         }
     }
 }

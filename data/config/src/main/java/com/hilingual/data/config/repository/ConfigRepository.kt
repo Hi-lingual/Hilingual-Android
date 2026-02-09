@@ -19,4 +19,6 @@ import com.hilingual.data.config.model.AppVersionInfo
 
 interface ConfigRepository {
     suspend fun getAppVersionInfo(): Result<AppVersionInfo>
+    suspend fun getIsSplashOnboardingCompleted(): Result<Boolean>
+    suspend fun completeSplashOnboarding(): Result<Unit>
 }

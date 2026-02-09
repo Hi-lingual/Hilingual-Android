@@ -27,6 +27,7 @@ import com.hilingual.data.config.repository.ConfigRepository
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -36,7 +37,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 internal class SplashViewModel @Inject constructor(
@@ -58,6 +58,7 @@ internal class SplashViewModel @Inject constructor(
 
     init {
         checkAppVersion()
+        checkIsSplashOnboardingCompleted()
     }
 
     private fun checkAppVersion() {
@@ -79,6 +80,17 @@ internal class SplashViewModel @Inject constructor(
         runCatching {
             context.packageManager.getPackageInfo(context.packageName, 0).versionName
         }.onFailure { Timber.e(it) }.getOrNull() ?: DEFAULT_VERSION
+
+    private fun checkIsSplashOnboardingCompleted() {
+        viewModelScope.launch {
+            configRepository.getIsSplashOnboardingCompleted()
+                .onSuccess { isCompleted ->
+                    if (!isCompleted) {
+                        _sideEffect.tryEmit(SplashSideEffect.NavigateToOnboarding)
+                    }
+                }.onLogFailure { }
+        }
+    }
 
     private fun checkLoginStatus() {
         viewModelScope.launch {
@@ -111,4 +123,5 @@ sealed interface SplashSideEffect {
     data object NavigateToHome : SplashSideEffect
     data object NavigateToAuth : SplashSideEffect
     data object NavigateToStore : SplashSideEffect
+    data object NavigateToOnboarding : SplashSideEffect
 }

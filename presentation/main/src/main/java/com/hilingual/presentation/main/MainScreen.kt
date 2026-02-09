@@ -145,7 +145,8 @@ internal fun MainScreen(
             ) {
                 splashNavGraph(
                     navigateToAuth = appState::navigateToAuth,
-                    navigateToHome = appState::navigateToHome
+                    navigateToHome = appState::navigateToHome,
+                    navigateToOnboarding = appState::navigateToOnboarding
                 )
 
                 authNavGraph(
