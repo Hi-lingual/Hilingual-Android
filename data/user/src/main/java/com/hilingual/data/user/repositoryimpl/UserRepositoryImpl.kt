@@ -17,6 +17,7 @@ package com.hilingual.data.user.repositoryimpl
 
 import android.net.Uri
 import com.hilingual.core.common.util.suspendRunCatching
+import com.hilingual.core.localstorage.OnboardingStateManager
 import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.data.presigned.repository.FileUploaderRepository
 import com.hilingual.data.user.datasource.UserRemoteDataSource
@@ -38,7 +39,8 @@ import javax.inject.Inject
 internal class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
     private val fileUploaderRepository: FileUploaderRepository,
-    private val userInfoManager: UserInfoManager
+    private val userInfoManager: UserInfoManager,
+    private val onboardingStateManager: OnboardingStateManager
 ) : UserRepository {
     override suspend fun getNicknameAvailability(nickname: String): Result<NicknameValidationResult> =
         suspendRunCatching {
@@ -169,5 +171,15 @@ internal class UserRepositoryImpl @Inject constructor(
     override suspend fun deleteFollow(targetUserId: Long): Result<Unit> =
         suspendRunCatching {
             userRemoteDataSource.deleteFollow(targetUserId = targetUserId)
+        }
+
+    override suspend fun getIsHomeOnboardingCompleted(): Result<Boolean> =
+        suspendRunCatching {
+            onboardingStateManager.getIsHomeOnboardingCompleted()
+        }
+
+    override suspend fun updateIsHomeOnboardingCompleted(isCompleted: Boolean): Result<Unit> =
+        suspendRunCatching {
+            onboardingStateManager.updateIsHomeOnboardingCompleted(isCompleted = isCompleted)
         }
 }

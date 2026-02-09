@@ -82,4 +82,7 @@ interface UserRepository {
     suspend fun deleteFollow(
         targetUserId: Long
     ): Result<Unit>
+
+    suspend fun getIsHomeOnboardingCompleted(): Result<Boolean>
+    suspend fun updateIsHomeOnboardingCompleted(isCompleted: Boolean): Result<Unit>
 }
