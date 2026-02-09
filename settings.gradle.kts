@@ -44,6 +44,7 @@ include(":data:voca")
 include(":data:feed")
 include(":data:presigned")
 include(":data:config")
+include(":data:onboarding")
 
 //presentation
 include(":presentation:auth")

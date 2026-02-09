@@ -39,8 +39,7 @@ import javax.inject.Inject
 internal class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
     private val fileUploaderRepository: FileUploaderRepository,
-    private val userInfoManager: UserInfoManager,
-    private val onboardingStateManager: OnboardingStateManager
+    private val userInfoManager: UserInfoManager
 ) : UserRepository {
     override suspend fun getNicknameAvailability(nickname: String): Result<NicknameValidationResult> =
         suspendRunCatching {
@@ -171,15 +170,5 @@ internal class UserRepositoryImpl @Inject constructor(
     override suspend fun deleteFollow(targetUserId: Long): Result<Unit> =
         suspendRunCatching {
             userRemoteDataSource.deleteFollow(targetUserId = targetUserId)
-        }
-
-    override suspend fun getIsHomeOnboardingCompleted(): Result<Boolean> =
-        suspendRunCatching {
-            onboardingStateManager.getIsHomeOnboardingCompleted()
-        }
-
-    override suspend fun updateIsHomeOnboardingCompleted(isCompleted: Boolean): Result<Unit> =
-        suspendRunCatching {
-            onboardingStateManager.updateIsHomeOnboardingCompleted(isCompleted = isCompleted)
         }
 }
