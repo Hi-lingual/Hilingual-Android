@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.hilingual.buildlogic.setNamespace
+package com.hilingual.presentation.signup
 
-plugins {
-    alias(libs.plugins.hilingual.android.presentation)
-}
+import androidx.compose.runtime.Immutable
 
-android {
-    setNamespace("presentation.onboarding")
-}
-
-dependencies {
-    implementation(projects.data.user)
-}
+@Immutable
+data class SignUpUiState(
+    val nickname: String = "",
+    val validationMessage: String = "",
+    val isNicknameValid: Boolean = false,
+    val isLoading: Boolean = false
+)

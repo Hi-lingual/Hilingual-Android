@@ -39,13 +39,13 @@ fun NavController.navigateToAuth(
 fun NavGraphBuilder.authNavGraph(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
-    navigateToOnboarding: () -> Unit
+    navigateToSignUp: () -> Unit
 ) {
     composable<Auth> {
         AuthRoute(
             paddingValues = paddingValues,
             navigateToHome = navigateToHome,
-            navigateToOnboarding = navigateToOnboarding
+            navigateToSignUp = navigateToSignUp
         )
     }
 }
