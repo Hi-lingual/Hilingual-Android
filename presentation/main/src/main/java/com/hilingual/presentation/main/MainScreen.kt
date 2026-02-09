@@ -240,6 +240,7 @@ internal fun MainScreen(
                 )
 
                 onboardingNavGraph(
+                    paddingValues = innerPadding,
                     navigateToAuth = appState::navigateToAuth
                 )
             }

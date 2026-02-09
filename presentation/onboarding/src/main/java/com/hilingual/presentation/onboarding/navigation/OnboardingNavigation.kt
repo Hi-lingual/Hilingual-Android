@@ -1,5 +1,6 @@
 package com.hilingual.presentation.onboarding.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -18,9 +19,13 @@ fun NavController.navigateToOnboarding(
 }
 
 fun NavGraphBuilder.onboardingNavGraph(
+    paddingValues: PaddingValues,
     navigateToAuth: () -> Unit
 ) {
     composable<Onboarding> {
-        OnboardingRoute(navigateToAuth = navigateToAuth)
+        OnboardingRoute(
+            paddingValues = paddingValues,
+            navigateToAuth = navigateToAuth
+        )
     }
 }
