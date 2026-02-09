@@ -39,13 +39,13 @@ internal fun HomeOnboardingBottomSheet(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_close_24),
                 contentDescription = null,
                 modifier = Modifier
                     .padding(top = 12.dp)
+                    .padding(horizontal = 16.dp)
                     .noRippleClickable(onClick = onCloseButtonClick)
                     .padding(10.dp)
                     .align(Alignment.TopEnd)
