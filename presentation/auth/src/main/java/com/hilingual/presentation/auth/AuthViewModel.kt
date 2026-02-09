@@ -35,7 +35,7 @@ import timber.log.Timber
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val configRepository: ConfigRepository
+    private val onboardingRepository: OnboardingRepository
 ) : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -76,7 +76,7 @@ class AuthViewModel @Inject constructor(
 
     private fun updateIsSplashOnboardingCompleted() {
         viewModelScope.launch {
-            configRepository.completeSplashOnboarding()
+            onboardingRepository.completeSplashOnboarding()
                 .onLogFailure { }
         }
     }

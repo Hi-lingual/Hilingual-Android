@@ -24,6 +24,7 @@ import com.hilingual.data.config.constant.DEFAULT_VERSION
 import com.hilingual.data.config.model.AppVersion
 import com.hilingual.data.config.model.UpdateState
 import com.hilingual.data.config.repository.ConfigRepository
+import com.hilingual.data.onboarding.repository.OnboardingRepository
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -43,7 +44,8 @@ internal class SplashViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
-    private val configRepository: ConfigRepository
+    private val configRepository: ConfigRepository,
+    private val onboardingRepository: OnboardingRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SplashUiState())
@@ -83,7 +85,7 @@ internal class SplashViewModel @Inject constructor(
 
     private fun checkIsSplashOnboardingCompleted() {
         viewModelScope.launch {
-            configRepository.getIsSplashOnboardingCompleted()
+            onboardingRepository.getIsSplashOnboardingCompleted()
                 .onSuccess { isCompleted ->
                     if (!isCompleted) {
                         _sideEffect.tryEmit(SplashSideEffect.NavigateToOnboarding)

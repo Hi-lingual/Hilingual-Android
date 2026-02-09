@@ -182,7 +182,7 @@ internal class SignUpViewModel @Inject constructor(
 
     private fun updateIsSplashOnboardingCompleted() {
         viewModelScope.launch {
-            configRepository.completeSplashOnboarding()
+            onboardingRepository.completeSplashOnboarding()
                 .onLogFailure { }
         }
     }

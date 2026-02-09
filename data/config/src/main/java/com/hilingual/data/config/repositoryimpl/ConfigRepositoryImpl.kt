@@ -30,14 +30,4 @@ internal class ConfigRepositoryImpl @Inject constructor(
         suspendRunCatching {
             configRemoteDataSource.getAppVersionInfo()
         }
-
-    override suspend fun getIsSplashOnboardingCompleted(): Result<Boolean> =
-        suspendRunCatching {
-            onboardingStateManager.getIsSplashOnboardingCompleted()
-        }
-
-    override suspend fun completeSplashOnboarding(): Result<Unit> =
-        suspendRunCatching {
-            onboardingStateManager.updateIsSplashOnboardingCompleted(isCompleted = true)
-        }
 }

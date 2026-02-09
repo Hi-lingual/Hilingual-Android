@@ -17,4 +17,14 @@ class OnboardingRepositoryImpl @Inject constructor(
         suspendRunCatching {
             onboardingStateManager.updateIsHomeOnboardingCompleted(isCompleted = isCompleted)
         }
+
+    override suspend fun getIsSplashOnboardingCompleted(): Result<Boolean> =
+        suspendRunCatching {
+            onboardingStateManager.getIsSplashOnboardingCompleted()
+        }
+
+    override suspend fun completeSplashOnboarding(): Result<Unit> =
+        suspendRunCatching {
+            onboardingStateManager.updateIsSplashOnboardingCompleted(isCompleted = true)
+        }
 }
