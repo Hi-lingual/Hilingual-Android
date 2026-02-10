@@ -39,9 +39,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -105,8 +102,6 @@ internal fun HomeRoute(
     val context = LocalContext.current
     val isSuccess = uiState is UiState.Success
 
-    var isOnboardingVisible by remember { mutableStateOf(false) }
-
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -142,9 +137,7 @@ internal fun HomeRoute(
                 notificationPermissionLauncher.launch(sideEffect.permission)
             }
 
-            is HomeSideEffect.ShowOnboarding -> {
-                isOnboardingVisible = true
-            }
+            is HomeSideEffect.ShowOnboarding -> homeState.showOnboardingBottomSheet()
         }
     }
 
@@ -206,11 +199,11 @@ internal fun HomeRoute(
     }
 
     HomeOnboardingBottomSheet(
-        isVisible = isOnboardingVisible,
-        onCloseButtonClick = { isOnboardingVisible = false }
+        isVisible = homeState.isOnboardingBottomSheetVisible,
+        onCloseButtonClick = homeState::hideOnboardingBottomSheet
     ) {
         HomeOnboardingContent(
-            onStartButtonClick = { isOnboardingVisible = false }
+            onStartButtonClick = homeState::hideOnboardingBottomSheet
         )
     }
 }

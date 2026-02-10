@@ -77,7 +77,7 @@ internal fun HomeOnboardingContent(
         }
 
         HilingualPagerIndicator(
-            pageCount = 4,
+            pageCount = onboardingPages.size,
             currentPage = pagerState.currentPage
         )
 
