@@ -15,18 +15,20 @@
  */
 package com.hilingual.presentation.splash
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.data.auth.repository.AuthRepository
-import com.hilingual.data.config.constant.DEFAULT_VERSION
 import com.hilingual.data.config.model.AppVersion
 import com.hilingual.data.config.model.UpdateState
 import com.hilingual.data.config.repository.ConfigRepository
 import com.hilingual.data.user.repository.UserRepository
+import com.hilingual.presentation.splash.SplashSideEffect.NavigateToAuth
+import com.hilingual.presentation.splash.SplashSideEffect.NavigateToHome
+import com.hilingual.presentation.splash.SplashSideEffect.NavigateToStore
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -35,15 +37,14 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 internal class SplashViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
-    private val configRepository: ConfigRepository
+    private val configRepository: ConfigRepository,
+    private val deviceInfoProvider: DeviceInfoProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SplashUiState())
@@ -61,7 +62,7 @@ internal class SplashViewModel @Inject constructor(
     }
 
     private fun checkAppVersion() {
-        val currentVersion = AppVersion(getAppVersionName())
+        val currentVersion = AppVersion(deviceInfoProvider.getAppVersion())
 
         viewModelScope.launch {
             configRepository.getAppVersionInfo()
@@ -75,30 +76,28 @@ internal class SplashViewModel @Inject constructor(
         }
     }
 
-    private fun getAppVersionName(): String =
-        runCatching {
-            context.packageManager.getPackageInfo(context.packageName, 0).versionName
-        }.onFailure { Timber.e(it) }.getOrNull() ?: DEFAULT_VERSION
-
     private fun checkLoginStatus() {
         viewModelScope.launch {
-            val accessToken = authRepository.getAccessToken()
-            val refreshToken = authRepository.getRefreshToken()
-            val isRegistered = userRepository.getRegisterStatus()
+            val isLoggedIn = runCatching {
+                val accessTokenDeferred = async { authRepository.getAccessToken() }
+                val refreshTokenDeferred = async { authRepository.getRefreshToken() }
+                val isRegisteredDeferred = async { userRepository.getRegisterStatus() }
 
-            val isLoggedIn =
+                val accessToken = accessTokenDeferred.await()
+                val refreshToken = refreshTokenDeferred.await()
+                val isRegistered = isRegisteredDeferred.await()
+
                 !accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty() && isRegistered
-            val effect =
-                if (isLoggedIn) SplashSideEffect.NavigateToHome else SplashSideEffect.NavigateToAuth
+            }.getOrElse { false }
 
             delay(1400L)
 
-            _sideEffect.tryEmit(effect)
+            _sideEffect.tryEmit(if (isLoggedIn) NavigateToHome else NavigateToAuth)
         }
     }
 
     fun onUpdateConfirm() {
-        _sideEffect.tryEmit(SplashSideEffect.NavigateToStore)
+        _sideEffect.tryEmit(NavigateToStore)
     }
 
     fun onUpdateSkip() {

@@ -19,7 +19,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
-import com.hilingual.data.config.constant.DEFAULT_VERSION
+import com.hilingual.core.common.constant.STABLE_VERSION
 import com.hilingual.data.config.constant.KEY_LATEST_VERSION
 import com.hilingual.data.config.constant.KEY_MIN_FORCE_VERSION
 import com.hilingual.data.config.constant.MIN_FETCH_INTERVAL_SECONDS
@@ -44,8 +44,8 @@ object FirebaseModule {
 
         remoteConfig.setDefaultsAsync(
             mapOf(
-                KEY_MIN_FORCE_VERSION to DEFAULT_VERSION,
-                KEY_LATEST_VERSION to DEFAULT_VERSION
+                KEY_MIN_FORCE_VERSION to STABLE_VERSION,
+                KEY_LATEST_VERSION to STABLE_VERSION
             )
         )
 

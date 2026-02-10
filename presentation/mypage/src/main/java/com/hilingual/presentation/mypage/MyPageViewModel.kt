@@ -19,6 +19,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.auth.repository.AuthRepository
 import com.hilingual.data.user.repository.UserRepository
@@ -36,7 +37,8 @@ import javax.inject.Inject
 @HiltViewModel
 internal class MyPageViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val deviceInfoProvider: DeviceInfoProvider
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<MyPageUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<MyPageUiState>> = _uiState.asStateFlow()
@@ -57,7 +59,8 @@ internal class MyPageViewModel @Inject constructor(
                             MyPageUiState(
                                 profileImageUrl = userInfo.profileImg,
                                 profileNickname = userInfo.nickname,
-                                profileProvider = userInfo.provider
+                                profileProvider = userInfo.provider,
+                                appVersion = deviceInfoProvider.getAppVersion()
                             )
                         )
                     }
