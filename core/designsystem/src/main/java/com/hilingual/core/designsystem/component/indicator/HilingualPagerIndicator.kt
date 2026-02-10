@@ -38,13 +38,20 @@ fun HilingualPagerIndicator(
     activeIndicatorColor: Color = HilingualTheme.colors.hilingualOrange,
     inactiveIndicatorColor: Color = HilingualTheme.colors.gray200
 ) {
+    if (pageCount <= 0) return
+    val selectedPage = currentPage.coerceIn(0, pageCount - 1)
+
+    val indicatorModifier = Modifier
+        .height(indicatorHeight)
+        .clip(CircleShape)
+
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(indicatorSpacing),
         verticalAlignment = Alignment.CenterVertically
     ) {
         repeat(pageCount) { index ->
-            val isSelected = index == currentPage
+            val isSelected = index == selectedPage
 
             val animatedWidth by animateDpAsState(
                 targetValue = if (isSelected) activeIndicatorWidth else inactiveIndicatorWidth,
@@ -56,10 +63,8 @@ fun HilingualPagerIndicator(
             )
 
             Box(
-                modifier = Modifier
-                    .height(indicatorHeight)
+                modifier = indicatorModifier
                     .width(animatedWidth)
-                    .clip(CircleShape)
                     .background(
                         color = if (isSelected) activeIndicatorColor else inactiveIndicatorColor
                     )
