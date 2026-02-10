@@ -31,23 +31,23 @@ fun HilingualPagerIndicator(
     pageCount: Int,
     currentPage: Int,
     modifier: Modifier = Modifier,
-    dotWidth: Dp = 8.dp,
-    lineWidth: Dp = 20.dp,
-    height: Dp = 8.dp,
-    spacing: Dp = 8.dp,
-    activeColor: Color = HilingualTheme.colors.hilingualOrange,
-    inactiveColor: Color = HilingualTheme.colors.gray200
+    activeIndicatorWidth: Dp = 20.dp,
+    inactiveIndicatorWidth: Dp = 8.dp,
+    indicatorHeight: Dp = 8.dp,
+    indicatorSpacing: Dp = 8.dp,
+    activeIndicatorColor: Color = HilingualTheme.colors.hilingualOrange,
+    inactiveIndicatorColor: Color = HilingualTheme.colors.gray200
 ) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(spacing),
+        horizontalArrangement = Arrangement.spacedBy(indicatorSpacing),
         verticalAlignment = Alignment.CenterVertically
     ) {
         repeat(pageCount) { index ->
             val isSelected = index == currentPage
 
             val animatedWidth by animateDpAsState(
-                targetValue = if (isSelected) lineWidth else dotWidth,
+                targetValue = if (isSelected) activeIndicatorWidth else inactiveIndicatorWidth,
                 animationSpec = tween(
                     durationMillis = 300,
                     easing = FastOutSlowInEasing
@@ -57,11 +57,11 @@ fun HilingualPagerIndicator(
 
             Box(
                 modifier = Modifier
-                    .height(height)
+                    .height(indicatorHeight)
                     .width(animatedWidth)
                     .clip(CircleShape)
                     .background(
-                        color = if (isSelected) activeColor else inactiveColor
+                        color = if (isSelected) activeIndicatorColor else inactiveIndicatorColor
                     )
             )
         }
