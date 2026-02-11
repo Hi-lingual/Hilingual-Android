@@ -19,10 +19,8 @@ import android.content.Context
 import androidx.credentials.CredentialManager
 import com.hilingual.data.auth.datasource.AuthRemoteDataSource
 import com.hilingual.data.auth.datasource.GoogleAuthDataSource
-import com.hilingual.data.auth.datasource.SystemDataSource
 import com.hilingual.data.auth.datasourceimpl.AuthRemoteDataSourceImpl
 import com.hilingual.data.auth.datasourceimpl.GoogleAuthDataSourceImpl
-import com.hilingual.data.auth.datasourceimpl.SystemDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -45,12 +43,6 @@ internal abstract class DataSourceModule {
     abstract fun bindAuthRemoteDataSource(
         authRemoteDataSourceImpl: AuthRemoteDataSourceImpl
     ): AuthRemoteDataSource
-
-    @Binds
-    @Singleton
-    abstract fun bindSystemDataSource(
-        systemDataSourceImpl: SystemDataSourceImpl
-    ): SystemDataSource
 
     internal companion object {
         @Provides
