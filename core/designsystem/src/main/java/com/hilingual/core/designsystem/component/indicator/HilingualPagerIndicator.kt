@@ -31,10 +31,10 @@ fun HilingualPagerIndicator(
     pageCount: Int,
     currentPage: Int,
     modifier: Modifier = Modifier,
-    activeIndicatorWidth: Dp = 20.dp,
-    inactiveIndicatorWidth: Dp = 8.dp,
     indicatorHeight: Dp = 8.dp,
     indicatorSpacing: Dp = 8.dp,
+    activeIndicatorWidth: Dp = 20.dp,
+    inactiveIndicatorWidth: Dp = 8.dp,
     activeIndicatorColor: Color = HilingualTheme.colors.hilingualOrange,
     inactiveIndicatorColor: Color = HilingualTheme.colors.gray200
 ) {
