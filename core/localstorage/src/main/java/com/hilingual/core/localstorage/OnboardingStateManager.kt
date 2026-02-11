@@ -6,5 +6,6 @@ interface OnboardingStateManager {
     suspend fun updateIsHomeOnboardingCompleted(isCompleted: Boolean)
 
     suspend fun getIsSplashOnboardingCompleted(): Boolean
+
     suspend fun updateIsSplashOnboardingCompleted(isCompleted: Boolean)
 }

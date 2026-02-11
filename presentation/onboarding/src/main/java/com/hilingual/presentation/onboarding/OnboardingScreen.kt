@@ -14,7 +14,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +31,29 @@ import com.hilingual.presentation.onboarding.model.OnboardingContent
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
+private val onboardingPages = persistentListOf(
+    OnboardingContent(
+        text = "48시간 동안 작성하는\n꾸준한 영어일기",
+        highlightedText = "48시간",
+        image = R.drawable.img_onboarding_1
+    ),
+    OnboardingContent(
+        text = "한 줄도, 한국어도, 사진도\n괜찮은 일기 작성",
+        highlightedText = "일기 작성",
+        image = R.drawable.img_onboarding_2
+    ),
+    OnboardingContent(
+        text = "영어일기에 최적화 된\n간편한 AI 피드백",
+        highlightedText = "AI 피드백",
+        image = R.drawable.img_onboarding_3
+    ),
+    OnboardingContent(
+        text = "일기를 공유하며\n더불어 성장하는 피드",
+        highlightedText = "일기를 공유",
+        image = R.drawable.img_onboarding_4
+    )
+)
+
 @Composable
 internal fun OnboardingRoute(
     paddingValues: PaddingValues,
@@ -48,31 +70,6 @@ private fun OnboardingScreen(
     paddingValues: PaddingValues,
     navigateToAuth: () -> Unit
 ) {
-    val onboardingPages = remember {
-        persistentListOf(
-            OnboardingContent(
-                text = "48시간 동안 작성하는\n꾸준한 영어일기",
-                highlightedText = "48시간",
-                image = R.drawable.img_onboarding_1
-            ),
-            OnboardingContent(
-                text = "한 줄도, 한국어도, 사진도\n괜찮은 일기 작성",
-                highlightedText = "일기 작성",
-                image = R.drawable.img_onboarding_2
-            ),
-            OnboardingContent(
-                text = "영어일기에 최적화 된\n간편한 AI 피드백",
-                highlightedText = "AI 피드백",
-                image = R.drawable.img_onboarding_3
-            ),
-            OnboardingContent(
-                text = "일기를 공유하며\n더불어 성장하는 피드",
-                highlightedText = "일기를 공유",
-                image = R.drawable.img_onboarding_4
-            )
-        )
-    }
-
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState { onboardingPages.size }
 

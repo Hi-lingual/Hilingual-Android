@@ -6,5 +6,6 @@ interface OnboardingRepository {
     suspend fun updateIsHomeOnboardingCompleted(isCompleted: Boolean): Result<Unit>
 
     suspend fun getIsSplashOnboardingCompleted(): Result<Boolean>
+
     suspend fun completeSplashOnboarding(): Result<Unit>
 }
