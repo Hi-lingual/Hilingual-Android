@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,16 +29,15 @@ internal fun HomeOnboardingBottomSheet(
     HilingualBasicBottomSheet(
         isVisible = isVisible,
         onDismiss = {},
-        sheetState = rememberModalBottomSheetState(
-            skipPartiallyExpanded = true,
+        properties = ModalBottomSheetProperties(
+            shouldDismissOnClickOutside = false
         ),
         isDimEnabled = true,
         modifier = modifier
     ) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_close_24),

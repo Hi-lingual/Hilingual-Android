@@ -17,7 +17,6 @@ package com.hilingual.data.user.repositoryimpl
 
 import android.net.Uri
 import com.hilingual.core.common.util.suspendRunCatching
-import com.hilingual.core.localstorage.OnboardingStateManager
 import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.data.presigned.repository.FileUploaderRepository
 import com.hilingual.data.user.datasource.UserRemoteDataSource

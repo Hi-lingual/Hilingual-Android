@@ -198,8 +198,7 @@ class HomeViewModel @Inject constructor(
                         yearMonth.atDay(1)
                     }
 
-                    val newDates =
-                        calendarModel.dateList.map { data -> data.toState() }.toImmutableList()
+                    val newDates = calendarModel.dateList.map { data -> data.toState() }.toImmutableList()
                     val newDiaryContent = fetchDiaryState(newDate, newDates)
 
                     _uiState.updateSuccess { state ->
@@ -313,8 +312,7 @@ class HomeViewModel @Inject constructor(
         dates: List<DateUiModel>
     ): HomeDiaryUiState {
         val tempExistDeferred = viewModelScope.async { diaryTempRepository.isDiaryTempExist(date) }
-        val thumbnailDeferred =
-            viewModelScope.async { calendarRepository.getDiaryThumbnail(date.toString()) }
+        val thumbnailDeferred = viewModelScope.async { calendarRepository.getDiaryThumbnail(date.toString()) }
         val topicDeferred = viewModelScope.async { calendarRepository.getTopic(date.toString()) }
 
         val isTempExist = tempExistDeferred.await().getOrDefault(false)
@@ -336,10 +334,9 @@ class HomeViewModel @Inject constructor(
                 .onSuccess { isCompleted ->
                     if (!isCompleted) {
                         emitOnboardingSideEffect()
+                        onboardingRepository.updateIsHomeOnboardingCompleted(true)
                     }
                 }.onLogFailure { }
-
-            onboardingRepository.updateIsHomeOnboardingCompleted(true)
         }
     }
 
