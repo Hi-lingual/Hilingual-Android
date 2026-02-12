@@ -61,7 +61,6 @@ internal class SplashViewModel @Inject constructor(
 
     init {
         checkAppVersion()
-        checkIsSplashOnboardingCompleted()
     }
 
     private fun checkAppVersion() {
@@ -73,9 +72,9 @@ internal class SplashViewModel @Inject constructor(
                     val state = info.checkUpdateStatus(currentVersion)
                     _uiState.update { it.copy(updateState = state) }
 
-                    if (state == UpdateState.NONE) checkLoginStatus()
+                    if (state == UpdateState.NONE) checkIsSplashOnboardingCompleted()
                 }
-                .onLogFailure { checkLoginStatus() }
+                .onLogFailure { checkIsSplashOnboardingCompleted() }
         }
     }
 
@@ -85,8 +84,10 @@ internal class SplashViewModel @Inject constructor(
                 .onSuccess { isCompleted ->
                     if (!isCompleted) {
                         _sideEffect.tryEmit(SplashSideEffect.NavigateToOnboarding)
+                        return@launch
                     }
-                }.onLogFailure { }
+                    checkLoginStatus()
+                }.onLogFailure { checkLoginStatus() }
         }
     }
 
@@ -116,7 +117,7 @@ internal class SplashViewModel @Inject constructor(
 
     fun onUpdateSkip() {
         _uiState.update { it.copy(updateState = UpdateState.NONE) }
-        checkLoginStatus()
+        checkIsSplashOnboardingCompleted()
     }
 }
 

@@ -202,7 +202,7 @@ internal class MainAppState(
         navController.navigateToMyFeedProfile(showLikedDiaries, navOptions)
     }
 
-    fun navigateToOnboarding(navOptions: NavOptions? = null) {
+    fun navigateToOnboarding(navOptions: NavOptions? = clearStackNavOptions) {
         navController.navigateToOnboarding(navOptions)
     }
 

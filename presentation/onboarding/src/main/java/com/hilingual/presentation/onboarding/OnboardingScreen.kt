@@ -1,5 +1,6 @@
 package com.hilingual.presentation.onboarding
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -134,7 +135,7 @@ private fun OnboardingScreen(
 private fun PagerContent(
     text: String,
     highlightedText: String,
-    image: Int
+    @DrawableRes image: Int
 ) {
     val startIndex = text.indexOf(highlightedText)
 
