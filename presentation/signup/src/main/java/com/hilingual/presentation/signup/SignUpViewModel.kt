@@ -19,6 +19,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.data.onboarding.repository.OnboardingRepository
 import com.hilingual.data.user.model.user.NicknameValidationResult
 import com.hilingual.data.user.model.user.UserProfileModel
 import com.hilingual.data.user.repository.UserRepository
@@ -43,7 +44,8 @@ private val specialCharRegex = Regex("[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]")
 
 @HiltViewModel
 internal class SignUpViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val onboardingRepository: OnboardingRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpUiState())
@@ -88,6 +90,7 @@ internal class SignUpViewModel @Inject constructor(
             userRepository.postUserProfile(userProfile)
                 .onSuccess {
                     userRepository.saveRegisterStatus(true)
+                    onboardingRepository.updateIsHomeOnboardingCompleted(false)
                     _sideEffect.emit(SignUpSideEffect.NavigateToHome)
                 }
                 .onLogFailure {
