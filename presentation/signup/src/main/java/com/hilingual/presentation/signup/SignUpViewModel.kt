@@ -180,11 +180,9 @@ internal class SignUpViewModel @Inject constructor(
         }
     }
 
-    private fun updateIsSplashOnboardingCompleted() {
-        viewModelScope.launch {
-            onboardingRepository.completeSplashOnboarding()
-                .onLogFailure { }
-        }
+    private suspend fun updateIsSplashOnboardingCompleted() {
+        onboardingRepository.completeSplashOnboarding()
+            .onLogFailure { }
     }
 }
 
