@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
@@ -28,10 +29,11 @@ import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.indicator.HilingualPagerIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.onboarding.model.OnboardingContent
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
-private val onboardingPages = persistentListOf(
+private val onboardingPages: ImmutableList<OnboardingContent> = persistentListOf(
     OnboardingContent(
         text = "48시간 동안 작성하는\n꾸준한 영어일기",
         highlightedText = "48시간",
@@ -170,5 +172,15 @@ private fun PagerContent(
             contentDescription = null,
             modifier = Modifier.size(360.dp)
         )
+    }
+}
+
+@Preview
+@Composable
+private fun OnboardingScreenPreview() {
+    HilingualTheme {
+        OnboardingScreen(
+            paddingValues = PaddingValues()
+        ) { }
     }
 }
