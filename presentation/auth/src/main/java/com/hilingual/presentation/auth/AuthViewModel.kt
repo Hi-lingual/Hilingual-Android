@@ -74,11 +74,9 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    private fun updateIsSplashOnboardingCompleted() {
-        viewModelScope.launch {
-            onboardingRepository.completeSplashOnboarding()
-                .onLogFailure { }
-        }
+    private suspend fun updateIsSplashOnboardingCompleted() {
+        onboardingRepository.completeSplashOnboarding()
+            .onLogFailure { }
     }
 
     private fun setIsLoading(isLoading: Boolean) {

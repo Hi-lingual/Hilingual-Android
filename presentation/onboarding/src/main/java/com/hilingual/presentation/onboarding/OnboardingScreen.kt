@@ -1,6 +1,5 @@
 package com.hilingual.presentation.onboarding
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -62,14 +61,14 @@ internal fun OnboardingRoute(
 ) {
     OnboardingScreen(
         paddingValues = paddingValues,
-        navigateToAuth = navigateToAuth
+        onOnboardingCompleted = navigateToAuth
     )
 }
 
 @Composable
 private fun OnboardingScreen(
     paddingValues: PaddingValues,
-    navigateToAuth: () -> Unit
+    onOnboardingCompleted: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState { onboardingPages.size }
@@ -89,7 +88,7 @@ private fun OnboardingScreen(
             color = HilingualTheme.colors.gray400,
             textAlign = TextAlign.Center,
             modifier = Modifier
-                .noRippleClickable(onClick = navigateToAuth)
+                .noRippleClickable(onClick = onOnboardingCompleted)
                 .padding(horizontal = 24.dp, vertical = 12.dp)
                 .align(Alignment.End)
         )
@@ -100,9 +99,7 @@ private fun OnboardingScreen(
             state = pagerState
         ) { currentPage ->
             PagerContent(
-                text = onboardingPages[currentPage].text,
-                highlightedText = onboardingPages[currentPage].highlightedText,
-                image = onboardingPages[currentPage].image
+                onboardingContent = onboardingPages[currentPage]
             )
         }
 
@@ -119,7 +116,7 @@ private fun OnboardingScreen(
             text = "다음",
             onClick = {
                 if (pagerState.currentPage == onboardingPages.lastIndex) {
-                    navigateToAuth()
+                    onOnboardingCompleted()
                 } else {
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(pagerState.currentPage + 1)
@@ -133,20 +130,25 @@ private fun OnboardingScreen(
 
 @Composable
 private fun PagerContent(
-    text: String,
-    highlightedText: String,
-    @DrawableRes image: Int
+    onboardingContent: OnboardingContent
 ) {
-    val startIndex = text.indexOf(highlightedText)
+    val fullText = onboardingContent.text
+    val highlightedText = onboardingContent.highlightedText
 
     val annotatedString = buildAnnotatedString {
-        append(text)
+        append(fullText)
 
-        if (startIndex >= 0) {
+        var startIndex = fullText.indexOf(highlightedText)
+
+        while (startIndex >= 0) {
             addStyle(
                 style = SpanStyle(color = HilingualTheme.colors.hilingualOrange),
                 start = startIndex,
                 end = startIndex + highlightedText.length
+            )
+
+            startIndex = fullText.indexOf(
+                highlightedText, startIndex + highlightedText.length
             )
         }
     }
@@ -164,7 +166,7 @@ private fun PagerContent(
         )
 
         Image(
-            painter = painterResource(image),
+            painter = painterResource(onboardingContent.image),
             contentDescription = null,
             modifier = Modifier.size(360.dp)
         )

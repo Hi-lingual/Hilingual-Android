@@ -83,7 +83,7 @@ internal class SplashViewModel @Inject constructor(
             onboardingRepository.getIsSplashOnboardingCompleted()
                 .onSuccess { isCompleted ->
                     if (!isCompleted) {
-                        _sideEffect.tryEmit(SplashSideEffect.NavigateToOnboarding)
+                        _sideEffect.emit(SplashSideEffect.NavigateToOnboarding)
                         return@launch
                     }
                     checkLoginStatus()
