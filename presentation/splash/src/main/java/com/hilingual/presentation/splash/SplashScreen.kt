@@ -50,6 +50,7 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 internal fun SplashRoute(
     navigateToAuth: () -> Unit,
     navigateToHome: () -> Unit,
+    navigateToOnboarding: () -> Unit,
     viewModel: SplashViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -67,6 +68,7 @@ internal fun SplashRoute(
                 }
                 context.startActivity(intent)
             }
+            is SplashSideEffect.NavigateToOnboarding -> navigateToOnboarding()
         }
     }
 

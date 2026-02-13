@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.auth.repository.AuthRepository
+import com.hilingual.data.onboarding.repository.OnboardingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.channels.BufferOverflow
@@ -33,7 +34,8 @@ import timber.log.Timber
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val onboardingRepository: OnboardingRepository
 ) : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -57,6 +59,7 @@ class AuthViewModel @Inject constructor(
                     authRepository.login(idToken)
                         .onSuccess { authResult ->
                             val sideEffect = if (authResult.registerStatus) {
+                                updateIsSplashOnboardingCompleted()
                                 AuthSideEffect.NavigateToHome
                             } else {
                                 AuthSideEffect.NavigateToSignUp
@@ -69,6 +72,11 @@ class AuthViewModel @Inject constructor(
 
             setIsLoading(false)
         }
+    }
+
+    private suspend fun updateIsSplashOnboardingCompleted() {
+        onboardingRepository.completeSplashOnboarding()
+            .onLogFailure { }
     }
 
     private fun setIsLoading(isLoading: Boolean) {

@@ -44,4 +44,5 @@ dependencies {
     implementation(projects.presentation.feeddiary)
     implementation(projects.presentation.feedprofile)
     implementation(projects.presentation.notification)
+    implementation(projects.presentation.onboarding)
 }

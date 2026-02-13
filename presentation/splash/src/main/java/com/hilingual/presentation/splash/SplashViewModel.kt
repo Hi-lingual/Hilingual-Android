@@ -17,17 +17,19 @@ package com.hilingual.presentation.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.app.DeviceInfoProvider
+import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.auth.repository.AuthRepository
 import com.hilingual.data.config.model.AppVersion
 import com.hilingual.data.config.model.UpdateState
 import com.hilingual.data.config.repository.ConfigRepository
+import com.hilingual.data.onboarding.repository.OnboardingRepository
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.splash.SplashSideEffect.NavigateToAuth
 import com.hilingual.presentation.splash.SplashSideEffect.NavigateToHome
 import com.hilingual.presentation.splash.SplashSideEffect.NavigateToStore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
@@ -37,14 +39,14 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 internal class SplashViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
     private val configRepository: ConfigRepository,
-    private val deviceInfoProvider: DeviceInfoProvider
+    private val deviceInfoProvider: DeviceInfoProvider,
+    private val onboardingRepository: OnboardingRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SplashUiState())
@@ -70,9 +72,22 @@ internal class SplashViewModel @Inject constructor(
                     val state = info.checkUpdateStatus(currentVersion)
                     _uiState.update { it.copy(updateState = state) }
 
-                    if (state == UpdateState.NONE) checkLoginStatus()
+                    if (state == UpdateState.NONE) checkIsSplashOnboardingCompleted()
                 }
-                .onLogFailure { checkLoginStatus() }
+                .onLogFailure { checkIsSplashOnboardingCompleted() }
+        }
+    }
+
+    private fun checkIsSplashOnboardingCompleted() {
+        viewModelScope.launch {
+            onboardingRepository.getIsSplashOnboardingCompleted()
+                .onSuccess { isCompleted ->
+                    if (!isCompleted) {
+                        _sideEffect.emit(SplashSideEffect.NavigateToOnboarding)
+                        return@launch
+                    }
+                    checkLoginStatus()
+                }.onLogFailure { checkLoginStatus() }
         }
     }
 
@@ -102,7 +117,7 @@ internal class SplashViewModel @Inject constructor(
 
     fun onUpdateSkip() {
         _uiState.update { it.copy(updateState = UpdateState.NONE) }
-        checkLoginStatus()
+        checkIsSplashOnboardingCompleted()
     }
 }
 
@@ -110,4 +125,5 @@ sealed interface SplashSideEffect {
     data object NavigateToHome : SplashSideEffect
     data object NavigateToAuth : SplashSideEffect
     data object NavigateToStore : SplashSideEffect
+    data object NavigateToOnboarding : SplashSideEffect
 }

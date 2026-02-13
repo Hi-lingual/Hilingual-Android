@@ -60,6 +60,7 @@ include(":presentation:feedprofile")
 include(":presentation:notification")
 include(":presentation:feeddiary")
 include(":presentation:signup")
+include(":presentation:onboarding")
 
 // Benchmarks
 include(":baselineprofile")

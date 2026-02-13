@@ -91,6 +91,7 @@ internal class SignUpViewModel @Inject constructor(
                 .onSuccess {
                     userRepository.saveRegisterStatus(true)
                     onboardingRepository.updateIsHomeOnboardingCompleted(false)
+                    updateIsSplashOnboardingCompleted()
                     _sideEffect.emit(SignUpSideEffect.NavigateToHome)
                 }
                 .onLogFailure {
@@ -177,6 +178,11 @@ internal class SignUpViewModel @Inject constructor(
                     _sideEffect.emit(SignUpSideEffect.ShowRetryDialog { validateNickname(nickname) })
                 }
         }
+    }
+
+    private suspend fun updateIsSplashOnboardingCompleted() {
+        onboardingRepository.completeSplashOnboarding()
+            .onLogFailure { }
     }
 }
 

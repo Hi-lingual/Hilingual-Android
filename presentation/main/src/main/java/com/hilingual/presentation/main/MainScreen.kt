@@ -66,6 +66,7 @@ import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.main.state.MainAppState
 import com.hilingual.presentation.mypage.navigation.myPageNavGraph
 import com.hilingual.presentation.notification.navigation.notificationNavGraph
+import com.hilingual.presentation.onboarding.navigation.onboardingNavGraph
 import com.hilingual.presentation.signup.navigation.signUpGraph
 import com.hilingual.presentation.splash.navigation.splashNavGraph
 import com.hilingual.presentation.voca.navigation.vocaNavGraph
@@ -144,7 +145,8 @@ internal fun MainScreen(
             ) {
                 splashNavGraph(
                     navigateToAuth = appState::navigateToAuth,
-                    navigateToHome = appState::navigateToHome
+                    navigateToHome = appState::navigateToHome,
+                    navigateToOnboarding = appState::navigateToOnboarding
                 )
 
                 authNavGraph(
@@ -236,6 +238,11 @@ internal fun MainScreen(
                     navController = appState.navController,
                     navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
                     navigateToFeedDiary = appState::navigateToFeedDiary
+                )
+
+                onboardingNavGraph(
+                    paddingValues = innerPadding,
+                    navigateToAuth = appState::navigateToAuth
                 )
             }
 
