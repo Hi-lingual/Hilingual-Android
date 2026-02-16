@@ -7,7 +7,7 @@ googleServices = "4.4.4"
 minSdk = "30"
 targetSdk = "36"
 jvmTarget = "17"
-androidGradlePlugin = "9.0.0"
+androidGradlePlugin = "9.0.1"
 spotless = "8.2.1"
 
 # App version
