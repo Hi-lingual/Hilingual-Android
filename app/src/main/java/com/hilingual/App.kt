@@ -20,11 +20,12 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
+import com.hilingual.core.common.util.HilingualReleaseTree
 import com.hilingual.core.work.scheduler.HilingualWorkManagerConfigurator
 import dagger.Lazy
 import dagger.hilt.android.HiltAndroidApp
-import javax.inject.Inject
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltAndroidApp
 class App : Application(), SingletonImageLoader.Factory {
@@ -50,7 +51,8 @@ class App : Application(), SingletonImageLoader.Factory {
     }
 
     private fun initTimber() {
-        if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
+        val tree = if (BuildConfig.DEBUG) Timber.DebugTree() else HilingualReleaseTree()
+        Timber.plant(tree)
     }
 
     private fun initWorkManager() {
