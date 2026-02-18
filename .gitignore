@@ -243,3 +243,7 @@ fabric.properties
 
 # Fastlane dependencies
 vendor/
+
+# ETC
+conductor/
+GEMINI.md
