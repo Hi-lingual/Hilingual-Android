@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.onboarding
+package com.hilingual.presentation.signup
 
 import androidx.compose.runtime.Immutable
 
 @Immutable
-data class OnboardingUiState(
+data class SignUpUiState(
     val nickname: String = "",
     val validationMessage: String = "",
     val isNicknameValid: Boolean = false,

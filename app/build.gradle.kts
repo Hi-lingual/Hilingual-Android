@@ -84,6 +84,7 @@ dependencies {
     // core
     implementation(projects.core.common)
     implementation(projects.core.work)
+    implementation(projects.core.notification)
 
     // presentation
     implementation(projects.presentation.main)
@@ -110,6 +111,7 @@ dependencies {
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.messaging)
 }
 
 ktlint {

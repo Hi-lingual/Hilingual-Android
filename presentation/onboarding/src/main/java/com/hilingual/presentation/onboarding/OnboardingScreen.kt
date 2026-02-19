@@ -1,222 +1,178 @@
-/*
- * Copyright 2025 The Hilingual Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.hilingual.presentation.onboarding
 
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hilingual.core.common.extension.addFocusCleaner
-import com.hilingual.core.common.extension.collectSideEffect
-import com.hilingual.core.common.extension.launchCustomTabs
+import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
-import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.designsystem.component.button.HilingualButton
-import com.hilingual.core.designsystem.component.textfield.HilingualShortTextField
-import com.hilingual.core.designsystem.component.textfield.TextFieldState
-import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppBar
+import com.hilingual.core.designsystem.component.indicator.HilingualPagerIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.designsystem.theme.white
-import com.hilingual.core.ui.component.bottomsheet.HilingualProfileImageBottomSheet
-import com.hilingual.core.ui.component.picker.ProfileImagePicker
-import com.hilingual.presentation.onboarding.component.TermsBottomSheet
+import com.hilingual.presentation.onboarding.model.OnboardingContent
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.launch
+
+private val onboardingPages: ImmutableList<OnboardingContent> = persistentListOf(
+    OnboardingContent(
+        text = "48시간 동안 작성하는\n꾸준한 영어일기",
+        highlightedText = "48시간",
+        image = R.drawable.img_onboarding_1
+    ),
+    OnboardingContent(
+        text = "한 줄도, 한국어도, 사진도\n괜찮은 일기 작성",
+        highlightedText = "일기 작성",
+        image = R.drawable.img_onboarding_2
+    ),
+    OnboardingContent(
+        text = "영어일기에 최적화 된\n간편한 AI 피드백",
+        highlightedText = "AI 피드백",
+        image = R.drawable.img_onboarding_3
+    ),
+    OnboardingContent(
+        text = "일기를 공유하며\n더불어 성장하는 피드",
+        highlightedText = "일기를 공유",
+        image = R.drawable.img_onboarding_4
+    )
+)
 
 @Composable
 internal fun OnboardingRoute(
     paddingValues: PaddingValues,
-    navigateToHome: () -> Unit,
-    viewModel: OnboardingViewModel = hiltViewModel()
+    navigateToAuth: () -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val dialogTrigger = LocalDialogTrigger.current
-    val context = LocalContext.current
-
-    var textFieldState by remember { mutableStateOf(TextFieldState.NORMAL) }
-
-    LaunchedEffect(uiState.isNicknameValid, uiState.validationMessage, uiState.nickname) {
-        if (uiState.nickname.isNotEmpty()) {
-            textFieldState = when {
-                uiState.isNicknameValid -> TextFieldState.SUCCESS
-                uiState.validationMessage.isNotEmpty() -> TextFieldState.ERROR
-                else -> TextFieldState.NORMAL
-            }
-        }
-    }
-
-    viewModel.sideEffect.collectSideEffect {
-        when (it) {
-            is OnboardingSideEffect.NavigateToHome -> navigateToHome()
-            is OnboardingSideEffect.ShowRetryDialog -> {
-                dialogTrigger.show(onClick = it.onRetry)
-            }
-        }
-    }
-
     OnboardingScreen(
         paddingValues = paddingValues,
-        nickname = { uiState.nickname },
-        onNicknameChanged = {
-            textFieldState = TextFieldState.NORMAL
-            viewModel.onNicknameChanged(it)
-        },
-        textFieldState = { textFieldState },
-        validationMessage = { uiState.validationMessage },
-        isNicknameValid = { uiState.isNicknameValid },
-        onDoneAction = viewModel::onSubmitNickname,
-        onRegisterClick = viewModel::onRegisterClick,
-        onTermLinkClick = { url -> context.launchCustomTabs(url) },
-        isLoading = { uiState.isLoading }
+        onOnboardingCompleted = navigateToAuth
     )
 }
 
 @Composable
 private fun OnboardingScreen(
     paddingValues: PaddingValues,
-    nickname: () -> String,
-    onNicknameChanged: (String) -> Unit,
-    textFieldState: () -> TextFieldState,
-    validationMessage: () -> String,
-    isNicknameValid: () -> Boolean,
-    onDoneAction: (String) -> Unit,
-    onRegisterClick: (String, Boolean, Uri?) -> Unit,
-    onTermLinkClick: (String) -> Unit,
-    isLoading: () -> Boolean,
-    modifier: Modifier = Modifier
+    onOnboardingCompleted: () -> Unit
 ) {
-    val focusManager = LocalFocusManager.current
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-    var isImageSheetVisible by remember { mutableStateOf(false) }
-    var isTermsSheetVisible by remember { mutableStateOf(false) }
-
-    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri ->
-            imageUri = uri
-        }
-    )
+    val coroutineScope = rememberCoroutineScope()
+    val pagerState = rememberPagerState { onboardingPages.size }
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .statusBarColor(white)
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
             .background(HilingualTheme.colors.white)
+            .statusBarColor(HilingualTheme.colors.white)
+            .fillMaxWidth()
             .padding(paddingValues)
-            .padding(horizontal = 16.dp)
-            .addFocusCleaner(focusManager),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(bottom = 49.dp)
     ) {
-        HilingualBasicTopAppBar(title = "프로필 작성")
-
-        Spacer(Modifier.weight(13f))
-
-        ProfileImagePicker(
-            onClick = { isImageSheetVisible = true },
-            imageUrl = imageUri?.toString()
-        )
-
-        Spacer(Modifier.weight(8f))
-
         Text(
-            text = "닉네임",
-            style = HilingualTheme.typography.bodyM16,
-            color = HilingualTheme.colors.black,
-            modifier = Modifier.align(Alignment.Start)
-        )
-
-        Spacer(Modifier.height(4.dp))
-
-        HilingualShortTextField(
-            value = nickname,
-            onValueChanged = onNicknameChanged,
-            placeholder = "한글, 영문, 숫자 조합만 가능",
-            maxLength = 10,
-            state = textFieldState,
-            errorMessage = validationMessage,
-            successMessage = "사용 가능한 닉네임이에요",
-            onDoneAction = {
-                onDoneAction(nickname())
-                focusManager.clearFocus()
-            }
-        )
-
-        Spacer(Modifier.weight(73f))
-
-        Text(
-            text = "설정한 닉네임은 변경이 불가능해요.",
+            text = "건너뛰기",
             style = HilingualTheme.typography.bodyM14,
-            color = HilingualTheme.colors.gray400
+            color = HilingualTheme.colors.gray400,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .noRippleClickable(onClick = onOnboardingCompleted)
+                .padding(horizontal = 24.dp, vertical = 12.dp)
+                .align(Alignment.End)
         )
 
-        HilingualButton(
-            text = "가입하기",
-            onClick = { isTermsSheetVisible = true },
-            enableProvider = isNicknameValid,
-            modifier = Modifier.padding(vertical = 16.dp)
-        )
-    }
+        Spacer(modifier = Modifier.weight(24f))
 
-    TermsBottomSheet(
-        isVisible = isTermsSheetVisible,
-        onDismiss = { isTermsSheetVisible = false },
-        onStartClick = { isMarketingAgreed ->
-            isTermsSheetVisible = false
-            onRegisterClick(nickname(), isMarketingAgreed, imageUri)
-        },
-        onTermLinkClick = onTermLinkClick,
-        isLoading = isLoading()
-    )
-
-    HilingualProfileImageBottomSheet(
-        isVisible = isImageSheetVisible,
-        onDismiss = { isImageSheetVisible = false },
-        onDefaultImageClick = {
-            isImageSheetVisible = false
-            imageUri = null
-        },
-        onGalleryImageClick = {
-            isImageSheetVisible = false
-            singlePhotoPickerLauncher.launch(
-                PickVisualMediaRequest(
-                    ActivityResultContracts.PickVisualMedia.ImageOnly
-                )
+        HorizontalPager(
+            state = pagerState
+        ) { currentPage ->
+            PagerContent(
+                onboardingContent = onboardingPages[currentPage]
             )
         }
-    )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        HilingualPagerIndicator(
+            pageCount = onboardingPages.size,
+            currentPage = pagerState.currentPage
+        )
+
+        Spacer(modifier = Modifier.weight(60f))
+
+        HilingualButton(
+            text = "다음",
+            onClick = {
+                if (pagerState.currentPage == onboardingPages.lastIndex) {
+                    onOnboardingCompleted()
+                } else {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                    }
+                }
+            },
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+    }
+}
+
+@Composable
+private fun PagerContent(
+    onboardingContent: OnboardingContent
+) {
+    val fullText = onboardingContent.text
+    val highlightedText = onboardingContent.highlightedText
+
+    val annotatedString = buildAnnotatedString {
+        append(fullText)
+
+        var startIndex = fullText.indexOf(highlightedText)
+
+        while (startIndex >= 0) {
+            addStyle(
+                style = SpanStyle(color = HilingualTheme.colors.hilingualOrange),
+                start = startIndex,
+                end = startIndex + highlightedText.length
+            )
+
+            startIndex = fullText.indexOf(
+                highlightedText, startIndex + highlightedText.length
+            )
+        }
+    }
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(28.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = annotatedString,
+            style = HilingualTheme.typography.headSB20,
+            color = HilingualTheme.colors.black,
+            textAlign = TextAlign.Center
+        )
+
+        Image(
+            painter = painterResource(onboardingContent.image),
+            contentDescription = null,
+            modifier = Modifier.size(360.dp)
+        )
+    }
 }
 
 @Preview
@@ -224,16 +180,7 @@ private fun OnboardingScreen(
 private fun OnboardingScreenPreview() {
     HilingualTheme {
         OnboardingScreen(
-            paddingValues = PaddingValues(0.dp),
-            nickname = { "" },
-            onNicknameChanged = {},
-            textFieldState = { TextFieldState.NORMAL },
-            validationMessage = { "" },
-            isNicknameValid = { true },
-            onDoneAction = { _ -> },
-            onRegisterClick = { _, _, _ -> },
-            onTermLinkClick = {},
-            isLoading = { false }
-        )
+            paddingValues = PaddingValues()
+        ) { }
     }
 }

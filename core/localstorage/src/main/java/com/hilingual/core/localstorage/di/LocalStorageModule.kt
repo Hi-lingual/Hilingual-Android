@@ -21,6 +21,8 @@ import androidx.datastore.dataStore
 import androidx.datastore.preferences.preferencesDataStore
 import com.hilingual.core.localstorage.DiaryTempManager
 import com.hilingual.core.localstorage.DiaryTempManagerImpl
+import com.hilingual.core.localstorage.OnboardingStateManager
+import com.hilingual.core.localstorage.OnboardingStateManagerImpl
 import com.hilingual.core.localstorage.TokenManager
 import com.hilingual.core.localstorage.TokenManagerImpl
 import com.hilingual.core.localstorage.UserInfoManager
@@ -46,6 +48,7 @@ object LocalStorageModule {
         serializer = UserPreferencesSerializer
     )
     private val Context.diaryTempDataStore by preferencesDataStore(name = DataStoreConstant.HILINGUAL_DIARY_TEMP_PREFS)
+    private val Context.onboardingStateDataStore by preferencesDataStore(name = DataStoreConstant.HILINGUAL_ONBOARDING_STATE_PREFS)
 
     @Provides
     @Singleton
@@ -67,4 +70,12 @@ object LocalStorageModule {
             dataStore = context.diaryTempDataStore,
             imageStorage = imageStorage
         )
+
+    @Provides
+    @Singleton
+    fun provideOnboardingStateManager(
+        @ApplicationContext context: Context
+    ): OnboardingStateManager = OnboardingStateManagerImpl(
+        dataStore = context.onboardingStateDataStore
+    )
 }

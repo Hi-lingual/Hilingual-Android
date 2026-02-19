@@ -1,6 +1,6 @@
-package com.hilingual.data.auth.datasource
+package com.hilingual.core.common.app
 
-interface SystemDataSource {
+interface DeviceInfoProvider {
     fun getDeviceName(): String
 
     fun getDeviceType(): String

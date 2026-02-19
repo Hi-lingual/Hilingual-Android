@@ -93,7 +93,7 @@ internal class DiaryWriteViewModel @Inject constructor(
                     _uiState.update { it.copy(topicKo = topic.topicKor, topicEn = topic.topicEn) }
                 }
                 .onLogFailure {
-                    _sideEffect.emit(DiaryWriteSideEffect.ShowErrorDialog)
+                    _uiState.update { it.copy(topicKo = "", topicEn = "") }
                 }
         }
     }

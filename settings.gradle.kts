@@ -44,6 +44,7 @@ include(":data:voca")
 include(":data:feed")
 include(":data:presigned")
 include(":data:config")
+include(":data:onboarding")
 
 //presentation
 include(":presentation:auth")
@@ -52,13 +53,14 @@ include(":presentation:diarywrite")
 include(":presentation:home")
 include(":presentation:voca")
 include(":presentation:main")
-include(":presentation:onboarding")
 include(":presentation:splash")
 include(":presentation:mypage")
 include(":presentation:feed")
 include(":presentation:feedprofile")
 include(":presentation:notification")
 include(":presentation:feeddiary")
+include(":presentation:signup")
+include(":presentation:onboarding")
 
 // Benchmarks
 include(":baselineprofile")
