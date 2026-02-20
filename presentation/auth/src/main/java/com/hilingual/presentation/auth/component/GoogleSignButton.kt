@@ -16,6 +16,7 @@
 package com.hilingual.presentation.auth.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -49,7 +50,12 @@ internal fun GoogleSignButton(
             .clip(RoundedCornerShape(8.dp))
             .background(HilingualTheme.colors.white)
             .noRippleClickable(onClick = onClick)
-            .padding(vertical = 18.dp, horizontal = 10.dp),
+            .border(
+                width = 1.dp,
+                color = HilingualTheme.colors.gray200,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(vertical = 18.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

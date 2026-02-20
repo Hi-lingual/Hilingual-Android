@@ -24,11 +24,15 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.localstorage.DiaryTempRepository
 import com.hilingual.data.diary.repository.DiaryRepository
+import com.hilingual.data.onboarding.repository.OnboardingRepository
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.home.model.DateUiModel
 import com.hilingual.presentation.home.model.toState
 import com.hilingual.presentation.home.type.NotificationPermissionState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDate
+import java.time.YearMonth
+import javax.inject.Inject
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.BufferOverflow
@@ -41,16 +45,14 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.YearMonth
-import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val calendarRepository: CalendarRepository,
     private val diaryRepository: DiaryRepository,
-    private val diaryTempRepository: DiaryTempRepository
+    private val diaryTempRepository: DiaryTempRepository,
+    private val onboardingRepository: OnboardingRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Loading)
@@ -62,6 +64,10 @@ class HomeViewModel @Inject constructor(
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
     val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
+
+    init {
+        checkOnboardingCompleted()
+    }
 
     fun loadInitialData() {
         viewModelScope.launch {
@@ -301,7 +307,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private suspend fun fetchDiaryState(date: LocalDate, dates: List<DateUiModel>): HomeDiaryUiState {
+    private suspend fun fetchDiaryState(
+        date: LocalDate,
+        dates: List<DateUiModel>
+    ): HomeDiaryUiState {
         val tempExistDeferred = viewModelScope.async { diaryTempRepository.isDiaryTempExist(date) }
         val thumbnailDeferred = viewModelScope.async { calendarRepository.getDiaryThumbnail(date.toString()) }
         val topicDeferred = viewModelScope.async { calendarRepository.getTopic(date.toString()) }
@@ -319,6 +328,18 @@ class HomeViewModel @Inject constructor(
         )
     }
 
+    private fun checkOnboardingCompleted() {
+        viewModelScope.launch {
+            onboardingRepository.getIsHomeOnboardingCompleted()
+                .onSuccess { isCompleted ->
+                    if (!isCompleted) {
+                        emitOnboardingSideEffect()
+                        onboardingRepository.updateIsHomeOnboardingCompleted(true)
+                    }
+                }.onLogFailure { }
+        }
+    }
+
     private suspend fun emitErrorDialogSideEffect(onRetry: () -> Unit) =
         _sideEffect.emit(HomeSideEffect.ShowErrorDialog(onRetry = onRetry))
 
@@ -327,6 +348,9 @@ class HomeViewModel @Inject constructor(
 
     private suspend fun emitSnackBarSideEffect(message: String, actionLabel: String) =
         _sideEffect.emit(HomeSideEffect.ShowSnackBar(message = message, actionLabel = actionLabel))
+
+    private suspend fun emitOnboardingSideEffect() =
+        _sideEffect.emit(HomeSideEffect.ShowOnboarding)
 }
 
 sealed interface HomeSideEffect {
@@ -337,4 +361,6 @@ sealed interface HomeSideEffect {
     data class ShowSnackBar(val message: String, val actionLabel: String) : HomeSideEffect
 
     data class RequestNotificationPermission(val permission: String) : HomeSideEffect
+
+    data object ShowOnboarding : HomeSideEffect
 }

@@ -16,9 +16,25 @@
 package com.hilingual.core.common.extension
 
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
+import com.hilingual.core.common.constant.STABLE_VERSION
 
 fun Context.launchCustomTabs(url: String) {
     CustomTabsIntent.Builder().build().launchUrl(this, url.toUri())
 }
+
+val Context.appVersionName: String
+    get() = runCatching {
+        val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            packageManager.getPackageInfo(
+                packageName,
+                PackageManager.PackageInfoFlags.of(0)
+            )
+        } else {
+            packageManager.getPackageInfo(packageName, 0)
+        }
+        packageInfo.versionName
+    }.getOrNull() ?: STABLE_VERSION

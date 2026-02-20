@@ -37,4 +37,8 @@ dependencies {
     implementation(libs.timber)
 
     implementation(libs.androidx.browser)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
 }

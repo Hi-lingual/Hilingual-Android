@@ -19,4 +19,5 @@ object DataStoreConstant {
     const val HILINGUAL_USER_INFO_PREFS = "hilingual_user_info_prefs"
     const val ENCRYPTED_USER_PREFS = "encrypted_user_prefs.bin"
     const val HILINGUAL_DIARY_TEMP_PREFS = "hilingual_diary_temp_prefs"
+    const val HILINGUAL_ONBOARDING_STATE_PREFS = "hilingual_onboarding_state_prefs"
 }

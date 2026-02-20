@@ -16,12 +16,12 @@
 package com.hilingual.data.auth.repositoryimpl
 
 import android.content.Context
+import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.localstorage.TokenManager
 import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.data.auth.datasource.AuthRemoteDataSource
 import com.hilingual.data.auth.datasource.GoogleAuthDataSource
-import com.hilingual.data.auth.datasource.SystemDataSource
 import com.hilingual.data.auth.dto.request.LoginRequestDto
 import com.hilingual.data.auth.dto.request.VerifyCodeRequestDto
 import com.hilingual.data.auth.model.LoginModel
@@ -31,7 +31,7 @@ import javax.inject.Inject
 internal class AuthRepositoryImpl @Inject constructor(
     private val authRemoteDataSource: AuthRemoteDataSource,
     private val googleAuthDataSource: GoogleAuthDataSource,
-    private val systemDataSource: SystemDataSource,
+    private val deviceInfoProvider: DeviceInfoProvider,
     private val tokenManager: TokenManager,
     private val userInfoManager: UserInfoManager
 ) : AuthRepository {
@@ -41,7 +41,7 @@ internal class AuthRepositoryImpl @Inject constructor(
     override suspend fun login(providerToken: String): Result<LoginModel> = suspendRunCatching {
         val loginResponse = authRemoteDataSource.login(
             providerToken = providerToken,
-            loginRequestDto = systemDataSource.toLoginRequestDto()
+            loginRequestDto = deviceInfoProvider.toLoginRequestDto()
         ).data!!
 
         tokenManager.saveTokens(loginResponse.accessToken, loginResponse.refreshToken)
@@ -70,7 +70,7 @@ internal class AuthRepositoryImpl @Inject constructor(
         userInfoManager.clear()
     }
 
-    private fun SystemDataSource.toLoginRequestDto() = LoginRequestDto(
+    private fun DeviceInfoProvider.toLoginRequestDto() = LoginRequestDto(
         provider = this.getProvider(),
         role = this.getRole(),
         deviceName = this.getDeviceName(),

@@ -42,11 +42,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.app.AppRestarter
-import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.model.HilingualMessage.Snackbar
 import com.hilingual.core.common.model.HilingualMessage.Toast
 import com.hilingual.core.common.model.MessageDuration
+import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
@@ -66,7 +66,8 @@ import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.main.state.MainAppState
 import com.hilingual.presentation.mypage.navigation.myPageNavGraph
 import com.hilingual.presentation.notification.navigation.notificationNavGraph
-import com.hilingual.presentation.onboarding.navigation.onboardingGraph
+import com.hilingual.presentation.onboarding.navigation.onboardingNavGraph
+import com.hilingual.presentation.signup.navigation.signUpGraph
 import com.hilingual.presentation.splash.navigation.splashNavGraph
 import com.hilingual.presentation.voca.navigation.vocaNavGraph
 import kotlinx.collections.immutable.toPersistentList
@@ -144,16 +145,17 @@ internal fun MainScreen(
             ) {
                 splashNavGraph(
                     navigateToAuth = appState::navigateToAuth,
-                    navigateToHome = appState::navigateToHome
+                    navigateToHome = appState::navigateToHome,
+                    navigateToOnboarding = appState::navigateToOnboarding
                 )
 
                 authNavGraph(
                     paddingValues = innerPadding,
                     navigateToHome = appState::navigateToHome,
-                    navigateToOnboarding = appState::navigateToOnboarding
+                    navigateToSignUp = appState::navigateToSignUp
                 )
 
-                onboardingGraph(
+                signUpGraph(
                     paddingValues = innerPadding,
                     navigateToHome = appState::navigateToHome
                 )
@@ -236,6 +238,11 @@ internal fun MainScreen(
                     navController = appState.navController,
                     navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
                     navigateToFeedDiary = appState::navigateToFeedDiary
+                )
+
+                onboardingNavGraph(
+                    paddingValues = innerPadding,
+                    navigateToAuth = appState::navigateToAuth
                 )
             }
 
