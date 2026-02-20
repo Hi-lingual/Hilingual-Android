@@ -39,6 +39,7 @@ fun HilingualBasicBottomSheet(
     ),
     properties: ModalBottomSheetProperties = ModalBottomSheetProperties(),
     isDimEnabled: Boolean = true,
+    sheetGesturesEnabled: Boolean = true,
     dragHandle: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
@@ -59,6 +60,7 @@ fun HilingualBasicBottomSheet(
             scrimColor = if (isDimEnabled) HilingualTheme.colors.dim1 else Color.Transparent,
             shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
             dragHandle = dragHandle,
+            sheetGesturesEnabled = sheetGesturesEnabled,
             properties = properties
         ) {
             content()
