@@ -33,6 +33,7 @@ internal fun HomeOnboardingBottomSheet(
             shouldDismissOnClickOutside = false
         ),
         isDimEnabled = true,
+        sheetGesturesEnabled = false,
         modifier = modifier
     ) {
         Box(

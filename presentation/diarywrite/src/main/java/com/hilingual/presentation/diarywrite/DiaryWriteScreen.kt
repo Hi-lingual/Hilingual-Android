@@ -96,10 +96,10 @@ import com.skydoves.balloon.compose.balloon
 import com.skydoves.balloon.compose.rememberBalloonBuilder
 import com.skydoves.balloon.compose.rememberBalloonState
 import com.skydoves.balloon.compose.setBackgroundColor
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.coroutines.delay
 import java.io.File
 import java.time.LocalDate
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.delay
 import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
@@ -486,25 +486,36 @@ private fun DiaryWriteScreen(
 
         val balloonState = rememberBalloonState(balloonBuilder)
 
-        HilingualButton(
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 16.dp)
                 .navigationBarsPadding()
-                .balloon(
-                    state = balloonState,
-                    balloonContent = {
-                        WriteGuideTooltip(
-                            text = "10자 이상 작성해야 피드백 요청이 가능해요!"
-                        )
-                    }
-                ),
-            text = "피드백 요청하기",
-            enableProvider = { diaryText.length >= 10 },
-            onClick = onDiaryFeedbackRequestButtonClick
-        )
+        ) {
+            Text(
+                text = "피드백을 요청한 일기는 수정이 불가능해요.",
+                style = HilingualTheme.typography.bodyM14,
+                color = HilingualTheme.colors.gray400
+            )
+
+            HilingualButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .balloon(
+                        state = balloonState,
+                        balloonContent = {
+                            WriteGuideTooltip(
+                                text = "10자 이상 작성해야 피드백 요청이 가능해요!"
+                            )
+                        }
+                    ),
+                text = "피드백 요청하기",
+                enableProvider = { diaryText.length >= 10 },
+                onClick = onDiaryFeedbackRequestButtonClick
+            )
+        }
 
         LaunchedEffect(Unit) {
             balloonState.showAlignTop()
