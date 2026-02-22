@@ -1,0 +1,70 @@
+{
+  "projectName": "Hilingual-Android",
+  "projectOwner": "Hi-lingual",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "angryPodo",
+      "name": "Han Minjae",
+      "avatar_url": "https://github.com/angryPodo.png",
+      "profile": "https://github.com/angryPodo",
+      "contributions": [
+        "code",
+        "infra",
+        "maintenance",
+        "review",
+        "projectManagement"
+      ]
+    },
+    {
+      "login": "nahy-512",
+      "name": "Kim Nahyun",
+      "avatar_url": "https://github.com/nahy-512.png",
+      "profile": "https://github.com/nahy-512",
+      "contributions": [
+        "code",
+        "review"
+      ]
+    },
+    {
+      "login": "nhyeonii",
+      "name": "Kim Nahyun",
+      "avatar_url": "https://github.com/nhyeonii.png",
+      "profile": "https://github.com/nhyeonii",
+      "contributions": [
+        "code",
+        "review"
+      ]
+    },
+    {
+      "login": "Daljyeong",
+      "name": "Moon Jiyoung",
+      "avatar_url": "https://github.com/Daljyeong.png",
+      "profile": "https://github.com/Daljyeong",
+      "contributions": [
+        "code",
+        "review"
+      ]
+    },
+    {
+      "login": "Hyobeen-Park",
+      "name": "Park Hyobeen",
+      "avatar_url": "https://github.com/Hyobeen-Park.png",
+      "profile": "https://github.com/Hyobeen-Park",
+      "contributions": [
+        "code",
+        "review"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "linkToUsage": true,
+  "commitType": "docs"
+}

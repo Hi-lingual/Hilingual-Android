@@ -18,12 +18,11 @@ package com.hilingual.core.designsystem.component.bottomsheet
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -38,7 +37,9 @@ fun HilingualBasicBottomSheet(
     sheetState: SheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     ),
+    properties: ModalBottomSheetProperties = ModalBottomSheetProperties(),
     isDimEnabled: Boolean = true,
+    sheetGesturesEnabled: Boolean = true,
     dragHandle: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
@@ -58,7 +59,9 @@ fun HilingualBasicBottomSheet(
             containerColor = HilingualTheme.colors.white,
             scrimColor = if (isDimEnabled) HilingualTheme.colors.dim1 else Color.Transparent,
             shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
-            dragHandle = dragHandle
+            dragHandle = dragHandle,
+            sheetGesturesEnabled = sheetGesturesEnabled,
+            properties = properties
         ) {
             content()
         }

@@ -72,6 +72,7 @@ import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.common.util.toKoreanFullDate
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualLongTextField
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -95,12 +96,10 @@ import com.skydoves.balloon.compose.balloon
 import com.skydoves.balloon.compose.rememberBalloonBuilder
 import com.skydoves.balloon.compose.rememberBalloonState
 import com.skydoves.balloon.compose.setBackgroundColor
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.coroutines.delay
 import java.io.File
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.delay
 import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
@@ -487,25 +486,36 @@ private fun DiaryWriteScreen(
 
         val balloonState = rememberBalloonState(balloonBuilder)
 
-        HilingualButton(
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 16.dp)
                 .navigationBarsPadding()
-                .balloon(
-                    state = balloonState,
-                    balloonContent = {
-                        WriteGuideTooltip(
-                            text = "10자 이상 작성해야 피드백 요청이 가능해요!"
-                        )
-                    }
-                ),
-            text = "피드백 요청하기",
-            enableProvider = { diaryText.length >= 10 },
-            onClick = onDiaryFeedbackRequestButtonClick
-        )
+        ) {
+            Text(
+                text = "피드백을 요청한 일기는 수정이 불가능해요.",
+                style = HilingualTheme.typography.bodyM14,
+                color = HilingualTheme.colors.gray400
+            )
+
+            HilingualButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .balloon(
+                        state = balloonState,
+                        balloonContent = {
+                            WriteGuideTooltip(
+                                text = "10자 이상 작성해야 피드백 요청이 가능해요!"
+                            )
+                        }
+                    ),
+                text = "피드백 요청하기",
+                enableProvider = { diaryText.length >= 10 },
+                onClick = onDiaryFeedbackRequestButtonClick
+            )
+        }
 
         LaunchedEffect(Unit) {
             balloonState.showAlignTop()
@@ -542,7 +552,7 @@ private fun DateText(
     val selectedDate = selectedDateProvider()
 
     val formattedDate = remember(selectedDate) {
-        selectedDate.format(DATE_FORMATTER)
+        selectedDate.toKoreanFullDate()
     }
 
     Text(
@@ -551,9 +561,6 @@ private fun DateText(
         color = HilingualTheme.colors.black
     )
 }
-
-private val DATE_FORMATTER: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("M월 d일 EEEE", Locale.KOREAN)
 
 private fun createTempImageFile(context: Context): Pair<Uri, File> {
     val imageFile = File.createTempFile("camera_", ".jpg", context.cacheDir)

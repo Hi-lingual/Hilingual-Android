@@ -12,7 +12,6 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("com.android.application")
-                apply("org.jetbrains.kotlin.android")
                 apply("hilingual.hilt")
                 apply("hilingual.serialization")
                 apply("hilingual.android.compose")

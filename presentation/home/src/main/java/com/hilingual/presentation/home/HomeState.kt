@@ -37,6 +37,9 @@ class HomeState(
     var isMoreMenuExpanded by mutableStateOf(false)
         private set
 
+    var isOnboardingBottomSheetVisible by mutableStateOf(false)
+        private set
+
     var onErrorRetry: (() -> Unit)? = null
         private set
 
@@ -64,6 +67,14 @@ class HomeState(
 
     fun hideMoreMenu() {
         isMoreMenuExpanded = false
+    }
+
+    fun showOnboardingBottomSheet() {
+        isOnboardingBottomSheetVisible = true
+    }
+
+    fun hideOnboardingBottomSheet() {
+        isOnboardingBottomSheetVisible = false
     }
 }
 

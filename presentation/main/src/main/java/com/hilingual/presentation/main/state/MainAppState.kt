@@ -40,12 +40,13 @@ import com.hilingual.presentation.mypage.navigation.navigateToMyPage
 import com.hilingual.presentation.notification.navigation.navigateToNotification
 import com.hilingual.presentation.notification.navigation.navigateToNotificationSetting
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
+import com.hilingual.presentation.signup.navigation.navigateToSignUp
 import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.voca.navigation.navigateToVoca
+import java.time.LocalDate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
-import java.time.LocalDate
 
 @Stable
 internal class MainAppState(
@@ -138,8 +139,8 @@ internal class MainAppState(
         navController.navigateToVoca(navOptions)
     }
 
-    fun navigateToOnboarding(navOptions: NavOptions? = clearStackNavOptions) {
-        navController.navigateToOnboarding(navOptions)
+    fun navigateToSignUp(navOptions: NavOptions? = clearStackNavOptions) {
+        navController.navigateToSignUp(navOptions)
     }
 
     fun navigateToDiaryFeedback(
@@ -199,6 +200,10 @@ internal class MainAppState(
 
     fun navigateToMyFeedProfile(showLikedDiaries: Boolean = false, navOptions: NavOptions? = null) {
         navController.navigateToMyFeedProfile(showLikedDiaries, navOptions)
+    }
+
+    fun navigateToOnboarding(navOptions: NavOptions? = clearStackNavOptions) {
+        navController.navigateToOnboarding(navOptions)
     }
 
     fun navigateUp() {

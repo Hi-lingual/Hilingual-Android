@@ -84,6 +84,7 @@ dependencies {
     // core
     implementation(projects.core.common)
     implementation(projects.core.work)
+    implementation(projects.core.notification)
 
     // presentation
     implementation(projects.presentation.main)
@@ -100,7 +101,6 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.credentials.play.services.auth)
-    implementation(libs.jakewharton.process.phoenix)
 
     implementation(platform(libs.coil.bom))
     implementation(libs.bundles.coil)
@@ -111,6 +111,7 @@ dependencies {
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.messaging)
 }
 
 ktlint {

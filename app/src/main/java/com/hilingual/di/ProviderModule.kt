@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Hilingual Project
+ * Copyright 2026 The Hilingual Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.common.util
+package com.hilingual.di
 
-object EmojiFilter {
-    private val EMOJI_REGEX = Regex("[\\p{So}\\p{Cn}]+")
+import com.hilingual.core.common.app.DeviceInfoProvider
+import com.hilingual.app.DeviceInfoProviderImpl
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-    fun String.removeEmoji(): String {
-        return this.replace(EMOJI_REGEX, "")
-    }
+@Module
+@InstallIn(SingletonComponent::class)
+internal abstract class ProviderModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindDeviceInfoProvider(
+        impl: DeviceInfoProviderImpl
+    ): DeviceInfoProvider
 }

@@ -37,11 +37,12 @@ dependencies {
     implementation(projects.presentation.diaryfeedback)
     implementation(projects.presentation.diarywrite)
     implementation(projects.presentation.voca)
-    implementation(projects.presentation.onboarding)
+    implementation(projects.presentation.signup)
     implementation(projects.presentation.splash)
     implementation(projects.presentation.mypage)
     implementation(projects.presentation.feed)
     implementation(projects.presentation.feeddiary)
     implementation(projects.presentation.feedprofile)
     implementation(projects.presentation.notification)
+    implementation(projects.presentation.onboarding)
 }

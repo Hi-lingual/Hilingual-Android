@@ -65,7 +65,7 @@ graph TD
         home["home"]
         mypage["mypage"]
         notification["notification"]
-        onboarding["onboarding"]
+        signup["signup"]
         splash["splash"]
         voca["voca"]
     end
@@ -73,6 +73,7 @@ graph TD
     subgraph Data Layer
         data_auth["data:auth"]
         data_calendar["data:calendar"]
+        data_config["data:config"]
         data_diary["data:diary"]
         data_feed["data:feed"]
         data_user["data:user"]
@@ -99,9 +100,10 @@ graph TD
     mypage --> data_user
     mypage --> data_auth
     notification --> data_user
-    onboarding --> data_user
+    signup --> data_user
     splash --> data_auth
     splash --> data_user
+    splash --> data_config
     voca --> data_voca
     voca --> data_diary
 ```
@@ -113,6 +115,7 @@ graph TD
     subgraph Data Layer
         auth["auth"]
         calendar["calendar"]
+        config["config"]
         diary["diary"]
         feed["feed"]
         presigned["presigned"]
@@ -133,6 +136,10 @@ graph TD
     calendar --> core_network
     calendar --> core_localstorage
     calendar --> core_common
+
+    config --> core_network
+    config --> core_localstorage
+    config --> core_common
 
     diary --> presigned
     diary --> core_network
@@ -184,13 +191,37 @@ graph TD
 ```
 
 ## Contributors
+<div align="center">
 
-| 🤴한민재<br/>[@angryPodo](https://github.com/angryPodo) | 🦔김나현<br/>[@nahy-512](https://github.com/nahy-512) | 😻김나현<br/>[@nhyeonii](https://github.com/nhyeonii) | 🐻문지영<br/>[@Daljyeong](https://github.com/Daljyeong) | 🎓박효빈<br/>[@Hyobeen-Park](https://github.com/Hyobeen-Park) |
-| --- | --- | --- | --- | --- |
-| <img src="https://github.com/user-attachments/assets/4a0a822a-f7ea-47c5-83ca-563ea3b90cc4" height="280" /> | <img src="https://github.com/user-attachments/assets/612c32be-c117-45a6-9392-958ff11de010" height="280" /> | <img src="https://github.com/user-attachments/assets/7af7e584-b763-407c-8628-bdccf731d8b7" height="280" /> | <img src="https://github.com/user-attachments/assets/fc497adb-66b1-4748-b864-7c5e2a18d82f" height="280" /> | <img src="https://github.com/user-attachments/assets/6bedede6-fd60-4514-90ad-7c596ce41fbb" height="280" /> |
-| `스플래시` `온보딩`<br/>`로그인` `홈(캘린더)` | `일기 상세` | `단어장` | `일기 작성` | `멘토` |
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/angryPodo"><img src="https://github.com/angryPodo.png?s=100" width="100px;" alt="Han Minjae"/><br /><sub><b>Han Minjae</b></sub></a><br /><a href="https://github.com/Hi-lingual/Hilingual-Android/commits?author=angryPodo" title="Code">💻</a> <a href="#infra-angryPodo" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#maintenance-angryPodo" title="Maintenance">🚧</a> <a href="https://github.com/Hi-lingual/Hilingual-Android/pulls?q=is%3Apr+reviewed-by%3AangryPodo" title="Reviewed Pull Requests">👀</a>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/nahy-512"><img src="https://github.com/nahy-512.png?s=100" width="100px;" alt="Kim Nahyun"/><br /><sub><b>Kim Nahyun</b></sub></a><br /><a href="https://github.com/Hi-lingual/Hilingual-Android/commits?author=nahy-512" title="Code">💻</a> <a href="https://github.com/Hi-lingual/Hilingual-Android/pulls?q=is%3Apr+reviewed-by%3Anahy-512" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/nhyeonii"><img src="https://github.com/nhyeonii.png?s=100" width="100px;" alt="Kim Nahyun"/><br /><sub><b>Kim Nahyun</b></sub></a><br /><a href="https://github.com/Hi-lingual/Hilingual-Android/commits?author=nhyeonii" title="Code">💻</a> <a href="https://github.com/Hi-lingual/Hilingual-Android/pulls?q=is%3Apr+reviewed-by%3Anhyeonii" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Daljyeong"><img src="https://github.com/Daljyeong.png?s=100" width="100px;" alt="Moon Jiyoung"/><br /><sub><b>Moon Jiyoung</b></sub></a><br /><a href="https://github.com/Hi-lingual/Hilingual-Android/commits?author=Daljyeong" title="Code">💻</a> <a href="https://github.com/Hi-lingual/Hilingual-Android/pulls?q=is%3Apr+reviewed-by%3ADaljyeong" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Hyobeen-Park"><img src="https://github.com/Hyobeen-Park.png?s=100" width="100px;" alt="Park Hyobeen"/><br /><sub><b>Park Hyobeen</b></sub></a><br /><a href="https://github.com/Hi-lingual/Hilingual-Android/commits?author=Hyobeen-Park" title="Code">💻</a> <a href="https://github.com/Hi-lingual/Hilingual-Android/pulls?q=is%3Apr+reviewed-by%3AHyobeen-Park" title="Reviewed Pull Requests">👀</a></td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td align="center" size="13px" colspan="7">
+        <img src="https://raw.githubusercontent.com/all-contributors/all-contributors-cli/1b8533af435da9854653492b1327a23a4dbd0a10/assets/logo-small.svg">
+          <a href="https://all-contributors.js.org/docs/en/bot/usage">Add your contributions</a>
+        </img>
+      </td>
+    </tr>
+  </tfoot>
+</table>
 
----
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+ </div>
 
 <p align="center">
   Made with by Hi-lingual Team

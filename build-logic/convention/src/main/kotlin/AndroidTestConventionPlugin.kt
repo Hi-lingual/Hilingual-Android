@@ -10,7 +10,6 @@ class AndroidTestConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("com.android.test")
-                apply("org.jetbrains.kotlin.android")
                 apply("org.jlleitschuh.gradle.ktlint")
             }
 

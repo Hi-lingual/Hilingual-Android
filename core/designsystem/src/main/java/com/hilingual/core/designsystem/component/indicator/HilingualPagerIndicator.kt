@@ -1,0 +1,110 @@
+/*
+ * Copyright 2026 The Hilingual Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.hilingual.core.designsystem.component.indicator
+
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.hilingual.core.designsystem.theme.HilingualTheme
+import kotlinx.coroutines.delay
+
+@Composable
+fun HilingualPagerIndicator(
+    pageCount: Int,
+    currentPage: Int,
+    modifier: Modifier = Modifier,
+    indicatorHeight: Dp = 8.dp,
+    indicatorSpacing: Dp = 8.dp,
+    activeIndicatorWidth: Dp = 20.dp,
+    inactiveIndicatorWidth: Dp = 8.dp,
+    activeIndicatorColor: Color = HilingualTheme.colors.hilingualOrange,
+    inactiveIndicatorColor: Color = HilingualTheme.colors.gray200
+) {
+    if (pageCount <= 0) return
+    val selectedPage = currentPage.coerceIn(0, pageCount - 1)
+
+    val indicatorModifier = Modifier
+        .height(indicatorHeight)
+        .clip(CircleShape)
+
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(indicatorSpacing),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        repeat(pageCount) { index ->
+            val isSelected = index == selectedPage
+
+            val animatedWidth by animateDpAsState(
+                targetValue = if (isSelected) activeIndicatorWidth else inactiveIndicatorWidth,
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                ),
+                label = "indicatorWidth"
+            )
+
+            Box(
+                modifier = indicatorModifier
+                    .width(animatedWidth)
+                    .background(
+                        color = if (isSelected) activeIndicatorColor else inactiveIndicatorColor
+                    )
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun HilingualPagerIndicatorPreview() {
+    val pageCount = 4
+    var currentPage by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(1_000L)
+            currentPage = (currentPage + 1) % pageCount
+        }
+    }
+
+    HilingualTheme {
+        HilingualPagerIndicator(
+            pageCount = pageCount,
+            currentPage = currentPage
+        )
+    }
+}

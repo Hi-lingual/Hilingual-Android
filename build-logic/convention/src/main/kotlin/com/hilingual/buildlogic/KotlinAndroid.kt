@@ -13,22 +13,20 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * 모든 안드로이드 모듈에 적용될 기본적인 코틀린 및 안드로이드 설정을 구성합니다.
  */
 fun Project.configureKotlinAndroid(
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
+    commonExtension: CommonExtension,
 ) {
     commonExtension.apply {
         compileSdk = libs.findVersion("compileSdk").get().requiredVersion.toInt()
 
-        defaultConfig {
+        defaultConfig.apply {
             minSdk = libs.findVersion("minSdk").get().requiredVersion.toInt()
         }
 
-        compileOptions {
+        compileOptions.apply {
             sourceCompatibility = JavaVersion.VERSION_17
             targetCompatibility = JavaVersion.VERSION_17
             isCoreLibraryDesugaringEnabled = true
         }
-
-
     }
 
     configureKotlin()

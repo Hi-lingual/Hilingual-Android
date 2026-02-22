@@ -19,7 +19,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import com.hilingual.core.designsystem.R
@@ -43,7 +42,7 @@ class HilingualNotificationManager @Inject constructor(
         val dailyChannel = NotificationChannel(
             CHANNEL_ID_DAILY,
             "일간 알림",
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_HIGH
         ).apply {
             description = "하루를 정리하는 알림"
         }
@@ -51,7 +50,7 @@ class HilingualNotificationManager @Inject constructor(
         val weeklyChannel = NotificationChannel(
             CHANNEL_ID_WEEKLY,
             "주간 알림",
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_HIGH
         ).apply {
             description = "한 주를 정리하는 알림"
         }
@@ -59,38 +58,28 @@ class HilingualNotificationManager @Inject constructor(
         notificationManager?.createNotificationChannels(listOf(dailyChannel, weeklyChannel))
     }
 
-    fun sendDailyNotification() {
-        sendNotification(
-            channelId = CHANNEL_ID_DAILY,
-            notificationId = NOTIFICATION_ID_DAILY,
-            title = "하루를 정리해 볼 시간 ✏️",
-            message = "오늘 하루를 돌아보며 떠오르는 생각들을 자유롭게 적어보세요."
+    fun sendReminderNotification(channelId: String?, title: String, message: String) {
+        val targetChannelId = channelId ?: CHANNEL_ID_DAILY
+        showReminderNotification(
+            channelId = targetChannelId,
+            notificationId = System.currentTimeMillis().toInt(),
+            title = title,
+            message = message
         )
     }
 
-    fun sendWeeklyNotification() {
-        sendNotification(
-            channelId = CHANNEL_ID_WEEKLY,
-            notificationId = NOTIFICATION_ID_WEEKLY,
-            title = "한 주를 정리해보는 시간 ✍️",
-            message = "특별한 주제가 없어도 괜찮아요. 지금 생각나는 걸 써보세요."
-        )
-    }
-
-    private fun sendNotification(
+    private fun showReminderNotification(
         channelId: String,
         notificationId: Int,
         title: String,
         message: String
     ) {
-        val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
+        val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
 
         val pendingIntent = launchIntent?.let {
             PendingIntent.getActivity(
                 context,
-                0,
+                notificationId,
                 it,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
@@ -101,7 +90,7 @@ class HilingualNotificationManager @Inject constructor(
             .setContentTitle(title)
             .setContentText(message)
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
 
         if (pendingIntent != null) {
@@ -120,8 +109,5 @@ class HilingualNotificationManager @Inject constructor(
     companion object {
         private const val CHANNEL_ID_DAILY = "channel_daily_notification"
         private const val CHANNEL_ID_WEEKLY = "channel_weekly_notification"
-
-        private const val NOTIFICATION_ID_DAILY = 1001
-        private const val NOTIFICATION_ID_WEEKLY = 1002
     }
 }

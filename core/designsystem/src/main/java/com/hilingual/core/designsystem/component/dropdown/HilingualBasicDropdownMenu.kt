@@ -91,7 +91,8 @@ fun HilingualBasicDropdownMenu(
                 Column(
                     modifier = modifier
                         .dropShadow(
-                            color = HilingualTheme.colors.black.copy(alpha = 0.2f),
+                            color = HilingualTheme.colors.black,
+                            alpha = 0.2f,
                             shape = RoundedCornerShape(size = 10.dp),
                             offsetX = 0.dp,
                             offsetY = 0.dp,

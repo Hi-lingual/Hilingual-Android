@@ -38,11 +38,11 @@ jobs:
           RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
           PLAY_STORE_JSON_KEY: ${{ secrets.PLAY_STORE_JSON_KEY }}
         run: |
-          echo "$GOOGLE_SERVICES_JSON" > app/google-services.json
-          echo "$LOCAL_PROPERTIES" > local.properties
+          printf "%s" "$GOOGLE_SERVICES_JSON" > app/google-services.json
+          printf "%s" "$LOCAL_PROPERTIES" > local.properties
           mkdir -p keystore
           echo "$RELEASE_KEYSTORE_BASE64" | base64 --decode > keystore/hilingual-release-key.jks
-          echo "$PLAY_STORE_JSON_KEY" > play_store_api_key.json
+          printf "%s" "$PLAY_STORE_JSON_KEY" > play_store_api_key.json
 
       - name: Build Release Bundle
         run: ./gradlew bundleRelease

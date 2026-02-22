@@ -1,45 +1,52 @@
 package com.hilingual.buildlogic
 
+import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Project
 import java.util.Properties
 
 fun Project.configureBuildTypes(
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
+    commonExtension: CommonExtension,
 ) {
     val properties = Properties().apply {
         project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
     }
 
-    commonExtension.apply {
-        buildFeatures {
-            buildConfig = true
-        }
+    fun configureBuildTypeFields(
+        buildConfigField: (String, String, String) -> Unit,
+        isDebug: Boolean
+    ) {
+        val prefix = if (isDebug) "dev" else "prod"
 
-        buildTypes {
-            debug {
-                buildConfigField(
-                    "String",
-                    "BASE_URL",
-                    properties.getQuotedProperty("dev.base.url")
-                )
-                buildConfigField(
-                    "String",
-                    "GOOGLE_WEB_CLIENT_ID",
-                    properties.getQuotedProperty("dev.google.client.id")
-                )
+        buildConfigField(
+            "String",
+            "BASE_URL",
+            properties.getQuotedProperty("$prefix.base.url")
+        )
+        buildConfigField(
+            "String",
+            "GOOGLE_WEB_CLIENT_ID",
+            properties.getQuotedProperty("$prefix.google.client.id")
+        )
+    }
+
+    commonExtension.apply {
+        when (this) {
+            is ApplicationExtension -> {
+                buildFeatures { buildConfig = true }
+                buildTypes {
+                    getByName("debug") { configureBuildTypeFields(::buildConfigField, true) }
+                    getByName("release") { configureBuildTypeFields(::buildConfigField, false) }
+                }
             }
-            release {
-                buildConfigField(
-                    "String",
-                    "BASE_URL",
-                    properties.getQuotedProperty("prod.base.url")
-                )
-                buildConfigField(
-                    "String",
-                    "GOOGLE_WEB_CLIENT_ID",
-                    properties.getQuotedProperty("prod.google.client.id")
-                )
+
+            is LibraryExtension -> {
+                buildFeatures { buildConfig = true }
+                buildTypes {
+                    getByName("debug") { configureBuildTypeFields(::buildConfigField, true) }
+                    getByName("release") { configureBuildTypeFields(::buildConfigField, false) }
+                }
             }
         }
     }

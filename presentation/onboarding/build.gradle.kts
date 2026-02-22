@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Hilingual Project
+ * Copyright 2026 The Hilingual Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,4 @@ plugins {
 
 android {
     setNamespace("presentation.onboarding")
-}
-
-dependencies {
-    implementation(projects.data.user)
 }
