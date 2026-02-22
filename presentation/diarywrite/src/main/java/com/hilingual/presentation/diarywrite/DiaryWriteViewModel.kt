@@ -189,9 +189,7 @@ internal class DiaryWriteViewModel @Inject constructor(
                             )
                         }
                     }
-                    .onFailure { throwable ->
-                        Timber.tag("DiaryWriteViewModel").e(throwable, "Text recognition failed")
-                    }
+                    .onLogFailure { }
             } finally {
                 withContext(Dispatchers.IO) {
                     if (tempFileToDelete?.exists() == true) {

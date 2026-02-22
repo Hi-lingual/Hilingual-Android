@@ -3,8 +3,7 @@ package com.hilingual.data.diary.repositoryimpl
 import android.content.Context
 import android.net.Uri
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.google.mlkit.vision.text.TextRecognizer
 import com.hilingual.data.diary.repository.TextRecognitionRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -13,12 +12,9 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class TextRecognitionRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val recognizer: TextRecognizer
 ) : TextRecognitionRepository {
-
-    private val recognizer by lazy {
-        TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-    }
 
     override suspend fun extractTextFromImage(uri: Uri): Result<String> =
         withContext(Dispatchers.IO) {
