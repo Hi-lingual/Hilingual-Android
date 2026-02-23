@@ -162,7 +162,6 @@ internal fun FeedRoute(
             onUnpublishClick = viewModel::diaryUnpublish,
             onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
             readAllFeed = viewModel::readAllFeed,
-            isScrollingDown = viewModel::isScrollingDown
         )
     }
 }
@@ -185,7 +184,6 @@ private fun FeedScreen(
     onReportClick: () -> Unit,
     readAllFeed: () -> Unit,
     onFeedRefresh: (FeedTab) -> Unit,
-    isScrollingDown: (FeedScrollState?, FeedScrollState) -> Boolean,
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -239,14 +237,14 @@ private fun FeedScreen(
     LaunchedEffect(pagerState.currentPage) {
         snapshotFlow {
             FeedScrollState(
-                firstVisibleItemIndex = currentListState.firstVisibleItemIndex,
-                firstVisibleItemScrollOffset = currentListState.firstVisibleItemScrollOffset
+                itemIndex = currentListState.firstVisibleItemIndex,
+                scrollOffset = currentListState.firstVisibleItemScrollOffset
             )
         }
             .pairwise()
             .collect { (previous, current) ->
                 if (currentListState.isScrollInProgress &&
-                    isScrollingDown(previous, current) &&
+                    current.isScrollingDownFrom(previous) &&
                     isAtBottom
                 ) {
                     latestReadAllFeed()
@@ -349,8 +347,18 @@ private fun FeedScreenPreview() {
             hasFollowing = false,
             recommendRefreshing = false,
             followingRefreshing = false,
-            onFeedRefresh = {},
-            isScrollingDown = { _, _ -> false }
+            onFeedRefresh = {}
         )
+    }
+}
+
+private data class FeedScrollState(
+    val itemIndex: Int,
+    val scrollOffset: Int
+) {
+    fun isScrollingDownFrom(previous: FeedScrollState?): Boolean {
+        if (previous == null) return false
+        return itemIndex > previous.itemIndex ||
+            (itemIndex == previous.itemIndex && scrollOffset > previous.scrollOffset)
     }
 }
