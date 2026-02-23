@@ -236,17 +236,15 @@ private fun FeedScreen(
 
     LaunchedEffect(pagerState.currentPage) {
         snapshotFlow {
-            Pair(currentListState.firstVisibleItemIndex, currentListState.firstVisibleItemScrollOffset)
+            FeedScrollState(
+                itemIndex = currentListState.firstVisibleItemIndex,
+                scrollOffset = currentListState.firstVisibleItemScrollOffset
+            )
         }
             .pairwise()
             .collect { (previous, current) ->
-                val isScrollingDown = previous != null && (
-                    current.first > previous.first ||
-                    (current.first == previous.first && current.second > previous.second)
-                    )
-
                 if (currentListState.isScrollInProgress &&
-                    isScrollingDown &&
+                    current.isScrollingDownFrom(previous) &&
                     isAtBottom
                 ) {
                     latestReadAllFeed()
@@ -351,5 +349,16 @@ private fun FeedScreenPreview() {
             followingRefreshing = false,
             onFeedRefresh = {}
         )
+    }
+}
+
+private data class FeedScrollState(
+    val itemIndex: Int,
+    val scrollOffset: Int
+) {
+    fun isScrollingDownFrom(previous: FeedScrollState?): Boolean {
+        if (previous == null) return false
+        return itemIndex > previous.itemIndex ||
+            (itemIndex == previous.itemIndex && scrollOffset > previous.scrollOffset)
     }
 }
