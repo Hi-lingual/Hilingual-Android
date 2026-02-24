@@ -25,4 +25,6 @@ android {
 
 dependencies {
     implementation(projects.data.presigned)
+    implementation(libs.mlkit.text.recognition)
+    implementation(libs.kotlinx.coroutines.play.services)
 }
