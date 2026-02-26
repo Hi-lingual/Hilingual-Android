@@ -1,7 +1,7 @@
 [versions]
 # Build Configuration
 compileSdk = "36"
-credentials = "1.6.0-rc01"
+credentials = "1.6.0-rc02"
 googleid = "1.2.0"
 googleServices = "4.4.4"
 minSdk = "30"
