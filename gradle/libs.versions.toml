@@ -63,7 +63,7 @@ balloonCompose = "1.7.3"
 richeditorCompose = "1.0.0-rc13"
 
 # Firebase
-firebaseBom = "34.9.0"
+firebaseBom = "34.10.0"
 firebaseCrashlyticsPlugin = "3.0.6"
 
 # ML Kit
