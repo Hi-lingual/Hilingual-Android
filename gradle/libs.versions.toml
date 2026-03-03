@@ -59,7 +59,7 @@ lottieCompose = "6.7.1"
 coroutine = "1.10.2"
 ktlint = "11.5.1"
 pebble = "0.1.0"
-balloonCompose = "1.7.3"
+balloonCompose = "1.7.4"
 richeditorCompose = "1.0.0-rc13"
 
 # Firebase
