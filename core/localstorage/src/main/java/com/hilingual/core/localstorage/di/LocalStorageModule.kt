@@ -16,20 +16,14 @@
 package com.hilingual.core.localstorage.di
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.dataStore
 import androidx.datastore.preferences.preferencesDataStore
 import com.hilingual.core.localstorage.DiaryTempManager
 import com.hilingual.core.localstorage.DiaryTempManagerImpl
 import com.hilingual.core.localstorage.OnboardingStateManager
 import com.hilingual.core.localstorage.OnboardingStateManagerImpl
-import com.hilingual.core.localstorage.TokenManager
-import com.hilingual.core.localstorage.TokenManagerImpl
 import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.core.localstorage.UserInfoManagerImpl
 import com.hilingual.core.localstorage.constant.DataStoreConstant
-import com.hilingual.core.localstorage.model.UserPreferences
-import com.hilingual.core.localstorage.serializer.UserPreferencesSerializer
 import com.hilingual.core.localstorage.util.InternalImageStorage
 import dagger.Module
 import dagger.Provides
@@ -43,17 +37,8 @@ import javax.inject.Singleton
 object LocalStorageModule {
 
     private val Context.userInfoDataStore by preferencesDataStore(name = DataStoreConstant.HILINGUAL_USER_INFO_PREFS)
-    private val Context.encryptedDataStore: DataStore<UserPreferences> by dataStore(
-        fileName = DataStoreConstant.ENCRYPTED_USER_PREFS,
-        serializer = UserPreferencesSerializer
-    )
     private val Context.diaryTempDataStore by preferencesDataStore(name = DataStoreConstant.HILINGUAL_DIARY_TEMP_PREFS)
     private val Context.onboardingStateDataStore by preferencesDataStore(name = DataStoreConstant.HILINGUAL_ONBOARDING_STATE_PREFS)
-
-    @Provides
-    @Singleton
-    fun provideTokenManager(@ApplicationContext context: Context): TokenManager =
-        TokenManagerImpl(context.encryptedDataStore)
 
     @Provides
     @Singleton
