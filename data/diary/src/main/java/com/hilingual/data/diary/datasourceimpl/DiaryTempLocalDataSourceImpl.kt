@@ -7,17 +7,17 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.hilingual.data.diary.datasource.DiaryTempDataSource
+import com.hilingual.data.diary.datasource.DiaryTempLocalDataSource
 import com.hilingual.data.diary.datasourceimpl.util.InternalImageStorage
 import com.hilingual.data.diary.di.qualifier.DiaryTempDataStore
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 import javax.inject.Inject
 
-class DiaryTempDataSourceImpl @Inject constructor(
+class DiaryTempLocalDataSourceImpl @Inject constructor(
     @DiaryTempDataStore private val dataStore: DataStore<Preferences>,
     private val imageStorage: InternalImageStorage
-) : DiaryTempDataSource {
+) : DiaryTempLocalDataSource {
 
     private fun keyIsDiaryTempExist(date: LocalDate) = booleanPreferencesKey("diary_${date}_has_temp")
     private fun keyDiaryText(date: LocalDate) = stringPreferencesKey("diary_${date}_text")
