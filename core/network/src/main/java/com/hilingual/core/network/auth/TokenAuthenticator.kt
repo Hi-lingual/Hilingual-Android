@@ -16,7 +16,6 @@
 package com.hilingual.core.network.auth
 
 import com.hilingual.core.common.app.AppRestarter
-import com.hilingual.core.localstorage.TokenManager
 import com.hilingual.core.network.constant.AUTHORIZATION
 import com.hilingual.core.network.constant.BEARER
 import kotlinx.coroutines.runBlocking
@@ -32,7 +31,7 @@ import javax.inject.Singleton
 
 @Singleton
 class TokenAuthenticator @Inject constructor(
-    private val tokenManager: TokenManager,
+    private val tokenProvider: TokenProvider,
     private val tokenRefreshService: TokenRefreshService,
     private val appRestarter: AppRestarter
 ) : Authenticator {
@@ -50,7 +49,7 @@ class TokenAuthenticator @Inject constructor(
         Timber.d("인증 필요. 요청 토큰: $requestToken")
 
         // 현재 저장된 토큰과 방금 실패한 요청의 토큰을 비교합니다.
-        val currentToken = tokenManager.getAccessToken()
+        val currentToken = tokenProvider.getAccessToken()
         if (requestToken != "$BEARER $currentToken") {
             // 다른 스레드에서 이미 토큰이 갱신되어, 현재 요청은 새 토큰으로 재시도하면 될 경우
             Timber.d("토큰 이미 갱신됨. 새 토큰으로 재시도: $BEARER $currentToken")
@@ -60,9 +59,9 @@ class TokenAuthenticator @Inject constructor(
         }
 
         // 토큰 재발급 로직 실행
-        val refreshToken = tokenManager.getRefreshToken() ?: run {
+        val refreshToken = tokenProvider.getRefreshToken() ?: run {
             Timber.d("리프레시 토큰 없음. 토큰 삭제 및 앱 재시작.")
-            tokenManager.clearTokens()
+            tokenProvider.clearTokens()
             appRestarter.restartApp()
             return@withLock null
         }
@@ -78,7 +77,7 @@ class TokenAuthenticator @Inject constructor(
                 .build()
         } else {
             Timber.d(result.exceptionOrNull(), "토큰 재발급 실패. 토큰 삭제 및 앱 재시작.")
-            tokenManager.clearTokens()
+            tokenProvider.clearTokens()
             appRestarter.restartApp()
             null
         }

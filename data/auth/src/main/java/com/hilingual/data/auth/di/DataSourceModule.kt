@@ -52,6 +52,12 @@ internal abstract class DataSourceModule {
         authLocalDataSourceImpl: AuthLocalDataSourceImpl
     ): AuthLocalDataSource
 
+    @Binds
+    @Singleton
+    abstract fun bindTokenProvider(
+        authLocalDataSourceImpl: AuthLocalDataSourceImpl
+    ): com.hilingual.core.network.auth.TokenProvider
+
     internal companion object {
         @Provides
         @Singleton
