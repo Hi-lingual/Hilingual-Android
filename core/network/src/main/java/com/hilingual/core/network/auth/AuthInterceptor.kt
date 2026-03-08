@@ -35,11 +35,15 @@ class AuthInterceptor @Inject constructor(
 
         val originalRequest = chain.request()
 
-        val authRequest = originalRequest.newBuilder().newAuthBuilder(token).build()
+        val authRequest = if (token.isNullOrBlank()) {
+            originalRequest.newBuilder().build()
+        } else {
+            originalRequest.newBuilder().newAuthBuilder(token).build()
+        }
 
         return chain.proceed(authRequest)
     }
 
-    private fun Request.Builder.newAuthBuilder(accessToken: String?) =
+    private fun Request.Builder.newAuthBuilder(accessToken: String) =
         this.header(AUTHORIZATION, "\$BEARER \$accessToken")
 }
