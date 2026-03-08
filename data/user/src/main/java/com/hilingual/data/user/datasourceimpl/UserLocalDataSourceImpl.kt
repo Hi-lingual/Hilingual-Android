@@ -2,9 +2,9 @@ package com.hilingual.data.user.datasourceimpl
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import com.hilingual.data.user.datasource.UserLocalDataSource
+import com.hilingual.core.localstorage.constant.UserInfoDataStoreKey.KEY_IS_REGISTER_COMPLETED
 import com.hilingual.core.localstorage.di.qualifier.UserInfoDataStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -30,9 +30,5 @@ class UserLocalDataSourceImpl @Inject constructor(
         dataStore.edit { preferences ->
             preferences.clear()
         }
-    }
-
-    companion object {
-        val KEY_IS_REGISTER_COMPLETED = booleanPreferencesKey("is_register_completed")
     }
 }

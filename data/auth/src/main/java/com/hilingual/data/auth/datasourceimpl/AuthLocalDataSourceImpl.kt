@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import com.hilingual.data.auth.di.quilifier.AuthDataStore
 import com.hilingual.data.auth.datasource.AuthLocalDataSource
 import com.hilingual.data.auth.localstorage.model.TokenPreferences
+import com.hilingual.core.localstorage.constant.UserInfoDataStoreKey.KEY_IS_REGISTER_COMPLETED
 import com.hilingual.core.localstorage.di.qualifier.UserInfoDataStore
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -66,9 +67,5 @@ class AuthLocalDataSourceImpl @Inject constructor(
         userInfoDataStore.edit { preferences ->
             preferences.clear()
         }
-    }
-
-    companion object {
-        val KEY_IS_REGISTER_COMPLETED = booleanPreferencesKey("is_register_completed")
     }
 }
