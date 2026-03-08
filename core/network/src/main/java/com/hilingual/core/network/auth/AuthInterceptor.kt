@@ -31,7 +31,7 @@ class AuthInterceptor @Inject constructor(
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val token = runBlocking { tokenProvider.getAccessToken() }
-        Timber.d("ACCESS_TOKEN: \$token")
+        Timber.d("ACCESS_TOKEN: $token")
 
         val originalRequest = chain.request()
 
@@ -45,5 +45,5 @@ class AuthInterceptor @Inject constructor(
     }
 
     private fun Request.Builder.newAuthBuilder(accessToken: String) =
-        this.header(AUTHORIZATION, "\$BEARER \$accessToken")
+        this.header(AUTHORIZATION, "$BEARER $accessToken")
 }
