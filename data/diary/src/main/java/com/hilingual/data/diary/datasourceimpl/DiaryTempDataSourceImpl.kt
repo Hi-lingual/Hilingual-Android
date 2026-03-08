@@ -9,7 +9,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.hilingual.data.diary.datasource.DiaryTempDataSource
 import com.hilingual.data.diary.datasourceimpl.util.InternalImageStorage
-import com.hilingual.data.diary.di.DiaryTempDataStore
+import com.hilingual.data.diary.di.qualifier.DiaryTempDataStore
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 import javax.inject.Inject

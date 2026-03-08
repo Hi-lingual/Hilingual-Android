@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.hilingual.core.localstorage.builder.DataStoreBuilder
+import com.hilingual.data.diary.di.qualifier.DiaryTempDataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

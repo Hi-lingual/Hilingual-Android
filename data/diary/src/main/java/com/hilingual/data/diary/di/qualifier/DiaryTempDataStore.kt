@@ -1,4 +1,4 @@
-package com.hilingual.data.diary.di
+package com.hilingual.data.diary.di.qualifier
 
 import javax.inject.Qualifier
 
