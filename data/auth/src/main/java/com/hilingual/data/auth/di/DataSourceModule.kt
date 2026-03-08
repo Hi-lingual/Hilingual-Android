@@ -21,6 +21,8 @@ import com.hilingual.data.auth.datasource.AuthRemoteDataSource
 import com.hilingual.data.auth.datasource.GoogleAuthDataSource
 import com.hilingual.data.auth.datasourceimpl.AuthRemoteDataSourceImpl
 import com.hilingual.data.auth.datasourceimpl.GoogleAuthDataSourceImpl
+import com.hilingual.data.auth.localstorage.AuthLocalDataSource
+import com.hilingual.data.auth.localstorage.AuthLocalDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -43,6 +45,12 @@ internal abstract class DataSourceModule {
     abstract fun bindAuthRemoteDataSource(
         authRemoteDataSourceImpl: AuthRemoteDataSourceImpl
     ): AuthRemoteDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthLocalDataSource(
+        authLocalDataSourceImpl: AuthLocalDataSourceImpl
+    ): AuthLocalDataSource
 
     internal companion object {
         @Provides

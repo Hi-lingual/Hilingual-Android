@@ -22,13 +22,14 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.hilingual.core.localstorage.di.qualifier.DiaryTempDataStore
 import com.hilingual.core.localstorage.util.InternalImageStorage
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 import javax.inject.Inject
 
 class DiaryTempDataSourceImpl @Inject constructor(
-    private val dataStore: DataStore<Preferences>,
+    @DiaryTempDataStore private val dataStore: DataStore<Preferences>,
     private val imageStorage: InternalImageStorage
 ) : DiaryTempDataSource {
 

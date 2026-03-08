@@ -4,13 +4,15 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import com.hilingual.core.localstorage.di.qualifier.UserInfoDataStore
+import com.hilingual.data.auth.di.AuthDataStore
 import com.hilingual.data.auth.localstorage.model.TokenPreferences
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class AuthLocalDataSourceImpl @Inject constructor(
-    private val tokenDataStore: DataStore<TokenPreferences>,
-    private val userInfoDataStore: DataStore<Preferences>
+    @AuthDataStore private val tokenDataStore: DataStore<TokenPreferences>,
+    @UserInfoDataStore private val userInfoDataStore: DataStore<Preferences>
 ) : AuthLocalDataSource {
 
     @Volatile

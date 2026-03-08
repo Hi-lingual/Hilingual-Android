@@ -4,11 +4,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import com.hilingual.core.localstorage.di.qualifier.OnboardingDataStore
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 
 class OnboardingLocalDataSourceImpl @Inject constructor(
-    private val dataStore: DataStore<Preferences>
+    @OnboardingDataStore private val dataStore: DataStore<Preferences>
 ) : OnboardingLocalDataSource {
     private object PreferencesKeys {
         val IS_HOME_ONBOARDING_COMPLETED = booleanPreferencesKey("is_home_onboarding_completed")
