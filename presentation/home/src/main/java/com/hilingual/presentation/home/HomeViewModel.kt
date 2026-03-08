@@ -22,7 +22,7 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.calendar.repository.CalendarRepository
-import com.hilingual.data.diary.localstorage.DiaryTempRepository
+import com.hilingual.data.diary.repository.DiaryTempRepository
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.onboarding.repository.OnboardingRepository
 import com.hilingual.data.user.repository.UserRepository

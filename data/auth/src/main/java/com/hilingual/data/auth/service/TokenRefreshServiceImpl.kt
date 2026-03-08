@@ -16,7 +16,7 @@
 package com.hilingual.data.auth.service
 
 import com.hilingual.core.common.util.suspendRunCatching
-import com.hilingual.data.auth.localstorage.AuthLocalDataSource
+import com.hilingual.data.auth.datasource.AuthLocalDataSource
 import com.hilingual.core.network.auth.TokenRefreshService
 import com.hilingual.core.network.constant.BEARER
 import javax.inject.Inject

@@ -15,10 +15,10 @@
  */
 package com.hilingual.data.user.di
 
-import com.hilingual.data.user.datasouceimpl.UserRemoteDataSourceImpl
+import com.hilingual.data.user.datasource.UserLocalDataSource
 import com.hilingual.data.user.datasource.UserRemoteDataSource
-import com.hilingual.data.user.localstorage.UserLocalDataSource
-import com.hilingual.data.user.localstorage.UserLocalDataSourceImpl
+import com.hilingual.data.user.datasourceimpl.UserLocalDataSourceImpl
+import com.hilingual.data.user.datasourceimpl.UserRemoteDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

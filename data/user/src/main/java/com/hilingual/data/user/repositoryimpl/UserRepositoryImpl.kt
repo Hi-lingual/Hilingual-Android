@@ -19,7 +19,7 @@ import android.net.Uri
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.data.presigned.repository.FileUploaderRepository
 import com.hilingual.data.user.datasource.UserRemoteDataSource
-import com.hilingual.data.user.localstorage.UserLocalDataSource
+import com.hilingual.data.user.datasource.UserLocalDataSource
 import com.hilingual.data.user.model.follow.FollowUserListResultModel
 import com.hilingual.data.user.model.follow.toModel
 import com.hilingual.data.user.model.notification.NotificationDetailModel

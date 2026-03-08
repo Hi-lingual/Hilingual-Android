@@ -1,4 +1,4 @@
-package com.hilingual.data.user.localstorage
+package com.hilingual.data.user.datasource
 
 interface UserLocalDataSource {
     suspend fun saveRegisterStatus(isCompleted: Boolean)

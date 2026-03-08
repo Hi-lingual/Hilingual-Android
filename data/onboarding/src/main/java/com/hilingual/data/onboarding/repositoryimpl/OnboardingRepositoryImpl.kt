@@ -16,7 +16,7 @@
 package com.hilingual.data.onboarding.repositoryimpl
 
 import com.hilingual.core.common.util.suspendRunCatching
-import com.hilingual.data.onboarding.localstorage.OnboardingLocalDataSource
+import com.hilingual.data.onboarding.datasource.OnboardingLocalDataSource
 import com.hilingual.data.onboarding.repository.OnboardingRepository
 import javax.inject.Inject
 

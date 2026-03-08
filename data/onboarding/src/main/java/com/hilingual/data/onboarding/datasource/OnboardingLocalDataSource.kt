@@ -1,4 +1,4 @@
-package com.hilingual.data.onboarding.localstorage
+package com.hilingual.data.onboarding.datasource
 
 interface OnboardingLocalDataSource {
     suspend fun getIsHomeOnboardingCompleted(): Boolean

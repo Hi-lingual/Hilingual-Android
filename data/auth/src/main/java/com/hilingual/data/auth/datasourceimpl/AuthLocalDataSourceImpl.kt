@@ -1,12 +1,13 @@
-package com.hilingual.data.auth.localstorage
+package com.hilingual.data.auth.datasourceimpl
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import com.hilingual.core.localstorage.di.qualifier.UserInfoDataStore
-import com.hilingual.data.auth.di.AuthDataStore
+import com.hilingual.data.auth.datasource.AuthDataStore
+import com.hilingual.data.auth.datasource.AuthLocalDataSource
 import com.hilingual.data.auth.localstorage.model.TokenPreferences
+import com.hilingual.core.localstorage.di.qualifier.UserInfoDataStore
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 

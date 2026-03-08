@@ -1,4 +1,4 @@
-package com.hilingual.core.localstorage.di.qualifier
+package com.hilingual.data.diary.di
 
 import javax.inject.Qualifier
 

@@ -17,12 +17,13 @@ package com.hilingual.data.auth.di
 
 import android.content.Context
 import androidx.credentials.CredentialManager
+import com.hilingual.core.network.auth.TokenProvider
 import com.hilingual.data.auth.datasource.AuthRemoteDataSource
 import com.hilingual.data.auth.datasource.GoogleAuthDataSource
+import com.hilingual.data.auth.datasource.AuthLocalDataSource
 import com.hilingual.data.auth.datasourceimpl.AuthRemoteDataSourceImpl
 import com.hilingual.data.auth.datasourceimpl.GoogleAuthDataSourceImpl
-import com.hilingual.data.auth.localstorage.AuthLocalDataSource
-import com.hilingual.data.auth.localstorage.AuthLocalDataSourceImpl
+import com.hilingual.data.auth.datasourceimpl.AuthLocalDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -56,7 +57,7 @@ internal abstract class DataSourceModule {
     @Singleton
     abstract fun bindTokenProvider(
         authLocalDataSourceImpl: AuthLocalDataSourceImpl
-    ): com.hilingual.core.network.auth.TokenProvider
+    ): TokenProvider
 
     internal companion object {
         @Provides

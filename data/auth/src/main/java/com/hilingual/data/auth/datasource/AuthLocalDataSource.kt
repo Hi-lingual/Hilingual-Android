@@ -1,4 +1,4 @@
-package com.hilingual.data.auth.localstorage
+package com.hilingual.data.auth.datasource
 
 import com.hilingual.core.network.auth.TokenProvider
 

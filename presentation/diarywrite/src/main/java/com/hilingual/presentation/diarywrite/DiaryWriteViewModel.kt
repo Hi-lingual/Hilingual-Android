@@ -24,7 +24,7 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.data.calendar.repository.CalendarRepository
-import com.hilingual.data.diary.localstorage.DiaryTempRepository
+import com.hilingual.data.diary.repository.DiaryTempRepository
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.diary.repository.TextRecognitionRepository
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite

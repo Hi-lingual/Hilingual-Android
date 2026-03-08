@@ -1,10 +1,11 @@
-package com.hilingual.data.onboarding.localstorage
+package com.hilingual.data.onboarding.datasourceimpl
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import com.hilingual.core.localstorage.di.qualifier.OnboardingDataStore
+import com.hilingual.data.onboarding.datasource.OnboardingLocalDataSource
+import com.hilingual.data.onboarding.di.OnboardingDataStore
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 

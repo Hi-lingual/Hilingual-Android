@@ -1,7 +1,7 @@
 package com.hilingual.data.onboarding.di
 
-import com.hilingual.data.onboarding.localstorage.OnboardingLocalDataSource
-import com.hilingual.data.onboarding.localstorage.OnboardingLocalDataSourceImpl
+import com.hilingual.data.onboarding.datasource.OnboardingLocalDataSource
+import com.hilingual.data.onboarding.datasourceimpl.OnboardingLocalDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

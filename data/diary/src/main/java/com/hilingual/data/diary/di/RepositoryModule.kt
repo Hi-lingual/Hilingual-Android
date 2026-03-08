@@ -15,8 +15,8 @@
  */
 package com.hilingual.data.diary.di
 
-import com.hilingual.data.diary.localstorage.DiaryTempRepository
-import com.hilingual.data.diary.localstorage.DiaryTempRepositoryImpl
+import com.hilingual.data.diary.repository.DiaryTempRepository
+import com.hilingual.data.diary.repositoryimpl.DiaryTempRepositoryImpl
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.diary.repository.TextRecognitionRepository
 import com.hilingual.data.diary.repositoryimpl.DiaryRepositoryImpl
