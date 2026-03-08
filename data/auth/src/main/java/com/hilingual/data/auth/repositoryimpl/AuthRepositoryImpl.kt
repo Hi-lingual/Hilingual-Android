@@ -18,12 +18,11 @@ package com.hilingual.data.auth.repositoryimpl
 import android.content.Context
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.util.suspendRunCatching
-import com.hilingual.core.localstorage.TokenManager
-import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.data.auth.datasource.AuthRemoteDataSource
 import com.hilingual.data.auth.datasource.GoogleAuthDataSource
 import com.hilingual.data.auth.dto.request.LoginRequestDto
 import com.hilingual.data.auth.dto.request.VerifyCodeRequestDto
+import com.hilingual.data.auth.localstorage.AuthLocalDataSource
 import com.hilingual.data.auth.model.LoginModel
 import com.hilingual.data.auth.repository.AuthRepository
 import javax.inject.Inject
@@ -32,8 +31,7 @@ internal class AuthRepositoryImpl @Inject constructor(
     private val authRemoteDataSource: AuthRemoteDataSource,
     private val googleAuthDataSource: GoogleAuthDataSource,
     private val deviceInfoProvider: DeviceInfoProvider,
-    private val tokenManager: TokenManager,
-    private val userInfoManager: UserInfoManager
+    private val authLocalDataSource: AuthLocalDataSource
 ) : AuthRepository {
     override suspend fun signInWithGoogle(context: Context): Result<String> =
         googleAuthDataSource.signIn(context).map { it.idToken }
@@ -44,8 +42,8 @@ internal class AuthRepositoryImpl @Inject constructor(
             loginRequestDto = deviceInfoProvider.toLoginRequestDto()
         ).data!!
 
-        tokenManager.saveTokens(loginResponse.accessToken, loginResponse.refreshToken)
-        userInfoManager.saveRegisterStatus(loginResponse.registerStatus)
+        authLocalDataSource.saveTokens(loginResponse.accessToken, loginResponse.refreshToken)
+        authLocalDataSource.saveRegisterStatus(loginResponse.registerStatus)
 
         LoginModel(loginResponse.registerStatus)
     }
@@ -54,20 +52,20 @@ internal class AuthRepositoryImpl @Inject constructor(
         authRemoteDataSource.verifyCode(VerifyCodeRequestDto(code))
     }
 
-    override suspend fun getAccessToken(): String? = tokenManager.getAccessToken()
+    override suspend fun getAccessToken(): String? = authLocalDataSource.getAccessToken()
 
-    override suspend fun getRefreshToken(): String? = tokenManager.getRefreshToken()
+    override suspend fun getRefreshToken(): String? = authLocalDataSource.getRefreshToken()
 
     override suspend fun logout(): Result<Unit> = suspendRunCatching {
         authRemoteDataSource.logout()
-        tokenManager.clearTokens()
-        userInfoManager.clear()
+        authLocalDataSource.clearTokens()
+        authLocalDataSource.clearUserInfo()
     }
 
     override suspend fun withdraw(): Result<Unit> = suspendRunCatching {
         authRemoteDataSource.withdraw()
-        tokenManager.clearTokens()
-        userInfoManager.clear()
+        authLocalDataSource.clearTokens()
+        authLocalDataSource.clearUserInfo()
     }
 
     private fun DeviceInfoProvider.toLoginRequestDto() = LoginRequestDto(

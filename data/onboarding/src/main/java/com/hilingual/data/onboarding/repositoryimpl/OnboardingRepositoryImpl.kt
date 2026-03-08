@@ -16,30 +16,31 @@
 package com.hilingual.data.onboarding.repositoryimpl
 
 import com.hilingual.core.common.util.suspendRunCatching
-import com.hilingual.core.localstorage.OnboardingStateManager
+import com.hilingual.data.onboarding.localstorage.OnboardingLocalDataSource
 import com.hilingual.data.onboarding.repository.OnboardingRepository
 import javax.inject.Inject
 
 class OnboardingRepositoryImpl @Inject constructor(
-    private val onboardingStateManager: OnboardingStateManager
+    private val onboardingLocalDataSource: OnboardingLocalDataSource
 ) : OnboardingRepository {
     override suspend fun getIsHomeOnboardingCompleted(): Result<Boolean> =
         suspendRunCatching {
-            onboardingStateManager.getIsHomeOnboardingCompleted()
+            onboardingLocalDataSource.getIsHomeOnboardingCompleted()
         }
 
     override suspend fun updateIsHomeOnboardingCompleted(isCompleted: Boolean): Result<Unit> =
         suspendRunCatching {
-            onboardingStateManager.updateIsHomeOnboardingCompleted(isCompleted = isCompleted)
+            onboardingLocalDataSource.updateIsHomeOnboardingCompleted(isCompleted = isCompleted)
         }
 
     override suspend fun getIsSplashOnboardingCompleted(): Result<Boolean> =
         suspendRunCatching {
-            onboardingStateManager.getIsSplashOnboardingCompleted()
+            onboardingLocalDataSource.getIsSplashOnboardingCompleted()
         }
 
-    override suspend fun completeSplashOnboarding(): Result<Unit> =
+    override suspend fun updateIsSplashOnboardingCompleted(): Result<Unit> =
         suspendRunCatching {
-            onboardingStateManager.updateIsSplashOnboardingCompleted(isCompleted = true)
+            onboardingLocalDataSource.updateIsSplashOnboardingCompleted(isCompleted = true)
         }
 }
+
