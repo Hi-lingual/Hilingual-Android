@@ -116,8 +116,9 @@ dependencies {
 
 ktlint {
     android = true
-    debug = true
-    coloredOutput = true
-    verbose = true
-    outputToConsole = true
+    ignoreFailures = false
+    reporters {
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.PLAIN)
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE)
+    }
 }

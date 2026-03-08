@@ -1,0 +1,46 @@
+# KtLint Configuration (v1.0+)
+# Optimized for Kotlin 1.8.0+ and developer discretion (PODO style)
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+
+# IMPORTANT: No spaces allowed in the glob pattern [*.{kt,kts}]
+[*.{kt,kts}]
+# 1. Code Style & IDE Compatibility
+ij_kotlin_code_style_defaults = KOTLIN_OFFICIAL
+ktlint_code_style = android_studio
+
+# 2. Rule Activations
+ktlint_standard_no-unused-imports = enabled
+ktlint_experimental = enabled
+
+# 3. Developer Discretion (Allow BOTH single-line and multi-line for signatures)
+# These rules force reformatting signatures. Disabling them allows discretion.
+ktlint_standard_function-signature = disabled
+ktlint_standard_class-signature = disabled
+
+# 4. Disable Wildcard Imports (Prevent IDEA conflicts)
+ij_kotlin_name_count_to_use_star_import = 2147483647
+ij_kotlin_name_count_to_use_star_import_for_members = 2147483647
+ij_kotlin_packages_to_use_import_on_demand = unset
+
+# 5. Trailing Comma (Declaration & Call site)
+ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma_on_call_site = true
+
+# 6. Compose Specific Naming & Style
+ktlint_function_naming_ignore_when_annotated_with = Composable
+ktlint_property_naming_constant_naming = pascal_case
+
+# 7. Formatting Tweaks
+max_line_length = 120
+ij_kotlin_line_break_after_multiline_when_entry = true
+ij_kotlin_imports_layout = *,java.,kotlin.,^
+
+# 8. Function expression body wrapping
+ktlint_function_signature_body_expression_wrapping = multiline
