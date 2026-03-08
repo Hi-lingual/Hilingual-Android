@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import com.hilingual.data.onboarding.datasource.OnboardingLocalDataSource
-import com.hilingual.data.onboarding.di.OnboardingDataStore
+import com.hilingual.data.onboarding.di.qualifier.OnboardingDataStore
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 
