@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.localstorage.model
+package com.hilingual.data.auth.localstorage.model
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserPreferences(
+data class TokenPreferences(
     val token: String? = null,
     val refreshToken: String? = null
 )
