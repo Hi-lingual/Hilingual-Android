@@ -38,7 +38,7 @@ class OnboardingRepositoryImpl @Inject constructor(
             onboardingLocalDataSource.getIsSplashOnboardingCompleted()
         }
 
-    override suspend fun updateIsSplashOnboardingCompleted(): Result<Unit> =
+    override suspend fun completeSplashOnboarding(): Result<Unit> =
         suspendRunCatching {
             onboardingLocalDataSource.updateIsSplashOnboardingCompleted(isCompleted = true)
         }
