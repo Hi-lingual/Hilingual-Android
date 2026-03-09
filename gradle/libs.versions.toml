@@ -61,6 +61,7 @@ ktlint = "11.5.1"
 pebble = "0.1.0"
 balloonCompose = "1.7.4"
 richeditorCompose = "1.0.0-rc13"
+gmaAds = "0.24.0-beta02"
 
 # Firebase
 firebaseBom = "34.10.0"
@@ -191,6 +192,7 @@ kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-cor
 
 # AboutLibraries
 aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
+gma-ads = { group = "com.google.android.libraries.ads.mobile.sdk", name = "ads-mobile-sdk", version.ref = "gmaAds" }
 
 # Baseline profile
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }

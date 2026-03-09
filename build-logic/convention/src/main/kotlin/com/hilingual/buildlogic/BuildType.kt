@@ -29,6 +29,11 @@ fun Project.configureBuildTypes(
             "GOOGLE_WEB_CLIENT_ID",
             properties.getQuotedProperty("$prefix.google.client.id")
         )
+        buildConfigField(
+            "String",
+            "ADMOB_APP_ID",
+            properties.getQuotedProperty(if (isDebug) "admob.app.test.id" else "admob.app.id")
+        )
     }
 
     commonExtension.apply {
