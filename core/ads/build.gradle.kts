@@ -2,6 +2,7 @@ import com.hilingual.buildlogic.setNamespace
 
 plugins {
     alias(libs.plugins.hilingual.android.library)
+    alias(libs.plugins.hilingual.android.compose)
     alias(libs.plugins.hilingual.hilt)
 }
 
