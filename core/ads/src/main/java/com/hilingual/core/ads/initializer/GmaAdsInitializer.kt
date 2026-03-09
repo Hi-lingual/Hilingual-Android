@@ -22,10 +22,10 @@ internal class GmaAdsInitializer @Inject constructor() : AdsInitializer {
             try {
                 val initConfig = Builder(BuildConfig.ADMOB_APP_ID).build()
                 MobileAds.initialize(context, initConfig) { status ->
-                    Timber.d("GMA Next Gen SDK 초기화 완료: %s", status)
+                    Timber.tag("GMA").d("GMA Next Gen SDK 초기화 완료: %s", status)
                 }
             } catch (e: Exception) {
-                Timber.e(e, "GMA Next Gen SDK 초기화 실패")
+                Timber.tag("GMA").e(e, "GMA Next Gen SDK 초기화 실패")
             }
         }
     }
