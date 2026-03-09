@@ -36,7 +36,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import timber.log.Timber
 import javax.inject.Singleton
-import kotlin.time.Duration.Companion.seconds
+import java.util.concurrent.TimeUnit
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -125,9 +125,9 @@ object NetworkModule {
         .addInterceptor(loggingInterceptor)
         .addInterceptor(authInterceptor)
         .authenticator(tokenAuthenticator)
-        .connectTimeout(60.seconds)
-        .readTimeout(60.seconds)
-        .writeTimeout(60.seconds)
+        .connectTimeout(60, TimeUnit.SECONDS)
+        .readTimeout(60, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
         .build()
 
     @Provides
