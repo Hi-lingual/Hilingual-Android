@@ -32,7 +32,12 @@ fun Project.configureBuildTypes(
         buildConfigField(
             "String",
             "ADMOB_APP_ID",
-            properties.getQuotedProperty(if (isDebug) "admob.app.test.id" else "admob.app.id")
+            properties.getQuotedProperty("admob.app.$prefix.id")
+        )
+        buildConfigField(
+            "String",
+            "ADMOB_BANNER_UNIT_ID",
+            properties.getQuotedProperty("admob.banner.$prefix.id")
         )
     }
 
