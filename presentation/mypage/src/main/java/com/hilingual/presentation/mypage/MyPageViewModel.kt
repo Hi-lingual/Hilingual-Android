@@ -18,6 +18,8 @@ package com.hilingual.presentation.mypage
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hilingual.core.ads.BuildConfig
+import com.hilingual.core.ads.manager.AdsPreloadManager
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.util.UiState
@@ -38,7 +40,8 @@ import javax.inject.Inject
 internal class MyPageViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
-    private val deviceInfoProvider: DeviceInfoProvider
+    private val deviceInfoProvider: DeviceInfoProvider,
+    adsPreloadManager: AdsPreloadManager
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<MyPageUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<MyPageUiState>> = _uiState.asStateFlow()
@@ -47,6 +50,10 @@ internal class MyPageViewModel @Inject constructor(
     val sideEffect: SharedFlow<MyPageSideEffect> = _sideEffect.asSharedFlow()
 
     init {
+        adsPreloadManager.preloadBanner(
+            adUnitId = BuildConfig.ADMOB_BANNER_UNIT_ID,
+            maxHeight = 70
+        )
         getProfileInfo()
     }
 
