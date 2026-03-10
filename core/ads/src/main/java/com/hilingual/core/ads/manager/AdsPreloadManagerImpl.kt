@@ -14,21 +14,21 @@ import javax.inject.Singleton
 internal class AdsPreloadManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : AdsPreloadManager {
-    
+
     override fun preloadBanner(adUnitId: String, maxHeight: Int?) {
         try {
             val displayMetrics = context.resources.displayMetrics
             val adWidth = (displayMetrics.widthPixels / displayMetrics.density).toInt()
-            
+
             val adSize = if (maxHeight != null) {
                 AdSize.getInlineAdaptiveBannerAdSize(adWidth, maxHeight)
             } else {
                 AdSize.getCurrentOrientationInlineAdaptiveBannerAdSize(context, adWidth)
             }
-            
+
             val adRequest = BannerAdRequest.Builder(adUnitId, adSize).build()
             val preloadConfig = PreloadConfiguration(adRequest)
-            
+
             BannerAdPreloader.start(adUnitId, preloadConfig)
             Timber.tag("GMA").d("GMA Next Gen 배너 프리로딩 시작: %s", adUnitId)
         } catch (e: Exception) {

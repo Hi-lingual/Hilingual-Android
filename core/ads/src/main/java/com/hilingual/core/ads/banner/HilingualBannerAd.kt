@@ -45,7 +45,7 @@ fun HilingualBannerAd(
         if (isPreviewMode || !isAdLoaded) {
             Image(
                 painter = painterResource(id = R.drawable.loading_feed_and),
-                contentDescription = "Loading Ad",
+                contentDescription = null,
                 modifier = Modifier.fillMaxWidth(),
                 contentScale = ContentScale.Crop
             )
