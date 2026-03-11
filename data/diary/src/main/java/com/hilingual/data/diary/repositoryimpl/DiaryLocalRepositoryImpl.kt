@@ -2,17 +2,17 @@ package com.hilingual.data.diary.repositoryimpl
 
 import android.net.Uri
 import com.hilingual.core.common.util.suspendRunCatching
-import com.hilingual.data.diary.datasource.DiaryTempLocalDataSource
-import com.hilingual.data.diary.repository.DiaryTempRepository
+import com.hilingual.data.diary.datasource.DiaryLocalDataSource
+import com.hilingual.data.diary.repository.DiaryLocalRepository
 import java.time.LocalDate
 import javax.inject.Inject
 
-class DiaryTempRepositoryImpl @Inject constructor(
-    private val diaryTempLocalDataSource: DiaryTempLocalDataSource
-) : DiaryTempRepository {
+class DiaryLocalRepositoryImpl @Inject constructor(
+    private val diaryLocalDataSource: DiaryLocalDataSource
+) : DiaryLocalRepository {
     override suspend fun isDiaryTempExist(selectedDate: LocalDate): Result<Boolean> =
         suspendRunCatching {
-            diaryTempLocalDataSource.isDiaryTempExist(selectedDate)
+            diaryLocalDataSource.isDiaryTempExist(selectedDate)
         }
 
     override suspend fun saveDiary(
@@ -21,21 +21,21 @@ class DiaryTempRepositoryImpl @Inject constructor(
         imageUri: Uri?
     ): Result<Unit> =
         suspendRunCatching {
-            diaryTempLocalDataSource.saveDiary(selectedDate, text, imageUri)
+            diaryLocalDataSource.saveDiary(selectedDate, text, imageUri)
         }
 
     override suspend fun getDiaryText(selectedDate: LocalDate): Result<String?> =
         suspendRunCatching {
-            diaryTempLocalDataSource.getDiaryText(selectedDate)
+            diaryLocalDataSource.getDiaryText(selectedDate)
         }
 
     override suspend fun getDiaryImageUri(selectedDate: LocalDate): Result<String?> =
         suspendRunCatching {
-            diaryTempLocalDataSource.getDiaryImageUri(selectedDate)
+            diaryLocalDataSource.getDiaryImageUri(selectedDate)
         }
 
     override suspend fun clearDiaryTemp(selectedDate: LocalDate): Result<Unit> =
         suspendRunCatching {
-            diaryTempLocalDataSource.clearDiaryTemp(selectedDate)
+            diaryLocalDataSource.clearDiaryTemp(selectedDate)
         }
 }
