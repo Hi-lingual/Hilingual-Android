@@ -3,7 +3,7 @@ package com.hilingual.data.auth.di
 import android.content.Context
 import androidx.datastore.core.DataStore
 import com.hilingual.core.localstorage.builder.DataStoreBuilder
-import com.hilingual.data.auth.di.quilifier.AuthDataStore
+import com.hilingual.data.auth.di.quilifier.TokenDataStore
 import com.hilingual.data.auth.localstorage.model.TokenPreferences
 import dagger.Module
 import dagger.Provides
@@ -20,7 +20,7 @@ object AuthDataStoreModule {
 
     @Provides
     @Singleton
-    @AuthDataStore
+    @TokenDataStore
     fun provideTokenDataStore(
         @ApplicationContext context: Context
     ): DataStore<TokenPreferences> = DataStoreBuilder.createEncryptedDataStore(

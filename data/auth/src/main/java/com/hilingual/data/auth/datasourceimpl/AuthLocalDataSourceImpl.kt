@@ -2,18 +2,17 @@ package com.hilingual.data.auth.datasourceimpl
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import com.hilingual.data.auth.di.quilifier.AuthDataStore
-import com.hilingual.data.auth.datasource.AuthLocalDataSource
-import com.hilingual.data.auth.localstorage.model.TokenPreferences
 import com.hilingual.core.localstorage.constant.UserInfoDataStoreKey.KEY_IS_REGISTER_COMPLETED
 import com.hilingual.core.localstorage.di.qualifier.UserInfoDataStore
+import com.hilingual.data.auth.datasource.AuthLocalDataSource
+import com.hilingual.data.auth.di.quilifier.TokenDataStore
+import com.hilingual.data.auth.localstorage.model.TokenPreferences
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class AuthLocalDataSourceImpl @Inject constructor(
-    @AuthDataStore private val tokenDataStore: DataStore<TokenPreferences>,
+    @TokenDataStore private val tokenDataStore: DataStore<TokenPreferences>,
     @UserInfoDataStore private val userInfoDataStore: DataStore<Preferences>
 ) : AuthLocalDataSource {
 
@@ -23,12 +22,12 @@ class AuthLocalDataSourceImpl @Inject constructor(
     override suspend fun saveTokens(accessToken: String, refreshToken: String) {
         cachedAccessToken = accessToken
         tokenDataStore.updateData {
-            it.copy(token = accessToken, refreshToken = refreshToken)
+            it.copy(accessToken = accessToken, refreshToken = refreshToken)
         }
     }
 
     override suspend fun getAccessToken(): String? {
-        return cachedAccessToken ?: tokenDataStore.data.first().token?.also {
+        return cachedAccessToken ?: tokenDataStore.data.first().accessToken?.also {
             cachedAccessToken = it
         }
     }
