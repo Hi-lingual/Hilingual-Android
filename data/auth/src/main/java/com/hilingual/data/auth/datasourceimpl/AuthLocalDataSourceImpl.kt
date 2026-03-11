@@ -20,19 +20,6 @@ class AuthLocalDataSourceImpl @Inject constructor(
     @Volatile
     private var cachedAccessToken: String? = null
 
-    override suspend fun saveAccessToken(token: String) {
-        cachedAccessToken = token
-        tokenDataStore.updateData { preferences ->
-            preferences.copy(token = token)
-        }
-    }
-
-    override suspend fun saveRefreshToken(token: String) {
-        tokenDataStore.updateData { preferences ->
-            preferences.copy(refreshToken = token)
-        }
-    }
-
     override suspend fun saveTokens(accessToken: String, refreshToken: String) {
         cachedAccessToken = accessToken
         tokenDataStore.updateData {
