@@ -6,7 +6,7 @@ import androidx.datastore.preferences.core.edit
 import com.hilingual.core.localstorage.constant.UserInfoDataStoreKey.KEY_IS_REGISTER_COMPLETED
 import com.hilingual.core.localstorage.di.qualifier.UserInfoDataStore
 import com.hilingual.data.auth.datasource.AuthLocalDataSource
-import com.hilingual.data.auth.di.quilifier.TokenDataStore
+import com.hilingual.data.auth.di.qualifier.TokenDataStore
 import com.hilingual.data.auth.localstorage.model.TokenPreferences
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -39,7 +39,7 @@ class AuthLocalDataSourceImpl @Inject constructor(
     override suspend fun clearTokens() {
         cachedAccessToken = null
         tokenDataStore.updateData {
-            it.copy(token = null, refreshToken = null)
+            it.copy(accessToken = null, refreshToken = null)
         }
     }
 

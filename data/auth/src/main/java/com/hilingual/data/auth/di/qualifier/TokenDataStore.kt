@@ -1,4 +1,4 @@
-package com.hilingual.data.auth.di.quilifier
+package com.hilingual.data.auth.di.qualifier
 
 import javax.inject.Qualifier
 

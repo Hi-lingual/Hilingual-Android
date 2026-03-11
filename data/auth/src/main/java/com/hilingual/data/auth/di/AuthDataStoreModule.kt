@@ -3,7 +3,7 @@ package com.hilingual.data.auth.di
 import android.content.Context
 import androidx.datastore.core.DataStore
 import com.hilingual.core.localstorage.builder.DataStoreBuilder
-import com.hilingual.data.auth.di.quilifier.TokenDataStore
+import com.hilingual.data.auth.di.qualifier.TokenDataStore
 import com.hilingual.data.auth.localstorage.model.TokenPreferences
 import dagger.Module
 import dagger.Provides
