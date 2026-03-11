@@ -14,6 +14,9 @@ class EncryptedSerializer<T>(
     private val kSerializer: KSerializer<T>,
     override val defaultValue: T
 ) : Serializer<T> {
+
+    private val json = Json { ignoreUnknownKeys = true }
+
     override suspend fun readFrom(input: InputStream): T {
         return try {
             val base64Bytes = input.readBytes()
@@ -25,7 +28,7 @@ class EncryptedSerializer<T>(
             val decryptedBytes = Crypto.decrypt(encryptedBytes)
             val jsonString = decryptedBytes.decodeToString()
 
-            Json.decodeFromString(kSerializer, jsonString)
+            json.decodeFromString(kSerializer, jsonString)
         } catch (e: SerializationException) {
             throw CorruptionException("Cannot read encrypted data.", e)
         } catch (_: Exception) {
@@ -34,7 +37,7 @@ class EncryptedSerializer<T>(
     }
 
     override suspend fun writeTo(t: T, output: OutputStream) {
-        val jsonString = Json.encodeToString(kSerializer, t)
+        val jsonString = json.encodeToString(kSerializer, t)
         val bytes = jsonString.toByteArray()
         val encryptedBytes = Crypto.encrypt(bytes)
         val base64Bytes = Base64.getEncoder().encode(encryptedBytes)

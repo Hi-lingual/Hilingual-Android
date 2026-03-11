@@ -15,10 +15,13 @@
  */
 package com.hilingual.data.auth.localstorage.model
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class TokenPreferences(
+    @SerialName("token")
     val accessToken: String? = null,
+    @SerialName("refreshToken")
     val refreshToken: String? = null
 )
