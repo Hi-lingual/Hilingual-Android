@@ -13,5 +13,14 @@ android {
 dependencies {
     implementation(projects.core.common)
     implementation(libs.gma.ads)
+
+    // Workaround for GMA Next Gen SDK beta03 Cronet namespace bug
+    val cronetVersion = "143.7445.0"
+    implementation("org.chromium.net:cronet-api:$cronetVersion")
+    implementation("org.chromium.net:cronet-shared:$cronetVersion")
+    implementation("org.chromium.net:cronet-common:$cronetVersion")
+    implementation("org.chromium.net:cronet-fallback:$cronetVersion")
+    implementation("org.chromium.net:httpengine-native-provider:$cronetVersion")
+
     implementation(libs.timber)
 }
