@@ -13,12 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.localstorage
+package com.hilingual.core.network.di.qualifier
 
-interface UserInfoManager {
-    suspend fun saveRegisterStatus(isCompleted: Boolean)
-    suspend fun getRegisterStatus(): Boolean
-    suspend fun saveOtpVerified(isVerified: Boolean)
-    suspend fun isOtpVerified(): Boolean
-    suspend fun clear()
-}
+import javax.inject.Qualifier
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class NoAuthClient
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class RefreshClient
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class LongTimeoutClient

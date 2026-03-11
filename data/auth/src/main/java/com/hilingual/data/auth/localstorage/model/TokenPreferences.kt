@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.localstorage
+package com.hilingual.data.auth.localstorage.model
 
-interface TokenManager {
-    suspend fun saveAccessToken(token: String)
-    suspend fun saveRefreshToken(token: String)
-    suspend fun saveTokens(accessToken: String, refreshToken: String)
-    suspend fun getAccessToken(): String?
-    suspend fun getRefreshToken(): String?
-    suspend fun clearTokens()
-}
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class TokenPreferences(
+    @SerialName("token")
+    val accessToken: String? = null,
+    @SerialName("refreshToken")
+    val refreshToken: String? = null
+)

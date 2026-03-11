@@ -19,6 +19,9 @@ import com.hilingual.core.network.BuildConfig
 import com.hilingual.core.network.BuildConfig.BASE_URL
 import com.hilingual.core.network.auth.AuthInterceptor
 import com.hilingual.core.network.auth.TokenAuthenticator
+import com.hilingual.core.network.di.qualifier.LongTimeoutClient
+import com.hilingual.core.network.di.qualifier.NoAuthClient
+import com.hilingual.core.network.di.qualifier.RefreshClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

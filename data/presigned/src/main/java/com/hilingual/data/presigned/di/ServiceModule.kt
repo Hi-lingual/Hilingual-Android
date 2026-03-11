@@ -15,7 +15,7 @@
  */
 package com.hilingual.data.presigned.di
 
-import com.hilingual.core.network.di.NoAuthClient
+import com.hilingual.core.network.di.qualifier.NoAuthClient
 import com.hilingual.data.presigned.service.PresignedUrlService
 import com.hilingual.data.presigned.service.S3Service
 import dagger.Module

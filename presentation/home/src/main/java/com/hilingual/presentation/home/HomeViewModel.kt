@@ -22,7 +22,7 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.calendar.repository.CalendarRepository
-import com.hilingual.data.diary.localstorage.DiaryTempRepository
+import com.hilingual.data.diary.repository.DiaryLocalRepository
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.onboarding.repository.OnboardingRepository
 import com.hilingual.data.user.repository.UserRepository
@@ -51,7 +51,7 @@ class HomeViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val calendarRepository: CalendarRepository,
     private val diaryRepository: DiaryRepository,
-    private val diaryTempRepository: DiaryTempRepository,
+    private val diaryLocalRepository: DiaryLocalRepository,
     private val onboardingRepository: OnboardingRepository
 ) : ViewModel() {
 
@@ -311,7 +311,7 @@ class HomeViewModel @Inject constructor(
         date: LocalDate,
         dates: List<DateUiModel>
     ): HomeDiaryUiState {
-        val tempExistDeferred = viewModelScope.async { diaryTempRepository.isDiaryTempExist(date) }
+        val tempExistDeferred = viewModelScope.async { diaryLocalRepository.isDiaryTempExist(date) }
         val thumbnailDeferred = viewModelScope.async { calendarRepository.getDiaryThumbnail(date.toString()) }
         val topicDeferred = viewModelScope.async { calendarRepository.getTopic(date.toString()) }
 

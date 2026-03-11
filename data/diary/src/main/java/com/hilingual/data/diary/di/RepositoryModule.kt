@@ -15,8 +15,8 @@
  */
 package com.hilingual.data.diary.di
 
-import com.hilingual.data.diary.localstorage.DiaryTempRepository
-import com.hilingual.data.diary.localstorage.DiaryTempRepositoryImpl
+import com.hilingual.data.diary.repository.DiaryLocalRepository
+import com.hilingual.data.diary.repositoryimpl.DiaryLocalRepositoryImpl
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.diary.repository.TextRecognitionRepository
 import com.hilingual.data.diary.repositoryimpl.DiaryRepositoryImpl
@@ -36,7 +36,7 @@ internal abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindDiaryTempRepository(impl: DiaryTempRepositoryImpl): DiaryTempRepository
+    abstract fun bindDiaryLocalRepository(impl: DiaryLocalRepositoryImpl): DiaryLocalRepository
 
     @Binds
     @Singleton

@@ -15,7 +15,7 @@
  */
 package com.hilingual.data.diary.di
 
-import com.hilingual.core.network.di.LongTimeoutClient
+import com.hilingual.core.network.di.qualifier.LongTimeoutClient
 import com.hilingual.data.diary.service.DiaryService
 import dagger.Module
 import dagger.Provides

@@ -84,6 +84,9 @@ object DependencyManager {
 
             // Retrofit
             add("implementation", project.libs.findBundle("retrofit").get())
+
+            // DataStore
+            add("implementation", project.libs.findLibrary("androidx.datastore.preferences").get())
         }
     }
 }
