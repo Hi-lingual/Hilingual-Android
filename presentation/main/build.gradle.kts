@@ -30,6 +30,7 @@ android {
 dependencies {
     // core
     implementation(projects.core.network)
+    implementation(projects.core.ads)
 
     // feature
     implementation(projects.presentation.home)
