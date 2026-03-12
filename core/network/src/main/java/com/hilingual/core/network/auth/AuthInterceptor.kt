@@ -15,7 +15,6 @@
  */
 package com.hilingual.core.network.auth
 
-import com.hilingual.core.localstorage.TokenManager
 import com.hilingual.core.network.constant.AUTHORIZATION
 import com.hilingual.core.network.constant.BEARER
 import kotlinx.coroutines.runBlocking
@@ -28,19 +27,23 @@ import javax.inject.Singleton
 
 @Singleton
 class AuthInterceptor @Inject constructor(
-    private val tokenManager: TokenManager
+    private val tokenProvider: TokenProvider
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val token = runBlocking { tokenManager.getAccessToken() }
+        val token = runBlocking { tokenProvider.getAccessToken() }
         Timber.d("ACCESS_TOKEN: $token")
 
         val originalRequest = chain.request()
 
-        val authRequest = originalRequest.newBuilder().newAuthBuilder(token).build()
+        val authRequest = if (token.isNullOrBlank()) {
+            originalRequest.newBuilder().build()
+        } else {
+            originalRequest.newBuilder().newAuthBuilder(token).build()
+        }
 
         return chain.proceed(authRequest)
     }
 
-    private fun Request.Builder.newAuthBuilder(accessToken: String?) =
+    private fun Request.Builder.newAuthBuilder(accessToken: String) =
         this.header(AUTHORIZATION, "$BEARER $accessToken")
 }

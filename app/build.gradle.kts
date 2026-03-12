@@ -83,6 +83,7 @@ android {
 dependencies {
     // core
     implementation(projects.core.common)
+    implementation(projects.core.ads)
     implementation(projects.core.work)
     implementation(projects.core.notification)
 

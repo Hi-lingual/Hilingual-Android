@@ -22,6 +22,7 @@ import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import com.hilingual.core.common.util.HilingualReleaseTree
 import com.hilingual.core.work.scheduler.HilingualWorkManagerConfigurator
+import com.hilingual.core.ads.initializer.AdsInitializer
 import dagger.Lazy
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
@@ -35,6 +36,9 @@ class App : Application(), SingletonImageLoader.Factory {
     @Inject
     lateinit var workConfigurator: HilingualWorkManagerConfigurator
 
+    @Inject
+    lateinit var adsInitializer: AdsInitializer
+
     override fun onCreate() {
         super.onCreate()
         SingletonImageLoader.setSafe { imageLoader.get() }
@@ -42,6 +46,7 @@ class App : Application(), SingletonImageLoader.Factory {
         setDayMode()
         initTimber()
         initWorkManager()
+        initAds()
     }
 
     override fun newImageLoader(context: Context): ImageLoader = imageLoader.get()
@@ -57,5 +62,9 @@ class App : Application(), SingletonImageLoader.Factory {
 
     private fun initWorkManager() {
         workConfigurator.initialize()
+    }
+
+    private fun initAds() {
+        adsInitializer.initialize(this)
     }
 }

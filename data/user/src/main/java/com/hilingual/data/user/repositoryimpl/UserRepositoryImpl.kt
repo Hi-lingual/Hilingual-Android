@@ -17,9 +17,9 @@ package com.hilingual.data.user.repositoryimpl
 
 import android.net.Uri
 import com.hilingual.core.common.util.suspendRunCatching
-import com.hilingual.core.localstorage.UserInfoManager
 import com.hilingual.data.presigned.repository.FileUploaderRepository
 import com.hilingual.data.user.datasource.UserRemoteDataSource
+import com.hilingual.data.user.datasource.UserLocalDataSource
 import com.hilingual.data.user.model.follow.FollowUserListResultModel
 import com.hilingual.data.user.model.follow.toModel
 import com.hilingual.data.user.model.notification.NotificationDetailModel
@@ -38,7 +38,7 @@ import javax.inject.Inject
 internal class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
     private val fileUploaderRepository: FileUploaderRepository,
-    private val userInfoManager: UserInfoManager
+    private val userLocalDataSource: UserLocalDataSource
 ) : UserRepository {
     override suspend fun getNicknameAvailability(nickname: String): Result<NicknameValidationResult> =
         suspendRunCatching {
@@ -100,11 +100,11 @@ internal class UserRepositoryImpl @Inject constructor(
         }
 
     override suspend fun saveRegisterStatus(isCompleted: Boolean) {
-        userInfoManager.saveRegisterStatus(isCompleted)
+        userLocalDataSource.saveRegisterStatus(isCompleted)
     }
 
     override suspend fun getRegisterStatus(): Boolean {
-        return userInfoManager.getRegisterStatus()
+        return userLocalDataSource.getRegisterStatus()
     }
 
     @Deprecated("OTP feature is removed")

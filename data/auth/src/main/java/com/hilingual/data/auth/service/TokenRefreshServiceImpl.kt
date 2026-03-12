@@ -16,19 +16,19 @@
 package com.hilingual.data.auth.service
 
 import com.hilingual.core.common.util.suspendRunCatching
-import com.hilingual.core.localstorage.TokenManager
+import com.hilingual.data.auth.datasource.AuthLocalDataSource
 import com.hilingual.core.network.auth.TokenRefreshService
 import com.hilingual.core.network.constant.BEARER
 import javax.inject.Inject
 
 internal class TokenRefreshServiceImpl @Inject constructor(
     private val reissueService: ReissueService,
-    private val tokenManager: TokenManager
+    private val authLocalDataSource: AuthLocalDataSource
 ) : TokenRefreshService {
     override suspend fun refreshToken(refreshToken: String): Result<Pair<String, String>> = suspendRunCatching {
         val response = reissueService.reissueToken("$BEARER $refreshToken")
         val data = response.data!!
-        tokenManager.saveTokens(data.accessToken, data.refreshToken)
+        authLocalDataSource.saveTokens(data.accessToken, data.refreshToken)
         Pair(data.accessToken, data.refreshToken)
     }
 }

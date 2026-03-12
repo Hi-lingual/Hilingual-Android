@@ -24,7 +24,7 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.data.calendar.repository.CalendarRepository
-import com.hilingual.data.diary.localstorage.DiaryTempRepository
+import com.hilingual.data.diary.repository.DiaryLocalRepository
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.diary.repository.TextRecognitionRepository
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
@@ -49,7 +49,7 @@ internal class DiaryWriteViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val calendarRepository: CalendarRepository,
     private val diaryRepository: DiaryRepository,
-    private val diaryTempRepository: DiaryTempRepository,
+    private val diaryLocalRepository: DiaryLocalRepository,
     private val textRecognitionRepository: TextRecognitionRepository
 ) : ViewModel() {
     private val route: DiaryWrite = savedStateHandle.toRoute<DiaryWrite>()
@@ -100,7 +100,7 @@ internal class DiaryWriteViewModel @Inject constructor(
 
     fun handleDiaryTempSavingFlow() {
         viewModelScope.launch {
-            diaryTempRepository.saveDiary(
+            diaryLocalRepository.saveDiary(
                 selectedDate = uiState.value.selectedDate,
                 text = uiState.value.diaryText,
                 imageUri = uiState.value.diaryImageUri
@@ -122,7 +122,7 @@ internal class DiaryWriteViewModel @Inject constructor(
         viewModelScope.launch {
             val selectedDate = uiState.value.selectedDate
 
-            diaryTempRepository.isDiaryTempExist(selectedDate)
+            diaryLocalRepository.isDiaryTempExist(selectedDate)
                 .onSuccess { isDiaryTempExist ->
                     if (!isDiaryTempExist) {
                         _uiState.update { it.copy(isDiaryTempExist = false) }
@@ -131,7 +131,7 @@ internal class DiaryWriteViewModel @Inject constructor(
 
                     _uiState.update { it.copy(isDiaryTempExist = true) }
 
-                    diaryTempRepository.getDiaryText(selectedDate)
+                    diaryLocalRepository.getDiaryText(selectedDate)
                         .onSuccess { text ->
                             _uiState.update {
                                 it.copy(
@@ -142,7 +142,7 @@ internal class DiaryWriteViewModel @Inject constructor(
                         }
                         .onLogFailure { }
 
-                    diaryTempRepository.getDiaryImageUri(selectedDate)
+                    diaryLocalRepository.getDiaryImageUri(selectedDate)
                         .onSuccess { imageUri ->
                             val uri = imageUri?.let(Uri::parse)
                             _uiState.update {
@@ -170,7 +170,7 @@ internal class DiaryWriteViewModel @Inject constructor(
             )
 
             result.onSuccess { response ->
-                diaryTempRepository.clearDiaryTemp(uiState.value.selectedDate)
+                diaryLocalRepository.clearDiaryTemp(uiState.value.selectedDate)
                 _feedbackUiState.update { UiState.Success(response.diaryId) }
             }.onLogFailure { throwable ->
                 _feedbackUiState.update { UiState.Failure }
