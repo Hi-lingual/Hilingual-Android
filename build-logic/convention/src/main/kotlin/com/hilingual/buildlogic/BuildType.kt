@@ -29,6 +29,16 @@ fun Project.configureBuildTypes(
             "GOOGLE_WEB_CLIENT_ID",
             properties.getQuotedProperty("$prefix.google.client.id")
         )
+        buildConfigField(
+            "String",
+            "ADMOB_APP_ID",
+            properties.getQuotedProperty("admob.app.$prefix.id")
+        )
+        buildConfigField(
+            "String",
+            "ADMOB_BANNER_UNIT_ID",
+            properties.getQuotedProperty("admob.banner.$prefix.id")
+        )
     }
 
     commonExtension.apply {
