@@ -16,5 +16,5 @@
 package com.hilingual.data.auth.model
 
 data class LoginModel(
-    val registerStatus: Boolean
+    val registerStatus: Boolean,
 )

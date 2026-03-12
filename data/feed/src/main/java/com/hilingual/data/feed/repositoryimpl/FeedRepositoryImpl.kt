@@ -29,7 +29,7 @@ import com.hilingual.data.feed.repository.FeedRepository
 import javax.inject.Inject
 
 internal class FeedRepositoryImpl @Inject constructor(
-    private val feedRemoteDataSource: FeedRemoteDataSource
+    private val feedRemoteDataSource: FeedRemoteDataSource,
 ) : FeedRepository {
     override suspend fun getFeedProfile(targetUserId: Long): Result<FeedProfileModel> =
         suspendRunCatching {
@@ -63,11 +63,11 @@ internal class FeedRepositoryImpl @Inject constructor(
 
     override suspend fun postIsLike(
         diaryId: Long,
-        isLiked: Boolean
+        isLiked: Boolean,
     ): Result<Unit> = suspendRunCatching {
         feedRemoteDataSource.postIsLike(
             diaryId = diaryId,
-            likeRequestDto = LikeRequestDto(isLiked)
+            likeRequestDto = LikeRequestDto(isLiked),
         )
     }
 

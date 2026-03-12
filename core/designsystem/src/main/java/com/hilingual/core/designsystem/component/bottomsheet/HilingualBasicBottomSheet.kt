@@ -35,13 +35,13 @@ fun HilingualBasicBottomSheet(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
+        skipPartiallyExpanded = true,
     ),
     properties: ModalBottomSheetProperties = ModalBottomSheetProperties(),
     isDimEnabled: Boolean = true,
     sheetGesturesEnabled: Boolean = true,
     dragHandle: (@Composable () -> Unit)? = null,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     LaunchedEffect(isVisible) {
         if (isVisible) {
@@ -61,7 +61,7 @@ fun HilingualBasicBottomSheet(
             shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
             dragHandle = dragHandle,
             sheetGesturesEnabled = sheetGesturesEnabled,
-            properties = properties
+            properties = properties,
         ) {
             content()
         }

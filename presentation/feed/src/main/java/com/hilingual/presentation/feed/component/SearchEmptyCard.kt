@@ -33,25 +33,25 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 internal fun SearchEmptyCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
 
     ) {
         Image(
             painter = painterResource(id = R.drawable.img_search),
             contentDescription = null,
-            modifier = Modifier.size(width = 210.dp, height = 140.dp)
+            modifier = Modifier.size(width = 210.dp, height = 140.dp),
         )
 
         Text(
             text = "검색 결과가 없습니다.",
             style = HilingualTheme.typography.headR18,
             color = HilingualTheme.colors.gray500,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }

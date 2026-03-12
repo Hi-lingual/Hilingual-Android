@@ -41,7 +41,7 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 @Composable
 internal fun TextScanButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
@@ -50,23 +50,23 @@ internal fun TextScanButton(
             .border(
                 width = 1.dp,
                 color = HilingualTheme.colors.gray200,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
             )
             .noRippleClickable(onClick = onClick)
             .padding(8.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             modifier = Modifier.size(16.dp),
             imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_scan_16),
             contentDescription = null,
-            tint = HilingualTheme.colors.gray500
+            tint = HilingualTheme.colors.gray500,
         )
         Text(
             text = "텍스트 스캔하기",
             color = HilingualTheme.colors.gray500,
-            style = HilingualTheme.typography.bodyR14
+            style = HilingualTheme.typography.bodyR14,
         )
     }
 }
@@ -81,7 +81,7 @@ private fun TextScanButtonPreview() {
             onClick = {
                 Toast.makeText(context, "TextScanButton Clicked", Toast.LENGTH_SHORT)
                     .show()
-            }
+            },
         )
     }
 }

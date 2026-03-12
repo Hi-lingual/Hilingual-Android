@@ -27,6 +27,6 @@ interface LoginService {
     @POST("api/v1/auth/login")
     suspend fun login(
         @Header(PROVIDER_TOKEN) providerToken: String,
-        @Body loginRequestDto: LoginRequestDto
+        @Body loginRequestDto: LoginRequestDto,
     ): BaseResponse<LoginResponseDto>
 }

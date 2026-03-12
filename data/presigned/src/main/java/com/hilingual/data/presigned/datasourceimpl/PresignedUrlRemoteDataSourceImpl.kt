@@ -23,15 +23,15 @@ import com.hilingual.data.presigned.service.PresignedUrlService
 import javax.inject.Inject
 
 class PresignedUrlRemoteDataSourceImpl @Inject constructor(
-    private val presignedUrlService: PresignedUrlService
+    private val presignedUrlService: PresignedUrlService,
 ) : PresignedUrlRemoteDataSource {
     override suspend fun getPresignedUrl(
         purpose: String,
-        contentType: String
+        contentType: String,
     ): BaseResponse<PresignedUrlResponseDto> = presignedUrlService.getPresignedUrl(
         PresignedUrlRequestDto(
             purpose = purpose,
-            contentType = contentType
-        )
+            contentType = contentType,
+        ),
     )
 }

@@ -44,20 +44,20 @@ fun DiaryWriteCancelBottomSheet(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     onCancelClick: () -> Unit,
-    onTempSaveClick: () -> Unit
+    onTempSaveClick: () -> Unit,
 ) {
     HilingualBasicBottomSheet(
         isVisible = isVisible,
-        onDismiss = onDismiss
+        onDismiss = onDismiss,
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = "일기 작성을 취소하시겠어요?",
                 style = HilingualTheme.typography.headSB16,
-                color = HilingualTheme.colors.hilingualBlack
+                color = HilingualTheme.colors.hilingualBlack,
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -65,7 +65,7 @@ fun DiaryWriteCancelBottomSheet(
             Text(
                 text = "임시저장하지 않은 내용은 모두 사라져요!",
                 style = HilingualTheme.typography.bodyR14,
-                color = HilingualTheme.colors.gray400
+                color = HilingualTheme.colors.gray400,
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -74,7 +74,7 @@ fun DiaryWriteCancelBottomSheet(
                 iconRes = R.drawable.ic_cancel_24,
                 text = "작성취소",
                 textColor = HilingualTheme.colors.alertRed,
-                onClick = onCancelClick
+                onClick = onCancelClick,
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -83,7 +83,7 @@ fun DiaryWriteCancelBottomSheet(
                 iconRes = R.drawable.ic_save_24,
                 text = "임시저장",
                 textColor = HilingualTheme.colors.gray700,
-                onClick = onTempSaveClick
+                onClick = onTempSaveClick,
             )
         }
     }
@@ -94,19 +94,19 @@ private fun DiaryWriteActionRow(
     iconRes: Int,
     text: String,
     textColor: Color,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp)
             .noRippleClickable(onClick = onClick),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(iconRes),
             contentDescription = null,
-            tint = Color.Unspecified
+            tint = Color.Unspecified,
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -114,7 +114,7 @@ private fun DiaryWriteActionRow(
         Text(
             text = text,
             style = HilingualTheme.typography.bodyM14,
-            color = textColor
+            color = textColor,
         )
     }
 }
@@ -127,7 +127,7 @@ private fun DiaryWriteCancelBottomSheetPreview() {
             isVisible = true,
             onDismiss = {},
             onCancelClick = {},
-            onTempSaveClick = {}
+            onTempSaveClick = {},
         )
     }
 }

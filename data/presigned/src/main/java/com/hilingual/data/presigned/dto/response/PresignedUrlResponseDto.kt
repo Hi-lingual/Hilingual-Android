@@ -20,5 +20,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PresignedUrlResponseDto(
     val fileKey: String,
-    val uploadUrl: String
+    val uploadUrl: String,
 )

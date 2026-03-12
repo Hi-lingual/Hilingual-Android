@@ -57,40 +57,40 @@ internal data object BlockedUser : Route
 internal data object OssLicenses : Route
 
 fun NavController.navigateToMyPage(
-    navOptions: NavOptions? = null
+    navOptions: NavOptions? = null,
 ) {
     navigate(
         route = MyPageGraph,
-        navOptions = navOptions
+        navOptions = navOptions,
     )
 }
 
 private fun NavController.navigateToProfileEdit(
-    navOptions: NavOptions? = null
+    navOptions: NavOptions? = null,
 ) {
     navigate(
         route = ProfileEdit,
-        navOptions = navOptions
+        navOptions = navOptions,
     )
 }
 
 private fun NavController.navigateToBlockedUser(
-    navOptions: NavOptions? = null
+    navOptions: NavOptions? = null,
 ) {
     navigate(
         route = BlockedUser,
-        navOptions = navOptions
+        navOptions = navOptions,
     )
 }
 
 private fun NavController.navigateToOssLicenses(
     navOptions: NavOptions? = navOptions {
         launchSingleTop = true
-    }
+    },
 ) {
     navigate(
         route = OssLicenses,
-        navOptions = navOptions
+        navOptions = navOptions,
     )
 }
 
@@ -100,10 +100,10 @@ fun NavGraphBuilder.myPageNavGraph(
     navigateUp: () -> Unit,
     navigateToMyFeedProfile: () -> Unit,
     navigateToFeedProfile: (Long) -> Unit,
-    navigateToAlarm: () -> Unit
+    navigateToAlarm: () -> Unit,
 ) {
     navigation<MyPageGraph>(
-        startDestination = MyPage
+        startDestination = MyPage,
     ) {
         composable<MyPage> { backStackEntry ->
             val viewModel = sharedMyPageViewModel(navController, backStackEntry)
@@ -115,7 +115,7 @@ fun NavGraphBuilder.myPageNavGraph(
                 navigateToAlarm = navigateToAlarm,
                 navigateToBlock = navController::navigateToBlockedUser,
                 navigateToOssLicenses = navController::navigateToOssLicenses,
-                viewModel = viewModel
+                viewModel = viewModel,
             )
         }
 
@@ -123,14 +123,14 @@ fun NavGraphBuilder.myPageNavGraph(
             enterTransition = enterTransition,
             exitTransition = { ExitTransition.None },
             popEnterTransition = { EnterTransition.None },
-            popExitTransition = popExitTransition
+            popExitTransition = popExitTransition,
         ) { backStackEntry ->
             val viewModel = sharedMyPageViewModel(navController, backStackEntry)
 
             ProfileEditRoute(
                 paddingValues = paddingValues,
                 navigateUp = navigateUp,
-                viewModel = viewModel
+                viewModel = viewModel,
             )
         }
 
@@ -138,12 +138,12 @@ fun NavGraphBuilder.myPageNavGraph(
             enterTransition = enterTransition,
             exitTransition = { ExitTransition.None },
             popEnterTransition = { EnterTransition.None },
-            popExitTransition = popExitTransition
+            popExitTransition = popExitTransition,
         ) {
             BlockedUserRoute(
                 paddingValues = paddingValues,
                 navigateUp = navigateUp,
-                navigateToProfile = navigateToFeedProfile
+                navigateToProfile = navigateToFeedProfile,
             )
         }
 
@@ -151,11 +151,11 @@ fun NavGraphBuilder.myPageNavGraph(
             enterTransition = enterTransition,
             exitTransition = { ExitTransition.None },
             popEnterTransition = { EnterTransition.None },
-            popExitTransition = popExitTransition
+            popExitTransition = popExitTransition,
         ) {
             OssLicensesScreen(
                 paddingValues = paddingValues,
-                onBackClick = navigateUp
+                onBackClick = navigateUp,
             )
         }
     }
@@ -164,7 +164,7 @@ fun NavGraphBuilder.myPageNavGraph(
 @Composable
 private fun sharedMyPageViewModel(
     navController: NavController,
-    backStackEntry: NavBackStackEntry
+    backStackEntry: NavBackStackEntry,
 ): MyPageViewModel {
     val parentEntry = remember(backStackEntry) {
         navController.getBackStackEntry(MyPageGraph)
@@ -175,13 +175,13 @@ private fun sharedMyPageViewModel(
 private val enterTransition: AnimatedContentTransitionScope<*>.() -> EnterTransition = {
     slideIntoContainer(
         AnimatedContentTransitionScope.SlideDirection.Left,
-        tween(ANIMATION_DURATION)
+        tween(ANIMATION_DURATION),
     )
 }
 
 private val popExitTransition: AnimatedContentTransitionScope<*>.() -> ExitTransition = {
     slideOutOfContainer(
         AnimatedContentTransitionScope.SlideDirection.Right,
-        tween(ANIMATION_DURATION)
+        tween(ANIMATION_DURATION),
     )
 }

@@ -34,21 +34,21 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 internal fun DiaryViewModeToggle(
     isAIWritten: Boolean,
     onToggle: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = modifier
+        modifier = modifier,
     ) {
         Text(
             text = "교정된 일기",
             style = HilingualTheme.typography.bodyR14,
-            color = HilingualTheme.colors.gray500
+            color = HilingualTheme.colors.gray500,
         )
         HilingualBasicToggleSwitch(
             isChecked = isAIWritten,
-            onCheckedChange = onToggle
+            onCheckedChange = onToggle,
         )
     }
 }
@@ -61,7 +61,7 @@ private fun AIDiaryTogglePreview() {
 
         DiaryViewModeToggle(
             isAIWritten = isAI,
-            onToggle = { isAI = it }
+            onToggle = { isAI = it },
         )
     }
 }

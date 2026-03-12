@@ -28,7 +28,7 @@ import com.hilingual.data.diary.service.DiaryService
 import javax.inject.Inject
 
 internal class DiaryRemoteDataSourceImpl @Inject constructor(
-    private val diaryService: DiaryService
+    private val diaryService: DiaryService,
 ) : DiaryRemoteDataSource {
     override suspend fun getDiaryContent(diaryId: Long): BaseResponse<DiaryContentResponseDto> =
         diaryService.getDiaryContent(diaryId)
@@ -36,27 +36,29 @@ internal class DiaryRemoteDataSourceImpl @Inject constructor(
     override suspend fun getDiaryFeedbacks(diaryId: Long): BaseResponse<DiaryFeedbackResponseDto> =
         diaryService.getDiaryFeedbacks(diaryId)
 
-    override suspend fun getDiaryRecommendExpressions(diaryId: Long): BaseResponse<DiaryRecommendExpressionResponseDto> =
+    override suspend fun getDiaryRecommendExpressions(
+        diaryId: Long,
+    ): BaseResponse<DiaryRecommendExpressionResponseDto> =
         diaryService.getDiaryRecommendExpressions(diaryId)
 
     override suspend fun patchPhraseBookmark(
         phraseId: Long,
-        bookmarkRequestDto: BookmarkRequestDto
+        bookmarkRequestDto: BookmarkRequestDto,
     ): BaseResponse<Unit> =
         diaryService.patchPhraseBookmark(
             phraseId = phraseId,
-            bookmarkRequestDto = bookmarkRequestDto
+            bookmarkRequestDto = bookmarkRequestDto,
         )
 
     override suspend fun postDiaryFeedbackCreate(
         originalText: String,
         date: String,
-        fileKey: String?
+        fileKey: String?,
     ): BaseResponse<DiaryFeedbackCreateResponseDto> {
         val imageRequest = if (fileKey != null) {
             ImageRequestDto(
                 fileKey = fileKey,
-                purpose = "DIARY_IMAGE"
+                purpose = "DIARY_IMAGE",
             )
         } else {
             null
@@ -66,8 +68,8 @@ internal class DiaryRemoteDataSourceImpl @Inject constructor(
             diaryFeedbackCreateRequestDto = DiaryFeedbackCreateRequestDto(
                 originalText = originalText,
                 date = date,
-                image = imageRequest
-            )
+                image = imageRequest,
+            ),
         )
     }
 

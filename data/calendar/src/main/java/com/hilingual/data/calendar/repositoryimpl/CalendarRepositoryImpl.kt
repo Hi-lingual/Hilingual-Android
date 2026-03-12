@@ -24,7 +24,7 @@ import com.hilingual.data.calendar.repository.CalendarRepository
 import jakarta.inject.Inject
 
 internal class CalendarRepositoryImpl @Inject constructor(
-    private val calendarRemoteDataSource: CalendarRemoteDataSource
+    private val calendarRemoteDataSource: CalendarRemoteDataSource,
 ) : CalendarRepository {
     override suspend fun getCalendar(year: Int, month: Int): Result<CalendarModel> =
         suspendRunCatching {

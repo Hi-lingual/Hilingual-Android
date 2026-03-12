@@ -35,9 +35,10 @@ data class VocaUiState(
     val searchKeyword: String = "",
     val searchResultList: ImmutableList<VocaItemModel> = persistentListOf(),
     val vocaItemDetail: UiState<VocaDetailModel> = UiState.Loading,
-    val isRefreshing: Boolean = false
+    val isRefreshing: Boolean = false,
 )
 
 enum class ScreenType {
-    DEFAULT, SEARCH
+    DEFAULT,
+    SEARCH,
 }

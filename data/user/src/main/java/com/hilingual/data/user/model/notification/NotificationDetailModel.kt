@@ -20,11 +20,11 @@ import com.hilingual.data.user.dto.response.notification.NotificationDetailRespo
 data class NotificationDetailModel(
     val title: String,
     val createdAt: String,
-    val content: String
+    val content: String,
 )
 
 internal fun NotificationDetailResponseDto.toModel() = NotificationDetailModel(
     title = this.title,
     createdAt = this.createdAt,
-    content = this.content
+    content = this.content,
 )

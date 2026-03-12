@@ -45,8 +45,8 @@ object FirebaseModule {
         remoteConfig.setDefaultsAsync(
             mapOf(
                 KEY_MIN_FORCE_VERSION to STABLE_VERSION,
-                KEY_LATEST_VERSION to STABLE_VERSION
-            )
+                KEY_LATEST_VERSION to STABLE_VERSION,
+            ),
         )
 
         return remoteConfig

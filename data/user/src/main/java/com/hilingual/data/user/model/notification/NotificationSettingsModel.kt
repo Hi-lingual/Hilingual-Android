@@ -19,10 +19,10 @@ import com.hilingual.data.user.dto.response.notification.NotificationSettingsRes
 
 data class NotificationSettingsModel(
     val isMarketingEnabled: Boolean,
-    val isFeedEnabled: Boolean
+    val isFeedEnabled: Boolean,
 )
 
 internal fun NotificationSettingsResponseDto.toModel() = NotificationSettingsModel(
     isMarketingEnabled = this.marketing,
-    isFeedEnabled = this.feed
+    isFeedEnabled = this.feed,
 )

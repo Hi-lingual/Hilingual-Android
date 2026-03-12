@@ -32,17 +32,17 @@ internal fun DiaryUnpublishBottomSheet(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     onPrivateClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     HilingualMenuBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
-        modifier = modifier
+        modifier = modifier,
     ) {
         HilingualMenuBottomSheetItem(
             text = "비공개하기",
             iconResId = R.drawable.ic_hide_24,
-            onClick = onPrivateClick
+            onClick = onPrivateClick,
         )
     }
 }
@@ -56,7 +56,7 @@ private fun DiaryUnpublishBottomSheetPreview() {
         DiaryUnpublishBottomSheet(
             isVisible = isSheetVisible,
             onDismiss = { isSheetVisible = false },
-            onPrivateClick = { }
+            onPrivateClick = { },
         )
     }
 }

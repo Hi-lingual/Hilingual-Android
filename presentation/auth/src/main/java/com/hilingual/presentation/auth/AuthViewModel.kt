@@ -35,7 +35,7 @@ import timber.log.Timber
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val onboardingRepository: OnboardingRepository
+    private val onboardingRepository: OnboardingRepository,
 ) : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -43,7 +43,7 @@ class AuthViewModel @Inject constructor(
     private val _navigationEvent = MutableSharedFlow<AuthSideEffect>(
         replay = 0,
         extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
     val navigationEvent = _navigationEvent.asSharedFlow()
 

@@ -24,6 +24,7 @@ import com.hilingual.data.feed.repository.FeedRepository
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.feed.model.FeedItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
@@ -35,13 +36,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 internal class FeedViewModel @Inject constructor(
     private val feedRepository: FeedRepository,
     private val diaryRepository: DiaryRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
@@ -74,7 +74,7 @@ internal class FeedViewModel @Inject constructor(
                 .onSuccess { myInfo ->
                     _uiState.update {
                         it.copy(
-                            myProfileUrl = myInfo.profileImg
+                            myProfileUrl = myInfo.profileImg,
                         )
                     }
                 }.onLogFailure { }
@@ -91,7 +91,7 @@ internal class FeedViewModel @Inject constructor(
                 .onSuccess { feedResult ->
                     _uiState.update {
                         it.copy(
-                            recommendFeedList = UiState.Success(feedResult.toState())
+                            recommendFeedList = UiState.Success(feedResult.toState()),
                         )
                     }
                 }
@@ -116,7 +116,7 @@ internal class FeedViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             followingFeedList = UiState.Success(feedResult.toState()),
-                            hasFollowing = feedResult.hasFollowing
+                            hasFollowing = feedResult.hasFollowing,
                         )
                     }
                 }
@@ -139,29 +139,29 @@ internal class FeedViewModel @Inject constructor(
                             recommendFeedList = currentState.recommendFeedList.updateIfSuccess { list ->
                                 updateSingleItem(
                                     list = list.toPersistentList(),
-                                    diaryId = diaryId
+                                    diaryId = diaryId,
                                 ) { item ->
                                     item.copy(
                                         isLiked = isLiked,
                                         likeCount = (item.likeCount + if (isLiked) 1 else -1).coerceAtLeast(
-                                            0
-                                        )
+                                            0,
+                                        ),
                                     )
                                 }
                             },
                             followingFeedList = currentState.followingFeedList.updateIfSuccess { list ->
                                 updateSingleItem(
                                     list = list.toPersistentList(),
-                                    diaryId = diaryId
+                                    diaryId = diaryId,
                                 ) { item ->
                                     item.copy(
                                         isLiked = isLiked,
                                         likeCount = (item.likeCount + if (isLiked) 1 else -1).coerceAtLeast(
-                                            0
-                                        )
+                                            0,
+                                        ),
                                     )
                                 }
-                            }
+                            },
                         )
                     }
                     if (isLiked) showLikeSnackbar()
@@ -181,7 +181,7 @@ internal class FeedViewModel @Inject constructor(
                             },
                             followingFeedList = currentState.followingFeedList.updateIfSuccess { list ->
                                 removeSingleItem(list.toPersistentList(), diaryId)
-                            }
+                            },
                         )
                     }
                 }.onLogFailure { }
@@ -189,18 +189,16 @@ internal class FeedViewModel @Inject constructor(
     }
 
     private fun UiState<ImmutableList<FeedItemUiModel>>.updateIfSuccess(
-        transform: (ImmutableList<FeedItemUiModel>) -> ImmutableList<FeedItemUiModel>
-    ): UiState<ImmutableList<FeedItemUiModel>> {
-        return when (this) {
-            is UiState.Success -> UiState.Success(transform(this.data))
-            else -> this
-        }
+        transform: (ImmutableList<FeedItemUiModel>) -> ImmutableList<FeedItemUiModel>,
+    ): UiState<ImmutableList<FeedItemUiModel>> = when (this) {
+        is UiState.Success -> UiState.Success(transform(this.data))
+        else -> this
     }
 
     private fun updateSingleItem(
         list: PersistentList<FeedItemUiModel>,
         diaryId: Long,
-        transform: (FeedItemUiModel) -> FeedItemUiModel
+        transform: (FeedItemUiModel) -> FeedItemUiModel,
     ): ImmutableList<FeedItemUiModel> {
         val index = list.indexOfFirst { it.diaryId == diaryId }
         return if (index != -1) {
@@ -213,7 +211,7 @@ internal class FeedViewModel @Inject constructor(
 
     private fun removeSingleItem(
         list: PersistentList<FeedItemUiModel>,
-        diaryId: Long
+        diaryId: Long,
     ): ImmutableList<FeedItemUiModel> {
         val index = list.indexOfFirst { it.diaryId == diaryId }
         return if (index != -1) {

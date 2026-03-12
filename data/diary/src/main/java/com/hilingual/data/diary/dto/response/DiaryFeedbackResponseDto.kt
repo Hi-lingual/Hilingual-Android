@@ -21,7 +21,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DiaryFeedbackResponseDto(
     @SerialName("feedbackList")
-    val feedbackList: List<FeedbackContent>
+    val feedbackList: List<FeedbackContent>,
 )
 
 @Serializable
@@ -31,5 +31,5 @@ data class FeedbackContent(
     @SerialName("rewrite")
     val rewrite: String,
     @SerialName("explain")
-    val explain: String
+    val explain: String,
 )

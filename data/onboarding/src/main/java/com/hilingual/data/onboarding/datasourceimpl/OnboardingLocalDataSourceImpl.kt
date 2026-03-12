@@ -10,7 +10,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 
 class OnboardingLocalDataSourceImpl @Inject constructor(
-    @OnboardingDataStore private val dataStore: DataStore<Preferences>
+    @OnboardingDataStore private val dataStore: DataStore<Preferences>,
 ) : OnboardingLocalDataSource {
     private object PreferencesKeys {
         val IS_HOME_ONBOARDING_COMPLETED = booleanPreferencesKey("is_home_onboarding_completed")

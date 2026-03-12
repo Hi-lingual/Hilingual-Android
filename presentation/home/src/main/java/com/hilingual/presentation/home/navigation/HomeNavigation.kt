@@ -23,18 +23,18 @@ import androidx.navigation.compose.composable
 import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.core.navigation.MainTabRoute
 import com.hilingual.presentation.home.HomeRoute
-import kotlinx.serialization.Serializable
 import java.time.LocalDate
+import kotlinx.serialization.Serializable
 
 @Serializable
 data object Home : MainTabRoute
 
 fun NavController.navigateToHome(
-    navOptions: NavOptions? = null
+    navOptions: NavOptions? = null,
 ) {
     navigate(
         route = Home,
-        navOptions = navOptions
+        navOptions = navOptions,
     )
 }
 
@@ -44,7 +44,7 @@ fun NavGraphBuilder.homeNavGraph(
     navigateToDiaryWrite: (selectedDate: LocalDate, mode: DiaryWriteMode) -> Unit,
     navigateToNotification: () -> Unit,
     navigateToFeedProfile: (userId: Long) -> Unit,
-    navigateToFeed: () -> Unit
+    navigateToFeed: () -> Unit,
 ) {
     composable<Home> {
         HomeRoute(
@@ -53,7 +53,7 @@ fun NavGraphBuilder.homeNavGraph(
             navigateToDiaryWrite = navigateToDiaryWrite,
             navigateToNotification = navigateToNotification,
             navigateToFeedProfile = navigateToFeedProfile,
-            navigateToFeed = navigateToFeed
+            navigateToFeed = navigateToFeed,
         )
     }
 }

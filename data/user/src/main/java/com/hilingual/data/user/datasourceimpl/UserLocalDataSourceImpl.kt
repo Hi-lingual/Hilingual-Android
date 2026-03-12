@@ -3,15 +3,15 @@ package com.hilingual.data.user.datasourceimpl
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import com.hilingual.data.user.datasource.UserLocalDataSource
 import com.hilingual.core.localstorage.constant.UserInfoDataStoreKey.KEY_IS_REGISTER_COMPLETED
 import com.hilingual.core.localstorage.di.qualifier.UserInfoDataStore
+import com.hilingual.data.user.datasource.UserLocalDataSource
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 class UserLocalDataSourceImpl @Inject constructor(
-    @UserInfoDataStore private val dataStore: DataStore<Preferences>
+    @UserInfoDataStore private val dataStore: DataStore<Preferences>,
 ) : UserLocalDataSource {
 
     override suspend fun saveRegisterStatus(isCompleted: Boolean) {
@@ -20,11 +20,9 @@ class UserLocalDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getRegisterStatus(): Boolean {
-        return dataStore.data.map { preferences ->
-            preferences[KEY_IS_REGISTER_COMPLETED] ?: false
-        }.first()
-    }
+    override suspend fun getRegisterStatus(): Boolean = dataStore.data.map { preferences ->
+        preferences[KEY_IS_REGISTER_COMPLETED] ?: false
+    }.first()
 
     override suspend fun clear() {
         dataStore.edit { preferences ->

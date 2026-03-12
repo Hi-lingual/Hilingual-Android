@@ -29,5 +29,5 @@ internal data class FeedItemUiModel(
     val diaryId: Long,
     val likeCount: Int,
     val isLiked: Boolean,
-    val isMine: Boolean
+    val isMine: Boolean,
 )

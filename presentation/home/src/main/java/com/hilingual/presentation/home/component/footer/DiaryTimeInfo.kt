@@ -40,17 +40,17 @@ import kotlin.math.ceil
 @Composable
 internal fun DiaryTimeInfo(
     remainingTime: Int?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (remainingTime != null) {
         Row(
             modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_time_16),
                 contentDescription = "남은 시간",
-                tint = Color.Unspecified
+                tint = Color.Unspecified,
             )
             Spacer(Modifier.width(4.dp))
 
@@ -66,7 +66,7 @@ internal fun DiaryTimeInfo(
             }
             Text(
                 text = annotatedString,
-                style = HilingualTheme.typography.bodyM14
+                style = HilingualTheme.typography.bodyM14,
             )
         }
     }
@@ -79,7 +79,7 @@ private fun formatRemainingTime(remainingMinutes: Int): String = when {
 }
 
 private data class DiaryTimeInfoPreviewState(
-    val remainingTime: Int?
+    val remainingTime: Int?,
 )
 
 private class DiaryTimeInfoPreviewProvider :
@@ -94,7 +94,7 @@ private class DiaryTimeInfoPreviewProvider :
         DiaryTimeInfoPreviewState(remainingTime = 60), // 1h 0m -> 60분
         DiaryTimeInfoPreviewState(remainingTime = 59), // 59m -> 59분
         DiaryTimeInfoPreviewState(remainingTime = 1), // 1m -> 1분
-        DiaryTimeInfoPreviewState(remainingTime = 0) // 0m -> 1분
+        DiaryTimeInfoPreviewState(remainingTime = 0), // 0m -> 1분
 
     )
 }
@@ -102,11 +102,11 @@ private class DiaryTimeInfoPreviewProvider :
 @Preview(showBackground = true)
 @Composable
 private fun DiaryTimeInfoPreview(
-    @PreviewParameter(DiaryTimeInfoPreviewProvider::class) state: DiaryTimeInfoPreviewState
+    @PreviewParameter(DiaryTimeInfoPreviewProvider::class) state: DiaryTimeInfoPreviewState,
 ) {
     HilingualTheme {
         DiaryTimeInfo(
-            remainingTime = state.remainingTime
+            remainingTime = state.remainingTime,
         )
     }
 }

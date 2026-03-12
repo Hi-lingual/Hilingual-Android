@@ -33,7 +33,7 @@ private val LocalHilingualTypography = staticCompositionLocalOf<HilingualTypogra
 
 private val LightColorScheme = lightColorScheme(
     primary = hilingualBlack,
-    background = white
+    background = white,
 )
 
 object HilingualTheme {
@@ -52,7 +52,7 @@ object HilingualTheme {
 fun ProvideHilingualColorsAndTypography(
     colors: HilingualColors,
     typography: HilingualTypography,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val provideColors = remember { colors.copy() }
     provideColors.update(colors)
@@ -60,20 +60,20 @@ fun ProvideHilingualColorsAndTypography(
     CompositionLocalProvider(
         LocalHilingualColors provides provideColors,
         LocalHilingualTypography provides provideTypography,
-        content = content
+        content = content,
     )
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun HilingualTheme(content: @Composable () -> Unit) {
-    val colors = DefaultHilingualColors()
+    val colors = defaultHilingualColors()
     val colorScheme = LightColorScheme
     val typography = HilingualTypography()
     ProvideHilingualColorsAndTypography(colors, typography) {
         MaterialTheme(
             colorScheme = colorScheme,
-            content = content
+            content = content,
         )
     }
 }

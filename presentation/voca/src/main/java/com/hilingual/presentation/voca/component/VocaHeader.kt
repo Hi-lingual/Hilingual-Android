@@ -42,7 +42,7 @@ internal fun VocaHeader(
     searchText: () -> String,
     onSearchTextChanged: (String) -> Unit,
     onCloseButtonClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -50,11 +50,11 @@ internal fun VocaHeader(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                color = HilingualTheme.colors.hilingualBlack
-            )
+                color = HilingualTheme.colors.hilingualBlack,
+            ),
     ) {
         TitleLeftAlignedTopAppBar(
-            title = "나의 단어장"
+            title = "나의 단어장",
         )
         HilingualSearchTextField(
             value = searchText(),
@@ -70,7 +70,7 @@ internal fun VocaHeader(
                 onCloseButtonClick()
                 focusManager.clearFocus()
             },
-            onSearchAction = { focusManager.clearFocus() }
+            onSearchAction = { focusManager.clearFocus() },
         )
         Spacer(modifier = Modifier.height(20.dp))
     }
@@ -85,7 +85,7 @@ private fun VocaHeaderPreview() {
         VocaHeader(
             searchText = { searchText },
             onSearchTextChanged = { searchText = it },
-            onCloseButtonClick = { }
+            onCloseButtonClick = { },
         )
     }
 }

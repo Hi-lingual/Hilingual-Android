@@ -31,6 +31,7 @@ import com.hilingual.presentation.feedprofile.model.FeedProfileInfoModel
 import com.hilingual.presentation.feedprofile.model.toState
 import com.hilingual.presentation.feedprofile.navigation.FeedProfileGraph
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
@@ -43,14 +44,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 internal class FeedProfileViewModel @Inject constructor(
     private val feedRepository: FeedRepository,
     private val userRepository: UserRepository,
     private val diaryRepository: DiaryRepository,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val routeData = savedStateHandle.toRoute<FeedProfileGraph>()
     val targetUserId: Long = routeData.userId
@@ -102,7 +102,7 @@ internal class FeedProfileViewModel @Inject constructor(
                         Timber.e(throwable)
                         _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
                         return@launch
-                    }
+                    },
                 )
             } else {
                 emptyList()
@@ -111,7 +111,7 @@ internal class FeedProfileViewModel @Inject constructor(
             val sharedDiaryUIModels = sharedDiariesModel.diaryList.map { sharedDiary ->
                 sharedDiary.toState(
                     feedProfileInfoModel = feedProfileInfoModel.toState(),
-                    authorUserId = targetUserId
+                    authorUserId = targetUserId,
                 )
             }.toImmutableList()
 
@@ -124,8 +124,8 @@ internal class FeedProfileViewModel @Inject constructor(
                     FeedProfileUiState(
                         feedProfileInfo = feedProfileInfoModel.toState(),
                         sharedDiaries = sharedDiaryUIModels,
-                        likedDiaries = likedDiaryUIModels
-                    )
+                        likedDiaries = likedDiaryUIModels,
+                    ),
                 )
             }
         }
@@ -138,7 +138,7 @@ internal class FeedProfileViewModel @Inject constructor(
                     val sharedDiaryUIModels = sharedDiariesModel.diaryList.map { sharedDiary ->
                         sharedDiary.toState(
                             feedProfileInfoModel = feedProfileInfoModel,
-                            authorUserId = targetUserId
+                            authorUserId = targetUserId,
                         )
                     }.toImmutableList()
 
@@ -177,6 +177,7 @@ internal class FeedProfileViewModel @Inject constructor(
         val feedProfileModel = currentState.data.feedProfileInfo
         when (tabType) {
             DiaryTabType.SHARED -> loadSharedDiaries(feedProfileModel)
+
             DiaryTabType.LIKED -> {
                 if (feedProfileModel.isMine) {
                     loadLikedDiaries()
@@ -189,19 +190,20 @@ internal class FeedProfileViewModel @Inject constructor(
         viewModelScope.launch {
             feedRepository.postIsLike(
                 diaryId = diaryId,
-                isLiked = isLiked
+                isLiked = isLiked,
             )
                 .onSuccess {
                     _uiState.updateSuccess { currentState ->
                         when (type) {
                             DiaryTabType.SHARED -> {
                                 currentState.copy(
-                                    sharedDiaries = currentState.sharedDiaries.updateLikeState(diaryId, isLiked)
+                                    sharedDiaries = currentState.sharedDiaries.updateLikeState(diaryId, isLiked),
                                 )
                             }
+
                             DiaryTabType.LIKED -> {
                                 currentState.copy(
-                                    likedDiaries = currentState.likedDiaries.updateLikeState(diaryId, isLiked)
+                                    likedDiaries = currentState.likedDiaries.updateLikeState(diaryId, isLiked),
                                 )
                             }
                         }
@@ -220,14 +222,17 @@ internal class FeedProfileViewModel @Inject constructor(
         }
     }
 
-    private fun ImmutableList<FeedDiaryUIModel>.updateLikeState(diaryId: Long, isLiked: Boolean): ImmutableList<FeedDiaryUIModel> {
+    private fun ImmutableList<FeedDiaryUIModel>.updateLikeState(
+        diaryId: Long,
+        isLiked: Boolean,
+    ): ImmutableList<FeedDiaryUIModel> {
         val targetIndex = this.indexOfFirst { it.diaryId == diaryId }
         if (targetIndex == -1) return this
 
         val targetItem = this[targetIndex]
         val updatedItem = targetItem.copy(
             isLiked = isLiked,
-            likeCount = targetItem.likeCount + if (isLiked) 1 else -1
+            likeCount = targetItem.likeCount + if (isLiked) 1 else -1,
         )
 
         return this.toMutableList().apply {
@@ -268,7 +273,12 @@ internal class FeedProfileViewModel @Inject constructor(
 
                     val updatedProfile = currentProfile.copy(
                         isFollowing = !isCurrentlyFollowing,
-                        follower = if (isCurrentlyFollowing) currentProfile.follower - 1 else currentProfile.follower + 1
+                        follower = if (isCurrentlyFollowing) {
+                            currentProfile.follower - 1
+                        } else {
+                            currentProfile.follower +
+                                1
+                        },
                     )
 
                     currentState.copy(feedProfileInfo = updatedProfile)

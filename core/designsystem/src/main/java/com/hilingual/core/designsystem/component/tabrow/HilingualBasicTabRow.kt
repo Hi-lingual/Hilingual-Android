@@ -41,7 +41,7 @@ fun HilingualBasicTabRow(
     tabTitles: ImmutableList<String>,
     tabIndex: Int,
     onTabSelected: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     CompositionLocalProvider(LocalRippleConfiguration provides null) {
         SecondaryTabRow(
@@ -51,11 +51,11 @@ fun HilingualBasicTabRow(
             indicator = {
                 TabRowDefaults.SecondaryIndicator(
                     modifier = Modifier.tabIndicatorOffset(tabIndex),
-                    color = HilingualTheme.colors.black
+                    color = HilingualTheme.colors.black,
                 )
             },
             divider = {},
-            modifier = modifier.padding(horizontal = 16.dp)
+            modifier = modifier.padding(horizontal = 16.dp),
         ) {
             tabTitles.forEachIndexed { index, title ->
                 val selected = (tabIndex == index)
@@ -64,8 +64,12 @@ fun HilingualBasicTabRow(
                         text = {
                             Text(
                                 text = title,
-                                style = if (selected) HilingualTheme.typography.headSB18 else HilingualTheme.typography.headM18,
-                                textAlign = TextAlign.Center
+                                style = if (selected) {
+                                    HilingualTheme.typography.headSB18
+                                } else {
+                                    HilingualTheme.typography.headM18
+                                },
+                                textAlign = TextAlign.Center,
                             )
                         },
                         modifier = Modifier
@@ -74,7 +78,7 @@ fun HilingualBasicTabRow(
                         selected = selected,
                         onClick = { onTabSelected(index) },
                         selectedContentColor = HilingualTheme.colors.black,
-                        unselectedContentColor = HilingualTheme.colors.gray500
+                        unselectedContentColor = HilingualTheme.colors.gray500,
                     )
                 }
             }
@@ -93,13 +97,13 @@ private fun TabRowPreview() {
             HilingualBasicTabRow(
                 tabTitles = persistentListOf("문법·철자", "추천표현"),
                 tabIndex = pagerState1.currentPage,
-                onTabSelected = {}
+                onTabSelected = {},
             )
 
             HilingualBasicTabRow(
                 tabTitles = persistentListOf("tab1", "tab2", "tab3"),
                 tabIndex = pagerState2.currentPage,
-                onTabSelected = {}
+                onTabSelected = {},
             )
         }
     }

@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 internal class FeedSearchViewModel @Inject constructor(
     val feedRepository: FeedRepository,
-    val userRepository: UserRepository
+    val userRepository: UserRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(FeedSearchUiState())
     val uiState: StateFlow<FeedSearchUiState> = _uiState.asStateFlow()
@@ -85,8 +85,8 @@ internal class FeedSearchViewModel @Inject constructor(
                         user.copy(
                             followState = FollowState.getValueByFollowState(
                                 isFollowing = !currentIsFollowing,
-                                isFollowed = user.followState.isFollowed
-                            )
+                                isFollowed = user.followState.isFollowed,
+                            ),
                         )
                     } else {
                         user

@@ -23,12 +23,12 @@ import androidx.compose.runtime.remember
 @Immutable
 data class DialogState(
     val isVisible: Boolean = false,
-    val onClickAction: () -> Unit = {}
+    val onClickAction: () -> Unit = {},
 )
 
 @Stable
 class DialogTrigger(
-    private val onShow: (() -> Unit) -> Unit
+    private val onShow: (() -> Unit) -> Unit,
 ) {
     fun show(onClick: () -> Unit) {
         onShow(onClick)
@@ -37,7 +37,7 @@ class DialogTrigger(
 
 @Composable
 fun rememberDialogTrigger(
-    show: (() -> Unit) -> Unit
+    show: (() -> Unit) -> Unit,
 ): DialogTrigger = remember(show) {
     DialogTrigger(show)
 }

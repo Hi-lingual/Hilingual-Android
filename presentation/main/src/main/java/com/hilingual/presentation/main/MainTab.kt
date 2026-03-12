@@ -26,36 +26,33 @@ import com.hilingual.presentation.voca.navigation.Voca
 internal enum class MainTab(
     @DrawableRes val iconRes: Int,
     val route: MainTabRoute,
-    val label: String
+    val label: String,
 ) {
     HOME(
         iconRes = R.drawable.ic_home_24,
         route = Home,
-        label = "홈"
+        label = "홈",
     ),
     VOCA(
         iconRes = R.drawable.ic_book_24,
         route = Voca,
-        label = "단어장"
+        label = "단어장",
     ),
     FEED(
         iconRes = R.drawable.ic_community_24,
         route = Feed,
-        label = "피드"
+        label = "피드",
     ),
     MY(
         iconRes = R.drawable.ic_my_24,
         route = MyPage,
-        label = "마이"
-    );
+        label = "마이",
+    ),
+    ;
 
     companion object {
-        fun find(predicate: (MainTabRoute) -> Boolean): MainTab? {
-            return entries.find { predicate(it.route) }
-        }
+        fun find(predicate: (MainTabRoute) -> Boolean): MainTab? = entries.find { predicate(it.route) }
 
-        fun contains(predicate: (Route) -> Boolean): Boolean {
-            return entries.map { it.route }.any { predicate(it) }
-        }
+        fun contains(predicate: (Route) -> Boolean): Boolean = entries.map { it.route }.any { predicate(it) }
     }
 }

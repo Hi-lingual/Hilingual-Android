@@ -32,14 +32,14 @@ fun OneButtonDialog(
     modifier: Modifier = Modifier,
     properties: DialogProperties = DialogProperties(
         usePlatformDefaultWidth = false,
-        decorFitsSystemWindows = false
+        decorFitsSystemWindows = false,
     ),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     HilingualBasicDialog(
         onDismiss = onDismiss,
         modifier = modifier,
-        properties = properties
+        properties = properties,
     ) {
         content()
 
@@ -48,7 +48,7 @@ fun OneButtonDialog(
         DialogButton(
             text = confirmText,
             onClick = onConfirm,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }

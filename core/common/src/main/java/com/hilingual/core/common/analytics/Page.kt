@@ -31,5 +31,5 @@ enum class Page(val pageName: String) {
     // 피드
     FEED("feed"),
     POSTED_DIARY("posted_diary"),
-    MY_FEED("my_feed")
+    MY_FEED("my_feed"),
 }

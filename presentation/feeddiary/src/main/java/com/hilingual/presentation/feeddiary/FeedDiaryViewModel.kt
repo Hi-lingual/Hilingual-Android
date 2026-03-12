@@ -30,6 +30,7 @@ import com.hilingual.data.feed.repository.FeedRepository
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.feeddiary.navigation.FeedDiary
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -41,14 +42,13 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 internal class FeedDiaryViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val diaryRepository: DiaryRepository,
     private val feedRepository: FeedRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : ViewModel() {
     val diaryId = savedStateHandle.toRoute<FeedDiary>().diaryId
 
@@ -91,7 +91,7 @@ internal class FeedDiaryViewModel @Inject constructor(
                         diaryContent = contentResult.toState(),
                         feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),
                         recommendExpressionList = recommendExpressionsResult.map { it.toState() }
-                            .toImmutableList()
+                            .toImmutableList(),
                     )
                 }
             }.onSuccess { combinedState ->
@@ -111,8 +111,8 @@ internal class FeedDiaryViewModel @Inject constructor(
                             profileContent = it.profileContent.copy(
                                 isLiked = isLiked,
                                 likeCount = (it.profileContent.likeCount + if (isLiked) 1 else -1)
-                                    .coerceAtLeast(0)
-                            )
+                                    .coerceAtLeast(0),
+                            ),
                         )
                     }
                     if (isLiked) showLikeSnackbar()
@@ -137,7 +137,7 @@ internal class FeedDiaryViewModel @Inject constructor(
         viewModelScope.launch {
             diaryRepository.patchPhraseBookmark(
                 phraseId = phraseId,
-                bookmarkModel = PhraseBookmarkModel(isMarked)
+                bookmarkModel = PhraseBookmarkModel(isMarked),
             )
                 .onSuccess { result ->
                     when (result) {
@@ -155,7 +155,7 @@ internal class FeedDiaryViewModel @Inject constructor(
                                 }.toImmutableList()
 
                                 currentState.copy(
-                                    recommendExpressionList = updatedList
+                                    recommendExpressionList = updatedList,
                                 )
                             }
                         }
@@ -189,8 +189,8 @@ internal class FeedDiaryViewModel @Inject constructor(
         _sideEffect.emit(
             FeedDiarySideEffect.ShowVocaOverflowSnackbar(
                 message = "단어장이 모두 찼어요!",
-                actionLabel = "비우러가기"
-            )
+                actionLabel = "비우러가기",
+            ),
         )
     }
 }

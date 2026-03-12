@@ -42,18 +42,18 @@ internal fun FeedTopAppBar(
     profileImageUrl: String?,
     onProfileClick: () -> Unit,
     onSearchClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 9.dp, horizontal = 16.dp)
+            .padding(vertical = 9.dp, horizontal = 16.dp),
     ) {
         Text(
             text = "피드",
             style = HilingualTheme.typography.headSB18,
-            color = HilingualTheme.colors.hilingualBlack
+            color = HilingualTheme.colors.hilingualBlack,
         )
 
         Spacer(Modifier.weight(1f))
@@ -65,7 +65,7 @@ internal fun FeedTopAppBar(
             modifier = Modifier
                 .size(36.dp)
                 .noRippleClickable(onClick = onSearchClick)
-                .padding(6.dp)
+                .padding(6.dp),
         )
 
         Spacer(Modifier.width(8.dp))
@@ -78,8 +78,8 @@ internal fun FeedTopAppBar(
                 .border(
                     width = 1.dp,
                     color = HilingualTheme.colors.gray400,
-                    shape = CircleShape
-                )
+                    shape = CircleShape,
+                ),
         )
     }
 }
@@ -91,7 +91,7 @@ private fun FeedTopAppBarPreview() {
         FeedTopAppBar(
             profileImageUrl = "",
             onProfileClick = {},
-            onSearchClick = {}
+            onSearchClick = {},
         )
     }
 }

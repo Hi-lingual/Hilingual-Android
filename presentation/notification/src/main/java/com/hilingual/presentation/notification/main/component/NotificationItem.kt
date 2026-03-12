@@ -48,7 +48,7 @@ internal fun NotificationItem(
     date: String,
     isRead: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val typo = HilingualTheme.typography
     val colors = HilingualTheme.colors
@@ -63,11 +63,11 @@ internal fun NotificationItem(
             .padding(vertical = 20.dp)
             .padding(start = 16.dp, end = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
                 text = buildAnnotatedString {
@@ -76,25 +76,25 @@ internal fun NotificationItem(
                         addStyle(
                             style = SpanStyle(fontWeight = FontWeight.Bold),
                             start = matchResult.range.first,
-                            end = matchResult.range.last + 1
+                            end = matchResult.range.last + 1,
                         )
                     }
                 },
                 style = typo.bodyR16,
                 color = colors.black,
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
             Text(
                 text = date,
                 style = typo.bodyR14,
-                color = colors.gray300
+                color = colors.gray300,
             )
         }
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right_24),
             contentDescription = null,
-            tint = Color.Unspecified
+            tint = Color.Unspecified,
         )
     }
 }
@@ -108,25 +108,25 @@ private fun NotificationItemPreview() {
                 title = "방금 이병건님이 당신의 8월 14일 일기에 공감했습니다.",
                 date = "2025-08-15",
                 isRead = false,
-                onClick = {}
+                onClick = {},
             )
             NotificationItem(
                 title = "토착왜구맨님이 당신의 8월 14일 일기에 공감했습니다.",
                 date = "2025-08-15",
                 isRead = true,
-                onClick = {}
+                onClick = {},
             )
             NotificationItem(
                 title = "v.1.1.0 업데이트 알림",
                 date = "2025-08-15",
                 isRead = false,
-                onClick = {}
+                onClick = {},
             )
             NotificationItem(
                 title = "시스템 점검에 따른 사용 중단 안내",
                 date = "2025-08-15",
                 isRead = true,
-                onClick = {}
+                onClick = {},
             )
         }
     }

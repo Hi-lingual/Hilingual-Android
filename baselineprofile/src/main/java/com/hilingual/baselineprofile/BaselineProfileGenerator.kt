@@ -58,7 +58,7 @@ class BaselineProfileGenerator {
         rule.collect(
             packageName = InstrumentationRegistry.getArguments().getString("targetAppId")
                 ?: throw Exception("instrumentation runner에 targetAppId가 전달되지 않았습니다."),
-            includeInStartupProfile = true
+            includeInStartupProfile = true,
         ) {
             // 앱 시작 (기본 액티비티)
             pressHome()

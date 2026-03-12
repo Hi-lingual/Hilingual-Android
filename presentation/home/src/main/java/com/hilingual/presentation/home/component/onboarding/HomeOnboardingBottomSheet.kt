@@ -39,21 +39,21 @@ internal fun HomeOnboardingBottomSheet(
     isVisible: Boolean,
     onCloseButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     HilingualBasicBottomSheet(
         isVisible = isVisible,
         onDismiss = {},
         properties = ModalBottomSheetProperties(
-            shouldDismissOnClickOutside = false
+            shouldDismissOnClickOutside = false,
         ),
         isDimEnabled = true,
         sheetGesturesEnabled = false,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_close_24),
@@ -63,7 +63,7 @@ internal fun HomeOnboardingBottomSheet(
                     .padding(horizontal = 16.dp)
                     .noRippleClickable(onClick = onCloseButtonClick)
                     .padding(10.dp)
-                    .align(Alignment.TopEnd)
+                    .align(Alignment.TopEnd),
             )
             content()
         }
@@ -76,7 +76,7 @@ private fun HomeOnboardingBottomSheetPreview() {
     HilingualTheme {
         HomeOnboardingBottomSheet(
             isVisible = true,
-            onCloseButtonClick = { }
+            onCloseButtonClick = { },
         ) { }
     }
 }

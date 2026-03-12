@@ -31,7 +31,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 fun TitleLeftAlignedTopAppBar(
     title: String,
     modifier: Modifier = Modifier,
-    textColor: Color = HilingualTheme.colors.white
+    textColor: Color = HilingualTheme.colors.white,
 ) {
     Text(
         modifier = modifier
@@ -41,7 +41,7 @@ fun TitleLeftAlignedTopAppBar(
         textAlign = TextAlign.Start,
         text = title,
         color = textColor,
-        style = HilingualTheme.typography.headSB18
+        style = HilingualTheme.typography.headSB18,
     )
 }
 
@@ -50,7 +50,7 @@ fun TitleLeftAlignedTopAppBar(
 private fun TitleLeftAlignedTopAppBarPreview() {
     HilingualTheme {
         TitleLeftAlignedTopAppBar(
-            title = "나의 단어장"
+            title = "나의 단어장",
         )
     }
 }

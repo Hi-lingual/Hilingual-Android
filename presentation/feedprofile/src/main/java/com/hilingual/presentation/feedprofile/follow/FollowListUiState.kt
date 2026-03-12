@@ -27,7 +27,7 @@ data class FollowListUiState(
     val followerList: UiState<ImmutableList<FollowItemModel>> = UiState.Loading,
     val followingList: UiState<ImmutableList<FollowItemModel>> = UiState.Loading,
     val isFollowerRefreshing: Boolean = false,
-    val isFollowingRefreshing: Boolean = false
+    val isFollowingRefreshing: Boolean = false,
 ) {
     companion object {
         val Fake = FollowListUiState(
@@ -37,15 +37,15 @@ data class FollowListUiState(
                         userId = 1L,
                         profileImgUrl = "https://picsum.photos/200",
                         nickname = "follower_1",
-                        followState = FollowState.NONE
+                        followState = FollowState.NONE,
                     ),
                     FollowItemModel(
                         userId = 2L,
                         profileImgUrl = "https://picsum.photos/201",
                         nickname = "follower_2",
-                        followState = FollowState.ONLY_FOLLOWED
-                    )
-                )
+                        followState = FollowState.ONLY_FOLLOWED,
+                    ),
+                ),
             ),
             followingList = UiState.Success(
                 persistentListOf(
@@ -53,16 +53,16 @@ data class FollowListUiState(
                         userId = 3L,
                         profileImgUrl = "https://picsum.photos/202",
                         nickname = "following_1",
-                        followState = FollowState.ONLY_FOLLOWING
+                        followState = FollowState.ONLY_FOLLOWING,
                     ),
                     FollowItemModel(
                         userId = 4L,
                         profileImgUrl = "https://picsum.photos/203",
                         nickname = "following_2",
-                        followState = FollowState.MUTUAL_FOLLOW
-                    )
-                )
-            )
+                        followState = FollowState.MUTUAL_FOLLOW,
+                    ),
+                ),
+            ),
         )
     }
 }

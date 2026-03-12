@@ -23,16 +23,16 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.notification.navigation.NotificationDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 internal class NotificationDetailViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val noticeId: Long = savedStateHandle.toRoute<NotificationDetail>().noticeId
 
@@ -52,7 +52,7 @@ internal class NotificationDetailViewModel @Inject constructor(
                         it.copy(
                             title = detail.title,
                             date = detail.createdAt,
-                            content = detail.content
+                            content = detail.content,
                         )
                     }
                 }

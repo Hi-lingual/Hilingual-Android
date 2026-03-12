@@ -25,7 +25,7 @@ import kotlinx.collections.immutable.persistentListOf
 data class FeedProfileUiState(
     val feedProfileInfo: FeedProfileInfoModel,
     val sharedDiaries: ImmutableList<FeedDiaryUIModel> = persistentListOf(),
-    val likedDiaries: ImmutableList<FeedDiaryUIModel> = persistentListOf()
+    val likedDiaries: ImmutableList<FeedDiaryUIModel> = persistentListOf(),
 ) {
     companion object {
         val Fake = FeedProfileUiState(
@@ -38,7 +38,7 @@ data class FeedProfileUiState(
                 isMine = true,
                 isFollowing = null,
                 isFollowed = null,
-                isBlock = null
+                isBlock = null,
             ),
             sharedDiaries = persistentListOf(
                 FeedDiaryUIModel(
@@ -52,7 +52,7 @@ data class FeedProfileUiState(
                     isLiked = false,
                     diaryImageUrl = null,
                     originalText = "가짜 사용자의 일기 내용입니다.",
-                    isMine = true
+                    isMine = true,
                 ),
                 FeedDiaryUIModel(
                     diaryId = 3L,
@@ -65,8 +65,8 @@ data class FeedProfileUiState(
                     isLiked = false,
                     diaryImageUrl = null,
                     originalText = "가짜 사용자의 일기 내용입니다.",
-                    isMine = true
-                )
+                    isMine = true,
+                ),
             ),
             likedDiaries = persistentListOf(
                 FeedDiaryUIModel(
@@ -80,7 +80,7 @@ data class FeedProfileUiState(
                     isLiked = false,
                     diaryImageUrl = null,
                     originalText = "가짜 사용자의 일기 내용입니다.",
-                    isMine = true
+                    isMine = true,
                 ),
                 FeedDiaryUIModel(
                     diaryId = 10L,
@@ -93,7 +93,7 @@ data class FeedProfileUiState(
                     isLiked = true,
                     diaryImageUrl = null,
                     originalText = "좋아요한 사용자의 일기 내용입니다.",
-                    isMine = false
+                    isMine = false,
                 ),
                 FeedDiaryUIModel(
                     diaryId = 11L,
@@ -106,9 +106,9 @@ data class FeedProfileUiState(
                     isLiked = true,
                     diaryImageUrl = null,
                     originalText = "또 다른 사용자의 일기 내용입니다.",
-                    isMine = false
-                )
-            )
+                    isMine = false,
+                ),
+            ),
         )
     }
 }

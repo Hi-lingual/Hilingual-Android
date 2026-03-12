@@ -93,7 +93,7 @@ internal fun HomeRoute(
     navigateToFeedProfile: (userId: Long) -> Unit,
     navigateToFeed: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
-    homeState: HomeState = rememberHomeState()
+    homeState: HomeState = rememberHomeState(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
@@ -103,7 +103,7 @@ internal fun HomeRoute(
     val isSuccess = uiState is UiState.Success
 
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
+        contract = ActivityResultContracts.RequestPermission(),
     ) { isGranted ->
         viewModel.onNotificationPermissionResult(isGranted = isGranted)
     }
@@ -113,7 +113,7 @@ internal fun HomeRoute(
             onClick = {
                 homeState.onErrorRetry?.invoke()
                 homeState.hideErrorDialog()
-            }
+            },
         )
     }
 
@@ -128,8 +128,8 @@ internal fun HomeRoute(
                     HilingualMessage.Snackbar(
                         message = sideEffect.message,
                         actionLabelText = sideEffect.actionLabel,
-                        onAction = navigateToFeed
-                    )
+                        onAction = navigateToFeed,
+                    ),
                 )
             }
 
@@ -149,7 +149,7 @@ internal fun HomeRoute(
     CheckNotificationPermission(
         context = context,
         isDataLoaded = isSuccess,
-        onCheck = viewModel::handleNotificationPermission
+        onCheck = viewModel::handleNotificationPermission,
     )
 
     when (val state = uiState) {
@@ -172,7 +172,7 @@ internal fun HomeRoute(
                         trigger = TriggerType.CLICK,
                         page = HOME,
                         event = "diary_write",
-                        properties = mapOf("open_time" to System.currentTimeMillis())
+                        properties = mapOf("open_time" to System.currentTimeMillis()),
                     )
                     navigateToDiaryWrite(date, mode)
                 },
@@ -183,15 +183,15 @@ internal fun HomeRoute(
                         event = "opend_diary_view",
                         properties = mapOf(
                             "open_time" to System.currentTimeMillis(),
-                            "entry_id" to diaryId
-                        )
+                            "entry_id" to diaryId,
+                        ),
                     )
                     navigateToDiaryFeedback(diaryId)
                 },
                 onDeleteClick = viewModel::deleteDiary,
                 onPublishClick = viewModel::publishDiary,
                 onUnpublishClick = viewModel::unpublishDiary,
-                tracker = tracker
+                tracker = tracker,
             )
         }
 
@@ -200,10 +200,10 @@ internal fun HomeRoute(
 
     HomeOnboardingBottomSheet(
         isVisible = homeState.isOnboardingBottomSheetVisible,
-        onCloseButtonClick = homeState::hideOnboardingBottomSheet
+        onCloseButtonClick = homeState::hideOnboardingBottomSheet,
     ) {
         HomeOnboardingContent(
-            onStartButtonClick = homeState::hideOnboardingBottomSheet
+            onStartButtonClick = homeState::hideOnboardingBottomSheet,
         )
     }
 }
@@ -222,7 +222,7 @@ private fun HomeScreen(
     onDeleteClick: (diaryId: Long) -> Unit,
     onPublishClick: (diaryId: Long) -> Unit,
     onUnpublishClick: (diaryId: Long) -> Unit,
-    tracker: Tracker
+    tracker: Tracker,
 ) {
     val date = uiState.calendar.selectedDate
 
@@ -236,7 +236,7 @@ private fun HomeScreen(
         onContinueClick = {
             onWriteDiaryClick(date, DiaryWriteMode.DEFAULT)
             homeState.hideDiaryContinueDialog()
-        }
+        },
     )
 
     Column(
@@ -245,7 +245,7 @@ private fun HomeScreen(
             .statusBarColor(hilingualBlack)
             .fillMaxSize()
             .padding(paddingValues)
-            .verticalScroll(homeState.scrollState)
+            .verticalScroll(homeState.scrollState),
     ) {
         with(uiState.header) {
             HomeHeader(
@@ -259,7 +259,7 @@ private fun HomeScreen(
                 modifier = Modifier
                     .background(hilingualBlack)
                     .padding(horizontal = 16.dp)
-                    .padding(top = 8.dp, bottom = 12.dp)
+                    .padding(top = 8.dp, bottom = 12.dp),
             )
         }
 
@@ -274,33 +274,33 @@ private fun HomeScreen(
                     .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
                     .background(white)
                     .padding(16.dp)
-                    .animateContentSize()
+                    .animateContentSize(),
             )
         }
 
         HorizontalDivider(
             thickness = 4.dp,
-            color = HilingualTheme.colors.gray100
+            color = HilingualTheme.colors.gray100,
         )
 
         Column(
             modifier = Modifier
                 .background(HilingualTheme.colors.white)
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(16.dp),
         ) {
             val contentState = uiState.diaryContent
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 DiaryDateInfo(
                     selectedDate = date,
                     isPublished = contentState.diaryThumbnail?.isPublished ?: false,
                     isWritten = contentState.cardState == DiaryCardState.WRITTEN,
-                    modifier = Modifier.heightIn(min = 20.dp)
+                    modifier = Modifier.heightIn(min = 20.dp),
                 )
 
                 when (contentState.cardState) {
@@ -316,7 +316,7 @@ private fun HomeScreen(
                                             trigger = TriggerType.CLICK,
                                             page = HOME,
                                             event = "more_menu",
-                                            properties = mapOf("menu_name" to "more_menu")
+                                            properties = mapOf("menu_name" to "more_menu"),
                                         )
                                     } else {
                                         homeState.hideMoreMenu()
@@ -324,7 +324,7 @@ private fun HomeScreen(
                                 },
                                 onDeleteClick = { onDeleteClick(diary.diaryId) },
                                 onPublishClick = { onPublishClick(diary.diaryId) },
-                                onUnpublishClick = { onUnpublishClick(diary.diaryId) }
+                                onUnpublishClick = { onUnpublishClick(diary.diaryId) },
                             )
                         }
                     }
@@ -348,7 +348,7 @@ private fun HomeScreen(
                                 diaryId = diaryThumbnail.diaryId,
                                 onClick = onDiaryPreviewClick,
                                 imageUrl = diaryThumbnail.imageUrl,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
                             )
                         }
                     }
@@ -369,10 +369,10 @@ private fun HomeScreen(
                                             page = HOME,
                                             event = "switch_language",
                                             properties = mapOf(
-                                                "recommen_topic" to "${todayTopic.topicKo}/${todayTopic.topicEn}"
-                                            )
+                                                "recommen_topic" to "${todayTopic.topicKo}/${todayTopic.topicEn}",
+                                            ),
                                         )
-                                    }
+                                    },
                             )
                         }
                         Spacer(Modifier.height(12.dp))
@@ -384,12 +384,13 @@ private fun HomeScreen(
                                     onWriteDiaryClick(date, DiaryWriteMode.DEFAULT)
                                 }
                             },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
                         )
                     }
 
                     DiaryCardState.REWRITE_DISABLED,
-                    DiaryCardState.PAST -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
+                    DiaryCardState.PAST,
+                    -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
                 }
             }
         }
@@ -400,7 +401,7 @@ private fun HomeScreen(
 private fun CheckNotificationPermission(
     context: Context,
     isDataLoaded: Boolean,
-    onCheck: (isGranted: Boolean, requiresPermission: Boolean) -> Unit
+    onCheck: (isGranted: Boolean, requiresPermission: Boolean) -> Unit,
 ) {
     val requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 
@@ -409,7 +410,7 @@ private fun CheckNotificationPermission(
             requiresPermission -> {
                 ContextCompat.checkSelfPermission(
                     context,
-                    Manifest.permission.POST_NOTIFICATIONS
+                    Manifest.permission.POST_NOTIFICATIONS,
                 ) == PackageManager.PERMISSION_GRANTED
             }
 
@@ -444,7 +445,7 @@ private fun HomeScreenPreview() {
             onDeleteClick = {},
             onPublishClick = {},
             onUnpublishClick = {},
-            tracker = FakeTracker()
+            tracker = FakeTracker(),
         )
     }
 }

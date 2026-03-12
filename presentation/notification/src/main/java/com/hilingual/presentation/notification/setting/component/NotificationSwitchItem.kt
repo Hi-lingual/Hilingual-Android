@@ -39,7 +39,7 @@ internal fun NotificationSwitchItem(
     text: String,
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
@@ -47,16 +47,16 @@ internal fun NotificationSwitchItem(
             .background(HilingualTheme.colors.white)
             .padding(horizontal = 16.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = text,
             style = HilingualTheme.typography.bodyR16,
-            color = HilingualTheme.colors.black
+            color = HilingualTheme.colors.black,
         )
         HilingualBasicToggleSwitch(
             isChecked = isChecked,
-            onCheckedChange = onCheckedChange
+            onCheckedChange = onCheckedChange,
         )
     }
 }
@@ -70,12 +70,12 @@ private fun NotificationSwitchItemPreview() {
             NotificationSwitchItem(
                 text = "마케팅 알림",
                 isChecked = isChecked,
-                onCheckedChange = { isChecked = it }
+                onCheckedChange = { isChecked = it },
             )
             NotificationSwitchItem(
                 text = "피드 알림",
                 isChecked = isChecked,
-                onCheckedChange = { isChecked = it }
+                onCheckedChange = { isChecked = it },
             )
         }
     }

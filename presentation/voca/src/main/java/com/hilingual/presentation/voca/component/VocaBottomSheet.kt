@@ -43,18 +43,18 @@ internal fun WordSortBottomSheet(
     isVisible: Boolean,
     selectedType: WordSortType,
     onDismiss: () -> Unit,
-    onTypeSelected: (WordSortType) -> Unit
+    onTypeSelected: (WordSortType) -> Unit,
 ) {
     HilingualBasicBottomSheet(
         isVisible = isVisible,
-        onDismiss = onDismiss
+        onDismiss = onDismiss,
     ) {
         SortBottomSheetContent(
             selectedType = selectedType,
             onTypeSelected = {
                 onTypeSelected(it)
                 onDismiss()
-            }
+            },
         )
     }
 }
@@ -63,17 +63,17 @@ internal fun WordSortBottomSheet(
 internal fun SortBottomSheetContent(
     selectedType: WordSortType,
     onTypeSelected: (WordSortType) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .padding(horizontal = 16.dp, vertical = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = "단어 정렬",
             style = HilingualTheme.typography.headSB16,
-            color = HilingualTheme.colors.hilingualBlack
+            color = HilingualTheme.colors.hilingualBlack,
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -89,25 +89,25 @@ internal fun SortBottomSheetContent(
                         .fillMaxWidth()
                         .padding(12.dp)
                         .noRippleClickable { onTypeSelected(type) },
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = type.iconRes),
                         contentDescription = null,
-                        tint = contentColor
+                        tint = contentColor,
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = type.text,
                         style = HilingualTheme.typography.bodyM14,
-                        color = contentColor
+                        color = contentColor,
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     if (isSelected) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = DesignSystemR.drawable.ic_check_24),
                             contentDescription = null,
-                            tint = HilingualTheme.colors.hilingualBlack
+                            tint = HilingualTheme.colors.hilingualBlack,
                         )
                     }
                 }

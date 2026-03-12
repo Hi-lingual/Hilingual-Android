@@ -47,7 +47,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 internal fun TodayTopic(
     koTopic: String,
     enTopic: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var isKo by remember(koTopic) { mutableStateOf(false) }
 
@@ -57,17 +57,17 @@ internal fun TodayTopic(
             .background(HilingualTheme.colors.gray100)
             .fillMaxWidth()
             .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = "오늘의 추천 주제",
                 style = HilingualTheme.typography.captionR12,
-                color = HilingualTheme.colors.gray500
+                color = HilingualTheme.colors.gray500,
             )
 
             Icon(
@@ -77,7 +77,7 @@ internal fun TodayTopic(
                 modifier = Modifier
                     .size(28.dp)
                     .noRippleClickable { isKo = !isKo }
-                    .padding(4.dp)
+                    .padding(4.dp),
             )
         }
 
@@ -88,7 +88,7 @@ internal fun TodayTopic(
             style = HilingualTheme.typography.bodyM15,
             color = HilingualTheme.colors.gray700,
             maxLines = 2,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
@@ -99,7 +99,7 @@ private fun TodayTopicPreview() {
     HilingualTheme {
         TodayTopic(
             enTopic = "What surprised you today?",
-            koTopic = "오늘 무엇이 당신을 놀라게 했나요?"
+            koTopic = "오늘 무엇이 당신을 놀라게 했나요?",
         )
     }
 }

@@ -54,13 +54,13 @@ import kotlinx.collections.immutable.toPersistentMap
 
 private enum class TermType {
     REQUIRED,
-    MARKETING
+    MARKETING,
 }
 
 private data class Term(
     val text: String,
     val type: TermType,
-    val link: String? = null
+    val link: String? = null,
 ) {
     val isRequired: Boolean
         get() = type == TermType.REQUIRED
@@ -70,17 +70,17 @@ private val terms = persistentListOf(
     Term(
         text = "서비스 이용약관 동의 (필수)",
         type = TermType.REQUIRED,
-        link = UrlConstant.SERVICE_TERMS
+        link = UrlConstant.SERVICE_TERMS,
     ),
     Term(
         text = "개인정보 수집 및 이용 동의 (필수)",
         type = TermType.REQUIRED,
-        link = UrlConstant.SIGNUP_PRIVACY_POLICY
+        link = UrlConstant.SIGNUP_PRIVACY_POLICY,
     ),
     Term(
         text = "앱 내 광고성 정보 수신 동의 (선택)",
-        type = TermType.MARKETING
-    )
+        type = TermType.MARKETING,
+    ),
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,7 +91,7 @@ internal fun TermsBottomSheet(
     onDismiss: () -> Unit,
     onStartClick: (isMarketingAgreed: Boolean) -> Unit,
     onTermLinkClick: (url: String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var agreements by remember { mutableStateOf(terms.associateWith { false }.toPersistentMap()) }
 
@@ -113,18 +113,18 @@ internal fun TermsBottomSheet(
     HilingualBasicBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
-                .padding(top = 32.dp, bottom = 12.dp)
+                .padding(top = 32.dp, bottom = 12.dp),
         ) {
             Text(
                 text = "하이링구얼이 처음이시군요!",
                 style = HilingualTheme.typography.headSB18,
-                color = HilingualTheme.colors.black
+                color = HilingualTheme.colors.black,
             )
 
             Spacer(Modifier.height(4.dp))
@@ -132,13 +132,13 @@ internal fun TermsBottomSheet(
             Text(
                 text = "아래 약관에 동의 후 서비스 이용이 가능해요.",
                 style = HilingualTheme.typography.bodyR14,
-                color = HilingualTheme.colors.gray400
+                color = HilingualTheme.colors.gray400,
             )
 
             Spacer(Modifier.height(32.dp))
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Row(
                     modifier = Modifier
@@ -148,18 +148,18 @@ internal fun TermsBottomSheet(
                         .clickable(onClick = onAllAgreedClick)
                         .padding(12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = "전체 동의",
                         style = HilingualTheme.typography.bodyM16,
-                        color = HilingualTheme.colors.black
+                        color = HilingualTheme.colors.black,
                     )
 
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_check_circle_28_and),
                         tint = if (allAgreed) HilingualTheme.colors.black else Color.Unspecified,
-                        contentDescription = null
+                        contentDescription = null,
                     )
                 }
 
@@ -171,7 +171,7 @@ internal fun TermsBottomSheet(
                             onSelectedChange = { isSelected ->
                                 agreements = agreements.put(term, isSelected)
                             },
-                            onTextClick = term.link?.let { { onTermLinkClick(it) } }
+                            onTextClick = term.link?.let { { onTermLinkClick(it) } },
                         )
                     }
                 }
@@ -182,7 +182,7 @@ internal fun TermsBottomSheet(
             HilingualButton(
                 text = "시작하기",
                 onClick = { onStartClick(isMarketingAgreed) },
-                enableProvider = { isStartButtonEnabled && !isLoading }
+                enableProvider = { isStartButtonEnabled && !isLoading },
             )
         }
     }
@@ -194,28 +194,28 @@ private fun TermRow(
     isSelected: Boolean,
     onSelectedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    onTextClick: (() -> Unit)? = null
+    onTextClick: (() -> Unit)? = null,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = text,
             style = HilingualTheme.typography.bodyM14,
             color = HilingualTheme.colors.gray400,
             textDecoration = if (onTextClick != null) TextDecoration.Underline else TextDecoration.None,
-            modifier = if (onTextClick != null) Modifier.noRippleClickable(onClick = onTextClick) else Modifier
+            modifier = if (onTextClick != null) Modifier.noRippleClickable(onClick = onTextClick) else Modifier,
         )
 
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_check_circle_28_and),
             tint = if (isSelected) HilingualTheme.colors.black else Color.Unspecified,
             modifier = Modifier.noRippleClickable(onClick = { onSelectedChange(!isSelected) }),
-            contentDescription = null
+            contentDescription = null,
         )
     }
 }
@@ -231,7 +231,7 @@ private fun TermsBottomSheetPreview() {
             onDismiss = { isVisible = false },
             onStartClick = {},
             isLoading = false,
-            onTermLinkClick = {}
+            onTermLinkClick = {},
         )
     }
 }

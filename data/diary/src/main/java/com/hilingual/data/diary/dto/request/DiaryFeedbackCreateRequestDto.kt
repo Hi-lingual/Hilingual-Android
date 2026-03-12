@@ -25,5 +25,5 @@ data class DiaryFeedbackCreateRequestDto(
     @SerialName("date")
     val date: String,
     @SerialName("image")
-    val image: ImageRequestDto? = null
+    val image: ImageRequestDto? = null,
 )

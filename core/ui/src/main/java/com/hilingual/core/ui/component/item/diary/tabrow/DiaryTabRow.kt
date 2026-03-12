@@ -26,12 +26,12 @@ private val TITLES = persistentListOf("문법·철자", "추천표현")
 fun DiaryTabRow(
     tabIndex: Int,
     onTabSelected: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     HilingualBasicTabRow(
         tabTitles = TITLES,
         tabIndex = tabIndex,
         onTabSelected = onTabSelected,
-        modifier = modifier
+        modifier = modifier,
     )
 }

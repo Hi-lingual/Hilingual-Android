@@ -42,10 +42,10 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 fun ProfileImagePicker(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    imageUrl: String? = null
+    imageUrl: String? = null,
 ) {
     Box(
-        modifier = modifier.noRippleClickable(onClick = onClick)
+        modifier = modifier.noRippleClickable(onClick = onClick),
     ) {
         val imageModifier = Modifier
             .size(120.dp)
@@ -53,19 +53,19 @@ fun ProfileImagePicker(
             .border(
                 shape = CircleShape,
                 color = HilingualTheme.colors.gray200,
-                width = 1.dp
+                width = 1.dp,
             )
 
         if (imageUrl.isNullOrBlank()) {
             Image(
                 painter = painterResource(R.drawable.img_default_image),
                 contentDescription = null,
-                modifier = imageModifier
+                modifier = imageModifier,
             )
         } else {
             NetworkImage(
                 imageUrl = imageUrl,
-                modifier = imageModifier
+                modifier = imageModifier,
             )
         }
         Icon(
@@ -77,7 +77,7 @@ fun ProfileImagePicker(
                 .clip(CircleShape)
                 .background(HilingualTheme.colors.gray100)
                 .padding(6.dp)
-                .align(Alignment.BottomEnd)
+                .align(Alignment.BottomEnd),
         )
     }
 }
@@ -96,7 +96,7 @@ private fun ProfileImagePickerWithImageUrlPreview() {
     HilingualTheme {
         ProfileImagePicker(
             onClick = {},
-            imageUrl = "https://picsum.photos/120"
+            imageUrl = "https://picsum.photos/120",
         )
     }
 }

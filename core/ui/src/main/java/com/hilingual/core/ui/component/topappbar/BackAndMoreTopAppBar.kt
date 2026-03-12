@@ -33,7 +33,7 @@ fun BackAndMoreTopAppBar(
     modifier: Modifier = Modifier,
     title: String?,
     onBackClicked: () -> Unit,
-    onMoreClicked: () -> Unit
+    onMoreClicked: () -> Unit,
 ) {
     HilingualBasicTopAppBar(
         modifier = modifier,
@@ -45,7 +45,7 @@ fun BackAndMoreTopAppBar(
                     .noRippleClickable(onClick = onBackClicked),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_24_back),
                 contentDescription = null,
-                tint = HilingualTheme.colors.black
+                tint = HilingualTheme.colors.black,
             )
         },
         actions = {
@@ -55,9 +55,9 @@ fun BackAndMoreTopAppBar(
                     .noRippleClickable(onClick = onMoreClicked),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_more_24),
                 contentDescription = null,
-                tint = HilingualTheme.colors.gray400
+                tint = HilingualTheme.colors.gray400,
             )
-        }
+        },
     )
 }
 
@@ -68,7 +68,7 @@ private fun BackAndMoreTopAppBarPreview() {
         BackAndMoreTopAppBar(
             title = "일기장",
             onBackClicked = {},
-            onMoreClicked = {}
+            onMoreClicked = {},
         )
     }
 }

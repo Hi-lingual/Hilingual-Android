@@ -32,7 +32,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 fun CloseTopAppBar(
     modifier: Modifier = Modifier,
     title: String?,
-    onCloseClicked: () -> Unit
+    onCloseClicked: () -> Unit,
 ) {
     HilingualBasicTopAppBar(
         modifier = modifier,
@@ -44,9 +44,9 @@ fun CloseTopAppBar(
                     .noRippleClickable(onClick = onCloseClicked),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_close_24),
                 contentDescription = null,
-                tint = HilingualTheme.colors.black
+                tint = HilingualTheme.colors.black,
             )
-        }
+        },
     )
 }
 
@@ -56,7 +56,7 @@ private fun CloseTopAppBarPreview() {
     HilingualTheme {
         CloseTopAppBar(
             title = "일기 작성하기",
-            onCloseClicked = {}
+            onCloseClicked = {},
         )
     }
 }

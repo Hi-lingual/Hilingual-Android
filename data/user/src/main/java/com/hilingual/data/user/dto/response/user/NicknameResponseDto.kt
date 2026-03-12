@@ -21,5 +21,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NicknameResponseDto(
     @SerialName("isAvailable")
-    val isAvailable: Boolean
+    val isAvailable: Boolean,
 )

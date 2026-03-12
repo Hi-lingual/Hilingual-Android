@@ -34,44 +34,44 @@ import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 internal enum class FeedEmptyCardType(
-    val text: String
+    val text: String,
 ) {
     NOT_SHARED(
-        text = "아직 공유한 일기가 없어요."
+        text = "아직 공유한 일기가 없어요.",
     ),
     NOT_LIKED(
-        text = "아직 공감한 일기가 없어요."
+        text = "아직 공감한 일기가 없어요.",
     ),
     NO_FOLLOWER(
-        text = "아직 팔로워가 없어요."
+        text = "아직 팔로워가 없어요.",
     ),
     NO_FOLLOWING(
-        text = "아직 팔로잉한 유저가 없어요."
-    )
+        text = "아직 팔로잉한 유저가 없어요.",
+    ),
 }
 
 @Composable
 internal fun FeedEmptyCard(
     type: FeedEmptyCardType,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
 
     ) {
         Image(
             modifier = Modifier
                 .size(width = 200.dp, height = 100.dp),
             painter = painterResource(id = R.drawable.img_diary_empty),
-            contentDescription = null
+            contentDescription = null,
         )
         Text(
             text = type.text,
             style = HilingualTheme.typography.headR18,
             color = HilingualTheme.colors.gray500,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -86,7 +86,7 @@ private class FeedEmptyCardPreviewParameterProvider :
 @Composable
 private fun FeedEmptyCardPreview(
     @PreviewParameter(FeedEmptyCardPreviewParameterProvider::class)
-    type: FeedEmptyCardType
+    type: FeedEmptyCardType,
 ) {
     HilingualTheme {
         FeedEmptyCard(type = type)

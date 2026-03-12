@@ -18,11 +18,11 @@ package com.hilingual.data.auth.repositoryimpl
 import android.content.Context
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.util.suspendRunCatching
+import com.hilingual.data.auth.datasource.AuthLocalDataSource
 import com.hilingual.data.auth.datasource.AuthRemoteDataSource
 import com.hilingual.data.auth.datasource.GoogleAuthDataSource
 import com.hilingual.data.auth.dto.request.LoginRequestDto
 import com.hilingual.data.auth.dto.request.VerifyCodeRequestDto
-import com.hilingual.data.auth.datasource.AuthLocalDataSource
 import com.hilingual.data.auth.model.LoginModel
 import com.hilingual.data.auth.repository.AuthRepository
 import javax.inject.Inject
@@ -31,7 +31,7 @@ internal class AuthRepositoryImpl @Inject constructor(
     private val authRemoteDataSource: AuthRemoteDataSource,
     private val googleAuthDataSource: GoogleAuthDataSource,
     private val deviceInfoProvider: DeviceInfoProvider,
-    private val authLocalDataSource: AuthLocalDataSource
+    private val authLocalDataSource: AuthLocalDataSource,
 ) : AuthRepository {
     override suspend fun signInWithGoogle(context: Context): Result<String> =
         googleAuthDataSource.signIn(context).map { it.idToken }
@@ -39,7 +39,7 @@ internal class AuthRepositoryImpl @Inject constructor(
     override suspend fun login(providerToken: String): Result<LoginModel> = suspendRunCatching {
         val loginResponse = authRemoteDataSource.login(
             providerToken = providerToken,
-            loginRequestDto = deviceInfoProvider.toLoginRequestDto()
+            loginRequestDto = deviceInfoProvider.toLoginRequestDto(),
         ).data!!
 
         authLocalDataSource.saveTokens(loginResponse.accessToken, loginResponse.refreshToken)
@@ -75,6 +75,6 @@ internal class AuthRepositoryImpl @Inject constructor(
         deviceType = this.getDeviceType(),
         osType = this.getOsType(),
         osVersion = this.getOsVersion(),
-        appVersion = this.getAppVersion()
+        appVersion = this.getAppVersion(),
     )
 }

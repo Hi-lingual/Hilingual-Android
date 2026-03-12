@@ -41,7 +41,7 @@ import kotlinx.coroutines.delay
 internal fun AnimatedLoadingLottie(
     lottieCompositions: ImmutableList<LottieComposition?>,
     height: Dp,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var currentIndex by remember { mutableIntStateOf(0) }
     val transition = rememberInfiniteTransition(label = "lottie fade transition")
@@ -51,9 +51,9 @@ internal fun AnimatedLoadingLottie(
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 1500),
-            repeatMode = RepeatMode.Reverse
+            repeatMode = RepeatMode.Reverse,
         ),
-        label = "lottie alpha"
+        label = "lottie alpha",
     )
 
     LaunchedEffect(Unit) {
@@ -69,6 +69,6 @@ internal fun AnimatedLoadingLottie(
             .height(height)
             .alpha(alpha),
         composition = lottieCompositions[currentIndex],
-        isInfinite = true
+        isInfinite = true,
     )
 }

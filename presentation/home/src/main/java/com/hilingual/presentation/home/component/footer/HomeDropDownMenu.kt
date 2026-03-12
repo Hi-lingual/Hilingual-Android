@@ -45,7 +45,7 @@ internal fun HomeDropDownMenu(
     onDeleteClick: () -> Unit,
     onPublishClick: () -> Unit,
     onUnpublishClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var publishDialogVisible by remember { mutableStateOf(false) }
     var deleteDialogVisible by remember { mutableStateOf(false) }
@@ -54,7 +54,7 @@ internal fun HomeDropDownMenu(
         isExpanded = isExpanded,
         modifier = modifier,
         iconSize = 20.dp,
-        onExpandedChange = onExpandedChange
+        onExpandedChange = onExpandedChange,
     ) {
         HilingualDropdownMenuItem(
             text = if (isPublished) "비공개하기" else "피드에 게시하기",
@@ -62,12 +62,12 @@ internal fun HomeDropDownMenu(
             onClick = {
                 publishDialogVisible = true
                 onExpandedChange(false)
-            }
+            },
         )
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             thickness = 1.dp,
-            color = HilingualTheme.colors.gray200
+            color = HilingualTheme.colors.gray200,
         )
         HilingualDropdownMenuItem(
             text = "삭제하기",
@@ -76,7 +76,7 @@ internal fun HomeDropDownMenu(
                 deleteDialogVisible = true
                 onExpandedChange(false)
             },
-            textColor = HilingualTheme.colors.alertRed
+            textColor = HilingualTheme.colors.alertRed,
         )
     }
 
@@ -88,9 +88,10 @@ internal fun HomeDropDownMenu(
                 onDeleteClick = {
                     onDeleteClick()
                     deleteDialogVisible = false
-                }
+                },
             )
         }
+
         publishDialogVisible -> {
             if (isPublished) {
                 DiaryUnpublishDialog(
@@ -99,7 +100,7 @@ internal fun HomeDropDownMenu(
                     onPrivateClick = {
                         onUnpublishClick()
                         publishDialogVisible = false
-                    }
+                    },
                 )
             } else {
                 DiaryPublishDialog(
@@ -108,7 +109,7 @@ internal fun HomeDropDownMenu(
                     onPostClick = {
                         onPublishClick()
                         publishDialogVisible = false
-                    }
+                    },
                 )
             }
         }
@@ -124,7 +125,7 @@ fun HomeDropDownMenuPreview() {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             HomeDropDownMenu(
                 isExpanded = isExpanded,
@@ -132,7 +133,7 @@ fun HomeDropDownMenuPreview() {
                 onExpandedChange = { isExpanded = it },
                 onDeleteClick = {},
                 onPublishClick = {},
-                onUnpublishClick = {}
+                onUnpublishClick = {},
             )
 
             HomeDropDownMenu(
@@ -141,7 +142,7 @@ fun HomeDropDownMenuPreview() {
                 onExpandedChange = { isExpanded1 = it },
                 onDeleteClick = {},
                 onPublishClick = {},
-                onUnpublishClick = {}
+                onUnpublishClick = {},
             )
         }
     }

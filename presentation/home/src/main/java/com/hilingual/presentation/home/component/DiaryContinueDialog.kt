@@ -25,7 +25,7 @@ internal fun DiaryContinueDialog(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     onNewClick: () -> Unit,
-    onContinueClick: () -> Unit
+    onContinueClick: () -> Unit,
 ) {
     if (isVisible) {
         TwoButtonDialog(
@@ -35,7 +35,7 @@ internal fun DiaryContinueDialog(
             confirmText = "이어 쓰기",
             onNegative = onNewClick,
             onPositive = onContinueClick,
-            onDismiss = onDismiss
+            onDismiss = onDismiss,
         )
     }
 }
@@ -48,7 +48,7 @@ private fun DiaryContinueDialogPreview() {
             isVisible = true,
             onDismiss = {},
             onNewClick = {},
-            onContinueClick = {}
+            onContinueClick = {},
         )
     }
 }

@@ -8,7 +8,7 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 class DiaryLocalRepositoryImpl @Inject constructor(
-    private val diaryLocalDataSource: DiaryLocalDataSource
+    private val diaryLocalDataSource: DiaryLocalDataSource,
 ) : DiaryLocalRepository {
     override suspend fun isDiaryTempExist(selectedDate: LocalDate): Result<Boolean> =
         suspendRunCatching {
@@ -18,7 +18,7 @@ class DiaryLocalRepositoryImpl @Inject constructor(
     override suspend fun saveDiary(
         selectedDate: LocalDate,
         text: String,
-        imageUri: Uri?
+        imageUri: Uri?,
     ): Result<Unit> =
         suspendRunCatching {
             diaryLocalDataSource.saveDiary(selectedDate, text, imageUri)

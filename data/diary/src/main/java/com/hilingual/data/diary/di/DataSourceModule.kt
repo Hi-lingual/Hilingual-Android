@@ -15,10 +15,10 @@
  */
 package com.hilingual.data.diary.di
 
-import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
 import com.hilingual.data.diary.datasource.DiaryLocalDataSource
-import com.hilingual.data.diary.datasourceimpl.DiaryRemoteDataSourceImpl
+import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
 import com.hilingual.data.diary.datasourceimpl.DiaryLocalDataSourceImpl
+import com.hilingual.data.diary.datasourceimpl.DiaryRemoteDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

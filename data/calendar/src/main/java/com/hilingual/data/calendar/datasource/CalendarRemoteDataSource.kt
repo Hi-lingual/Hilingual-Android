@@ -23,11 +23,11 @@ import com.hilingual.data.calendar.dto.response.TopicResponseDto
 interface CalendarRemoteDataSource {
     suspend fun getCalendar(
         year: Int,
-        month: Int
+        month: Int,
     ): BaseResponse<CalendarResponseDto>
 
     suspend fun getDiaryThumbnail(
-        date: String
+        date: String,
     ): BaseResponse<DiaryThumbnailResponseDto>
 
     suspend fun getTopic(date: String): BaseResponse<TopicResponseDto>

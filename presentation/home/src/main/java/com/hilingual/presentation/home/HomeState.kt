@@ -26,7 +26,7 @@ import androidx.compose.runtime.setValue
 
 @Stable
 class HomeState(
-    val scrollState: ScrollState
+    val scrollState: ScrollState,
 ) {
     var isDiaryContinueDialogVisible by mutableStateOf(false)
         private set
@@ -80,11 +80,9 @@ class HomeState(
 
 @Composable
 fun rememberHomeState(
-    scrollState: ScrollState = rememberScrollState()
-): HomeState {
-    return remember(scrollState) {
-        HomeState(
-            scrollState = scrollState
-        )
-    }
+    scrollState: ScrollState = rememberScrollState(),
+): HomeState = remember(scrollState) {
+    HomeState(
+        scrollState = scrollState,
+    )
 }

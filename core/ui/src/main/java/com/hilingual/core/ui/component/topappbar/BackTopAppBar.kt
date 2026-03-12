@@ -32,7 +32,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 fun BackTopAppBar(
     modifier: Modifier = Modifier,
     title: String?,
-    onBackClicked: () -> Unit
+    onBackClicked: () -> Unit,
 ) {
     HilingualBasicTopAppBar(
         modifier = modifier,
@@ -44,9 +44,9 @@ fun BackTopAppBar(
                     .noRippleClickable(onClick = onBackClicked),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_24_back),
                 contentDescription = null,
-                tint = HilingualTheme.colors.black
+                tint = HilingualTheme.colors.black,
             )
-        }
+        },
     )
 }
 
@@ -56,7 +56,7 @@ private fun BackTopAppBarPreview() {
     HilingualTheme {
         BackTopAppBar(
             title = "일기 작성하기",
-            onBackClicked = { }
+            onBackClicked = { },
         )
     }
 }

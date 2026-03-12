@@ -33,7 +33,7 @@ import timber.log.Timber
 fun HilingualBannerAd(
     modifier: Modifier = Modifier,
     adUnitId: String = BuildConfig.ADMOB_BANNER_UNIT_ID,
-    maxHeight: Int? = null
+    maxHeight: Int? = null,
 ) {
     val activity = LocalActivity.current
     val isPreviewMode = LocalInspectionMode.current
@@ -47,7 +47,7 @@ fun HilingualBannerAd(
                 painter = painterResource(id = R.drawable.loading_feed_and),
                 contentDescription = null,
                 modifier = Modifier.fillMaxWidth(),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
             )
         }
 
@@ -61,13 +61,13 @@ fun HilingualBannerAd(
                         adUnitId = adUnitId,
                         screenWidth = screenWidth,
                         maxHeight = maxHeight,
-                        onLoaded = { isAdLoaded = true }
+                        onLoaded = { isAdLoaded = true },
                     )
                 },
                 onRelease = { adView ->
                     Timber.tag("GMA").d("배너 광고 리소스 해제(destroy)")
                     adView.destroy()
-                }
+                },
             )
         }
     }
@@ -79,21 +79,19 @@ private fun createAndLoadAdView(
     adUnitId: String,
     screenWidth: Int,
     maxHeight: Int?,
-    onLoaded: () -> Unit
-): AdView {
-    return AdView(context).apply {
-        val preloadedAd = BannerAdPreloader.pollAd(adUnitId)
-        if (preloadedAd != null) {
-            Timber.tag("GMA").d("프리로드된 배너 광고를 화면에 등록합니다.")
-            registerBannerAd(preloadedAd, activity)
-            onLoaded()
-        } else {
-            Timber.tag("GMA").d("프리로드된 광고가 없어 새로 로드를 요청합니다.")
-            val adSize = getAdSize(context, screenWidth, maxHeight)
-            val adRequest = BannerAdRequest.Builder(adUnitId, adSize).build()
-            
-            loadAd(adRequest, createAdLoadCallback(onLoaded))
-        }
+    onLoaded: () -> Unit,
+): AdView = AdView(context).apply {
+    val preloadedAd = BannerAdPreloader.pollAd(adUnitId)
+    if (preloadedAd != null) {
+        Timber.tag("GMA").d("프리로드된 배너 광고를 화면에 등록합니다.")
+        registerBannerAd(preloadedAd, activity)
+        onLoaded()
+    } else {
+        Timber.tag("GMA").d("프리로드된 광고가 없어 새로 로드를 요청합니다.")
+        val adSize = getAdSize(context, screenWidth, maxHeight)
+        val adRequest = BannerAdRequest.Builder(adUnitId, adSize).build()
+
+        loadAd(adRequest, createAdLoadCallback(onLoaded))
     }
 }
 
@@ -108,10 +106,8 @@ private fun createAdLoadCallback(onLoaded: () -> Unit) = object : AdLoadCallback
     }
 }
 
-private fun getAdSize(context: Context, width: Int, maxHeight: Int?): AdSize {
-    return if (maxHeight != null) {
-        AdSize.getInlineAdaptiveBannerAdSize(width, maxHeight)
-    } else {
-        AdSize.getCurrentOrientationInlineAdaptiveBannerAdSize(context, width)
-    }
+private fun getAdSize(context: Context, width: Int, maxHeight: Int?): AdSize = if (maxHeight != null) {
+    AdSize.getInlineAdaptiveBannerAdSize(width, maxHeight)
+} else {
+    AdSize.getCurrentOrientationInlineAdaptiveBannerAdSize(context, width)
 }

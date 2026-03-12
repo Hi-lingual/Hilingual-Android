@@ -31,7 +31,7 @@ import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 @Composable
 fun OssLicensesScreen(
     paddingValues: PaddingValues,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     val libraries by produceLibraries()
 
@@ -39,15 +39,15 @@ fun OssLicensesScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
-            .padding(paddingValues)
+            .padding(paddingValues),
     ) {
         BackTopAppBar(
             title = "오픈소스 라이선스",
-            onBackClicked = onBackClick
+            onBackClicked = onBackClick,
         )
         LibrariesContainer(
             libraries = libraries,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }

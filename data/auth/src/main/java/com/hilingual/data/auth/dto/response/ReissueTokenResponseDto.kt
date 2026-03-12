@@ -23,5 +23,5 @@ data class ReissueTokenResponseDto(
     @SerialName("accessToken")
     val accessToken: String,
     @SerialName("refreshToken")
-    val refreshToken: String
+    val refreshToken: String,
 )

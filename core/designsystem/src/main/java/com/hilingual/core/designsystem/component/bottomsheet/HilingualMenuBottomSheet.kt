@@ -47,18 +47,18 @@ fun HilingualMenuBottomSheet(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     title: String? = null,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     HilingualBasicBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             if (!title.isNullOrBlank()) {
                 Text(
@@ -67,7 +67,7 @@ fun HilingualMenuBottomSheet(
                     color = HilingualTheme.colors.black,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
-                        .padding(bottom = 16.dp)
+                        .padding(bottom = 16.dp),
                 )
             }
             content()
@@ -82,7 +82,7 @@ fun HilingualMenuBottomSheetItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     textColor: Color = HilingualTheme.colors.gray700,
-    iconTintColor: Color = Color.Unspecified
+    iconTintColor: Color = Color.Unspecified,
 ) {
     Row(
         horizontalArrangement = Arrangement.Start,
@@ -91,13 +91,13 @@ fun HilingualMenuBottomSheetItem(
             .background(HilingualTheme.colors.white)
             .fillMaxWidth()
             .noRippleClickable(onClick = onClick)
-            .padding(12.dp)
+            .padding(12.dp),
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(iconResId),
             contentDescription = null,
             modifier = Modifier.size(24.dp),
-            tint = iconTintColor
+            tint = iconTintColor,
         )
 
         Spacer(Modifier.width(8.dp))
@@ -105,7 +105,7 @@ fun HilingualMenuBottomSheetItem(
         Text(
             text = text,
             style = HilingualTheme.typography.bodyM14,
-            color = textColor
+            color = textColor,
         )
     }
 }
@@ -118,17 +118,17 @@ private fun HilingualMenuBottomSheetPreview() {
         HilingualMenuBottomSheet(
             isVisible = true,
             onDismiss = {},
-            title = "이미지 선택"
+            title = "이미지 선택",
         ) {
             HilingualMenuBottomSheetItem(
                 text = "갤러리에서 선택하기",
                 iconResId = R.drawable.ic_search_20,
-                onClick = {}
+                onClick = {},
             )
             HilingualMenuBottomSheetItem(
                 text = "기본 이미지 적용하기",
                 iconResId = R.drawable.ic_search_20,
-                onClick = {}
+                onClick = {},
             )
         }
     }
@@ -141,12 +141,12 @@ private fun HilingualMenuBottomSheetPreview2() {
     HilingualTheme {
         HilingualMenuBottomSheet(
             isVisible = true,
-            onDismiss = {}
+            onDismiss = {},
         ) {
             HilingualMenuBottomSheetItem(
                 text = "갤러리에서 선택하기",
                 iconResId = R.drawable.ic_search_20,
-                onClick = {}
+                onClick = {},
             )
         }
     }
@@ -159,7 +159,7 @@ private fun HilingualMenuBottomSheetItemPreview() {
         HilingualMenuBottomSheetItem(
             text = "메뉴 제목",
             iconResId = R.drawable.ic_search_20,
-            onClick = {}
+            onClick = {},
         )
     }
 }

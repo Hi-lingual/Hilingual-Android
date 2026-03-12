@@ -60,22 +60,20 @@ import androidx.core.view.WindowCompat
 @Composable
 inline fun Modifier.noRippleClickable(
     enabled: Boolean = true,
-    crossinline onClick: () -> Unit
+    crossinline onClick: () -> Unit,
 ): Modifier = composed {
     this.clickable(
         indication = null,
         interactionSource = remember { MutableInteractionSource() },
         onClick = { onClick() },
-        enabled = enabled
+        enabled = enabled,
     )
 }
 
-fun Modifier.addFocusCleaner(focusManager: FocusManager): Modifier {
-    return this.pointerInput(Unit) {
-        detectTapGestures(
-            onTap = { focusManager.clearFocus() }
-        )
-    }
+fun Modifier.addFocusCleaner(focusManager: FocusManager): Modifier = this.pointerInput(Unit) {
+    detectTapGestures(
+        onTap = { focusManager.clearFocus() },
+    )
 }
 
 fun Modifier.advancedImePadding() = composed {
@@ -97,7 +95,7 @@ fun Modifier.dropShadow(
     blur: Dp = 1.dp,
     offsetY: Dp = 1.dp,
     offsetX: Dp = 1.dp,
-    spread: Dp = 1.dp
+    spread: Dp = 1.dp,
 ) = this.dropShadow(
     shape = shape,
     shadow = Shadow(
@@ -107,9 +105,9 @@ fun Modifier.dropShadow(
         spread = spread,
         offset = DpOffset(
             x = offsetX,
-            y = offsetY
-        )
-    )
+            y = offsetY,
+        ),
+    ),
 )
 
 fun Modifier.fadingEdge(brush: Brush) = this
@@ -134,7 +132,7 @@ fun Modifier.statusBarColor(backgroundColor: Color): Modifier = composed {
         drawRect(
             color = backgroundColor,
             topLeft = Offset.Zero,
-            size = Size(size.width, statusBarHeight.toPx())
+            size = Size(size.width, statusBarHeight.toPx()),
         )
     }
 }

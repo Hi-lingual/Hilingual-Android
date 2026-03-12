@@ -22,5 +22,5 @@ internal data class NotificationDetailUiState(
     val title: String = "",
     val date: String = "",
     val content: String = "",
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
 )

@@ -45,14 +45,14 @@ fun HilingualBasicDialog(
     modifier: Modifier = Modifier,
     properties: DialogProperties = DialogProperties(
         usePlatformDefaultWidth = false,
-        decorFitsSystemWindows = false
+        decorFitsSystemWindows = false,
     ),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val dimCondition = properties.dismissOnClickOutside
     Dialog(
         onDismissRequest = onDismiss,
-        properties = properties
+        properties = properties,
     ) {
         Box(
             modifier = modifier
@@ -60,7 +60,7 @@ fun HilingualBasicDialog(
                 .then(if (dimCondition) Modifier.noRippleClickable(onClick = onDismiss) else Modifier)
                 .background(HilingualTheme.colors.dim2)
                 .padding(horizontal = 16.dp),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -69,9 +69,9 @@ fun HilingualBasicDialog(
                     .noRippleClickable { /* 클릭 이벤트 소비 */ }
                     .background(
                         color = HilingualTheme.colors.white,
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(12.dp),
                     )
-                    .padding(top = 34.dp, start = 24.dp, end = 24.dp, bottom = 24.dp)
+                    .padding(top = 34.dp, start = 24.dp, end = 24.dp, bottom = 24.dp),
             ) {
                 content()
             }
@@ -84,12 +84,12 @@ fun HilingualBasicDialog(
 private fun HilingualBasicDialogPreview() {
     HilingualTheme {
         HilingualBasicDialog(
-            onDismiss = {}
+            onDismiss = {},
         ) {
             Text(
                 text = "AI 피드백을 신고하시겠어요?",
                 style = HilingualTheme.typography.headSB16,
-                color = HilingualTheme.colors.gray850
+                color = HilingualTheme.colors.gray850,
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -100,14 +100,14 @@ private fun HilingualBasicDialogPreview() {
                 color = HilingualTheme.colors.gray400,
                 maxLines = 2,
                 minLines = 2,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(13.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 32.dp)
+                    .padding(top = 32.dp),
             ) {
                 Row(
                     modifier = Modifier
@@ -116,12 +116,12 @@ private fun HilingualBasicDialogPreview() {
                         .background(color = HilingualTheme.colors.gray100)
                         .padding(vertical = 14.dp),
                     horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = "취소",
                         style = HilingualTheme.typography.bodyM16,
-                        color = HilingualTheme.colors.gray400
+                        color = HilingualTheme.colors.gray400,
                     )
                 }
 
@@ -132,12 +132,12 @@ private fun HilingualBasicDialogPreview() {
                         .background(HilingualTheme.colors.hilingualOrange)
                         .padding(vertical = 14.dp),
                     horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = "확인",
                         style = HilingualTheme.typography.bodyM16,
-                        color = HilingualTheme.colors.white
+                        color = HilingualTheme.colors.white,
                     )
                 }
             }

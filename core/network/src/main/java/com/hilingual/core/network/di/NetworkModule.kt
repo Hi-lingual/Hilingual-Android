@@ -26,6 +26,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import okhttp3.MediaType.Companion.toMediaType
@@ -35,8 +37,6 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import timber.log.Timber
-import javax.inject.Singleton
-import kotlin.time.Duration.Companion.seconds
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -77,19 +77,17 @@ object NetworkModule {
         return trimmed.startsWith("{") || trimmed.startsWith("[")
     }
 
-    private fun prettyPrintJson(json: Json, message: String): String {
-        return runCatching {
-            val jsonElement = json.decodeFromString(JsonElement.serializer(), message)
-            json.encodeToString(JsonElement.serializer(), jsonElement)
-        }.getOrElse { message }
-    }
+    private fun prettyPrintJson(json: Json, message: String): String = runCatching {
+        val jsonElement = json.decodeFromString(JsonElement.serializer(), message)
+        json.encodeToString(JsonElement.serializer(), jsonElement)
+    }.getOrElse { message }
 
     @Provides
     @Singleton
     fun provideDefaultOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
         authInterceptor: AuthInterceptor,
-        tokenAuthenticator: TokenAuthenticator
+        tokenAuthenticator: TokenAuthenticator,
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .addInterceptor(authInterceptor)
@@ -100,7 +98,7 @@ object NetworkModule {
     @Singleton
     @NoAuthClient
     fun provideLoginOkHttpClient(
-        loggingInterceptor: HttpLoggingInterceptor
+        loggingInterceptor: HttpLoggingInterceptor,
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .build()
@@ -109,7 +107,7 @@ object NetworkModule {
     @Singleton
     @RefreshClient
     fun provideRefreshOkHttpClient(
-        loggingInterceptor: HttpLoggingInterceptor
+        loggingInterceptor: HttpLoggingInterceptor,
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .build()
@@ -120,7 +118,7 @@ object NetworkModule {
     fun provideLongTimeoutOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
         authInterceptor: AuthInterceptor,
-        tokenAuthenticator: TokenAuthenticator
+        tokenAuthenticator: TokenAuthenticator,
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .addInterceptor(authInterceptor)
@@ -134,7 +132,7 @@ object NetworkModule {
     @Singleton
     fun provideDefaultRetrofit(
         client: OkHttpClient,
-        factory: Converter.Factory
+        factory: Converter.Factory,
     ): Retrofit =
         Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -147,7 +145,7 @@ object NetworkModule {
     @NoAuthClient
     fun provideLoginRetrofit(
         @NoAuthClient client: OkHttpClient,
-        factory: Converter.Factory
+        factory: Converter.Factory,
     ): Retrofit =
         Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -160,7 +158,7 @@ object NetworkModule {
     @RefreshClient
     fun provideRefreshRetrofit(
         @RefreshClient client: OkHttpClient,
-        factory: Converter.Factory
+        factory: Converter.Factory,
     ): Retrofit =
         Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -173,7 +171,7 @@ object NetworkModule {
     @LongTimeoutClient
     fun provideLongTimeoutRetrofit(
         @LongTimeoutClient client: OkHttpClient,
-        factory: Converter.Factory
+        factory: Converter.Factory,
     ): Retrofit =
         Retrofit.Builder()
             .baseUrl(BASE_URL)

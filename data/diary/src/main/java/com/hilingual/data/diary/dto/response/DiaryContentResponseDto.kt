@@ -31,7 +31,7 @@ data class DiaryContentResponseDto(
     @SerialName("imageUrl")
     val imageUrl: String?,
     @SerialName("isPublished")
-    val isPublished: Boolean
+    val isPublished: Boolean,
 )
 
 @Serializable
@@ -41,5 +41,5 @@ data class DiaryContentDiffRange(
     @SerialName("end")
     val end: Int,
     @SerialName("correctedText")
-    val correctedText: String
+    val correctedText: String,
 )

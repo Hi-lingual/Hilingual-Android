@@ -23,7 +23,7 @@ data class FeedItemDto(
     @SerialName("profile")
     val profile: FeedItemProfileDto,
     @SerialName("diary")
-    val diary: FeedItemDiaryDto
+    val diary: FeedItemDiaryDto,
 )
 
 @Serializable
@@ -37,7 +37,7 @@ data class FeedItemProfileDto(
     @SerialName("nickname")
     val nickname: String,
     @SerialName("streak")
-    val streak: Int
+    val streak: Int,
 )
 
 @Serializable
@@ -53,5 +53,5 @@ data class FeedItemDiaryDto(
     @SerialName("diaryImg")
     val diaryImg: String?,
     @SerialName("originalText")
-    val originalText: String
+    val originalText: String,
 )

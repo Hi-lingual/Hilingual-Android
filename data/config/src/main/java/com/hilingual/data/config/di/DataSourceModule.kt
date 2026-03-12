@@ -30,6 +30,6 @@ internal abstract class DataSourceModule {
     @Binds
     @Singleton
     abstract fun bindConfigRemoteDataSource(
-        impl: RemoteConfigDataSourceImpl
+        impl: RemoteConfigDataSourceImpl,
     ): ConfigRemoteDataSource
 }

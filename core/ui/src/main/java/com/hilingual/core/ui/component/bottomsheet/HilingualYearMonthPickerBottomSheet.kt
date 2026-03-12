@@ -45,7 +45,7 @@ fun HilingualYearMonthPickerBottomSheet(
     onDismiss: () -> Unit,
     onDateSelected: (YearMonth) -> Unit,
     modifier: Modifier = Modifier,
-    initialYearMonth: YearMonth = YearMonth.now()
+    initialYearMonth: YearMonth = YearMonth.now(),
 ) {
     var selectedYear by remember { mutableIntStateOf(initialYearMonth.year) }
     var selectedMonth by remember { mutableIntStateOf(initialYearMonth.monthValue) }
@@ -53,16 +53,16 @@ fun HilingualYearMonthPickerBottomSheet(
     HilingualBasicBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(19.dp),
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         ) {
             HilingualYearMonthPicker(
                 initialYearMonth = initialYearMonth,
                 onYearSelected = { selectedYear = it },
-                onMonthSelected = { selectedMonth = it }
+                onMonthSelected = { selectedMonth = it },
             )
 
             HilingualButton(
@@ -70,7 +70,7 @@ fun HilingualYearMonthPickerBottomSheet(
                 onClick = {
                     onDateSelected(YearMonth.of(selectedYear, selectedMonth))
                     onDismiss()
-                }
+                },
             )
         }
     }
@@ -89,14 +89,14 @@ private fun YearMonthPickerBottomSheetPreview() {
             onDateSelected = { yearMonth ->
                 selectedYearMonth = yearMonth
             },
-            initialYearMonth = selectedYearMonth
+            initialYearMonth = selectedYearMonth,
         )
 
         Column(
             modifier = Modifier
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = "${selectedYearMonth.year}년 ${selectedYearMonth.monthValue}월",
@@ -104,8 +104,8 @@ private fun YearMonthPickerBottomSheetPreview() {
                 modifier = Modifier
                     .padding(5.dp)
                     .noRippleClickable(
-                        onClick = { isDateBottomSheetVisible = true }
-                    )
+                        onClick = { isDateBottomSheetVisible = true },
+                    ),
             )
         }
     }

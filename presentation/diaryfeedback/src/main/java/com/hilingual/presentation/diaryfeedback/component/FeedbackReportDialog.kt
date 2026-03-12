@@ -25,7 +25,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 internal fun FeedbackReportDialog(
     isVisible: Boolean,
     onDismiss: () -> Unit,
-    onReportClick: () -> Unit
+    onReportClick: () -> Unit,
 ) {
     if (isVisible) {
         TwoButtonDialog(
@@ -36,14 +36,14 @@ internal fun FeedbackReportDialog(
             properties = DialogProperties(
                 dismissOnClickOutside = false,
                 usePlatformDefaultWidth = false,
-                decorFitsSystemWindows = false
+                decorFitsSystemWindows = false,
             ),
             onNegative = onDismiss,
             onPositive = {
                 onReportClick()
                 onDismiss()
             },
-            onDismiss = onDismiss
+            onDismiss = onDismiss,
         )
     }
 }
@@ -55,7 +55,7 @@ private fun FeedbackReportDialogPreview() {
         FeedbackReportDialog(
             isVisible = true,
             onDismiss = {},
-            onReportClick = {}
+            onReportClick = {},
         )
     }
 }

@@ -23,7 +23,7 @@ import com.hilingual.data.voca.service.VocaService
 import javax.inject.Inject
 
 internal class VocaDataSourceImpl @Inject constructor(
-    private val vocaService: VocaService
+    private val vocaService: VocaService,
 ) : VocaDataSource {
     override suspend fun getVocaList(sort: Int): BaseResponse<VocaListResponseDto> =
         vocaService.getVocaList(sort = sort)

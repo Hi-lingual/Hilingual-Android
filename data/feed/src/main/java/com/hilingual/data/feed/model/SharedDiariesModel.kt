@@ -20,12 +20,12 @@ import com.hilingual.data.feed.dto.response.SharedDiaryProfileDto
 
 data class SharedDiariesModel(
     val profile: SharedDiaryProfileModel,
-    val diaryList: List<FeedItemDiaryModel>
+    val diaryList: List<FeedItemDiaryModel>,
 )
 
 data class SharedDiaryProfileModel(
     val profileImg: String?,
-    val nickname: String
+    val nickname: String,
 )
 
 internal fun SharedDiariesResponseDto.toModel(): SharedDiariesModel = SharedDiariesModel(
@@ -37,12 +37,12 @@ internal fun SharedDiariesResponseDto.toModel(): SharedDiariesModel = SharedDiar
             likeCount = diaryDto.likeCount,
             isLiked = diaryDto.isLiked,
             diaryImg = diaryDto.diaryImg,
-            originalText = diaryDto.originalText
+            originalText = diaryDto.originalText,
         )
-    }
+    },
 )
 
 internal fun SharedDiaryProfileDto.toModel(): SharedDiaryProfileModel = SharedDiaryProfileModel(
     profileImg = this.profileImg,
-    nickname = this.nickname
+    nickname = this.nickname,
 )

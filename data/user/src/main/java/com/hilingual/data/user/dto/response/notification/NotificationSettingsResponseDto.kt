@@ -23,5 +23,5 @@ data class NotificationSettingsResponseDto(
     @SerialName("marketing")
     val marketing: Boolean,
     @SerialName("feed")
-    val feed: Boolean
+    val feed: Boolean,
 )

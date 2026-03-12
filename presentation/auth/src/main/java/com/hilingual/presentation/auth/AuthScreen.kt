@@ -50,7 +50,7 @@ internal fun AuthRoute(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
     navigateToSignUp: () -> Unit,
-    viewModel: AuthViewModel = hiltViewModel()
+    viewModel: AuthViewModel = hiltViewModel(),
 ) {
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -65,12 +65,12 @@ internal fun AuthRoute(
     AuthScreen(
         paddingValues = paddingValues,
         onGoogleSignClick = { viewModel.onGoogleSignClick(context) },
-        onPrivacyPolicyClick = { context.launchCustomTabs(UrlConstant.PRIVACY_POLICY) }
+        onPrivacyPolicyClick = { context.launchCustomTabs(UrlConstant.PRIVACY_POLICY) },
     )
 
     if (isLoading) {
         HilingualLoadingIndicator(
-            backgroundColor = HilingualTheme.colors.dim1
+            backgroundColor = HilingualTheme.colors.dim1,
         )
     }
 }
@@ -80,7 +80,7 @@ private fun AuthScreen(
     paddingValues: PaddingValues,
     onGoogleSignClick: () -> Unit,
     onPrivacyPolicyClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -90,14 +90,14 @@ private fun AuthScreen(
             .padding(paddingValues)
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(Modifier.weight(132f))
 
         Text(
             text = "일기로 시작하는 일상 속 영어 습관",
             color = HilingualTheme.colors.hilingualBlack,
-            style = HilingualTheme.typography.headSB16
+            style = HilingualTheme.typography.headSB16,
         )
 
         Spacer(Modifier.height(4.dp))
@@ -105,7 +105,7 @@ private fun AuthScreen(
         Image(
             painter = painterResource(R.drawable.img_logo_black),
             contentDescription = null,
-            modifier = Modifier.size(width = 200.dp, height = 50.dp)
+            modifier = Modifier.size(width = 200.dp, height = 50.dp),
         )
 
         Spacer(Modifier.height(56.dp))
@@ -113,7 +113,7 @@ private fun AuthScreen(
         Image(
             painter = painterResource(DesignSystemR.drawable.img_login),
             contentDescription = null,
-            modifier = Modifier.size(width = 360.dp, height = 245.dp)
+            modifier = Modifier.size(width = 360.dp, height = 245.dp),
         )
 
         Spacer(Modifier.weight(95f))
@@ -127,7 +127,7 @@ private fun AuthScreen(
             color = HilingualTheme.colors.gray400,
             style = HilingualTheme.typography.bodyR14,
             textDecoration = TextDecoration.Underline,
-            modifier = Modifier.noRippleClickable(onClick = onPrivacyPolicyClick)
+            modifier = Modifier.noRippleClickable(onClick = onPrivacyPolicyClick),
         )
     }
 }

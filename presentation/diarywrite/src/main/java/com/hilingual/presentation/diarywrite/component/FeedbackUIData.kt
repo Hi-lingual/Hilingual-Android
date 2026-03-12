@@ -23,17 +23,17 @@ import androidx.compose.ui.unit.Dp
 data class FeedbackUIData(
     val title: String = "",
     val description: (@Composable () -> Unit)? = null,
-    val media: FeedbackMedia
+    val media: FeedbackMedia,
 )
 
 sealed class FeedbackMedia {
     data class Lottie(
         @RawRes val resId: Int,
-        val heightDp: Dp
+        val heightDp: Dp,
     ) : FeedbackMedia()
 
     data class Image(
         @DrawableRes val resId: Int,
-        val heightDp: Dp
+        val heightDp: Dp,
     ) : FeedbackMedia()
 }

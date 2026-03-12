@@ -40,7 +40,7 @@ import com.hilingual.presentation.notification.setting.component.NotificationSwi
 internal fun NotificationSettingRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
-    viewModel: NotificationSettingViewModel = hiltViewModel()
+    viewModel: NotificationSettingViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -48,6 +48,7 @@ internal fun NotificationSettingRoute(
         is UiState.Loading -> {
             HilingualLoadingIndicator()
         }
+
         is UiState.Success -> {
             NotificationSettingScreen(
                 isMarketingChecked = state.data.isMarketingChecked,
@@ -55,9 +56,10 @@ internal fun NotificationSettingRoute(
                 isFeedChecked = state.data.isFeedChecked,
                 onFeedCheckedChange = viewModel::updateFeedChecked,
                 paddingValues = paddingValues,
-                onBackClick = navigateUp
+                onBackClick = navigateUp,
             )
         }
+
         else -> {}
     }
 }
@@ -70,29 +72,29 @@ private fun NotificationSettingScreen(
     onFeedCheckedChange: (Boolean) -> Unit,
     paddingValues: PaddingValues,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
-            .padding(paddingValues)
+            .padding(paddingValues),
     ) {
         BackTopAppBar(
             title = "알림 설정",
-            onBackClicked = onBackClick
+            onBackClicked = onBackClick,
         )
 
         NotificationSwitchItem(
             text = "마케팅 알림",
             isChecked = isMarketingChecked,
-            onCheckedChange = onMarketingCheckedChange
+            onCheckedChange = onMarketingCheckedChange,
         )
 
         NotificationSwitchItem(
             text = "피드 알림",
             isChecked = isFeedChecked,
-            onCheckedChange = onFeedCheckedChange
+            onCheckedChange = onFeedCheckedChange,
         )
     }
 }
@@ -110,7 +112,7 @@ private fun NotificationSettingScreenPreview() {
             isFeedChecked = isFeedChecked,
             onFeedCheckedChange = { isFeedChecked = it },
             paddingValues = PaddingValues(0.dp),
-            onBackClick = {}
+            onBackClick = {},
         )
     }
 }

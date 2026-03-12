@@ -21,5 +21,5 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Immutable
 internal data class BlockedUserUiState(
-    val blockedUserList: UiState<ImmutableList<BlockedUserUiModel>> = UiState.Loading
+    val blockedUserList: UiState<ImmutableList<BlockedUserUiModel>> = UiState.Loading,
 )

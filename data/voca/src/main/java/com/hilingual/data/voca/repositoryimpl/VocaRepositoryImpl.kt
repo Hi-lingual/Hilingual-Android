@@ -24,7 +24,7 @@ import com.hilingual.data.voca.repository.VocaRepository
 import javax.inject.Inject
 
 internal class VocaRepositoryImpl @Inject constructor(
-    private val vocaDataSource: VocaDataSource
+    private val vocaDataSource: VocaDataSource,
 ) : VocaRepository {
     override suspend fun getVocaList(sort: Int): Result<VocaListResultModel> =
         suspendRunCatching {

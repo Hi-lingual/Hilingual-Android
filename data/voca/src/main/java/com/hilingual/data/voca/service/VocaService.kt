@@ -25,11 +25,11 @@ import retrofit2.http.Query
 interface VocaService {
     @GET("api/v1/voca")
     suspend fun getVocaList(
-        @Query("sort") sort: Int
+        @Query("sort") sort: Int,
     ): BaseResponse<VocaListResponseDto>
 
     @GET("api/v1/voca/{phraseId}")
     suspend fun getVocaDetail(
-        @Path("phraseId") phraseId: Long
+        @Path("phraseId") phraseId: Long,
     ): BaseResponse<VocaDetailResponseDto>
 }

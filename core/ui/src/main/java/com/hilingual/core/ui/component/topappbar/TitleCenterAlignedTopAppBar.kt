@@ -24,11 +24,11 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
 fun TitleCenterAlignedTopAppBar(
     modifier: Modifier = Modifier,
-    title: String
+    title: String,
 ) {
     HilingualBasicTopAppBar(
         modifier = modifier,
-        title = title
+        title = title,
     )
 }
 
@@ -37,7 +37,7 @@ fun TitleCenterAlignedTopAppBar(
 private fun TitleCenterAlignedTopAppBarPreview() {
     HilingualTheme {
         TitleCenterAlignedTopAppBar(
-            title = "일기 작성하기"
+            title = "일기 작성하기",
         )
     }
 }

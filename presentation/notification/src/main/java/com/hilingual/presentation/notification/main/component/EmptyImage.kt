@@ -32,18 +32,18 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 internal fun EmptyImage(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(Modifier.weight(0.5f))
 
         Image(
             painter = painterResource(R.drawable.img_diary_empty),
             contentDescription = null,
-            modifier = Modifier.size(width = 200.dp, height = 100.dp)
+            modifier = Modifier.size(width = 200.dp, height = 100.dp),
         )
 
         Spacer(Modifier.height(8.dp))
@@ -51,7 +51,7 @@ internal fun EmptyImage(
         Text(
             text = "아직 알림이 없어요.",
             style = HilingualTheme.typography.headR18,
-            color = HilingualTheme.colors.gray500
+            color = HilingualTheme.colors.gray500,
         )
 
         Spacer(Modifier.weight(1f))

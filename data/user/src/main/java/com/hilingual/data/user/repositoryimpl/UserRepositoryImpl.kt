@@ -18,8 +18,8 @@ package com.hilingual.data.user.repositoryimpl
 import android.net.Uri
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.data.presigned.repository.FileUploaderRepository
-import com.hilingual.data.user.datasource.UserRemoteDataSource
 import com.hilingual.data.user.datasource.UserLocalDataSource
+import com.hilingual.data.user.datasource.UserRemoteDataSource
 import com.hilingual.data.user.model.follow.FollowUserListResultModel
 import com.hilingual.data.user.model.follow.toModel
 import com.hilingual.data.user.model.notification.NotificationDetailModel
@@ -38,7 +38,7 @@ import javax.inject.Inject
 internal class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
     private val fileUploaderRepository: FileUploaderRepository,
-    private val userLocalDataSource: UserLocalDataSource
+    private val userLocalDataSource: UserLocalDataSource,
 ) : UserRepository {
     override suspend fun getNicknameAvailability(nickname: String): Result<NicknameValidationResult> =
         suspendRunCatching {
@@ -56,7 +56,7 @@ internal class UserRepositoryImpl @Inject constructor(
             val fileKey = if (userProfileModel.imageUri != null) {
                 fileUploaderRepository.uploadFile(
                     uri = userProfileModel.imageUri,
-                    purpose = "PROFILE_UPLOAD"
+                    purpose = "PROFILE_UPLOAD",
                 ).getOrThrow()
             } else {
                 null
@@ -65,7 +65,7 @@ internal class UserRepositoryImpl @Inject constructor(
             userRemoteDataSource.postUserProfile(
                 nickname = userProfileModel.nickname,
                 adAlarmAgree = userProfileModel.adAlarmAgree,
-                fileKey = fileKey
+                fileKey = fileKey,
             )
         }
 
@@ -103,9 +103,7 @@ internal class UserRepositoryImpl @Inject constructor(
         userLocalDataSource.saveRegisterStatus(isCompleted)
     }
 
-    override suspend fun getRegisterStatus(): Boolean {
-        return userLocalDataSource.getRegisterStatus()
-    }
+    override suspend fun getRegisterStatus(): Boolean = userLocalDataSource.getRegisterStatus()
 
     @Deprecated("OTP feature is removed")
     override suspend fun saveOtpVerified(isVerified: Boolean) {
@@ -113,9 +111,7 @@ internal class UserRepositoryImpl @Inject constructor(
     }
 
     @Deprecated("OTP feature is removed")
-    override suspend fun isOtpVerified(): Boolean {
-        return true
-    }
+    override suspend fun isOtpVerified(): Boolean = true
 
     override suspend fun getFollowers(targetUserId: Long): Result<List<FollowUserListResultModel>> =
         suspendRunCatching {
@@ -152,7 +148,7 @@ internal class UserRepositoryImpl @Inject constructor(
             val fileKey = if (imageFileUri != null) {
                 fileUploaderRepository.uploadFile(
                     uri = imageFileUri,
-                    purpose = "PROFILE_UPDATE"
+                    purpose = "PROFILE_UPDATE",
                 ).getOrThrow()
             } else {
                 null

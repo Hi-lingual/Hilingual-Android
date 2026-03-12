@@ -34,7 +34,7 @@ fun DialogButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isFilled: Boolean = true
+    isFilled: Boolean = true,
 ) {
     Row(
         modifier = modifier
@@ -44,12 +44,12 @@ fun DialogButton(
                     HilingualTheme.colors.hilingualOrange
                 } else {
                     HilingualTheme.colors.gray100
-                }
+                },
             )
             .padding(vertical = 14.dp)
             .noRippleClickable(onClick = onClick),
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = text,
@@ -58,7 +58,7 @@ fun DialogButton(
                 HilingualTheme.colors.white
             } else {
                 HilingualTheme.colors.gray400
-            }
+            },
         )
     }
 }

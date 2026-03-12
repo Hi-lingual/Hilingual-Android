@@ -75,7 +75,7 @@ internal fun FeedDiaryRoute(
     navigateToMyFeedProfile: (showLikedDiaries: Boolean) -> Unit,
     navigateToFeedProfile: (Long) -> Unit,
     navigateToVoca: () -> Unit,
-    viewModel: FeedDiaryViewModel = hiltViewModel()
+    viewModel: FeedDiaryViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
 
@@ -105,8 +105,8 @@ internal fun FeedDiaryRoute(
                     HilingualMessage.Snackbar(
                         message = it.message,
                         actionLabelText = it.actionLabel,
-                        onAction = navigateToVoca
-                    )
+                        onAction = navigateToVoca,
+                    ),
                 )
             }
 
@@ -115,8 +115,8 @@ internal fun FeedDiaryRoute(
                     HilingualMessage.Snackbar(
                         message = it.message,
                         actionLabelText = it.actionLabel,
-                        onAction = { navigateToMyFeedProfile(true) }
-                    )
+                        onAction = { navigateToMyFeedProfile(true) },
+                    ),
                 )
             }
 
@@ -148,7 +148,7 @@ internal fun FeedDiaryRoute(
                 onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 isImageDetailVisible = isImageDetailVisible,
                 onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
-                onToggleBookmark = viewModel::toggleBookmark
+                onToggleBookmark = viewModel::toggleBookmark,
             )
         }
 
@@ -171,7 +171,7 @@ private fun FeedDiaryScreen(
     onBlockClick: (Long) -> Unit,
     isImageDetailVisible: Boolean,
     onChangeImageDetailVisible: () -> Unit,
-    onToggleBookmark: (Long, Boolean) -> Unit
+    onToggleBookmark: (Long, Boolean) -> Unit,
 ) {
     var isUnpublishBottomSheetVisible by remember { mutableStateOf(false) }
     var isUnpublishDialogVisible by remember { mutableStateOf(false) }
@@ -203,8 +203,8 @@ private fun FeedDiaryScreen(
             event = "page",
             properties = mapOf(
                 "entry_id" to diaryId,
-                "tab_name" to if (pagerState.currentPage == 0) "grammar_spelling" else "recommend_expression"
-            )
+                "tab_name" to if (pagerState.currentPage == 0) "grammar_spelling" else "recommend_expression",
+            ),
         )
     }
 
@@ -212,7 +212,7 @@ private fun FeedDiaryScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
-            .padding(paddingValues)
+            .padding(paddingValues),
     ) {
         BackAndMoreTopAppBar(
             onBackClicked = onBackClick,
@@ -223,7 +223,7 @@ private fun FeedDiaryScreen(
                     isReportBottomSheetVisible = true
                 }
             },
-            title = "피드"
+            title = "피드",
         )
 
         with(uiState) {
@@ -241,7 +241,7 @@ private fun FeedDiaryScreen(
                         onProfileClick(profileContent.userId)
                     }
                 },
-                onLikeClick = { onLikeClick(!profileContent.isLiked) }
+                onLikeClick = { onLikeClick(!profileContent.isLiked) },
             )
         }
 
@@ -251,17 +251,17 @@ private fun FeedDiaryScreen(
                 coroutineScope.launch {
                     pagerState.animateScrollToPage(it)
                 }
-            }
+            },
         )
 
         Box(
             modifier = Modifier
                 .background(HilingualTheme.colors.gray100)
-                .weight(1f)
+                .weight(1f),
         ) {
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) { page ->
                 with(uiState) {
                     when (page) {
@@ -272,14 +272,14 @@ private fun FeedDiaryScreen(
                             feedbackList = feedbackList,
                             isAIWrittenDiary = isAIWrittenDiary,
                             onImageClick = onChangeImageDetailVisible,
-                            onToggleViewMode = { isAIWrittenDiary = it }
+                            onToggleViewMode = { isAIWrittenDiary = it },
                         )
 
                         1 -> RecommendExpressionTab(
                             listState = recommendListState,
                             writtenDate = writtenDate,
                             recommendExpressionList = recommendExpressionList,
-                            onBookmarkClick = onToggleBookmark
+                            onBookmarkClick = onToggleBookmark,
                         )
                     }
                 }
@@ -297,7 +297,7 @@ private fun FeedDiaryScreen(
                 },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(bottom = 24.dp, end = 16.dp)
+                    .padding(bottom = 24.dp, end = 16.dp),
             )
         }
     }
@@ -306,7 +306,7 @@ private fun FeedDiaryScreen(
         ModalImage(
             imageUrl = uiState.diaryContent.imageUrl ?: "",
             onBackClick = onChangeImageDetailVisible,
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(paddingValues),
         )
     }
 
@@ -317,7 +317,7 @@ private fun FeedDiaryScreen(
             onPrivateClick = {
                 isUnpublishBottomSheetVisible = false
                 isUnpublishDialogVisible = true
-            }
+            },
         )
     } else {
         ReportBlockBottomSheet(
@@ -330,7 +330,7 @@ private fun FeedDiaryScreen(
             onBlockClick = {
                 isReportBottomSheetVisible = false
                 isBlockConfirmBottomSheetVisible = true
-            }
+            },
         )
     }
 
@@ -340,7 +340,7 @@ private fun FeedDiaryScreen(
         onPrivateClick = {
             isUnpublishDialogVisible = false
             onPrivateClick()
-        }
+        },
     )
 
     BlockBottomSheet(
@@ -349,7 +349,7 @@ private fun FeedDiaryScreen(
         onBlockButtonClick = {
             isBlockConfirmBottomSheetVisible = false
             onBlockClick(uiState.profileContent.userId)
-        }
+        },
     )
 
     ReportPostDialog(
@@ -358,7 +358,7 @@ private fun FeedDiaryScreen(
         onReportClick = {
             isReportConfirmDialogVisible = false
             onReportClick()
-        }
+        },
     )
 }
 
@@ -382,7 +382,7 @@ private fun FeedDiaryScreenPreview() {
             onPrivateClick = {},
             onReportClick = {},
             onBlockClick = {},
-            uiState = FeedDiaryUiState.Fake
+            uiState = FeedDiaryUiState.Fake,
         )
     }
 }

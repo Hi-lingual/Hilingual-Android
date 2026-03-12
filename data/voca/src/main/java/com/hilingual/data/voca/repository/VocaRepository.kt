@@ -20,10 +20,10 @@ import com.hilingual.data.voca.model.VocaListResultModel
 
 interface VocaRepository {
     suspend fun getVocaList(
-        sort: Int
+        sort: Int,
     ): Result<VocaListResultModel>
 
     suspend fun getVocaDetail(
-        phraseId: Long
+        phraseId: Long,
     ): Result<VocaDetailModel>
 }

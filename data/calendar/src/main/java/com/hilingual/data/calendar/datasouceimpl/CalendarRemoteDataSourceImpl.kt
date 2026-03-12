@@ -24,7 +24,7 @@ import com.hilingual.data.calendar.service.CalendarService
 import jakarta.inject.Inject
 
 internal class CalendarRemoteDataSourceImpl @Inject constructor(
-    private val calendarService: CalendarService
+    private val calendarService: CalendarService,
 ) : CalendarRemoteDataSource {
     override suspend fun getCalendar(year: Int, month: Int): BaseResponse<CalendarResponseDto> =
         calendarService.getCalendar(year = year, month = month)

@@ -27,16 +27,16 @@ interface CalendarService {
     @GET("/api/v1/home/calendar/month")
     suspend fun getCalendar(
         @Query("year") year: Int,
-        @Query("month") month: Int
+        @Query("month") month: Int,
     ): BaseResponse<CalendarResponseDto>
 
     @GET("/api/v1/home/calendar/{date}")
     suspend fun getDiaryThumbnail(
-        @Path("date") date: String
+        @Path("date") date: String,
     ): BaseResponse<DiaryThumbnailResponseDto>
 
     @GET("/api/v1/home/calendar/{date}/topic")
     suspend fun getTopic(
-        @Path("date") date: String
+        @Path("date") date: String,
     ): BaseResponse<TopicResponseDto>
 }

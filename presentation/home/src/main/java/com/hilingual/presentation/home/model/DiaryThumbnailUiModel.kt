@@ -23,12 +23,12 @@ data class DiaryThumbnailUiModel(
     val diaryId: Long,
     val imageUrl: String?,
     val originalText: String,
-    val isPublished: Boolean
+    val isPublished: Boolean,
 )
 
 internal fun DiaryThumbnailModel.toState() = DiaryThumbnailUiModel(
     diaryId = this.diaryId,
     imageUrl = this.imageUrl,
     originalText = this.originalText,
-    isPublished = this.isPublished
+    isPublished = this.isPublished,
 )

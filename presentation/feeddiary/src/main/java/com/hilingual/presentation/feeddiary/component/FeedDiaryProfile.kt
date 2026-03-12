@@ -52,7 +52,7 @@ internal fun FeedDiaryProfile(
     sharedDateInMinutes: Long,
     onProfileClick: () -> Unit,
     onLikeClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val formattedDate = remember(sharedDateInMinutes) { formatRelativeTime(sharedDateInMinutes) }
 
@@ -60,7 +60,7 @@ internal fun FeedDiaryProfile(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 10.dp, horizontal = 20.dp)
+            .padding(vertical = 10.dp, horizontal = 20.dp),
     ) {
         ProfileImage(
             imageUrl = profileUrl,
@@ -69,23 +69,23 @@ internal fun FeedDiaryProfile(
                 .border(
                     width = 1.dp,
                     color = HilingualTheme.colors.gray200,
-                    shape = CircleShape
+                    shape = CircleShape,
                 )
-                .noRippleClickable(onClick = onProfileClick)
+                .noRippleClickable(onClick = onProfileClick),
         )
 
         Spacer(Modifier.width(10.dp))
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = nickname,
                     style = HilingualTheme.typography.headSB16,
-                    color = HilingualTheme.colors.gray850
+                    color = HilingualTheme.colors.gray850,
                 )
 
                 Icon(
@@ -94,21 +94,21 @@ internal fun FeedDiaryProfile(
                     tint = HilingualTheme.colors.hilingualOrange,
                     modifier = Modifier
                         .padding(start = 4.dp)
-                        .size(16.dp)
+                        .size(16.dp),
                 )
 
                 Text(
                     text = "$streak",
                     style = HilingualTheme.typography.bodyR14,
                     color = HilingualTheme.colors.hilingualOrange,
-                    modifier = Modifier.padding(end = 8.dp)
+                    modifier = Modifier.padding(end = 8.dp),
                 )
             }
 
             Text(
                 text = "$formattedDate 공유",
                 style = HilingualTheme.typography.captionR12,
-                color = HilingualTheme.colors.gray500
+                color = HilingualTheme.colors.gray500,
             )
         }
 
@@ -116,22 +116,22 @@ internal fun FeedDiaryProfile(
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(3.dp)
+            verticalArrangement = Arrangement.spacedBy(3.dp),
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(
-                    id = if (isLiked) R.drawable.ic_like_24_filled else R.drawable.ic_like_24_empty
+                    id = if (isLiked) R.drawable.ic_like_24_filled else R.drawable.ic_like_24_empty,
                 ),
                 contentDescription = null,
                 tint = Color.Unspecified,
                 modifier = Modifier
                     .size(24.dp)
-                    .noRippleClickable(onClick = onLikeClick)
+                    .noRippleClickable(onClick = onLikeClick),
             )
             Text(
                 text = "$likeCount",
                 style = HilingualTheme.typography.captionR12,
-                color = HilingualTheme.colors.gray850
+                color = HilingualTheme.colors.gray850,
             )
         }
     }
@@ -149,7 +149,7 @@ private fun FeedDiaryProfilePreview() {
             likeCount = 6,
             sharedDateInMinutes = 6000,
             onProfileClick = {},
-            onLikeClick = {}
+            onLikeClick = {},
         )
     }
 }

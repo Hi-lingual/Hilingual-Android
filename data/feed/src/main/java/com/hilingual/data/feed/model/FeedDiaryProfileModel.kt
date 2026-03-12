@@ -20,20 +20,20 @@ import com.hilingual.data.feed.dto.response.DiaryProfileResponseDto
 data class FeedDiaryProfileModel(
     val isMine: Boolean,
     val profile: ProfileModel,
-    val diary: DiaryInfoModel
+    val diary: DiaryInfoModel,
 )
 
 data class ProfileModel(
     val userId: Long,
     val profileImg: String?,
     val nickname: String,
-    val streak: Int
+    val streak: Int,
 )
 
 data class DiaryInfoModel(
     val sharedDate: Long,
     val likeCount: Int,
-    val isLiked: Boolean
+    val isLiked: Boolean,
 )
 
 internal fun DiaryProfileResponseDto.toModel() = FeedDiaryProfileModel(
@@ -43,14 +43,14 @@ internal fun DiaryProfileResponseDto.toModel() = FeedDiaryProfileModel(
             userId = userId,
             profileImg = profileImg,
             nickname = nickname,
-            streak = streak
+            streak = streak,
         )
     },
     diary = with(this.diary) {
         DiaryInfoModel(
             sharedDate = sharedDate,
             likeCount = likeCount,
-            isLiked = isLiked
+            isLiked = isLiked,
         )
-    }
+    },
 )

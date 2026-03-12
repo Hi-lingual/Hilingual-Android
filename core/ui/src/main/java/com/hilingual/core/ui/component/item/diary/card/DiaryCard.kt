@@ -52,7 +52,7 @@ internal fun DiaryCard(
     onImageClick: () -> Unit,
     modifier: Modifier = Modifier,
     diffRanges: ImmutableList<Pair<Int, Int>> = persistentListOf(),
-    imageUrl: String? = null
+    imageUrl: String? = null,
 ) {
     val maxContentLength = if (isAIWritten) MAX_AI else MAX_ORIGINAL
 
@@ -72,7 +72,7 @@ internal fun DiaryCard(
             .clip(RoundedCornerShape(8.dp))
             .background(HilingualTheme.colors.white)
             .fillMaxWidth()
-            .padding(12.dp)
+            .padding(12.dp),
     ) {
         if (imageUrl != null) {
             NetworkImage(
@@ -83,8 +83,8 @@ internal fun DiaryCard(
                     .fillMaxWidth()
                     .aspectRatio(1f / 0.6f)
                     .noRippleClickable(
-                        onClick = onImageClick
-                    )
+                        onClick = onImageClick,
+                    ),
             )
         }
 
@@ -92,7 +92,7 @@ internal fun DiaryCard(
             text = displayText,
             style = HilingualTheme.typography.bodyR15,
             color = HilingualTheme.colors.black,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         Text(
@@ -101,7 +101,7 @@ internal fun DiaryCard(
             color = HilingualTheme.colors.gray400,
             textAlign = TextAlign.End,
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(),
         )
     }
 }
@@ -114,7 +114,7 @@ private fun Pair<Int, Int>.isValid(textLength: Int): Boolean {
 @Composable
 private fun getAnnotatedString(
     content: String,
-    diffRanges: ImmutableList<Pair<Int, Int>>
+    diffRanges: ImmutableList<Pair<Int, Int>>,
 ): AnnotatedString {
     val contentLength = content.length
     return buildAnnotatedString {
@@ -125,10 +125,10 @@ private fun getAnnotatedString(
                 addStyle(
                     style = SpanStyle(
                         color = HilingualTheme.colors.hilingualOrange,
-                        fontFamily = PretendardMedium
+                        fontFamily = PretendardMedium,
                     ),
                     start = start,
-                    end = end
+                    end = end,
                 )
             }
     }
@@ -138,7 +138,7 @@ private data class DiaryCardPreviewState(
     val isAIDiary: Boolean,
     val imageUrl: String?,
     val content: String,
-    val diffRanges: ImmutableList<Pair<Int, Int>>
+    val diffRanges: ImmutableList<Pair<Int, Int>>,
 )
 
 private class DiaryContentCardPreviewProvider :
@@ -148,33 +148,47 @@ private class DiaryContentCardPreviewProvider :
             isAIDiary = false,
             imageUrl = "",
             content = "이미지 & 텍스트",
-            diffRanges = persistentListOf()
+            diffRanges = persistentListOf(),
         ),
         DiaryCardPreviewState(
             isAIDiary = false,
             imageUrl = null,
             content = "I want to become a teacher future. Because I like child.",
-            diffRanges = persistentListOf()
+            diffRanges = persistentListOf(),
         ),
         DiaryCardPreviewState(
             isAIDiary = true,
             imageUrl = null,
-            content = "Today I went to the cafe Conhas in Yeonnam to meet my teammates.\n I was planning to arrive around 1:30 p.m., but I got there at 2:20 because I overslept, as always.\n I wore rain boots and brought my favorite umbrella because the weather forecast said it would rain all day, but it wasn’t really raining much outside.\n I got kind of disappointed. But yes, no rain is better than rain, I guess.\n" +
-                "After arriving, I had a jambon arugula sandwich with a vanilla latte.\n Honestly, I should be more careful when I'm drinking milk because I get stomachaches easily, but I always order lattes.\nMy life feels like a disaster, a mess that I call myself.\n But they tasted really good, so I felt more motivated to work.\n I really liked this café because it's spacious, chill, and has a great atmosphere for focusing.\n I’ll definitely come back again soon!",
+            content =
+            "Today I went to the cafe Conhas in Yeonnam to meet my teammates.\n " +
+                "I was planning to arrive around 1:30 p.m., but I got there at 2:20 " +
+                "because I overslept, as always.\n " +
+                "I wore rain boots and brought my favorite umbrella " +
+                "because the weather forecast said it would rain all day, " +
+                "but it wasn’t really raining much outside.\n " +
+                "I got kind of disappointed. But yes, no rain is better than rain, I guess.\n" +
+                "After arriving, I had a jambon arugula sandwich with a vanilla latte.\n " +
+                "Honestly, I should be more careful when I'm drinking milk " +
+                "because I get stomachaches easily, " +
+                "but I always order lattes.\nMy life feels like a disaster, a mess that I call myself.\n " +
+                "But they tasted really good, so I felt more motivated to work.\n " +
+                "I really liked this café because it's spacious, chill, " +
+                "and has a great atmosphere for focusing.\n " +
+                "I’ll definitely come back again soon!",
             diffRanges = persistentListOf(
                 Pair(84, 164),
                 Pair(278, 316),
                 Pair(508, 583),
-                Pair(740, 802)
-            )
-        )
+                Pair(740, 802),
+            ),
+        ),
     )
 }
 
 @Preview
 @Composable
 private fun DiaryCardPreview(
-    @PreviewParameter(DiaryContentCardPreviewProvider::class) state: DiaryCardPreviewState
+    @PreviewParameter(DiaryContentCardPreviewProvider::class) state: DiaryCardPreviewState,
 ) {
     HilingualTheme {
         DiaryCard(
@@ -182,7 +196,7 @@ private fun DiaryCardPreview(
             diaryContent = state.content,
             imageUrl = state.imageUrl,
             diffRanges = state.diffRanges,
-            onImageClick = {}
+            onImageClick = {},
         )
     }
 }

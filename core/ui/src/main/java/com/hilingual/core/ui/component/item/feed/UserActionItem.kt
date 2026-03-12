@@ -44,7 +44,7 @@ fun UserActionItem(
     buttonText: String,
     onProfileClick: (Long) -> Unit,
     onButtonClick: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -52,12 +52,12 @@ fun UserActionItem(
         modifier = modifier
             .fillMaxWidth()
             .background(HilingualTheme.colors.white)
-            .padding(vertical = 8.dp)
+            .padding(vertical = 8.dp),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.noRippleClickable(onClick = { onProfileClick(userId) })
+            modifier = Modifier.noRippleClickable(onClick = { onProfileClick(userId) }),
         ) {
             ProfileImage(
                 imageUrl = profileUrl,
@@ -66,21 +66,21 @@ fun UserActionItem(
                     .border(
                         width = 1.dp,
                         color = HilingualTheme.colors.gray200,
-                        shape = CircleShape
-                    )
+                        shape = CircleShape,
+                    ),
             )
 
             Text(
                 text = nickname,
                 style = HilingualTheme.typography.headSB16,
-                color = HilingualTheme.colors.black
+                color = HilingualTheme.colors.black,
             )
         }
 
         UserActionButton(
             isFilled = isFilled,
             buttonText = buttonText,
-            onClick = { onButtonClick(userId) }
+            onClick = { onButtonClick(userId) },
         )
     }
 }
@@ -90,7 +90,7 @@ fun UserActionItem(
 private fun UserActionItemPreview() {
     HilingualTheme {
         Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             UserActionItem(
                 userId = 1L,
@@ -99,7 +99,7 @@ private fun UserActionItemPreview() {
                 isFilled = false,
                 buttonText = "팔로우",
                 onProfileClick = {},
-                onButtonClick = {}
+                onButtonClick = {},
             )
             UserActionItem(
                 userId = 2L,
@@ -108,7 +108,7 @@ private fun UserActionItemPreview() {
                 isFilled = false,
                 buttonText = "맞팔로우",
                 onProfileClick = {},
-                onButtonClick = {}
+                onButtonClick = {},
             )
             UserActionItem(
                 userId = 3L,
@@ -117,7 +117,7 @@ private fun UserActionItemPreview() {
                 isFilled = true,
                 buttonText = "팔로잉",
                 onProfileClick = {},
-                onButtonClick = {}
+                onButtonClick = {},
             )
         }
     }

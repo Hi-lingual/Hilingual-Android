@@ -51,7 +51,7 @@ internal fun SplashRoute(
     navigateToAuth: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToOnboarding: () -> Unit,
-    viewModel: SplashViewModel = hiltViewModel()
+    viewModel: SplashViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -60,7 +60,9 @@ internal fun SplashRoute(
     viewModel.sideEffect.collectLatestSideEffect { event ->
         when (event) {
             is SplashSideEffect.NavigateToHome -> navigateToHome()
+
             is SplashSideEffect.NavigateToAuth -> navigateToAuth()
+
             is SplashSideEffect.NavigateToStore -> {
                 val intent = Intent(Intent.ACTION_VIEW).apply {
                     data = "market://details?id=${context.packageName}".toUri()
@@ -68,6 +70,7 @@ internal fun SplashRoute(
                 }
                 context.startActivity(intent)
             }
+
             is SplashSideEffect.NavigateToOnboarding -> navigateToOnboarding()
         }
     }
@@ -78,7 +81,7 @@ internal fun SplashRoute(
         UpdateState.FORCE -> {
             ForceDialog(
                 onConfirm = viewModel::onUpdateConfirm,
-                onDismiss = { activity?.finish() }
+                onDismiss = { activity?.finish() },
             )
         }
 
@@ -86,7 +89,7 @@ internal fun SplashRoute(
             OptionalDialog(
                 onPositive = viewModel::onUpdateConfirm,
                 onNegative = viewModel::onUpdateSkip,
-                onDismiss = viewModel::onUpdateSkip
+                onDismiss = viewModel::onUpdateSkip,
             )
         }
 
@@ -101,21 +104,21 @@ private fun SplashScreen() {
         modifier = Modifier
             .fillMaxWidth()
             .statusBarColor(hilingualOrange)
-            .background(HilingualTheme.colors.hilingualOrange)
+            .background(HilingualTheme.colors.hilingualOrange),
     ) {
         Spacer(
-            modifier = Modifier.weight(18f)
+            modifier = Modifier.weight(18f),
         )
 
         Image(
             painter = painterResource(DesignSystemR.drawable.img_logo),
             contentDescription = null,
             modifier = Modifier
-                .size(width = 200.dp, height = 50.dp)
+                .size(width = 200.dp, height = 50.dp),
         )
 
         Spacer(
-            modifier = Modifier.weight(29f)
+            modifier = Modifier.weight(29f),
         )
     }
 }
@@ -124,7 +127,7 @@ private fun SplashScreen() {
 private fun ForceDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     OneButtonDialog(
         confirmText = "업데이트 하기",
@@ -135,19 +138,19 @@ private fun ForceDialog(
             Text(
                 text = "최신 버전의 앱이 출시 되었습니다",
                 style = HilingualTheme.typography.headSB16,
-                color = HilingualTheme.colors.gray850
+                color = HilingualTheme.colors.gray850,
             )
             Spacer(Modifier.height(8.dp))
 
             Text(
                 text = "안정적인 서비스 사용을 위해\n" +
-                        "최신 버전의 앱으로 업데이트 해주세요.",
+                    "최신 버전의 앱으로 업데이트 해주세요.",
                 style = HilingualTheme.typography.bodyR14,
                 color = HilingualTheme.colors.gray400,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
-        }
+        },
     )
 }
 
@@ -156,18 +159,18 @@ private fun OptionalDialog(
     onPositive: () -> Unit,
     onNegative: () -> Unit,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     TwoButtonDialog(
         title = "최신 버전의 앱이 출시 되었습니다",
         description = "지금 바로 업데이트 하고 \n" +
-                "최적의 사용 환경을 이용해보세요.",
+            "최적의 사용 환경을 이용해보세요.",
         cancelText = "다음에 하기",
         confirmText = "업데이트 하기",
         onPositive = onPositive,
         onNegative = onNegative,
         onDismiss = onDismiss,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -177,7 +180,7 @@ private fun ForceDialogPreview() {
     HilingualTheme {
         ForceDialog(
             onConfirm = {},
-            onDismiss = {}
+            onDismiss = {},
         )
     }
 }
@@ -189,7 +192,7 @@ private fun OptionalDialogPreview() {
         OptionalDialog(
             onPositive = {},
             onNegative = {},
-            onDismiss = {}
+            onDismiss = {},
         )
     }
 }

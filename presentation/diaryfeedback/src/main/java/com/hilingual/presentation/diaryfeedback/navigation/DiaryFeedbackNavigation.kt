@@ -28,16 +28,16 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DiaryFeedback(
-    val diaryId: Long
+    val diaryId: Long,
 ) : Route
 
 fun NavController.navigateToDiaryFeedback(
     diaryId: Long,
-    navOptions: NavOptions? = null
+    navOptions: NavOptions? = null,
 ) {
     navigate(
         route = DiaryFeedback(diaryId),
-        navOptions = navOptions
+        navOptions = navOptions,
     )
 }
 
@@ -46,22 +46,22 @@ fun NavGraphBuilder.diaryFeedbackNavGraph(
     navigateUp: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToFeed: () -> Unit,
-    navigateToVoca: () -> Unit
+    navigateToVoca: () -> Unit,
 ) {
     composable<DiaryFeedback>(
         enterTransition = {
             slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(500)
+                animationSpec = tween(500),
             )
-        }
+        },
     ) {
         DiaryFeedbackRoute(
             paddingValues = paddingValues,
             navigateUp = navigateUp,
             navigateToHome = navigateToHome,
             navigateToFeed = navigateToFeed,
-            navigateToVoca = navigateToVoca
+            navigateToVoca = navigateToVoca,
         )
     }
 }

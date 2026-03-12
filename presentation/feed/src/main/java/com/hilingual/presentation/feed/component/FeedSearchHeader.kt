@@ -53,7 +53,7 @@ internal fun FeedSearchHeader(
     onClearClick: () -> Unit,
     onBackClick: () -> Unit,
     onSearchAction: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
@@ -67,7 +67,7 @@ internal fun FeedSearchHeader(
         modifier = modifier
             .fillMaxWidth()
             .background(HilingualTheme.colors.white)
-            .padding(vertical = 8.dp, horizontal = 16.dp)
+            .padding(vertical = 8.dp, horizontal = 16.dp),
     ) {
         Icon(
             modifier = Modifier
@@ -75,7 +75,7 @@ internal fun FeedSearchHeader(
                 .noRippleClickable(onClick = onBackClick),
             imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_24_back),
             contentDescription = null,
-            tint = HilingualTheme.colors.black
+            tint = HilingualTheme.colors.black,
         )
 
         Spacer(Modifier.width(8.dp))
@@ -99,7 +99,7 @@ internal fun FeedSearchHeader(
                 onSearchAction()
                 focusManager.clearFocus()
             },
-            paddingValues = PaddingValues(8.dp)
+            paddingValues = PaddingValues(8.dp),
         )
     }
 }
@@ -115,7 +115,7 @@ private fun FeedSearchHeaderPreview() {
             onSearchWordChanged = { searchText = it },
             onClearClick = {},
             onBackClick = {},
-            onSearchAction = {}
+            onSearchAction = {},
         )
     }
 }

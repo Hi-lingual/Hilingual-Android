@@ -45,7 +45,7 @@ private val specialCharRegex = Regex("[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]")
 @HiltViewModel
 internal class SignUpViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val onboardingRepository: OnboardingRepository
+    private val onboardingRepository: OnboardingRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpUiState())
@@ -69,7 +69,7 @@ internal class SignUpViewModel @Inject constructor(
             currentState.copy(
                 nickname = newNickname,
                 validationMessage = "",
-                isNicknameValid = false
+                isNicknameValid = false,
             )
         }
     }
@@ -85,7 +85,7 @@ internal class SignUpViewModel @Inject constructor(
             val userProfile = UserProfileModel(
                 nickname = nickname,
                 adAlarmAgree = isMarketingAgreed,
-                imageUri = imageUri
+                imageUri = imageUri,
             )
             userRepository.postUserProfile(userProfile)
                 .onSuccess {
@@ -96,13 +96,15 @@ internal class SignUpViewModel @Inject constructor(
                 }
                 .onLogFailure {
                     _uiState.update { it.copy(isLoading = false) }
-                    _sideEffect.emit(SignUpSideEffect.ShowRetryDialog {
-                        onRegisterClick(
-                            nickname,
-                            isMarketingAgreed,
-                            imageUri
-                        )
-                    })
+                    _sideEffect.emit(
+                        SignUpSideEffect.ShowRetryDialog {
+                            onRegisterClick(
+                                nickname,
+                                isMarketingAgreed,
+                                imageUri,
+                            )
+                        },
+                    )
                 }
         }
     }
@@ -112,7 +114,7 @@ internal class SignUpViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     validationMessage = "",
-                    isNicknameValid = false
+                    isNicknameValid = false,
                 )
             }
             return
@@ -122,7 +124,7 @@ internal class SignUpViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         validationMessage = "최소 2글자 이상 입력해주세요",
-                        isNicknameValid = false
+                        isNicknameValid = false,
                     )
                 }
                 return@launch
@@ -132,7 +134,7 @@ internal class SignUpViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         validationMessage = "특수문자, 이모지는 사용이 불가능해요",
-                        isNicknameValid = false
+                        isNicknameValid = false,
                     )
                 }
                 return@launch
@@ -145,7 +147,7 @@ internal class SignUpViewModel @Inject constructor(
                             _uiState.update {
                                 it.copy(
                                     validationMessage = "사용 가능한 닉네임이에요",
-                                    isNicknameValid = true
+                                    isNicknameValid = true,
                                 )
                             }
                         }
@@ -154,7 +156,7 @@ internal class SignUpViewModel @Inject constructor(
                             _uiState.update {
                                 it.copy(
                                     validationMessage = "이미 사용중인 닉네임이에요",
-                                    isNicknameValid = false
+                                    isNicknameValid = false,
                                 )
                             }
                         }
@@ -163,7 +165,7 @@ internal class SignUpViewModel @Inject constructor(
                             _uiState.update {
                                 it.copy(
                                     validationMessage = "금지어가 포함된 닉네임이에요",
-                                    isNicknameValid = false
+                                    isNicknameValid = false,
                                 )
                             }
                         }
@@ -172,7 +174,7 @@ internal class SignUpViewModel @Inject constructor(
                 .onLogFailure {
                     _uiState.update {
                         it.copy(
-                            isNicknameValid = false
+                            isNicknameValid = false,
                         )
                     }
                     _sideEffect.emit(SignUpSideEffect.ShowRetryDialog { validateNickname(nickname) })

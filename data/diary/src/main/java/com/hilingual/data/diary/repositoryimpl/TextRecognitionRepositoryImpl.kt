@@ -6,14 +6,14 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognizer
 import com.hilingual.data.diary.repository.TextRecognitionRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class TextRecognitionRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val recognizer: TextRecognizer
+    private val recognizer: TextRecognizer,
 ) : TextRecognitionRepository {
 
     override suspend fun extractTextFromImage(uri: Uri): Result<String> =

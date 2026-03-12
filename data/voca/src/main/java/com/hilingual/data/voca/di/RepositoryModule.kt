@@ -30,6 +30,6 @@ internal abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindsVocaRepository(
-        vocaRepositoryImpl: VocaRepositoryImpl
+        vocaRepositoryImpl: VocaRepositoryImpl,
     ): VocaRepository
 }

@@ -31,5 +31,5 @@ data class VocaDetailResponseDto(
     @SerialName("writtenFrom")
     val writtenFrom: String,
     @SerialName("isBookmarked")
-    val isBookmarked: Boolean
+    val isBookmarked: Boolean,
 )

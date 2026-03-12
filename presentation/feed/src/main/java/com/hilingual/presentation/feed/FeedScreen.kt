@@ -69,7 +69,7 @@ internal fun FeedRoute(
     navigateToFeedProfile: (userId: Long) -> Unit,
     navigateToFeedDiary: (Long) -> Unit,
     navigateToFeedSearch: () -> Unit,
-    viewModel: FeedViewModel = hiltViewModel()
+    viewModel: FeedViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
 
@@ -94,8 +94,8 @@ internal fun FeedRoute(
                     HilingualMessage.Snackbar(
                         message = sideEffect.message,
                         actionLabelText = sideEffect.actionLabel,
-                        onAction = { navigateToMyFeedProfile(true) }
-                    )
+                        onAction = { navigateToMyFeedProfile(true) },
+                    ),
                 )
             }
         }
@@ -108,8 +108,8 @@ internal fun FeedRoute(
             event = "refresh",
             properties = mapOf(
                 "refresh_method" to "auto",
-                "page" to FEED.pageName
-            )
+                "page" to FEED.pageName,
+            ),
         )
         viewModel.loadInitialFeedData()
     }
@@ -129,8 +129,8 @@ internal fun FeedRoute(
                     event = "refresh",
                     properties = mapOf(
                         "refresh_method" to "pull_to_refresh",
-                        "page" to FEED.pageName
-                    )
+                        "page" to FEED.pageName,
+                    ),
                 )
                 viewModel.onFeedRefresh(tab)
             },
@@ -140,7 +140,7 @@ internal fun FeedRoute(
                 tracker.logEvent(
                     trigger = TriggerType.VIEW,
                     page = MY_FEED,
-                    event = "page"
+                    event = "page",
                 )
                 navigateToMyFeedProfile(false)
             },
@@ -153,8 +153,8 @@ internal fun FeedRoute(
                     properties = mapOf(
                         "entry_id" to diaryId,
                         "empathy_action" to if (isLiked) "add" else "remove",
-                        "page" to FEED.pageName
-                    )
+                        "page" to FEED.pageName,
+                    ),
                 )
                 viewModel.toggleIsLiked(diaryId, isLiked)
             },
@@ -184,7 +184,7 @@ private fun FeedScreen(
     onReportClick: () -> Unit,
     readAllFeed: () -> Unit,
     onFeedRefresh: (FeedTab) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -238,7 +238,7 @@ private fun FeedScreen(
         snapshotFlow {
             FeedScrollState(
                 itemIndex = currentListState.firstVisibleItemIndex,
-                scrollOffset = currentListState.firstVisibleItemScrollOffset
+                scrollOffset = currentListState.firstVisibleItemScrollOffset,
             )
         }
             .pairwise()
@@ -257,12 +257,12 @@ private fun FeedScreen(
             .fillMaxSize()
             .statusBarColor(HilingualTheme.colors.white)
             .background(HilingualTheme.colors.white)
-            .padding(paddingValues)
+            .padding(paddingValues),
     ) {
         FeedTopAppBar(
             profileImageUrl = myProfileUrl,
             onProfileClick = onMyProfileClick,
-            onSearchClick = onSearchClick
+            onSearchClick = onSearchClick,
         )
 
         HilingualBasicTabRow(
@@ -272,16 +272,16 @@ private fun FeedScreen(
                 coroutineScope.launch {
                     pagerState.animateScrollToPage(it)
                 }
-            }
+            },
         )
 
         Box(
             modifier = Modifier
-                .weight(1f)
+                .weight(1f),
         ) {
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) { page ->
                 when (val tab = FeedTab.entries[page]) {
                     FeedTab.RECOMMEND -> FeedTab(
@@ -294,7 +294,7 @@ private fun FeedScreen(
                         onLikeClick = onLikeClick,
                         hasFollowing = true,
                         onUnpublishClick = onUnpublishClick,
-                        onReportClick = onReportClick
+                        onReportClick = onReportClick,
                     )
 
                     FeedTab.FOLLOWING -> FeedTab(
@@ -307,7 +307,7 @@ private fun FeedScreen(
                         onLikeClick = onLikeClick,
                         hasFollowing = hasFollowing,
                         onUnpublishClick = onUnpublishClick,
-                        onReportClick = onReportClick
+                        onReportClick = onReportClick,
                     )
                 }
             }
@@ -321,7 +321,7 @@ private fun FeedScreen(
                 },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(bottom = 24.dp, end = 16.dp)
+                    .padding(bottom = 24.dp, end = 16.dp),
             )
         }
     }
@@ -347,14 +347,14 @@ private fun FeedScreenPreview() {
             hasFollowing = false,
             recommendRefreshing = false,
             followingRefreshing = false,
-            onFeedRefresh = {}
+            onFeedRefresh = {},
         )
     }
 }
 
 private data class FeedScrollState(
     val itemIndex: Int,
-    val scrollOffset: Int
+    val scrollOffset: Int,
 ) {
     fun isScrollingDownFrom(previous: FeedScrollState?): Boolean {
         if (previous == null) return false

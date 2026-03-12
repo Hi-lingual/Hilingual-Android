@@ -21,7 +21,7 @@ import com.hilingual.data.onboarding.repository.OnboardingRepository
 import javax.inject.Inject
 
 class OnboardingRepositoryImpl @Inject constructor(
-    private val onboardingLocalDataSource: OnboardingLocalDataSource
+    private val onboardingLocalDataSource: OnboardingLocalDataSource,
 ) : OnboardingRepository {
     override suspend fun getIsHomeOnboardingCompleted(): Result<Boolean> =
         suspendRunCatching {
@@ -43,4 +43,3 @@ class OnboardingRepositoryImpl @Inject constructor(
             onboardingLocalDataSource.updateIsSplashOnboardingCompleted(isCompleted = true)
         }
 }
-

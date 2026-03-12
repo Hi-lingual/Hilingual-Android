@@ -27,5 +27,5 @@ data class VocaItemResponseDto(
     @SerialName("phraseType")
     val phraseType: List<String>,
     @SerialName("isBookmarked")
-    val isBookmarked: Boolean
+    val isBookmarked: Boolean,
 )

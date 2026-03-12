@@ -21,7 +21,7 @@ import java.time.LocalDate
 
 @Immutable
 data class DateUiModel(
-    val date: LocalDate
+    val date: LocalDate,
 ) {
     val isFuture: Boolean
         get() = date.isAfter(LocalDate.now())
@@ -34,5 +34,5 @@ data class DateUiModel(
 }
 
 internal fun DateModel.toState() = DateUiModel(
-    date = LocalDate.parse(this.date)
+    date = LocalDate.parse(this.date),
 )

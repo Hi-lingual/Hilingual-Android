@@ -31,7 +31,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 fun CloseOnlyTopAppBar(
     onCloseClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    iconTint: Color = HilingualTheme.colors.white
+    iconTint: Color = HilingualTheme.colors.white,
 ) {
     HilingualBasicTopAppBar(
         modifier = modifier,
@@ -40,10 +40,10 @@ fun CloseOnlyTopAppBar(
                 modifier = Modifier.noRippleClickable(onClick = onCloseClicked),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_close_24),
                 contentDescription = null,
-                tint = iconTint
+                tint = iconTint,
             )
         },
-        backgroundColor = Color.Transparent
+        backgroundColor = Color.Transparent,
     )
 }
 
@@ -52,7 +52,7 @@ fun CloseOnlyTopAppBar(
 private fun CloseOnlyTopAppBarPreview() {
     HilingualTheme {
         CloseOnlyTopAppBar(
-            onCloseClicked = {}
+            onCloseClicked = {},
         )
     }
 }

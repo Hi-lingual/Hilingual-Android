@@ -29,9 +29,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.picker.HilingualBasicPicker
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import java.time.YearMonth
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import java.time.YearMonth
 
 private val YEAR_RANGE = (2025..2100).map { "${it}년" }.toImmutableList()
 private val MONTH_RANGE = (1..12).map { "${it}월" }.toImmutableList()
@@ -47,14 +47,14 @@ fun HilingualYearMonthPicker(
     visibleItemsCount: Int = 3,
     itemSpacing: Dp = 10.dp,
     itemContentPadding: PaddingValues = PaddingValues(vertical = 16.dp, horizontal = 12.dp),
-    spacingBetweenPickers: Dp = 44.dp
+    spacingBetweenPickers: Dp = 44.dp,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = modifier
             .fillMaxWidth()
-            .background(HilingualTheme.colors.white)
+            .background(HilingualTheme.colors.white),
     ) {
         val yearStartIndex = yearItems.indexOf("${initialYearMonth.year}년")
         val monthStartIndex = monthItems.indexOf("${initialYearMonth.monthValue}월")
@@ -63,8 +63,8 @@ fun HilingualYearMonthPicker(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(
                 spacingBetweenPickers,
-                Alignment.CenterHorizontally
-            )
+                Alignment.CenterHorizontally,
+            ),
         ) {
             HilingualBasicPicker(
                 items = yearItems,
@@ -75,7 +75,7 @@ fun HilingualYearMonthPicker(
                 modifier = Modifier.width(89.dp),
                 itemContentPadding = itemContentPadding,
                 itemSpacing = itemSpacing,
-                visibleItemsCount = visibleItemsCount
+                visibleItemsCount = visibleItemsCount,
             )
 
             HilingualBasicPicker(
@@ -87,7 +87,7 @@ fun HilingualYearMonthPicker(
                 modifier = Modifier.width(54.dp),
                 itemContentPadding = itemContentPadding,
                 itemSpacing = itemSpacing,
-                visibleItemsCount = visibleItemsCount
+                visibleItemsCount = visibleItemsCount,
             )
         }
     }

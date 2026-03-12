@@ -28,19 +28,19 @@ import kotlinx.serialization.Serializable
 data object Onboarding : Route
 
 fun NavController.navigateToOnboarding(
-    navOptions: NavOptions? = null
+    navOptions: NavOptions? = null,
 ) {
     navigate(route = Onboarding, navOptions = navOptions)
 }
 
 fun NavGraphBuilder.onboardingNavGraph(
     paddingValues: PaddingValues,
-    navigateToAuth: () -> Unit
+    navigateToAuth: () -> Unit,
 ) {
     composable<Onboarding> {
         OnboardingRoute(
             paddingValues = paddingValues,
-            navigateToAuth = navigateToAuth
+            navigateToAuth = navigateToAuth,
         )
     }
 }

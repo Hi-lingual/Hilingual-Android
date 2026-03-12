@@ -37,17 +37,17 @@ internal fun FeedScreen(
     onRefresh: () -> Unit,
     listState: LazyListState,
     onNotificationClick: (FeedNotificationItemUiModel) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     HilingualPullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = onRefresh,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             state = listState,
-            verticalArrangement = if (notifications.isEmpty()) Arrangement.Center else Arrangement.Top
+            verticalArrangement = if (notifications.isEmpty()) Arrangement.Center else Arrangement.Top,
         ) {
             if (notifications.isEmpty()) {
                 item {
@@ -56,13 +56,13 @@ internal fun FeedScreen(
             } else {
                 items(
                     items = notifications,
-                    key = { it.id }
+                    key = { it.id },
                 ) { notification ->
                     NotificationItem(
                         title = notification.title,
                         date = notification.publishedAt,
                         isRead = notification.isRead,
-                        onClick = { onNotificationClick(notification) }
+                        onClick = { onNotificationClick(notification) },
                     )
                 }
             }

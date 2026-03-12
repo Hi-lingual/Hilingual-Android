@@ -21,5 +21,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UpdateProfileImageRequestDto(
     @SerialName("image")
-    val image: ImageRequestDto? = null
+    val image: ImageRequestDto? = null,
 )

@@ -25,5 +25,5 @@ data class UserLoginInfoResponseDto(
     @SerialName("nickname")
     val nickname: String,
     @SerialName("provider")
-    val provider: String
+    val provider: String,
 )

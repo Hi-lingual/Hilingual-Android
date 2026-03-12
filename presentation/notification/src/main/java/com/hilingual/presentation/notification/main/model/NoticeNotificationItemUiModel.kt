@@ -20,7 +20,7 @@ import com.hilingual.data.user.model.notification.NotificationModel
 
 enum class NoticeCategoryType {
     SYSTEM,
-    MARKETING
+    MARKETING,
 }
 
 @Stable
@@ -29,7 +29,7 @@ data class NoticeNotificationItemUiModel(
     val title: String,
     val isRead: Boolean,
     val publishedAt: String,
-    val noticeCategory: NoticeCategoryType
+    val noticeCategory: NoticeCategoryType,
 )
 
 internal fun NotificationModel.toNoticeStateOrNull(): NoticeNotificationItemUiModel? {
@@ -40,6 +40,6 @@ internal fun NotificationModel.toNoticeStateOrNull(): NoticeNotificationItemUiMo
         title = title,
         isRead = isRead,
         publishedAt = publishedAt,
-        noticeCategory = NoticeCategoryType.valueOf(currentCategory)
+        noticeCategory = NoticeCategoryType.valueOf(currentCategory),
     )
 }

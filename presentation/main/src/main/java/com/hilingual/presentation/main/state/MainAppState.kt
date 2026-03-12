@@ -53,7 +53,7 @@ internal class MainAppState(
     val navController: NavHostController,
     val dialogStateHolder: DialogStateHolder,
     coroutineScope: CoroutineScope,
-    networkMonitor: NetworkMonitor
+    networkMonitor: NetworkMonitor,
 ) {
     val startDestination = Splash
 
@@ -61,14 +61,14 @@ internal class MainAppState(
         .map(Boolean::not)
         .stateInWhileSubscribed(
             scope = coroutineScope,
-            initialValue = false
+            initialValue = false,
         )
 
     private val currentDestination = navController.currentBackStackEntryFlow
         .map { it.destination }
         .stateInWhileSubscribed(
             scope = coroutineScope,
-            initialValue = null
+            initialValue = null,
         )
 
     val currentTab: StateFlow<MainTab?> = currentDestination
@@ -79,7 +79,7 @@ internal class MainAppState(
         }
         .stateInWhileSubscribed(
             scope = coroutineScope,
-            initialValue = null
+            initialValue = null,
         )
 
     val isBottomBarVisible: StateFlow<Boolean> = currentDestination
@@ -90,7 +90,7 @@ internal class MainAppState(
         }
         .stateInWhileSubscribed(
             scope = coroutineScope,
-            initialValue = false
+            initialValue = false,
         )
 
     fun navigate(tab: MainTab) {
@@ -145,7 +145,7 @@ internal class MainAppState(
 
     fun navigateToDiaryFeedback(
         diaryId: Long,
-        navOptions: NavOptions? = null
+        navOptions: NavOptions? = null,
     ) {
         navController.navigateToDiaryFeedback(diaryId, navOptions)
     }
@@ -155,19 +155,19 @@ internal class MainAppState(
         mode: DiaryWriteMode,
         navOptions: NavOptions? = navOptions {
             launchSingleTop = true
-        }
+        },
     ) {
         navController.navigateToDiaryWrite(
             selectedDate = selectedDate,
             mode = mode,
-            navOptions = navOptions
+            navOptions = navOptions,
         )
     }
 
     fun navigateToNotification(
         navOptions: NavOptions = navOptions {
             launchSingleTop = true
-        }
+        },
     ) {
         navController.navigateToNotification(navOptions)
     }
@@ -175,7 +175,7 @@ internal class MainAppState(
     fun navigateToNotificationSetting(
         navOptions: NavOptions = navOptions {
             launchSingleTop = true
-        }
+        },
     ) {
         navController.navigateToNotificationSetting(navOptions)
     }
@@ -186,14 +186,14 @@ internal class MainAppState(
 
     fun navigateToFeedDiary(
         diaryId: Long,
-        navOptions: NavOptions? = null
+        navOptions: NavOptions? = null,
     ) {
         navController.navigateToFeedDiary(diaryId, navOptions)
     }
 
     fun navigateToFeedProfile(
         userId: Long,
-        navOptions: NavOptions? = null
+        navOptions: NavOptions? = null,
     ) {
         navController.navigateToFeedProfile(userId, navOptions)
     }
@@ -216,7 +216,7 @@ internal fun rememberMainAppState(
     networkMonitor: NetworkMonitor,
     navController: NavHostController = rememberNavController(),
     dialogStateHolder: DialogStateHolder = rememberDialogStateHolder(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ): MainAppState = remember(navController, dialogStateHolder, coroutineScope, networkMonitor) {
     MainAppState(navController, dialogStateHolder, coroutineScope, networkMonitor)
 }

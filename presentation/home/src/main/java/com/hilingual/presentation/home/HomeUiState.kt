@@ -22,15 +22,15 @@ import com.hilingual.presentation.home.model.TodayTopicUiModel
 import com.hilingual.presentation.home.model.UserProfileUiModel
 import com.hilingual.presentation.home.type.DiaryCardState
 import com.hilingual.presentation.home.type.NotificationPermissionState
+import java.time.LocalDate
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import java.time.LocalDate
 
 @Immutable
 data class HomeUiState(
     val header: HomeHeaderUiState = HomeHeaderUiState(),
     val calendar: HomeCalendarUiState = HomeCalendarUiState(),
-    val diaryContent: HomeDiaryUiState = HomeDiaryUiState()
+    val diaryContent: HomeDiaryUiState = HomeDiaryUiState(),
 ) {
     companion object {
         val Fake = HomeUiState(
@@ -40,8 +40,8 @@ data class HomeUiState(
                     profileImg = "",
                     totalDiaries = 12,
                     streak = 5,
-                    isNewAlarm = true
-                )
+                    isNewAlarm = true,
+                ),
             ),
             calendar = HomeCalendarUiState(
                 selectedDate = LocalDate.now(),
@@ -49,23 +49,23 @@ data class HomeUiState(
                     DateUiModel(date = LocalDate.of(2025, 9, 1)),
                     DateUiModel(date = LocalDate.of(2025, 9, 5)),
                     DateUiModel(date = LocalDate.of(2025, 9, 12)),
-                    DateUiModel(date = LocalDate.of(2025, 9, 23))
-                )
+                    DateUiModel(date = LocalDate.of(2025, 9, 23)),
+                ),
             ),
             diaryContent = HomeDiaryUiState(
                 diaryThumbnail = DiaryThumbnailUiModel(
                     diaryId = 1L,
                     imageUrl = null,
                     originalText = "오늘 날씨가 정말 좋았다. 그래서 산책을 나갔다.",
-                    isPublished = false
+                    isPublished = false,
                 ),
                 todayTopic = TodayTopicUiModel(
                     topicKo = "가장 좋아하는 계절은 무엇인가요?",
                     topicEn = "What is your favorite season?",
-                    remainingTime = -1
+                    remainingTime = -1,
                 ),
-                cardState = DiaryCardState.PAST
-            )
+                cardState = DiaryCardState.PAST,
+            ),
         )
     }
 }
@@ -73,17 +73,15 @@ data class HomeUiState(
 @Immutable
 data class HomeHeaderUiState(
     val userProfile: UserProfileUiModel = UserProfileUiModel(),
-    val notificationPermissionState: NotificationPermissionState = NotificationPermissionState.NOT_DETERMINED
+    val notificationPermissionState: NotificationPermissionState = NotificationPermissionState.NOT_DETERMINED,
 )
 
 @Immutable
 data class HomeCalendarUiState(
     val dates: ImmutableList<DateUiModel> = persistentListOf(),
-    val selectedDate: LocalDate = LocalDate.now()
+    val selectedDate: LocalDate = LocalDate.now(),
 ) {
-    fun selectDate(date: LocalDate): HomeCalendarUiState {
-        return copy(selectedDate = date)
-    }
+    fun selectDate(date: LocalDate): HomeCalendarUiState = copy(selectedDate = date)
 }
 
 @Immutable
@@ -91,14 +89,14 @@ data class HomeDiaryUiState(
     val isDiaryTempExist: Boolean = false,
     val diaryThumbnail: DiaryThumbnailUiModel? = null,
     val todayTopic: TodayTopicUiModel? = null,
-    val cardState: DiaryCardState = DiaryCardState.PAST
+    val cardState: DiaryCardState = DiaryCardState.PAST,
 ) {
     fun update(
         selectedDate: LocalDate,
         dates: List<DateUiModel>,
         fetchedThumbnail: DiaryThumbnailUiModel? = null,
         fetchedTopic: TodayTopicUiModel? = null,
-        isTempExist: Boolean = this.isDiaryTempExist
+        isTempExist: Boolean = this.isDiaryTempExist,
     ): HomeDiaryUiState {
         // Use Rich Model Logic
         val selectedDateModel = DateUiModel(selectedDate)
@@ -108,7 +106,7 @@ data class HomeDiaryUiState(
                 cardState = DiaryCardState.FUTURE,
                 diaryThumbnail = null,
                 todayTopic = null,
-                isDiaryTempExist = isTempExist
+                isDiaryTempExist = isTempExist,
             )
         }
 
@@ -118,7 +116,7 @@ data class HomeDiaryUiState(
                 cardState = DiaryCardState.WRITTEN,
                 diaryThumbnail = fetchedThumbnail,
                 todayTopic = null,
-                isDiaryTempExist = isTempExist
+                isDiaryTempExist = isTempExist,
             )
         }
 
@@ -133,7 +131,7 @@ data class HomeDiaryUiState(
                 cardState = topicState,
                 diaryThumbnail = null,
                 todayTopic = fetchedTopic,
-                isDiaryTempExist = isTempExist
+                isDiaryTempExist = isTempExist,
             )
         }
 
@@ -141,7 +139,7 @@ data class HomeDiaryUiState(
             cardState = DiaryCardState.PAST,
             diaryThumbnail = null,
             todayTopic = null,
-            isDiaryTempExist = isTempExist
+            isDiaryTempExist = isTempExist,
         )
     }
 }

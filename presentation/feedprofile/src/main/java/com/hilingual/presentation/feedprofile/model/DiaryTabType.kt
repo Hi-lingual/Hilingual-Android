@@ -17,5 +17,5 @@ package com.hilingual.presentation.feedprofile.model
 
 internal enum class DiaryTabType {
     SHARED,
-    LIKED
+    LIKED,
 }

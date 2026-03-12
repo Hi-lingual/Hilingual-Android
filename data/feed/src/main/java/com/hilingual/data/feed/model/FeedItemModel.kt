@@ -19,7 +19,7 @@ import com.hilingual.data.feed.dto.response.FeedItemDto
 
 data class FeedItemModel(
     val profile: FeedItemProfileModel,
-    val diary: FeedItemDiaryModel
+    val diary: FeedItemDiaryModel,
 )
 
 data class FeedItemProfileModel(
@@ -27,7 +27,7 @@ data class FeedItemProfileModel(
     val isMine: Boolean,
     val profileImg: String?,
     val nickname: String,
-    val streak: Int
+    val streak: Int,
 )
 
 data class FeedItemDiaryModel(
@@ -36,7 +36,7 @@ data class FeedItemDiaryModel(
     val likeCount: Int,
     val isLiked: Boolean,
     val diaryImg: String?,
-    val originalText: String
+    val originalText: String,
 )
 
 internal fun FeedItemDto.toModel(): FeedItemModel = FeedItemModel(
@@ -46,7 +46,7 @@ internal fun FeedItemDto.toModel(): FeedItemModel = FeedItemModel(
             isMine = this.isMine,
             profileImg = this.profileImg,
             nickname = this.nickname,
-            streak = this.streak
+            streak = this.streak,
         )
     },
     diary = with(this.diary) {
@@ -56,7 +56,7 @@ internal fun FeedItemDto.toModel(): FeedItemModel = FeedItemModel(
             likeCount = this.likeCount,
             isLiked = this.isLiked,
             diaryImg = this.diaryImg,
-            originalText = this.originalText
+            originalText = this.originalText,
         )
-    }
+    },
 )

@@ -32,13 +32,13 @@ private val TITLES = persistentListOf("팔로워", "팔로잉")
 internal fun FollowTabRow(
     tabIndex: Int,
     onTabSelected: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     HilingualBasicTabRow(
         tabTitles = TITLES,
         tabIndex = tabIndex,
         onTabSelected = onTabSelected,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -49,7 +49,7 @@ private fun FollowTapRowPreview() {
         var selectedTabIndex by remember { mutableIntStateOf(0) }
         FollowTabRow(
             tabIndex = selectedTabIndex,
-            onTabSelected = { selectedTabIndex = it }
+            onTabSelected = { selectedTabIndex = it },
         )
     }
 }

@@ -44,7 +44,7 @@ fun HilingualBasicToggleSwitch(
     height: Dp = 28.dp,
     checkedTrackColor: Color = HilingualTheme.colors.hilingualOrange,
     uncheckedTrackColor: Color = HilingualTheme.colors.gray300,
-    gapBetweenThumbAndTrackEdge: Dp = 2.dp
+    gapBetweenThumbAndTrackEdge: Dp = 2.dp,
 ) {
     val halfHeight = height / 2
     val thumbRadius = halfHeight - gapBetweenThumbAndTrackEdge
@@ -61,7 +61,7 @@ fun HilingualBasicToggleSwitch(
     }
 
     val animatePosition by animateFloatAsState(
-        targetValue = targetPosition
+        targetValue = targetPosition,
     )
 
     Canvas(
@@ -71,12 +71,12 @@ fun HilingualBasicToggleSwitch(
                 value = isChecked,
                 onValueChange = { onCheckedChange(it) },
                 indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            )
+                interactionSource = remember { MutableInteractionSource() },
+            ),
     ) {
         drawRoundRect( // Track
             color = if (isChecked) checkedTrackColor else uncheckedTrackColor,
-            cornerRadius = CornerRadius(x = halfHeight.toPx(), y = halfHeight.toPx())
+            cornerRadius = CornerRadius(x = halfHeight.toPx(), y = halfHeight.toPx()),
         )
 
         drawCircle( // Thumb
@@ -84,8 +84,8 @@ fun HilingualBasicToggleSwitch(
             radius = thumbRadius.toPx(),
             center = Offset(
                 x = animatePosition,
-                y = size.height / 2
-            )
+                y = size.height / 2,
+            ),
         )
     }
 }
@@ -98,7 +98,7 @@ private fun ToggleSwitchPreview() {
 
         HilingualBasicToggleSwitch(
             isChecked = isChecked,
-            onCheckedChange = { isChecked = it }
+            onCheckedChange = { isChecked = it },
         )
     }
 }

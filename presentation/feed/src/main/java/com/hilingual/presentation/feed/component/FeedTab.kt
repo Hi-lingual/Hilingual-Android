@@ -55,17 +55,18 @@ internal fun FeedTab(
     onUnpublishClick: (diaryId: Long) -> Unit,
     onReportClick: () -> Unit,
     modifier: Modifier = Modifier,
-    hasFollowing: Boolean = true
+    hasFollowing: Boolean = true,
 ) {
     when (val state = feedListState) {
         is UiState.Loading -> HilingualLoadingIndicator()
+
         is UiState.Success -> {
             val feedList = state.data
 
             HilingualPullToRefreshBox(
                 isRefreshing = isRefreshing,
                 onRefresh = onRefresh,
-                modifier = modifier.fillMaxSize()
+                modifier = modifier.fillMaxSize(),
             ) {
                 LazyColumn(
                     state = listState,
@@ -73,16 +74,20 @@ internal fun FeedTab(
                     modifier = Modifier
                         .background(HilingualTheme.colors.white)
                         .fillMaxSize()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 16.dp),
                 ) {
                     if (feedList.isEmpty()) {
                         item {
                             Column(
-                                modifier = Modifier.fillParentMaxSize()
+                                modifier = Modifier.fillParentMaxSize(),
                             ) {
                                 Spacer(Modifier.weight(16f))
                                 FeedEmptyCard(
-                                    type = if (hasFollowing) FeedEmptyCardType.NOT_FEED else FeedEmptyCardType.NOT_FOLLOWING
+                                    type = if (hasFollowing) {
+                                        FeedEmptyCardType.NOT_FEED
+                                    } else {
+                                        FeedEmptyCardType.NOT_FOLLOWING
+                                    },
                                 )
                                 Spacer(Modifier.weight(30f))
                             }
@@ -90,7 +95,7 @@ internal fun FeedTab(
                     } else {
                         itemsIndexed(
                             items = feedList,
-                            key = { _, feed -> feed.diaryId }
+                            key = { _, feed -> feed.diaryId },
                         ) { index, feed ->
                             with(feed) {
                                 FeedCard(
@@ -107,14 +112,14 @@ internal fun FeedTab(
                                     onLikeClick = { onLikeClick(diaryId, !isLiked) },
                                     isMine = isMine,
                                     onUnpublishClick = { onUnpublishClick(diaryId) },
-                                    onReportClick = onReportClick
+                                    onReportClick = onReportClick,
                                 )
                             }
 
                             if (index != feedList.lastIndex) {
                                 HorizontalDivider(
                                     color = HilingualTheme.colors.gray100,
-                                    thickness = 1.dp
+                                    thickness = 1.dp,
                                 )
                             }
                         }
@@ -122,6 +127,7 @@ internal fun FeedTab(
                 }
             }
         }
+
         else -> {}
     }
 }
@@ -143,7 +149,7 @@ private fun FeedTabScreenPreview() {
                     diaryId = 1,
                     likeCount = 120,
                     isLiked = false,
-                    isMine = true
+                    isMine = true,
                 ),
                 FeedItemUiModel(
                     userId = 2,
@@ -156,9 +162,9 @@ private fun FeedTabScreenPreview() {
                     diaryId = 2,
                     likeCount = 75,
                     isLiked = true,
-                    isMine = false
-                )
-            )
+                    isMine = false,
+                ),
+            ),
         )
     }
 
@@ -174,7 +180,7 @@ private fun FeedTabScreenPreview() {
             onUnpublishClick = { },
             onReportClick = { },
             hasFollowing = true,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }

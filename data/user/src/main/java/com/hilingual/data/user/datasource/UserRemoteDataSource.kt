@@ -32,17 +32,17 @@ interface UserRemoteDataSource {
     suspend fun postUserProfile(
         nickname: String,
         adAlarmAgree: Boolean,
-        fileKey: String?
+        fileKey: String?,
     ): BaseResponse<Unit>
 
     suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto>
 
     suspend fun getFollowers(
-        targetUserId: Long
+        targetUserId: Long,
     ): BaseResponse<FollowerResponseDto>
 
     suspend fun getFollowings(
-        targetUserId: Long
+        targetUserId: Long,
     ): BaseResponse<FollowingResponseDto>
 
     suspend fun getUserLoginInfo(): BaseResponse<UserLoginInfoResponseDto>
@@ -54,11 +54,11 @@ interface UserRemoteDataSource {
     suspend fun deleteBlockUser(targetUserId: Long): BaseResponse<Unit>
 
     suspend fun putFollow(
-        targetUserId: Long
+        targetUserId: Long,
     ): BaseResponse<Unit>
 
     suspend fun deleteFollow(
-        targetUserId: Long
+        targetUserId: Long,
     ): BaseResponse<Unit>
 
     suspend fun getNotifications(tab: String): BaseResponse<List<NotificationResponseDto>>

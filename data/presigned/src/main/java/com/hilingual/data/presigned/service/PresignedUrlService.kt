@@ -24,6 +24,6 @@ import retrofit2.http.POST
 interface PresignedUrlService {
     @POST("/api/v1/presigned-urls")
     suspend fun getPresignedUrl(
-        @Body request: PresignedUrlRequestDto
+        @Body request: PresignedUrlRequestDto,
     ): BaseResponse<PresignedUrlResponseDto>
 }

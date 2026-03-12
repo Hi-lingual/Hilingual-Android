@@ -24,7 +24,7 @@ import javax.inject.Inject
 import kotlin.system.exitProcess
 
 class AppRestarterImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
 ) : AppRestarter {
 
     override fun restartApp() {

@@ -21,5 +21,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FollowerResponseDto(
     @SerialName("followerList")
-    val userList: List<UserItemDto>
+    val userList: List<UserItemDto>,
 )

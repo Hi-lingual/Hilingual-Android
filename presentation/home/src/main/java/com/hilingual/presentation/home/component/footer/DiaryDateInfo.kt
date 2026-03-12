@@ -35,7 +35,7 @@ internal fun DiaryDateInfo(
     selectedDate: LocalDate,
     isWritten: Boolean,
     isPublished: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val formattedDate = remember(selectedDate) {
         selectedDate.toKoreanFullDate()
@@ -55,24 +55,24 @@ internal fun DiaryDateInfo(
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Text(
             text = formattedDate,
             style = HilingualTheme.typography.headSB16,
-            color = HilingualTheme.colors.black
+            color = HilingualTheme.colors.black,
         )
 
         Text(
             text = "·",
             style = HilingualTheme.typography.captionR12,
-            color = HilingualTheme.colors.gray300
+            color = HilingualTheme.colors.gray300,
         )
 
         Text(
             text = diaryStatusText,
             style = HilingualTheme.typography.captionR12,
-            color = diaryStatusColor
+            color = diaryStatusColor,
         )
     }
 }
@@ -80,7 +80,7 @@ internal fun DiaryDateInfo(
 private data class DateDiaryInfoPreviewState(
     val date: LocalDate,
     val isWritten: Boolean,
-    val isPublished: Boolean
+    val isPublished: Boolean,
 )
 
 private class DateDiaryInfoPreviewProvider : PreviewParameterProvider<DateDiaryInfoPreviewState> {
@@ -91,26 +91,26 @@ private class DateDiaryInfoPreviewProvider : PreviewParameterProvider<DateDiaryI
         DateDiaryInfoPreviewState(
             LocalDate.now().plusDays(1),
             isWritten = false,
-            isPublished = false
+            isPublished = false,
         ),
         DateDiaryInfoPreviewState(
             LocalDate.now().minusDays(1),
             isWritten = false,
-            isPublished = false
-        )
+            isPublished = false,
+        ),
     )
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun DateDiaryInfoPreview(
-    @PreviewParameter(DateDiaryInfoPreviewProvider::class) state: DateDiaryInfoPreviewState
+    @PreviewParameter(DateDiaryInfoPreviewProvider::class) state: DateDiaryInfoPreviewState,
 ) {
     HilingualTheme {
         DiaryDateInfo(
             selectedDate = state.date,
             isWritten = state.isWritten,
-            isPublished = state.isPublished
+            isPublished = state.isPublished,
         )
     }
 }

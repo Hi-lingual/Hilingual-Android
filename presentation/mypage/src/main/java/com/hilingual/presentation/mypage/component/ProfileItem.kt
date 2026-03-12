@@ -35,7 +35,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 internal fun ProfileItem(
     label: String,
     value: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
@@ -43,23 +43,23 @@ internal fun ProfileItem(
             .border(
                 width = 1.dp,
                 color = HilingualTheme.colors.gray200,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
             )
             .background(HilingualTheme.colors.white, shape = RoundedCornerShape(8.dp))
             .padding(horizontal = 20.dp, vertical = 18.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             text = label,
             color = HilingualTheme.colors.black,
-            style = HilingualTheme.typography.bodyM16
+            style = HilingualTheme.typography.bodyM16,
         )
 
         Text(
             text = value,
             color = HilingualTheme.colors.gray500,
-            style = HilingualTheme.typography.bodyR16
+            style = HilingualTheme.typography.bodyR16,
         )
     }
 }
@@ -69,7 +69,7 @@ internal fun ProfileItem(
 private fun ProfileItemPreview() {
     HilingualTheme {
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             ProfileItem(label = "닉네임", value = "내 닉네임")
             ProfileItem(label = "연결된 소셜 계정", value = "구글 로그인")

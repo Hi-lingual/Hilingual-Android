@@ -25,5 +25,5 @@ data class NotificationDetailResponseDto(
     @SerialName("createdAt")
     val createdAt: String,
     @SerialName("content")
-    val content: String
+    val content: String,
 )

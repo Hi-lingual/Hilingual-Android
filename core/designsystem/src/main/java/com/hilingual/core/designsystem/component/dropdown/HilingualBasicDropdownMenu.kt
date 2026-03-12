@@ -62,7 +62,7 @@ fun HilingualBasicDropdownMenu(
     modifier: Modifier = Modifier,
     offsetY: Dp = 4.dp,
     iconSize: Dp = 24.dp,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     var iconHeight by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
@@ -79,14 +79,14 @@ fun HilingualBasicDropdownMenu(
                 .onGloballyPositioned { coordinates ->
                     iconHeight = coordinates.size.height
                 }
-                .noRippleClickable(onClick = { onExpandedChange(!isExpanded) })
+                .noRippleClickable(onClick = { onExpandedChange(!isExpanded) }),
         )
 
         if (isExpanded) {
             Popup(
                 alignment = Alignment.TopEnd,
                 onDismissRequest = { onExpandedChange(false) },
-                offset = IntOffset(x = 0, y = iconHeight + popupYOffset)
+                offset = IntOffset(x = 0, y = iconHeight + popupYOffset),
             ) {
                 Column(
                     modifier = modifier
@@ -97,11 +97,11 @@ fun HilingualBasicDropdownMenu(
                             offsetX = 0.dp,
                             offsetY = 0.dp,
                             spread = 0.dp,
-                            blur = 15.dp
+                            blur = 15.dp,
                         )
                         .clip(RoundedCornerShape(size = 10.dp))
                         .background(color = Color.White)
-                        .width(182.dp)
+                        .width(182.dp),
                 ) {
                     content()
                 }
@@ -116,7 +116,7 @@ fun HilingualDropdownMenuItem(
     @DrawableRes iconResId: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    textColor: Color = HilingualTheme.colors.gray700
+    textColor: Color = HilingualTheme.colors.gray700,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -124,19 +124,19 @@ fun HilingualDropdownMenuItem(
         modifier = modifier
             .clickable(onClick = onClick)
             .padding(12.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(iconResId),
             tint = Color.Unspecified,
             contentDescription = null,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(24.dp),
         )
 
         Text(
             text = text,
             style = HilingualTheme.typography.bodyM14,
-            color = textColor
+            color = textColor,
         )
     }
 }
@@ -153,35 +153,35 @@ private fun DropdownMenuPreview() {
             horizontalAlignment = Alignment.End,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(16.dp),
         ) {
             HilingualBasicDropdownMenu( // Option1
                 isExpanded = expanded1,
-                onExpandedChange = { expanded1 = it }
+                onExpandedChange = { expanded1 = it },
             ) {
                 HilingualDropdownMenuItem(
                     text = "비공개하기",
                     iconResId = R.drawable.ic_hide_24,
                     onClick = {
                         expanded1 = false
-                    }
+                    },
                 )
             }
 
             HilingualBasicDropdownMenu( // Option2
                 isExpanded = expanded2,
-                onExpandedChange = { expanded2 = it }
+                onExpandedChange = { expanded2 = it },
             ) {
                 HilingualDropdownMenuItem(
                     text = "비공개하기",
                     iconResId = R.drawable.ic_hide_24,
                     onClick = {
                         expanded2 = false
-                    }
+                    },
                 )
                 HorizontalDivider(
                     thickness = 1.dp,
-                    color = HilingualTheme.colors.gray200
+                    color = HilingualTheme.colors.gray200,
                 )
                 HilingualDropdownMenuItem(
                     text = "삭제하기",
@@ -189,7 +189,7 @@ private fun DropdownMenuPreview() {
                     onClick = {
                         expanded2 = false
                     },
-                    textColor = HilingualTheme.colors.alertRed
+                    textColor = HilingualTheme.colors.alertRed,
                 )
             }
         }

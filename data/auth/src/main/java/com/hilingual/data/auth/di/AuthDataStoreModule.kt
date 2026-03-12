@@ -22,11 +22,11 @@ object AuthDataStoreModule {
     @Singleton
     @TokenDataStore
     fun provideTokenDataStore(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): DataStore<TokenPreferences> = DataStoreBuilder.createEncryptedDataStore(
         context = context,
         fileName = ENCRYPTED_USER_PREFS,
         kSerializer = TokenPreferences.serializer(),
-        defaultValue = TokenPreferences()
+        defaultValue = TokenPreferences(),
     )
 }

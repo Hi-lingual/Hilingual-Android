@@ -46,7 +46,7 @@ internal fun DiaryListScreen(
     onUnpublishClick: (diaryId: Long) -> Unit,
     onReportClick: () -> Unit,
     modifier: Modifier = Modifier,
-    listState: LazyListState = rememberLazyListState()
+    listState: LazyListState = rememberLazyListState(),
 ) {
     LazyColumn(
         state = listState,
@@ -54,12 +54,12 @@ internal fun DiaryListScreen(
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp),
     ) {
         if (diaries.isEmpty()) {
             item {
                 Column(
-                    modifier = Modifier.fillParentMaxSize()
+                    modifier = Modifier.fillParentMaxSize(),
                 ) {
                     Spacer(modifier = Modifier.weight(140f))
                     FeedEmptyCard(type = emptyCardType)
@@ -69,7 +69,7 @@ internal fun DiaryListScreen(
         } else {
             itemsIndexed(
                 items = diaries,
-                key = { _, diary -> diary.diaryId }
+                key = { _, diary -> diary.diaryId },
             ) { index, diary ->
                 with(diary) {
                     FeedCard(
@@ -86,14 +86,14 @@ internal fun DiaryListScreen(
                         onLikeClick = { onLikeClick(diaryId, !isLiked) },
                         isMine = isMine,
                         onUnpublishClick = { onUnpublishClick(diaryId) },
-                        onReportClick = onReportClick
+                        onReportClick = onReportClick,
                     )
                 }
 
                 if (index < diaries.lastIndex) {
                     HorizontalDivider(
                         thickness = 1.dp,
-                        color = HilingualTheme.colors.gray100
+                        color = HilingualTheme.colors.gray100,
                     )
                 }
             }

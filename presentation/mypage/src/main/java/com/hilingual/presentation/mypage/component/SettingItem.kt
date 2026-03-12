@@ -43,20 +43,20 @@ internal fun SettingItem(
     title: String,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
-    trailingContent: @Composable () -> Unit = {}
+    trailingContent: @Composable () -> Unit = {},
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .then(if (onClick != null) Modifier.noRippleClickable(onClick = onClick) else Modifier)
             .padding(vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             modifier = Modifier.size(24.dp),
             imageVector = ImageVector.vectorResource(iconRes),
             contentDescription = null,
-            tint = HilingualTheme.colors.gray700
+            tint = HilingualTheme.colors.gray700,
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -64,7 +64,7 @@ internal fun SettingItem(
         Text(
             text = title,
             color = HilingualTheme.colors.gray700,
-            style = HilingualTheme.typography.bodyR14
+            style = HilingualTheme.typography.bodyR14,
 
         )
 
@@ -79,7 +79,7 @@ internal fun SettingItem(
 private fun SettingItemPreview() {
     HilingualTheme {
         Column(
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             SettingItem(
                 iconRes = DesignSystemR.drawable.ic_alarm_28,
@@ -91,10 +91,10 @@ private fun SettingItemPreview() {
                             .padding(4.dp),
                         imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_arrow_right_16_bold),
                         contentDescription = null,
-                        tint = HilingualTheme.colors.gray400
+                        tint = HilingualTheme.colors.gray400,
                     )
                 },
-                onClick = { println("SettingItem Clicked in Preview") }
+                onClick = { println("SettingItem Clicked in Preview") },
             )
             SettingItem(
                 iconRes = DesignSystemR.drawable.ic_info_24,
@@ -104,13 +104,13 @@ private fun SettingItemPreview() {
                         text = "1.01.01",
                         color = HilingualTheme.colors.gray400,
                         style = HilingualTheme.typography.bodyR14,
-                        modifier = Modifier.padding(end = 4.dp)
+                        modifier = Modifier.padding(end = 4.dp),
                     )
-                }
+                },
             )
             SettingItem(
                 iconRes = DesignSystemR.drawable.ic_logout_24,
-                title = "로그아웃"
+                title = "로그아웃",
             )
         }
     }

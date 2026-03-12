@@ -21,5 +21,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LikeRequestDto(
     @SerialName("isLiked")
-    val isLiked: Boolean
+    val isLiked: Boolean,
 )

@@ -22,6 +22,6 @@ interface FileUploaderRemoteDataSource {
     suspend fun uploadFile(
         uploadUrl: String,
         contentType: String,
-        file: RequestBody
+        file: RequestBody,
     ): Response<Unit>
 }

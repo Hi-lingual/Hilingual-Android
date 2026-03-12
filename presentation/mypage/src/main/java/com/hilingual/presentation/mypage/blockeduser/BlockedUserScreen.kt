@@ -60,7 +60,7 @@ internal fun BlockedUserRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToProfile: (Long) -> Unit,
-    viewModel: BlockedUserViewModel = hiltViewModel()
+    viewModel: BlockedUserViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
@@ -82,7 +82,7 @@ internal fun BlockedUserRoute(
                 onBackClick = navigateUp,
                 blockedUserList = state.data,
                 onUserProfileClick = navigateToProfile,
-                onButtonClick = viewModel::onUnblockStatusChanged
+                onButtonClick = viewModel::onUnblockStatusChanged,
             )
         }
 
@@ -96,18 +96,18 @@ private fun BlockedUserScreen(
     onBackClick: () -> Unit,
     blockedUserList: ImmutableList<BlockedUserUiModel>,
     onUserProfileClick: (Long) -> Unit,
-    onButtonClick: (Long) -> Unit
+    onButtonClick: (Long) -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .statusBarColor(HilingualTheme.colors.white)
             .background(HilingualTheme.colors.white)
-            .padding(paddingValues)
+            .padding(paddingValues),
     ) {
         BackTopAppBar(
             title = "차단한 유저",
-            onBackClicked = onBackClick
+            onBackClicked = onBackClick,
         )
 
         if (blockedUserList.isEmpty()) {
@@ -116,31 +116,31 @@ private fun BlockedUserScreen(
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
 
             ) {
                 Image(
                     modifier = Modifier
                         .size(width = 200.dp, height = 140.dp),
                     painter = painterResource(id = R.drawable.img_search),
-                    contentDescription = null
+                    contentDescription = null,
                 )
                 Text(
                     text = "차단된 계정이 없습니다.",
                     style = HilingualTheme.typography.headR18,
                     color = HilingualTheme.colors.gray500,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             }
         } else {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 16.dp),
             ) {
                 items(
                     items = blockedUserList,
-                    key = { it.userId }
+                    key = { it.userId },
                 ) { blockedUser ->
                     with(blockedUser) {
                         UserActionItem(
@@ -150,7 +150,7 @@ private fun BlockedUserScreen(
                             isFilled = !isBlocked,
                             buttonText = if (isBlocked) "차단 해제" else "차단",
                             onProfileClick = onUserProfileClick,
-                            onButtonClick = onButtonClick
+                            onButtonClick = onButtonClick,
                         )
                     }
                 }
@@ -168,7 +168,7 @@ private fun BlockedUserScreenEmptyPreview() {
             onBackClick = {},
             blockedUserList = persistentListOf(),
             onUserProfileClick = {},
-            onButtonClick = {}
+            onButtonClick = {},
         )
     }
 }
@@ -183,29 +183,29 @@ private fun BlockedUserScreenWithDataPreview() {
                     BlockedUserUiModel(
                         userId = 1L,
                         profileImageUrl = "",
-                        nickname = "사과"
+                        nickname = "사과",
                     ),
                     BlockedUserUiModel(
                         userId = 2L,
                         profileImageUrl = "",
-                        nickname = "바나나"
+                        nickname = "바나나",
                     ),
                     BlockedUserUiModel(
                         userId = 3L,
                         profileImageUrl = "",
-                        nickname = "오렌지"
+                        nickname = "오렌지",
                     ),
                     BlockedUserUiModel(
                         userId = 4L,
                         profileImageUrl = "https://picsum.photos/42/42?random=1",
-                        nickname = "딸기"
+                        nickname = "딸기",
                     ),
                     BlockedUserUiModel(
                         userId = 5L,
                         profileImageUrl = "",
-                        nickname = "포도"
-                    )
-                )
+                        nickname = "포도",
+                    ),
+                ),
             )
         }
 
@@ -218,7 +218,7 @@ private fun BlockedUserScreenWithDataPreview() {
                 sampleBlockedUsers = sampleBlockedUsers.map { user ->
                     if (user.userId == userId) user.copy(isBlocked = !user.isBlocked) else user
                 }.toPersistentList()
-            }
+            },
         )
     }
 }

@@ -37,7 +37,7 @@ internal fun NotificationDetailContent(
     title: String,
     date: String,
     content: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val textState = rememberRichTextState()
     val colors = HilingualTheme.colors
@@ -50,35 +50,35 @@ internal fun NotificationDetailContent(
 
     Column(
         modifier = modifier
-            .background(HilingualTheme.colors.white)
+            .background(HilingualTheme.colors.white),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
                 text = title,
                 style = HilingualTheme.typography.headSB20,
-                color = HilingualTheme.colors.black
+                color = HilingualTheme.colors.black,
             )
             Text(
                 text = date,
                 style = HilingualTheme.typography.bodyR14,
-                color = HilingualTheme.colors.gray300
+                color = HilingualTheme.colors.gray300,
             )
         }
         HorizontalDivider(
             thickness = 1.dp,
-            color = HilingualTheme.colors.gray100
+            color = HilingualTheme.colors.gray100,
         )
 
         RichText(
             state = textState,
             modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp),
             style = HilingualTheme.typography.bodyR14,
-            color = HilingualTheme.colors.gray850
+            color = HilingualTheme.colors.gray850,
         )
     }
 }
@@ -110,7 +110,7 @@ private fun NotificationDetailContentPreview() {
                         2. `inline code`와 같은 코드 스니펫 작동합니다.
 
                         감사합니다.
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 }

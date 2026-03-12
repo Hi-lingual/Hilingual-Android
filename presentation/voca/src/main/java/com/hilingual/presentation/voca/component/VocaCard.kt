@@ -51,7 +51,7 @@ internal fun VocaCard(
     onCardClick: () -> Unit,
     isBookmarked: Boolean,
     onBookmarkClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
@@ -60,16 +60,16 @@ internal fun VocaCard(
             .clip(RoundedCornerShape(8.dp))
             .background(
                 color = HilingualTheme.colors.white,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
             )
-            .padding(12.dp)
+            .padding(12.dp),
     ) {
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
 
             ) {
                 phraseType.forEach { type ->
@@ -81,7 +81,7 @@ internal fun VocaCard(
             Text(
                 text = phrase,
                 style = HilingualTheme.typography.bodyR17,
-                color = HilingualTheme.colors.black
+                color = HilingualTheme.colors.black,
             )
         }
         Icon(
@@ -90,11 +90,11 @@ internal fun VocaCard(
                     DesignSystemR.drawable.ic_save_28_filled
                 } else {
                     DesignSystemR.drawable.ic_save_28_empty
-                }
+                },
             ),
             contentDescription = null,
             modifier = Modifier.noRippleClickable(onClick = onBookmarkClick),
-            tint = Color.Unspecified
+            tint = Color.Unspecified,
         )
     }
 }
@@ -109,7 +109,7 @@ private fun VocaCardPreview() {
             phraseType = persistentListOf("동사", "숙어"),
             onCardClick = {},
             isBookmarked = isBookmarked,
-            onBookmarkClick = { isBookmarked = !isBookmarked }
+            onBookmarkClick = { isBookmarked = !isBookmarked },
         )
     }
 }

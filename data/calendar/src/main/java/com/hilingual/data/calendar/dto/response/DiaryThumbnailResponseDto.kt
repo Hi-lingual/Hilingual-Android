@@ -27,5 +27,5 @@ data class DiaryThumbnailResponseDto(
     @SerialName("originalText")
     val originalText: String,
     @SerialName("isPublished")
-    val isPublished: Boolean
+    val isPublished: Boolean,
 )

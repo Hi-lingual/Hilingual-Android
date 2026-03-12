@@ -28,24 +28,24 @@ import kotlinx.serialization.Serializable
 data object Auth : Route
 
 fun NavController.navigateToAuth(
-    navOptions: NavOptions? = null
+    navOptions: NavOptions? = null,
 ) {
     navigate(
         route = Auth,
-        navOptions = navOptions
+        navOptions = navOptions,
     )
 }
 
 fun NavGraphBuilder.authNavGraph(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
-    navigateToSignUp: () -> Unit
+    navigateToSignUp: () -> Unit,
 ) {
     composable<Auth> {
         AuthRoute(
             paddingValues = paddingValues,
             navigateToHome = navigateToHome,
-            navigateToSignUp = navigateToSignUp
+            navigateToSignUp = navigateToSignUp,
         )
     }
 }

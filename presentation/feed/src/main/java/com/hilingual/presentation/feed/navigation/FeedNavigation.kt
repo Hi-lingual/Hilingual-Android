@@ -37,20 +37,20 @@ data object Feed : MainTabRoute
 internal data object FeedSearch : Route
 
 fun NavController.navigateToFeed(
-    navOptions: NavOptions? = null
+    navOptions: NavOptions? = null,
 ) {
     navigate(
         route = FeedGraph,
-        navOptions = navOptions
+        navOptions = navOptions,
     )
 }
 
 private fun NavController.navigateToFeedSearch(
-    navOptions: NavOptions? = null
+    navOptions: NavOptions? = null,
 ) {
     navigate(
         route = FeedSearch,
-        navOptions = navOptions
+        navOptions = navOptions,
     )
 }
 
@@ -59,10 +59,10 @@ fun NavGraphBuilder.feedNavGraph(
     navController: NavController,
     navigateToFeedDiary: (Long) -> Unit,
     navigateToMyFeedProfile: (showLikedDiaries: Boolean) -> Unit,
-    navigateToFeedProfile: (Long) -> Unit
+    navigateToFeedProfile: (Long) -> Unit,
 ) {
     navigation<FeedGraph>(
-        startDestination = Feed
+        startDestination = Feed,
     ) {
         composable<Feed> {
             FeedRoute(
@@ -70,7 +70,7 @@ fun NavGraphBuilder.feedNavGraph(
                 navigateToFeedDiary = navigateToFeedDiary,
                 navigateToFeedSearch = navController::navigateToFeedSearch,
                 navigateToMyFeedProfile = navigateToMyFeedProfile,
-                navigateToFeedProfile = navigateToFeedProfile
+                navigateToFeedProfile = navigateToFeedProfile,
             )
         }
 
@@ -78,7 +78,7 @@ fun NavGraphBuilder.feedNavGraph(
             FeedSearchRoute(
                 paddingValues = paddingValues,
                 navigateUp = navController::navigateUp,
-                navigateToFeedProfile = navigateToFeedProfile
+                navigateToFeedProfile = navigateToFeedProfile,
             )
         }
     }

@@ -32,12 +32,12 @@ internal abstract class DataSourceModule {
     @Binds
     @Singleton
     abstract fun bindsUserRemoteDataSource(
-        userRemoteDataSourceImpl: UserRemoteDataSourceImpl
+        userRemoteDataSourceImpl: UserRemoteDataSourceImpl,
     ): UserRemoteDataSource
 
     @Binds
     @Singleton
     abstract fun bindsUserLocalDataSource(
-        userLocalDataSourceImpl: UserLocalDataSourceImpl
+        userLocalDataSourceImpl: UserLocalDataSourceImpl,
     ): UserLocalDataSource
 }

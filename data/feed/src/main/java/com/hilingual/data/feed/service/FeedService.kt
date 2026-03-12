@@ -33,17 +33,17 @@ import retrofit2.http.Query
 interface FeedService {
     @GET("/api/v1/feed/profiles/{targetUserId}")
     suspend fun getFeedProfile(
-        @Path("targetUserId") targetUserId: Long
+        @Path("targetUserId") targetUserId: Long,
     ): BaseResponse<FeedProfileResponseDto>
 
     @GET("/api/v1/feed/profiles/{targetUserId}/diaries/shared")
     suspend fun getSharedDiaries(
-        @Path("targetUserId") targetUserId: Long
+        @Path("targetUserId") targetUserId: Long,
     ): BaseResponse<SharedDiariesResponseDto>
 
     @GET("/api/v1/feed/profiles/{targetUserId}/diaries/liked")
     suspend fun getLikedDiaries(
-        @Path("targetUserId") targetUserId: Long
+        @Path("targetUserId") targetUserId: Long,
     ): BaseResponse<LikedDiariesResponseDto>
 
     @GET("/api/v1/feed/recommend")
@@ -54,17 +54,17 @@ interface FeedService {
 
     @GET("/api/v1/feed/{diaryId}/users/profiles")
     suspend fun getFeedDiaryProfile(
-        @Path("diaryId") diaryId: Long
+        @Path("diaryId") diaryId: Long,
     ): BaseResponse<DiaryProfileResponseDto>
 
     @POST("/api/v1/feed/likes/{diaryId}")
     suspend fun postIsLike(
         @Path("diaryId") diaryId: Long,
-        @Body likeRequestDto: LikeRequestDto
+        @Body likeRequestDto: LikeRequestDto,
     ): BaseResponse<Unit>
 
     @GET("/api/v1/feed/search")
     suspend fun getUserSearchResult(
-        @Query("keyword") keyword: String
+        @Query("keyword") keyword: String,
     ): BaseResponse<UserResponseDto>
 }

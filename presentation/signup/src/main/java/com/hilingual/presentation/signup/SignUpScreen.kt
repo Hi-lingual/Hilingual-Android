@@ -60,7 +60,7 @@ import com.hilingual.presentation.signup.component.TermsBottomSheet
 internal fun SignUpRoute(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
-    viewModel: SignUpViewModel = hiltViewModel()
+    viewModel: SignUpViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
@@ -81,6 +81,7 @@ internal fun SignUpRoute(
     viewModel.sideEffect.collectSideEffect {
         when (it) {
             is SignUpSideEffect.NavigateToHome -> navigateToHome()
+
             is SignUpSideEffect.ShowRetryDialog -> {
                 dialogTrigger.show(onClick = it.onRetry)
             }
@@ -100,7 +101,7 @@ internal fun SignUpRoute(
         onDoneAction = viewModel::onSubmitNickname,
         onRegisterClick = viewModel::onRegisterClick,
         onTermLinkClick = { url -> context.launchCustomTabs(url) },
-        isLoading = { uiState.isLoading }
+        isLoading = { uiState.isLoading },
     )
 }
 
@@ -116,7 +117,7 @@ private fun SignUpScreen(
     onRegisterClick: (String, Boolean, Uri?) -> Unit,
     onTermLinkClick: (String) -> Unit,
     isLoading: () -> Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
     var imageUri by remember { mutableStateOf<Uri?>(null) }
@@ -127,7 +128,7 @@ private fun SignUpScreen(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
             imageUri = uri
-        }
+        },
     )
 
     Column(
@@ -138,7 +139,7 @@ private fun SignUpScreen(
             .padding(paddingValues)
             .padding(horizontal = 16.dp)
             .addFocusCleaner(focusManager),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         HilingualBasicTopAppBar(title = "프로필 작성")
 
@@ -146,7 +147,7 @@ private fun SignUpScreen(
 
         ProfileImagePicker(
             onClick = { isImageSheetVisible = true },
-            imageUrl = imageUri?.toString()
+            imageUrl = imageUri?.toString(),
         )
 
         Spacer(Modifier.weight(8f))
@@ -155,7 +156,7 @@ private fun SignUpScreen(
             text = "닉네임",
             style = HilingualTheme.typography.bodyM16,
             color = HilingualTheme.colors.black,
-            modifier = Modifier.align(Alignment.Start)
+            modifier = Modifier.align(Alignment.Start),
         )
 
         Spacer(Modifier.height(4.dp))
@@ -171,7 +172,7 @@ private fun SignUpScreen(
             onDoneAction = {
                 onDoneAction(nickname())
                 focusManager.clearFocus()
-            }
+            },
         )
 
         Spacer(Modifier.weight(73f))
@@ -179,14 +180,14 @@ private fun SignUpScreen(
         Text(
             text = "설정한 닉네임은 변경이 불가능해요.",
             style = HilingualTheme.typography.bodyM14,
-            color = HilingualTheme.colors.gray400
+            color = HilingualTheme.colors.gray400,
         )
 
         HilingualButton(
             text = "가입하기",
             onClick = { isTermsSheetVisible = true },
             enableProvider = isNicknameValid,
-            modifier = Modifier.padding(vertical = 16.dp)
+            modifier = Modifier.padding(vertical = 16.dp),
         )
     }
 
@@ -198,7 +199,7 @@ private fun SignUpScreen(
             onRegisterClick(nickname(), isMarketingAgreed, imageUri)
         },
         onTermLinkClick = onTermLinkClick,
-        isLoading = isLoading()
+        isLoading = isLoading(),
     )
 
     HilingualProfileImageBottomSheet(
@@ -212,10 +213,10 @@ private fun SignUpScreen(
             isImageSheetVisible = false
             singlePhotoPickerLauncher.launch(
                 PickVisualMediaRequest(
-                    ActivityResultContracts.PickVisualMedia.ImageOnly
-                )
+                    ActivityResultContracts.PickVisualMedia.ImageOnly,
+                ),
             )
-        }
+        },
     )
 }
 
@@ -233,7 +234,7 @@ private fun SignUpScreenPreview() {
             onDoneAction = { _ -> },
             onRegisterClick = { _, _, _ -> },
             onTermLinkClick = {},
-            isLoading = { false }
+            isLoading = { false },
         )
     }
 }

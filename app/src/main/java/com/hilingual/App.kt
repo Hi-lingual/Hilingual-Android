@@ -20,13 +20,13 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
+import com.hilingual.core.ads.initializer.AdsInitializer
 import com.hilingual.core.common.util.HilingualReleaseTree
 import com.hilingual.core.work.scheduler.HilingualWorkManagerConfigurator
-import com.hilingual.core.ads.initializer.AdsInitializer
 import dagger.Lazy
 import dagger.hilt.android.HiltAndroidApp
-import timber.log.Timber
 import javax.inject.Inject
+import timber.log.Timber
 
 @HiltAndroidApp
 class App : Application(), SingletonImageLoader.Factory {

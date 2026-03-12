@@ -31,12 +31,12 @@ data class FeedDiaryUIModel(
     val diaryImageUrl: String?,
     val likeCount: Int,
     val isLiked: Boolean,
-    val isMine: Boolean
+    val isMine: Boolean,
 )
 
 internal fun FeedItemDiaryModel.toState(
     feedProfileInfoModel: FeedProfileInfoModel,
-    authorUserId: Long
+    authorUserId: Long,
 ): FeedDiaryUIModel = FeedDiaryUIModel(
     diaryId = this.diaryId,
     authorUserId = authorUserId,
@@ -48,7 +48,7 @@ internal fun FeedItemDiaryModel.toState(
     diaryImageUrl = this.diaryImg,
     likeCount = this.likeCount,
     isLiked = this.isLiked,
-    isMine = feedProfileInfoModel.isMine
+    isMine = feedProfileInfoModel.isMine,
 )
 
 internal fun FeedItemModel.toState(): FeedDiaryUIModel = FeedDiaryUIModel(
@@ -62,5 +62,5 @@ internal fun FeedItemModel.toState(): FeedDiaryUIModel = FeedDiaryUIModel(
     diaryImageUrl = this.diary.diaryImg,
     likeCount = this.diary.likeCount,
     isLiked = this.diary.isLiked,
-    isMine = this.profile.isMine
+    isMine = this.profile.isMine,
 )

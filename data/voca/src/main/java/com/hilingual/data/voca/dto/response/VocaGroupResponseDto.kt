@@ -23,5 +23,5 @@ data class VocaGroupResponseDto(
     @SerialName("group")
     val group: String,
     @SerialName("words")
-    val words: List<VocaItemResponseDto>
+    val words: List<VocaItemResponseDto>,
 )

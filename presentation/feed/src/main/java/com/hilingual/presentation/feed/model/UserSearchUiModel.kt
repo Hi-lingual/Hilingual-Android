@@ -24,16 +24,14 @@ internal data class UserSearchUiModel(
     val userId: Long,
     val nickname: String,
     val profileUrl: String,
-    val followState: FollowState
+    val followState: FollowState,
 )
 
-internal fun UserListModel.toState(): ImmutableList<UserSearchUiModel> {
-    return this.userList.map {
-        UserSearchUiModel(
-            userId = it.userId,
-            nickname = it.nickname,
-            profileUrl = it.profileImg,
-            followState = it.followState
-        )
-    }.toImmutableList()
-}
+internal fun UserListModel.toState(): ImmutableList<UserSearchUiModel> = this.userList.map {
+    UserSearchUiModel(
+        userId = it.userId,
+        nickname = it.nickname,
+        profileUrl = it.profileImg,
+        followState = it.followState,
+    )
+}.toImmutableList()

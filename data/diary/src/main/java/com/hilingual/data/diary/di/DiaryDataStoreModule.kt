@@ -22,9 +22,9 @@ object DiaryDataStoreModule {
     @Singleton
     @DiaryTempDataStore
     fun provideDiaryTempDataStore(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): DataStore<Preferences> = DataStoreBuilder.createPreferencesDataStore(
         context = context,
-        name = HILINGUAL_DIARY_TEMP_PREFS
+        name = HILINGUAL_DIARY_TEMP_PREFS,
     )
 }

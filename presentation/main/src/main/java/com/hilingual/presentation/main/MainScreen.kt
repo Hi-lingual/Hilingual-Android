@@ -80,7 +80,7 @@ internal fun MainScreen(
     appState: MainAppState,
     tracker: Tracker,
     appRestarter: AppRestarter,
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel = hiltViewModel(),
 ) {
     val isOffline by appState.isOffline.collectAsStateWithLifecycle()
     val isBottomBarVisible by appState.isBottomBarVisible.collectAsStateWithLifecycle()
@@ -88,7 +88,7 @@ internal fun MainScreen(
     val coroutineScope = rememberCoroutineScope()
 
     val dialogTrigger = rememberDialogTrigger(
-        show = appState.dialogStateHolder::showDialog
+        show = appState.dialogStateHolder::showDialog,
     )
 
     val snackBarHostState = remember { SnackbarHostState() }
@@ -96,7 +96,7 @@ internal fun MainScreen(
     val onShowMessage: (HilingualMessage) -> Unit =
         remember(
             key1 = coroutineScope,
-            key2 = snackBarHostState
+            key2 = snackBarHostState,
         ) {
             { message ->
                 coroutineScope.launch {
@@ -117,14 +117,14 @@ internal fun MainScreen(
     }
 
     HandleBackPressToExit(
-        onShowMessage = { onShowMessage(Toast("버튼을 한번 더 누르면 앱이 종료됩니다.")) }
+        onShowMessage = { onShowMessage(Toast("버튼을 한번 더 누르면 앱이 종료됩니다.")) },
     )
 
     CompositionLocalProvider(
         LocalDialogTrigger provides dialogTrigger,
         LocalMessageController provides onShowMessage,
         LocalTracker provides tracker,
-        LocalAppRestarter provides appRestarter
+        LocalAppRestarter provides appRestarter,
     ) {
         Scaffold(
             bottomBar = {
@@ -132,9 +132,9 @@ internal fun MainScreen(
                     visible = isBottomBarVisible,
                     tabs = MainTab.entries.toPersistentList(),
                     currentTab = currentTab,
-                    onTabSelected = appState::navigate
+                    onTabSelected = appState::navigate,
                 )
-            }
+            },
         ) { innerPadding ->
             NavHost(
                 enterTransition = { EnterTransition.None },
@@ -142,24 +142,24 @@ internal fun MainScreen(
                 popEnterTransition = { EnterTransition.None },
                 popExitTransition = { ExitTransition.None },
                 navController = appState.navController,
-                startDestination = appState.startDestination
+                startDestination = appState.startDestination,
 
             ) {
                 splashNavGraph(
                     navigateToAuth = appState::navigateToAuth,
                     navigateToHome = appState::navigateToHome,
-                    navigateToOnboarding = appState::navigateToOnboarding
+                    navigateToOnboarding = appState::navigateToOnboarding,
                 )
 
                 authNavGraph(
                     paddingValues = innerPadding,
                     navigateToHome = appState::navigateToHome,
-                    navigateToSignUp = appState::navigateToSignUp
+                    navigateToSignUp = appState::navigateToSignUp,
                 )
 
                 signUpGraph(
                     paddingValues = innerPadding,
-                    navigateToHome = appState::navigateToHome
+                    navigateToHome = appState::navigateToHome,
                 )
 
                 homeNavGraph(
@@ -168,7 +168,7 @@ internal fun MainScreen(
                     navigateToDiaryWrite = appState::navigateToDiaryWrite,
                     navigateToNotification = appState::navigateToNotification,
                     navigateToFeedProfile = appState::navigateToFeedProfile,
-                    navigateToFeed = appState::navigateToFeed
+                    navigateToFeed = appState::navigateToFeed,
                 )
 
                 notificationNavGraph(
@@ -176,7 +176,7 @@ internal fun MainScreen(
                     navController = appState.navController,
                     navigateUp = appState::navigateUp,
                     navigateToFeedDiary = appState::navigateToFeedDiary,
-                    navigateToFeedProfile = appState::navigateToFeedProfile
+                    navigateToFeedProfile = appState::navigateToFeedProfile,
                 )
 
                 diaryWriteNavGraph(
@@ -190,14 +190,14 @@ internal fun MainScreen(
                                 popUpTo<DiaryWrite> {
                                     inclusive = true
                                 }
-                            }
+                            },
                         )
-                    }
+                    },
                 )
 
                 vocaNavGraph(
                     paddingValues = innerPadding,
-                    navigateToHome = appState::navigateToHome
+                    navigateToHome = appState::navigateToHome,
                 )
 
                 diaryFeedbackNavGraph(
@@ -205,7 +205,7 @@ internal fun MainScreen(
                     navigateUp = appState::navigateUp,
                     navigateToHome = appState::navigateToHome,
                     navigateToFeed = appState::navigateToFeed,
-                    navigateToVoca = appState::navigateToVoca
+                    navigateToVoca = appState::navigateToVoca,
                 )
 
                 feedNavGraph(
@@ -213,7 +213,7 @@ internal fun MainScreen(
                     navController = appState.navController,
                     navigateToFeedDiary = appState::navigateToFeedDiary,
                     navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
-                    navigateToFeedProfile = appState::navigateToFeedProfile
+                    navigateToFeedProfile = appState::navigateToFeedProfile,
                 )
 
                 feedDiaryNavGraph(
@@ -221,7 +221,7 @@ internal fun MainScreen(
                     navigateUp = appState::navigateUp,
                     navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
                     navigateToFeedProfile = appState::navigateToFeedProfile,
-                    navigateToVoca = appState::navigateToVoca
+                    navigateToVoca = appState::navigateToVoca,
                 )
 
                 myPageNavGraph(
@@ -230,7 +230,7 @@ internal fun MainScreen(
                     navigateUp = appState::navigateUp,
                     navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
                     navigateToFeedProfile = appState::navigateToFeedProfile,
-                    navigateToAlarm = appState::navigateToNotificationSetting
+                    navigateToAlarm = appState::navigateToNotificationSetting,
                 )
 
                 feedProfileNavGraph(
@@ -239,18 +239,18 @@ internal fun MainScreen(
                     navigateToFeedProfile = appState::navigateToFeedProfile,
                     navController = appState.navController,
                     navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
-                    navigateToFeedDiary = appState::navigateToFeedDiary
+                    navigateToFeedDiary = appState::navigateToFeedDiary,
                 )
 
                 onboardingNavGraph(
                     paddingValues = innerPadding,
-                    navigateToAuth = appState::navigateToAuth
+                    navigateToAuth = appState::navigateToAuth,
                 )
             }
 
             HilingualErrorDialog(
                 state = appState.dialogStateHolder.dialogState,
-                onDismiss = appState.dialogStateHolder::dismissDialog
+                onDismiss = appState.dialogStateHolder::dismissDialog,
             )
 
             Box(
@@ -258,7 +258,7 @@ internal fun MainScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .navigationBarsPadding()
-                    .padding(bottom = 82.dp)
+                    .padding(bottom = 82.dp),
             ) {
                 SnackbarHost(hostState = snackBarHostState) { data ->
                     when (val visuals = data.visuals) {
@@ -266,7 +266,7 @@ internal fun MainScreen(
                             HilingualActionSnackbar(
                                 message = visuals,
                                 modifier = Modifier.padding(horizontal = 16.dp),
-                                onDismiss = { data.dismiss() }
+                                onDismiss = { data.dismiss() },
                             )
                         }
 
@@ -287,7 +287,7 @@ internal fun MainScreen(
 @Composable
 private fun HandleBackPressToExit(
     enabled: Boolean = true,
-    onShowMessage: () -> Unit = {}
+    onShowMessage: () -> Unit = {},
 ) {
     val context = LocalActivity.current
     var backPressedTime by remember { mutableLongStateOf(0L) }

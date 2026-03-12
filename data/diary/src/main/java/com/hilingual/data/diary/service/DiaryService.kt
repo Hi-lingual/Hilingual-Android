@@ -32,42 +32,42 @@ import retrofit2.http.Path
 interface DiaryService {
     @GET("/api/v1/diaries/{diaryId}")
     suspend fun getDiaryContent(
-        @Path(value = "diaryId") diaryId: Long
+        @Path(value = "diaryId") diaryId: Long,
     ): BaseResponse<DiaryContentResponseDto>
 
     @GET("/api/v1/diaries/{diaryId}/feedbacks")
     suspend fun getDiaryFeedbacks(
-        @Path(value = "diaryId") diaryId: Long
+        @Path(value = "diaryId") diaryId: Long,
     ): BaseResponse<DiaryFeedbackResponseDto>
 
     @GET("/api/v1/diaries/{diaryId}/recommended")
     suspend fun getDiaryRecommendExpressions(
-        @Path(value = "diaryId") diaryId: Long
+        @Path(value = "diaryId") diaryId: Long,
     ): BaseResponse<DiaryRecommendExpressionResponseDto>
 
     @PATCH("/api/v1/diaries/{phraseId}")
     suspend fun patchPhraseBookmark(
         @Path("phraseId") phraseId: Long,
-        @Body bookmarkRequestDto: BookmarkRequestDto
+        @Body bookmarkRequestDto: BookmarkRequestDto,
     ): BaseResponse<Unit>
 
     @POST("/api/v1/diaries")
     suspend fun postDiaryFeedbackCreate(
-        @Body diaryFeedbackCreateRequestDto: DiaryFeedbackCreateRequestDto
+        @Body diaryFeedbackCreateRequestDto: DiaryFeedbackCreateRequestDto,
     ): BaseResponse<DiaryFeedbackCreateResponseDto>
 
     @PATCH("/api/v1/diaries/{diaryId}/publish")
     suspend fun patchDiaryPublish(
-        @Path("diaryId") diaryId: Long
+        @Path("diaryId") diaryId: Long,
     ): BaseResponse<Unit>
 
     @PATCH("/api/v1/diaries/{diaryId}/unpublish")
     suspend fun patchDiaryUnpublish(
-        @Path("diaryId") diaryId: Long
+        @Path("diaryId") diaryId: Long,
     ): BaseResponse<Unit>
 
     @DELETE("/api/v1/diaries/{diaryId}")
     suspend fun deleteDiary(
-        @Path("diaryId") diaryId: Long
+        @Path("diaryId") diaryId: Long,
     ): BaseResponse<Unit>
 }

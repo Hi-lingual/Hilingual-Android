@@ -15,6 +15,6 @@ internal abstract class DataSourceModule {
     @Binds
     @Singleton
     abstract fun bindsOnboardingLocalDataSource(
-        onboardingLocalDataSourceImpl: OnboardingLocalDataSourceImpl
+        onboardingLocalDataSourceImpl: OnboardingLocalDataSourceImpl,
     ): OnboardingLocalDataSource
 }

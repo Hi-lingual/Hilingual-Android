@@ -23,6 +23,6 @@ import retrofit2.http.POST
 interface VerifyService {
     @POST("api/v1/auth/verify")
     suspend fun verifyCode(
-        @Body request: VerifyCodeRequestDto
+        @Body request: VerifyCodeRequestDto,
     ): BaseResponse<Unit>
 }

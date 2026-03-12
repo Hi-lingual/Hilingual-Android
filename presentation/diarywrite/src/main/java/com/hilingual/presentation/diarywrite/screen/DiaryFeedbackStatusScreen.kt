@@ -47,23 +47,23 @@ internal fun DiaryFeedbackStatusScreen(
     paddingValues: PaddingValues,
     uiData: FeedbackUIData,
     content: @Composable () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
             .padding(paddingValues)
-            .background(HilingualTheme.colors.white)
+            .background(HilingualTheme.colors.white),
     ) {
         Column(
             modifier = modifier.align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = uiData.title,
                 color = HilingualTheme.colors.gray850,
                 style = HilingualTheme.typography.headSB20,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
 
             if (uiData.description != null) {
@@ -81,7 +81,7 @@ internal fun DiaryFeedbackStatusScreen(
                             .width(200.dp)
                             .height(media.heightDp),
                         rawResFile = media.resId,
-                        isInfinite = true
+                        isInfinite = true,
                     )
                 }
 
@@ -91,7 +91,7 @@ internal fun DiaryFeedbackStatusScreen(
                             .width(200.dp)
                             .height(media.heightDp),
                         painter = painterResource(media.resId),
-                        contentDescription = null
+                        contentDescription = null,
                     )
                 }
             }
@@ -112,16 +112,16 @@ private fun DiaryFeedbackCompleteStatusScreenPreview() {
                 description = { Text("틀린 부분을 고치고,\n더 나은 표현으로 수정했어요!") },
                 media = FeedbackMedia.Lottie(
                     resId = R.raw.lottie_feedback_complete,
-                    heightDp = 180.dp
-                )
+                    heightDp = 180.dp,
+                ),
             ),
             content = {
                 FeedbackCompleteContent(
                     diaryId = 0,
                     onCloseButtonClick = {},
-                    onShowFeedbackButtonClick = {}
+                    onShowFeedbackButtonClick = {},
                 )
-            }
+            },
         )
     }
 }
@@ -136,15 +136,15 @@ private fun DiaryFeedbackFailureStatusScreenPreview() {
                 title = "앗! 일시적인 오류가 발생했어요.",
                 media = FeedbackMedia.Image(
                     resId = DesignSystemR.drawable.img_error,
-                    heightDp = 175.dp
-                )
+                    heightDp = 175.dp,
+                ),
             ),
             content = {
                 FeedbackFailureContent(
                     onCloseButtonClick = {},
-                    onRequestAgainButtonClick = {}
+                    onRequestAgainButtonClick = {},
                 )
-            }
+            },
         )
     }
 }

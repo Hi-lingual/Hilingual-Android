@@ -16,9 +16,9 @@
 package com.hilingual.data.diary.di
 
 import com.hilingual.data.diary.repository.DiaryLocalRepository
-import com.hilingual.data.diary.repositoryimpl.DiaryLocalRepositoryImpl
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.diary.repository.TextRecognitionRepository
+import com.hilingual.data.diary.repositoryimpl.DiaryLocalRepositoryImpl
 import com.hilingual.data.diary.repositoryimpl.DiaryRepositoryImpl
 import com.hilingual.data.diary.repositoryimpl.TextRecognitionRepositoryImpl
 import dagger.Binds

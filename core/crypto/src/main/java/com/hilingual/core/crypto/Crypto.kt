@@ -46,13 +46,13 @@ object Crypto {
                 init(
                     KeyGenParameterSpec.Builder(
                         KEY_ALIAS,
-                        KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+                        KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,
                     )
                         .setBlockModes(BLOCK_MODE)
                         .setEncryptionPaddings(PADDING)
                         .setRandomizedEncryptionRequired(true)
                         .setUserAuthenticationRequired(false)
-                        .build()
+                        .build(),
                 )
             }.generateKey()
 
@@ -77,7 +77,7 @@ object Crypto {
         cipher.init(
             Cipher.DECRYPT_MODE,
             getKey(),
-            IvParameterSpec(iv)
+            IvParameterSpec(iv),
         )
         return cipher.doFinal(encryptedBytes)
     }

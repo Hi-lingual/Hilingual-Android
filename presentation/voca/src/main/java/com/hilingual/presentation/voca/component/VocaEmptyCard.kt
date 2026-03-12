@@ -36,40 +36,40 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 
 internal enum class VocaEmptyCardType(
     val text: String,
-    @DrawableRes val imageRes: Int
+    @DrawableRes val imageRes: Int,
 ) {
     NOT_ADD(
         text = "아직 단어가 추가되지 않았어요.",
-        imageRes = DesignSystemR.drawable.img_word
+        imageRes = DesignSystemR.drawable.img_word,
     ),
     NOT_SEARCH(
         text = "검색 결과가 없습니다.",
-        imageRes = DesignSystemR.drawable.img_search
-    )
+        imageRes = DesignSystemR.drawable.img_search,
+    ),
 }
 
 @Composable
 internal fun VocaEmptyCard(
     type: VocaEmptyCardType,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
 
     ) {
         Image(
             modifier = Modifier
                 .size(width = 200.dp, height = 140.dp),
             painter = painterResource(id = type.imageRes),
-            contentDescription = null
+            contentDescription = null,
         )
         Text(
             text = type.text,
             style = HilingualTheme.typography.headR18,
             color = HilingualTheme.colors.gray500,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -84,7 +84,7 @@ private class VocaEmptyCardPreviewParameterProvider :
 @Composable
 private fun VocaEmptyCardPreview(
     @PreviewParameter(VocaEmptyCardPreviewParameterProvider::class)
-    type: VocaEmptyCardType
+    type: VocaEmptyCardType,
 ) {
     HilingualTheme {
         VocaEmptyCard(type = type)

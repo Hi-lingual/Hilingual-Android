@@ -28,11 +28,11 @@ import com.hilingual.data.user.model.user.UserProfileModel
 
 interface UserRepository {
     suspend fun getNicknameAvailability(
-        nickname: String
+        nickname: String,
     ): Result<NicknameValidationResult>
 
     suspend fun postUserProfile(
-        userProfileModel: UserProfileModel
+        userProfileModel: UserProfileModel,
     ): Result<Unit>
 
     suspend fun getUserInfo(): Result<UserInfoModel>
@@ -58,11 +58,11 @@ interface UserRepository {
     suspend fun isOtpVerified(): Boolean
 
     suspend fun getFollowers(
-        targetUserId: Long
+        targetUserId: Long,
     ): Result<List<FollowUserListResultModel>>
 
     suspend fun getFollowings(
-        targetUserId: Long
+        targetUserId: Long,
     ): Result<List<FollowUserListResultModel>>
 
     suspend fun getUserLoginInfo(): Result<UserLoginInfoModel>
@@ -76,10 +76,10 @@ interface UserRepository {
     suspend fun updateProfileImage(imageFileUri: Uri?): Result<Unit>
 
     suspend fun putFollow(
-        targetUserId: Long
+        targetUserId: Long,
     ): Result<Unit>
 
     suspend fun deleteFollow(
-        targetUserId: Long
+        targetUserId: Long,
     ): Result<Unit>
 }

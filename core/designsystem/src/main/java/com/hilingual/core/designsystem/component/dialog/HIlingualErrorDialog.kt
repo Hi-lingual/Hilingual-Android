@@ -34,7 +34,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 fun HilingualErrorDialog(
     state: DialogState,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (state.isVisible) {
         OneButtonDialog(
@@ -48,23 +48,23 @@ fun HilingualErrorDialog(
                 dismissOnBackPress = false,
                 dismissOnClickOutside = false,
                 usePlatformDefaultWidth = false,
-                decorFitsSystemWindows = false
+                decorFitsSystemWindows = false,
             ),
-            modifier = modifier
+            modifier = modifier,
         ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Image(
                     painter = painterResource(R.drawable.img_error),
                     contentDescription = null,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = 8.dp),
                 )
 
                 Text(
                     text = "앗! 일시적인 오류가 발생했어요.",
                     style = HilingualTheme.typography.headSB16,
-                    color = HilingualTheme.colors.gray850
+                    color = HilingualTheme.colors.gray850,
                 )
             }
         }
@@ -79,7 +79,7 @@ private fun HilingualErrorDialogPreview() {
     HilingualTheme {
         HilingualErrorDialog(
             state = state,
-            onDismiss = {}
+            onDismiss = {},
         )
     }
 }

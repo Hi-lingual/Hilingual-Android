@@ -30,6 +30,6 @@ internal abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindConfigRepository(
-        impl: ConfigRepositoryImpl
+        impl: ConfigRepositoryImpl,
     ): ConfigRepository
 }

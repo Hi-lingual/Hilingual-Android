@@ -23,5 +23,5 @@ data class TokenPreferences(
     @SerialName("token")
     val accessToken: String? = null,
     @SerialName("refreshToken")
-    val refreshToken: String? = null
+    val refreshToken: String? = null,
 )

@@ -36,27 +36,27 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun FeedbackLoadingContent(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(bottom = 16.dp),
         verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
             modifier = Modifier.size(16.dp),
             imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_error_16),
             contentDescription = null,
-            tint = HilingualTheme.colors.gray300
+            tint = HilingualTheme.colors.gray300,
         )
         Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = "지금 화면을 나가면, 작성 중인 일기가\n저장되지 않아요",
             color = HilingualTheme.colors.gray300,
             style = HilingualTheme.typography.captionR12,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }

@@ -33,22 +33,22 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
 fun TextToast(
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Text(
         text = text,
         modifier = modifier
             .background(
                 color = HilingualTheme.colors.gray500,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
             )
             .padding(
                 vertical = 8.dp,
-                horizontal = 24.dp
+                horizontal = 24.dp,
             ),
         textAlign = TextAlign.Center,
         style = HilingualTheme.typography.bodyR16,
-        color = HilingualTheme.colors.white
+        color = HilingualTheme.colors.white,
     )
 }
 
@@ -59,11 +59,11 @@ private fun TextToastPreview() {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             TextToast(
                 text = "This is a sample snackbar message.",
-                modifier = Modifier.padding(bottom = 23.dp)
+                modifier = Modifier.padding(bottom = 23.dp),
             )
         }
     }

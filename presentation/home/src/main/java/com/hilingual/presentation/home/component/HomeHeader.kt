@@ -51,18 +51,18 @@ internal fun HomeHeader(
     isNewAlarm: Boolean,
     onAlarmClick: () -> Unit,
     onImageClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         ProfileImage(
             imageUrl = imageUrl,
             modifier = Modifier.noRippleClickable(
-                onClick = onImageClick
-            )
+                onClick = onImageClick,
+            ),
         )
 
         Column(modifier = Modifier.weight(1f)) {
@@ -75,14 +75,14 @@ internal fun HomeHeader(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_alarm_28),
                 contentDescription = null,
                 tint = Color.Unspecified,
-                modifier = Modifier.noRippleClickable(onClick = onAlarmClick)
+                modifier = Modifier.noRippleClickable(onClick = onAlarmClick),
             )
             if (isNewAlarm) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_dot_4),
                     contentDescription = null,
                     tint = HilingualTheme.colors.alertRed,
-                    modifier = Modifier.align(Alignment.TopEnd)
+                    modifier = Modifier.align(Alignment.TopEnd),
                 )
             }
         }
@@ -92,7 +92,7 @@ internal fun HomeHeader(
 @Composable
 private fun ProfileImage(
     imageUrl: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (imageUrl.isBlank()) {
         Image(
@@ -100,12 +100,12 @@ private fun ProfileImage(
             contentDescription = null,
             modifier = modifier
                 .size(46.dp)
-                .clip(CircleShape)
+                .clip(CircleShape),
         )
     } else {
         NetworkImage(
             imageUrl = imageUrl,
-            modifier = modifier.size(46.dp)
+            modifier = modifier.size(46.dp),
         )
     }
 }
@@ -117,7 +117,7 @@ private fun ProfileName(name: String) {
         style = HilingualTheme.typography.headSB18,
         color = HilingualTheme.colors.white,
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
@@ -125,7 +125,7 @@ private fun ProfileName(name: String) {
 private fun UserStatsRow(totalDiaries: Int, streak: Int) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         DiaryCountStat(totalDiaries)
 
@@ -139,7 +139,7 @@ private fun UserStatsRow(totalDiaries: Int, streak: Int) {
 private fun DiaryCountStat(count: Int) {
     StatItem(
         icon = R.drawable.ic_bubble_16,
-        text = "총 ${count}편"
+        text = "총 ${count}편",
     )
 }
 
@@ -147,7 +147,7 @@ private fun DiaryCountStat(count: Int) {
 private fun StreakStat(days: Int) {
     StatItem(
         icon = R.drawable.ic_fire_16,
-        text = "${days}일 연속 작성 중"
+        text = "${days}일 연속 작성 중",
     )
 }
 
@@ -156,7 +156,7 @@ private fun StatItem(@DrawableRes icon: Int, text: String) {
     Icon(
         imageVector = ImageVector.vectorResource(icon),
         contentDescription = null,
-        tint = Color.Unspecified
+        tint = Color.Unspecified,
     )
 
     Text(
@@ -164,7 +164,7 @@ private fun StatItem(@DrawableRes icon: Int, text: String) {
         style = HilingualTheme.typography.captionR12,
         color = HilingualTheme.colors.white,
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
@@ -173,7 +173,7 @@ private fun StatSeparator() {
     Text(
         text = "·",
         style = HilingualTheme.typography.captionR12,
-        color = HilingualTheme.colors.gray100
+        color = HilingualTheme.colors.gray100,
     )
 }
 
@@ -182,7 +182,7 @@ private fun StatSeparator() {
 private fun HomeHeaderPreview() {
     HilingualTheme {
         Column(
-            modifier = Modifier.background(HilingualTheme.colors.black)
+            modifier = Modifier.background(HilingualTheme.colors.black),
         ) {
             HomeHeader(
                 imageUrl = "",
@@ -191,7 +191,7 @@ private fun HomeHeaderPreview() {
                 streak = 5,
                 isNewAlarm = true,
                 onAlarmClick = {},
-                onImageClick = {}
+                onImageClick = {},
             )
             HomeHeader(
                 imageUrl = "",
@@ -200,7 +200,7 @@ private fun HomeHeaderPreview() {
                 streak = 0,
                 isNewAlarm = false,
                 onAlarmClick = {},
-                onImageClick = {}
+                onImageClick = {},
             )
         }
     }

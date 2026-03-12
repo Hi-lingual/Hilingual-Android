@@ -29,7 +29,7 @@ import com.hilingual.data.feed.service.FeedService
 import javax.inject.Inject
 
 internal class FeedRemoteDataSourceImpl @Inject constructor(
-    private val feedService: FeedService
+    private val feedService: FeedService,
 ) : FeedRemoteDataSource {
     override suspend fun getFeedProfile(targetUserId: Long): BaseResponse<FeedProfileResponseDto> =
         feedService.getFeedProfile(targetUserId = targetUserId)

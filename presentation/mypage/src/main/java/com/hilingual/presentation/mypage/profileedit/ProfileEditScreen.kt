@@ -62,7 +62,7 @@ import com.hilingual.presentation.mypage.component.WithdrawDialog
 internal fun ProfileEditRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
-    viewModel: MyPageViewModel = hiltViewModel()
+    viewModel: MyPageViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
@@ -72,9 +72,7 @@ internal fun ProfileEditRoute(
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is MyPageSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = navigateUp)
-
             is MyPageSideEffect.ShowToast -> messageController(HilingualMessage.Toast(sideEffect.message))
-
             is MyPageSideEffect.RestartApp -> appRestarter.restartApp()
         }
     }
@@ -85,7 +83,7 @@ internal fun ProfileEditRoute(
                 paddingValues = paddingValues,
                 profileLoginInfo = state.data,
                 onProfileImageUriChanged = viewModel::patchProfileImage,
-                onWithdrawClick = viewModel::withdraw
+                onWithdrawClick = viewModel::withdraw,
             )
         }
 
@@ -98,7 +96,7 @@ private fun ProfileEditScreen(
     paddingValues: PaddingValues,
     profileLoginInfo: MyPageUiState,
     onProfileImageUriChanged: (Uri?) -> Unit,
-    onWithdrawClick: () -> Unit
+    onWithdrawClick: () -> Unit,
 ) {
     var imageUri by remember { mutableStateOf<String?>(profileLoginInfo.profileImageUrl.takeIf { it.isNotBlank() }) }
     var isImageSheetVisible by remember { mutableStateOf(false) }
@@ -111,7 +109,7 @@ private fun ProfileEditScreen(
                 imageUri = uri.toString()
                 onProfileImageUriChanged(uri)
             }
-        }
+        },
     )
 
     Column(
@@ -120,24 +118,24 @@ private fun ProfileEditScreen(
             .statusBarColor(HilingualTheme.colors.white)
             .background(HilingualTheme.colors.white)
             .padding(paddingValues),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         TitleCenterAlignedTopAppBar(
-            title = "프로필 작성"
+            title = "프로필 작성",
         )
 
         Spacer(modifier = Modifier.height(46.dp))
 
         ProfileImagePicker(
             onClick = { isImageSheetVisible = true },
-            imageUrl = imageUri
+            imageUrl = imageUri,
         )
 
         Spacer(modifier = Modifier.height(48.dp))
 
         Column(
             modifier = Modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             ProfileItem(label = "닉네임", value = profileLoginInfo.profileNickname)
             ProfileItem(label = "연결된 소셜 계정", value = profileLoginInfo.profileProvider)
@@ -152,7 +150,7 @@ private fun ProfileEditScreen(
             textDecoration = TextDecoration.Underline,
             modifier = Modifier
                 .padding(vertical = 4.dp)
-                .noRippleClickable(onClick = { isWithdrawDialogVisible = true })
+                .noRippleClickable(onClick = { isWithdrawDialogVisible = true }),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -172,16 +170,16 @@ private fun ProfileEditScreen(
             isImageSheetVisible = false
             singlePhotoPickerLauncher.launch(
                 PickVisualMediaRequest(
-                    ActivityResultContracts.PickVisualMedia.ImageOnly
-                )
+                    ActivityResultContracts.PickVisualMedia.ImageOnly,
+                ),
             )
-        }
+        },
     )
 
     WithdrawDialog(
         isVisible = isWithdrawDialogVisible,
         onDismiss = { isWithdrawDialogVisible = false },
-        onDeleteClick = onWithdrawClick
+        onDeleteClick = onWithdrawClick,
     )
 }
 
@@ -194,10 +192,10 @@ private fun ProfileEditScreenPreview() {
             profileLoginInfo = MyPageUiState(
                 profileImageUrl = "",
                 profileNickname = "하링이",
-                profileProvider = "구글 로그인"
+                profileProvider = "구글 로그인",
             ),
             onProfileImageUriChanged = {},
-            onWithdrawClick = {}
+            onWithdrawClick = {},
         )
     }
 }

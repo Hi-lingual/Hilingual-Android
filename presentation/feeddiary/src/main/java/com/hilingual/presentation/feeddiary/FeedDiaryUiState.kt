@@ -35,7 +35,7 @@ internal data class FeedDiaryUiState(
     val profileContent: ProfileContentUiModel = ProfileContentUiModel(),
     val diaryContent: DiaryContent = DiaryContent(),
     val feedbackList: ImmutableList<FeedbackContent> = persistentListOf(),
-    val recommendExpressionList: ImmutableList<RecommendExpression> = persistentListOf()
+    val recommendExpressionList: ImmutableList<RecommendExpression> = persistentListOf(),
 ) {
     companion object {
         val Fake = FeedDiaryUiState(
@@ -48,27 +48,34 @@ internal data class FeedDiaryUiState(
                 streak = 2,
                 isLiked = true,
                 likeCount = 112,
-                sharedDateInMinutes = 3
+                sharedDateInMinutes = 3,
             ),
             feedbackList = persistentListOf(
                 FeedbackContent(
                     originalText = "Today my friend called to me.",
                     feedbackText = "Today my friend called me.",
-                    explain = "'call'은 전화하다라는 의미일 때 'to' 없이 바로 목적어를 씁니다. 'called to me'는 '나를 불렀다'라는 의미가 되어 전화 상황에서는 어색합니다."
-                )
+                    explain = "'call'은 전화하다라는 의미일 때 'to' 없이 바로 목적어를 씁니다. " +
+                        "'called to me'는 '나를 불렀다'라는 의미가 되어 전화 상황에서는 어색합니다.",
+                ),
             ),
             diaryContent = DiaryContent(
-                originalText = "Today my friend called to me. She sent message a few days ago, but I forgot to replying her. I apolozied to her. We promissed to playing when our university exams are all done. I hope that it’s be done fastly.",
-                aiText = "Today my friend called me. She sent a message a few days ago, but I forgot to reply to her. I apologized to her. We promised to play when our university exams are all done. I hope that it’s done quickly.",
+                originalText = "Today my friend called to me. She sent message a few days ago, " +
+                    "but I forgot to replying her. I apolozied to her. " +
+                    "We promissed to playing when our university exams are all done. " +
+                    "I hope that it’s be done fastly.",
+                aiText = "Today my friend called me. She sent a message a few days ago, " +
+                    "but I forgot to reply to her. I apologized to her. " +
+                    "We promised to play when our university exams are all done. " +
+                    "I hope that it’s done quickly.",
                 diffRanges = persistentListOf(
                     Pair(36, 37),
                     Pair(75, 83),
                     Pair(94, 104),
                     Pair(116, 124),
                     Pair(128, 132),
-                    Pair(195, 203)
+                    Pair(195, 203),
                 ),
-                imageUrl = "https://avatars.githubusercontent.com/u/101113025?v=4"
+                imageUrl = "https://avatars.githubusercontent.com/u/101113025?v=4",
             ),
             recommendExpressionList = persistentListOf(
                 RecommendExpression(
@@ -77,7 +84,7 @@ internal data class FeedDiaryUiState(
                     phrase = "a few days ago",
                     explanation = "며칠 전에",
                     reason = "과거 시점을 간단히 나타낼 수 있는 일상적인 표현으로, 대화와 글 모두에서 자주 쓰입니다.",
-                    isMarked = false
+                    isMarked = false,
                 ),
                 RecommendExpression(
                     phraseId = 1,
@@ -85,7 +92,7 @@ internal data class FeedDiaryUiState(
                     phrase = "reply to",
                     explanation = "…에게 답장하다",
                     reason = "편지나 메시지에 답변할 때 쓰이며, 'I forgot to reply to her.'처럼 정확한 상황을 전달하는 데 적합합니다.",
-                    isMarked = true
+                    isMarked = true,
                 ),
                 RecommendExpression(
                     phraseId = 2,
@@ -93,9 +100,9 @@ internal data class FeedDiaryUiState(
                     phrase = "all done",
                     explanation = "완전히 끝난",
                     reason = "작업이나 시험이 모두 끝났음을 간단하게 표현하는 구어체 표현입니다.",
-                    isMarked = false
-                )
-            )
+                    isMarked = false,
+                ),
+            ),
         )
     }
 }
@@ -107,7 +114,7 @@ internal fun FeedDiaryProfileModel.toState() = ProfileContentUiModel(
     streak = this.profile.streak,
     sharedDateInMinutes = this.diary.sharedDate,
     isLiked = this.diary.isLiked,
-    likeCount = this.diary.likeCount
+    likeCount = this.diary.likeCount,
 )
 
 internal fun DiaryContentModel.toState() = DiaryContent(
@@ -117,13 +124,13 @@ internal fun DiaryContentModel.toState() = DiaryContent(
         it.diffRange.first to it.diffRange.second
     }.toImmutableList(),
     imageUrl = this.imageUrl,
-    isPublished = this.isPublished
+    isPublished = this.isPublished,
 )
 
 internal fun DiaryFeedbackModel.toState() = FeedbackContent(
     originalText = this.originalText,
     feedbackText = this.rewriteText,
-    explain = this.explain
+    explain = this.explain,
 )
 
 internal fun DiaryRecommendExpressionModel.toState() = RecommendExpression(
@@ -132,5 +139,5 @@ internal fun DiaryRecommendExpressionModel.toState() = RecommendExpression(
     phrase = this.phrase,
     explanation = this.explanation,
     reason = this.reason,
-    isMarked = this.isMarked
+    isMarked = this.isMarked,
 )

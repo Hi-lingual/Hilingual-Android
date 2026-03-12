@@ -54,7 +54,7 @@ internal fun FollowListRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToFeedProfile: (Long) -> Unit,
-    viewModel: FollowListViewModel = hiltViewModel()
+    viewModel: FollowListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -75,7 +75,7 @@ internal fun FollowListRoute(
         onBackClick = navigateUp,
         onProfileClick = navigateToFeedProfile,
         onActionButtonClick = viewModel::toggleFollow,
-        onTabRefresh = viewModel::refreshTab
+        onTabRefresh = viewModel::refreshTab,
     )
 }
 
@@ -90,7 +90,7 @@ private fun FollowListScreen(
     onProfileClick: (Long) -> Unit,
     onActionButtonClick: (Long, Boolean, FollowTabType) -> Unit,
     onTabRefresh: (FollowTabType) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
@@ -110,11 +110,11 @@ private fun FollowListScreen(
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
-            .padding(paddingValues)
+            .padding(paddingValues),
     ) {
         BackTopAppBar(
             title = "팔로우",
-            onBackClicked = onBackClick
+            onBackClicked = onBackClick,
         )
         FollowTabRow(
             tabIndex = pagerState.currentPage,
@@ -127,11 +127,11 @@ private fun FollowListScreen(
                         pagerState.animateScrollToPage(index)
                     }
                 }
-            }
+            },
         )
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) { page ->
             val pageState = when (page) {
                 0 -> FollowPageState(
@@ -139,19 +139,21 @@ private fun FollowListScreen(
                     emptyCardType = FeedEmptyCardType.NO_FOLLOWER,
                     tabType = FollowTabType.FOLLOWER,
                     isRefreshing = isFollowerRefreshing,
-                    listState = followerListState
+                    listState = followerListState,
                 )
+
                 else -> FollowPageState(
                     followState = followings,
                     emptyCardType = FeedEmptyCardType.NO_FOLLOWING,
                     tabType = FollowTabType.FOLLOWING,
                     isRefreshing = isFollowingRefreshing,
-                    listState = followingListState
+                    listState = followingListState,
                 )
             }
 
             when (pageState.followState) {
                 is UiState.Loading -> HilingualLoadingIndicator()
+
                 is UiState.Success -> {
                     FollowScreen(
                         follows = pageState.followState.data,
@@ -162,9 +164,10 @@ private fun FollowListScreen(
                         onProfileClick = onProfileClick,
                         onActionButtonClick = { userId, isFollowing ->
                             onActionButtonClick(userId, isFollowing, pageState.tabType)
-                        }
+                        },
                     )
                 }
+
                 else -> {}
             }
         }
@@ -176,7 +179,7 @@ private data class FollowPageState(
     val emptyCardType: FeedEmptyCardType,
     val tabType: FollowTabType,
     val isRefreshing: Boolean,
-    val listState: LazyListState
+    val listState: LazyListState,
 )
 
 @Preview(showBackground = true)
@@ -192,7 +195,7 @@ private fun FollowListScreenPreview() {
             onBackClick = {},
             onProfileClick = {},
             onActionButtonClick = { _, _, _ -> },
-            onTabRefresh = {}
+            onTabRefresh = {},
         )
     }
 }

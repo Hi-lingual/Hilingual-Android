@@ -25,5 +25,5 @@ data class LoginResponseDto(
     @SerialName("refreshToken")
     val refreshToken: String,
     @SerialName("registerStatus")
-    val registerStatus: Boolean
+    val registerStatus: Boolean,
 )

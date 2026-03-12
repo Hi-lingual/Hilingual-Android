@@ -42,9 +42,11 @@ import com.hilingual.presentation.home.component.calendar.state.rememberCalendar
 import com.hilingual.presentation.home.component.calendar.util.generateMonthData
 
 @OptIn(ExperimentalFoundationApi::class)
-private fun createSnapLayoutInfoProvider(lazyListState: LazyListState) = object : SnapLayoutInfoProvider by SnapLayoutInfoProvider(
+private fun createSnapLayoutInfoProvider(
+    lazyListState: LazyListState,
+) = object : SnapLayoutInfoProvider by SnapLayoutInfoProvider(
     lazyListState = lazyListState,
-    snapPosition = SnapPosition.Start
+    snapPosition = SnapPosition.Start,
 ) {
     override fun calculateApproachOffset(velocity: Float, decayOffset: Float): Float = 0f
 }
@@ -61,14 +63,14 @@ internal fun HorizontalCalendar(
     modifier: Modifier = Modifier,
     state: CalendarState = rememberCalendarState(),
     dayContent: @Composable (CalendarDay) -> Unit,
-    monthHeader: @Composable (CalendarMonth) -> Unit
+    monthHeader: @Composable (CalendarMonth) -> Unit,
 ) {
     val flingBehavior = rememberSnappingFlingBehavior(lazyListState = state.listState)
 
     LazyRow(
         modifier = modifier,
         state = state.listState,
-        flingBehavior = flingBehavior
+        flingBehavior = flingBehavior,
     ) {
         CalendarMonths(
             monthCount = state.monthIndicesCount,
@@ -76,44 +78,44 @@ internal fun HorizontalCalendar(
                 generateMonthData(
                     startMonth = state.startMonth,
                     offset = it,
-                    firstDayOfWeek = state.firstDayOfWeek
+                    firstDayOfWeek = state.firstDayOfWeek,
                 ).calendarMonth
             },
             dayContent = dayContent,
-            monthHeader = monthHeader
+            monthHeader = monthHeader,
         )
     }
 }
 
-private fun LazyListScope.CalendarMonths(
+private fun LazyListScope.calendarMonths(
     monthCount: Int,
     monthData: (offset: Int) -> CalendarMonth,
     dayContent: @Composable (CalendarDay) -> Unit,
-    monthHeader: @Composable (CalendarMonth) -> Unit
+    monthHeader: @Composable (CalendarMonth) -> Unit,
 ) {
     items(
         count = monthCount,
-        key = { offset -> monthData(offset).yearMonth }
+        key = { offset -> monthData(offset).yearMonth },
     ) { offset ->
         val month = monthData(offset)
         Column(
-            modifier = Modifier.fillParentMaxWidth()
+            modifier = Modifier.fillParentMaxWidth(),
         ) {
             monthHeader(month)
 
             Spacer(Modifier.height(8.dp))
 
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 for (week in month.weekDays) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         for (day in week) {
                             Box(
-                                modifier = Modifier.size(34.dp)
+                                modifier = Modifier.size(34.dp),
                             ) {
                                 dayContent(day)
                             }
