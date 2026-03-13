@@ -20,16 +20,16 @@ kotlinxImmutable = "0.4.0"
 ksp = "2.3.6"
 
 # AndroidX
-coreKtx = "1.17.0"
+coreKtx = "1.18.0"
 coreSplachscreen = "1.2.0"
 androidxAppCompat = "1.7.1"
 lifecycleRuntimeKtx = "2.10.0"
 lifecycleRuntimeComposeAndroid = "2.10.0"
-activityCompose = "1.12.4"
-composeBom = "2026.02.01"
+activityCompose = "1.13.0"
+composeBom = "2026.03.00"
 composeNavigation = "2.9.7"
 security = "1.1.0"
-datastorePreferences = "1.2.0"
+datastorePreferences = "1.2.1"
 material = "1.13.0"
 desugarJdkLibs = "2.1.5"
 browser="1.9.0"
@@ -59,7 +59,7 @@ lottieCompose = "6.7.1"
 coroutine = "1.10.2"
 ktlint = "14.1.0"
 pebble = "0.1.0"
-balloonCompose = "1.7.4"
+balloonCompose = "1.7.5"
 richeditorCompose = "1.0.0-rc13"
 gmaAds = "0.24.0-beta03"
 
@@ -73,13 +73,13 @@ coroutinesPlayServices = "1.10.2"
 
 uiautomator = "2.3.0"
 benchmarkMacroJunit4 = "1.4.1"
-baselineprofile = "1.5.0-alpha03"
+baselineprofile = "1.5.0-alpha04"
 profileinstaller = "1.4.1"
 runner = "1.7.0"
 
 # AboutLibraries
 aboutLibraries = "14.0.0-b02"
-amplitude = "1.26.0"
+amplitude = "1.26.1"
 
 [libraries]
 # Analytics
