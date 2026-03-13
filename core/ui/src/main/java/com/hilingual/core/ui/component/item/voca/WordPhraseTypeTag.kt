@@ -44,7 +44,7 @@ import com.hilingual.core.designsystem.theme.white
 @Composable
 fun WordPhraseTypeTag(
     phraseType: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Text(
         text = phraseType,
@@ -53,62 +53,61 @@ fun WordPhraseTypeTag(
         modifier = modifier
             .clip(CircleShape)
             .background(
-                PartOfSpeechType.getTypeByText(phraseType)?.bgColor ?: HilingualTheme.colors.gray100
+                PartOfSpeechType.getTypeByText(phraseType)?.bgColor ?: HilingualTheme.colors.gray100,
             )
-            .padding(vertical = 2.dp, horizontal = 6.dp)
+            .padding(vertical = 2.dp, horizontal = 6.dp),
     )
 }
 
 private enum class PartOfSpeechType(
     val displayName: String,
     val bgColor: Color,
-    val textColor: Color
+    val textColor: Color,
 ) {
     VERB(
         displayName = "동사",
         bgColor = hilingualOrange,
-        textColor = white
+        textColor = white,
     ),
     NOUN(
         displayName = "명사",
         bgColor = nounBg,
-        textColor = hilingualBlue
+        textColor = hilingualBlue,
     ),
     PRONOUN(
         displayName = "대명사",
         bgColor = pronounBg,
-        textColor = pronounText
+        textColor = pronounText,
     ),
     ADJECTIVE(
         displayName = "형용사",
         bgColor = adjBg,
-        textColor = adjText
+        textColor = adjText,
     ),
     ADVERB(
         displayName = "부사",
         bgColor = adverbBg,
-        textColor = adverbText
+        textColor = adverbText,
     ),
     PREPOSITION(
         displayName = "전치사",
         bgColor = prepositionBg,
-        textColor = hilingualOrange
+        textColor = hilingualOrange,
     ),
     CONJUNCTION(
         displayName = "접속사",
         bgColor = hilingualBlue,
-        textColor = white
+        textColor = white,
     ),
     INTERJECTION(
         displayName = "감탄사",
         bgColor = interjectionBg,
-        textColor = white
-    );
+        textColor = white,
+    ),
+    ;
 
     companion object {
-        fun getTypeByText(name: String): PartOfSpeechType? {
-            return entries.find { it.displayName == name }
-        }
+        fun getTypeByText(name: String): PartOfSpeechType? = entries.find { it.displayName == name }
     }
 }
 
@@ -117,7 +116,7 @@ private enum class PartOfSpeechType(
 private fun WordPartsPreview() {
     HilingualTheme {
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             // 8품사
             WordPhraseTypeTag("동사")

@@ -26,7 +26,7 @@ fun DiaryPublishDialog(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     onPostClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (isVisible) {
         TwoButtonDialog(
@@ -38,7 +38,7 @@ fun DiaryPublishDialog(
             confirmText = "게시하기",
             onNegative = onDismiss,
             onPositive = onPostClick,
-            onDismiss = onDismiss
+            onDismiss = onDismiss,
         )
     }
 }
@@ -50,7 +50,7 @@ private fun DiaryPublishPreview() {
         DiaryPublishDialog(
             isVisible = true,
             onDismiss = {},
-            onPostClick = { }
+            onPostClick = { },
         )
     }
 }

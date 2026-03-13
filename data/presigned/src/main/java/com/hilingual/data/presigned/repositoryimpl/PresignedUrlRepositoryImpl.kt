@@ -23,11 +23,11 @@ import com.hilingual.data.presigned.repository.PresignedUrlRepository
 import javax.inject.Inject
 
 class PresignedUrlRepositoryImpl @Inject constructor(
-    private val presignedUrlRemoteDataSource: PresignedUrlRemoteDataSource
+    private val presignedUrlRemoteDataSource: PresignedUrlRemoteDataSource,
 ) : PresignedUrlRepository {
     override suspend fun getPresignedUrl(
         purpose: String,
-        contentType: String
+        contentType: String,
     ): Result<PresignedUrlModel> = suspendRunCatching {
         presignedUrlRemoteDataSource.getPresignedUrl(purpose, contentType).data!!.toModel()
     }

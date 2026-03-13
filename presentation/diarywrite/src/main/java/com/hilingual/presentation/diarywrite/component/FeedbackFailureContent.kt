@@ -29,15 +29,15 @@ import com.hilingual.core.ui.component.topappbar.CloseOnlyTopAppBar
 @Composable
 internal fun FeedbackFailureContent(
     onCloseButtonClick: () -> Unit,
-    onRequestAgainButtonClick: () -> Unit
+    onRequestAgainButtonClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
         CloseOnlyTopAppBar(
             onCloseClicked = onCloseButtonClick,
-            iconTint = HilingualTheme.colors.black
+            iconTint = HilingualTheme.colors.black,
         )
 
         HilingualButton(
@@ -45,7 +45,7 @@ internal fun FeedbackFailureContent(
                 .padding(horizontal = 16.dp)
                 .padding(bottom = 14.dp),
             text = "다시 요청하기",
-            onClick = onRequestAgainButtonClick
+            onClick = onRequestAgainButtonClick,
         )
     }
 }

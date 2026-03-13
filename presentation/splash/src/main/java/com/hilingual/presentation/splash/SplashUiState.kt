@@ -20,5 +20,5 @@ import com.hilingual.data.config.model.UpdateState
 
 @Immutable
 data class SplashUiState(
-    val updateState: UpdateState = UpdateState.NONE
+    val updateState: UpdateState = UpdateState.NONE,
 )

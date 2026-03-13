@@ -43,7 +43,7 @@ fun RecommendExpressionTab(
     writtenDate: String,
     recommendExpressionList: ImmutableList<RecommendExpression>,
     onBookmarkClick: (Long, Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         state = listState,
@@ -51,7 +51,7 @@ fun RecommendExpressionTab(
         contentPadding = PaddingValues(vertical = 24.dp, horizontal = 16.dp),
         modifier = modifier
             .fillMaxSize()
-            .background(HilingualTheme.colors.gray100)
+            .background(HilingualTheme.colors.gray100),
     ) {
         item {
             Text(
@@ -60,13 +60,13 @@ fun RecommendExpressionTab(
                 color = HilingualTheme.colors.gray700,
                 modifier = Modifier
                     .heightIn(min = 28.dp)
-                    .wrapContentHeight(align = Alignment.CenterVertically)
+                    .wrapContentHeight(align = Alignment.CenterVertically),
             )
         }
 
         items(
             recommendExpressionList,
-            key = { it.phraseId }
+            key = { it.phraseId },
         ) {
             RecommendExpressionCard(
                 phraseType = it.phraseType,
@@ -74,7 +74,7 @@ fun RecommendExpressionTab(
                 explanation = it.explanation,
                 reason = it.reason,
                 isMarked = it.isMarked,
-                onBookmarkClick = { onBookmarkClick(it.phraseId, !it.isMarked) }
+                onBookmarkClick = { onBookmarkClick(it.phraseId, !it.isMarked) },
             )
         }
     }
@@ -88,7 +88,7 @@ private fun RecommendExpressionTabPreview() {
             listState = rememberLazyListState(),
             writtenDate = "7월 11일 금요일",
             recommendExpressionList = persistentListOf(),
-            onBookmarkClick = { _, _ -> }
+            onBookmarkClick = { _, _ -> },
         )
     }
 }

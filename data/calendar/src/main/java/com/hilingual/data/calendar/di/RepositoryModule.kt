@@ -30,6 +30,6 @@ internal abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindsCalendarRepository(
-        calendarRepositoryImpl: CalendarRepositoryImpl
+        calendarRepositoryImpl: CalendarRepositoryImpl,
     ): CalendarRepository
 }

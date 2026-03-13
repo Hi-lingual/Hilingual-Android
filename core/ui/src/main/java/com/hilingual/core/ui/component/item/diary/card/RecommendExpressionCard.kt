@@ -54,7 +54,7 @@ internal fun RecommendExpressionCard(
     reason: String,
     onBookmarkClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isMarked: Boolean = false
+    isMarked: Boolean = false,
 ) {
     Row(
         verticalAlignment = Alignment.Top,
@@ -62,35 +62,35 @@ internal fun RecommendExpressionCard(
             .clip(RoundedCornerShape(8.dp))
             .background(HilingualTheme.colors.white)
             .fillMaxWidth()
-            .padding(vertical = 12.dp, horizontal = 16.dp)
+            .padding(vertical = 12.dp, horizontal = 16.dp),
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         ) {
             ExpressionTopContent(
                 tagList = phraseType,
                 phrase = phrase,
                 explanation = explanation,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
             Text(
                 text = reason,
                 style = HilingualTheme.typography.captionR12,
-                color = HilingualTheme.colors.gray700
+                color = HilingualTheme.colors.gray700,
             )
         }
         Icon(
             imageVector = ImageVector.vectorResource(
-                if (isMarked) R.drawable.ic_save_28_filled else R.drawable.ic_save_28_empty
+                if (isMarked) R.drawable.ic_save_28_filled else R.drawable.ic_save_28_empty,
             ),
             contentDescription = null,
             tint = Color.Unspecified,
             modifier = Modifier
                 .size(28.dp)
                 .noRippleClickable(
-                    onClick = onBookmarkClick
-                )
+                    onClick = onBookmarkClick,
+                ),
         )
     }
 }
@@ -100,22 +100,22 @@ private fun ExpressionTopContent(
     tagList: ImmutableList<String>,
     phrase: String,
     explanation: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = modifier
+        modifier = modifier,
     ) {
         ExpressionTag(tagList)
         Text(
             text = phrase,
             style = HilingualTheme.typography.bodyM16,
-            color = HilingualTheme.colors.black
+            color = HilingualTheme.colors.black,
         )
         Text(
             text = explanation,
             style = HilingualTheme.typography.bodySB14,
-            color = HilingualTheme.colors.black
+            color = HilingualTheme.colors.black,
         )
     }
 }
@@ -123,11 +123,11 @@ private fun ExpressionTopContent(
 @Composable
 private fun ExpressionTag(
     tagList: ImmutableList<String>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = modifier
+        modifier = modifier,
     ) {
         tagList.forEach {
             key(it) {
@@ -149,7 +149,7 @@ private fun RecommendExpressionCardPreview() {
             explanation = "~처럼 보이다, ~한 인상을 주다",
             reason = "“My life comes across as a disaster.”처럼 자신이나 상황의 ‘이미지’를 묘사할 때 자연스러워요.",
             isMarked = isBookmarked,
-            onBookmarkClick = { isBookmarked = !isBookmarked }
+            onBookmarkClick = { isBookmarked = !isBookmarked },
         )
     }
 }

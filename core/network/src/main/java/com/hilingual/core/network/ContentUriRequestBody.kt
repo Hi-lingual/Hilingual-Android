@@ -22,6 +22,10 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Size
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.io.ByteArrayOutputStream
+import javax.inject.Inject
+import kotlin.math.max
+import kotlin.math.min
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -32,15 +36,11 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okio.BufferedSink
 import timber.log.Timber
-import java.io.ByteArrayOutputStream
-import javax.inject.Inject
-import kotlin.math.max
-import kotlin.math.min
 
 class ContentUriRequestBody @Inject constructor(
     @ApplicationContext context: Context,
     private val uri: Uri?,
-    private val config: ImageConfig = ImageConfig.DEFAULT
+    private val config: ImageConfig = ImageConfig.DEFAULT,
 ) : RequestBody() {
 
     private val contentResolver = context.contentResolver
@@ -49,7 +49,7 @@ class ContentUriRequestBody @Inject constructor(
 
     private data class ImageMetadata(
         val size: Long,
-        val mimeType: String?
+        val mimeType: String?,
     ) {
         companion object {
             val EMPTY = ImageMetadata(0L, null)
@@ -62,7 +62,7 @@ class ContentUriRequestBody @Inject constructor(
         val maxFileSize: Int,
         val initialQuality: Int,
         val minQuality: Int,
-        val format: Bitmap.CompressFormat
+        val format: Bitmap.CompressFormat,
     ) {
         companion object {
             val DEFAULT = ImageConfig(
@@ -71,7 +71,7 @@ class ContentUriRequestBody @Inject constructor(
                 maxFileSize = 2 * 1024 * 1024,
                 initialQuality = 90,
                 minQuality = 50,
-                format = Bitmap.CompressFormat.JPEG
+                format = Bitmap.CompressFormat.JPEG,
             )
 
             val WEBP = ImageConfig(
@@ -80,7 +80,7 @@ class ContentUriRequestBody @Inject constructor(
                 maxFileSize = 2 * 1024 * 1024,
                 initialQuality = 90,
                 minQuality = 50,
-                format = Bitmap.CompressFormat.WEBP_LOSSY
+                format = Bitmap.CompressFormat.WEBP_LOSSY,
             )
         }
     }
@@ -180,16 +180,16 @@ class ContentUriRequestBody @Inject constructor(
                 uri,
                 arrayOf(
                     MediaStore.Images.Media.SIZE,
-                    MediaStore.Images.Media.MIME_TYPE
+                    MediaStore.Images.Media.MIME_TYPE,
                 ),
                 null,
                 null,
-                null
+                null,
             )?.use { cursor ->
                 if (cursor.moveToFirst()) {
                     ImageMetadata(
                         size = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)),
-                        mimeType = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE))
+                        mimeType = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)),
                     )
                 } else {
                     ImageMetadata.EMPTY

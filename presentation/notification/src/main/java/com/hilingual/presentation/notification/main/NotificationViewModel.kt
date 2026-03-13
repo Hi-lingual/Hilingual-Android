@@ -22,16 +22,16 @@ import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.notification.main.model.toFeedStateOrNull
 import com.hilingual.presentation.notification.main.model.toNoticeStateOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 internal class NotificationViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(NotificationUiState())
     val uiState = _uiState.asStateFlow()
@@ -55,12 +55,12 @@ internal class NotificationViewModel @Inject constructor(
                         when (tab) {
                             NotificationTab.FEED -> it.copy(
                                 feedNotifications = notifications.mapNotNull { item -> item.toFeedStateOrNull() }
-                                    .toImmutableList()
+                                    .toImmutableList(),
                             )
 
                             NotificationTab.NOTIFICATION -> it.copy(
                                 noticeNotifications = notifications.mapNotNull { item -> item.toNoticeStateOrNull() }
-                                    .toImmutableList()
+                                    .toImmutableList(),
                             )
                         }
                     }

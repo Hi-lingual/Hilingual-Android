@@ -32,7 +32,9 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 private val INPUT_FILTER_REGEX = Regex("""[^\p{IsHangul}a-zA-Z0-9\p{Punct}\p{S}]""")
 
 enum class TextFieldState {
-    NORMAL, ERROR, SUCCESS
+    NORMAL,
+    ERROR,
+    SUCCESS,
 }
 
 @Composable
@@ -45,7 +47,7 @@ fun HilingualShortTextField(
     errorMessage: () -> String,
     successMessage: String,
     modifier: Modifier = Modifier,
-    onDoneAction: () -> Unit = {}
+    onDoneAction: () -> Unit = {},
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val text = value()
@@ -57,7 +59,7 @@ fun HilingualShortTextField(
     }
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         HilingualBasicTextField(
             value = text,
@@ -78,7 +80,7 @@ fun HilingualShortTextField(
                 onDoneAction()
                 keyboardController?.hide()
             },
-            paddingValues = PaddingValues(vertical = 16.dp, horizontal = 12.dp)
+            paddingValues = PaddingValues(vertical = 16.dp, horizontal = 12.dp),
         )
         Row {
             Text(
@@ -92,7 +94,7 @@ fun HilingualShortTextField(
                     TextFieldState.ERROR -> HilingualTheme.colors.alertRed
                     TextFieldState.SUCCESS -> HilingualTheme.colors.hilingualBlue
                     else -> Color.Transparent
-                }
+                },
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -100,7 +102,7 @@ fun HilingualShortTextField(
             Text(
                 text = "${text.graphemeLength}/$maxLength",
                 style = HilingualTheme.typography.captionR12,
-                color = HilingualTheme.colors.gray300
+                color = HilingualTheme.colors.gray300,
             )
         }
     }

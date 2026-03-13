@@ -37,19 +37,19 @@ fun FeedUserActionButton(
     isFilled: Boolean,
     buttonText: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val (buttonColor, textColor, borderColor) = if (isFilled) {
         Triple(
             HilingualTheme.colors.hilingualBlack,
             HilingualTheme.colors.white,
-            HilingualTheme.colors.hilingualBlack
+            HilingualTheme.colors.hilingualBlack,
         )
     } else {
         Triple(
             HilingualTheme.colors.white,
             HilingualTheme.colors.gray500,
-            HilingualTheme.colors.gray200
+            HilingualTheme.colors.gray200,
         )
     }
 
@@ -66,15 +66,15 @@ fun FeedUserActionButton(
             .border(
                 width = 1.dp,
                 color = borderColor,
-                shape = RoundedCornerShape(4.dp)
+                shape = RoundedCornerShape(4.dp),
             )
-            .padding(vertical = 10.dp)
+            .padding(vertical = 10.dp),
     )
 }
 
 private data class FeedUserActionButtonPreviewData(
     val isFilled: Boolean,
-    val buttonText: String
+    val buttonText: String,
 )
 
 private class FeedUserActionButtonPreviewParameterProvider :
@@ -84,7 +84,7 @@ private class FeedUserActionButtonPreviewParameterProvider :
         FeedUserActionButtonPreviewData(isFilled = true, buttonText = "맞팔로우"),
         FeedUserActionButtonPreviewData(isFilled = true, buttonText = "차단"),
         FeedUserActionButtonPreviewData(isFilled = false, buttonText = "팔로잉"),
-        FeedUserActionButtonPreviewData(isFilled = false, buttonText = "차단 해제하기")
+        FeedUserActionButtonPreviewData(isFilled = false, buttonText = "차단 해제하기"),
     )
 }
 
@@ -92,13 +92,13 @@ private class FeedUserActionButtonPreviewParameterProvider :
 @Composable
 private fun FeedUserActionButtonPreview(
     @PreviewParameter(FeedUserActionButtonPreviewParameterProvider::class)
-    previewData: FeedUserActionButtonPreviewData
+    previewData: FeedUserActionButtonPreviewData,
 ) {
     HilingualTheme {
         FeedUserActionButton(
             isFilled = previewData.isFilled,
             buttonText = previewData.buttonText,
-            onClick = {}
+            onClick = {},
         )
     }
 }

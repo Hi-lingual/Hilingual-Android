@@ -42,7 +42,7 @@ import com.hilingual.presentation.auth.R
 @Composable
 internal fun GoogleSignButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
@@ -53,22 +53,22 @@ internal fun GoogleSignButton(
             .border(
                 width = 1.dp,
                 color = HilingualTheme.colors.gray200,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
             )
             .padding(vertical = 18.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_google_20),
             contentDescription = null,
-            tint = Color.Unspecified
+            tint = Color.Unspecified,
         )
 
         Text(
             text = "Google로 계속하기",
             style = HilingualTheme.typography.bodyM16,
-            color = HilingualTheme.colors.hilingualBlack
+            color = HilingualTheme.colors.hilingualBlack,
         )
 
         Spacer(Modifier.width(20.dp))
@@ -80,7 +80,7 @@ internal fun GoogleSignButton(
 private fun GoogleSignButtonPreview() {
     HilingualTheme {
         GoogleSignButton(
-            onClick = {}
+            onClick = {},
         )
     }
 }

@@ -108,7 +108,7 @@ internal fun DiaryWriteRoute(
     navigateUp: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToDiaryFeedback: (diaryId: Long) -> Unit,
-    viewModel: DiaryWriteViewModel = hiltViewModel()
+    viewModel: DiaryWriteViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -118,13 +118,13 @@ internal fun DiaryWriteRoute(
     val tracker = LocalTracker.current
 
     val lottieComposition1 by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.lottie_feedback_loading_1)
+        LottieCompositionSpec.RawRes(R.raw.lottie_feedback_loading_1),
     )
     val lottieComposition2 by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.lottie_feedback_loading_2)
+        LottieCompositionSpec.RawRes(R.raw.lottie_feedback_loading_2),
     )
     val lottieComposition3 by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.lottie_feedback_loading_3)
+        LottieCompositionSpec.RawRes(R.raw.lottie_feedback_loading_3),
     )
 
     val lottieCompositions = remember(lottieComposition1, lottieComposition2, lottieComposition3) {
@@ -136,7 +136,7 @@ internal fun DiaryWriteRoute(
     var diaryTextImageFile by remember { mutableStateOf<File?>(null) }
 
     val cameraLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicture()
+        contract = ActivityResultContracts.TakePicture(),
     ) { success ->
         if (success) {
             val uri = diaryTextImageUri
@@ -147,7 +147,7 @@ internal fun DiaryWriteRoute(
     }
 
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
+        contract = ActivityResultContracts.RequestPermission(),
     ) { isGranted ->
         if (isGranted) {
             val (uri, file) = createTempImageFile(context)
@@ -158,7 +158,7 @@ internal fun DiaryWriteRoute(
     }
 
     val galleryLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia()
+        contract = ActivityResultContracts.PickVisualMedia(),
     ) { uri ->
         uri?.let { viewModel.extractTextFromImage(it) }
     }
@@ -204,19 +204,19 @@ internal fun DiaryWriteRoute(
                         event = "submit_cta",
                         properties = mapOf(
                             "has_photo" to (uiState.diaryImageUri != null),
-                            "char_count" to uiState.diaryText.length
-                        )
+                            "char_count" to uiState.diaryText.length,
+                        ),
                     )
                     viewModel.postDiaryFeedbackCreate()
                 },
-                tracker = tracker
+                tracker = tracker,
             )
         }
 
         is UiState.Loading -> {
             DiaryFeedbackLoadingScreen(
                 lottieCompositions = lottieCompositions,
-                paddingValues = paddingValues
+                paddingValues = paddingValues,
             )
         }
 
@@ -231,21 +231,21 @@ internal fun DiaryWriteRoute(
                             text = "틀린 부분을 고치고,\n더 나은 표현으로 수정했어요!",
                             color = HilingualTheme.colors.gray400,
                             style = HilingualTheme.typography.headR18,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
                         )
                     },
                     media = FeedbackMedia.Lottie(
                         resId = R.raw.lottie_feedback_complete,
-                        heightDp = 180.dp
-                    )
+                        heightDp = 180.dp,
+                    ),
                 ),
                 content = {
                     FeedbackCompleteContent(
                         diaryId = diaryId,
                         onCloseButtonClick = navigateToHome,
-                        onShowFeedbackButtonClick = navigateToDiaryFeedback
+                        onShowFeedbackButtonClick = navigateToDiaryFeedback,
                     )
-                }
+                },
             )
         }
 
@@ -256,15 +256,15 @@ internal fun DiaryWriteRoute(
                     title = "앗! 일시적인 오류가 발생했어요.",
                     media = FeedbackMedia.Image(
                         resId = DesignSystemR.drawable.img_error,
-                        heightDp = 175.dp
-                    )
+                        heightDp = 175.dp,
+                    ),
                 ),
                 content = {
                     FeedbackFailureContent(
                         onCloseButtonClick = navigateToHome,
-                        onRequestAgainButtonClick = viewModel::postDiaryFeedbackCreate
+                        onRequestAgainButtonClick = viewModel::postDiaryFeedbackCreate,
                     )
-                }
+                },
             )
         }
     }
@@ -288,7 +288,7 @@ private fun DiaryWriteScreen(
     onBottomSheetCameraClicked: () -> Unit,
     onBottomSheetGalleryClicked: () -> Unit,
     onDiaryFeedbackRequestButtonClick: () -> Unit,
-    tracker: Tracker
+    tracker: Tracker,
 ) {
     val verticalScrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
@@ -308,7 +308,7 @@ private fun DiaryWriteScreen(
             initialImageUri = initialDiaryImageUri,
             currentImageUri = diaryImageUri,
             onBackClicked = onBackClicked,
-            setBottomSheetVisible = { isCancelBottomSheetVisible = it }
+            setBottomSheetVisible = { isCancelBottomSheetVisible = it },
         )
     }
 
@@ -320,7 +320,7 @@ private fun DiaryWriteScreen(
                 trigger = TriggerType.CLICK,
                 page = WRITE_DIARY,
                 event = "modal",
-                properties = mapOf("modal_action" to "confirm_exit")
+                properties = mapOf("modal_action" to "confirm_exit"),
             )
             onBackClicked()
         },
@@ -331,14 +331,14 @@ private fun DiaryWriteScreen(
             } else {
                 onTempSaveClick()
             }
-        }
+        },
     )
 
     DiaryOverwriteDialog(
         isVisible = isOverwriteDialogVisible,
         onDismiss = { isOverwriteDialogVisible = false },
         onNoClick = { isOverwriteDialogVisible = false },
-        onOverwriteClick = onTempSaveClick
+        onOverwriteClick = onTempSaveClick,
     )
 
     ImageSelectBottomSheet(
@@ -351,11 +351,11 @@ private fun DiaryWriteScreen(
         onGallerySelected = {
             onBottomSheetGalleryClicked()
             isImageBottomSheetVisible = false
-        }
+        },
     )
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         Column(
             modifier = Modifier
@@ -363,7 +363,7 @@ private fun DiaryWriteScreen(
                 .background(HilingualTheme.colors.white)
                 .fillMaxSize()
                 .padding(paddingValues)
-                .addFocusCleaner(focusManager)
+                .addFocusCleaner(focusManager),
         ) {
             BackTopAppBar(
                 title = "일기 작성하기",
@@ -372,7 +372,7 @@ private fun DiaryWriteScreen(
                         trigger = TriggerType.CLICK,
                         page = WRITE_DIARY,
                         event = "back_diary",
-                        properties = mapOf("back_source" to "ui_button")
+                        properties = mapOf("back_source" to "ui_button"),
                     )
                     cancelDiaryWrite(
                         initialText = initialDiaryText,
@@ -380,9 +380,9 @@ private fun DiaryWriteScreen(
                         initialImageUri = initialDiaryImageUri,
                         currentImageUri = diaryImageUri,
                         onBackClicked = onBackClicked,
-                        setBottomSheetVisible = { isCancelBottomSheetVisible = it }
+                        setBottomSheetVisible = { isCancelBottomSheetVisible = it },
                     )
-                }
+                },
             )
 
             Column(
@@ -391,17 +391,17 @@ private fun DiaryWriteScreen(
                     .advancedImePadding()
                     .verticalScroll(verticalScrollState)
                     .padding(horizontal = 16.dp)
-                    .padding(bottom = 16.dp)
+                    .padding(bottom = 16.dp),
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp, bottom = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     DateText(
-                        selectedDateProvider = { selectedDate }
+                        selectedDateProvider = { selectedDate },
                     )
 
                     TextScanButton(
@@ -409,10 +409,10 @@ private fun DiaryWriteScreen(
                             tracker.logEvent(
                                 trigger = TriggerType.CLICK,
                                 page = WRITE_DIARY,
-                                event = "scan_text"
+                                event = "scan_text",
                             )
                             isImageBottomSheetVisible = true
-                        }
+                        },
                     )
                 }
 
@@ -428,10 +428,10 @@ private fun DiaryWriteScreen(
                             event = "dropdown",
                             properties = mapOf(
                                 "recommen_topic" to "$topicKo/$topicEn",
-                                "dropdown_click_count" to dropdownClickCount
-                            )
+                                "dropdown_click_count" to dropdownClickCount,
+                            ),
                         )
-                    }
+                    },
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -450,8 +450,9 @@ private fun DiaryWriteScreen(
                                         event = "textfield",
                                         properties = mapOf(
                                             "text_input_type" to "typed",
-                                            "time_to_first_input" to (System.currentTimeMillis() - textFieldFocusedTime)
-                                        )
+                                            "time_to_first_input" to
+                                                (System.currentTimeMillis() - textFieldFocusedTime),
+                                        ),
                                     )
                                     textFieldFocusedTime = 0L
                                 }
@@ -462,14 +463,14 @@ private fun DiaryWriteScreen(
                     maxLength = 1000,
                     onDoneAction = {
                         focusManager.clearFocus()
-                    }
+                    },
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
                 PhotoSelectButton(
                     selectedImgUri = diaryImageUri,
-                    onImgSelected = onDiaryImageUriChanged
+                    onImgSelected = onDiaryImageUriChanged,
                 )
             }
         }
@@ -491,12 +492,12 @@ private fun DiaryWriteScreen(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .navigationBarsPadding()
+                .navigationBarsPadding(),
         ) {
             Text(
                 text = "피드백을 요청한 일기는 수정이 불가능해요.",
                 style = HilingualTheme.typography.bodyM14,
-                color = HilingualTheme.colors.gray400
+                color = HilingualTheme.colors.gray400,
             )
 
             HilingualButton(
@@ -507,13 +508,13 @@ private fun DiaryWriteScreen(
                         state = balloonState,
                         balloonContent = {
                             WriteGuideTooltip(
-                                text = "10자 이상 작성해야 피드백 요청이 가능해요!"
+                                text = "10자 이상 작성해야 피드백 요청이 가능해요!",
                             )
-                        }
+                        },
                     ),
                 text = "피드백 요청하기",
                 enableProvider = { diaryText.length >= 10 },
-                onClick = onDiaryFeedbackRequestButtonClick
+                onClick = onDiaryFeedbackRequestButtonClick,
             )
         }
 
@@ -535,7 +536,7 @@ private fun cancelDiaryWrite(
     initialImageUri: Uri?,
     currentImageUri: Uri?,
     onBackClicked: () -> Unit,
-    setBottomSheetVisible: (Boolean) -> Unit
+    setBottomSheetVisible: (Boolean) -> Unit,
 ) {
     val isChanged = initialText != currentText || initialImageUri != currentImageUri
     if (isChanged) {
@@ -547,7 +548,7 @@ private fun cancelDiaryWrite(
 
 @Composable
 private fun DateText(
-    selectedDateProvider: () -> LocalDate
+    selectedDateProvider: () -> LocalDate,
 ) {
     val selectedDate = selectedDateProvider()
 
@@ -558,7 +559,7 @@ private fun DateText(
     Text(
         text = formattedDate,
         style = HilingualTheme.typography.bodyM16,
-        color = HilingualTheme.colors.black
+        color = HilingualTheme.colors.black,
     )
 }
 
@@ -567,7 +568,7 @@ private fun createTempImageFile(context: Context): Pair<Uri, File> {
     val uri = FileProvider.getUriForFile(
         context,
         "${context.packageName}.fileprovider",
-        imageFile
+        imageFile,
     )
     return uri to imageFile
 }
@@ -596,7 +597,7 @@ private fun DiaryWriteScreenPreview() {
             onBottomSheetCameraClicked = {},
             onBottomSheetGalleryClicked = {},
             onDiaryFeedbackRequestButtonClick = {},
-            tracker = FakeTracker()
+            tracker = FakeTracker(),
         )
     }
 }

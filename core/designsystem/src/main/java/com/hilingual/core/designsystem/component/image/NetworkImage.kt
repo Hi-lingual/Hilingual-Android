@@ -36,7 +36,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 enum class ErrorImageSize {
     SMALL,
-    LARGE
+    LARGE,
 }
 
 @Composable
@@ -46,7 +46,7 @@ fun NetworkImage(
     shape: Shape = CircleShape,
     errorImageSize: ErrorImageSize = ErrorImageSize.SMALL,
     contentScale: ContentScale = ContentScale.Crop,
-    contentDescription: String? = null
+    contentDescription: String? = null,
 ) {
     val errorImage = remember {
         when (errorImageSize) {
@@ -60,7 +60,7 @@ fun NetworkImage(
             painter = painterResource(R.drawable.img_default_image),
             contentDescription = contentDescription,
             contentScale = contentScale,
-            modifier = modifier.clip(shape)
+            modifier = modifier.clip(shape),
 
         )
     } else {
@@ -69,7 +69,7 @@ fun NetworkImage(
             contentDescription = contentDescription,
             contentScale = contentScale,
             error = painterResource(errorImage),
-            modifier = modifier.clip(shape)
+            modifier = modifier.clip(shape),
         )
     }
 }
@@ -81,12 +81,12 @@ private fun NetworkImagePreview() {
         Row {
             NetworkImage(
                 imageUrl = "",
-                modifier = Modifier.size(50.dp)
+                modifier = Modifier.size(50.dp),
             )
             NetworkImage(
                 imageUrl = "",
                 shape = RectangleShape,
-                modifier = Modifier.size(50.dp)
+                modifier = Modifier.size(50.dp),
             )
         }
     }

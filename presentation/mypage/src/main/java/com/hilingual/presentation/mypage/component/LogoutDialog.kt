@@ -24,7 +24,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 internal fun LogoutDialog(
     isVisible: Boolean,
     onDismiss: () -> Unit,
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
 ) {
     if (isVisible) {
         TwoButtonDialog(
@@ -33,7 +33,7 @@ internal fun LogoutDialog(
             confirmText = "로그아웃",
             onNegative = onDismiss,
             onPositive = onLogoutClick,
-            onDismiss = onDismiss
+            onDismiss = onDismiss,
         )
     }
 }
@@ -45,7 +45,7 @@ private fun LogoutDialogPreview() {
         LogoutDialog(
             isVisible = true,
             onDismiss = {},
-            onLogoutClick = {}
+            onLogoutClick = {},
         )
     }
 }

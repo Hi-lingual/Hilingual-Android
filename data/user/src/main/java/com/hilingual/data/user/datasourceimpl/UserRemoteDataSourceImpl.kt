@@ -18,7 +18,7 @@ import com.hilingual.data.user.service.UserService
 import javax.inject.Inject
 
 internal class UserRemoteDataSourceImpl @Inject constructor(
-    private val userService: UserService
+    private val userService: UserService,
 ) : UserRemoteDataSource {
     override suspend fun getNicknameAvailability(nickname: String): BaseResponse<NicknameResponseDto> =
         userService.getNicknameAvailability(nickname = nickname)
@@ -26,12 +26,12 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
     override suspend fun postUserProfile(
         nickname: String,
         adAlarmAgree: Boolean,
-        fileKey: String?
+        fileKey: String?,
     ): BaseResponse<Unit> {
         val imageRequest = if (fileKey != null) {
             ImageRequestDto(
                 fileKey = fileKey,
-                purpose = "PROFILE_UPLOAD"
+                purpose = "PROFILE_UPLOAD",
             )
         } else {
             null
@@ -40,8 +40,8 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
             RegisterProfileRequestDto(
                 image = imageRequest,
                 nickname = nickname,
-                adAlarmAgree = adAlarmAgree
-            )
+                adAlarmAgree = adAlarmAgree,
+            ),
         )
     }
 
@@ -91,7 +91,7 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
         val imageRequest = if (fileKey != null) {
             ImageRequestDto(
                 fileKey = fileKey,
-                purpose = "PROFILE_UPDATE"
+                purpose = "PROFILE_UPDATE",
             )
         } else {
             null
@@ -99,8 +99,8 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
 
         return userService.updateProfileImage(
             updateProfileImageRequestDto = UpdateProfileImageRequestDto(
-                image = imageRequest
-            )
+                image = imageRequest,
+            ),
         )
     }
 }

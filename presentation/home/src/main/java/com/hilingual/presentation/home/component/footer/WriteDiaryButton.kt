@@ -41,7 +41,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
 internal fun WriteDiaryButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
@@ -51,12 +51,12 @@ internal fun WriteDiaryButton(
             .padding(vertical = 18.dp)
             .noRippleClickable(onClick = onClick),
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_plus_16),
             contentDescription = null,
-            tint = Color.Unspecified
+            tint = Color.Unspecified,
         )
 
         Spacer(Modifier.width(8.dp))
@@ -64,7 +64,7 @@ internal fun WriteDiaryButton(
         Text(
             text = "일기 작성하기",
             style = HilingualTheme.typography.bodyM16,
-            color = HilingualTheme.colors.white
+            color = HilingualTheme.colors.white,
         )
     }
 }
@@ -74,7 +74,7 @@ internal fun WriteDiaryButton(
 private fun WriteDiaryButtonPreview() {
     HilingualTheme {
         WriteDiaryButton(
-            onClick = {}
+            onClick = {},
         )
     }
 }

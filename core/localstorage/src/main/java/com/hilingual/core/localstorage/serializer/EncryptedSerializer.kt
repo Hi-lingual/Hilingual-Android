@@ -3,16 +3,16 @@ package com.hilingual.core.localstorage.serializer
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import com.hilingual.core.crypto.Crypto
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.Json
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.Base64
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
 
 class EncryptedSerializer<T>(
     private val kSerializer: KSerializer<T>,
-    override val defaultValue: T
+    override val defaultValue: T,
 ) : Serializer<T> {
 
     private val json = Json { ignoreUnknownKeys = true }

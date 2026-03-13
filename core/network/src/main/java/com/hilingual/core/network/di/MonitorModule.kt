@@ -27,6 +27,6 @@ import dagger.hilt.components.SingletonComponent
 interface MonitorModule {
     @Binds
     fun bindNetworkMonitor(
-        networkMonitor: NetworkMonitorImpl
+        networkMonitor: NetworkMonitorImpl,
     ): NetworkMonitor
 }

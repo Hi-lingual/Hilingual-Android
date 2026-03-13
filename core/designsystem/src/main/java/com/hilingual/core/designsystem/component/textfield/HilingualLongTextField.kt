@@ -38,7 +38,7 @@ fun HilingualLongTextField(
     maxLength: Int,
     modifier: Modifier = Modifier,
     placeholder: String = "What's been going on today?",
-    onDoneAction: () -> Unit = {}
+    onDoneAction: () -> Unit = {},
 ) {
     var isFocused by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -63,7 +63,7 @@ fun HilingualLongTextField(
             keyboardController?.hide()
         },
         isShowLength = true,
-        keyboardImeAction = ImeAction.Default
+        keyboardImeAction = ImeAction.Default,
     )
 }
 
@@ -81,7 +81,7 @@ private fun HilingualLongTextFieldPreview() {
                 Toast.makeText(context, "Enter key pressed with text: $text", Toast.LENGTH_SHORT)
                     .show()
             },
-            maxLength = 1000
+            maxLength = 1000,
         )
     }
 }

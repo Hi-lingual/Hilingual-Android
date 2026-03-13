@@ -22,11 +22,11 @@ import com.hilingual.data.calendar.model.TopicModel
 data class TodayTopicUiModel(
     val topicKo: String,
     val topicEn: String,
-    val remainingTime: Int
+    val remainingTime: Int,
 )
 
 internal fun TopicModel.toState(): TodayTopicUiModel = TodayTopicUiModel(
     topicKo = topicKor,
     topicEn = topicEn,
-    remainingTime = remainingTime
+    remainingTime = remainingTime,
 )

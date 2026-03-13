@@ -28,6 +28,7 @@ import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.presentation.diaryfeedback.navigation.DiaryFeedback
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -39,12 +40,11 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 internal class DiaryFeedbackViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val diaryRepository: DiaryRepository
+    private val diaryRepository: DiaryRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<DiaryFeedbackUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<DiaryFeedbackUiState>> = _uiState.asStateFlow()
@@ -67,7 +67,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
             }.onLogFailure {
                 _uiState.update { UiState.Failure }
                 _sideEffect.emit(
-                    DiaryFeedbackSideEffect.ShowErrorDialog
+                    DiaryFeedbackSideEffect.ShowErrorDialog,
                 )
             }
         }
@@ -88,7 +88,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                 writtenDate = diaryResult.writtenDate,
                 diaryContent = diaryResult.toState(),
                 feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),
-                recommendExpressionList = recommendExpressionsResult.map { it.toState() }.toImmutableList()
+                recommendExpressionList = recommendExpressionsResult.map { it.toState() }.toImmutableList(),
             )
         }
 
@@ -115,7 +115,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
             }.onLogFailure {
                 _uiState.update { UiState.Failure }
                 _sideEffect.emit(
-                    DiaryFeedbackSideEffect.ShowErrorDialog
+                    DiaryFeedbackSideEffect.ShowErrorDialog,
                 )
             }
         }
@@ -137,7 +137,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
         viewModelScope.launch {
             diaryRepository.patchPhraseBookmark(
                 phraseId = phraseId,
-                bookmarkModel = PhraseBookmarkModel(isMarked)
+                bookmarkModel = PhraseBookmarkModel(isMarked),
             )
                 .onSuccess { result ->
                     when (result) {
@@ -154,13 +154,15 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                                 }.toImmutableList()
 
                                 currentState.copy(
-                                    recommendExpressionList = updatedList
+                                    recommendExpressionList = updatedList,
                                 )
                             }
                         }
+
                         BookmarkResult.OVERCAPACITY -> {
                             showVocaOverflowSnackbar()
                         }
+
                         else -> { }
                     }
                 }
@@ -169,11 +171,15 @@ internal class DiaryFeedbackViewModel @Inject constructor(
     }
 
     private suspend fun showPublishSnackbar() {
-        _sideEffect.emit(DiaryFeedbackSideEffect.ShowDiaryPublishSnackbar(message = "일기가 게시되었어요!", actionLabel = "보러가기"))
+        _sideEffect.emit(
+            DiaryFeedbackSideEffect.ShowDiaryPublishSnackbar(message = "일기가 게시되었어요!", actionLabel = "보러가기"),
+        )
     }
 
     private suspend fun showVocaOverflowSnackbar() {
-        _sideEffect.emit(DiaryFeedbackSideEffect.ShowVocaOverflowSnackbar(message = "단어장이 모두 찼어요!", actionLabel = "비우러가기"))
+        _sideEffect.emit(
+            DiaryFeedbackSideEffect.ShowVocaOverflowSnackbar(message = "단어장이 모두 찼어요!", actionLabel = "비우러가기"),
+        )
     }
 
     private suspend fun showToast(message: String) {

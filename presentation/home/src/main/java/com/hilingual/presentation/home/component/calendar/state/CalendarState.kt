@@ -36,10 +36,10 @@ private val CALENDAR_END_MONTH = YearMonth.of(2100, 12)
 @Composable
 internal fun rememberCalendarState(
     initialVisibleMonth: YearMonth = YearMonth.now(),
-    firstDayOfWeek: DayOfWeek = firstDayOfWeekFromLocale()
+    firstDayOfWeek: DayOfWeek = firstDayOfWeekFromLocale(),
 ): CalendarState {
     val listState = rememberLazyListState(
-        initialFirstVisibleItemIndex = getMonthIndex(CALENDAR_START_MONTH, initialVisibleMonth)
+        initialFirstVisibleItemIndex = getMonthIndex(CALENDAR_START_MONTH, initialVisibleMonth),
     )
     return remember { CalendarState(listState, firstDayOfWeek) }
 }
@@ -47,7 +47,7 @@ internal fun rememberCalendarState(
 @Stable
 internal class CalendarState(
     val listState: LazyListState,
-    internal val firstDayOfWeek: DayOfWeek
+    internal val firstDayOfWeek: DayOfWeek,
 ) {
     internal val startMonth: YearMonth = CALENDAR_START_MONTH
 
@@ -55,7 +55,7 @@ internal class CalendarState(
         generateMonthData(
             startMonth = startMonth,
             offset = listState.firstVisibleItemIndex,
-            firstDayOfWeek = firstDayOfWeek
+            firstDayOfWeek = firstDayOfWeek,
         ).calendarMonth
     }
 

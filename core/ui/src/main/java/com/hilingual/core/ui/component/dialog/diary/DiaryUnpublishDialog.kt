@@ -26,7 +26,7 @@ fun DiaryUnpublishDialog(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     onPrivateClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (isVisible) {
         TwoButtonDialog(
@@ -38,7 +38,7 @@ fun DiaryUnpublishDialog(
             confirmText = "비공개하기",
             onNegative = onDismiss,
             onPositive = onPrivateClick,
-            onDismiss = onDismiss
+            onDismiss = onDismiss,
         )
     }
 }
@@ -50,7 +50,7 @@ private fun DiaryUnpublishPreview() {
         DiaryUnpublishDialog(
             isVisible = true,
             onDismiss = {},
-            onPrivateClick = { }
+            onPrivateClick = { },
         )
     }
 }

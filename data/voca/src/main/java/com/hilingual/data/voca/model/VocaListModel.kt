@@ -21,31 +21,31 @@ import com.hilingual.data.voca.dto.response.VocaListResponseDto
 
 data class VocaListResultModel(
     val count: Int,
-    val list: List<GroupingVocaModel>
+    val list: List<GroupingVocaModel>,
 )
 
 data class GroupingVocaModel(
     val group: String,
-    val words: List<VocaItemModel>
+    val words: List<VocaItemModel>,
 )
 
 data class VocaItemModel(
     val phraseId: Long,
     val phrase: String,
     val phraseType: List<String>,
-    val isBookmarked: Boolean
+    val isBookmarked: Boolean,
 )
 
 internal fun VocaListResponseDto.toModel(): VocaListResultModel =
     VocaListResultModel(
         count = this.count,
-        list = this.wordList.map { it.toModel() }
+        list = this.wordList.map { it.toModel() },
     )
 
 internal fun VocaGroupResponseDto.toModel(): GroupingVocaModel =
     GroupingVocaModel(
         group = this.group,
-        words = this.words.map { it.toModel() }
+        words = this.words.map { it.toModel() },
     )
 
 internal fun VocaItemResponseDto.toModel(): VocaItemModel =
@@ -53,5 +53,5 @@ internal fun VocaItemResponseDto.toModel(): VocaItemModel =
         phraseId = this.phraseId,
         phrase = this.phrase,
         phraseType = this.phraseType,
-        isBookmarked = this.isBookmarked
+        isBookmarked = this.isBookmarked,
     )

@@ -22,9 +22,9 @@ object OnboardingDataStoreModule {
     @Singleton
     @OnboardingDataStore
     fun provideOnboardingDataStore(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): DataStore<Preferences> = DataStoreBuilder.createPreferencesDataStore(
         context = context,
-        name = HILINGUAL_ONBOARDING_STATE_PREFS
+        name = HILINGUAL_ONBOARDING_STATE_PREFS,
     )
 }

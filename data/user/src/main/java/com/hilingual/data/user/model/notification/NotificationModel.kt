@@ -24,7 +24,7 @@ data class NotificationModel(
     val title: String,
     val targetId: Long?,
     val isRead: Boolean,
-    val publishedAt: String
+    val publishedAt: String,
 )
 
 internal fun NotificationResponseDto.toModel() = NotificationModel(
@@ -34,5 +34,5 @@ internal fun NotificationResponseDto.toModel() = NotificationModel(
     title = this.title,
     targetId = this.targetId,
     isRead = this.isRead,
-    publishedAt = this.publishedAt
+    publishedAt = this.publishedAt,
 )

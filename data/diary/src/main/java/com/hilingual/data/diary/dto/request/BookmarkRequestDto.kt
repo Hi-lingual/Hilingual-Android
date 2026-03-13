@@ -21,5 +21,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class BookmarkRequestDto(
     @SerialName("isBookmarked")
-    val isBookmarked: Boolean
+    val isBookmarked: Boolean,
 )

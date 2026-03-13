@@ -14,7 +14,7 @@
     },
     {
       "matchDepNames": ["org.jlleitschuh.gradle.ktlint"],
-      "enabled": false
+      "enabled": true
     },
     {
       "description": "Ignore updates for Ruby and Fastlane to prevent CI breakage",

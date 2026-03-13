@@ -33,7 +33,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
 internal fun AddVocaButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Text(
         text = "일기 쓰고 단어 추가하기",
@@ -43,12 +43,12 @@ internal fun AddVocaButton(
             .clip(RoundedCornerShape(8.dp))
             .background(
                 shape = RoundedCornerShape(8.dp),
-                color = HilingualTheme.colors.hilingualBlack
+                color = HilingualTheme.colors.hilingualBlack,
             )
             .width(IntrinsicSize.Max)
             .noRippleClickable(onClick = onClick)
             .padding(12.dp),
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Center,
     )
 }
 
@@ -57,7 +57,7 @@ internal fun AddVocaButton(
 private fun AddVocaButtonPreview() {
     HilingualTheme {
         AddVocaButton(
-            onClick = {}
+            onClick = {},
         )
     }
 }

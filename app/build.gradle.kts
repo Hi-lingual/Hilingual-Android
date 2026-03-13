@@ -27,7 +27,7 @@ plugins {
 val properties = Properties().apply {
     project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use {
         load(
-            it
+            it,
         )
     }
 }
@@ -44,7 +44,7 @@ android {
         buildConfigField(
             "String",
             "AMPLITUDE_API_KEY",
-            "\"${properties.getProperty("amplitudeKey")}\""
+            "\"${properties.getProperty("amplitudeKey")}\"",
         )
     }
 
@@ -73,7 +73,7 @@ android {
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
             signingConfig = signingConfigs.getByName("release")
         }
@@ -117,8 +117,9 @@ dependencies {
 
 ktlint {
     android = true
-    debug = true
-    coloredOutput = true
-    verbose = true
-    outputToConsole = true
+    ignoreFailures = false
+    reporters {
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.PLAIN)
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE)
+    }
 }

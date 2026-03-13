@@ -43,18 +43,18 @@ fun TwoButtonDialog(
     description: String? = null,
     properties: DialogProperties = DialogProperties(
         usePlatformDefaultWidth = false,
-        decorFitsSystemWindows = false
-    )
+        decorFitsSystemWindows = false,
+    ),
 ) {
     HilingualBasicDialog(
         onDismiss = onDismiss,
         modifier = modifier,
-        properties = properties
+        properties = properties,
     ) {
         Text(
             text = title,
             style = HilingualTheme.typography.headSB16,
-            color = HilingualTheme.colors.gray850
+            color = HilingualTheme.colors.gray850,
         )
 
         if (description != null) {
@@ -65,7 +65,7 @@ fun TwoButtonDialog(
                 style = HilingualTheme.typography.bodyR14,
                 color = HilingualTheme.colors.gray500,
                 maxLines = 2,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
         }
 
@@ -73,19 +73,19 @@ fun TwoButtonDialog(
             horizontalArrangement = Arrangement.spacedBy(13.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 32.dp)
+                .padding(top = 32.dp),
         ) {
             DialogButton(
                 text = cancelText,
                 onClick = onNegative,
                 isFilled = false,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
             DialogButton(
                 text = confirmText,
                 onClick = onPositive,
                 isFilled = true,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
         }
     }
@@ -102,7 +102,7 @@ private fun TwoButtonDialogPreview() {
             confirmText = "확인",
             onNegative = {},
             onPositive = {},
-            onDismiss = {}
+            onDismiss = {},
         )
     }
 }

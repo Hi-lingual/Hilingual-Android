@@ -60,29 +60,29 @@ fun GrammarSpellingTab(
     isAIWrittenDiary: Boolean,
     onImageClick: () -> Unit,
     onToggleViewMode: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         state = listState,
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 40.dp),
         modifier = modifier
             .fillMaxSize()
-            .background(HilingualTheme.colors.gray100)
+            .background(HilingualTheme.colors.gray100),
     ) {
         item {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
                     text = writtenDate,
                     style = HilingualTheme.typography.bodyM16,
-                    color = HilingualTheme.colors.gray700
+                    color = HilingualTheme.colors.gray700,
                 )
                 DiaryViewModeToggle(
                     isAIWritten = isAIWrittenDiary,
-                    onToggle = onToggleViewMode
+                    onToggle = onToggleViewMode,
                 )
             }
             Spacer(Modifier.height(12.dp))
@@ -92,7 +92,7 @@ fun GrammarSpellingTab(
                     diaryContent = if (isAIWrittenDiary) aiText else originalText,
                     diffRanges = diffRanges,
                     imageUrl = imageUrl,
-                    onImageClick = onImageClick
+                    onImageClick = onImageClick,
                 )
             }
             Spacer(Modifier.height(24.dp))
@@ -110,14 +110,14 @@ fun GrammarSpellingTab(
         } else {
             itemsIndexed(
                 items = feedbackList,
-                key = { index, feedback -> "$index-${feedback.hashCode()}" }
+                key = { index, feedback -> "$index-${feedback.hashCode()}" },
             ) { index, content ->
                 with(content) {
                     FeedbackCard(
                         originalText = originalText,
                         feedbackText = feedbackText,
                         explain = explain,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
                 if (index != feedbackList.lastIndex) Spacer(Modifier.height(12.dp))
@@ -129,15 +129,21 @@ fun GrammarSpellingTab(
 @Composable
 private fun FeedbackTitle(feedbackSize: Int) {
     Text(
-        text = if (feedbackSize == 0) AnnotatedString("일기에서 발견된 피드백 알려드릴게요!") else getFeedbackTitleAnnotatedString(feedbackSize),
+        text = if (feedbackSize ==
+            0
+        ) {
+            AnnotatedString("일기에서 발견된 피드백 알려드릴게요!")
+        } else {
+            getFeedbackTitleAnnotatedString(feedbackSize)
+        },
         style = HilingualTheme.typography.bodyM16,
-        color = HilingualTheme.colors.black
+        color = HilingualTheme.colors.black,
     )
 }
 
 @Composable
 private fun getFeedbackTitleAnnotatedString(
-    feedbackSize: Int
+    feedbackSize: Int,
 ) = buildAnnotatedString {
     append("주요 피드백 ")
     withStyle(style = SpanStyle(color = HilingualTheme.colors.hilingualOrange)) {
@@ -158,7 +164,7 @@ private fun GrammarSpellingTabPreview() {
             feedbackList = persistentListOf(),
             isAIWrittenDiary = isAIWritten,
             onImageClick = {},
-            onToggleViewMode = { isAIWritten = it }
+            onToggleViewMode = { isAIWritten = it },
         )
     }
 }

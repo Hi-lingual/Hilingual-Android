@@ -81,7 +81,7 @@ fun HilingualBasicTextField(
     paddingValues: PaddingValues = PaddingValues(12.dp),
     decorationBoxHeight: Dp = 22.dp,
     leadingIcon: @Composable () -> Unit = {},
-    trailingIcon: @Composable () -> Unit = {}
+    trailingIcon: @Composable () -> Unit = {},
 ) {
     BasicTextField(
         value = value,
@@ -96,7 +96,7 @@ fun HilingualBasicTextField(
             .border(
                 width = 1.dp,
                 color = borderColor,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
             )
             .focusRequester(focusRequester)
             .onFocusChanged { focusState ->
@@ -106,35 +106,35 @@ fun HilingualBasicTextField(
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,
             imeAction = keyboardImeAction,
-            hintLocales = hintLocales
+            hintLocales = hintLocales,
         ),
         keyboardActions = KeyboardActions(
             onDone = { onDoneAction() },
-            onSearch = { onSearchAction() }
+            onSearch = { onSearchAction() },
         ),
         textStyle = inputTextStyle.copy(
-            color = HilingualTheme.colors.black
+            color = HilingualTheme.colors.black,
         ),
         decorationBox = { innerTextField ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier.padding(paddingValues)
+                modifier = Modifier.padding(paddingValues),
             ) {
                 leadingIcon()
 
                 Column(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 ) {
                     Column(
-                        modifier = Modifier.height(decorationBoxHeight)
+                        modifier = Modifier.height(decorationBoxHeight),
                     ) {
                         Box {
                             if (value.isEmpty()) {
                                 Text(
                                     text = placeholder,
                                     color = HilingualTheme.colors.gray400,
-                                    style = placeholderTextStyle
+                                    style = placeholderTextStyle,
                                 )
                             }
                             innerTextField()
@@ -147,13 +147,13 @@ fun HilingualBasicTextField(
                             text = "${value.length}/$maxLength",
                             style = HilingualTheme.typography.captionR12,
                             color = HilingualTheme.colors.gray400,
-                            modifier = Modifier.align(Alignment.End)
+                            modifier = Modifier.align(Alignment.End),
                         )
                     }
                 }
                 trailingIcon()
             }
-        }
+        },
     )
 }
 
@@ -170,7 +170,7 @@ private fun HilingualBasicTextFieldWithIconsPreview() {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = null,
-                    tint = HilingualTheme.colors.gray400
+                    tint = HilingualTheme.colors.gray400,
                 )
             },
             trailingIcon = {
@@ -178,10 +178,10 @@ private fun HilingualBasicTextFieldWithIconsPreview() {
                     Icon(
                         imageVector = Icons.Default.Clear,
                         contentDescription = "Clear",
-                        modifier = Modifier.clickable { text = "" }
+                        modifier = Modifier.clickable { text = "" },
                     )
                 }
-            }
+            },
         )
     }
 }
@@ -195,7 +195,7 @@ private fun HilingualBasicTextFieldPadding16Preview() {
             value = text,
             onValueChanged = { text = it },
             placeholder = "Enter text",
-            paddingValues = PaddingValues(vertical = 16.dp, horizontal = 12.dp)
+            paddingValues = PaddingValues(vertical = 16.dp, horizontal = 12.dp),
         )
     }
 }
@@ -205,7 +205,7 @@ private fun HilingualBasicTextFieldPadding16Preview() {
 private fun HilingualBasicTextFieldMultiLineWithLengthPreview() {
     var text by remember {
         mutableStateOf(
-            "This is a long text that will wrap into multiple lines to demonstrate the behavior of the text field."
+            "This is a long text that will wrap into multiple lines to demonstrate the behavior of the text field.",
         )
     }
     HilingualTheme {
@@ -216,7 +216,7 @@ private fun HilingualBasicTextFieldMultiLineWithLengthPreview() {
             singleLine = false,
             decorationBoxHeight = 240.dp,
             isShowLength = true,
-            maxLength = 1000
+            maxLength = 1000,
         )
     }
 }

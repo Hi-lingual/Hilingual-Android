@@ -22,11 +22,11 @@ import com.hilingual.data.calendar.model.TopicModel
 interface CalendarRepository {
     suspend fun getCalendar(
         year: Int,
-        month: Int
+        month: Int,
     ): Result<CalendarModel>
 
     suspend fun getDiaryThumbnail(
-        date: String
+        date: String,
     ): Result<DiaryThumbnailModel>
 
     suspend fun getTopic(date: String): Result<TopicModel>

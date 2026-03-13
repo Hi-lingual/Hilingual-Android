@@ -18,12 +18,13 @@ package com.hilingual.presentation.mypage
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.app.DeviceInfoProvider
+import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.auth.repository.AuthRepository
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -32,13 +33,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 internal class MyPageViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
-    private val deviceInfoProvider: DeviceInfoProvider
+    private val deviceInfoProvider: DeviceInfoProvider,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<MyPageUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<MyPageUiState>> = _uiState.asStateFlow()
@@ -60,8 +60,8 @@ internal class MyPageViewModel @Inject constructor(
                                 profileImageUrl = userInfo.profileImg,
                                 profileNickname = userInfo.nickname,
                                 profileProvider = userInfo.provider,
-                                appVersion = deviceInfoProvider.getAppVersion()
-                            )
+                                appVersion = deviceInfoProvider.getAppVersion(),
+                            ),
                         )
                     }
                 }

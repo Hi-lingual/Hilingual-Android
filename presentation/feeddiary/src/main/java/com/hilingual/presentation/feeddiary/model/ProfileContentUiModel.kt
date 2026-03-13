@@ -25,5 +25,5 @@ data class ProfileContentUiModel(
     val streak: Int = 0,
     val isLiked: Boolean = false,
     val likeCount: Int = 0,
-    val sharedDateInMinutes: Long = 0
+    val sharedDateInMinutes: Long = 0,
 )

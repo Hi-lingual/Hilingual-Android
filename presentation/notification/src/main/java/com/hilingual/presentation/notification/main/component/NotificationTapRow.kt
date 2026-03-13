@@ -32,13 +32,13 @@ private val TITLES = persistentListOf("피드", "공지사항")
 internal fun NotificationTapRow(
     tabIndex: Int,
     onTabSelected: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     HilingualBasicTabRow(
         tabTitles = TITLES,
         tabIndex = tabIndex,
         onTabSelected = onTabSelected,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -49,7 +49,7 @@ internal fun NotificationTapRowPreview() {
         var selectedTabIndex by remember { mutableIntStateOf(0) }
         NotificationTapRow(
             tabIndex = selectedTabIndex,
-            onTabSelected = { selectedTabIndex = it }
+            onTabSelected = { selectedTabIndex = it },
         )
     }
 }

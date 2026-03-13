@@ -21,5 +21,5 @@ import java.time.YearMonth
 @Immutable
 internal data class CalendarMonth(
     val yearMonth: YearMonth,
-    val weekDays: List<List<CalendarDay>>
+    val weekDays: List<List<CalendarDay>>,
 )

@@ -67,7 +67,7 @@ internal fun MyPageRoute(
     navigateToAlarm: () -> Unit,
     navigateToBlock: () -> Unit,
     navigateToOssLicenses: () -> Unit,
-    viewModel: MyPageViewModel
+    viewModel: MyPageViewModel,
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -78,9 +78,7 @@ internal fun MyPageRoute(
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is MyPageSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = sideEffect.onRetry)
-
             is MyPageSideEffect.ShowToast -> messageController(HilingualMessage.Toast(sideEffect.message))
-
             is MyPageSideEffect.RestartApp -> appRestarter.restartApp()
         }
     }
@@ -99,7 +97,7 @@ internal fun MyPageRoute(
                 onOssLicensesClick = navigateToOssLicenses,
                 onCustomerCenterClick = { context.launchCustomTabs(UrlConstant.KAKAOTALK_CHANNEL) },
                 onTermsClick = { context.launchCustomTabs(UrlConstant.PRIVACY_POLICY) },
-                onLogoutClick = viewModel::logout
+                onLogoutClick = viewModel::logout,
             )
         }
 
@@ -120,7 +118,7 @@ private fun MyPageScreen(
     onOssLicensesClick: () -> Unit,
     onCustomerCenterClick: () -> Unit,
     onTermsClick: () -> Unit,
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
 ) {
     var isLogoutDialogVisible by remember { mutableStateOf(false) }
 
@@ -129,11 +127,11 @@ private fun MyPageScreen(
             .fillMaxSize()
             .statusBarColor(HilingualTheme.colors.gray100)
             .background(HilingualTheme.colors.gray100)
-            .padding(paddingValues)
+            .padding(paddingValues),
     ) {
         TitleLeftAlignedTopAppBar(
             title = "마이페이지",
-            textColor = HilingualTheme.colors.black
+            textColor = HilingualTheme.colors.black,
         )
 
         Column(
@@ -141,7 +139,7 @@ private fun MyPageScreen(
                 .weight(1f)
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             MyInfoBox(
                 modifier = Modifier
@@ -150,7 +148,7 @@ private fun MyPageScreen(
                 profileUrl = profileImageUrl,
                 profileNickname = profileNickname,
                 onEditButtonClick = onProfileEditClick,
-                onMyFeedButtonClick = onMyFeedClick
+                onMyFeedButtonClick = onMyFeedClick,
             )
 
             Column(
@@ -160,34 +158,34 @@ private fun MyPageScreen(
                     .clip(RoundedCornerShape(12.dp))
                     .background(HilingualTheme.colors.white)
                     .padding(12.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
                 SettingItem(
                     iconRes = R.drawable.ic_alarm_28,
                     title = "알림 설정",
                     onClick = onAlarmClick,
-                    trailingContent = { ArrowIcon() }
+                    trailingContent = { ArrowIcon() },
                 )
 
                 SettingItem(
                     iconRes = R.drawable.ic_block_24_black,
                     title = "차단한 유저",
                     onClick = onBlockClick,
-                    trailingContent = { ArrowIcon() }
+                    trailingContent = { ArrowIcon() },
                 )
 
                 SettingItem(
                     iconRes = R.drawable.ic_customer_24,
                     title = "고객센터",
                     onClick = onCustomerCenterClick,
-                    trailingContent = { ArrowIcon() }
+                    trailingContent = { ArrowIcon() },
                 )
 
                 SettingItem(
                     iconRes = R.drawable.ic_document_24,
                     title = "개인정보 처리방침 및 이용약관",
                     onClick = onTermsClick,
-                    trailingContent = { ArrowIcon() }
+                    trailingContent = { ArrowIcon() },
                 )
             }
 
@@ -195,7 +193,7 @@ private fun MyPageScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 28.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
                 SettingItem(
                     iconRes = R.drawable.ic_info_24,
@@ -205,21 +203,21 @@ private fun MyPageScreen(
                             text = appVersion,
                             color = HilingualTheme.colors.gray400,
                             style = HilingualTheme.typography.bodyR14,
-                            modifier = Modifier.padding(end = 4.dp)
+                            modifier = Modifier.padding(end = 4.dp),
                         )
-                    }
+                    },
                 )
 
                 SettingItem(
                     iconRes = R.drawable.ic_info_24,
                     title = "오픈소스 라이선스",
-                    onClick = onOssLicensesClick
+                    onClick = onOssLicensesClick,
                 )
 
                 SettingItem(
                     iconRes = R.drawable.ic_logout_24,
                     title = "로그아웃",
-                    onClick = { isLogoutDialogVisible = true }
+                    onClick = { isLogoutDialogVisible = true },
                 )
 
                 Spacer(modifier = Modifier.size(16.dp))
@@ -228,14 +226,14 @@ private fun MyPageScreen(
 
         HilingualBannerAd(
             adUnitId = BuildConfig.ADMOB_BANNER_UNIT_ID,
-            maxHeight = 70
+            maxHeight = 70,
         )
     }
 
     LogoutDialog(
         isVisible = isLogoutDialogVisible,
         onDismiss = { isLogoutDialogVisible = false },
-        onLogoutClick = onLogoutClick
+        onLogoutClick = onLogoutClick,
     )
 }
 
@@ -247,7 +245,7 @@ private fun ArrowIcon() {
             .padding(4.dp),
         imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right_16_bold),
         contentDescription = null,
-        tint = HilingualTheme.colors.gray400
+        tint = HilingualTheme.colors.gray400,
     )
 }
 
@@ -267,7 +265,7 @@ private fun MyPageScreenPreview() {
             onOssLicensesClick = {},
             onCustomerCenterClick = {},
             onTermsClick = {},
-            onLogoutClick = {}
+            onLogoutClick = {},
         )
     }
 }

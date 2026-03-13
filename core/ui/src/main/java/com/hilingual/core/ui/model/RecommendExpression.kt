@@ -25,5 +25,5 @@ data class RecommendExpression(
     val phrase: String,
     val explanation: String,
     val reason: String,
-    val isMarked: Boolean = false
+    val isMarked: Boolean = false,
 )

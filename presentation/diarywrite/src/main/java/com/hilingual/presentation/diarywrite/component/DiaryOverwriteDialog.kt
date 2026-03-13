@@ -25,7 +25,7 @@ internal fun DiaryOverwriteDialog(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     onNoClick: () -> Unit,
-    onOverwriteClick: () -> Unit
+    onOverwriteClick: () -> Unit,
 ) {
     if (isVisible) {
         TwoButtonDialog(
@@ -35,7 +35,7 @@ internal fun DiaryOverwriteDialog(
             confirmText = "덮어쓰기",
             onNegative = onNoClick,
             onPositive = onOverwriteClick,
-            onDismiss = onDismiss
+            onDismiss = onDismiss,
         )
     }
 }
@@ -48,7 +48,7 @@ private fun DiaryOverwriteDialogPreview() {
             isVisible = true,
             onDismiss = {},
             onNoClick = {},
-            onOverwriteClick = {}
+            onOverwriteClick = {},
         )
     }
 }

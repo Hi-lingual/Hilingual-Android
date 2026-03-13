@@ -34,11 +34,11 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.bottomsheet.HilingualYearMonthPickerBottomSheet
 import com.hilingual.presentation.home.component.calendar.state.rememberCalendarState
 import com.hilingual.presentation.home.component.calendar.util.daysOfWeek
+import java.time.LocalDate
+import java.time.YearMonth
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.YearMonth
 
 @Composable
 internal fun HilingualCalendar(
@@ -46,14 +46,14 @@ internal fun HilingualCalendar(
     writtenDates: Set<LocalDate>,
     onDateClick: (date: LocalDate) -> Unit,
     onMonthChanged: (yearMonth: YearMonth) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val daysOfWeek = remember { daysOfWeek().toImmutableList() }
     val initialMonth = remember { YearMonth.now() }
     val state = rememberCalendarState(
         initialVisibleMonth = initialMonth,
-        firstDayOfWeek = daysOfWeek.first()
+        firstDayOfWeek = daysOfWeek.first(),
     )
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var settledMonth by remember { mutableStateOf(initialMonth) }
@@ -83,7 +83,7 @@ internal fun HilingualCalendar(
                 state.scrollToMonth(newYearMonth)
                 isBottomSheetVisible = false
             }
-        }
+        },
     )
 
     Column(modifier = modifier) {
@@ -100,7 +100,7 @@ internal fun HilingualCalendar(
                 }
             },
             yearMonth = { settledMonth },
-            modifier = Modifier.padding(bottom = 12.dp)
+            modifier = Modifier.padding(bottom = 12.dp),
         )
 
         key(settledMonth) {
@@ -115,9 +115,9 @@ internal fun HilingualCalendar(
                         day = day,
                         onClick = { onDateClick(day.date) },
                         isSelected = selectedDate == day.date,
-                        isWritten = day.date in writtenDates
+                        isWritten = day.date in writtenDates,
                     )
-                }
+                },
             )
         }
     }
@@ -135,7 +135,7 @@ private fun HilingualCalendarPreview() {
             selectedDate = selectedDate,
             writtenDates = writtenDates,
             onDateClick = { selectedDate = it },
-            onMonthChanged = { }
+            onMonthChanged = { },
         )
     }
 }

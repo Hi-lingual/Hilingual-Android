@@ -47,12 +47,12 @@ internal fun FollowScreen(
     onRefresh: () -> Unit,
     onProfileClick: (Long) -> Unit,
     onActionButtonClick: (Long, Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     HilingualPullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = onRefresh,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
     ) {
         LazyColumn(
             state = listState,
@@ -61,12 +61,12 @@ internal fun FollowScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(HilingualTheme.colors.white)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp),
         ) {
             if (follows.isEmpty()) {
                 item {
                     Column(
-                        modifier = Modifier.fillParentMaxSize()
+                        modifier = Modifier.fillParentMaxSize(),
                     ) {
                         Spacer(Modifier.weight(1f))
                         FeedEmptyCard(type = emptyCardType)
@@ -76,7 +76,7 @@ internal fun FollowScreen(
             } else {
                 items(
                     items = follows,
-                    key = { it.userId }
+                    key = { it.userId },
                 ) { follow ->
                     with(follow) {
                         UserActionItem(
@@ -86,7 +86,7 @@ internal fun FollowScreen(
                             isFilled = !followState.isFollowing,
                             buttonText = followState.label,
                             onProfileClick = onProfileClick,
-                            onButtonClick = { onActionButtonClick(userId, followState.isFollowing) }
+                            onButtonClick = { onActionButtonClick(userId, followState.isFollowing) },
                         )
                     }
                 }

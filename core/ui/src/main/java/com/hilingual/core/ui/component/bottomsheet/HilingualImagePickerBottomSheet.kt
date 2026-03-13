@@ -29,24 +29,24 @@ fun HilingualProfileImageBottomSheet(
     onDismiss: () -> Unit,
     onDefaultImageClick: () -> Unit,
     onGalleryImageClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     HilingualMenuBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
         title = "이미지 선택",
-        modifier = modifier
+        modifier = modifier,
     ) {
         HilingualMenuBottomSheetItem(
             text = "기본 이미지로 변경하기",
             iconResId = R.drawable.ic_image_24,
-            onClick = onDefaultImageClick
+            onClick = onDefaultImageClick,
         )
 
         HilingualMenuBottomSheetItem(
             text = "갤러리에서 선택하기",
             iconResId = R.drawable.ic_gallary_24,
-            onClick = onGalleryImageClick
+            onClick = onGalleryImageClick,
         )
     }
 }
@@ -59,7 +59,7 @@ private fun HilingualImagePickerBottomSheetPreview() {
             isVisible = true,
             onDismiss = {},
             onDefaultImageClick = {},
-            onGalleryImageClick = {}
+            onGalleryImageClick = {},
         )
     }
 }

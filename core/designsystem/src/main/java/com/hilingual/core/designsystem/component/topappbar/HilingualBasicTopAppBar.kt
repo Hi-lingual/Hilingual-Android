@@ -35,18 +35,18 @@ fun HilingualBasicTopAppBar(
     title: String? = null,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable () -> Unit = {},
-    backgroundColor: Color = HilingualTheme.colors.white
+    backgroundColor: Color = HilingualTheme.colors.white,
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .background(backgroundColor)
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
         // 좌측 아이콘
         Row(
             modifier = Modifier.align(Alignment.CenterStart),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             navigationIcon()
         }
@@ -57,14 +57,14 @@ fun HilingualBasicTopAppBar(
                 modifier = Modifier.align(Alignment.Center),
                 text = title,
                 color = HilingualTheme.colors.black,
-                style = HilingualTheme.typography.headSB18
+                style = HilingualTheme.typography.headSB18,
             )
         }
 
         // 우측 아이콘
         Row(
             modifier = Modifier.align(Alignment.CenterEnd),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             actions()
         }

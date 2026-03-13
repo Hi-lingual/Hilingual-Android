@@ -20,7 +20,7 @@ import com.hilingual.data.user.model.notification.NotificationModel
 
 enum class FeedNotificationType {
     LIKE_DIARY,
-    FOLLOW_USER
+    FOLLOW_USER,
 }
 
 @Stable
@@ -30,7 +30,7 @@ data class FeedNotificationItemUiModel(
     val isRead: Boolean,
     val publishedAt: String,
     val feedType: FeedNotificationType,
-    val targetId: Long
+    val targetId: Long,
 )
 
 internal fun NotificationModel.toFeedStateOrNull(): FeedNotificationItemUiModel? {
@@ -43,6 +43,6 @@ internal fun NotificationModel.toFeedStateOrNull(): FeedNotificationItemUiModel?
         isRead = isRead,
         publishedAt = publishedAt,
         feedType = FeedNotificationType.valueOf(currentType),
-        targetId = currentTargetId
+        targetId = currentTargetId,
     )
 }

@@ -23,7 +23,7 @@ data class VocaDetailModel(
     val phraseType: List<String>,
     val explanation: String,
     val writtenFrom: String,
-    val isBookmarked: Boolean
+    val isBookmarked: Boolean,
 )
 
 internal fun VocaDetailResponseDto.toModel(): VocaDetailModel =
@@ -33,5 +33,5 @@ internal fun VocaDetailResponseDto.toModel(): VocaDetailModel =
         phraseType = this.phraseType,
         explanation = this.explanation,
         writtenFrom = this.writtenFrom,
-        isBookmarked = this.isBookmarked
+        isBookmarked = this.isBookmarked,
     )

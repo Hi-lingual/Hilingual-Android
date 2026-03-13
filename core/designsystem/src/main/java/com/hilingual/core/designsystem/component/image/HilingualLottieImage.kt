@@ -37,7 +37,7 @@ fun HilingualLottieAnimation(
     contentScale: ContentScale = ContentScale.Fit,
     speed: Float = 1f,
     iterations: Int = 1,
-    isInfinite: Boolean = false
+    isInfinite: Boolean = false,
 ) {
     val lottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(rawResFile))
     HilingualLottieAnimation(
@@ -47,7 +47,7 @@ fun HilingualLottieAnimation(
         contentScale = contentScale,
         speed = speed,
         iterations = iterations,
-        isInfinite = isInfinite
+        isInfinite = isInfinite,
     )
 }
 
@@ -59,7 +59,7 @@ fun HilingualLottieAnimation(
     contentScale: ContentScale = ContentScale.Fit,
     speed: Float = 1f,
     iterations: Int = 1,
-    isInfinite: Boolean = false
+    isInfinite: Boolean = false,
 ) {
     LottieAnimation(
         modifier = modifier.clip(shape),
@@ -67,6 +67,6 @@ fun HilingualLottieAnimation(
         composition = composition,
         iterations = if (isInfinite) LottieConstants.IterateForever else iterations,
         contentScale = contentScale,
-        clipToCompositionBounds = false
+        clipToCompositionBounds = false,
     )
 }

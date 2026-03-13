@@ -21,5 +21,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DiaryFeedbackCreateResponseDto(
     @SerialName("diaryId")
-    val diaryId: Long
+    val diaryId: Long,
 )

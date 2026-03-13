@@ -44,7 +44,7 @@ internal fun DiaryPreviewCard(
     diaryId: Long,
     onClick: (diaryId: Long) -> Unit,
     modifier: Modifier = Modifier,
-    imageUrl: String? = null
+    imageUrl: String? = null,
 ) {
     Row(
         modifier = modifier
@@ -52,12 +52,12 @@ internal fun DiaryPreviewCard(
             .noRippleClickable(onClick = { onClick(diaryId) })
             .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         VerticalDivider(
             modifier = Modifier.fillMaxHeight().heightIn(min = 74.dp),
             thickness = 3.dp,
-            color = HilingualTheme.colors.hilingualBlack
+            color = HilingualTheme.colors.hilingualBlack,
         )
 
         Text(
@@ -66,7 +66,7 @@ internal fun DiaryPreviewCard(
             color = HilingualTheme.colors.black,
             maxLines = 3,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
 
         if (imageUrl != null) {
@@ -74,7 +74,7 @@ internal fun DiaryPreviewCard(
                 imageUrl = imageUrl,
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
-                    .size(74.dp)
+                    .size(74.dp),
             )
         }
     }
@@ -86,20 +86,20 @@ private fun DiaryPreviewCardPreview() {
     HilingualTheme {
         val text = "This is a sample diary text that will be displayed"
         Column(
-            modifier = Modifier.padding(4.dp)
+            modifier = Modifier.padding(4.dp),
         ) {
             DiaryPreviewCard(
                 imageUrl = "",
                 diaryText = text,
                 diaryId = 0,
-                onClick = {}
+                onClick = {},
             )
 
             DiaryPreviewCard(
                 imageUrl = null,
                 diaryText = text,
                 diaryId = 0,
-                onClick = {}
+                onClick = {},
             )
         }
     }

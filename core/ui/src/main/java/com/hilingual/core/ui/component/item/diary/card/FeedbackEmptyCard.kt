@@ -39,26 +39,26 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 internal fun FeedbackEmptyCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .background(HilingualTheme.colors.white)
-            .padding(12.dp)
+            .padding(12.dp),
     ) {
         Image(
             painterResource(R.drawable.img_feedback_wow_grey),
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .size(width = 200.dp, height = 140.dp)
+                .size(width = 200.dp, height = 140.dp),
         )
 
         Spacer(Modifier.height(10.dp))
 
         HorizontalDivider(
-            thickness = Dp.Hairline
+            thickness = Dp.Hairline,
         )
 
         Spacer(Modifier.height(8.dp))
@@ -67,7 +67,7 @@ internal fun FeedbackEmptyCard(
             text = "추가 설명이 필요 없는 일기네요!",
             style = HilingualTheme.typography.bodyR14,
             color = HilingualTheme.colors.hilingualBlack,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }

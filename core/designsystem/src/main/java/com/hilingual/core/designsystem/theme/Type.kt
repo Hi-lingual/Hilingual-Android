@@ -54,7 +54,7 @@ class HilingualTypography(
     bodyM14: TextStyle,
     bodyR14: TextStyle,
     bodyM12: TextStyle,
-    captionR12: TextStyle
+    captionR12: TextStyle,
 ) {
     var headSB20 by mutableStateOf(headSB20)
         private set
@@ -108,7 +108,7 @@ class HilingualTypography(
         bodyM14: TextStyle = this.bodyM14,
         bodyR14: TextStyle = this.bodyR14,
         bodyM12: TextStyle = this.bodyM12,
-        captionR12: TextStyle = this.captionR12
+        captionR12: TextStyle = this.captionR12,
     ) = HilingualTypography(
         headSB20,
         headM20,
@@ -126,7 +126,7 @@ class HilingualTypography(
         bodyM14,
         bodyR14,
         bodyM12,
-        captionR12
+        captionR12,
     )
 
     fun update(other: HilingualTypography) {
@@ -153,101 +153,99 @@ class HilingualTypography(
 }
 
 @Composable
-fun HilingualTypography(): HilingualTypography {
-    return HilingualTypography(
-        headSB20 = TextStyle(
-            fontFamily = PretendardSemiBold,
-            fontSize = 20.sp
+fun HilingualTypography(): HilingualTypography = HilingualTypography(
+    headSB20 = TextStyle(
+        fontFamily = PretendardSemiBold,
+        fontSize = 20.sp,
+    ),
+    headM20 = TextStyle(
+        fontFamily = PretendardMedium,
+        fontSize = 20.sp,
+    ),
+    headR20 = TextStyle(
+        fontFamily = PretendardRegular,
+        fontSize = 20.sp,
+    ),
+    headSB18 = TextStyle(
+        fontFamily = PretendardSemiBold,
+        fontSize = 18.sp,
+        letterSpacing = 0.03.em,
+    ),
+    headM18 = TextStyle(
+        fontFamily = PretendardMedium,
+        fontSize = 18.sp,
+    ),
+    headR18 = TextStyle(
+        fontFamily = PretendardRegular,
+        fontSize = 18.sp,
+    ),
+    headSB16 = TextStyle(
+        fontFamily = PretendardSemiBold,
+        fontSize = 16.sp,
+    ),
+    bodyR17 = TextStyle(
+        fontFamily = PretendardRegular,
+        fontSize = 17.sp,
+    ),
+    bodyM16 = TextStyle(
+        fontFamily = PretendardMedium,
+        fontSize = 16.sp,
+        lineHeight = 1.4.em,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None,
         ),
-        headM20 = TextStyle(
-            fontFamily = PretendardMedium,
-            fontSize = 20.sp
+    ),
+    bodyR16 = TextStyle(
+        fontFamily = PretendardRegular,
+        fontSize = 16.sp,
+        lineHeight = 1.4.em,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None,
         ),
-        headR20 = TextStyle(
-            fontFamily = PretendardRegular,
-            fontSize = 20.sp
+    ),
+    bodyM15 = TextStyle(
+        fontFamily = PretendardMedium,
+        fontSize = 15.sp,
+        lineHeight = 1.4.em,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None,
         ),
-        headSB18 = TextStyle(
-            fontFamily = PretendardSemiBold,
-            fontSize = 18.sp,
-            letterSpacing = 0.03.em
+        letterSpacing = 0.01.em,
+    ),
+    bodyR15 = TextStyle(
+        fontFamily = PretendardRegular,
+        fontSize = 15.sp,
+        lineHeight = 1.4.em,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None,
         ),
-        headM18 = TextStyle(
-            fontFamily = PretendardMedium,
-            fontSize = 18.sp
-        ),
-        headR18 = TextStyle(
-            fontFamily = PretendardRegular,
-            fontSize = 18.sp
-        ),
-        headSB16 = TextStyle(
-            fontFamily = PretendardSemiBold,
-            fontSize = 16.sp
-        ),
-        bodyR17 = TextStyle(
-            fontFamily = PretendardRegular,
-            fontSize = 17.sp
-        ),
-        bodyM16 = TextStyle(
-            fontFamily = PretendardMedium,
-            fontSize = 16.sp,
-            lineHeight = 1.4.em,
-            lineHeightStyle = LineHeightStyle(
-                alignment = LineHeightStyle.Alignment.Center,
-                trim = LineHeightStyle.Trim.None
-            )
-        ),
-        bodyR16 = TextStyle(
-            fontFamily = PretendardRegular,
-            fontSize = 16.sp,
-            lineHeight = 1.4.em,
-            lineHeightStyle = LineHeightStyle(
-                alignment = LineHeightStyle.Alignment.Center,
-                trim = LineHeightStyle.Trim.None
-            )
-        ),
-        bodyM15 = TextStyle(
-            fontFamily = PretendardMedium,
-            fontSize = 15.sp,
-            lineHeight = 1.4.em,
-            lineHeightStyle = LineHeightStyle(
-                alignment = LineHeightStyle.Alignment.Center,
-                trim = LineHeightStyle.Trim.None
-            ),
-            letterSpacing = 0.01.em
-        ),
-        bodyR15 = TextStyle(
-            fontFamily = PretendardRegular,
-            fontSize = 15.sp,
-            lineHeight = 1.4.em,
-            lineHeightStyle = LineHeightStyle(
-                alignment = LineHeightStyle.Alignment.Center,
-                trim = LineHeightStyle.Trim.None
-            ),
-            letterSpacing = 0.01.em
-        ),
-        bodySB14 = TextStyle(
-            fontFamily = PretendardSemiBold,
-            fontSize = 14.sp
-        ),
-        bodyM14 = TextStyle(
-            fontFamily = PretendardMedium,
-            fontSize = 14.sp
-        ),
-        bodyR14 = TextStyle(
-            fontFamily = PretendardRegular,
-            fontSize = 14.sp
-        ),
-        bodyM12 = TextStyle(
-            fontFamily = PretendardMedium,
-            fontSize = 12.sp
-        ),
-        captionR12 = TextStyle(
-            fontFamily = PretendardRegular,
-            fontSize = 12.sp
-        )
-    )
-}
+        letterSpacing = 0.01.em,
+    ),
+    bodySB14 = TextStyle(
+        fontFamily = PretendardSemiBold,
+        fontSize = 14.sp,
+    ),
+    bodyM14 = TextStyle(
+        fontFamily = PretendardMedium,
+        fontSize = 14.sp,
+    ),
+    bodyR14 = TextStyle(
+        fontFamily = PretendardRegular,
+        fontSize = 14.sp,
+    ),
+    bodyM12 = TextStyle(
+        fontFamily = PretendardMedium,
+        fontSize = 12.sp,
+    ),
+    captionR12 = TextStyle(
+        fontFamily = PretendardRegular,
+        fontSize = 12.sp,
+    ),
+)
 
 @Preview(showBackground = true)
 @Composable
@@ -256,71 +254,71 @@ private fun HilingualTypographyPreview() {
         Column {
             Text(
                 text = "head_sb_20",
-                style = HilingualTheme.typography.headSB20
+                style = HilingualTheme.typography.headSB20,
             )
             Text(
                 text = "head_m_20",
-                style = HilingualTheme.typography.headM20
+                style = HilingualTheme.typography.headM20,
             )
             Text(
                 text = "head_r_20",
-                style = HilingualTheme.typography.headR20
+                style = HilingualTheme.typography.headR20,
             )
             Text(
                 text = "head_sb_18",
-                style = HilingualTheme.typography.headSB18
+                style = HilingualTheme.typography.headSB18,
             )
             Text(
                 text = "head_m_18",
-                style = HilingualTheme.typography.headM18
+                style = HilingualTheme.typography.headM18,
             )
             Text(
                 text = "head_r_18",
-                style = HilingualTheme.typography.headR18
+                style = HilingualTheme.typography.headR18,
             )
             Text(
                 text = "head_sb_16",
-                style = HilingualTheme.typography.headSB16
+                style = HilingualTheme.typography.headSB16,
             )
             Text(
                 text = "body_r_17",
-                style = HilingualTheme.typography.bodyR17
+                style = HilingualTheme.typography.bodyR17,
             )
             Text(
                 text = "body_m_16",
-                style = HilingualTheme.typography.bodyM16
+                style = HilingualTheme.typography.bodyM16,
             )
             Text(
                 text = "body_r_16",
-                style = HilingualTheme.typography.bodyR16
+                style = HilingualTheme.typography.bodyR16,
             )
             Text(
                 text = "body_m_15",
-                style = HilingualTheme.typography.bodyM15
+                style = HilingualTheme.typography.bodyM15,
             )
             Text(
                 text = "body_r_15",
-                style = HilingualTheme.typography.bodyR15
+                style = HilingualTheme.typography.bodyR15,
             )
             Text(
                 text = "body_sb_14",
-                style = HilingualTheme.typography.bodySB14
+                style = HilingualTheme.typography.bodySB14,
             )
             Text(
                 text = "body_m_14",
-                style = HilingualTheme.typography.bodyM14
+                style = HilingualTheme.typography.bodyM14,
             )
             Text(
                 text = "body_r_14",
-                style = HilingualTheme.typography.bodyR14
+                style = HilingualTheme.typography.bodyR14,
             )
             Text(
                 text = "body_m_12",
-                style = HilingualTheme.typography.bodyM12
+                style = HilingualTheme.typography.bodyM12,
             )
             Text(
                 text = "caption_r_12",
-                style = HilingualTheme.typography.captionR12
+                style = HilingualTheme.typography.captionR12,
             )
         }
     }

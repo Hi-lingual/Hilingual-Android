@@ -20,5 +20,5 @@ import android.net.Uri
 data class UserProfileModel(
     val nickname: String,
     val adAlarmAgree: Boolean,
-    val imageUri: Uri?
+    val imageUri: Uri?,
 )

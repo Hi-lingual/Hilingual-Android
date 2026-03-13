@@ -30,11 +30,11 @@ internal class AuthRemoteDataSourceImpl @Inject constructor(
     private val loginService: LoginService,
     private val verifyService: VerifyService,
     private val logoutService: LogoutService,
-    private val withdrawService: WithdrawService
+    private val withdrawService: WithdrawService,
 ) : AuthRemoteDataSource {
     override suspend fun login(
         providerToken: String,
-        loginRequestDto: LoginRequestDto
+        loginRequestDto: LoginRequestDto,
     ): BaseResponse<LoginResponseDto> = loginService.login(providerToken, loginRequestDto)
 
     override suspend fun verifyCode(request: VerifyCodeRequestDto): BaseResponse<Unit> =

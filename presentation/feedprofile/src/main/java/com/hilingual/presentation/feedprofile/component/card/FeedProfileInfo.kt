@@ -57,17 +57,17 @@ internal fun FeedProfileInfo(
     isFollowed: Boolean?,
     isBlock: Boolean?,
     onActionButtonClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(HilingualTheme.colors.white)
+            .background(HilingualTheme.colors.white),
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             val imageModifier = Modifier
                 .padding(vertical = 4.dp)
@@ -76,19 +76,19 @@ internal fun FeedProfileInfo(
                 .border(
                     width = 1.dp,
                     color = HilingualTheme.colors.gray200,
-                    shape = CircleShape
+                    shape = CircleShape,
                 )
 
             if (profileImageUrl.isNullOrBlank()) {
                 Image(
                     painter = painterResource(R.drawable.img_default_image),
                     contentDescription = null,
-                    modifier = imageModifier
+                    modifier = imageModifier,
                 )
             } else {
                 NetworkImage(
                     imageUrl = profileImageUrl,
-                    modifier = imageModifier
+                    modifier = imageModifier,
                 )
             }
             Column {
@@ -96,40 +96,40 @@ internal fun FeedProfileInfo(
                     text = nickname,
                     style = HilingualTheme.typography.headSB18,
                     color = HilingualTheme.colors.gray850,
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    modifier = Modifier.padding(bottom = 4.dp),
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .noRippleClickable(onClick = onFollowClick)
-                        .padding(bottom = 8.dp)
+                        .padding(bottom = 8.dp),
                 ) {
                     Text(
                         text = "팔로워",
                         style = HilingualTheme.typography.bodyR14,
                         color = HilingualTheme.colors.gray400,
-                        modifier = Modifier.padding(end = 2.dp)
+                        modifier = Modifier.padding(end = 2.dp),
                     )
                     Text(
                         text = "$follower",
                         style = HilingualTheme.typography.bodyM14,
                         color = HilingualTheme.colors.gray400,
-                        modifier = Modifier.padding(end = 8.dp)
+                        modifier = Modifier.padding(end = 8.dp),
                     )
                     Text(
                         text = "팔로잉",
                         style = HilingualTheme.typography.bodyR14,
                         color = HilingualTheme.colors.gray400,
-                        modifier = Modifier.padding(end = 2.dp)
+                        modifier = Modifier.padding(end = 2.dp),
                     )
                     Text(
                         text = "$following",
                         style = HilingualTheme.typography.bodyM14,
-                        color = HilingualTheme.colors.gray400
+                        color = HilingualTheme.colors.gray400,
                     )
                 }
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_fire_16),
@@ -137,12 +137,18 @@ internal fun FeedProfileInfo(
                         tint = HilingualTheme.colors.hilingualOrange,
                         modifier = Modifier
                             .padding(end = 1.dp)
-                            .size(16.dp)
+                            .size(16.dp),
                     )
                     Text(
                         text = "${streak}일 연속 작성 중",
                         style = HilingualTheme.typography.bodyR14,
-                        color = if (streak > 0) HilingualTheme.colors.hilingualOrange else HilingualTheme.colors.gray400
+                        color = if (streak >
+                            0
+                        ) {
+                            HilingualTheme.colors.hilingualOrange
+                        } else {
+                            HilingualTheme.colors.gray400
+                        },
                     )
                 }
             }
@@ -162,7 +168,7 @@ internal fun FeedProfileInfo(
                 onClick = onActionButtonClick,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp)
+                    .padding(bottom = 8.dp),
             )
         }
     }
@@ -173,7 +179,7 @@ internal fun FeedProfileInfo(
 private fun FeedProfileInfoPreview() {
     HilingualTheme {
         Column(
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             FeedProfileInfo(
                 profileImageUrl = "",
@@ -186,7 +192,7 @@ private fun FeedProfileInfoPreview() {
                 isFollowed = true,
                 isBlock = false,
                 onFollowClick = {},
-                onActionButtonClick = {}
+                onActionButtonClick = {},
             )
             FeedProfileInfo(
                 profileImageUrl = "",
@@ -199,7 +205,7 @@ private fun FeedProfileInfoPreview() {
                 isFollowed = false,
                 isBlock = false,
                 onFollowClick = {},
-                onActionButtonClick = {}
+                onActionButtonClick = {},
             )
         }
     }

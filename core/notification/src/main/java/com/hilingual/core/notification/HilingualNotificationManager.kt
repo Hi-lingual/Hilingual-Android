@@ -23,13 +23,13 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import com.hilingual.core.designsystem.R
 import dagger.hilt.android.qualifiers.ApplicationContext
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+import timber.log.Timber
 
 @Singleton
 class HilingualNotificationManager @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
 ) {
 
     private val notificationManager: NotificationManager? = context.getSystemService()
@@ -42,7 +42,7 @@ class HilingualNotificationManager @Inject constructor(
         val dailyChannel = NotificationChannel(
             CHANNEL_ID_DAILY,
             "일간 알림",
-            NotificationManager.IMPORTANCE_HIGH
+            NotificationManager.IMPORTANCE_HIGH,
         ).apply {
             description = "하루를 정리하는 알림"
         }
@@ -50,7 +50,7 @@ class HilingualNotificationManager @Inject constructor(
         val weeklyChannel = NotificationChannel(
             CHANNEL_ID_WEEKLY,
             "주간 알림",
-            NotificationManager.IMPORTANCE_HIGH
+            NotificationManager.IMPORTANCE_HIGH,
         ).apply {
             description = "한 주를 정리하는 알림"
         }
@@ -64,7 +64,7 @@ class HilingualNotificationManager @Inject constructor(
             channelId = targetChannelId,
             notificationId = System.currentTimeMillis().toInt(),
             title = title,
-            message = message
+            message = message,
         )
     }
 
@@ -72,7 +72,7 @@ class HilingualNotificationManager @Inject constructor(
         channelId: String,
         notificationId: Int,
         title: String,
-        message: String
+        message: String,
     ) {
         val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
 
@@ -81,7 +81,7 @@ class HilingualNotificationManager @Inject constructor(
                 context,
                 notificationId,
                 it,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
         }
 

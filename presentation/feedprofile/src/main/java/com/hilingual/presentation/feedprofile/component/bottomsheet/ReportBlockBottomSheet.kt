@@ -33,22 +33,22 @@ internal fun ReportBlockBottomSheet(
     onDismiss: () -> Unit,
     onReportClick: () -> Unit,
     onBlockClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     HilingualMenuBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
-        modifier = modifier
+        modifier = modifier,
     ) {
         HilingualMenuBottomSheetItem(
             text = "계정 차단하기",
             iconResId = R.drawable.ic_block_24_gray,
-            onClick = onBlockClick
+            onClick = onBlockClick,
         )
         HilingualMenuBottomSheetItem(
             text = "계정 신고하기",
             iconResId = R.drawable.ic_report_24,
-            onClick = onReportClick
+            onClick = onReportClick,
         )
     }
 }
@@ -63,7 +63,7 @@ private fun ReportBlockBottomSheetPreviewVisible() {
             isVisible = isSheetVisible,
             onDismiss = { isSheetVisible = false },
             onReportClick = { },
-            onBlockClick = { }
+            onBlockClick = { },
         )
     }
 }

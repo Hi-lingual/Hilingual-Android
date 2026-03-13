@@ -46,7 +46,7 @@ internal fun DayItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
-    isWritten: Boolean = false
+    isWritten: Boolean = false,
 ) {
     val textColor = when {
         isSelected -> HilingualTheme.colors.white
@@ -60,19 +60,19 @@ internal fun DayItem(
         animationSpec = if (isSelected) {
             spring(
                 dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessMedium
+                stiffness = Spring.StiffnessMedium,
             )
         } else {
             tween(durationMillis = 150)
         },
-        label = "DayItemScale"
+        label = "DayItemScale",
     )
 
     Box(
         modifier = modifier
             .aspectRatio(1f)
             .noRippleClickable(onClick = onClick),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         when {
             scale > 0f -> {
@@ -83,7 +83,7 @@ internal fun DayItem(
                     modifier = Modifier.graphicsLayer {
                         scaleX = scale
                         scaleY = scale
-                    }
+                    },
                 )
             }
 
@@ -91,7 +91,7 @@ internal fun DayItem(
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_bubble_34),
                     contentDescription = null,
-                    tint = HilingualTheme.colors.hilingualBlue50
+                    tint = HilingualTheme.colors.hilingualBlue50,
                 )
             }
         }
@@ -99,7 +99,7 @@ internal fun DayItem(
         Text(
             text = day.date.dayOfMonth.toString(),
             style = HilingualTheme.typography.bodyM14,
-            color = textColor
+            color = textColor,
         )
 
         if (day.date == LocalDate.now()) {
@@ -109,7 +109,7 @@ internal fun DayItem(
                 tint = Color.Unspecified,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .offset(y = 8.dp)
+                    .offset(y = 8.dp),
             )
         }
     }

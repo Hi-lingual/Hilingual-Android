@@ -45,7 +45,7 @@ import com.hilingual.core.designsystem.theme.white
 fun BoxScope.HilingualFloatingButton(
     isVisible: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     AnimatedVisibility(
         visible = isVisible,
@@ -53,14 +53,14 @@ fun BoxScope.HilingualFloatingButton(
             initialOffsetY = { it },
             animationSpec = spring(
                 dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessMedium
-            )
+                stiffness = Spring.StiffnessMedium,
+            ),
         ),
         exit = slideOutVertically(
             targetOffsetY = { it * 3 },
-            animationSpec = tween(durationMillis = 100)
+            animationSpec = tween(durationMillis = 100),
         ),
-        modifier = modifier
+        modifier = modifier,
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_up_fab_24),
@@ -75,12 +75,12 @@ fun BoxScope.HilingualFloatingButton(
                     offsetX = 0.dp,
                     offsetY = 2.dp,
                     blur = 4.dp,
-                    spread = 0.dp
+                    spread = 0.dp,
 
                 )
                 .size(40.dp)
                 .background(color = HilingualTheme.colors.white, shape = CircleShape)
-                .padding(8.dp)
+                .padding(8.dp),
         )
     }
 }
@@ -92,11 +92,11 @@ private fun HilingualFloatingButtonPreview() {
         Box(
             modifier = Modifier
                 .background(white)
-                .padding(40.dp)
+                .padding(40.dp),
         ) {
             HilingualFloatingButton(
                 onClick = {},
-                isVisible = true
+                isVisible = true,
             )
         }
     }

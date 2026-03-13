@@ -78,7 +78,7 @@ fun FeedCard(
     isMine: Boolean,
     onUnpublishClick: () -> Unit,
     onReportClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var isDropdownExpanded by remember { mutableStateOf(false) }
 
@@ -86,7 +86,7 @@ fun FeedCard(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         modifier = modifier
             .background(HilingualTheme.colors.white)
-            .padding(vertical = 20.dp)
+            .padding(vertical = 20.dp),
     ) {
         ProfileImage(
             imageUrl = profileUrl,
@@ -96,9 +96,9 @@ fun FeedCard(
                 .border(
                     width = 1.dp,
                     color = HilingualTheme.colors.gray200,
-                    shape = CircleShape
+                    shape = CircleShape,
                 )
-                .noRippleClickable(onClick = onProfileClick)
+                .noRippleClickable(onClick = onProfileClick),
         )
 
         Column {
@@ -110,20 +110,20 @@ fun FeedCard(
                 onDropdownExpandedChange = { isDropdownExpanded = it },
                 isMine = isMine,
                 onUnpublishClick = onUnpublishClick,
-                onReportClick = onReportClick
+                onReportClick = onReportClick,
             )
 
             Spacer(modifier = Modifier.height(4.dp))
 
             Column(
-                modifier = Modifier.noRippleClickable(onClick = onContentDetailClick)
+                modifier = Modifier.noRippleClickable(onClick = onContentDetailClick),
             ) {
                 Text(
                     text = content,
                     style = HilingualTheme.typography.bodyR15,
                     color = HilingualTheme.colors.black,
                     maxLines = 5,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
 
                 if (imageUrl != null) {
@@ -134,7 +134,7 @@ fun FeedCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(1f / 0.6f)
-                            .padding(top = 4.dp)
+                            .padding(top = 4.dp),
                     )
                 }
             }
@@ -145,7 +145,7 @@ fun FeedCard(
                 likeCount = likeCount,
                 isLiked = isLiked,
                 onLikeClick = onLikeClick,
-                onMoreClick = onContentDetailClick
+                onMoreClick = onContentDetailClick,
             )
         }
     }
@@ -161,7 +161,7 @@ private fun FeedHeader(
     isMine: Boolean,
     onUnpublishClick: () -> Unit,
     onReportClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val formattedDate = remember(sharedDateInMinutes) { formatRelativeTime(sharedDateInMinutes) }
 
@@ -169,12 +169,12 @@ private fun FeedHeader(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .background(HilingualTheme.colors.white)
+            .background(HilingualTheme.colors.white),
     ) {
         Text(
             text = nickname,
             style = HilingualTheme.typography.headSB16,
-            color = HilingualTheme.colors.gray850
+            color = HilingualTheme.colors.gray850,
         )
 
         if (streak != null) {
@@ -184,13 +184,13 @@ private fun FeedHeader(
                 tint = HilingualTheme.colors.hilingualOrange,
                 modifier = Modifier
                     .padding(start = 4.dp, end = 1.dp)
-                    .size(16.dp)
+                    .size(16.dp),
             )
 
             Text(
                 text = "$streak",
                 style = HilingualTheme.typography.bodyR14,
-                color = HilingualTheme.colors.hilingualOrange
+                color = HilingualTheme.colors.hilingualOrange,
             )
         }
 
@@ -200,7 +200,7 @@ private fun FeedHeader(
             color = HilingualTheme.colors.gray400,
             modifier = Modifier
                 .padding(start = 8.dp)
-                .weight(1f)
+                .weight(1f),
         )
 
         FeedDropDownMenu(
@@ -213,7 +213,7 @@ private fun FeedHeader(
                 } else {
                     onReportClick()
                 }
-            }
+            },
         )
     }
 }
@@ -224,7 +224,7 @@ private fun FeedFooter(
     onLikeClick: () -> Unit,
     likeCount: Int,
     onMoreClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val scale = remember { Animatable(1f) }
     val coroutineScope = rememberCoroutineScope()
@@ -234,15 +234,15 @@ private fun FeedFooter(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .fillMaxWidth()
-            .background(HilingualTheme.colors.white)
+            .background(HilingualTheme.colors.white),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(
-                    id = if (isLiked) R.drawable.ic_like_24_filled else R.drawable.ic_like_24_empty
+                    id = if (isLiked) R.drawable.ic_like_24_filled else R.drawable.ic_like_24_empty,
                 ),
                 contentDescription = null,
                 tint = Color.Unspecified,
@@ -258,39 +258,39 @@ private fun FeedFooter(
                                         targetValue = 1f,
                                         animationSpec = spring(
                                             dampingRatio = Spring.DampingRatioMediumBouncy,
-                                            stiffness = Spring.StiffnessMedium
-                                        )
+                                            stiffness = Spring.StiffnessMedium,
+                                        ),
                                     )
                                 }
                             }
-                        }
+                        },
                     )
                     .graphicsLayer {
                         scaleX = scale.value
                         scaleY = scale.value
-                    }
+                    },
             )
             Text(
                 text = likeCount.toString(),
                 style = HilingualTheme.typography.bodyM14,
-                color = HilingualTheme.colors.black
+                color = HilingualTheme.colors.black,
             )
         }
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.noRippleClickable(onClick = onMoreClick)
+            modifier = Modifier.noRippleClickable(onClick = onMoreClick),
         ) {
             Text(
                 text = "상세보기",
                 style = HilingualTheme.typography.bodyR14,
-                color = HilingualTheme.colors.gray400
+                color = HilingualTheme.colors.gray400,
             )
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_right_16_thin),
                 contentDescription = null,
                 tint = HilingualTheme.colors.gray400,
                 modifier = Modifier
-                    .size(16.dp)
+                    .size(16.dp),
             )
         }
     }
@@ -301,13 +301,13 @@ private fun FeedDropDownMenu(
     isExpanded: Boolean,
     isMine: Boolean,
     onExpandedChange: (Boolean) -> Unit,
-    onActionClick: () -> Unit
+    onActionClick: () -> Unit,
 ) {
     var isDialogVisible by remember { mutableStateOf(false) }
 
     HilingualBasicDropdownMenu(
         isExpanded = isExpanded,
-        onExpandedChange = onExpandedChange
+        onExpandedChange = onExpandedChange,
     ) {
         HilingualDropdownMenuItem(
             text = if (isMine) "비공개하기" else "게시글 신고하기",
@@ -315,7 +315,7 @@ private fun FeedDropDownMenu(
             onClick = {
                 isDialogVisible = true
                 onExpandedChange(false)
-            }
+            },
         )
     }
 
@@ -326,7 +326,7 @@ private fun FeedDropDownMenu(
             onPrivateClick = {
                 isDialogVisible = false
                 onActionClick()
-            }
+            },
         )
     } else {
         ReportPostDialog(
@@ -335,7 +335,7 @@ private fun FeedDropDownMenu(
             onReportClick = {
                 isDialogVisible = false
                 onActionClick()
-            }
+            },
         )
     }
 }
@@ -352,7 +352,7 @@ private fun FeedHeaderPreview() {
             onDropdownExpandedChange = {},
             isMine = true,
             onUnpublishClick = {},
-            onReportClick = {}
+            onReportClick = {},
         )
     }
 }
@@ -369,7 +369,7 @@ private fun FeedHeaderPreviewNoStreak() {
             onDropdownExpandedChange = {},
             isMine = true,
             onUnpublishClick = {},
-            onReportClick = {}
+            onReportClick = {},
         )
     }
 }
@@ -392,7 +392,7 @@ private fun FeedFooterPreview() {
                     likeCountPreview--
                 }
             },
-            onMoreClick = {}
+            onMoreClick = {},
         )
     }
 }
@@ -409,7 +409,9 @@ private fun FeedContentPreviewWithImage() {
             nickname = "HilingualDev",
             streak = 7,
             sharedDateInMinutes = 3,
-            content = "Today was a busy but fulfilling day. I spent the morning working on my project and finally solved a problem that had been bothering me for days. " +
+            content =
+            "Today was a busy but fulfilling day. I spent the morning working on my project " +
+                "and finally solved a problem that had been bothering me for days. " +
                 "In the afternoon, I met a friend for coffee and we talked about our future plans.\n" +
                 "The weather was warm and sunny, which made the walk back home really pleasant.\n" +
                 "I feel tired now, but also proud of how I spent my day.",
@@ -424,7 +426,7 @@ private fun FeedContentPreviewWithImage() {
             },
             isMine = true,
             onUnpublishClick = { },
-            onReportClick = { }
+            onReportClick = { },
         )
     }
 }
@@ -442,7 +444,8 @@ private fun FeedContentPreviewNoImage() {
             streak = null,
             sharedDateInMinutes = 24,
             content = "Today was a busy but fulfilling day.\n" +
-                "I spent the morning working on my project and finally solved a problem that had been bothering me for days.\n" +
+                "I spent the morning working on my project and finally solved a problem " +
+                "that had been bothering me for days.\n" +
                 "In the afternoon, I met a friend for coffee and we talked about our future plans.\n" +
                 "The weather was warm and sunny, which made the walk back home really pleasant.\n" +
                 "I feel tired now, but also proud of how I spent my day.",
@@ -457,7 +460,7 @@ private fun FeedContentPreviewNoImage() {
             },
             isMine = true,
             onUnpublishClick = { },
-            onReportClick = { }
+            onReportClick = { },
         )
     }
 }

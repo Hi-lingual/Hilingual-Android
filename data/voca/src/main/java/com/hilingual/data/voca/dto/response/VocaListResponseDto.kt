@@ -23,5 +23,5 @@ data class VocaListResponseDto(
     @SerialName("count")
     val count: Int,
     @SerialName("wordList")
-    val wordList: List<VocaGroupResponseDto>
+    val wordList: List<VocaGroupResponseDto>,
 )

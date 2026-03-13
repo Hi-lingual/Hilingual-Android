@@ -31,12 +31,12 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindPresignedUrlRepository(
-        presignedUrlRepositoryImpl: PresignedUrlRepositoryImpl
+        presignedUrlRepositoryImpl: PresignedUrlRepositoryImpl,
     ): PresignedUrlRepository
 
     @Binds
     @Singleton
     abstract fun bindFileUploaderRepository(
-        fileUploaderRepositoryImpl: FileUploaderRepositoryImpl
+        fileUploaderRepositoryImpl: FileUploaderRepositoryImpl,
     ): FileUploaderRepository
 }

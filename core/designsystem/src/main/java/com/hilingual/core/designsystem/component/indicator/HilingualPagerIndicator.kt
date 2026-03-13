@@ -51,7 +51,7 @@ fun HilingualPagerIndicator(
     activeIndicatorWidth: Dp = 20.dp,
     inactiveIndicatorWidth: Dp = 8.dp,
     activeIndicatorColor: Color = HilingualTheme.colors.hilingualOrange,
-    inactiveIndicatorColor: Color = HilingualTheme.colors.gray200
+    inactiveIndicatorColor: Color = HilingualTheme.colors.gray200,
 ) {
     if (pageCount <= 0) return
     val selectedPage = currentPage.coerceIn(0, pageCount - 1)
@@ -63,7 +63,7 @@ fun HilingualPagerIndicator(
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(indicatorSpacing),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         repeat(pageCount) { index ->
             val isSelected = index == selectedPage
@@ -72,17 +72,17 @@ fun HilingualPagerIndicator(
                 targetValue = if (isSelected) activeIndicatorWidth else inactiveIndicatorWidth,
                 animationSpec = tween(
                     durationMillis = 300,
-                    easing = FastOutSlowInEasing
+                    easing = FastOutSlowInEasing,
                 ),
-                label = "indicatorWidth"
+                label = "indicatorWidth",
             )
 
             Box(
                 modifier = indicatorModifier
                     .width(animatedWidth)
                     .background(
-                        color = if (isSelected) activeIndicatorColor else inactiveIndicatorColor
-                    )
+                        color = if (isSelected) activeIndicatorColor else inactiveIndicatorColor,
+                    ),
             )
         }
     }
@@ -104,7 +104,7 @@ private fun HilingualPagerIndicatorPreview() {
     HilingualTheme {
         HilingualPagerIndicator(
             pageCount = pageCount,
-            currentPage = currentPage
+            currentPage = currentPage,
         )
     }
 }

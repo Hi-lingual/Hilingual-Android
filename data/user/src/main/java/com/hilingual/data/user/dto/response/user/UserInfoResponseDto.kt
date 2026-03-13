@@ -29,5 +29,5 @@ data class UserInfoResponseDto(
     @SerialName("streak")
     val streak: Int,
     @SerialName("newAlarm")
-    val newAlarm: Boolean
+    val newAlarm: Boolean,
 )

@@ -23,5 +23,5 @@ data class ImageRequestDto(
     @SerialName("fileKey")
     val fileKey: String,
     @SerialName("purpose")
-    val purpose: String
+    val purpose: String,
 )

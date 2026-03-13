@@ -54,7 +54,7 @@ fun NavController.navigateToNotificationSetting(navOptions: NavOptions? = null) 
 
 private fun NavController.navigateToNoticeDetail(
     noticeId: Long,
-    navOptions: NavOptions? = null
+    navOptions: NavOptions? = null,
 ) = navigate(NotificationDetail(noticeId), navOptions)
 
 fun NavGraphBuilder.notificationNavGraph(
@@ -62,14 +62,14 @@ fun NavGraphBuilder.notificationNavGraph(
     navController: NavController,
     navigateUp: () -> Unit,
     navigateToFeedDiary: (Long) -> Unit,
-    navigateToFeedProfile: (Long) -> Unit
+    navigateToFeedProfile: (Long) -> Unit,
 ) {
     navigation<NotificationGraph>(
         startDestination = Notification,
         enterTransition = enterTransition,
         exitTransition = { ExitTransition.None },
         popEnterTransition = { EnterTransition.None },
-        popExitTransition = popExitTransition
+        popExitTransition = popExitTransition,
     ) {
         composable<Notification> {
             NotificationRoute(
@@ -79,15 +79,15 @@ fun NavGraphBuilder.notificationNavGraph(
                 navigateToFeedProfile = navigateToFeedProfile,
                 navigateToSetting = {
                     navController.navigateToNotificationSetting(
-                        navOptions = navOptions { launchSingleTop = true }
+                        navOptions = navOptions { launchSingleTop = true },
                     )
                 },
                 navigateToNoticeDetail = { noticeId ->
                     navController.navigateToNoticeDetail(
                         noticeId = noticeId,
-                        navOptions = navOptions { launchSingleTop = true }
+                        navOptions = navOptions { launchSingleTop = true },
                     )
-                }
+                },
             )
         }
 
@@ -95,11 +95,11 @@ fun NavGraphBuilder.notificationNavGraph(
             enterTransition = enterTransition,
             exitTransition = { ExitTransition.None },
             popEnterTransition = { EnterTransition.None },
-            popExitTransition = popExitTransition
+            popExitTransition = popExitTransition,
         ) {
             NotificationDetailRoute(
                 paddingValues = paddingValues,
-                navigateUp = navigateUp
+                navigateUp = navigateUp,
             )
         }
 
@@ -107,11 +107,11 @@ fun NavGraphBuilder.notificationNavGraph(
             enterTransition = enterTransition,
             exitTransition = { ExitTransition.None },
             popEnterTransition = { EnterTransition.None },
-            popExitTransition = popExitTransition
+            popExitTransition = popExitTransition,
         ) {
             NotificationSettingRoute(
                 paddingValues = paddingValues,
-                navigateUp = navigateUp
+                navigateUp = navigateUp,
             )
         }
     }
@@ -120,13 +120,13 @@ fun NavGraphBuilder.notificationNavGraph(
 private val enterTransition: AnimatedContentTransitionScope<*>.() -> EnterTransition = {
     slideIntoContainer(
         AnimatedContentTransitionScope.SlideDirection.Left,
-        tween(ANIMATION_DURATION)
+        tween(ANIMATION_DURATION),
     )
 }
 
 private val popExitTransition: AnimatedContentTransitionScope<*>.() -> ExitTransition = {
     slideOutOfContainer(
         AnimatedContentTransitionScope.SlideDirection.Right,
-        tween(ANIMATION_DURATION)
+        tween(ANIMATION_DURATION),
     )
 }

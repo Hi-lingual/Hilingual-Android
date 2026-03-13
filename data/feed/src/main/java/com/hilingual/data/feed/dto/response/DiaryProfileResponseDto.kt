@@ -25,7 +25,7 @@ data class DiaryProfileResponseDto(
     @SerialName("profile")
     val profile: ProfileInfoDto,
     @SerialName("diary")
-    val diary: DiaryInfoDto
+    val diary: DiaryInfoDto,
 )
 
 @Serializable
@@ -37,7 +37,7 @@ data class ProfileInfoDto(
     @SerialName("nickname")
     val nickname: String,
     @SerialName("streak")
-    val streak: Int
+    val streak: Int,
 )
 
 @Serializable
@@ -47,5 +47,5 @@ data class DiaryInfoDto(
     @SerialName("likeCount")
     val likeCount: Int,
     @SerialName("isLiked")
-    val isLiked: Boolean
+    val isLiked: Boolean,
 )

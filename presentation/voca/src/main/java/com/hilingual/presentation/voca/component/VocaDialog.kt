@@ -67,14 +67,14 @@ internal fun VocaDialog(
     modifier: Modifier = Modifier,
     properties: DialogProperties = DialogProperties(
         usePlatformDefaultWidth = false,
-        decorFitsSystemWindows = false
-    )
+        decorFitsSystemWindows = false,
+    ),
 ) {
     var isMarked by remember { mutableStateOf(isBookmarked) }
 
     Dialog(
         onDismissRequest = onDismiss,
-        properties = properties
+        properties = properties,
     ) {
         val dialogWindowProvider = LocalView.current.parent as? DialogWindowProvider
         dialogWindowProvider?.window?.setGravity(Gravity.BOTTOM)
@@ -87,7 +87,7 @@ internal fun VocaDialog(
                 .navigationBarsPadding()
                 .padding(horizontal = 16.dp)
                 .padding(bottom = 20.dp),
-            contentAlignment = Alignment.BottomCenter
+            contentAlignment = Alignment.BottomCenter,
         ) {
             Box(
                 modifier = Modifier
@@ -95,16 +95,16 @@ internal fun VocaDialog(
                     .fillMaxWidth()
                     .background(
                         color = HilingualTheme.colors.white,
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(12.dp),
                     )
                     .padding(top = 28.dp, bottom = 40.dp)
-                    .padding(horizontal = 24.dp)
+                    .padding(horizontal = 24.dp),
             ) {
                 Column(
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .padding(bottom = 80.dp, end = 44.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                         phraseType.forEach { type ->
@@ -117,13 +117,13 @@ internal fun VocaDialog(
                     Text(
                         text = phrase,
                         style = HilingualTheme.typography.headR20,
-                        color = HilingualTheme.colors.black
+                        color = HilingualTheme.colors.black,
                     )
 
                     Text(
                         text = explanation,
                         style = HilingualTheme.typography.bodyR14,
-                        color = HilingualTheme.colors.black
+                        color = HilingualTheme.colors.black,
                     )
                 }
 
@@ -133,7 +133,7 @@ internal fun VocaDialog(
                             DesignSystemR.drawable.ic_save_28_filled
                         } else {
                             DesignSystemR.drawable.ic_save_28_empty
-                        }
+                        },
                     ),
                     contentDescription = null,
                     modifier = Modifier
@@ -143,14 +143,14 @@ internal fun VocaDialog(
                             isMarked = !isMarked
                             onBookmarkClick(phraseId, isMarked)
                         },
-                    tint = Color.Unspecified
+                    tint = Color.Unspecified,
                 )
 
                 Text(
                     text = writtenDate,
                     style = HilingualTheme.typography.captionR12,
                     color = HilingualTheme.colors.gray400,
-                    modifier = Modifier.align(Alignment.BottomEnd)
+                    modifier = Modifier.align(Alignment.BottomEnd),
                 )
             }
         }
@@ -169,7 +169,7 @@ private fun VocaDialogPreview() {
             explanation = "다음 기회로 미루다, 나중에 하자고 하다",
             writtenDate = "2024.03.15",
             isBookmarked = true,
-            onBookmarkClick = { _, _ -> }
+            onBookmarkClick = { _, _ -> },
         )
     }
 }

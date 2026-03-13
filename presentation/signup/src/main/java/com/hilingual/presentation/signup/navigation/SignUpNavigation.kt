@@ -28,19 +28,19 @@ import kotlinx.serialization.Serializable
 data object SignUp : Route
 
 fun NavController.navigateToSignUp(
-    navOptions: NavOptions? = null
+    navOptions: NavOptions? = null,
 ) {
     navigate(route = SignUp, navOptions = navOptions)
 }
 
 fun NavGraphBuilder.signUpGraph(
     paddingValues: PaddingValues,
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
 ) {
     composable<SignUp> {
         SignUpRoute(
             paddingValues = paddingValues,
-            navigateToHome = navigateToHome
+            navigateToHome = navigateToHome,
         )
     }
 }

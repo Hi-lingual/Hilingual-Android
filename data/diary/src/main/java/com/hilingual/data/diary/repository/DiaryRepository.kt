@@ -33,24 +33,24 @@ interface DiaryRepository {
 
     suspend fun patchPhraseBookmark(
         phraseId: Long,
-        bookmarkModel: PhraseBookmarkModel
+        bookmarkModel: PhraseBookmarkModel,
     ): Result<BookmarkResult>
 
     suspend fun postDiaryFeedbackCreate(
         originalText: String,
         date: LocalDate,
-        imageFileUri: Uri? = null
+        imageFileUri: Uri? = null,
     ): Result<DiaryFeedbackCreateModel>
 
     suspend fun patchDiaryPublish(
-        diaryId: Long
+        diaryId: Long,
     ): Result<Unit>
 
     suspend fun patchDiaryUnpublish(
-        diaryId: Long
+        diaryId: Long,
     ): Result<Unit>
 
     suspend fun deleteDiary(
-        diaryId: Long
+        diaryId: Long,
     ): Result<Unit>
 }

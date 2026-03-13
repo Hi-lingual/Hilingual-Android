@@ -42,23 +42,23 @@ import kotlinx.collections.immutable.persistentListOf
 internal fun DiaryFeedbackLoadingScreen(
     lottieCompositions: ImmutableList<LottieComposition?>,
     paddingValues: PaddingValues,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
             .padding(paddingValues)
-            .background(HilingualTheme.colors.white)
+            .background(HilingualTheme.colors.white),
     ) {
         Column(
             modifier = Modifier.align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = "일기 저장 중...",
                 color = HilingualTheme.colors.gray850,
                 style = HilingualTheme.typography.headSB20,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -67,15 +67,15 @@ internal fun DiaryFeedbackLoadingScreen(
                 texts = persistentListOf(
                     "피드백을 요청하고 있어요.",
                     "오늘 하루도 수고했어요!",
-                    "발전하는 모습이 멋져요."
-                )
+                    "발전하는 모습이 멋져요.",
+                ),
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
             AnimatedLoadingLottie(
                 lottieCompositions = lottieCompositions,
-                height = 194.dp
+                height = 194.dp,
             )
         }
 
@@ -89,7 +89,7 @@ private fun DiaryFeedbackLoadingScreenPreview() {
     HilingualTheme {
         DiaryFeedbackLoadingScreen(
             lottieCompositions = persistentListOf(),
-            paddingValues = PaddingValues(0.dp)
+            paddingValues = PaddingValues(0.dp),
         )
     }
 }

@@ -29,5 +29,5 @@ data class UserItemDto(
     @SerialName("isFollowing")
     val isFollowing: Boolean,
     @SerialName("isFollowed")
-    val isFollowed: Boolean
+    val isFollowed: Boolean,
 )

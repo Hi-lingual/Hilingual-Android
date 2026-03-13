@@ -30,15 +30,15 @@ import com.hilingual.core.ui.component.topappbar.CloseOnlyTopAppBar
 internal fun FeedbackCompleteContent(
     diaryId: Long,
     onCloseButtonClick: () -> Unit,
-    onShowFeedbackButtonClick: (diaryId: Long) -> Unit
+    onShowFeedbackButtonClick: (diaryId: Long) -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
         CloseOnlyTopAppBar(
             onCloseClicked = onCloseButtonClick,
-            iconTint = HilingualTheme.colors.black
+            iconTint = HilingualTheme.colors.black,
         )
 
         HilingualButton(
@@ -46,7 +46,7 @@ internal fun FeedbackCompleteContent(
                 .padding(horizontal = 16.dp)
                 .padding(bottom = 14.dp),
             text = "피드백 보러가기",
-            onClick = { onShowFeedbackButtonClick(diaryId) }
+            onClick = { onShowFeedbackButtonClick(diaryId) },
         )
     }
 }

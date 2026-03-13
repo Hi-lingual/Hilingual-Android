@@ -47,12 +47,12 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 @Composable
 internal fun PhotoSelectButton(
     selectedImgUri: Uri? = null,
-    onImgSelected: (Uri?) -> Unit
+    onImgSelected: (Uri?) -> Unit,
 ) {
     var isGalleryLaunching by remember { mutableStateOf(false) }
 
     val photoSelectLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.PickVisualMedia()
+        ActivityResultContracts.PickVisualMedia(),
     ) { uri ->
         isGalleryLaunching = false
 
@@ -62,7 +62,7 @@ internal fun PhotoSelectButton(
     }
 
     Box(
-        modifier = Modifier.size(width = 88.dp, height = 89.dp)
+        modifier = Modifier.size(width = 88.dp, height = 89.dp),
     ) {
         if (selectedImgUri != null) {
             NetworkImage(
@@ -71,7 +71,7 @@ internal fun PhotoSelectButton(
                 modifier = Modifier
                     .size(80.dp)
                     .align(Alignment.BottomStart)
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(8.dp)),
             )
             Icon(
                 modifier = Modifier
@@ -82,7 +82,7 @@ internal fun PhotoSelectButton(
                     },
                 imageVector = ImageVector.vectorResource(R.drawable.ic_delete_circle_22),
                 contentDescription = null,
-                tint = Color.Unspecified
+                tint = Color.Unspecified,
             )
         } else {
             Box(
@@ -96,18 +96,18 @@ internal fun PhotoSelectButton(
                         if (!isGalleryLaunching) {
                             isGalleryLaunching = true
                             photoSelectLauncher.launch(
-                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
                             )
                         }
                     }),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     modifier = Modifier
                         .size(20.dp),
                     imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_camera_20),
                     contentDescription = null,
-                    tint = HilingualTheme.colors.gray300
+                    tint = HilingualTheme.colors.gray300,
                 )
             }
         }
@@ -124,7 +124,7 @@ private fun PhotoSelectButtonPreview() {
             selectedImgUri = imgUriState.value,
             onImgSelected = { newUri ->
                 imgUriState.value = newUri
-            }
+            },
         )
     }
 }

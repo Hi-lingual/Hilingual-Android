@@ -23,5 +23,5 @@ data class FollowingFeedResponseDto(
     @SerialName("diaryList")
     val diaryList: List<FeedItemDto>,
     @SerialName("haveFollowing")
-    val haveFollowing: Boolean
+    val haveFollowing: Boolean,
 )

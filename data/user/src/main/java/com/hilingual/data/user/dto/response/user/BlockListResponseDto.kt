@@ -21,7 +21,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class BlockListResponseDto(
     @SerialName("blockList")
-    val blockList: List<BlockUserDto>
+    val blockList: List<BlockUserDto>,
 )
 
 @Serializable
@@ -31,5 +31,5 @@ data class BlockUserDto(
     @SerialName("profileImg")
     val profileImageUrl: String,
     @SerialName("nickname")
-    val nickname: String
+    val nickname: String,
 )

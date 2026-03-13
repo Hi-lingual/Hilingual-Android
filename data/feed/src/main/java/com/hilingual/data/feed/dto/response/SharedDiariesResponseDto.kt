@@ -23,7 +23,7 @@ data class SharedDiariesResponseDto(
     @SerialName("profile")
     val profile: SharedDiaryProfileDto,
     @SerialName("diaryList")
-    val diaryList: List<FeedItemDiaryDto>
+    val diaryList: List<FeedItemDiaryDto>,
 )
 
 @Serializable
@@ -31,5 +31,5 @@ data class SharedDiaryProfileDto(
     @SerialName("profileImg")
     val profileImg: String?,
     @SerialName("nickname")
-    val nickname: String
+    val nickname: String,
 )

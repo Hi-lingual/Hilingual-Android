@@ -38,7 +38,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 fun HilingualActionSnackbar(
     message: HilingualMessage.Snackbar,
     modifier: Modifier = Modifier,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -47,12 +47,12 @@ fun HilingualActionSnackbar(
             .background(color = HilingualTheme.colors.gray500)
             .padding(vertical = 10.dp, horizontal = 24.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             text = message.message,
             style = HilingualTheme.typography.bodyR16,
-            color = HilingualTheme.colors.white
+            color = HilingualTheme.colors.white,
         )
 
         Text(
@@ -66,9 +66,9 @@ fun HilingualActionSnackbar(
                     onClick = {
                         message.onAction()
                         onDismiss()
-                    }
+                    },
                 )
-                .padding(vertical = 7.dp, horizontal = 11.dp)
+                .padding(vertical = 7.dp, horizontal = 11.dp),
         )
     }
 }
@@ -80,18 +80,18 @@ private fun DiarySnackbarPreview() {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             HilingualActionSnackbar(
                 message = HilingualMessage.Snackbar(
                     message = "일기가 게시되었어요!",
                     actionLabelText = "보러가기",
-                    onAction = {}
+                    onAction = {},
                 ),
                 onDismiss = {},
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .padding(bottom = 23.dp)
+                    .padding(bottom = 23.dp),
             )
         }
     }

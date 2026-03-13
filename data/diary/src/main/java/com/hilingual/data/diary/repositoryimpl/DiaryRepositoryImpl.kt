@@ -34,7 +34,7 @@ import javax.inject.Inject
 
 internal class DiaryRepositoryImpl @Inject constructor(
     private val diaryRemoteDataSource: DiaryRemoteDataSource,
-    private val fileUploaderRepository: FileUploaderRepository
+    private val fileUploaderRepository: FileUploaderRepository,
 ) : DiaryRepository {
     override suspend fun getDiaryContent(diaryId: Long): Result<DiaryContentModel> =
         suspendRunCatching {
@@ -53,12 +53,12 @@ internal class DiaryRepositoryImpl @Inject constructor(
 
     override suspend fun patchPhraseBookmark(
         phraseId: Long,
-        bookmarkModel: PhraseBookmarkModel
+        bookmarkModel: PhraseBookmarkModel,
     ): Result<BookmarkResult> =
         suspendRunCatching {
             val response = diaryRemoteDataSource.patchPhraseBookmark(
                 phraseId = phraseId,
-                bookmarkRequestDto = bookmarkModel.toDto()
+                bookmarkRequestDto = bookmarkModel.toDto(),
             )
 
             BookmarkResult.getOrError(response.code)
@@ -67,12 +67,12 @@ internal class DiaryRepositoryImpl @Inject constructor(
     override suspend fun postDiaryFeedbackCreate(
         originalText: String,
         date: LocalDate,
-        imageFileUri: Uri?
+        imageFileUri: Uri?,
     ): Result<DiaryFeedbackCreateModel> = suspendRunCatching {
         val fileKey = if (imageFileUri != null) {
             fileUploaderRepository.uploadFile(
                 uri = imageFileUri,
-                purpose = "DIARY_IMAGE"
+                purpose = "DIARY_IMAGE",
             ).getOrThrow()
         } else {
             null
@@ -81,7 +81,7 @@ internal class DiaryRepositoryImpl @Inject constructor(
         diaryRemoteDataSource.postDiaryFeedbackCreate(
             originalText = originalText,
             date = date.toIsoDate(),
-            fileKey = fileKey
+            fileKey = fileKey,
         ).data!!.toModel()
     }
 

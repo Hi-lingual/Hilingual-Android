@@ -23,5 +23,5 @@ internal data class MyPageUiState(
     val profileImageUrl: String = "",
     val profileNickname: String = "",
     val profileProvider: String = "",
-    val appVersion: String = STABLE_VERSION
+    val appVersion: String = STABLE_VERSION,
 )

@@ -52,20 +52,20 @@ internal fun MainBottomBar(
     visible: Boolean,
     tabs: ImmutableList<MainTab>,
     currentTab: MainTab?,
-    onTabSelected: (MainTab) -> Unit
+    onTabSelected: (MainTab) -> Unit,
 ) {
     AnimatedVisibility(
         visible = visible,
         enter = fadeIn() + slideIn { IntOffset(0, it.height) },
-        exit = fadeOut() + slideOut { IntOffset(0, it.height) }
+        exit = fadeOut() + slideOut { IntOffset(0, it.height) },
     ) {
         Column(
             modifier = Modifier
-                .background(HilingualTheme.colors.white)
+                .background(HilingualTheme.colors.white),
         ) {
             HorizontalDivider(
                 color = HilingualTheme.colors.gray100,
-                thickness = 1.dp
+                thickness = 1.dp,
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -73,14 +73,14 @@ internal fun MainBottomBar(
                 modifier = Modifier
                     .padding(vertical = 8.dp)
                     .navigationBarsPadding()
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             ) {
                 tabs.forEach { tab ->
                     key(tab.route) {
                         MainBottomBarItem(
                             tab = tab,
                             selected = (tab == currentTab),
-                            onClick = { onTabSelected(tab) }
+                            onClick = { onTabSelected(tab) },
                         )
                     }
                 }
@@ -93,14 +93,14 @@ internal fun MainBottomBar(
 private fun RowScope.MainBottomBarItem(
     tab: MainTab,
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
             .noRippleClickable(onClick = onClick)
             .weight(1f),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(tab.iconRes),
@@ -110,7 +110,7 @@ private fun RowScope.MainBottomBarItem(
                 HilingualTheme.colors.hilingualBlack
             } else {
                 HilingualTheme.colors.gray200
-            }
+            },
         )
         Text(
             text = tab.label,
@@ -119,7 +119,7 @@ private fun RowScope.MainBottomBarItem(
             } else {
                 HilingualTheme.colors.gray200
             },
-            style = HilingualTheme.typography.captionR12
+            style = HilingualTheme.typography.captionR12,
         )
     }
 }
@@ -133,7 +133,7 @@ private fun BottomBarPreview() {
                 visible = true,
                 tabs = MainTab.entries.toPersistentList(),
                 currentTab = MainTab.HOME,
-                onTabSelected = {}
+                onTabSelected = {},
             )
         }
     }

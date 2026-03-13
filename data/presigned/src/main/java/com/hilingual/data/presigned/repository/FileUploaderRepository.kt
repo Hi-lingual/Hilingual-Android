@@ -20,6 +20,6 @@ import android.net.Uri
 interface FileUploaderRepository {
     suspend fun uploadFile(
         uri: Uri,
-        purpose: String
+        purpose: String,
     ): Result<String>
 }

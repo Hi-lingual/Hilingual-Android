@@ -29,7 +29,7 @@ import timber.log.Timber
 
 @Singleton
 class AmplitudeTracker @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
 ) : Tracker {
 
     private val amplitude: Amplitude? = run {
@@ -38,8 +38,8 @@ class AmplitudeTracker @Inject constructor(
         Amplitude(
             Configuration(
                 apiKey = BuildConfig.AMPLITUDE_API_KEY,
-                context = context
-            )
+                context = context,
+            ),
         )
     }
 
@@ -58,7 +58,7 @@ class AmplitudeTracker @Inject constructor(
         trigger: TriggerType,
         page: Page,
         event: String,
-        properties: Map<String, Any>
+        properties: Map<String, Any>,
     ) {
         val eventName = "${trigger.value}_${page.pageName}.$event"
 

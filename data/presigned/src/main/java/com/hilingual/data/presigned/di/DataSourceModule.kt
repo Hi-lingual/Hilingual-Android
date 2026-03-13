@@ -31,12 +31,12 @@ abstract class DataSourceModule {
     @Binds
     @Singleton
     abstract fun bindPresignedUrlRemoteDataSource(
-        presignedUrlRemoteDataSourceImpl: PresignedUrlRemoteDataSourceImpl
+        presignedUrlRemoteDataSourceImpl: PresignedUrlRemoteDataSourceImpl,
     ): PresignedUrlRemoteDataSource
 
     @Binds
     @Singleton
     abstract fun bindFileUploaderRemoteDataSource(
-        fileUploaderRemoteDataSourceImpl: FileUploaderRemoteDataSourceImpl
+        fileUploaderRemoteDataSourceImpl: FileUploaderRemoteDataSourceImpl,
     ): FileUploaderRemoteDataSource
 }

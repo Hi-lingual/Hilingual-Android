@@ -29,24 +29,24 @@ internal fun ImageSelectBottomSheet(
     onDismiss: () -> Unit,
     onCameraSelected: () -> Unit,
     onGallerySelected: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     HilingualMenuBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
         modifier = modifier,
-        title = "이미지 선택"
+        title = "이미지 선택",
     ) {
         HilingualMenuBottomSheetItem(
             text = "카메라로 사진 찍기",
             iconResId = DesignSystemR.drawable.ic_camera_24,
-            onClick = onCameraSelected
+            onClick = onCameraSelected,
         )
 
         HilingualMenuBottomSheetItem(
             text = "갤러리에서 선택하기",
             iconResId = DesignSystemR.drawable.ic_gallary_24,
-            onClick = onGallerySelected
+            onClick = onGallerySelected,
         )
     }
 }

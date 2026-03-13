@@ -25,6 +25,7 @@ import com.hilingual.data.voca.model.GroupingVocaModel
 import com.hilingual.data.voca.repository.VocaRepository
 import com.hilingual.presentation.voca.component.WordSortType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -45,13 +46,12 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class VocaViewModel @Inject
 constructor(
     private val vocaRepository: VocaRepository,
-    private val diaryRepository: DiaryRepository
+    private val diaryRepository: DiaryRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(VocaUiState())
@@ -60,7 +60,7 @@ constructor(
     private val _sideEffect = MutableSharedFlow<VocaSideEffect>()
     val sideEffect: SharedFlow<VocaSideEffect> = _sideEffect.asSharedFlow()
 
-    private val _actions = MutableSharedFlow<VocaAction>()
+    private val actions = MutableSharedFlow<VocaAction>()
 
     init {
         fetchInitialData()
@@ -81,19 +81,17 @@ constructor(
     }
 
     private fun setupActionStateMachine() {
-        _actions
+        actions
             .scan(false) { hasDataChanged, action ->
                 handleAction(hasDataChanged, action)
             }
             .launchIn(viewModelScope)
     }
 
-    private fun handleAction(hasDataChanged: Boolean, action: VocaAction): Boolean {
-        return when (action) {
-            is VocaAction.BookmarkChanged -> true
-            is VocaAction.SortChanged -> handleSortChanged(hasDataChanged, action.sortType)
-            is VocaAction.DataRefreshed -> false
-        }
+    private fun handleAction(hasDataChanged: Boolean, action: VocaAction): Boolean = when (action) {
+        is VocaAction.BookmarkChanged -> true
+        is VocaAction.SortChanged -> handleSortChanged(hasDataChanged, action.sortType)
+        is VocaAction.DataRefreshed -> false
     }
 
     private fun handleSortChanged(hasDataChanged: Boolean, sortType: WordSortType): Boolean {
@@ -152,11 +150,11 @@ constructor(
                     aTozList = aTozGroupList,
                     latestList = latestGroupList,
                     vocaCount = count,
-                    isRefreshing = false
+                    isRefreshing = false,
                 )
             }
 
-            _actions.emit(VocaAction.DataRefreshed)
+            actions.emit(VocaAction.DataRefreshed)
         }
     }
 
@@ -164,7 +162,7 @@ constructor(
         _uiState.update { it.copy(sortType = sort) }
 
         viewModelScope.launch {
-            _actions.emit(VocaAction.SortChanged(sort))
+            actions.emit(VocaAction.SortChanged(sort))
         }
     }
 
@@ -177,7 +175,7 @@ constructor(
         _uiState.update {
             it.copy(
                 sortType = sort,
-                vocaGroupList = UiState.Success(currentList)
+                vocaGroupList = UiState.Success(currentList),
             )
         }
     }
@@ -218,7 +216,7 @@ constructor(
 
             currentState.copy(
                 searchResultList = filteredList,
-                viewType = if (searchKeyword.isBlank()) ScreenType.DEFAULT else ScreenType.SEARCH
+                viewType = if (searchKeyword.isBlank()) ScreenType.DEFAULT else ScreenType.SEARCH,
             )
         }
     }
@@ -227,7 +225,7 @@ constructor(
         _uiState.update {
             it.copy(
                 searchKeyword = "",
-                viewType = ScreenType.DEFAULT
+                viewType = ScreenType.DEFAULT,
             )
         }
     }
@@ -236,11 +234,11 @@ constructor(
         viewModelScope.launch {
             diaryRepository.patchPhraseBookmark(
                 phraseId = phraseId,
-                bookmarkModel = PhraseBookmarkModel(isMarked)
+                bookmarkModel = PhraseBookmarkModel(isMarked),
             )
                 .onSuccess {
                     updateLocalBookmarkState(phraseId, isMarked)
-                    _actions.emit(VocaAction.BookmarkChanged)
+                    actions.emit(VocaAction.BookmarkChanged)
                 }
                 .onLogFailure {
                     _sideEffect.emit(VocaSideEffect.ShowErrorDialog {})
@@ -270,7 +268,7 @@ constructor(
                 aTozList = updatedATozList,
                 latestList = updatedLatestList,
                 vocaGroupList = UiState.Success(currentList),
-                searchResultList = updatedSearchResults
+                searchResultList = updatedSearchResults,
             )
         }
     }
@@ -278,20 +276,18 @@ constructor(
     private fun updateBookmarkInList(
         list: ImmutableList<GroupingVocaModel>,
         phraseId: Long,
-        isMarked: Boolean
-    ): ImmutableList<GroupingVocaModel> {
-        return list.map { group ->
-            group.copy(
-                words = group.words.map { item ->
-                    if (item.phraseId == phraseId) {
-                        item.copy(isBookmarked = isMarked)
-                    } else {
-                        item
-                    }
-                }.toImmutableList()
-            )
-        }.toImmutableList()
-    }
+        isMarked: Boolean,
+    ): ImmutableList<GroupingVocaModel> = list.map { group ->
+        group.copy(
+            words = group.words.map { item ->
+                if (item.phraseId == phraseId) {
+                    item.copy(isBookmarked = isMarked)
+                } else {
+                    item
+                }
+            }.toImmutableList(),
+        )
+    }.toImmutableList()
 
     fun refreshVocaList() {
         viewModelScope.launch {

@@ -22,9 +22,9 @@ object UserDataStoreModule {
     @Singleton
     @UserInfoDataStore
     fun provideUserInfoDataStore(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): DataStore<Preferences> = DataStoreBuilder.createPreferencesDataStore(
         context = context,
-        name = HILINGUAL_USER_INFO_PREFS
+        name = HILINGUAL_USER_INFO_PREFS,
     )
 }

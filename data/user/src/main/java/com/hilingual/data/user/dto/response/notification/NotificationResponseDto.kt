@@ -33,5 +33,5 @@ data class NotificationResponseDto(
     @SerialName("isRead")
     val isRead: Boolean,
     @SerialName("publishedAt")
-    val publishedAt: String
+    val publishedAt: String,
 )

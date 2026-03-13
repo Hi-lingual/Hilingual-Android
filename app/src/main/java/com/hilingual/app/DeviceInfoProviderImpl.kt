@@ -17,13 +17,13 @@ package com.hilingual.app
 
 import android.content.Context
 import android.os.Build
-import com.hilingual.core.common.extension.appVersionName
 import com.hilingual.core.common.app.DeviceInfoProvider
+import com.hilingual.core.common.extension.appVersionName
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 internal class DeviceInfoProviderImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
 ) : DeviceInfoProvider {
 
     override fun getDeviceName(): String = Build.MODEL

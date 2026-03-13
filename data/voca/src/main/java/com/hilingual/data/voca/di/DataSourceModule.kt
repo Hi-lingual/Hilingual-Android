@@ -30,6 +30,6 @@ internal abstract class DataSourceModule {
     @Binds
     @Singleton
     abstract fun bindsVocaDataSource(
-        vocaDataSourceImpl: VocaDataSourceImpl
+        vocaDataSourceImpl: VocaDataSourceImpl,
     ): VocaDataSource
 }

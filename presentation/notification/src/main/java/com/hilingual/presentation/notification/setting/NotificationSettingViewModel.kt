@@ -21,6 +21,7 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,12 +32,11 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
 internal class NotificationSettingViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<NotificationSettingUiState>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
@@ -59,7 +59,7 @@ internal class NotificationSettingViewModel @Inject constructor(
                 .onSuccess { settings ->
                     val newUiState = NotificationSettingUiState(
                         isMarketingChecked = settings.isMarketingEnabled,
-                        isFeedChecked = settings.isFeedEnabled
+                        isFeedChecked = settings.isFeedEnabled,
                     )
                     _uiState.update { UiState.Success(newUiState) }
                     serverState.update { newUiState }
@@ -106,7 +106,7 @@ internal class NotificationSettingViewModel @Inject constructor(
                 .onSuccess { settings ->
                     val newUiState = NotificationSettingUiState(
                         isMarketingChecked = settings.isMarketingEnabled,
-                        isFeedChecked = settings.isFeedEnabled
+                        isFeedChecked = settings.isFeedEnabled,
                     )
                     _uiState.update { UiState.Success(newUiState) }
                     serverState.update { newUiState }
@@ -120,5 +120,5 @@ internal class NotificationSettingViewModel @Inject constructor(
 
 private enum class NotiType {
     FEED,
-    MARKETING
+    MARKETING,
 }

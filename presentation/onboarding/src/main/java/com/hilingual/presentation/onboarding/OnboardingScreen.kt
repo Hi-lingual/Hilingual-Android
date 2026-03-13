@@ -52,40 +52,40 @@ private val onboardingPages: ImmutableList<OnboardingContent> = persistentListOf
     OnboardingContent(
         text = "48시간 동안 작성하는\n꾸준한 영어일기",
         highlightedText = "48시간",
-        image = R.drawable.img_onboarding_1
+        image = R.drawable.img_onboarding_1,
     ),
     OnboardingContent(
         text = "한 줄도, 한국어도, 사진도\n괜찮은 일기 작성",
         highlightedText = "일기 작성",
-        image = R.drawable.img_onboarding_2
+        image = R.drawable.img_onboarding_2,
     ),
     OnboardingContent(
         text = "영어일기에 최적화 된\n간편한 AI 피드백",
         highlightedText = "AI 피드백",
-        image = R.drawable.img_onboarding_3
+        image = R.drawable.img_onboarding_3,
     ),
     OnboardingContent(
         text = "일기를 공유하며\n더불어 성장하는 피드",
         highlightedText = "일기를 공유",
-        image = R.drawable.img_onboarding_4
-    )
+        image = R.drawable.img_onboarding_4,
+    ),
 )
 
 @Composable
 internal fun OnboardingRoute(
     paddingValues: PaddingValues,
-    navigateToAuth: () -> Unit
+    navigateToAuth: () -> Unit,
 ) {
     OnboardingScreen(
         paddingValues = paddingValues,
-        onOnboardingCompleted = navigateToAuth
+        onOnboardingCompleted = navigateToAuth,
     )
 }
 
 @Composable
 private fun OnboardingScreen(
     paddingValues: PaddingValues,
-    onOnboardingCompleted: () -> Unit
+    onOnboardingCompleted: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState { onboardingPages.size }
@@ -97,7 +97,7 @@ private fun OnboardingScreen(
             .statusBarColor(HilingualTheme.colors.white)
             .fillMaxWidth()
             .padding(paddingValues)
-            .padding(bottom = 49.dp)
+            .padding(bottom = 49.dp),
     ) {
         Text(
             text = "건너뛰기",
@@ -107,16 +107,16 @@ private fun OnboardingScreen(
             modifier = Modifier
                 .noRippleClickable(onClick = onOnboardingCompleted)
                 .padding(horizontal = 24.dp, vertical = 12.dp)
-                .align(Alignment.End)
+                .align(Alignment.End),
         )
 
         Spacer(modifier = Modifier.weight(24f))
 
         HorizontalPager(
-            state = pagerState
+            state = pagerState,
         ) { currentPage ->
             PagerContent(
-                onboardingContent = onboardingPages[currentPage]
+                onboardingContent = onboardingPages[currentPage],
             )
         }
 
@@ -124,7 +124,7 @@ private fun OnboardingScreen(
 
         HilingualPagerIndicator(
             pageCount = onboardingPages.size,
-            currentPage = pagerState.currentPage
+            currentPage = pagerState.currentPage,
         )
 
         Spacer(modifier = Modifier.weight(60f))
@@ -140,14 +140,14 @@ private fun OnboardingScreen(
                     }
                 }
             },
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp),
         )
     }
 }
 
 @Composable
 private fun PagerContent(
-    onboardingContent: OnboardingContent
+    onboardingContent: OnboardingContent,
 ) {
     val fullText = onboardingContent.text
     val highlightedText = onboardingContent.highlightedText
@@ -161,11 +161,12 @@ private fun PagerContent(
             addStyle(
                 style = SpanStyle(color = HilingualTheme.colors.hilingualOrange),
                 start = startIndex,
-                end = startIndex + highlightedText.length
+                end = startIndex + highlightedText.length,
             )
 
             startIndex = fullText.indexOf(
-                highlightedText, startIndex + highlightedText.length
+                highlightedText,
+                startIndex + highlightedText.length,
             )
         }
     }
@@ -173,19 +174,19 @@ private fun PagerContent(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(28.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Text(
             text = annotatedString,
             style = HilingualTheme.typography.headSB20,
             color = HilingualTheme.colors.black,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
 
         Image(
             painter = painterResource(onboardingContent.image),
             contentDescription = null,
-            modifier = Modifier.size(360.dp)
+            modifier = Modifier.size(360.dp),
         )
     }
 }
@@ -195,7 +196,7 @@ private fun PagerContent(
 private fun OnboardingScreenPreview() {
     HilingualTheme {
         OnboardingScreen(
-            paddingValues = PaddingValues()
+            paddingValues = PaddingValues(),
         ) { }
     }
 }

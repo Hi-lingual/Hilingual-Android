@@ -28,22 +28,22 @@ import kotlinx.serialization.Serializable
 data object Voca : MainTabRoute
 
 fun NavController.navigateToVoca(
-    navOptions: NavOptions? = null
+    navOptions: NavOptions? = null,
 ) {
     navigate(
         route = Voca,
-        navOptions = navOptions
+        navOptions = navOptions,
     )
 }
 
 fun NavGraphBuilder.vocaNavGraph(
     paddingValues: PaddingValues,
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
 ) {
     composable<Voca> {
         VocaRoute(
             paddingValues = paddingValues,
-            navigateToHome = navigateToHome
+            navigateToHome = navigateToHome,
         )
     }
 }

@@ -34,14 +34,14 @@ import com.hilingual.presentation.notification.detail.component.NotificationDeta
 internal fun NotificationDetailRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
-    viewModel: NotificationDetailViewModel = hiltViewModel()
+    viewModel: NotificationDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     NotificationDetailScreen(
         paddingValues = paddingValues,
         onBackClick = navigateUp,
-        uiState = uiState
+        uiState = uiState,
     )
 }
 
@@ -50,17 +50,17 @@ private fun NotificationDetailScreen(
     paddingValues: PaddingValues,
     onBackClick: () -> Unit,
     uiState: NotificationDetailUiState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
-            .padding(paddingValues)
+            .padding(paddingValues),
     ) {
         BackTopAppBar(
             title = "알림",
-            onBackClicked = onBackClick
+            onBackClicked = onBackClick,
         )
         if (uiState.isLoading) {
             HilingualLoadingIndicator()
@@ -68,7 +68,7 @@ private fun NotificationDetailScreen(
             NotificationDetailContent(
                 title = uiState.title,
                 date = uiState.date,
-                content = uiState.content
+                content = uiState.content,
             )
         }
     }

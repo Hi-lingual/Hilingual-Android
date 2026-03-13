@@ -27,18 +27,18 @@ import com.hilingual.core.designsystem.component.image.NetworkImage
 @Composable
 fun ProfileImage(
     imageUrl: String?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (imageUrl.isNullOrBlank()) {
         Image(
             painter = painterResource(R.drawable.img_default_image),
             contentDescription = null,
-            modifier = modifier.clip(CircleShape)
+            modifier = modifier.clip(CircleShape),
         )
     } else {
         NetworkImage(
             imageUrl = imageUrl,
-            modifier = modifier
+            modifier = modifier,
         )
     }
 }

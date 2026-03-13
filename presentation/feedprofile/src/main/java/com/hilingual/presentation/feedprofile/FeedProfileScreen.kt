@@ -87,7 +87,7 @@ internal fun FeedProfileRoute(
     navigateToFeedProfile: (Long) -> Unit,
     navigateToFollowList: () -> Unit,
     navigateToFeedDiary: (Long) -> Unit,
-    viewModel: FeedProfileViewModel = hiltViewModel()
+    viewModel: FeedProfileViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -103,8 +103,8 @@ internal fun FeedProfileRoute(
             event = "view_profile_user",
             properties = mapOf(
                 "profile_user_id" to viewModel.targetUserId,
-                "page" to Page.FEED.pageName
-            )
+                "page" to Page.FEED.pageName,
+            ),
         )
         viewModel.loadFeedProfile()
     }
@@ -118,8 +118,8 @@ internal fun FeedProfileRoute(
                     HilingualMessage.Snackbar(
                         message = sideEffect.message,
                         actionLabelText = sideEffect.actionLabel,
-                        onAction = { navigateToMyFeedProfile(true) }
-                    )
+                        onAction = { navigateToMyFeedProfile(true) },
+                    ),
                 )
 
             is FeedProfileSideEffect.ShowToast -> messageController(HilingualMessage.Toast(sideEffect.message))
@@ -148,7 +148,7 @@ internal fun FeedProfileRoute(
                 onBlockClick = { viewModel.updateBlockState(state.data.feedProfileInfo.isBlock ?: false) },
                 onReportDiaryClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 onUnpublishClick = viewModel::diaryUnpublish,
-                onTabRefresh = viewModel::refreshTab
+                onTabRefresh = viewModel::refreshTab,
             )
         }
 
@@ -172,7 +172,7 @@ private fun FeedProfileScreen(
     onUnpublishClick: (diaryId: Long) -> Unit,
     onReportDiaryClick: () -> Unit,
     onTabRefresh: (DiaryTabType) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val profile = uiState.feedProfileInfo
 
@@ -191,6 +191,7 @@ private fun FeedProfileScreen(
                 profile.isMine -> {
                     if (pagerState.currentPage == 0) sharedDiaryListState else likedDiaryListState
                 }
+
                 else -> sharedDiaryListState
             }
         }
@@ -216,18 +217,18 @@ private fun FeedProfileScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(HilingualTheme.colors.white)
+            .background(HilingualTheme.colors.white),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(paddingValues),
         ) {
             FeedProfileTopBar(
                 isMine = profile.isMine,
                 isBlock = profile.isBlock,
                 onBackClick = onBackClick,
-                onMoreClick = { isMenuBottomSheetVisible = true }
+                onMoreClick = { isMenuBottomSheetVisible = true },
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -244,7 +245,7 @@ private fun FeedProfileScreen(
                 isFollowed = profile.isFollowed,
                 isBlock = profile.isBlock,
                 onActionButtonClick = onActionButtonClick,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp),
             )
 
             FeedProfileContent(
@@ -261,7 +262,7 @@ private fun FeedProfileScreen(
                 onUnpublishClick = onUnpublishClick,
                 onReportDiaryClick = onReportDiaryClick,
                 onTabRefresh = onTabRefresh,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             )
         }
 
@@ -271,7 +272,7 @@ private fun FeedProfileScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .navigationBarsPadding()
-                .padding(bottom = 24.dp, end = 16.dp)
+                .padding(bottom = 24.dp, end = 16.dp),
         )
     }
 
@@ -285,7 +286,7 @@ private fun FeedProfileScreen(
         onBlockClick = {
             isMenuBottomSheetVisible = false
             isBlockBottomSheetVisible = true
-        }
+        },
     )
 
     BlockBottomSheet(
@@ -294,7 +295,7 @@ private fun FeedProfileScreen(
         onBlockButtonClick = {
             isBlockBottomSheetVisible = false
             onBlockClick()
-        }
+        },
     )
 
     ReportUserDialog(
@@ -303,7 +304,7 @@ private fun FeedProfileScreen(
         onReportClick = {
             isReportUserDialogVisible = false
             onReportUserClick()
-        }
+        },
     )
 }
 
@@ -312,7 +313,7 @@ private fun FeedProfileTopBar(
     isMine: Boolean,
     isBlock: Boolean?,
     onBackClick: () -> Unit,
-    onMoreClick: () -> Unit
+    onMoreClick: () -> Unit,
 ) {
     if (isMine || isBlock == true) {
         BackTopAppBar(title = "피드", onBackClicked = onBackClick)
@@ -320,7 +321,7 @@ private fun FeedProfileTopBar(
         BackAndMoreTopAppBar(
             title = "피드",
             onBackClicked = onBackClick,
-            onMoreClicked = onMoreClick
+            onMoreClicked = onMoreClick,
         )
     }
 }
@@ -340,7 +341,7 @@ private fun FeedProfileContent(
     onUnpublishClick: (Long) -> Unit,
     onReportDiaryClick: () -> Unit,
     onTabRefresh: (DiaryTabType) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     when {
         profile.isMine -> {
@@ -357,14 +358,14 @@ private fun FeedProfileContent(
                 onUnpublishClick = onUnpublishClick,
                 onReportDiaryClick = onReportDiaryClick,
                 onTabRefresh = onTabRefresh,
-                modifier = modifier
+                modifier = modifier,
             )
         }
 
         profile.isBlock == true -> {
             BlockedUserContent(
                 nickname = profile.nickname,
-                modifier = modifier
+                modifier = modifier,
             )
         }
 
@@ -377,7 +378,7 @@ private fun FeedProfileContent(
                 onLikeClick = onLikeClick,
                 onUnpublishClick = onUnpublishClick,
                 onReportDiaryClick = onReportDiaryClick,
-                modifier = modifier
+                modifier = modifier,
             )
         }
     }
@@ -397,7 +398,7 @@ private fun MyFeedContent(
     onUnpublishClick: (Long) -> Unit,
     onReportDiaryClick: () -> Unit,
     onTabRefresh: (DiaryTabType) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     FeedProfileTabRow(
         tabIndex = pagerState.currentPage,
@@ -415,25 +416,25 @@ private fun MyFeedContent(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .background(HilingualTheme.colors.white)
+            .background(HilingualTheme.colors.white),
     )
 
     HorizontalPager(
         state = pagerState,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
     ) { page ->
         val tabType = DiaryTabType.entries[page]
         val (diaries, emptyCardType, listState) = when (tabType) {
             DiaryTabType.SHARED -> Triple(
                 sharedDiaries,
                 FeedEmptyCardType.NOT_SHARED,
-                sharedDiaryListState
+                sharedDiaryListState,
             )
 
             DiaryTabType.LIKED -> Triple(
                 likedDiaries,
                 FeedEmptyCardType.NOT_LIKED,
-                likedDiaryListState
+                likedDiaryListState,
             )
         }
 
@@ -448,7 +449,7 @@ private fun MyFeedContent(
             onUnpublishClick = onUnpublishClick,
             onReportClick = onReportDiaryClick,
             listState = listState,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
@@ -456,11 +457,11 @@ private fun MyFeedContent(
 @Composable
 private fun BlockedUserContent(
     nickname: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(140.dp))
 
@@ -468,7 +469,7 @@ private fun BlockedUserContent(
             text = "${nickname}님의 글을 확인할 수 없어요.",
             style = HilingualTheme.typography.headSB18,
             color = HilingualTheme.colors.black,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -477,7 +478,7 @@ private fun BlockedUserContent(
             text = "차단을 해제하면 글을 확인할 수 있어요.",
             style = HilingualTheme.typography.bodyR16,
             color = HilingualTheme.colors.gray400,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -491,7 +492,7 @@ private fun OtherUserFeedContent(
     onLikeClick: (Long, Boolean, DiaryTabType) -> Unit,
     onUnpublishClick: (Long) -> Unit,
     onReportDiaryClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     DiaryListScreen(
         diaries = diaries,
@@ -504,7 +505,7 @@ private fun OtherUserFeedContent(
         onUnpublishClick = onUnpublishClick,
         onReportClick = onReportDiaryClick,
         listState = listState,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -532,7 +533,7 @@ private fun FeedProfileScreenPreview() {
             onLikeClick = { _, _, _ -> },
             onUnpublishClick = {},
             onReportDiaryClick = {},
-            onTabRefresh = {}
+            onTabRefresh = {},
         )
     }
 }

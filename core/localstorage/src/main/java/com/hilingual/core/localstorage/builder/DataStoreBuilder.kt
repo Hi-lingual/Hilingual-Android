@@ -13,22 +13,18 @@ import kotlinx.serialization.KSerializer
 object DataStoreBuilder {
     fun createPreferencesDataStore(
         context: Context,
-        name: String
-    ): DataStore<Preferences> {
-        return PreferenceDataStoreFactory.create(
-            produceFile = { context.preferencesDataStoreFile(name) }
-        )
-    }
+        name: String,
+    ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
+        produceFile = { context.preferencesDataStoreFile(name) },
+    )
 
     fun <T> createEncryptedDataStore(
         context: Context,
         fileName: String,
         kSerializer: KSerializer<T>,
-        defaultValue: T
-    ): DataStore<T> {
-        return DataStoreFactory.create(
-            serializer = EncryptedSerializer(kSerializer, defaultValue),
-            produceFile = { context.dataStoreFile(fileName) }
-        )
-    }
+        defaultValue: T,
+    ): DataStore<T> = DataStoreFactory.create(
+        serializer = EncryptedSerializer(kSerializer, defaultValue),
+        produceFile = { context.dataStoreFile(fileName) },
+    )
 }

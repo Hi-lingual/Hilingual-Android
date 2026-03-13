@@ -50,7 +50,7 @@ internal fun RecommendedTopicDropdown(
     enTopic: String,
     koTopic: String,
     focusManager: FocusManager,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var isKo by remember { mutableStateOf(false) }
     var isExpanded by remember { mutableStateOf(false) }
@@ -62,17 +62,17 @@ internal fun RecommendedTopicDropdown(
             .background(HilingualTheme.colors.gray100)
             .fillMaxWidth()
             .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
                 text = "오늘의 추천 주제 참고하기",
                 style = HilingualTheme.typography.bodyR14,
-                color = HilingualTheme.colors.gray700
+                color = HilingualTheme.colors.gray700,
             )
             Icon(
                 modifier = Modifier
@@ -88,7 +88,7 @@ internal fun RecommendedTopicDropdown(
                     },
                 imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_arrow_down_20_gray),
                 contentDescription = null,
-                tint = HilingualTheme.colors.gray400
+                tint = HilingualTheme.colors.gray400,
             )
         }
 
@@ -100,14 +100,14 @@ internal fun RecommendedTopicDropdown(
                     .background(HilingualTheme.colors.white)
                     .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
                     text = if (isKo) koTopic else enTopic,
                     style = HilingualTheme.typography.bodyM15,
                     color = HilingualTheme.colors.gray700,
-                    maxLines = 2
+                    maxLines = 2,
                 )
                 Icon(
                     modifier = Modifier
@@ -115,7 +115,7 @@ internal fun RecommendedTopicDropdown(
                         .noRippleClickable { isKo = !isKo },
                     imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_change_20),
                     contentDescription = null,
-                    tint = HilingualTheme.colors.gray300
+                    tint = HilingualTheme.colors.gray300,
                 )
             }
         }
@@ -129,7 +129,7 @@ private fun RecommendedTopicDropdownPreview() {
         RecommendedTopicDropdown(
             enTopic = "What surprised you today?",
             koTopic = "오늘 무엇이 당신을 놀라게 했나요?",
-            focusManager = LocalFocusManager.current
+            focusManager = LocalFocusManager.current,
         )
     }
 }

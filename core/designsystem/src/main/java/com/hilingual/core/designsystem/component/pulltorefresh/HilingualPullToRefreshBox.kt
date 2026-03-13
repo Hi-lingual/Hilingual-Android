@@ -34,7 +34,7 @@ fun HilingualPullToRefreshBox(
     modifier: Modifier = Modifier,
     state: PullToRefreshState = rememberPullToRefreshState(),
     contentAlignment: Alignment = Alignment.TopStart,
-    content: @Composable (BoxScope.() -> Unit)
+    content: @Composable (BoxScope.() -> Unit),
 ) {
     PullToRefreshBox(
         isRefreshing = isRefreshing,
@@ -48,9 +48,9 @@ fun HilingualPullToRefreshBox(
                 isRefreshing = isRefreshing,
                 state = state,
                 containerColor = HilingualTheme.colors.white,
-                color = HilingualTheme.colors.black
+                color = HilingualTheme.colors.black,
             )
         },
-        content = content
+        content = content,
     )
 }

@@ -51,7 +51,7 @@ internal fun MyInfoBox(
     profileNickname: String,
     onEditButtonClick: () -> Unit,
     onMyFeedButtonClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -59,10 +59,10 @@ internal fun MyInfoBox(
             .clip(RoundedCornerShape(12.dp))
             .background(HilingualTheme.colors.white)
             .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             val imageModifier = Modifier
                 .size(60.dp)
@@ -70,7 +70,7 @@ internal fun MyInfoBox(
                 .border(
                     width = 1.dp,
                     color = HilingualTheme.colors.gray200,
-                    shape = CircleShape
+                    shape = CircleShape,
                 )
                 .noRippleClickable(onClick = onEditButtonClick)
 
@@ -78,12 +78,12 @@ internal fun MyInfoBox(
                 Image(
                     painter = painterResource(R.drawable.img_default_image),
                     contentDescription = null,
-                    modifier = imageModifier
+                    modifier = imageModifier,
                 )
             } else {
                 NetworkImage(
                     imageUrl = profileUrl,
-                    modifier = imageModifier
+                    modifier = imageModifier,
                 )
             }
 
@@ -93,7 +93,7 @@ internal fun MyInfoBox(
                 modifier = Modifier.noRippleClickable(onClick = onEditButtonClick),
                 text = profileNickname,
                 color = HilingualTheme.colors.gray850,
-                style = HilingualTheme.typography.headSB18
+                style = HilingualTheme.typography.headSB18,
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -105,7 +105,7 @@ internal fun MyInfoBox(
                     .padding(4.dp),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_pen_24),
                 contentDescription = null,
-                tint = HilingualTheme.colors.gray400
+                tint = HilingualTheme.colors.gray400,
             )
         }
 
@@ -119,7 +119,7 @@ internal fun MyInfoBox(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(4.dp))
                 .background(HilingualTheme.colors.black)
-                .padding(vertical = 10.dp)
+                .padding(vertical = 10.dp),
         )
     }
 }
@@ -132,7 +132,7 @@ private fun MyInfoBoxPreview() {
             profileUrl = "",
             profileNickname = "내 닉네임",
             onEditButtonClick = { println("Block Button Clicked in Preview") },
-            onMyFeedButtonClick = {}
+            onMyFeedButtonClick = {},
         )
     }
 }

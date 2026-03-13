@@ -24,15 +24,15 @@ import com.hilingual.data.feed.model.UserListModel
 
 interface FeedRepository {
     suspend fun getFeedProfile(
-        targetUserId: Long
+        targetUserId: Long,
     ): Result<FeedProfileModel>
 
     suspend fun getSharedDiaries(
-        targetUserId: Long
+        targetUserId: Long,
     ): Result<SharedDiariesModel>
 
     suspend fun getLikedDiaries(
-        targetUserId: Long
+        targetUserId: Long,
     ): Result<LikedDiariesModel>
 
     suspend fun getRecommendFeeds(): Result<FeedListModel>

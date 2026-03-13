@@ -30,6 +30,6 @@ internal abstract class DataSourceModule {
     @Binds
     @Singleton
     abstract fun bindsCalendarRemoteDataSource(
-        calendarRemoteDataSourceImpl: CalendarRemoteDataSourceImpl
+        calendarRemoteDataSourceImpl: CalendarRemoteDataSourceImpl,
     ): CalendarRemoteDataSource
 }

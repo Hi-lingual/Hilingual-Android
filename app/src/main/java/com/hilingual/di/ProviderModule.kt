@@ -15,8 +15,8 @@
  */
 package com.hilingual.di
 
-import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.app.DeviceInfoProviderImpl
+import com.hilingual.core.common.app.DeviceInfoProvider
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -30,6 +30,6 @@ internal abstract class ProviderModule {
     @Binds
     @Singleton
     abstract fun bindDeviceInfoProvider(
-        impl: DeviceInfoProviderImpl
+        impl: DeviceInfoProviderImpl,
     ): DeviceInfoProvider
 }

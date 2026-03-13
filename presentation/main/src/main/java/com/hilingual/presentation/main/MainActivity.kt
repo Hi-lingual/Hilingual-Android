@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
                 MainScreen(
                     appState = appState,
                     tracker = tracker,
-                    appRestarter = appRestarter
+                    appRestarter = appRestarter,
                 )
             }
         }

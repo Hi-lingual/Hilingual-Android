@@ -33,38 +33,38 @@ import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 internal enum class FeedEmptyCardType(
-    val text: String
+    val text: String,
 ) {
     NOT_FEED(
-        text = "피드에 아직 공유된 일기가 없어요."
+        text = "피드에 아직 공유된 일기가 없어요.",
     ),
     NOT_FOLLOWING(
-        text = "아직 팔로잉한 유저가 없어요.\n마음에 드는 사람을 찾아 팔로우해 보세요!"
-    )
+        text = "아직 팔로잉한 유저가 없어요.\n마음에 드는 사람을 찾아 팔로우해 보세요!",
+    ),
 }
 
 @Composable
 internal fun FeedEmptyCard(
     type: FeedEmptyCardType,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
 
     ) {
         Image(
             painter = painterResource(id = R.drawable.img_diary_empty),
             contentDescription = null,
-            modifier = Modifier.size(width = 200.dp, height = 100.dp)
+            modifier = Modifier.size(width = 200.dp, height = 100.dp),
         )
 
         Text(
             text = type.text,
             style = HilingualTheme.typography.headR18,
             color = HilingualTheme.colors.gray500,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -75,11 +75,11 @@ private fun FeedEmptyCardPreview() {
     HilingualTheme {
         Column {
             FeedEmptyCard(
-                FeedEmptyCardType.NOT_FEED
+                FeedEmptyCardType.NOT_FEED,
             )
             HorizontalDivider()
             FeedEmptyCard(
-                FeedEmptyCardType.NOT_FOLLOWING
+                FeedEmptyCardType.NOT_FOLLOWING,
             )
         }
     }

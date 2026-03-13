@@ -29,14 +29,14 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
 fun HilingualLoadingIndicator(
     modifier: Modifier = Modifier,
-    backgroundColor: Color = HilingualTheme.colors.white
+    backgroundColor: Color = HilingualTheme.colors.white,
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(backgroundColor)
             .noRippleClickable { },
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator()
     }

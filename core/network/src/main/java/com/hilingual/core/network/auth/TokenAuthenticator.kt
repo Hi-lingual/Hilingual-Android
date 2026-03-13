@@ -18,6 +18,8 @@ package com.hilingual.core.network.auth
 import com.hilingual.core.common.app.AppRestarter
 import com.hilingual.core.network.constant.AUTHORIZATION
 import com.hilingual.core.network.constant.BEARER
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -26,22 +28,18 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class TokenAuthenticator @Inject constructor(
     private val tokenProvider: TokenProvider,
     private val tokenRefreshService: TokenRefreshService,
-    private val appRestarter: AppRestarter
+    private val appRestarter: AppRestarter,
 ) : Authenticator {
 
     private val mutex = Mutex()
 
-    override fun authenticate(route: Route?, response: Response): Request? {
-        return runBlocking {
-            handleAuthentication(response)
-        }
+    override fun authenticate(route: Route?, response: Response): Request? = runBlocking {
+        handleAuthentication(response)
     }
 
     private suspend fun handleAuthentication(response: Response): Request? = mutex.withLock {

@@ -26,20 +26,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.Locale
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 internal fun DaysOfWeekTitle(
     daysOfWeek: ImmutableList<DayOfWeek>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     ) {
         for (dayOfWeek in daysOfWeek) {
             Text(
@@ -51,7 +51,7 @@ internal fun DaysOfWeekTitle(
                     DayOfWeek.SATURDAY -> HilingualTheme.colors.hilingualBlue
                     DayOfWeek.SUNDAY -> HilingualTheme.colors.alertRed
                     else -> HilingualTheme.colors.gray500
-                }
+                },
             )
         }
     }
@@ -64,7 +64,7 @@ private fun DaysOfWeekTitlePreview() {
         val daysOfWeek = DayOfWeek.entries.toTypedArray().toImmutableList()
         DaysOfWeekTitle(
             daysOfWeek = daysOfWeek,
-            modifier = Modifier
+            modifier = Modifier,
         )
     }
 }

@@ -79,7 +79,7 @@ class StartupBenchmarks {
                 // "Google로 계속하기" 버튼이 표시될 때까지 대기
                 // → 앱이 완전히 그려졌다고 판단하는 기준
                 device.wait(Until.hasObject(By.text("Google로 계속하기")), 10_000)
-            }
+            },
         )
     }
 }

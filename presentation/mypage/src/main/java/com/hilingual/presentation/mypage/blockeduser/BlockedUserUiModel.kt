@@ -22,5 +22,5 @@ internal data class BlockedUserUiModel(
     val userId: Long,
     val profileImageUrl: String,
     val nickname: String,
-    val isBlocked: Boolean = true
+    val isBlocked: Boolean = true,
 )

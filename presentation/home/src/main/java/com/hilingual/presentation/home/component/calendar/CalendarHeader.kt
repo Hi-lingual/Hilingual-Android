@@ -44,26 +44,26 @@ internal fun CalendarHeader(
     onLeftArrowClick: () -> Unit,
     onRightArrowClick: () -> Unit,
     yearMonth: () -> YearMonth,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val currentYearMonth = yearMonth()
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.background(HilingualTheme.colors.white)
+        modifier = modifier.background(HilingualTheme.colors.white),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.noRippleClickable(onClick = onDownArrowClick)
+            modifier = Modifier.noRippleClickable(onClick = onDownArrowClick),
         ) {
             Text(
                 text = "${currentYearMonth.year}년 ${
-                currentYearMonth.month.getDisplayName(
-                    TextStyle.SHORT,
-                    Locale.getDefault()
-                )
+                    currentYearMonth.month.getDisplayName(
+                        TextStyle.SHORT,
+                        Locale.getDefault(),
+                    )
                 }",
                 style = HilingualTheme.typography.headSB18,
-                color = HilingualTheme.colors.black
+                color = HilingualTheme.colors.black,
             )
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_down_24_black),
@@ -71,7 +71,7 @@ internal fun CalendarHeader(
                 tint = Color.Unspecified,
                 modifier = Modifier
                     .size(28.dp)
-                    .padding(2.dp)
+                    .padding(2.dp),
             )
         }
         Spacer(Modifier.weight(1f))
@@ -83,7 +83,7 @@ internal fun CalendarHeader(
             modifier = Modifier
                 .size(28.dp)
                 .padding(2.dp)
-                .noRippleClickable(onClick = onLeftArrowClick)
+                .noRippleClickable(onClick = onLeftArrowClick),
         )
         Spacer(Modifier.width(8.dp))
         Icon(
@@ -93,7 +93,7 @@ internal fun CalendarHeader(
             modifier = Modifier
                 .size(28.dp)
                 .padding(2.dp)
-                .noRippleClickable(onClick = onRightArrowClick)
+                .noRippleClickable(onClick = onRightArrowClick),
         )
     }
 }
@@ -107,7 +107,7 @@ private fun CalendarHeaderPreview() {
             onLeftArrowClick = {},
             onRightArrowClick = {},
             modifier = Modifier,
-            yearMonth = { YearMonth.now() }
+            yearMonth = { YearMonth.now() },
         )
     }
 }

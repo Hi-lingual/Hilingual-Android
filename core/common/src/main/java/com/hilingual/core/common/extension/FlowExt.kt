@@ -31,7 +31,7 @@ import kotlinx.coroutines.flow.stateIn
 @Composable
 fun <T> Flow<T>.collectSideEffect(
     key: Any? = Unit,
-    collector: suspend (T) -> Unit
+    collector: suspend (T) -> Unit,
 ) {
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     LaunchedEffect(key) {
@@ -43,7 +43,7 @@ fun <T> Flow<T>.collectSideEffect(
 @Composable
 fun <T> Flow<T>.collectLatestSideEffect(
     key: Any? = Unit,
-    collector: suspend (T) -> Unit
+    collector: suspend (T) -> Unit,
 ) {
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     LaunchedEffect(key) {
@@ -63,9 +63,9 @@ fun <T> Flow<T>.pairwise(): Flow<Pair<T?, T>> = flow {
 fun <T> Flow<T>.stateInWhileSubscribed(
     scope: CoroutineScope,
     initialValue: T,
-    stopTimeoutMillis: Long = 5_000
+    stopTimeoutMillis: Long = 5_000,
 ): StateFlow<T> = stateIn(
     scope = scope,
     started = SharingStarted.WhileSubscribed(stopTimeoutMillis),
-    initialValue = initialValue
+    initialValue = initialValue,
 )

@@ -51,7 +51,7 @@ internal fun NotificationRoute(
     navigateToFeedDiary: (Long) -> Unit,
     navigateToFeedProfile: (Long) -> Unit,
     navigateToNoticeDetail: (Long) -> Unit,
-    viewModel: NotificationViewModel = hiltViewModel()
+    viewModel: NotificationViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -69,7 +69,7 @@ internal fun NotificationRoute(
         },
         onNoticeNotificationClick = { notification -> navigateToNoticeDetail(notification.id) },
         onTabSelected = viewModel::onTabSelected,
-        onUserRefresh = viewModel::onUserRefresh
+        onUserRefresh = viewModel::onUserRefresh,
     )
 }
 
@@ -83,7 +83,7 @@ private fun NotificationScreen(
     onNoticeNotificationClick: (NoticeNotificationItemUiModel) -> Unit,
     onTabSelected: (NotificationTab) -> Unit,
     onUserRefresh: (NotificationTab) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val feedListState = rememberLazyListState()
     val noticeListState = rememberLazyListState()
@@ -110,7 +110,7 @@ private fun NotificationScreen(
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
-            .padding(paddingValues)
+            .padding(paddingValues),
     ) {
         NotificationTopAppBar(
             onBackClick = onBackClick,
@@ -119,7 +119,7 @@ private fun NotificationScreen(
                     onSettingClick()
                     pagerState.scrollToPage(0)
                 }
-            }
+            },
         )
         NotificationTapRow(
             tabIndex = pagerState.currentPage,
@@ -127,11 +127,11 @@ private fun NotificationScreen(
                 coroutineScope.launch {
                     pagerState.animateScrollToPage(index)
                 }
-            }
+            },
         )
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) { page ->
             when (val tab = NotificationTab.entries[page]) {
                 NotificationTab.FEED -> FeedScreen(
@@ -139,7 +139,7 @@ private fun NotificationScreen(
                     onNotificationClick = onFeedNotificationClick,
                     isRefreshing = uiState.isFeedRefreshing,
                     listState = feedListState,
-                    onRefresh = { onUserRefresh(tab) }
+                    onRefresh = { onUserRefresh(tab) },
                 )
 
                 NotificationTab.NOTIFICATION -> NoticeScreen(
@@ -147,7 +147,7 @@ private fun NotificationScreen(
                     onNotificationClick = onNoticeNotificationClick,
                     isRefreshing = uiState.isNoticeRefreshing,
                     listState = noticeListState,
-                    onRefresh = { onUserRefresh(tab) }
+                    onRefresh = { onUserRefresh(tab) },
                 )
             }
         }

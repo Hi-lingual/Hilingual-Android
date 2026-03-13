@@ -23,7 +23,7 @@ data class DiaryRecommendExpressionModel(
     val phrase: String,
     val explanation: String,
     val reason: String,
-    val isMarked: Boolean = false
+    val isMarked: Boolean = false,
 )
 
 internal fun RecommendExpressionResult.toModel() = DiaryRecommendExpressionModel(
@@ -32,5 +32,5 @@ internal fun RecommendExpressionResult.toModel() = DiaryRecommendExpressionModel
     phrase = this.phrase,
     explanation = this.explanation,
     reason = this.reason,
-    isMarked = this.isBookmarked
+    isMarked = this.isBookmarked,
 )

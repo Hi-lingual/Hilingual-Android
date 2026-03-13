@@ -28,7 +28,7 @@ data class FeedProfileInfoModel(
     val streak: Int,
     val isFollowing: Boolean?,
     val isFollowed: Boolean?,
-    val isBlock: Boolean?
+    val isBlock: Boolean?,
 )
 
 internal fun FeedProfileModel.toState(): FeedProfileInfoModel =
@@ -41,5 +41,5 @@ internal fun FeedProfileModel.toState(): FeedProfileInfoModel =
         streak = this.streak,
         isFollowing = this.isFollowing,
         isFollowed = this.isFollowed,
-        isBlock = this.isBlock
+        isBlock = this.isBlock,
     )

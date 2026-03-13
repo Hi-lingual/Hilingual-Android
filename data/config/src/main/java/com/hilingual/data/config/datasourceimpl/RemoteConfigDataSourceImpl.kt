@@ -22,11 +22,11 @@ import com.hilingual.data.config.constant.KEY_MIN_FORCE_VERSION
 import com.hilingual.data.config.datasource.ConfigRemoteDataSource
 import com.hilingual.data.config.model.AppVersion
 import com.hilingual.data.config.model.AppVersionInfo
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import kotlinx.coroutines.tasks.await
 
 internal class RemoteConfigDataSourceImpl @Inject constructor(
-    private val remoteConfig: FirebaseRemoteConfig
+    private val remoteConfig: FirebaseRemoteConfig,
 ) : ConfigRemoteDataSource {
 
     override suspend fun getAppVersionInfo(): AppVersionInfo {
@@ -39,7 +39,7 @@ internal class RemoteConfigDataSourceImpl @Inject constructor(
 
         return AppVersionInfo(
             minForceVersion = AppVersion(minForceVersionStr),
-            latestVersion = AppVersion(latestVersionStr)
+            latestVersion = AppVersion(latestVersionStr),
         )
     }
 }

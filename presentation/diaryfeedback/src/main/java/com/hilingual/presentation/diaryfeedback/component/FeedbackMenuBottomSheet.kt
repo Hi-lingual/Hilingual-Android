@@ -35,24 +35,24 @@ internal fun FeedbackMenuBottomSheet(
     onDismiss: () -> Unit,
     onDeleteClick: () -> Unit,
     onReportClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     HilingualMenuBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
-        modifier = modifier
+        modifier = modifier,
     ) {
         HilingualMenuBottomSheetItem(
             text = "삭제하기",
             iconResId = DesignSystemR.drawable.ic_delete_24,
             onClick = onDeleteClick,
-            textColor = HilingualTheme.colors.alertRed
+            textColor = HilingualTheme.colors.alertRed,
         )
 
         HilingualMenuBottomSheetItem(
             text = "AI 피드백 신고하기",
             iconResId = DesignSystemR.drawable.ic_report_24,
-            onClick = onReportClick
+            onClick = onReportClick,
         )
     }
 }
@@ -69,7 +69,7 @@ private fun FeedbackReportPreview() {
                 isVisible = isVisible,
                 onDismiss = { isVisible = false },
                 onDeleteClick = {},
-                onReportClick = {}
+                onReportClick = {},
             )
         }
     }

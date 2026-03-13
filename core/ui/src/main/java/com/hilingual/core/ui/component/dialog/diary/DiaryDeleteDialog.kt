@@ -26,7 +26,7 @@ fun DiaryDeleteDialog(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     onDeleteClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (isVisible) {
         TwoButtonDialog(
@@ -38,7 +38,7 @@ fun DiaryDeleteDialog(
             confirmText = "삭제하기",
             onNegative = onDismiss,
             onPositive = onDeleteClick,
-            onDismiss = onDismiss
+            onDismiss = onDismiss,
         )
     }
 }
@@ -50,7 +50,7 @@ private fun DiaryDeletePreview() {
         DiaryDeleteDialog(
             isVisible = true,
             onDismiss = {},
-            onDeleteClick = {}
+            onDeleteClick = {},
         )
     }
 }

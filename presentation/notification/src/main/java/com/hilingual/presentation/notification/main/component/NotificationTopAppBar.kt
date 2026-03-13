@@ -31,7 +31,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 internal fun NotificationTopAppBar(
     onBackClick: () -> Unit,
     onSettingClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     HilingualBasicTopAppBar(
         modifier = modifier,
@@ -41,7 +41,7 @@ internal fun NotificationTopAppBar(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_24_back),
                 contentDescription = null,
                 tint = Color.Unspecified,
-                modifier = Modifier.noRippleClickable(onClick = onBackClick)
+                modifier = Modifier.noRippleClickable(onClick = onBackClick),
             )
         },
         actions = {
@@ -49,9 +49,9 @@ internal fun NotificationTopAppBar(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_setting_24),
                 contentDescription = null,
                 tint = Color.Unspecified,
-                modifier = Modifier.noRippleClickable(onClick = onSettingClick)
+                modifier = Modifier.noRippleClickable(onClick = onSettingClick),
             )
-        }
+        },
     )
 }
 
@@ -61,7 +61,7 @@ private fun NotificationTopAppBarPreview() {
     HilingualTheme {
         NotificationTopAppBar(
             onBackClick = {},
-            onSettingClick = {}
+            onSettingClick = {},
         )
     }
 }

@@ -27,6 +27,6 @@ interface S3Service {
     suspend fun uploadFile(
         @Url uploadUrl: String,
         @Header("Content-Type") contentType: String,
-        @Body file: RequestBody
+        @Body file: RequestBody,
     ): Response<Unit>
 }

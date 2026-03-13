@@ -52,7 +52,7 @@ class HomeViewModel @Inject constructor(
     private val calendarRepository: CalendarRepository,
     private val diaryRepository: DiaryRepository,
     private val diaryLocalRepository: DiaryLocalRepository,
-    private val onboardingRepository: OnboardingRepository
+    private val onboardingRepository: OnboardingRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Loading)
@@ -61,7 +61,7 @@ class HomeViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<HomeSideEffect>(
         replay = 0,
         extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
     val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
 
@@ -103,14 +103,14 @@ class HomeViewModel @Inject constructor(
                 UiState.Success(
                     HomeUiState(
                         header = HomeHeaderUiState(
-                            userProfile = userInfo.toState()
+                            userProfile = userInfo.toState(),
                         ),
                         calendar = HomeCalendarUiState(
                             dates = initialDates,
-                            selectedDate = today
+                            selectedDate = today,
                         ),
-                        diaryContent = initialDiaryContent
-                    )
+                        diaryContent = initialDiaryContent,
+                    ),
                 )
             }
         }
@@ -118,7 +118,7 @@ class HomeViewModel @Inject constructor(
 
     fun handleNotificationPermission(
         isGranted: Boolean,
-        requiresPermission: Boolean
+        requiresPermission: Boolean,
     ) {
         val currentState = uiState.value
         if (currentState !is UiState.Success) return
@@ -136,7 +136,7 @@ class HomeViewModel @Inject constructor(
 
         _uiState.updateSuccess { state ->
             state.copy(
-                header = state.header.copy(notificationPermissionState = newPermissionState)
+                header = state.header.copy(notificationPermissionState = newPermissionState),
             )
         }
 
@@ -157,7 +157,7 @@ class HomeViewModel @Inject constructor(
 
         _uiState.updateSuccess { state ->
             state.copy(
-                header = state.header.copy(notificationPermissionState = newPermissionState)
+                header = state.header.copy(notificationPermissionState = newPermissionState),
             )
         }
     }
@@ -166,8 +166,8 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _sideEffect.emit(
                 HomeSideEffect.RequestNotificationPermission(
-                    permission = Manifest.permission.POST_NOTIFICATIONS
-                )
+                    permission = Manifest.permission.POST_NOTIFICATIONS,
+                ),
             )
         }
     }
@@ -205,9 +205,9 @@ class HomeViewModel @Inject constructor(
                         state.copy(
                             calendar = HomeCalendarUiState(
                                 dates = newDates,
-                                selectedDate = newDate
+                                selectedDate = newDate,
                             ),
-                            diaryContent = newDiaryContent
+                            diaryContent = newDiaryContent,
                         )
                     }
                 }
@@ -227,13 +227,13 @@ class HomeViewModel @Inject constructor(
                     _uiState.updateSuccess { state ->
                         state.copy(
                             diaryContent = state.diaryContent.copy(
-                                diaryThumbnail = state.diaryContent.diaryThumbnail?.copy(isPublished = true)
-                            )
+                                diaryThumbnail = state.diaryContent.diaryThumbnail?.copy(isPublished = true),
+                            ),
                         )
                     }
                     emitSnackBarSideEffect(
                         message = "일기가 게시되었어요!",
-                        actionLabel = "보러가기"
+                        actionLabel = "보러가기",
                     )
                 }
                 .onLogFailure {
@@ -252,8 +252,8 @@ class HomeViewModel @Inject constructor(
                     _uiState.updateSuccess { state ->
                         state.copy(
                             diaryContent = state.diaryContent.copy(
-                                diaryThumbnail = state.diaryContent.diaryThumbnail?.copy(isPublished = false)
-                            )
+                                diaryThumbnail = state.diaryContent.diaryThumbnail?.copy(isPublished = false),
+                            ),
                         )
                     }
                     emitToastSideEffect("일기가 비공개 되었어요.")
@@ -277,7 +277,7 @@ class HomeViewModel @Inject constructor(
                             .filter { it.date != selectedDate }
                             .toImmutableList()
                         state.copy(
-                            calendar = state.calendar.copy(dates = newDates)
+                            calendar = state.calendar.copy(dates = newDates),
                         )
                     }
                     updateContentForDate(selectedDate)
@@ -309,7 +309,7 @@ class HomeViewModel @Inject constructor(
 
     private suspend fun fetchDiaryState(
         date: LocalDate,
-        dates: List<DateUiModel>
+        dates: List<DateUiModel>,
     ): HomeDiaryUiState {
         val tempExistDeferred = viewModelScope.async { diaryLocalRepository.isDiaryTempExist(date) }
         val thumbnailDeferred = viewModelScope.async { calendarRepository.getDiaryThumbnail(date.toString()) }
@@ -324,7 +324,7 @@ class HomeViewModel @Inject constructor(
             dates = dates,
             fetchedThumbnail = thumbnail,
             fetchedTopic = topic,
-            isTempExist = isTempExist
+            isTempExist = isTempExist,
         )
     }
 

@@ -32,13 +32,13 @@ private val TITLES = persistentListOf("공유한 일기", "공감한 일기")
 internal fun FeedProfileTabRow(
     tabIndex: Int,
     onTabSelected: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     HilingualBasicTabRow(
         tabTitles = TITLES,
         tabIndex = tabIndex,
         onTabSelected = onTabSelected,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -49,7 +49,7 @@ private fun FeedProfileTapRowPreview() {
         var selectedTabIndex by remember { mutableIntStateOf(0) }
         FeedProfileTabRow(
             tabIndex = selectedTabIndex,
-            onTabSelected = { selectedTabIndex = it }
+            onTabSelected = { selectedTabIndex = it },
         )
     }
 }

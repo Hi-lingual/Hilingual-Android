@@ -21,5 +21,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LikedDiariesResponseDto(
     @SerialName("diaryList")
-    val diaryList: List<FeedItemDto>
+    val diaryList: List<FeedItemDto>,
 )

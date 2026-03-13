@@ -23,23 +23,23 @@ import androidx.navigation.compose.composable
 import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.diarywrite.DiaryWriteRoute
-import kotlinx.serialization.Serializable
 import java.time.LocalDate
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class DiaryWrite(
     val selectedDate: String,
-    val mode: DiaryWriteMode = DiaryWriteMode.DEFAULT
+    val mode: DiaryWriteMode = DiaryWriteMode.DEFAULT,
 ) : Route
 
 fun NavController.navigateToDiaryWrite(
     selectedDate: LocalDate,
     mode: DiaryWriteMode = DiaryWriteMode.DEFAULT,
-    navOptions: NavOptions? = null
+    navOptions: NavOptions? = null,
 ) {
     navigate(
         route = DiaryWrite(selectedDate = selectedDate.toString(), mode = mode),
-        navOptions = navOptions
+        navOptions = navOptions,
     )
 }
 
@@ -47,14 +47,14 @@ fun NavGraphBuilder.diaryWriteNavGraph(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToHome: () -> Unit,
-    navigateToDiaryFeedback: (diaryId: Long) -> Unit
+    navigateToDiaryFeedback: (diaryId: Long) -> Unit,
 ) {
     composable<DiaryWrite> {
         DiaryWriteRoute(
             paddingValues = paddingValues,
             navigateUp = navigateUp,
             navigateToHome = navigateToHome,
-            navigateToDiaryFeedback = navigateToDiaryFeedback
+            navigateToDiaryFeedback = navigateToDiaryFeedback,
         )
     }
 }

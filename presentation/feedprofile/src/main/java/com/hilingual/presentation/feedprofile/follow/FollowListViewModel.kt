@@ -28,6 +28,7 @@ import com.hilingual.presentation.feedprofile.follow.model.FollowTabType
 import com.hilingual.presentation.feedprofile.follow.model.toState
 import com.hilingual.presentation.feedprofile.navigation.FollowList
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -38,12 +39,11 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 internal class FollowListViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val targetUserId: Long = savedStateHandle.toRoute<FollowList>().userId
@@ -74,10 +74,11 @@ internal class FollowListViewModel @Inject constructor(
                 _uiState.update { currentState ->
                     when (tabType) {
                         FollowTabType.FOLLOWER -> currentState.copy(
-                            followerList = updateFollowListState(currentState.followerList, userId, isFollowing)
+                            followerList = updateFollowListState(currentState.followerList, userId, isFollowing),
                         )
+
                         FollowTabType.FOLLOWING -> currentState.copy(
-                            followingList = updateFollowListState(currentState.followingList, userId, isFollowing)
+                            followingList = updateFollowListState(currentState.followingList, userId, isFollowing),
                         )
                     }
                 }
@@ -101,7 +102,7 @@ internal class FollowListViewModel @Inject constructor(
 
     private fun updateLoadingState(
         tabType: FollowTabType,
-        state: UiState<ImmutableList<FollowItemModel>>
+        state: UiState<ImmutableList<FollowItemModel>>,
     ) {
         _uiState.update { currentState ->
             when (tabType) {
@@ -123,21 +124,20 @@ internal class FollowListViewModel @Inject constructor(
     private fun updateFollowListState(
         uiState: UiState<ImmutableList<FollowItemModel>>,
         userId: Long,
-        currentIsFollowing: Boolean
-    ): UiState<ImmutableList<FollowItemModel>> {
-        return when (uiState) {
-            is UiState.Success -> {
-                val updatedList = updateFollowItem(uiState.data, userId, currentIsFollowing)
-                UiState.Success(updatedList)
-            }
-            else -> uiState
+        currentIsFollowing: Boolean,
+    ): UiState<ImmutableList<FollowItemModel>> = when (uiState) {
+        is UiState.Success -> {
+            val updatedList = updateFollowItem(uiState.data, userId, currentIsFollowing)
+            UiState.Success(updatedList)
         }
+
+        else -> uiState
     }
 
     private fun updateFollowItem(
         followList: ImmutableList<FollowItemModel>,
         userId: Long,
-        currentIsFollowing: Boolean
+        currentIsFollowing: Boolean,
     ): ImmutableList<FollowItemModel> {
         val targetIndex = followList.indexOfFirst { it.userId == userId }
         if (targetIndex == -1) return followList
@@ -145,7 +145,7 @@ internal class FollowListViewModel @Inject constructor(
         val targetItem = followList[targetIndex]
         val newState = FollowState.getValueByFollowState(
             isFollowing = !currentIsFollowing,
-            isFollowed = targetItem.followState.isFollowed
+            isFollowed = targetItem.followState.isFollowed,
         )
 
         return followList.toMutableList().apply {

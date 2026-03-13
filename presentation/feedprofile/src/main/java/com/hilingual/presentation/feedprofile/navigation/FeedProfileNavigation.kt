@@ -60,13 +60,13 @@ fun NavGraphBuilder.feedProfileNavGraph(
     navigateUp: () -> Unit,
     navigateToMyFeedProfile: (Boolean) -> Unit,
     navigateToFeedProfile: (Long) -> Unit,
-    navigateToFeedDiary: (Long) -> Unit
+    navigateToFeedDiary: (Long) -> Unit,
 ) {
     navigation<FeedProfileGraph>(
         startDestination = FeedProfile::class,
         enterTransition = enterTransition,
         exitTransition = { ExitTransition.None },
-        popEnterTransition = { EnterTransition.None }
+        popEnterTransition = { EnterTransition.None },
     ) {
         composable<FeedProfile> { backStackEntry ->
             val parentEntry = remember(backStackEntry) {
@@ -80,21 +80,21 @@ fun NavGraphBuilder.feedProfileNavGraph(
                 navigateToMyFeedProfile = navigateToMyFeedProfile,
                 navigateToFollowList = { navController.navigateToFollowList(userId = 0L) },
                 navigateToFeedProfile = navigateToFeedProfile,
-                navigateToFeedDiary = navigateToFeedDiary
+                navigateToFeedDiary = navigateToFeedDiary,
             )
         }
         composable<FollowList>(
             enterTransition = enterTransition,
             exitTransition = { ExitTransition.None },
             popEnterTransition = { EnterTransition.None },
-            popExitTransition = popExitTransition
+            popExitTransition = popExitTransition,
         ) { backStackEntry ->
             val viewModel: FollowListViewModel = hiltViewModel(backStackEntry)
             FollowListRoute(
                 viewModel = viewModel,
                 paddingValues = paddingValues,
                 navigateUp = navigateUp,
-                navigateToFeedProfile = navigateToFeedProfile
+                navigateToFeedProfile = navigateToFeedProfile,
             )
         }
     }
@@ -103,13 +103,13 @@ fun NavGraphBuilder.feedProfileNavGraph(
 private val enterTransition: AnimatedContentTransitionScope<*>.() -> EnterTransition = {
     slideIntoContainer(
         AnimatedContentTransitionScope.SlideDirection.Left,
-        tween(ANIMATION_DURATION)
+        tween(ANIMATION_DURATION),
     )
 }
 
 private val popExitTransition: AnimatedContentTransitionScope<*>.() -> ExitTransition = {
     slideOutOfContainer(
         AnimatedContentTransitionScope.SlideDirection.Right,
-        tween(ANIMATION_DURATION)
+        tween(ANIMATION_DURATION),
     )
 }

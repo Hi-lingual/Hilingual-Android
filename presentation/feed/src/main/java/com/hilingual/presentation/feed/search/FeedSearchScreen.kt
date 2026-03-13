@@ -50,7 +50,7 @@ internal fun FeedSearchRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToFeedProfile: (userId: Long) -> Unit,
-    viewModel: FeedSearchViewModel = hiltViewModel()
+    viewModel: FeedSearchViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -69,7 +69,7 @@ internal fun FeedSearchRoute(
         onSearchDone = viewModel::searchUser,
         searchResultUserList = uiState.searchResultUserList,
         onProfileClick = navigateToFeedProfile,
-        onFollowActionClick = viewModel::updateFollowingState
+        onFollowActionClick = viewModel::updateFollowingState,
     )
 }
 
@@ -83,20 +83,20 @@ private fun FeedSearchScreen(
     onSearchDone: () -> Unit,
     searchResultUserList: UiState<ImmutableList<UserSearchUiModel>>,
     onProfileClick: (Long) -> Unit,
-    onFollowActionClick: (Long, Boolean) -> Unit
+    onFollowActionClick: (Long, Boolean) -> Unit,
 ) {
     Column(
         modifier = Modifier
             .background(HilingualTheme.colors.white)
             .fillMaxSize()
-            .padding(paddingValues)
+            .padding(paddingValues),
     ) {
         FeedSearchHeader(
             searchWord = { searchWord },
             onSearchWordChanged = onSearchWordChanged,
             onClearClick = onSearchWordClearClick,
             onBackClick = onBackClick,
-            onSearchAction = onSearchDone
+            onSearchAction = onSearchDone,
         )
 
         when (searchResultUserList) {
@@ -106,7 +106,7 @@ private fun FeedSearchScreen(
                 with(searchResultUserList.data) {
                     if (isEmpty()) {
                         Column(
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
                         ) {
                             Spacer(Modifier.weight(14f))
                             SearchEmptyCard()
@@ -116,7 +116,7 @@ private fun FeedSearchScreen(
                         LazyColumn {
                             items(
                                 items = searchResultUserList.data,
-                                key = ({ user -> user.userId })
+                                key = ({ user -> user.userId }),
                             ) {
                                 with(it) {
                                     UserActionItem(
@@ -127,7 +127,7 @@ private fun FeedSearchScreen(
                                         buttonText = followState.label,
                                         onProfileClick = onProfileClick,
                                         onButtonClick = { onFollowActionClick(userId, followState.isFollowing) },
-                                        modifier = Modifier.padding(horizontal = 16.dp)
+                                        modifier = Modifier.padding(horizontal = 16.dp),
                                     )
                                 }
                             }
@@ -162,28 +162,28 @@ private fun FeedSearchScreenPreview() {
                         userId = 1L,
                         nickname = "작나",
                         profileUrl = "",
-                        followState = FollowState.ONLY_FOLLOWING
+                        followState = FollowState.ONLY_FOLLOWING,
                     ),
                     UserSearchUiModel(
                         userId = 2L,
                         nickname = "큰나",
                         profileUrl = "",
-                        followState = FollowState.MUTUAL_FOLLOW
+                        followState = FollowState.MUTUAL_FOLLOW,
                     ),
                     UserSearchUiModel(
                         userId = 3L,
                         nickname = "Daljyeong",
                         profileUrl = "",
-                        followState = FollowState.NONE
+                        followState = FollowState.NONE,
                     ),
                     UserSearchUiModel(
                         userId = 4L,
                         nickname = "Makers",
                         profileUrl = "",
-                        followState = FollowState.ONLY_FOLLOWED
-                    )
-                )
-            )
+                        followState = FollowState.ONLY_FOLLOWED,
+                    ),
+                ),
+            ),
         )
     }
 }

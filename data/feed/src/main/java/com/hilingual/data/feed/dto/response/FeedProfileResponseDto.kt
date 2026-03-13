@@ -37,5 +37,5 @@ data class FeedProfileResponseDto(
     @SerialName("isFollowed")
     val isFollowed: Boolean?,
     @SerialName("isBlocked")
-    val isBlocked: Boolean?
+    val isBlocked: Boolean?,
 )

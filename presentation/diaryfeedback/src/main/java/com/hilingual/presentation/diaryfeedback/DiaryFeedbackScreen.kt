@@ -77,7 +77,7 @@ internal fun DiaryFeedbackRoute(
     navigateToHome: () -> Unit,
     navigateToFeed: () -> Unit,
     navigateToVoca: () -> Unit,
-    viewModel: DiaryFeedbackViewModel = hiltViewModel()
+    viewModel: DiaryFeedbackViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
 
@@ -114,12 +114,12 @@ internal fun DiaryFeedbackRoute(
                                     "toast_id" to "diary_post_success",
                                     "toast_action" to "cta_click",
                                     "entry_id" to viewModel.diaryId,
-                                    "page" to FEEDBACK.pageName
-                                )
+                                    "page" to FEEDBACK.pageName,
+                                ),
                             )
                             navigateToFeed()
-                        }
-                    )
+                        },
+                    ),
                 )
             }
 
@@ -128,8 +128,8 @@ internal fun DiaryFeedbackRoute(
                     HilingualMessage.Snackbar(
                         message = it.message,
                         actionLabelText = it.actionLabel,
-                        onAction = navigateToVoca
-                    )
+                        onAction = navigateToVoca,
+                    ),
                 )
             }
 
@@ -154,8 +154,8 @@ internal fun DiaryFeedbackRoute(
                 event = "back_feedback",
                 properties = mapOf(
                     "entry_id" to viewModel.diaryId,
-                    "back_source" to "ui_button"
-                )
+                    "back_source" to "ui_button",
+                ),
             )
             navigateUp()
         },
@@ -168,14 +168,14 @@ internal fun DiaryFeedbackRoute(
                     trigger = TriggerType.CLICK,
                     page = FEEDBACK,
                     event = "submitted_post_diary",
-                    properties = mapOf("entry_id" to viewModel.diaryId)
+                    properties = mapOf("entry_id" to viewModel.diaryId),
                 )
             }
             viewModel.toggleIsPublished(isPublished)
         },
         onToggleBookmark = viewModel::toggleBookmark,
         onDeleteDiary = viewModel::deleteDiary,
-        tracker = tracker
+        tracker = tracker,
     )
 }
 
@@ -192,7 +192,7 @@ private fun DiaryFeedbackScreen(
     onToggleBookmark: (Long, Boolean) -> Unit,
     onDeleteDiary: () -> Unit,
     tracker: Tracker,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var isPublishDialogVisible by remember { mutableStateOf(false) }
     var isDeleteDialogVisible by remember { mutableStateOf(false) }
@@ -233,12 +233,12 @@ private fun DiaryFeedbackScreen(
             .fillMaxSize()
             .statusBarColor(HilingualTheme.colors.white)
             .background(HilingualTheme.colors.white)
-            .padding(paddingValues)
+            .padding(paddingValues),
     ) {
         BackAndMoreTopAppBar(
             title = "일기장",
             onBackClicked = onBackClick,
-            onMoreClicked = { isReportBottomSheetVisible = true }
+            onMoreClicked = { isReportBottomSheetVisible = true },
         )
 
         DiaryTabRow(
@@ -247,7 +247,7 @@ private fun DiaryFeedbackScreen(
                 coroutineScope.launch {
                     pagerState.animateScrollToPage(it)
                 }
-            }
+            },
         )
 
         when (uiState) {
@@ -259,11 +259,11 @@ private fun DiaryFeedbackScreen(
                 Box(
                     modifier = Modifier
                         .background(HilingualTheme.colors.gray100)
-                        .weight(1f)
+                        .weight(1f),
                 ) {
                     HorizontalPager(
                         state = pagerState,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
                     ) { page ->
                         when (page) {
                             0 -> GrammarSpellingTab(
@@ -283,10 +283,10 @@ private fun DiaryFeedbackScreen(
                                         properties = mapOf(
                                             "entry_id" to diaryId,
                                             "toggle_state" to it,
-                                            "toggle_click_count" to toggleClickCount
-                                        )
+                                            "toggle_click_count" to toggleClickCount,
+                                        ),
                                     )
-                                }
+                                },
                             )
 
                             1 -> RecommendExpressionTab(
@@ -302,11 +302,11 @@ private fun DiaryFeedbackScreen(
                                             "entry_id" to diaryId,
                                             "bookmark_action" to if (isMarked) "add" else "remove",
                                             "page" to FEEDBACK.pageName,
-                                            "tab_name" to "recommend_expression"
-                                        )
+                                            "tab_name" to "recommend_expression",
+                                        ),
                                     )
                                     onToggleBookmark(phraseId, isMarked)
-                                }
+                                },
                             )
                         }
                     }
@@ -323,7 +323,7 @@ private fun DiaryFeedbackScreen(
                         },
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
-                            .padding(bottom = 24.dp, end = 16.dp)
+                            .padding(bottom = 24.dp, end = 16.dp),
                     )
                 }
 
@@ -333,7 +333,7 @@ private fun DiaryFeedbackScreen(
                     modifier = Modifier
                         .background(HilingualTheme.colors.gray100)
                         .padding(horizontal = 16.dp)
-                        .padding(top = 12.dp, bottom = 16.dp)
+                        .padding(top = 12.dp, bottom = 16.dp),
                 )
             }
 
@@ -345,7 +345,7 @@ private fun DiaryFeedbackScreen(
         ModalImage(
             imageUrl = successData.diaryContent.imageUrl ?: "",
             onBackClick = onChangeImageDetailVisible,
-            modifier = modifier.padding(paddingValues)
+            modifier = modifier.padding(paddingValues),
         )
     }
 
@@ -356,7 +356,7 @@ private fun DiaryFeedbackScreen(
             onPrivateClick = {
                 onToggleIsPublished(false)
                 isPublishDialogVisible = false
-            }
+            },
         )
     } else {
         DiaryPublishDialog(
@@ -365,7 +365,7 @@ private fun DiaryFeedbackScreen(
             onPostClick = {
                 onToggleIsPublished(true)
                 isPublishDialogVisible = false
-            }
+            },
         )
     }
 
@@ -375,7 +375,7 @@ private fun DiaryFeedbackScreen(
         onDeleteClick = {
             isDeleteDialogVisible = false
             onDeleteDiary()
-        }
+        },
     )
 
     FeedbackMenuBottomSheet(
@@ -388,13 +388,13 @@ private fun DiaryFeedbackScreen(
         onReportClick = {
             isReportBottomSheetVisible = false
             isReportDialogVisible = true
-        }
+        },
     )
 
     FeedbackReportDialog(
         isVisible = isReportDialogVisible,
         onDismiss = { isReportDialogVisible = false },
-        onReportClick = onReportClick
+        onReportClick = onReportClick,
     )
 }
 
@@ -405,7 +405,7 @@ private fun DiaryFeedbackScreenPreview() {
         DiaryFeedbackScreen(
             paddingValues = PaddingValues(),
             uiState = UiState.Success(
-                DiaryFeedbackUiState.Fake
+                DiaryFeedbackUiState.Fake,
             ),
             diaryId = 0L,
             isImageDetailVisible = false,
@@ -415,7 +415,7 @@ private fun DiaryFeedbackScreenPreview() {
             onToggleBookmark = { _, _ -> {} },
             onToggleIsPublished = {},
             onDeleteDiary = {},
-            tracker = FakeTracker()
+            tracker = FakeTracker(),
         )
     }
 }

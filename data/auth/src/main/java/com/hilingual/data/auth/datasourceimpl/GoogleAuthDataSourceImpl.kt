@@ -26,12 +26,12 @@ import com.hilingual.data.auth.datasource.GoogleAuthDataSource
 import javax.inject.Inject
 
 internal class GoogleAuthDataSourceImpl @Inject constructor(
-    private val credentialManager: CredentialManager
+    private val credentialManager: CredentialManager,
 ) : GoogleAuthDataSource {
     override suspend fun signIn(context: Context): Result<GoogleIdTokenCredential> =
         suspendRunCatching {
             val signInWithGoogleOption = GetSignInWithGoogleOption.Builder(
-                serverClientId = BuildConfig.GOOGLE_WEB_CLIENT_ID
+                serverClientId = BuildConfig.GOOGLE_WEB_CLIENT_ID,
             ).build()
 
             val request = GetCredentialRequest.Builder()

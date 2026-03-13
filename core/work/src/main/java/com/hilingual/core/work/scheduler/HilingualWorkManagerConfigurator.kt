@@ -26,7 +26,7 @@ import javax.inject.Singleton
 @Singleton
 class HilingualWorkManagerConfigurator @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val workerFactory: HiltWorkerFactory
+    private val workerFactory: HiltWorkerFactory,
 ) {
 
     fun initialize() {

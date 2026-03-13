@@ -36,10 +36,10 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 enum class WordSortType(
     val text: String,
     @DrawableRes val iconRes: Int,
-    val sortParam: Int
+    val sortParam: Int,
 ) {
     Latest(text = "최신순", iconRes = DesignSystemR.drawable.ic_listdown_24, sortParam = 1),
-    AtoZ(text = "A-Z 순", iconRes = DesignSystemR.drawable.ic_az_24, sortParam = 2)
+    AtoZ(text = "A-Z 순", iconRes = DesignSystemR.drawable.ic_az_24, sortParam = 2),
 }
 
 @Composable
@@ -47,32 +47,32 @@ internal fun VocaInfo(
     wordCount: Int,
     sortType: WordSortType,
     onSortClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             text = "총 ${wordCount}개",
             style = HilingualTheme.typography.bodyR14,
-            color = HilingualTheme.colors.gray500
+            color = HilingualTheme.colors.gray500,
         )
         Row(
             modifier = Modifier.noRippleClickable(onClick = onSortClick),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp)
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_list_24),
                 contentDescription = null,
-                tint = Color.Unspecified
+                tint = Color.Unspecified,
             )
             Text(
                 text = sortType.text,
                 style = HilingualTheme.typography.bodyR14,
-                color = HilingualTheme.colors.gray500
+                color = HilingualTheme.colors.gray500,
             )
         }
     }

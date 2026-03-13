@@ -35,38 +35,38 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 
 enum class DiaryEmptyCardType(
     val text: String,
-    @DrawableRes val imageRes: Int
+    @DrawableRes val imageRes: Int,
 ) {
     PAST(
         text = "작성된 일기가 없어요\n좋은 하루 보내셨기를 바라요!",
-        imageRes = DesignSystemR.drawable.img_diary_empty
+        imageRes = DesignSystemR.drawable.img_diary_empty,
     ),
     FUTURE(
         text = "아직 작성 가능한 시간이 아니에요.\n오늘의 일기를 작성해주세요!",
-        imageRes = DesignSystemR.drawable.img_diary_lock
-    )
+        imageRes = DesignSystemR.drawable.img_diary_lock,
+    ),
 }
 
 @Composable
 internal fun DiaryEmptyCard(
     type: DiaryEmptyCardType,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Image(
             painter = painterResource(id = type.imageRes),
-            contentDescription = null
+            contentDescription = null,
         )
         Text(
             text = type.text,
             style = HilingualTheme.typography.bodyM14,
             color = HilingualTheme.colors.gray400,
             textAlign = TextAlign.Center,
-            maxLines = 2
+            maxLines = 2,
         )
     }
 }
@@ -80,7 +80,7 @@ private class DiaryEmptyCardPreviewParameterProvider :
 @Preview(showBackground = true)
 @Composable
 private fun DiaryEmptyCardPreview(
-    @PreviewParameter(DiaryEmptyCardPreviewParameterProvider::class) type: DiaryEmptyCardType
+    @PreviewParameter(DiaryEmptyCardPreviewParameterProvider::class) type: DiaryEmptyCardType,
 ) {
     HilingualTheme {
         DiaryEmptyCard(type = type)

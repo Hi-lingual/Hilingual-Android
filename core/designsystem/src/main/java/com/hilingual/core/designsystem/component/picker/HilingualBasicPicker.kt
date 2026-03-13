@@ -57,7 +57,7 @@ fun HilingualBasicPicker(
     itemSpacing: Dp,
     modifier: Modifier = Modifier,
     visibleItemsCount: Int = 3,
-    isInfinity: Boolean = true
+    isInfinity: Boolean = true,
 ) {
     val density = LocalDensity.current
     val visibleItemsMiddle = visibleItemsCount / 2
@@ -95,7 +95,7 @@ fun HilingualBasicPicker(
         Brush.verticalGradient(
             0f to gray200,
             0.5f to black,
-            1f to gray200
+            1f to gray200,
         )
     }
 
@@ -110,7 +110,7 @@ fun HilingualBasicPicker(
                     firstVisibleItemIndex = index,
                     firstVisibleItemScrollOffset = offset,
                     itemHeightPx = itemHeightPx,
-                    visibleItemsMiddle = visibleItemsMiddle
+                    visibleItemsMiddle = visibleItemsMiddle,
                 )
                 val selectedItem = getItem(currentCenterIndex)
                 if (selectedItem != null) {
@@ -129,11 +129,11 @@ fun HilingualBasicPicker(
                 .align(Alignment.Center)
                 .wrapContentSize()
                 .height(itemHeightDp * visibleItemsCount + itemSpacing * (visibleItemsCount - 1))
-                .fadingEdge(fadingEdgeGradient)
+                .fadingEdge(fadingEdgeGradient),
         ) {
             items(
                 listScrollCount,
-                key = { it }
+                key = { it },
             ) { index ->
                 val currentItemText = getItem(index).orEmpty()
                 val isSelected = index == currentCenterIndex
@@ -155,7 +155,7 @@ fun HilingualBasicPicker(
                     modifier = Modifier
                         .height(itemHeightDp)
                         .wrapContentHeight(align = Alignment.CenterVertically)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
                 )
             }
         }
@@ -165,14 +165,14 @@ fun HilingualBasicPicker(
             modifier = Modifier
                 .align(Alignment.Center)
                 .fillMaxWidth()
-                .height(itemHeightDp)
+                .height(itemHeightDp),
         ) {
             HorizontalDivider(
                 color = HilingualTheme.colors.black,
                 thickness = 1.dp,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.TopCenter)
+                    .align(Alignment.TopCenter),
             )
 
             HorizontalDivider(
@@ -180,7 +180,7 @@ fun HilingualBasicPicker(
                 thickness = 1.dp,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
+                    .align(Alignment.BottomCenter),
             )
         }
     }
@@ -190,7 +190,7 @@ private fun calculateCenterIndex(
     firstVisibleItemIndex: Int,
     firstVisibleItemScrollOffset: Int,
     itemHeightPx: Int,
-    visibleItemsMiddle: Int
+    visibleItemsMiddle: Int,
 ): Int {
     val correction = if (firstVisibleItemScrollOffset > itemHeightPx / 2) 1 else 0
     return firstVisibleItemIndex + visibleItemsMiddle + correction

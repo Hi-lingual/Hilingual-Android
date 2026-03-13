@@ -17,12 +17,12 @@ internal abstract class AdsModule {
     @Binds
     @Singleton
     abstract fun bindAdsInitializer(
-        gmaAdsInitializer: GmaAdsInitializer
+        gmaAdsInitializer: GmaAdsInitializer,
     ): AdsInitializer
 
     @Binds
     @Singleton
     abstract fun bindAdsPreloadManager(
-        adsPreloadManagerImpl: AdsPreloadManagerImpl
+        adsPreloadManagerImpl: AdsPreloadManagerImpl,
     ): AdsPreloadManager
 }

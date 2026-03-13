@@ -28,6 +28,6 @@ abstract class TrackerModule {
 
     @Binds
     abstract fun bindTracker(
-        amplitudeTracker: AmplitudeTracker
+        amplitudeTracker: AmplitudeTracker,
     ): Tracker
 }

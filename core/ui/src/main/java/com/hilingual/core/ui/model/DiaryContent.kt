@@ -25,5 +25,5 @@ data class DiaryContent(
     val aiText: String = "",
     val diffRanges: ImmutableList<Pair<Int, Int>> = persistentListOf(),
     val imageUrl: String? = null,
-    val isPublished: Boolean = false
+    val isPublished: Boolean = false,
 )

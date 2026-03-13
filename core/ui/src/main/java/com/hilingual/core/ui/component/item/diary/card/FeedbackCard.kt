@@ -43,29 +43,29 @@ internal fun FeedbackCard(
     originalText: String,
     feedbackText: String,
     explain: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .background(HilingualTheme.colors.white)
-            .padding(12.dp)
+            .padding(12.dp),
     ) {
         FeedbackTopContent(
             originalText = originalText,
-            feedbackText = feedbackText
+            feedbackText = feedbackText,
         )
 
         HorizontalDivider(
-            thickness = Dp.Hairline
+            thickness = Dp.Hairline,
         )
 
         Text(
             text = explain,
             style = HilingualTheme.typography.bodyR14,
             color = HilingualTheme.colors.hilingualBlack,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -73,19 +73,19 @@ internal fun FeedbackCard(
 @Composable
 private fun FeedbackTopContent(
     originalText: String,
-    feedbackText: String
+    feedbackText: String,
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(2.dp)
+        verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         FeedbackSentence(
             text = originalText,
-            isFeedback = false
+            isFeedback = false,
         )
 
         FeedbackSentence(
             text = feedbackText,
-            isFeedback = true
+            isFeedback = true,
         )
     }
 }
@@ -94,34 +94,34 @@ private fun FeedbackTopContent(
 private fun FeedbackSentence(
     text: String,
     isFeedback: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val (iconRes, color) = if (isFeedback) {
         Pair(
             R.drawable.chip_feedback_card_ai,
-            HilingualTheme.colors.hilingualOrange
+            HilingualTheme.colors.hilingualOrange,
         )
     } else {
         Pair(
             R.drawable.chip_feedback_card_me,
-            HilingualTheme.colors.gray700
+            HilingualTheme.colors.gray700,
         )
     }
 
     Row(
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(iconRes),
             contentDescription = null,
-            tint = Color.Unspecified
+            tint = Color.Unspecified,
         )
         Text(
             text = text,
             style = HilingualTheme.typography.bodyM15,
-            color = color
+            color = color,
         )
     }
 }
@@ -131,17 +131,18 @@ private fun FeedbackSentence(
 private fun FeedbackCardPreview() {
     HilingualTheme {
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             FeedbackCard(
                 originalText = "i’m drinking milk because I easily get stomachache",
                 feedbackText = "I’m drinking milk because I get stomachaches easily",
-                explain = "a stomachache처럼 가산명사는 ~게 작성하는게 맞는 표현이에요. ‘easily’의 어순을 문장 마지막에 작성하여 더 정확해졌어요."
+                explain = "a stomachache처럼 가산명사는 ~게 작성하는게 맞는 표현이에요. ‘easily’의 어순을 문장 마지막에 작성하여 더 정확해졌어요.",
             )
             FeedbackCard(
                 originalText = "I was planning to arrive it here around 13:30",
                 feedbackText = "I was planning to arrive here around 1:30 p.m",
-                explain = "arrive는 자동사이기 때문에 직접 목적어 ‘it’을 쓸 수 없어요. ‘arrive at the station’, ‘arrive here’처럼 써야 맞는 표현이에요!"
+                explain = "arrive는 자동사이기 때문에 직접 목적어 ‘it’을 쓸 수 없어요. " +
+                    "‘arrive at the station’, ‘arrive here’처럼 써야 맞는 표현이에요!",
             )
         }
     }

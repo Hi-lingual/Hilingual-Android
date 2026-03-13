@@ -36,7 +36,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun AnimatedLoadingText(
     modifier: Modifier = Modifier,
-    texts: ImmutableList<String>
+    texts: ImmutableList<String>,
 ) {
     if (texts.isEmpty()) return
 
@@ -48,9 +48,9 @@ fun AnimatedLoadingText(
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 1500),
-            repeatMode = RepeatMode.Reverse
+            repeatMode = RepeatMode.Reverse,
         ),
-        label = "text alpha"
+        label = "text alpha",
     )
 
     LaunchedEffect(Unit) {
@@ -64,6 +64,6 @@ fun AnimatedLoadingText(
         text = texts[currentIndex],
         style = HilingualTheme.typography.bodyR16,
         color = HilingualTheme.colors.gray400,
-        modifier = modifier.alpha(alpha)
+        modifier = modifier.alpha(alpha),
     )
 }

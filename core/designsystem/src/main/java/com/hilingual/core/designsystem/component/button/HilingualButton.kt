@@ -40,7 +40,7 @@ fun HilingualButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enableProvider: () -> Boolean = { true }
+    enableProvider: () -> Boolean = { true },
 ) {
     val enabled = enableProvider()
     Row(
@@ -48,20 +48,20 @@ fun HilingualButton(
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
             .background(
-                color = if (enabled) HilingualTheme.colors.black else HilingualTheme.colors.gray300
+                color = if (enabled) HilingualTheme.colors.black else HilingualTheme.colors.gray300,
             )
             .noRippleClickable(
                 enabled = enabled,
-                onClick = onClick
+                onClick = onClick,
             )
             .padding(vertical = 18.dp, horizontal = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
         Text(
             text = text,
             color = HilingualTheme.colors.white,
-            style = HilingualTheme.typography.bodyM16
+            style = HilingualTheme.typography.bodyM16,
         )
     }
 }
@@ -72,7 +72,7 @@ private fun EnabledButtonPreview() {
     HilingualTheme {
         HilingualButton(
             text = "시작하기",
-            onClick = {}
+            onClick = {},
         )
     }
 }
@@ -84,7 +84,7 @@ private fun DisabledButtonPreview() {
         HilingualButton(
             text = "시작하기",
             enableProvider = { false },
-            onClick = {}
+            onClick = {},
         )
     }
 }
@@ -98,7 +98,7 @@ private fun ButtonTogglePreview() {
         HilingualButton(
             text = if (isEnabled) "활성화됨" else "비활성화됨",
             enableProvider = { isEnabled },
-            onClick = { isEnabled = !isEnabled }
+            onClick = { isEnabled = !isEnabled },
         )
     }
 }

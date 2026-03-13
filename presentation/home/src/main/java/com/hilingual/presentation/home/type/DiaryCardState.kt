@@ -20,5 +20,5 @@ enum class DiaryCardState {
     FUTURE,
     WRITABLE,
     REWRITE_DISABLED,
-    PAST
+    PAST,
 }

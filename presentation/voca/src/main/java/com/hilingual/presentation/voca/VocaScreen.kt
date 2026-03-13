@@ -79,7 +79,7 @@ import kotlinx.coroutines.launch
 internal fun VocaRoute(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
-    viewModel: VocaViewModel = hiltViewModel()
+    viewModel: VocaViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
@@ -121,8 +121,8 @@ internal fun VocaRoute(
                     event = "voca_sort_changed",
                     properties = mapOf(
                         "previous_sort_type" to uiState.sortType.name,
-                        "sort_type" to newSortType.name
-                    )
+                        "sort_type" to newSortType.name,
+                    ),
                 )
                 viewModel.updateSort(newSortType)
             },
@@ -131,7 +131,7 @@ internal fun VocaRoute(
                     trigger = TriggerType.CLICK,
                     page = VOCABULARY,
                     event = "voca_lookup",
-                    properties = mapOf("page" to VOCABULARY.pageName)
+                    properties = mapOf("page" to VOCABULARY.pageName),
                 )
                 viewModel.fetchVocaDetail(phraseId)
             },
@@ -142,7 +142,7 @@ internal fun VocaRoute(
             onSearchTextChanged = viewModel::updateSearchKeyword,
             onWriteDiaryClick = navigateToHome,
             onCloseButtonClick = viewModel::clearSearchKeyword,
-            onRefresh = viewModel::refreshVocaList
+            onRefresh = viewModel::refreshVocaList,
         )
     }
 
@@ -159,7 +159,7 @@ internal fun VocaRoute(
                 isBookmarked = vocaDetail.isBookmarked,
                 onBookmarkClick = { phraseId, isMarked ->
                     viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
-                }
+                },
             )
         }
 
@@ -183,7 +183,7 @@ private fun VocaScreen(
     onSearchTextChanged: (String) -> Unit,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
-    onCloseButtonClick: () -> Unit
+    onCloseButtonClick: () -> Unit,
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
@@ -209,13 +209,13 @@ private fun VocaScreen(
         modifier = Modifier
             .fillMaxSize()
             .statusBarColor(hilingualBlack)
-            .padding(paddingValues)
+            .padding(paddingValues),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(HilingualTheme.colors.gray100)
-                .addFocusCleaner(focusManager)
+                .addFocusCleaner(focusManager),
         ) {
             VocaHeader(
                 searchText = { searchText },
@@ -223,7 +223,7 @@ private fun VocaScreen(
                 onCloseButtonClick = onCloseButtonClick,
                 modifier = Modifier
                     .background(hilingualBlack)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
 
             when (vocaGroupList) {
@@ -232,7 +232,7 @@ private fun VocaScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(HilingualTheme.colors.gray100),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         CircularProgressIndicator()
                     }
@@ -251,7 +251,7 @@ private fun VocaScreen(
                                 onBookmarkClick = onBookmarkClick,
                                 onWriteDiaryClick = onWriteDiaryClick,
                                 isRefreshing = isRefreshing,
-                                onRefresh = onRefresh
+                                onRefresh = onRefresh,
 
                             )
                         }
@@ -261,7 +261,7 @@ private fun VocaScreen(
                                 listState = listState,
                                 searchResultList = searchResultList,
                                 onCardClick = onCardClick,
-                                onBookmarkClick = onBookmarkClick
+                                onBookmarkClick = onBookmarkClick,
                             )
                         }
                     }
@@ -280,7 +280,7 @@ private fun VocaScreen(
             isVisible = isFabVisible,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(bottom = 24.dp, end = 16.dp)
+                .padding(bottom = 24.dp, end = 16.dp),
         )
     }
 
@@ -288,7 +288,7 @@ private fun VocaScreen(
         isVisible = showBottomSheet,
         selectedType = sortType,
         onDismiss = { showBottomSheet = false },
-        onTypeSelected = onSortTypeChanged
+        onTypeSelected = onSortTypeChanged,
     )
 }
 
@@ -305,20 +305,20 @@ private fun VocaListWithInfoSection(
     onSortClick: () -> Unit,
     onCardClick: (Long) -> Unit,
     onBookmarkClick: (Long, Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val isEmpty = vocaGroupList.all { it.words.isEmpty() }
 
     HilingualPullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = onRefresh,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
     ) {
         LazyColumn(
             state = listState,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp),
         ) {
             if (isEmpty) {
                 item {
@@ -326,7 +326,7 @@ private fun VocaListWithInfoSection(
                         modifier = Modifier
                             .fillParentMaxSize()
                             .padding(top = 120.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         VocaEmptyCard(type = VocaEmptyCardType.NOT_ADD)
                         Spacer(modifier = Modifier.height(16.dp))
@@ -340,7 +340,7 @@ private fun VocaListWithInfoSection(
                         wordCount = wordCount,
                         sortType = sortType,
                         onSortClick = onSortClick,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -363,13 +363,13 @@ private fun VocaListWithInfoSection(
                                 text = groupLabel,
                                 style = HilingualTheme.typography.bodyM16,
                                 color = HilingualTheme.colors.black,
-                                modifier = Modifier.padding(bottom = 16.dp)
+                                modifier = Modifier.padding(bottom = 16.dp),
                             )
                         }
 
                         itemsIndexed(
                             group.words,
-                            key = { _, voca -> voca.phraseId }
+                            key = { _, voca -> voca.phraseId },
                         ) { index, voca ->
                             val isLastItem = index == group.words.lastIndex
                             VocaCard(
@@ -380,12 +380,12 @@ private fun VocaListWithInfoSection(
                                 onBookmarkClick = {
                                     onBookmarkClick(
                                         voca.phraseId,
-                                        !voca.isBookmarked
+                                        !voca.isBookmarked,
                                     )
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(bottom = if (isLastItem) 20.dp else 16.dp)
+                                    .padding(bottom = if (isLastItem) 20.dp else 16.dp),
                             )
                         }
                     }
@@ -404,25 +404,25 @@ private fun SearchResultSection(
     searchResultList: ImmutableList<VocaItemModel>,
     onCardClick: (Long) -> Unit,
     onBookmarkClick: (Long, Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (searchResultList.isEmpty()) {
         VocaEmptyCard(
             type = VocaEmptyCardType.NOT_SEARCH,
             modifier = modifier
                 .fillMaxSize()
-                .padding(horizontal = 80.dp, vertical = 80.dp)
+                .padding(horizontal = 80.dp, vertical = 80.dp),
         )
     } else {
         LazyColumn(
             state = listState,
             contentPadding = PaddingValues(16.dp),
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
         ) {
             items(
                 searchResultList,
-                key = { voca -> voca.phraseId }
+                key = { voca -> voca.phraseId },
             ) { voca ->
                 VocaCard(
                     phrase = voca.phrase,
@@ -430,7 +430,7 @@ private fun SearchResultSection(
                     onCardClick = { onCardClick(voca.phraseId) },
                     isBookmarked = voca.isBookmarked,
                     onBookmarkClick = { onBookmarkClick(voca.phraseId, !voca.isBookmarked) },
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    modifier = Modifier.padding(bottom = 16.dp),
                 )
             }
             item {
@@ -459,7 +459,7 @@ private fun VocaScreenLoadingPreview() {
             onSearchTextChanged = {},
             onCloseButtonClick = {},
             isRefreshing = false,
-            onRefresh = {}
+            onRefresh = {},
         )
     }
 }

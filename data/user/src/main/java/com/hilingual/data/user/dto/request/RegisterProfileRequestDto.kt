@@ -25,5 +25,5 @@ data class RegisterProfileRequestDto(
     @SerialName("nickname")
     val nickname: String,
     @SerialName("adAlarmAgree")
-    val adAlarmAgree: Boolean
+    val adAlarmAgree: Boolean,
 )

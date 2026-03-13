@@ -26,7 +26,7 @@ fun ReportPostDialog(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     onReportClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (isVisible) {
         TwoButtonDialog(
@@ -38,7 +38,7 @@ fun ReportPostDialog(
             confirmText = "신고하기",
             onNegative = onDismiss,
             onPositive = onReportClick,
-            onDismiss = onDismiss
+            onDismiss = onDismiss,
         )
     }
 }
@@ -50,7 +50,7 @@ private fun ReportPostDialogPreview() {
         ReportPostDialog(
             isVisible = true,
             onDismiss = {},
-            onReportClick = {}
+            onReportClick = {},
         )
     }
 }

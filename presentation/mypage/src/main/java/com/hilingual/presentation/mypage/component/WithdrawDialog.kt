@@ -24,7 +24,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 internal fun WithdrawDialog(
     isVisible: Boolean,
     onDismiss: () -> Unit,
-    onDeleteClick: () -> Unit
+    onDeleteClick: () -> Unit,
 ) {
     if (isVisible) {
         TwoButtonDialog(
@@ -35,7 +35,7 @@ internal fun WithdrawDialog(
             confirmText = "삭제하기",
             onNegative = onDismiss,
             onPositive = onDeleteClick,
-            onDismiss = onDismiss
+            onDismiss = onDismiss,
         )
     }
 }
@@ -47,7 +47,7 @@ private fun WithdrawDialogPreview() {
         WithdrawDialog(
             isVisible = true,
             onDismiss = {},
-            onDeleteClick = {}
+            onDeleteClick = {},
         )
     }
 }

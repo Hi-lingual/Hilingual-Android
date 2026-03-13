@@ -21,7 +21,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DiaryRecommendExpressionResponseDto(
     @SerialName("phraseList")
-    val phraseList: List<RecommendExpressionResult>
+    val phraseList: List<RecommendExpressionResult>,
 )
 
 @Serializable
@@ -37,5 +37,5 @@ data class RecommendExpressionResult(
     @SerialName("reason")
     val reason: String,
     @SerialName("isBookmarked")
-    val isBookmarked: Boolean
+    val isBookmarked: Boolean,
 )

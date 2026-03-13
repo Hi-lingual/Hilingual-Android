@@ -22,11 +22,11 @@ import javax.annotation.concurrent.Immutable
 data class DiaryFeedbackModel(
     val originalText: String,
     val rewriteText: String,
-    val explain: String
+    val explain: String,
 )
 
 internal fun FeedbackContent.toModel() = DiaryFeedbackModel(
     originalText = this.original,
     rewriteText = this.rewrite,
-    explain = this.explain
+    explain = this.explain,
 )

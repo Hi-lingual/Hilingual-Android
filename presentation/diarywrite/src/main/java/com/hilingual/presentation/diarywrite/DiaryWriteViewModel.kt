@@ -29,6 +29,9 @@ import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.diary.repository.TextRecognitionRepository
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.File
+import java.time.LocalDate
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,10 +42,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
-import java.io.File
-import java.time.LocalDate
-import javax.inject.Inject
 
 @HiltViewModel
 internal class DiaryWriteViewModel @Inject constructor(
@@ -50,14 +49,14 @@ internal class DiaryWriteViewModel @Inject constructor(
     private val calendarRepository: CalendarRepository,
     private val diaryRepository: DiaryRepository,
     private val diaryLocalRepository: DiaryLocalRepository,
-    private val textRecognitionRepository: TextRecognitionRepository
+    private val textRecognitionRepository: TextRecognitionRepository,
 ) : ViewModel() {
     private val route: DiaryWrite = savedStateHandle.toRoute<DiaryWrite>()
 
     private val _uiState = MutableStateFlow(
         DiaryWriteUiState(
-            selectedDate = LocalDate.parse(route.selectedDate)
-        )
+            selectedDate = LocalDate.parse(route.selectedDate),
+        ),
     )
     val uiState: StateFlow<DiaryWriteUiState> = _uiState.asStateFlow()
 
@@ -72,6 +71,7 @@ internal class DiaryWriteViewModel @Inject constructor(
 
         when (route.mode) {
             DiaryWriteMode.DEFAULT -> loadDiaryTemp()
+
             DiaryWriteMode.NEW -> {
                 // Do nothing, start new diary to.Dalji
             }
@@ -103,7 +103,7 @@ internal class DiaryWriteViewModel @Inject constructor(
             diaryLocalRepository.saveDiary(
                 selectedDate = uiState.value.selectedDate,
                 text = uiState.value.diaryText,
-                imageUri = uiState.value.diaryImageUri
+                imageUri = uiState.value.diaryImageUri,
             )
                 .onSuccess {
                     _uiState.update { it.copy(isDiaryTempExist = true) }
@@ -136,7 +136,7 @@ internal class DiaryWriteViewModel @Inject constructor(
                             _uiState.update {
                                 it.copy(
                                     diaryText = text ?: "",
-                                    initialDiaryText = text ?: ""
+                                    initialDiaryText = text ?: "",
                                 )
                             }
                         }
@@ -148,7 +148,7 @@ internal class DiaryWriteViewModel @Inject constructor(
                             _uiState.update {
                                 it.copy(
                                     diaryImageUri = uri,
-                                    initialDiaryImageUri = uri
+                                    initialDiaryImageUri = uri,
                                 )
                             }
                         }
@@ -166,7 +166,7 @@ internal class DiaryWriteViewModel @Inject constructor(
             val result = diaryRepository.postDiaryFeedbackCreate(
                 originalText = uiState.value.diaryText,
                 date = uiState.value.selectedDate,
-                imageFileUri = uiState.value.diaryImageUri
+                imageFileUri = uiState.value.diaryImageUri,
             )
 
             result.onSuccess { response ->
@@ -185,7 +185,7 @@ internal class DiaryWriteViewModel @Inject constructor(
                     .onSuccess { extractedText ->
                         _uiState.update {
                             it.copy(
-                                diaryText = extractedText.take(MAX_DIARY_TEXT_LENGTH)
+                                diaryText = extractedText.take(MAX_DIARY_TEXT_LENGTH),
                             )
                         }
                     }

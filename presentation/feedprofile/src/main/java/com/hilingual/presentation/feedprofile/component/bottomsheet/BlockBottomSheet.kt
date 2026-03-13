@@ -46,7 +46,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 private val CHECK_TEXTS = persistentListOf(
     "상대의 모든 활동을 확인할 수 없어요.",
-    "상대는 나의 모든 활동을 확인할 수 없어요."
+    "상대는 나의 모든 활동을 확인할 수 없어요.",
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,23 +55,23 @@ internal fun BlockBottomSheet(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     onBlockButtonClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     HilingualBasicBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 32.dp, bottom = 12.dp)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp),
         ) {
             Text(
                 text = "정말 차단하실 건가요?",
                 style = HilingualTheme.typography.headSB18,
-                color = HilingualTheme.colors.black
+                color = HilingualTheme.colors.black,
             )
 
             Spacer(Modifier.height(8.dp))
@@ -80,7 +80,7 @@ internal fun BlockBottomSheet(
                 text = "차단 시 상대방은 차단 여부를 알 수 없으며,\n" +
                     "언제든 차단을 해제 할 수 있어요.",
                 style = HilingualTheme.typography.bodyR14,
-                color = HilingualTheme.colors.gray400
+                color = HilingualTheme.colors.gray400,
             )
 
             Spacer(Modifier.height(20.dp))
@@ -91,19 +91,19 @@ internal fun BlockBottomSheet(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 28.dp)
+                        .heightIn(min = 28.dp),
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_check_24),
                         contentDescription = null,
                         tint = HilingualTheme.colors.gray850,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(20.dp),
                     )
 
                     Text(
                         text = text,
                         style = HilingualTheme.typography.bodyR14,
-                        color = HilingualTheme.colors.gray850
+                        color = HilingualTheme.colors.gray850,
                     )
                 }
             }
@@ -112,7 +112,7 @@ internal fun BlockBottomSheet(
 
             HilingualButton(
                 text = "차단하기",
-                onClick = onBlockButtonClick
+                onClick = onBlockButtonClick,
             )
         }
     }
@@ -130,7 +130,7 @@ private fun BlockBottomSheetPreviewVisible() {
             onBlockButtonClick = {
                 println("Block Button Clicked in Preview")
                 isSheetVisible = false
-            }
+            },
         )
     }
 }

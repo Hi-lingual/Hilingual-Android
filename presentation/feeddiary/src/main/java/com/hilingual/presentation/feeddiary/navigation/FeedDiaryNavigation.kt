@@ -26,16 +26,16 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class FeedDiary(
-    val diaryId: Long
+    val diaryId: Long,
 ) : Route
 
 fun NavController.navigateToFeedDiary(
     diaryId: Long,
-    navOptions: NavOptions? = null
+    navOptions: NavOptions? = null,
 ) {
     navigate(
         route = FeedDiary(diaryId),
-        navOptions = navOptions
+        navOptions = navOptions,
     )
 }
 
@@ -44,7 +44,7 @@ fun NavGraphBuilder.feedDiaryNavGraph(
     navigateUp: () -> Unit,
     navigateToMyFeedProfile: (showLikedDiaries: Boolean) -> Unit,
     navigateToFeedProfile: (userId: Long) -> Unit,
-    navigateToVoca: () -> Unit
+    navigateToVoca: () -> Unit,
 ) {
     composable<FeedDiary> {
         FeedDiaryRoute(
@@ -52,7 +52,7 @@ fun NavGraphBuilder.feedDiaryNavGraph(
             navigateUp = navigateUp,
             navigateToMyFeedProfile = navigateToMyFeedProfile,
             navigateToFeedProfile = navigateToFeedProfile,
-            navigateToVoca = navigateToVoca
+            navigateToVoca = navigateToVoca,
         )
     }
 }

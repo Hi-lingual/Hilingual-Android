@@ -49,7 +49,7 @@ fun HilingualSearchTextField(
     backgroundColor: Color = HilingualTheme.colors.white,
     onSearchAction: () -> Unit = {},
     onTrailingIconClick: () -> Unit = {},
-    paddingValues: PaddingValues = PaddingValues(12.dp)
+    paddingValues: PaddingValues = PaddingValues(12.dp),
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -66,7 +66,7 @@ fun HilingualSearchTextField(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_search_20),
                 contentDescription = null,
                 tint = HilingualTheme.colors.gray500,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.dp),
             )
         },
         trailingIcon = {
@@ -77,7 +77,7 @@ fun HilingualSearchTextField(
                     tint = Color.Unspecified,
                     modifier = Modifier
                         .size(20.dp)
-                        .noRippleClickable(onClick = onTrailingIconClick)
+                        .noRippleClickable(onClick = onTrailingIconClick),
                 )
             }
         },
@@ -88,7 +88,7 @@ fun HilingualSearchTextField(
             keyboardController?.hide()
         },
         hintLocales = LocaleList(Locale("en")),
-        paddingValues = paddingValues
+        paddingValues = paddingValues,
     )
 }
 
@@ -105,7 +105,7 @@ private fun HilingualSearchTextFieldPreview() {
             onSearchAction = {
                 Toast.makeText(context, "Enter key pressed with text: $text", Toast.LENGTH_SHORT)
                     .show()
-            }
+            },
         )
     }
 }

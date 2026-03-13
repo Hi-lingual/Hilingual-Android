@@ -46,7 +46,7 @@ internal class SplashViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val configRepository: ConfigRepository,
     private val deviceInfoProvider: DeviceInfoProvider,
-    private val onboardingRepository: OnboardingRepository
+    private val onboardingRepository: OnboardingRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SplashUiState())
@@ -55,7 +55,7 @@ internal class SplashViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<SplashSideEffect>(
         replay = 0,
         extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
     val sideEffect = _sideEffect.asSharedFlow()
 

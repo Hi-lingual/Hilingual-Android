@@ -21,7 +21,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UserResponseDto(
     @SerialName("userList")
-    val userList: List<UserItemDto>
+    val userList: List<UserItemDto>,
 )
 
 @Serializable
@@ -35,5 +35,5 @@ data class UserItemDto(
     @SerialName("isFollowing")
     val isFollowing: Boolean,
     @SerialName("isFollowed")
-    val isFollowed: Boolean
+    val isFollowed: Boolean,
 )

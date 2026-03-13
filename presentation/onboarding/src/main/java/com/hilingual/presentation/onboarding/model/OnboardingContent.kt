@@ -20,5 +20,5 @@ import androidx.annotation.DrawableRes
 internal data class OnboardingContent(
     val text: String,
     val highlightedText: String,
-    @DrawableRes val image: Int
+    @DrawableRes val image: Int,
 )

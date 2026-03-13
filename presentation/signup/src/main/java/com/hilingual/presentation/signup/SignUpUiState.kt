@@ -22,5 +22,5 @@ data class SignUpUiState(
     val nickname: String = "",
     val validationMessage: String = "",
     val isNicknameValid: Boolean = false,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
 )

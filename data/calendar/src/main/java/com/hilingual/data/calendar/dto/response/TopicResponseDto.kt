@@ -25,5 +25,5 @@ data class TopicResponseDto(
     @SerialName("topicEn")
     val topicEn: String,
     @SerialName("remainingTime")
-    val remainingTime: Int
+    val remainingTime: Int,
 )

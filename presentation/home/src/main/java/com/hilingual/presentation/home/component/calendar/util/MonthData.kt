@@ -24,7 +24,7 @@ import java.time.YearMonth
 internal data class MonthData(
     private val month: YearMonth,
     private val inDays: Int,
-    private val outDays: Int
+    private val outDays: Int,
 ) {
     private val totalDays = inDays + month.lengthOfMonth() + outDays
     private val firstDay = month.atStartOfMonth().minusDays(inDays.toLong())
@@ -36,7 +36,7 @@ internal data class MonthData(
         month,
         rows.map { week ->
             week.map { dayOffset -> getDay(dayOffset) }
-        }
+        },
     )
 
     private fun getDay(dayOffset: Int): CalendarDay {

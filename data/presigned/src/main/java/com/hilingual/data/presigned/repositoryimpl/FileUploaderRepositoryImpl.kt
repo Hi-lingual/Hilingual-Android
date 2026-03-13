@@ -28,7 +28,7 @@ import javax.inject.Inject
 class FileUploaderRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val presignedUrlRepository: PresignedUrlRepository,
-    private val fileUploaderRemoteDataSource: FileUploaderRemoteDataSource
+    private val fileUploaderRemoteDataSource: FileUploaderRemoteDataSource,
 ) : FileUploaderRepository {
 
     override suspend fun uploadFile(uri: Uri, purpose: String): Result<String> = suspendRunCatching {
@@ -36,7 +36,7 @@ class FileUploaderRepositoryImpl @Inject constructor(
 
         val presignedUrlModel = presignedUrlRepository.getPresignedUrl(
             purpose = purpose,
-            contentType = contentType
+            contentType = contentType,
         ).getOrThrow()
 
         val imageConfig = ContentUriRequestBody.ImageConfig.WEBP
@@ -47,7 +47,7 @@ class FileUploaderRepositoryImpl @Inject constructor(
         val response = fileUploaderRemoteDataSource.uploadFile(
             uploadUrl = presignedUrlModel.uploadUrl,
             contentType = contentType,
-            file = requestBody
+            file = requestBody,
         )
 
         if (!response.isSuccessful) {

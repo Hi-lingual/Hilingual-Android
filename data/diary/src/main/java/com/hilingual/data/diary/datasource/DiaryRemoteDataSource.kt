@@ -24,37 +24,37 @@ import com.hilingual.data.diary.dto.response.DiaryRecommendExpressionResponseDto
 
 interface DiaryRemoteDataSource {
     suspend fun getDiaryContent(
-        diaryId: Long
+        diaryId: Long,
     ): BaseResponse<DiaryContentResponseDto>
 
     suspend fun getDiaryFeedbacks(
-        diaryId: Long
+        diaryId: Long,
     ): BaseResponse<DiaryFeedbackResponseDto>
 
     suspend fun getDiaryRecommendExpressions(
-        diaryId: Long
+        diaryId: Long,
     ): BaseResponse<DiaryRecommendExpressionResponseDto>
 
     suspend fun patchPhraseBookmark(
         phraseId: Long,
-        bookmarkRequestDto: BookmarkRequestDto
+        bookmarkRequestDto: BookmarkRequestDto,
     ): BaseResponse<Unit>
 
     suspend fun postDiaryFeedbackCreate(
         originalText: String,
         date: String,
-        fileKey: String?
+        fileKey: String?,
     ): BaseResponse<DiaryFeedbackCreateResponseDto>
 
     suspend fun patchDiaryPublish(
-        diaryId: Long
+        diaryId: Long,
     ): BaseResponse<Unit>
 
     suspend fun patchDiaryUnpublish(
-        diaryId: Long
+        diaryId: Long,
     ): BaseResponse<Unit>
 
     suspend fun deleteDiary(
-        diaryId: Long
+        diaryId: Long,
     ): BaseResponse<Unit>
 }

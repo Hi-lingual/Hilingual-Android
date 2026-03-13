@@ -8,12 +8,12 @@ import com.hilingual.core.localstorage.di.qualifier.UserInfoDataStore
 import com.hilingual.data.auth.datasource.AuthLocalDataSource
 import com.hilingual.data.auth.di.qualifier.TokenDataStore
 import com.hilingual.data.auth.localstorage.model.TokenPreferences
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
+import kotlinx.coroutines.flow.first
 
 class AuthLocalDataSourceImpl @Inject constructor(
     @TokenDataStore private val tokenDataStore: DataStore<TokenPreferences>,
-    @UserInfoDataStore private val userInfoDataStore: DataStore<Preferences>
+    @UserInfoDataStore private val userInfoDataStore: DataStore<Preferences>,
 ) : AuthLocalDataSource {
 
     @Volatile
@@ -26,15 +26,12 @@ class AuthLocalDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAccessToken(): String? {
-        return cachedAccessToken ?: tokenDataStore.data.first().accessToken?.also {
+    override suspend fun getAccessToken(): String? =
+        cachedAccessToken ?: tokenDataStore.data.first().accessToken?.also {
             cachedAccessToken = it
         }
-    }
 
-    override suspend fun getRefreshToken(): String? {
-        return tokenDataStore.data.first().refreshToken
-    }
+    override suspend fun getRefreshToken(): String? = tokenDataStore.data.first().refreshToken
 
     override suspend fun clearTokens() {
         cachedAccessToken = null

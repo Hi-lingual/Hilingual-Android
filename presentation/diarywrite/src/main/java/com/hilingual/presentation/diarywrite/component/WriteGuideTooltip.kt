@@ -35,10 +35,10 @@ import com.hilingual.presentation.diarywrite.R
 @Composable
 internal fun WriteGuideTooltip(
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             modifier = modifier
@@ -47,13 +47,13 @@ internal fun WriteGuideTooltip(
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             text = text,
             style = HilingualTheme.typography.bodyR16,
-            color = HilingualTheme.colors.white
+            color = HilingualTheme.colors.white,
         )
 
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_tooltip_arrow),
             contentDescription = null,
-            tint = HilingualTheme.colors.hilingualBlack
+            tint = HilingualTheme.colors.hilingualBlack,
         )
     }
 }
@@ -63,7 +63,7 @@ internal fun WriteGuideTooltip(
 private fun WriteGuideTooltipPreview() {
     HilingualTheme {
         WriteGuideTooltip(
-            text = "10자 이상 작성해야 피드백 요청이 가능해요!"
+            text = "10자 이상 작성해야 피드백 요청이 가능해요!",
         )
     }
 }

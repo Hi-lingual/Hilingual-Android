@@ -34,12 +34,12 @@ import com.hilingual.core.ui.component.topappbar.CloseOnlyTopAppBar
 fun ModalImage(
     imageUrl: String,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(HilingualTheme.colors.black)
+            .background(HilingualTheme.colors.black),
     ) {
         NetworkImage(
             imageUrl = imageUrl,
@@ -48,14 +48,14 @@ fun ModalImage(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(9f / 16f)
-                .align(Alignment.Center)
+                .align(Alignment.Center),
         )
 
         CloseOnlyTopAppBar(
             onCloseClicked = onBackClick,
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .background(HilingualTheme.colors.black)
+                .background(HilingualTheme.colors.black),
         )
     }
 }
@@ -66,7 +66,7 @@ private fun PhotoDetailPreview() {
     HilingualTheme {
         ModalImage(
             imageUrl = "",
-            onBackClick = {}
+            onBackClick = {},
         )
     }
 }
