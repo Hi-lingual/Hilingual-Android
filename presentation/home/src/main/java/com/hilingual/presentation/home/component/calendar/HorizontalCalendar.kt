@@ -72,7 +72,7 @@ internal fun HorizontalCalendar(
         state = state.listState,
         flingBehavior = flingBehavior,
     ) {
-        CalendarMonths(
+        calendarMonths(
             monthCount = state.monthIndicesCount,
             monthData = {
                 generateMonthData(
