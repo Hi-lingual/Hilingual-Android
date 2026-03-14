@@ -225,7 +225,7 @@ private fun MyPageScreen(
         }
 
         HilingualBannerAd(
-            adUnitId = BuildConfig.ADMOB_BANNER_UNIT_ID,
+            adUnitId = BuildConfig.ADMOB_BOTTOMBANNER_UNIT_ID,
             maxHeight = 70,
         )
     }

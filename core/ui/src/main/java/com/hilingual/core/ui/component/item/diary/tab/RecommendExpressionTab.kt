@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.ads.banner.HilingualBannerAd
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.ui.BuildConfig
 import com.hilingual.core.ui.component.item.diary.card.RecommendExpressionCard
 import com.hilingual.core.ui.model.RecommendExpression
 import kotlinx.collections.immutable.ImmutableList
@@ -88,7 +89,7 @@ fun RecommendExpressionTab(
         if (isAdVisible) {
             item {
                 Spacer(Modifier.height(24.dp))
-                HilingualBannerAd()
+                HilingualBannerAd(BuildConfig.ADMOB_INLINEBANNER_UNIT_ID)
             }
         }
     }

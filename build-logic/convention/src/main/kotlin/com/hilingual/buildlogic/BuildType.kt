@@ -36,8 +36,13 @@ fun Project.configureBuildTypes(
         )
         buildConfigField(
             "String",
-            "ADMOB_BANNER_UNIT_ID",
-            properties.getQuotedProperty("admob.banner.$prefix.id")
+            "ADMOB_BOTTOMBANNER_UNIT_ID",
+            properties.getQuotedProperty("admob.bottombanner.$prefix.id")
+        )
+        buildConfigField(
+            "String",
+            "ADMOB_INLINEBANNER_UNIT_ID",
+            properties.getQuotedProperty("admob.inlinebanner.$prefix.id")
         )
     }
 
