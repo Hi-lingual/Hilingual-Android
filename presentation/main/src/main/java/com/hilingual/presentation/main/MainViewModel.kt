@@ -7,13 +7,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class MainViewModel @Inject constructor(
-    adsPreloadManager: AdsPreloadManager,
+    private val adsPreloadManager: AdsPreloadManager,
 ) : ViewModel() {
 
     init {
-        adsPreloadManager.preloadBanner(
-            adUnitId = BuildConfig.ADMOB_BANNER_UNIT_ID,
-            maxHeight = 70,
-        )
+        preloadMyPageBanner()
+        preloadFeedBanner()
     }
+
+    private fun preloadMyPageBanner() = adsPreloadManager.preloadBanner(BuildConfig.ADMOB_BOTTOMBANNER_UNIT_ID, 70)
+
+    private fun preloadFeedBanner() = adsPreloadManager.preloadBanner(BuildConfig.ADMOB_INLINEBANNER_UNIT_ID)
 }

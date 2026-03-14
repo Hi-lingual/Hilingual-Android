@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -41,7 +42,9 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.ads.banner.HilingualBannerAd
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.ui.BuildConfig
 import com.hilingual.core.ui.component.item.diary.card.DiaryCard
 import com.hilingual.core.ui.component.item.diary.card.FeedbackCard
 import com.hilingual.core.ui.component.item.diary.card.FeedbackEmptyCard
@@ -61,10 +64,11 @@ fun GrammarSpellingTab(
     onImageClick: () -> Unit,
     onToggleViewMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    isAdVisible: Boolean = false,
 ) {
     LazyColumn(
         state = listState,
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 40.dp),
+        contentPadding = PaddingValues(top = 24.dp, bottom = 40.dp),
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.gray100),
@@ -73,7 +77,9 @@ fun GrammarSpellingTab(
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
             ) {
                 Text(
                     text = writtenDate,
@@ -93,19 +99,23 @@ fun GrammarSpellingTab(
                     diffRanges = diffRanges,
                     imageUrl = imageUrl,
                     onImageClick = onImageClick,
+                    modifier = Modifier.padding(horizontal = 16.dp),
                 )
             }
             Spacer(Modifier.height(24.dp))
         }
 
         item {
-            FeedbackTitle(feedbackList.size)
+            FeedbackTitle(
+                feedbackSize = feedbackList.size,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
             Spacer(Modifier.height(12.dp))
         }
 
         if (feedbackList.isEmpty()) {
             item {
-                FeedbackEmptyCard()
+                FeedbackEmptyCard(Modifier.padding(horizontal = 16.dp))
             }
         } else {
             itemsIndexed(
@@ -117,17 +127,29 @@ fun GrammarSpellingTab(
                         originalText = originalText,
                         feedbackText = feedbackText,
                         explain = explain,
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                     )
                 }
                 if (index != feedbackList.lastIndex) Spacer(Modifier.height(12.dp))
+            }
+        }
+
+        if (isAdVisible) {
+            item {
+                Spacer(Modifier.height(24.dp))
+                HilingualBannerAd(BuildConfig.ADMOB_INLINEBANNER_UNIT_ID)
             }
         }
     }
 }
 
 @Composable
-private fun FeedbackTitle(feedbackSize: Int) {
+private fun FeedbackTitle(
+    feedbackSize: Int,
+    modifier: Modifier = Modifier,
+) {
     Text(
         text = if (feedbackSize ==
             0
@@ -138,6 +160,7 @@ private fun FeedbackTitle(feedbackSize: Int) {
         },
         style = HilingualTheme.typography.bodyM16,
         color = HilingualTheme.colors.black,
+        modifier = modifier,
     )
 }
 

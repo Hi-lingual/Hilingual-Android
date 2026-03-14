@@ -28,6 +28,7 @@ dependencies {
     // core
     implementation(projects.core.common)
     implementation(projects.core.designsystem)
+    implementation(projects.core.ads)
 
     // androidx
     implementation(libs.bundles.androidx)

@@ -25,14 +25,13 @@ import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdPreloader
 import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdRequest
 import com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback
 import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError
-import com.hilingual.core.ads.BuildConfig
 import com.hilingual.core.ads.R
 import timber.log.Timber
 
 @Composable
 fun HilingualBannerAd(
+    adUnitId: String,
     modifier: Modifier = Modifier,
-    adUnitId: String = BuildConfig.ADMOB_BANNER_UNIT_ID,
     maxHeight: Int? = null,
 ) {
     val activity = LocalActivity.current
