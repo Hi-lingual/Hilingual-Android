@@ -48,7 +48,7 @@ fun RecommendExpressionTab(
     recommendExpressionList: ImmutableList<RecommendExpression>,
     onBookmarkClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    isAdVisible: Boolean = false
+    isAdVisible: Boolean = false,
 ) {
     LazyColumn(
         state = listState,
@@ -81,7 +81,7 @@ fun RecommendExpressionTab(
                 reason = it.reason,
                 isMarked = it.isMarked,
                 onBookmarkClick = { onBookmarkClick(it.phraseId, !it.isMarked) },
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp),
             )
         }
 
