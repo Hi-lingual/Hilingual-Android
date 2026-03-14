@@ -18,8 +18,11 @@ package com.hilingual.core.ui.component.item.diary.tab
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -31,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.ads.banner.HilingualBannerAd
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.item.diary.card.RecommendExpressionCard
 import com.hilingual.core.ui.model.RecommendExpression
@@ -44,11 +48,12 @@ fun RecommendExpressionTab(
     recommendExpressionList: ImmutableList<RecommendExpression>,
     onBookmarkClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    isAdVisible: Boolean = false
 ) {
     LazyColumn(
         state = listState,
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(vertical = 24.dp, horizontal = 16.dp),
+        contentPadding = PaddingValues(vertical = 24.dp),
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.gray100),
@@ -59,6 +64,7 @@ fun RecommendExpressionTab(
                 style = HilingualTheme.typography.bodyM16,
                 color = HilingualTheme.colors.gray700,
                 modifier = Modifier
+                    .padding(horizontal = 16.dp)
                     .heightIn(min = 28.dp)
                     .wrapContentHeight(align = Alignment.CenterVertically),
             )
@@ -75,7 +81,15 @@ fun RecommendExpressionTab(
                 reason = it.reason,
                 isMarked = it.isMarked,
                 onBookmarkClick = { onBookmarkClick(it.phraseId, !it.isMarked) },
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
+        }
+
+        if (isAdVisible) {
+            item {
+                Spacer(Modifier.height(24.dp))
+                HilingualBannerAd()
+            }
         }
     }
 }
