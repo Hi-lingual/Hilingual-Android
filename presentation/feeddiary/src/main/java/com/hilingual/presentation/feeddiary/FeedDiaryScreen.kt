@@ -273,6 +273,7 @@ private fun FeedDiaryScreen(
                             isAIWrittenDiary = isAIWrittenDiary,
                             onImageClick = onChangeImageDetailVisible,
                             onToggleViewMode = { isAIWrittenDiary = it },
+                            isAdVisible = true
                         )
 
                         1 -> RecommendExpressionTab(
@@ -280,6 +281,7 @@ private fun FeedDiaryScreen(
                             writtenDate = writtenDate,
                             recommendExpressionList = recommendExpressionList,
                             onBookmarkClick = onToggleBookmark,
+                            isAdVisible = true
                         )
                     }
                 }
