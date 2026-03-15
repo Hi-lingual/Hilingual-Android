@@ -146,10 +146,7 @@ fun GrammarSpellingTab(
         if (isAdVisible) {
             item {
                 Spacer(Modifier.height(24.dp))
-                HilingualBannerAd(
-                    adUnitId = BuildConfig.ADMOB_INLINEBANNER_UNIT_ID,
-                    adHolder = adHolder,
-                )
+                if (adHolder != null) HilingualBannerAd(adHolder = adHolder)
             }
         }
     }
