@@ -258,7 +258,7 @@ internal fun MainScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .navigationBarsPadding()
-                    .padding(bottom = 82.dp),
+                    .padding(bottom = 106.dp),
             ) {
                 SnackbarHost(hostState = snackBarHostState) { data ->
                     when (val visuals = data.visuals) {
