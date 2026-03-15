@@ -16,6 +16,7 @@
 package com.hilingual.presentation.diaryfeedback
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +42,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.ads.BuildConfig
+import com.hilingual.core.ads.interstitial.showInterstitialAd
 import com.hilingual.core.common.analytics.FakeTracker
 import com.hilingual.core.common.analytics.Page.FEEDBACK
 import com.hilingual.core.common.analytics.Tracker
@@ -80,6 +83,7 @@ internal fun DiaryFeedbackRoute(
     viewModel: DiaryFeedbackViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+    val activity = LocalActivity.current
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var isImageDetailVisible by remember { mutableStateOf(false) }
@@ -98,7 +102,20 @@ internal fun DiaryFeedbackRoute(
 
     viewModel.sideEffect.collectSideEffect {
         when (it) {
-            is DiaryFeedbackSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = navigateUp)
+            is DiaryFeedbackSideEffect.ShowInterstitialAd -> {
+                if (activity != null) {
+                    showInterstitialAd(
+                        activity = activity,
+                        adUnitId = BuildConfig.ADMOB_INTERSTITIAL_UNIT_ID,
+                        onAdDismissed = { viewModel.onAdWatched() },
+                    )
+                } else {
+                    viewModel.onAdWatched()
+                }
+            }
+
+            is DiaryFeedbackSideEffect.ShowErrorDialog ->
+                dialogTrigger.show(onClick = navigateUp)
 
             is DiaryFeedbackSideEffect.ShowDiaryPublishSnackbar -> {
                 messageController(
@@ -143,40 +160,47 @@ internal fun DiaryFeedbackRoute(
         tracker.logEvent(trigger = TriggerType.VIEW, page = FEEDBACK, event = "page")
     }
 
-    DiaryFeedbackScreen(
-        paddingValues = paddingValues,
-        uiState = state,
-        diaryId = viewModel.diaryId,
-        onBackClick = {
-            tracker.logEvent(
-                trigger = TriggerType.CLICK,
-                page = FEEDBACK,
-                event = "back_feedback",
-                properties = mapOf(
-                    "entry_id" to viewModel.diaryId,
-                    "back_source" to "ui_button",
-                ),
+    when (val currentState = state) {
+        is UiState.Success -> {
+            if (!currentState.data.isAdWatched) return
+            DiaryFeedbackScreen(
+                paddingValues = paddingValues,
+                uiState = currentState,
+                diaryId = viewModel.diaryId,
+                onBackClick = {
+                    tracker.logEvent(
+                        trigger = TriggerType.CLICK,
+                        page = FEEDBACK,
+                        event = "back_feedback",
+                        properties = mapOf(
+                            "entry_id" to viewModel.diaryId,
+                            "back_source" to "ui_button",
+                        ),
+                    )
+                    navigateUp()
+                },
+                onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
+                isImageDetailVisible = isImageDetailVisible,
+                onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
+                onToggleIsPublished = { isPublished ->
+                    if (isPublished) {
+                        tracker.logEvent(
+                            trigger = TriggerType.CLICK,
+                            page = FEEDBACK,
+                            event = "submitted_post_diary",
+                            properties = mapOf("entry_id" to viewModel.diaryId),
+                        )
+                    }
+                    viewModel.toggleIsPublished(isPublished)
+                },
+                onToggleBookmark = viewModel::toggleBookmark,
+                onDeleteDiary = viewModel::deleteDiary,
+                tracker = tracker,
             )
-            navigateUp()
-        },
-        onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
-        isImageDetailVisible = isImageDetailVisible,
-        onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
-        onToggleIsPublished = { isPublished ->
-            if (isPublished) {
-                tracker.logEvent(
-                    trigger = TriggerType.CLICK,
-                    page = FEEDBACK,
-                    event = "submitted_post_diary",
-                    properties = mapOf("entry_id" to viewModel.diaryId),
-                )
-            }
-            viewModel.toggleIsPublished(isPublished)
-        },
-        onToggleBookmark = viewModel::toggleBookmark,
-        onDeleteDiary = viewModel::deleteDiary,
-        tracker = tracker,
-    )
+        }
+
+        else -> Unit
+    }
 }
 
 @Composable

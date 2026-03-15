@@ -25,4 +25,5 @@ android {
 
 dependencies {
     implementation(projects.data.diary)
+    implementation(projects.core.ads)
 }

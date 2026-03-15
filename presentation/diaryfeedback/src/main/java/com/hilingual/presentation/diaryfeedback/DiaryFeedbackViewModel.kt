@@ -19,6 +19,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.hilingual.core.ads.BuildConfig
+import com.hilingual.core.ads.manager.AdsPreloadManager
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
@@ -45,6 +47,7 @@ import kotlinx.coroutines.launch
 internal class DiaryFeedbackViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val diaryRepository: DiaryRepository,
+    adsPreloadManager: AdsPreloadManager,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<DiaryFeedbackUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<DiaryFeedbackUiState>> = _uiState.asStateFlow()
@@ -56,6 +59,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
 
     init {
         loadInitialData()
+        adsPreloadManager.preloadInterstitial(BuildConfig.ADMOB_INTERSTITIAL_UNIT_ID)
     }
 
     private fun loadInitialData() {
@@ -64,6 +68,9 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                 requestDiaryFeedbackData()
             }.onSuccess { newUiState ->
                 _uiState.update { UiState.Success(newUiState) }
+                if (!newUiState.isAdWatched) {
+                    _sideEffect.emit(DiaryFeedbackSideEffect.ShowInterstitialAd)
+                }
             }.onLogFailure {
                 _uiState.update { UiState.Failure }
                 _sideEffect.emit(
@@ -85,12 +92,25 @@ internal class DiaryFeedbackViewModel @Inject constructor(
 
             DiaryFeedbackUiState(
                 isPublished = diaryResult.isPublished,
+                isAdWatched = diaryResult.isAdWatched,
                 writtenDate = diaryResult.writtenDate,
                 diaryContent = diaryResult.toState(),
                 feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),
                 recommendExpressionList = recommendExpressionsResult.map { it.toState() }.toImmutableList(),
             )
         }
+
+    fun onAdWatched() {
+        viewModelScope.launch {
+            diaryRepository.patchAdWatch(diaryId)
+                .onSuccess {
+                    _uiState.updateSuccess { it.copy(isAdWatched = true) }
+                }
+                .onLogFailure {
+                    _uiState.updateSuccess { it.copy(isAdWatched = true) }
+                }
+        }
+    }
 
     fun toggleIsPublished(isPublished: Boolean) {
         val currentState = _uiState.value
@@ -190,6 +210,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
 sealed interface DiaryFeedbackSideEffect {
     data object NavigateToHome : DiaryFeedbackSideEffect
     data object ShowErrorDialog : DiaryFeedbackSideEffect
+    data object ShowInterstitialAd : DiaryFeedbackSideEffect
     data class ShowDiaryPublishSnackbar(val message: String, val actionLabel: String) : DiaryFeedbackSideEffect
     data class ShowVocaOverflowSnackbar(val message: String, val actionLabel: String) : DiaryFeedbackSideEffect
     data class ShowToast(val message: String) : DiaryFeedbackSideEffect

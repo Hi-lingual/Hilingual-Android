@@ -30,6 +30,7 @@ import kotlinx.collections.immutable.toImmutableList
 internal data class DiaryFeedbackUiState(
     val writtenDate: String = "",
     val isPublished: Boolean = false,
+    val isAdWatched: Boolean = false,
     val diaryContent: DiaryContent = DiaryContent(),
     val feedbackList: ImmutableList<FeedbackContent> = persistentListOf(),
     val recommendExpressionList: ImmutableList<RecommendExpression> = persistentListOf(),
