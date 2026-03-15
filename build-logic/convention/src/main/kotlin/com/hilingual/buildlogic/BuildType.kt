@@ -39,6 +39,11 @@ fun Project.configureBuildTypes(
             "ADMOB_BANNER_UNIT_ID",
             properties.getQuotedProperty("admob.banner.$prefix.id")
         )
+        buildConfigField(
+            "String",
+            "ADMOB_INTERSTITIAL_UNIT_ID",
+            properties.getQuotedProperty("admob.interstitial.$prefix.id")
+        )
     }
 
     commonExtension.apply {
