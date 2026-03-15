@@ -13,11 +13,10 @@ import com.hilingual.core.ads.R
 
 @Composable
 fun HilingualBannerAd(
-    adUnitId: String,
+    type: BannerAdType,
     modifier: Modifier = Modifier,
-    maxHeight: Int? = null,
 ) {
-    val adHolder = rememberBannerAdView(adUnitId = adUnitId, maxHeight = maxHeight)
+    val adHolder = rememberBannerAdView(type = type)
 
     HilingualBannerAd(
         adHolder = adHolder,
