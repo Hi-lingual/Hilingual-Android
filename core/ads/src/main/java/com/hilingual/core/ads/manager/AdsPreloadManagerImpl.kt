@@ -5,6 +5,7 @@ import com.google.android.libraries.ads.mobile.sdk.banner.AdSize
 import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdPreloader
 import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdRequest
 import com.google.android.libraries.ads.mobile.sdk.common.PreloadConfiguration
+import com.hilingual.core.ads.utils.screenWidthDp
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,8 +18,7 @@ internal class AdsPreloadManagerImpl @Inject constructor(
 
     override fun preloadBanner(adUnitId: String, maxHeight: Int?) {
         try {
-            val displayMetrics = context.resources.displayMetrics
-            val adWidth = (displayMetrics.widthPixels / displayMetrics.density).toInt()
+            val adWidth = context.screenWidthDp
 
             val adSize = if (maxHeight != null) {
                 AdSize.getInlineAdaptiveBannerAdSize(adWidth, maxHeight)

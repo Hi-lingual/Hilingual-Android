@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.ads.banner.HilingualBannerAd
+import com.hilingual.core.ads.banner.rememberBannerAdView
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.BuildConfig
 import com.hilingual.core.ui.component.item.diary.card.RecommendExpressionCard
@@ -51,6 +52,12 @@ fun RecommendExpressionTab(
     modifier: Modifier = Modifier,
     isAdVisible: Boolean = false,
 ) {
+    val adHolder = if (isAdVisible) {
+        rememberBannerAdView(BuildConfig.ADMOB_INLINEBANNER_UNIT_ID)
+    } else {
+        null
+    }
+
     LazyColumn(
         state = listState,
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -89,7 +96,10 @@ fun RecommendExpressionTab(
         if (isAdVisible) {
             item {
                 Spacer(Modifier.height(24.dp))
-                HilingualBannerAd(BuildConfig.ADMOB_INLINEBANNER_UNIT_ID)
+                HilingualBannerAd(
+                    adUnitId = BuildConfig.ADMOB_INLINEBANNER_UNIT_ID,
+                    adHolder = adHolder,
+                )
             }
         }
     }
