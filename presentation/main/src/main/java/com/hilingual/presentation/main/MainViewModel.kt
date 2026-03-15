@@ -1,6 +1,8 @@
 package com.hilingual.presentation.main
 
 import androidx.lifecycle.ViewModel
+import com.hilingual.core.ads.banner.BannerAdType.BOTTOM_BANNER
+import com.hilingual.core.ads.banner.BannerAdType.INLINE_BANNER
 import com.hilingual.core.ads.manager.AdsPreloadManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -15,7 +17,7 @@ internal class MainViewModel @Inject constructor(
         preloadFeedBanner()
     }
 
-    private fun preloadMyPageBanner() = adsPreloadManager.preloadBanner(BuildConfig.ADMOB_BOTTOMBANNER_UNIT_ID, 70)
+    private fun preloadMyPageBanner() = adsPreloadManager.preloadBanner(BOTTOM_BANNER)
 
-    private fun preloadFeedBanner() = adsPreloadManager.preloadBanner(BuildConfig.ADMOB_INLINEBANNER_UNIT_ID)
+    private fun preloadFeedBanner() = adsPreloadManager.preloadBanner(INLINE_BANNER)
 }

@@ -31,8 +31,7 @@ data class BannerAdHolder internal constructor(
 
 @Composable
 fun rememberBannerAdView(
-    adUnitId: String,
-    maxHeight: Int? = null,
+    type: BannerAdType,
 ): BannerAdHolder {
     val context = LocalContext.current
     val activity = LocalActivity.current
@@ -44,14 +43,14 @@ fun rememberBannerAdView(
         createAndLoadAdView(
             context = context,
             activity = activity,
-            adUnitId = adUnitId,
+            adUnitId = type.adUnitId,
             screenWidth = screenWidth,
-            maxHeight = maxHeight,
+            maxHeight = type.maxHeight,
             onLoaded = { isLoadedState.value = true },
         )
     }
 
-    DisposableEffect(adUnitId) {
+    DisposableEffect(type) {
         onDispose {
             adView.destroy()
         }

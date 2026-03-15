@@ -1,5 +1,7 @@
 package com.hilingual.core.ads.manager
 
+import com.hilingual.core.ads.banner.BannerAdType
+
 interface AdsPreloadManager {
-    fun preloadBanner(adUnitId: String, maxHeight: Int? = null)
+    fun preloadBanner(type: BannerAdType)
 }
