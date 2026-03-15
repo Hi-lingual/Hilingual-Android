@@ -59,6 +59,6 @@ interface DiaryRemoteDataSource {
     ): BaseResponse<Unit>
 
     suspend fun patchAdWatch(
-        diaryId: Long
+        diaryId: Long,
     ): BaseResponse<Unit>
 }

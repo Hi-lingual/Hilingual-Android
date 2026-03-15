@@ -51,7 +51,7 @@ internal class DiaryWriteViewModel @Inject constructor(
     private val diaryRepository: DiaryRepository,
     private val diaryLocalRepository: DiaryLocalRepository,
     private val textRecognitionRepository: TextRecognitionRepository,
-    adsPreloadManager: AdsPreloadManager
+    adsPreloadManager: AdsPreloadManager,
 ) : ViewModel() {
     private val route: DiaryWrite = savedStateHandle.toRoute<DiaryWrite>()
 

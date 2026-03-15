@@ -42,5 +42,5 @@ internal fun DiaryContentResponseDto.toModel() = DiaryContentModel(
         )
     },
     isPublished = this.isPublished,
-    isAdWatched = false //TODO:: 서버 연결 시 this.isAdWatched로 교체
+    isAdWatched = false, // TODO:: 서버 연결 시 this.isAdWatched로 교체
 )

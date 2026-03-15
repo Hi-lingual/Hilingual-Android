@@ -36,7 +36,7 @@ fun showInterstitialAd(
                     Timber.tag("GMA").e("전면 광고 로드 실패: %s", error)
                     onAdDismissed()
                 }
-            }
+            },
         )
     }
 }
