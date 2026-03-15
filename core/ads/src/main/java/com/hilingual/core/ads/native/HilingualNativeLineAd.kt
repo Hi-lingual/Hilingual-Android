@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-fun NativeLineAd(
+fun HilingualNativeLineAd(
     title: String,
     body: String,
     modifier: Modifier = Modifier,
@@ -49,9 +49,9 @@ fun NativeLineAd(
 
 @Preview
 @Composable
-private fun NativeLineAdPreview() {
+private fun HilingualNativeLineAdPreview() {
     HilingualTheme{
-        NativeLineAd(
+        HilingualNativeLineAd(
             title = "광고 이름",
             body = "메인 카피".repeat(20)
         )
