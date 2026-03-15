@@ -199,7 +199,9 @@ internal fun DiaryFeedbackRoute(
             )
         }
 
-        else -> Unit
+        is UiState.Loading -> HilingualLoadingIndicator()
+
+        else -> {}
     }
 }
 
