@@ -99,4 +99,9 @@ internal class DiaryRepositoryImpl @Inject constructor(
         suspendRunCatching {
             diaryRemoteDataSource.deleteDiary(diaryId)
         }
+
+    override suspend fun patchAdWatch(diaryId: Long): Result<Unit> =
+        suspendRunCatching {
+            diaryRemoteDataSource.patchAdWatch(diaryId)
+        }
 }

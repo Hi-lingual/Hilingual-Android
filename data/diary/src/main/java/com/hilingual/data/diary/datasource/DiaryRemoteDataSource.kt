@@ -57,4 +57,8 @@ interface DiaryRemoteDataSource {
     suspend fun deleteDiary(
         diaryId: Long,
     ): BaseResponse<Unit>
+
+    suspend fun patchAdWatch(
+        diaryId: Long
+    ): BaseResponse<Unit>
 }
