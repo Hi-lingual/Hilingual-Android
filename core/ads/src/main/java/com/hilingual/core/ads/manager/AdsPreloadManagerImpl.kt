@@ -5,6 +5,8 @@ import com.google.android.libraries.ads.mobile.sdk.banner.AdSize
 import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdPreloader
 import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdRequest
 import com.google.android.libraries.ads.mobile.sdk.common.PreloadConfiguration
+import com.hilingual.core.ads.banner.BannerAdType
+import com.hilingual.core.ads.utils.screenWidthDp
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,24 +17,23 @@ internal class AdsPreloadManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : AdsPreloadManager {
 
-    override fun preloadBanner(adUnitId: String, maxHeight: Int?) {
+    override fun preloadBanner(type: BannerAdType) {
         try {
-            val displayMetrics = context.resources.displayMetrics
-            val adWidth = (displayMetrics.widthPixels / displayMetrics.density).toInt()
+            val adWidth = context.screenWidthDp
 
-            val adSize = if (maxHeight != null) {
-                AdSize.getInlineAdaptiveBannerAdSize(adWidth, maxHeight)
+            val adSize = if (type.maxHeight != null) {
+                AdSize.getInlineAdaptiveBannerAdSize(adWidth, type.maxHeight)
             } else {
                 AdSize.getCurrentOrientationInlineAdaptiveBannerAdSize(context, adWidth)
             }
 
-            val adRequest = BannerAdRequest.Builder(adUnitId, adSize).build()
+            val adRequest = BannerAdRequest.Builder(type.adUnitId, adSize).build()
             val preloadConfig = PreloadConfiguration(adRequest)
 
-            BannerAdPreloader.start(adUnitId, preloadConfig)
-            Timber.tag("GMA").d("GMA Next Gen 배너 프리로딩 시작: %s", adUnitId)
+            BannerAdPreloader.start(type.adUnitId, preloadConfig)
+            Timber.tag("GMA").d("GMA Next Gen 배너 프리로딩 시작: %s", type.adUnitId)
         } catch (e: Exception) {
-            Timber.tag("GMA").e(e, "배너 프리로딩 시작 실패: %s", adUnitId)
+            Timber.tag("GMA").e(e, "배너 프리로딩 시작 실패: %s", type.adUnitId)
         }
     }
 }
