@@ -1,4 +1,4 @@
-package com.hilingual.core.ads.native
+package com.hilingual.core.ads.native.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
