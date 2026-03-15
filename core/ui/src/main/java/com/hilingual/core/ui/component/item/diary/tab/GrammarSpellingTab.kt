@@ -139,10 +139,10 @@ fun GrammarSpellingTab(
             }
         }
 
-        if (isAdVisible) {
+        if (isAdVisible && adHolder != null) {
             item {
                 Spacer(Modifier.height(24.dp))
-                if (adHolder != null) HilingualBannerAd(adHolder = adHolder)
+                HilingualBannerAd(adHolder = adHolder)
             }
         }
     }
