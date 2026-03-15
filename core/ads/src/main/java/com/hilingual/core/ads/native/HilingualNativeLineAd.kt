@@ -1,59 +1,44 @@
 package com.hilingual.core.ads.native
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import com.hilingual.core.ads.native.component.NativeLineAdContent
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun HilingualNativeLineAd(
-    title: String,
-    body: String,
+    adUnitId: String,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(HilingualTheme.colors.white)
-            .padding(horizontal = 16.dp, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp)
-    ) {
-        AdMark()
+    val isPreviewMode = LocalInspectionMode.current
 
-        Text(
-            text = title,
-            color = HilingualTheme.colors.gray850,
-            style = HilingualTheme.typography.bodyM12,
-            maxLines = 1
+    if (isPreviewMode) {
+        NativeLineAdContent(
+            title = "광고 이름",
+            body = "메인 카피",
+            modifier = modifier,
         )
-
-        Text(
-            text = body,
-            color = HilingualTheme.colors.gray850,
-            style = HilingualTheme.typography.captionR12,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+    } else {
+        val nativeAd = rememberNativeAd(adUnitId)
+        if (nativeAd != null) {
+            AndroidView(
+                modifier = modifier.fillMaxWidth(),
+                factory = { context ->
+                    createNativeAdView(context, nativeAd)
+                },
+            )
+        }
     }
 }
 
 @Preview
 @Composable
 private fun HilingualNativeLineAdPreview() {
-    HilingualTheme{
-        HilingualNativeLineAd(
-            title = "광고 이름",
-            body = "메인 카피".repeat(20)
-        )
+    HilingualTheme {
+        HilingualNativeLineAd("")
     }
 }
