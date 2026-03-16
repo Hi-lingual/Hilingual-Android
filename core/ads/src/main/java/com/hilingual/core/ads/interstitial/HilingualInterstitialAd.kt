@@ -28,12 +28,17 @@ fun showInterstitialAd(
             adRequest,
             object : AdLoadCallback<InterstitialAd> {
                 override fun onAdLoaded(ad: InterstitialAd) {
-                    ad.adEventCallback = createEventCallback(onAdDismissed)
-                    ad.show(activity)
+                    if (!activity.isFinishing && !activity.isDestroyed) {
+                        ad.adEventCallback = createEventCallback(onAdDismissed)
+                        ad.show(activity)
+                    } else {
+                        Timber.tag("GMA").w("Activity가 이미 종료 상태라 전면 광고를 표시하지 않습니다.")
+                        onAdDismissed()
+                    }
                 }
 
-                override fun onAdFailedToLoad(error: LoadAdError) {
-                    Timber.tag("GMA").e("전면 광고 로드 실패: %s", error)
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    Timber.tag("GMA").e("전면 광고 로드 실패: %s", adError)
                     onAdDismissed()
                 }
             },
@@ -47,8 +52,8 @@ private fun createEventCallback(onAdDismissed: () -> Unit) = object : Interstiti
         onAdDismissed()
     }
 
-    override fun onAdFailedToShowFullScreenContent(error: FullScreenContentError) {
-        Timber.tag("GMA").e("전면 광고 표시 실패: %s", error)
+    override fun onAdFailedToShowFullScreenContent(fullScreenContentError: FullScreenContentError) {
+        Timber.tag("GMA").e("전면 광고 표시 실패: %s", fullScreenContentError)
         onAdDismissed()
     }
 }

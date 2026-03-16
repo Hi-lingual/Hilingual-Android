@@ -92,6 +92,10 @@ internal fun DiaryFeedbackRoute(
     val messageController = LocalMessageController.current
     val tracker = LocalTracker.current
 
+    LaunchedEffect(Unit) {
+        viewModel.loadInitialData()
+    }
+
     BackHandler {
         if (isImageDetailVisible) {
             isImageDetailVisible = false
@@ -107,10 +111,10 @@ internal fun DiaryFeedbackRoute(
                     showInterstitialAd(
                         activity = activity,
                         adUnitId = BuildConfig.ADMOB_INTERSTITIAL_UNIT_ID,
-                        onAdDismissed = { viewModel.onAdWatched() },
+                        onAdDismissed = { viewModel.fetchAdWatched() },
                     )
                 } else {
-                    viewModel.onAdWatched()
+                    viewModel.fetchAdWatched()
                 }
             }
 
@@ -162,41 +166,44 @@ internal fun DiaryFeedbackRoute(
 
     when (val currentState = state) {
         is UiState.Success -> {
-            if (!currentState.data.isAdWatched) return
-            DiaryFeedbackScreen(
-                paddingValues = paddingValues,
-                uiState = currentState,
-                diaryId = viewModel.diaryId,
-                onBackClick = {
-                    tracker.logEvent(
-                        trigger = TriggerType.CLICK,
-                        page = FEEDBACK,
-                        event = "back_feedback",
-                        properties = mapOf(
-                            "entry_id" to viewModel.diaryId,
-                            "back_source" to "ui_button",
-                        ),
-                    )
-                    navigateUp()
-                },
-                onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
-                isImageDetailVisible = isImageDetailVisible,
-                onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
-                onToggleIsPublished = { isPublished ->
-                    if (isPublished) {
+            if (!currentState.data.isAdWatched) {
+                HilingualLoadingIndicator()
+            } else {
+                DiaryFeedbackScreen(
+                    paddingValues = paddingValues,
+                    uiState = currentState,
+                    diaryId = viewModel.diaryId,
+                    onBackClick = {
                         tracker.logEvent(
                             trigger = TriggerType.CLICK,
                             page = FEEDBACK,
-                            event = "submitted_post_diary",
-                            properties = mapOf("entry_id" to viewModel.diaryId),
+                            event = "back_feedback",
+                            properties = mapOf(
+                                "entry_id" to viewModel.diaryId,
+                                "back_source" to "ui_button",
+                            ),
                         )
-                    }
-                    viewModel.toggleIsPublished(isPublished)
-                },
-                onToggleBookmark = viewModel::toggleBookmark,
-                onDeleteDiary = viewModel::deleteDiary,
-                tracker = tracker,
-            )
+                        navigateUp()
+                    },
+                    onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
+                    isImageDetailVisible = isImageDetailVisible,
+                    onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
+                    onToggleIsPublished = { isPublished ->
+                        if (isPublished) {
+                            tracker.logEvent(
+                                trigger = TriggerType.CLICK,
+                                page = FEEDBACK,
+                                event = "submitted_post_diary",
+                                properties = mapOf("entry_id" to viewModel.diaryId),
+                            )
+                        }
+                        viewModel.toggleIsPublished(isPublished)
+                    },
+                    onToggleBookmark = viewModel::toggleBookmark,
+                    onDeleteDiary = viewModel::deleteDiary,
+                    tracker = tracker,
+                )
+            }
         }
 
         is UiState.Loading -> HilingualLoadingIndicator()

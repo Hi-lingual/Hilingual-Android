@@ -19,8 +19,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.hilingual.core.ads.BuildConfig
-import com.hilingual.core.ads.manager.AdsPreloadManager
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
@@ -47,7 +45,6 @@ import kotlinx.coroutines.launch
 internal class DiaryFeedbackViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val diaryRepository: DiaryRepository,
-    adsPreloadManager: AdsPreloadManager,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<DiaryFeedbackUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<DiaryFeedbackUiState>> = _uiState.asStateFlow()
@@ -57,12 +54,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<DiaryFeedbackSideEffect>()
     val sideEffect: SharedFlow<DiaryFeedbackSideEffect> = _sideEffect.asSharedFlow()
 
-    init {
-        loadInitialData()
-        adsPreloadManager.preloadInterstitial(BuildConfig.ADMOB_INTERSTITIAL_UNIT_ID)
-    }
-
-    private fun loadInitialData() {
+    fun loadInitialData() {
         viewModelScope.launch {
             suspendRunCatching {
                 requestDiaryFeedbackData()
@@ -100,14 +92,16 @@ internal class DiaryFeedbackViewModel @Inject constructor(
             )
         }
 
-    fun onAdWatched() {
+    fun fetchAdWatched() {
+        _uiState.updateSuccess { it.copy(isAdWatched = true) }
+
         viewModelScope.launch {
             diaryRepository.patchAdWatch(diaryId)
-                .onSuccess {
-                    _uiState.updateSuccess { it.copy(isAdWatched = true) }
-                }
                 .onLogFailure {
                     _uiState.updateSuccess { it.copy(isAdWatched = true) }
+                     /*TODO: 서버 동기화 실패 처리
+                     patchAdWatch API 실패 시 서버는 여전히 isAdWatched = false 상태입니다.
+                     WorkManager로 Sync 필요*/
                 }
         }
     }
