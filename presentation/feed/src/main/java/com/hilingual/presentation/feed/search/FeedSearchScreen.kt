@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -89,7 +90,7 @@ private fun FeedSearchScreen(
         modifier = Modifier
             .background(HilingualTheme.colors.white)
             .fillMaxSize()
-            .padding(paddingValues),
+            .subScreenPadding(paddingValues),
     ) {
         FeedSearchHeader(
             searchWord = { searchWord },

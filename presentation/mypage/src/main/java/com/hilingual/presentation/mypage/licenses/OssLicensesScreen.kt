@@ -19,10 +19,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
@@ -39,7 +39,7 @@ fun OssLicensesScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
-            .padding(paddingValues),
+            .subScreenPadding(paddingValues),
     ) {
         BackTopAppBar(
             title = "오픈소스 라이선스",

@@ -49,6 +49,7 @@ import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
@@ -233,7 +234,7 @@ private fun DiaryFeedbackScreen(
             .fillMaxSize()
             .statusBarColor(HilingualTheme.colors.white)
             .background(HilingualTheme.colors.white)
-            .padding(paddingValues),
+            .subScreenPadding(paddingValues),
     ) {
         BackAndMoreTopAppBar(
             title = "일기장",
