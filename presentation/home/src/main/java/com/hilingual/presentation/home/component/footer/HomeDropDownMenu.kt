@@ -69,15 +69,17 @@ internal fun HomeDropDownMenu(
             thickness = 1.dp,
             color = HilingualTheme.colors.gray200,
         )
-        HilingualDropdownMenuItem(
-            text = "삭제하기",
-            iconResId = R.drawable.ic_delete_24,
-            onClick = {
-                deleteDialogVisible = true
-                onExpandedChange(false)
-            },
-            textColor = HilingualTheme.colors.alertRed,
-        )
+
+//        수정기능 도입까지 삭제 기능 지원중단
+//        HilingualDropdownMenuItem(
+//            text = "삭제하기",
+//            iconResId = R.drawable.ic_delete_24,
+//            onClick = {
+//                deleteDialogVisible = true
+//                onExpandedChange(false)
+//            },
+//            textColor = HilingualTheme.colors.alertRed,
+//        )
     }
 
     when {

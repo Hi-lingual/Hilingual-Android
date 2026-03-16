@@ -121,6 +121,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
         }
     }
 
+    @Deprecated("수정 기능이 도입되기 까지 지원 중단입니다.")
     fun deleteDiary() {
         viewModelScope.launch {
             diaryRepository.deleteDiary(diaryId = diaryId).onSuccess {

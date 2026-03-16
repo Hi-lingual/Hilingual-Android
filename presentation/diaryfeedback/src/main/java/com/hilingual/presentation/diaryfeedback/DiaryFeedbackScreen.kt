@@ -58,7 +58,6 @@ import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.ui.component.dialog.diary.DiaryDeleteDialog
 import com.hilingual.core.ui.component.dialog.diary.DiaryPublishDialog
 import com.hilingual.core.ui.component.dialog.diary.DiaryUnpublishDialog
 import com.hilingual.core.ui.component.item.diary.image.ModalImage
@@ -174,7 +173,7 @@ internal fun DiaryFeedbackRoute(
             viewModel.toggleIsPublished(isPublished)
         },
         onToggleBookmark = viewModel::toggleBookmark,
-        onDeleteDiary = viewModel::deleteDiary,
+        onDeleteDiary = { /* viewModel::deleteDiary 수정기능 도입까지 삭제 기능 지원중단 */ },
         tracker = tracker,
     )
 }
@@ -369,21 +368,23 @@ private fun DiaryFeedbackScreen(
         )
     }
 
-    DiaryDeleteDialog(
-        isVisible = isDeleteDialogVisible,
-        onDismiss = { isDeleteDialogVisible = false },
-        onDeleteClick = {
-            isDeleteDialogVisible = false
-            onDeleteDiary()
-        },
-    )
+//    수정기능 도입까지 삭제 기능 지원중단
+//    DiaryDeleteDialog(
+//        isVisible = isDeleteDialogVisible,
+//        onDismiss = { isDeleteDialogVisible = false },
+//        onDeleteClick = {
+//            isDeleteDialogVisible = false
+//            onDeleteDiary()
+//        },
+//    )
 
     FeedbackMenuBottomSheet(
         isVisible = isReportBottomSheetVisible,
         onDismiss = { isReportBottomSheetVisible = false },
         onDeleteClick = {
-            isReportBottomSheetVisible = false
-            isDeleteDialogVisible = true
+//            수정기능 도입까지 삭제 기능 지원중단
+//            isReportBottomSheetVisible = false
+//            isDeleteDialogVisible = true
         },
         onReportClick = {
             isReportBottomSheetVisible = false

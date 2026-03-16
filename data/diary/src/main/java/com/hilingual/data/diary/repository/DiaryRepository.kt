@@ -50,6 +50,7 @@ interface DiaryRepository {
         diaryId: Long,
     ): Result<Unit>
 
+    @Deprecated("수정 기능이 도입되기 까지 지원 중단입니다.")
     suspend fun deleteDiary(
         diaryId: Long,
     ): Result<Unit>
