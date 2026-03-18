@@ -19,12 +19,18 @@ import android.content.Context
 import android.os.Build
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.extension.appVersionName
+import com.hilingual.data.auth.datasource.DeviceInfoLocalDataSource
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import kotlinx.coroutines.runBlocking
 
 internal class DeviceInfoProviderImpl @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val deviceInfoLocalDataSource: DeviceInfoLocalDataSource,
 ) : DeviceInfoProvider {
+
+    @Volatile
+    private var cachedUuid: String? = null
 
     override fun getDeviceName(): String = Build.MODEL
 
@@ -40,4 +46,16 @@ internal class DeviceInfoProviderImpl @Inject constructor(
     override fun getRole(): String = "USER"
 
     override fun getOsType(): String = "Android"
+
+    override fun getUuid(): String {
+        if (cachedUuid != null) return cachedUuid!!
+
+        return synchronized(this) {
+            cachedUuid ?: runBlocking {
+                deviceInfoLocalDataSource.getDeviceUuid().also {
+                    cachedUuid = it
+                }
+            }
+        }
+    }
 }

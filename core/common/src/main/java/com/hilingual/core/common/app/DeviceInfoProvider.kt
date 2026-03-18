@@ -29,4 +29,6 @@ interface DeviceInfoProvider {
     fun getRole(): String
 
     fun getOsType(): String
+
+    fun getUuid(): String
 }

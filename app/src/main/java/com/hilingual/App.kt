@@ -21,11 +21,15 @@ import androidx.appcompat.app.AppCompatDelegate
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import com.hilingual.core.ads.initializer.AdsInitializer
+import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.util.HilingualReleaseTree
 import com.hilingual.core.work.scheduler.HilingualWorkManagerConfigurator
 import dagger.Lazy
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @HiltAndroidApp
@@ -39,6 +43,9 @@ class App : Application(), SingletonImageLoader.Factory {
     @Inject
     lateinit var adsInitializer: AdsInitializer
 
+    @Inject
+    lateinit var deviceInfoProvider: DeviceInfoProvider
+
     override fun onCreate() {
         super.onCreate()
         SingletonImageLoader.setSafe { imageLoader.get() }
@@ -47,6 +54,10 @@ class App : Application(), SingletonImageLoader.Factory {
         initTimber()
         initWorkManager()
         initAds()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            deviceInfoProvider.getUuid()
+        }
     }
 
     override fun newImageLoader(context: Context): ImageLoader = imageLoader.get()
