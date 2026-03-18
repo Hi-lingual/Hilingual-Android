@@ -22,6 +22,8 @@ internal fun rememberNativeAd(adUnitId: String): NativeAd? {
     var loadedAdState by remember { mutableStateOf<NativeAd?>(null) }
 
     DisposableEffect(adUnitId) {
+        var isDisposed = false
+
         val adRequest = NativeAdRequest.Builder(
             adUnitId = adUnitId,
             nativeAdTypes = listOf(NativeAd.NativeAdType.NATIVE),
@@ -29,7 +31,7 @@ internal fun rememberNativeAd(adUnitId: String): NativeAd? {
 
         val adCallback = object : NativeAdLoaderCallback {
             override fun onNativeAdLoaded(nativeAd: NativeAd) {
-                loadedAdState = nativeAd
+                if (isDisposed) nativeAd.destroy() else loadedAdState = nativeAd
             }
 
             override fun onAdFailedToLoad(adError: LoadAdError) {
@@ -40,7 +42,9 @@ internal fun rememberNativeAd(adUnitId: String): NativeAd? {
         NativeAdLoader.load(adRequest, adCallback)
 
         onDispose {
+            isDisposed = true
             loadedAdState?.destroy()
+            loadedAdState = null
         }
     }
 
