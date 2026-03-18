@@ -21,7 +21,9 @@ import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.auth.repository.AuthRepository
 import com.hilingual.data.onboarding.repository.OnboardingRepository
+import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.TimeZone
 import javax.inject.Inject
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -36,6 +38,7 @@ import timber.log.Timber
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val onboardingRepository: OnboardingRepository,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -60,6 +63,7 @@ class AuthViewModel @Inject constructor(
                         .onSuccess { authResult ->
                             val sideEffect = if (authResult.registerStatus) {
                                 updateIsSplashOnboardingCompleted()
+                                putDeviceInfo()
                                 AuthSideEffect.NavigateToHome
                             } else {
                                 AuthSideEffect.NavigateToSignUp
@@ -72,6 +76,13 @@ class AuthViewModel @Inject constructor(
 
             setIsLoading(false)
         }
+    }
+
+    private suspend fun putDeviceInfo() {
+        runCatching {
+            val timezone = TimeZone.getDefault().id
+            userRepository.putDeviceInfo(timezone)
+        }.onLogFailure { }
     }
 
     private suspend fun updateIsSplashOnboardingCompleted() {
