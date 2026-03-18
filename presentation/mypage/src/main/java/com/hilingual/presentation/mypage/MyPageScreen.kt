@@ -42,6 +42,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.ads.banner.BannerAdType.BOTTOM_BANNER
 import com.hilingual.core.ads.banner.HilingualBannerAd
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
@@ -224,10 +225,7 @@ private fun MyPageScreen(
             }
         }
 
-        HilingualBannerAd(
-            adUnitId = BuildConfig.ADMOB_BANNER_UNIT_ID,
-            maxHeight = 70,
-        )
+        HilingualBannerAd(type = BOTTOM_BANNER)
     }
 
     LogoutDialog(

@@ -1,0 +1,104 @@
+package com.hilingual.core.ads.banner
+
+import android.app.Activity
+import android.content.Context
+import androidx.activity.compose.LocalActivity
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import com.google.android.libraries.ads.mobile.sdk.banner.AdSize
+import com.google.android.libraries.ads.mobile.sdk.banner.AdView
+import com.google.android.libraries.ads.mobile.sdk.banner.BannerAd
+import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdPreloader
+import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdRequest
+import com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback
+import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError
+import com.hilingual.core.ads.utils.screenWidthDp
+import timber.log.Timber
+
+@ConsistentCopyVisibility
+@Stable
+data class BannerAdHolder internal constructor(
+    internal val adView: AdView,
+    private val _isLoaded: State<Boolean>,
+) {
+    val isLoaded: Boolean get() = _isLoaded.value
+}
+
+@Composable
+fun rememberBannerAdView(
+    type: BannerAdType,
+): BannerAdHolder {
+    val context = LocalContext.current
+    val activity = LocalActivity.current
+    val screenWidth = context.screenWidthDp
+
+    val isLoadedState = remember { mutableStateOf(false) }
+
+    val adView = remember {
+        createAndLoadAdView(
+            context = context,
+            activity = activity,
+            adUnitId = type.adUnitId,
+            screenWidth = screenWidth,
+            maxHeight = type.maxHeight,
+            onLoaded = { isLoadedState.value = true },
+        )
+    }
+
+    DisposableEffect(type) {
+        onDispose {
+            adView.destroy()
+        }
+    }
+
+    return remember { BannerAdHolder(adView, isLoadedState) }
+}
+
+private fun createAndLoadAdView(
+    context: Context,
+    activity: Activity?,
+    adUnitId: String,
+    screenWidth: Int,
+    maxHeight: Int?,
+    onLoaded: () -> Unit,
+): AdView = AdView(context).apply {
+    if (activity == null) {
+        Timber.tag("GMA").w("Activity가 null이므로 광고를 로드할 수 없습니다.")
+        return@apply
+    }
+
+    val preloadedAd = BannerAdPreloader.pollAd(adUnitId)
+    if (preloadedAd != null) {
+        Timber.tag("GMA").d("프리로드된 배너 광고를 화면에 등록합니다.")
+        registerBannerAd(preloadedAd, activity)
+        onLoaded()
+    } else {
+        Timber.tag("GMA").d("프리로드된 광고가 없어 새로 로드를 요청합니다.")
+        val adSize = getAdSize(context, screenWidth, maxHeight)
+        val adRequest = BannerAdRequest.Builder(adUnitId, adSize).build()
+
+        loadAd(adRequest, createAdLoadCallback(onLoaded))
+    }
+}
+
+private fun createAdLoadCallback(onLoaded: () -> Unit) = object : AdLoadCallback<BannerAd> {
+    override fun onAdLoaded(ad: BannerAd) {
+        Timber.tag("GMA").d("GMA Next Gen 배너 광고 새로 로드 성공")
+        onLoaded()
+    }
+
+    override fun onAdFailedToLoad(adError: LoadAdError) {
+        Timber.tag("GMA").e("GMA Next Gen 배너 광고 로드 실패: %s", adError)
+    }
+}
+
+private fun getAdSize(context: Context, width: Int, maxHeight: Int?): AdSize = if (maxHeight != null) {
+    AdSize.getInlineAdaptiveBannerAdSize(width, maxHeight)
+} else {
+    AdSize.getCurrentOrientationInlineAdaptiveBannerAdSize(context, width)
+}

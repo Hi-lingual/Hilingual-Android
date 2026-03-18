@@ -188,7 +188,7 @@ internal fun HomeRoute(
                     )
                     navigateToDiaryFeedback(diaryId)
                 },
-                onDeleteClick = viewModel::deleteDiary,
+                onDeleteClick = { /* viewModel::deleteDiary 수정기능 도입까지 삭제 기능 지원중단 */ },
                 onPublishClick = viewModel::publishDiary,
                 onUnpublishClick = viewModel::unpublishDiary,
                 tracker = tracker,
@@ -322,7 +322,7 @@ private fun HomeScreen(
                                         homeState.hideMoreMenu()
                                     }
                                 },
-                                onDeleteClick = { onDeleteClick(diary.diaryId) },
+                                onDeleteClick = { /* onDeleteClick(diary.diaryId) 수정기능 도입까지 삭제 기능 지원중단 */ },
                                 onPublishClick = { onPublishClick(diary.diaryId) },
                                 onUnpublishClick = { onUnpublishClick(diary.diaryId) },
                             )

@@ -264,6 +264,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    @Deprecated("수정 기능이 도입되기 까지 지원 중단입니다.")
     fun deleteDiary(diaryId: Long) {
         val currentState = uiState.value
         if (currentState !is UiState.Success) return

@@ -50,10 +50,11 @@ private val onboardingPages = persistentListOf(
         "오늘의 일기는\n48시간 동안 작성할 수 있어요.",
         R.drawable.img_onboarding_bottomsheet_1,
     ),
-    HomeOnboarding(
-        "일기를 삭제 한 날에는\n다시 일기를 작성할 수 없어요.",
-        R.drawable.img_onboarding_bottomsheet_2,
-    ),
+//    수정기능 도입까지 삭제 기능 지원중단
+//    HomeOnboarding(
+//        "일기를 삭제 한 날에는\n다시 일기를 작성할 수 없어요.",
+//        R.drawable.img_onboarding_bottomsheet_2,
+//    ),
     HomeOnboarding(
         "작성한 일기는\n커뮤니티에 공유할 수 있어요.",
         R.drawable.img_onboarding_bottomsheet_3,

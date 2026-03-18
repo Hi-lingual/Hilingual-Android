@@ -42,12 +42,13 @@ internal fun FeedbackMenuBottomSheet(
         onDismiss = onDismiss,
         modifier = modifier,
     ) {
-        HilingualMenuBottomSheetItem(
-            text = "삭제하기",
-            iconResId = DesignSystemR.drawable.ic_delete_24,
-            onClick = onDeleteClick,
-            textColor = HilingualTheme.colors.alertRed,
-        )
+//        수정기능 도입까지 삭제 기능 지원중단
+//        HilingualMenuBottomSheetItem(
+//            text = "삭제하기",
+//            iconResId = DesignSystemR.drawable.ic_delete_24,
+//            onClick = onDeleteClick,
+//            textColor = HilingualTheme.colors.alertRed,
+//        )
 
         HilingualMenuBottomSheetItem(
             text = "AI 피드백 신고하기",
