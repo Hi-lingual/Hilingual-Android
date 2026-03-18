@@ -67,6 +67,7 @@ import com.hilingual.core.common.extension.advancedImePadding
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
@@ -362,7 +363,7 @@ private fun DiaryWriteScreen(
                 .statusBarColor(white)
                 .background(HilingualTheme.colors.white)
                 .fillMaxSize()
-                .padding(paddingValues)
+                .subScreenPadding(paddingValues)
                 .addFocusCleaner(focusManager),
         ) {
             BackTopAppBar(
