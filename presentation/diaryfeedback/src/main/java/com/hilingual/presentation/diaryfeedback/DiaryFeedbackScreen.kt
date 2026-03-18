@@ -111,7 +111,7 @@ internal fun DiaryFeedbackRoute(
                     showInterstitialAd(
                         activity = activity,
                         adUnitId = BuildConfig.ADMOB_INTERSTITIAL_UNIT_ID,
-                        onAdDismissed = { viewModel.fetchAdWatched() },
+                        onAdDismissed = viewModel::fetchAdWatched,
                     )
                 } else {
                     viewModel.fetchAdWatched()
