@@ -24,6 +24,7 @@ data class DiaryContentModel(
     val diffRanges: List<DiaryContentFeedback>,
     val imageUrl: String?,
     val isPublished: Boolean,
+    val isAdWatched: Boolean,
 )
 
 data class DiaryContentFeedback(
@@ -41,4 +42,5 @@ internal fun DiaryContentResponseDto.toModel() = DiaryContentModel(
         )
     },
     isPublished = this.isPublished,
+    isAdWatched = false, // TODO:: 서버 연결 시 this.isAdWatched로 교체
 )

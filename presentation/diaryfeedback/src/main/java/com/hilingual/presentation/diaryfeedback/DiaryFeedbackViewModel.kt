@@ -54,16 +54,15 @@ internal class DiaryFeedbackViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<DiaryFeedbackSideEffect>()
     val sideEffect: SharedFlow<DiaryFeedbackSideEffect> = _sideEffect.asSharedFlow()
 
-    init {
-        loadInitialData()
-    }
-
-    private fun loadInitialData() {
+    fun loadInitialData() {
         viewModelScope.launch {
             suspendRunCatching {
                 requestDiaryFeedbackData()
             }.onSuccess { newUiState ->
                 _uiState.update { UiState.Success(newUiState) }
+                if (!newUiState.isAdWatched) {
+                    _sideEffect.emit(DiaryFeedbackSideEffect.ShowInterstitialAd)
+                }
             }.onLogFailure {
                 _uiState.update { UiState.Failure }
                 _sideEffect.emit(
@@ -85,12 +84,29 @@ internal class DiaryFeedbackViewModel @Inject constructor(
 
             DiaryFeedbackUiState(
                 isPublished = diaryResult.isPublished,
+                isAdWatched = diaryResult.isAdWatched,
                 writtenDate = diaryResult.writtenDate,
                 diaryContent = diaryResult.toState(),
                 feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),
                 recommendExpressionList = recommendExpressionsResult.map { it.toState() }.toImmutableList(),
             )
         }
+
+    fun fetchAdWatched() {
+        _uiState.updateSuccess { it.copy(isAdWatched = true) }
+
+        viewModelScope.launch {
+            diaryRepository.patchAdWatch(diaryId)
+                .onLogFailure {
+                    _uiState.updateSuccess { it.copy(isAdWatched = true) }
+                    /*
+                     * TODO:: 서버 동기화 실패 처리
+                     * patchAdWatch API 실패 시 서버는 여전히 isAdWatched = false 상태입니다.
+                     * WorkManager로 Sync 필요
+                     */
+                }
+        }
+    }
 
     fun toggleIsPublished(isPublished: Boolean) {
         val currentState = _uiState.value
@@ -191,6 +207,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
 sealed interface DiaryFeedbackSideEffect {
     data object NavigateToHome : DiaryFeedbackSideEffect
     data object ShowErrorDialog : DiaryFeedbackSideEffect
+    data object ShowInterstitialAd : DiaryFeedbackSideEffect
     data class ShowDiaryPublishSnackbar(val message: String, val actionLabel: String) : DiaryFeedbackSideEffect
     data class ShowVocaOverflowSnackbar(val message: String, val actionLabel: String) : DiaryFeedbackSideEffect
     data class ShowToast(val message: String) : DiaryFeedbackSideEffect
