@@ -17,9 +17,16 @@ package com.hilingual.presentation.main
 
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideOut
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -36,11 +43,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
+import com.hilingual.core.ads.native.HilingualNativeLineAd
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.app.AppRestarter
 import com.hilingual.core.common.model.HilingualMessage
@@ -128,9 +137,8 @@ internal fun MainScreen(
     ) {
         Scaffold(
             bottomBar = {
-                MainBottomBar(
-                    visible = isBottomBarVisible,
-                    tabs = MainTab.entries.toPersistentList(),
+                BottomSection(
+                    isVisible = isBottomBarVisible,
                     currentTab = currentTab,
                     onTabSelected = appState::navigate,
                 )
@@ -143,7 +151,6 @@ internal fun MainScreen(
                 popExitTransition = { ExitTransition.None },
                 navController = appState.navController,
                 startDestination = appState.startDestination,
-
             ) {
                 splashNavGraph(
                     navigateToAuth = appState::navigateToAuth,
@@ -258,7 +265,7 @@ internal fun MainScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .navigationBarsPadding()
-                    .padding(bottom = 82.dp),
+                    .padding(bottom = 106.dp),
             ) {
                 SnackbarHost(hostState = snackBarHostState) { data ->
                     when (val visuals = data.visuals) {
@@ -299,5 +306,32 @@ private fun HandleBackPressToExit(
             onShowMessage()
         }
         backPressedTime = System.currentTimeMillis()
+    }
+}
+
+@Composable
+private fun BottomSection(
+    isVisible: Boolean,
+    currentTab: MainTab?,
+    onTabSelected: (MainTab) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = fadeIn() + slideIn { IntOffset(0, it.height) },
+        exit = fadeOut() + slideOut { IntOffset(0, it.height) },
+    ) {
+        Column(
+            modifier = modifier
+                .animateContentSize()
+                .navigationBarsPadding(),
+        ) {
+            MainBottomBar(
+                tabs = MainTab.entries.toPersistentList(),
+                currentTab = currentTab,
+                onTabSelected = onTabSelected,
+            )
+            HilingualNativeLineAd(adUnitId = BuildConfig.ADMOB_NATIVE_UNIT_ID)
+        }
     }
 }

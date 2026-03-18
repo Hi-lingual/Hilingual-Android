@@ -12,6 +12,7 @@ android {
 
 dependencies {
     implementation(projects.core.common)
+    implementation(projects.core.designsystem)
     implementation(libs.gma.ads)
 
     // Workaround for GMA Next Gen SDK beta03 Cronet namespace bug
