@@ -8,7 +8,7 @@ minSdk = "30"
 targetSdk = "36"
 jvmTarget = "17"
 androidGradlePlugin = "9.1.0"
-spotless = "8.3.0"
+spotless = "8.4.0"
 
 # App version
 versionCode = "2030100"
