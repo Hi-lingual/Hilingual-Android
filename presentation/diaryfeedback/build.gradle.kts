@@ -25,5 +25,6 @@ android {
 
 dependencies {
     implementation(projects.core.ads)
+    implementation(projects.core.work)
     implementation(projects.data.diary)
 }

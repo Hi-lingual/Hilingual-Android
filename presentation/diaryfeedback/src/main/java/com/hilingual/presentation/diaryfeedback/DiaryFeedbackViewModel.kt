@@ -1,18 +1,3 @@
-/*
- * Copyright 2025 The Hilingual Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.hilingual.presentation.diaryfeedback
 
 import androidx.lifecycle.SavedStateHandle
@@ -23,6 +8,7 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.common.util.suspendRunCatching
+import com.hilingual.core.work.repository.WorkRepository
 import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
@@ -45,6 +31,7 @@ import kotlinx.coroutines.launch
 internal class DiaryFeedbackViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val diaryRepository: DiaryRepository,
+    private val workRepository: WorkRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<DiaryFeedbackUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<DiaryFeedbackUiState>> = _uiState.asStateFlow()
@@ -98,12 +85,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
         viewModelScope.launch {
             diaryRepository.patchAdWatch(diaryId)
                 .onLogFailure {
-                    _uiState.updateSuccess { it.copy(isAdWatched = true) }
-                    /*
-                     * TODO:: 서버 동기화 실패 처리
-                     * patchAdWatch API 실패 시 서버는 여전히 isAdWatched = false 상태입니다.
-                     * WorkManager로 Sync 필요
-                     */
+                    workRepository.scheduleAdWatchSync(diaryId)
                 }
         }
     }
