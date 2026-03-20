@@ -32,7 +32,8 @@ data class DiaryContentResponseDto(
     val imageUrl: String?,
     @SerialName("isPublished")
     val isPublished: Boolean,
-    /*TODO:: isAdWatched — 서버 연결 시 추가*/
+    @SerialName("isAdWatched")
+    val isAdWatched: Boolean,
 )
 
 @Serializable
