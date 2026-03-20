@@ -20,6 +20,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.hilingual.core.ads.manager.AdsPreloadManager
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.navigation.DiaryWriteMode
@@ -50,6 +51,7 @@ internal class DiaryWriteViewModel @Inject constructor(
     private val diaryRepository: DiaryRepository,
     private val diaryLocalRepository: DiaryLocalRepository,
     private val textRecognitionRepository: TextRecognitionRepository,
+    adsPreloadManager: AdsPreloadManager,
 ) : ViewModel() {
     private val route: DiaryWrite = savedStateHandle.toRoute<DiaryWrite>()
 
@@ -68,6 +70,7 @@ internal class DiaryWriteViewModel @Inject constructor(
 
     init {
         getTopic(route.selectedDate)
+        adsPreloadManager.preloadInterstitial(BuildConfig.ADMOB_INTERSTITIAL_UNIT_ID)
 
         when (route.mode) {
             DiaryWriteMode.DEFAULT -> loadDiaryTemp()

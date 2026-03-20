@@ -70,4 +70,9 @@ interface DiaryService {
     suspend fun deleteDiary(
         @Path("diaryId") diaryId: Long,
     ): BaseResponse<Unit>
+
+    @PATCH("/api/v1/diaries/{diaryId}/ad-watch")
+    suspend fun patchAdWatch(
+        @Path("diaryId") diaryId: Long,
+    ): BaseResponse<Unit>
 }

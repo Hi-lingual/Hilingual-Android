@@ -43,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.trigger.LocalDialogTrigger
@@ -117,7 +118,7 @@ private fun ProfileEditScreen(
             .fillMaxSize()
             .statusBarColor(HilingualTheme.colors.white)
             .background(HilingualTheme.colors.white)
-            .padding(paddingValues),
+            .subScreenPadding(paddingValues),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         TitleCenterAlignedTopAppBar(

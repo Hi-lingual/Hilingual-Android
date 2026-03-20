@@ -24,6 +24,8 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -136,3 +138,8 @@ fun Modifier.statusBarColor(backgroundColor: Color): Modifier = composed {
         )
     }
 }
+
+fun Modifier.subScreenPadding(paddingValues: PaddingValues) =
+    this
+        .padding(top = paddingValues.calculateTopPadding())
+        .navigationBarsPadding()

@@ -4,7 +4,9 @@ import android.content.Context
 import com.google.android.libraries.ads.mobile.sdk.banner.AdSize
 import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdPreloader
 import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdRequest
+import com.google.android.libraries.ads.mobile.sdk.common.AdRequest
 import com.google.android.libraries.ads.mobile.sdk.common.PreloadConfiguration
+import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAdPreloader
 import com.hilingual.core.ads.banner.BannerAdType
 import com.hilingual.core.ads.utils.screenWidthDp
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -34,6 +36,18 @@ internal class AdsPreloadManagerImpl @Inject constructor(
             Timber.tag("GMA").d("GMA Next Gen 배너 프리로딩 시작: %s", type.adUnitId)
         } catch (e: Exception) {
             Timber.tag("GMA").e(e, "배너 프리로딩 시작 실패: %s", type.adUnitId)
+        }
+    }
+
+    override fun preloadInterstitial(adUnitId: String) {
+        try {
+            val adRequest = AdRequest.Builder(adUnitId).build()
+            val preloadConfig = PreloadConfiguration(adRequest)
+
+            InterstitialAdPreloader.start(adUnitId, preloadConfig)
+            Timber.tag("GMA").d("GMA Next Gen 전면 광고 프리로딩 시작: %s", adUnitId)
+        } catch (e: Exception) {
+            Timber.tag("GMA").e(e, "전면 광고 프리로딩 실패: %s", adUnitId)
         }
     }
 }

@@ -54,4 +54,8 @@ interface DiaryRepository {
     suspend fun deleteDiary(
         diaryId: Long,
     ): Result<Unit>
+
+    suspend fun patchAdWatch(
+        diaryId: Long,
+    ): Result<Unit>
 }

@@ -19,7 +19,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -31,6 +30,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.notification.main.component.NotificationTapRow
 import com.hilingual.presentation.notification.main.component.NotificationTopAppBar
@@ -110,7 +110,7 @@ private fun NotificationScreen(
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white)
-            .padding(paddingValues),
+            .subScreenPadding(paddingValues),
     ) {
         NotificationTopAppBar(
             onBackClick = onBackClick,
