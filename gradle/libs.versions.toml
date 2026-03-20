@@ -15,7 +15,7 @@ versionCode = "2030100"
 versionName = "2.3.1"
 
 # Kotlin
-kotlin = "2.3.10"
+kotlin = "2.3.20"
 kotlinxImmutable = "0.4.0"
 ksp = "2.3.6"
 
@@ -57,14 +57,14 @@ coil = "3.4.0"
 timber = "5.0.1"
 lottieCompose = "6.7.1"
 coroutine = "1.10.2"
-ktlint = "14.1.0"
+ktlint = "14.2.0"
 pebble = "0.1.0"
 balloonCompose = "1.7.5"
 richeditorCompose = "1.0.0-rc13"
 gmaAds = "0.24.0-beta03"
 
 # Firebase
-firebaseBom = "34.10.0"
+firebaseBom = "34.11.0"
 firebaseCrashlyticsPlugin = "3.0.6"
 
 # ML Kit
@@ -78,8 +78,8 @@ profileinstaller = "1.4.1"
 runner = "1.7.0"
 
 # AboutLibraries
-aboutLibraries = "14.0.0-b02"
-amplitude = "1.26.1"
+aboutLibraries = "14.0.0-b03"
+amplitude = "1.26.4"
 
 [libraries]
 # Analytics
