@@ -98,12 +98,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
         viewModelScope.launch {
             diaryRepository.patchAdWatch(diaryId)
                 .onLogFailure {
-                    _uiState.updateSuccess { it.copy(isAdWatched = true) }
-                    /*
-                     * TODO:: 서버 동기화 실패 처리
-                     * patchAdWatch API 실패 시 서버는 여전히 isAdWatched = false 상태입니다.
-                     * WorkManager로 Sync 필요
-                     */
+                    diaryRepository.scheduleAdWatchSync(diaryId)
                 }
         }
     }
