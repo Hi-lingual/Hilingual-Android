@@ -26,7 +26,6 @@ android {
 
 dependencies {
     implementation(projects.core.notification)
-    implementation(projects.data.diary)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.startup)
     implementation(libs.hilt.work)

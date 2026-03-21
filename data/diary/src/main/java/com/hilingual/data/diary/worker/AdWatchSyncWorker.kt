@@ -1,4 +1,4 @@
-package com.hilingual.core.work.worker
+package com.hilingual.data.diary.worker
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
