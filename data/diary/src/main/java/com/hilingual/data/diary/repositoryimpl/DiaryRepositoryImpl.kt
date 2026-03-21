@@ -15,7 +15,15 @@
  */
 package com.hilingual.data.diary.repositoryimpl
 
+import android.content.Context
 import android.net.Uri
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.common.util.toIsoDate
 import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
@@ -28,13 +36,18 @@ import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.model.toDto
 import com.hilingual.data.diary.model.toModel
 import com.hilingual.data.diary.repository.DiaryRepository
+import com.hilingual.data.diary.worker.AdWatchSyncWorker
 import com.hilingual.data.presigned.repository.FileUploaderRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.LocalDate
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import timber.log.Timber
 
 internal class DiaryRepositoryImpl @Inject constructor(
     private val diaryRemoteDataSource: DiaryRemoteDataSource,
     private val fileUploaderRepository: FileUploaderRepository,
+    @ApplicationContext private val context: Context,
 ) : DiaryRepository {
     override suspend fun getDiaryContent(diaryId: Long): Result<DiaryContentModel> =
         suspendRunCatching {
@@ -104,4 +117,23 @@ internal class DiaryRepositoryImpl @Inject constructor(
         suspendRunCatching {
             diaryRemoteDataSource.patchAdWatch(diaryId)
         }
+
+    override fun scheduleAdWatchSync(diaryId: Long) {
+        val workRequest = OneTimeWorkRequestBuilder<AdWatchSyncWorker>()
+            .setInputData(workDataOf(AdWatchSyncWorker.KEY_DIARY_ID to diaryId))
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build()
+            )
+            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 15, TimeUnit.SECONDS)
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            "ad_watch_sync_$diaryId",
+            ExistingWorkPolicy.KEEP,
+            workRequest,
+        )
+        Timber.tag("AdWatchSync").d("WorkManager 재시도 등록: diaryId=$diaryId")
+    }
 }
