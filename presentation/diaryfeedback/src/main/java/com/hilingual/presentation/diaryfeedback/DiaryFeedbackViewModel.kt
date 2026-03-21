@@ -23,7 +23,6 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.common.util.suspendRunCatching
-import com.hilingual.core.work.repository.WorkRepository
 import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
@@ -46,7 +45,6 @@ import kotlinx.coroutines.launch
 internal class DiaryFeedbackViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val diaryRepository: DiaryRepository,
-    private val workRepository: WorkRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<DiaryFeedbackUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<DiaryFeedbackUiState>> = _uiState.asStateFlow()
@@ -100,7 +98,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
         viewModelScope.launch {
             diaryRepository.patchAdWatch(diaryId)
                 .onLogFailure {
-                    workRepository.scheduleAdWatchSync(diaryId)
+                    diaryRepository.scheduleAdWatchSync(diaryId)
                 }
         }
     }
