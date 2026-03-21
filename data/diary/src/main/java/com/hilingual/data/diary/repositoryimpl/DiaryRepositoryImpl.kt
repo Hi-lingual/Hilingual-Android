@@ -124,7 +124,7 @@ internal class DiaryRepositoryImpl @Inject constructor(
             .setConstraints(
                 Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build()
+                    .build(),
             )
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 15, TimeUnit.SECONDS)
             .build()
