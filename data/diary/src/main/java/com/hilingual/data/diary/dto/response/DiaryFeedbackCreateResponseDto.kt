@@ -22,4 +22,7 @@ import kotlinx.serialization.Serializable
 data class DiaryFeedbackCreateResponseDto(
     @SerialName("diaryId")
     val diaryId: Long,
+    // 피드백 화면 진입 시 getDiaryContent()로 직접 조회하므로 모델에 매핑하지 않습니다.
+    @SerialName("isAdWatched")
+    val isAdWatched: Boolean,
 )
