@@ -18,8 +18,8 @@ class AdWatchSyncWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        val diaryId = inputData.keyValueMap[KEY_DIARY_ID] as? Long
-            ?: return Result.failure()
+        val diaryId = inputData.getLong(KEY_DIARY_ID, -1L)
+        if (diaryId == -1L) return Result.failure()
 
         return diaryRepository.patchAdWatch(diaryId)
             .fold(
