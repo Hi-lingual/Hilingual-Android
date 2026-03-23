@@ -207,28 +207,17 @@ private fun FeedScreen(
 
     val isAtBottom by remember(pagerState.currentPage) {
         derivedStateOf {
-            val feedListState = when (pagerState.currentPage) {
-                0 -> recommendFeedList
-                else -> followingFeedList
+            val layoutInfo = currentListState.layoutInfo
+            val visibleItemsInfo = layoutInfo.visibleItemsInfo
+
+            if (layoutInfo.totalItemsCount == 0 || visibleItemsInfo.isEmpty()) {
+                return@derivedStateOf false
             }
 
-            when (feedListState) {
-                is UiState.Success -> {
-                    val feedList = feedListState.data
-                    val layoutInfo = currentListState.layoutInfo
-                    val visibleItemsInfo = layoutInfo.visibleItemsInfo
-
-                    if (feedList.isEmpty() || layoutInfo.totalItemsCount == 0) return@derivedStateOf false
-
-                    val lastVisibleItem = visibleItemsInfo.last()
-                    val viewportHeight =
-                        layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
-                    (lastVisibleItem.index == layoutInfo.totalItemsCount - 1) &&
-                        (lastVisibleItem.offset + lastVisibleItem.size <= viewportHeight)
-                }
-
-                else -> false
-            }
+            val lastVisibleItem = visibleItemsInfo.last()
+            val viewportHeight = layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
+            (lastVisibleItem.index == layoutInfo.totalItemsCount - 1) &&
+                (lastVisibleItem.offset + lastVisibleItem.size <= viewportHeight)
         }
     }
 
@@ -239,13 +228,15 @@ private fun FeedScreen(
             FeedScrollState(
                 itemIndex = currentListState.firstVisibleItemIndex,
                 scrollOffset = currentListState.firstVisibleItemScrollOffset,
+                isAtBottom = isAtBottom,
+                isScrollInProgress = currentListState.isScrollInProgress,
             )
         }
             .pairwise()
             .collect { (previous, current) ->
-                if (currentListState.isScrollInProgress &&
+                if (current.isScrollInProgress &&
                     current.isScrollingDownFrom(previous) &&
-                    isAtBottom
+                    current.isAtBottom
                 ) {
                     latestReadAllFeed()
                 }
@@ -355,6 +346,8 @@ private fun FeedScreenPreview() {
 private data class FeedScrollState(
     val itemIndex: Int,
     val scrollOffset: Int,
+    val isAtBottom: Boolean = false,
+    val isScrollInProgress: Boolean = false,
 ) {
     fun isScrollingDownFrom(previous: FeedScrollState?): Boolean {
         if (previous == null) return false
