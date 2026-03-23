@@ -1,5 +1,6 @@
 package com.hilingual.core.ads.banner
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,9 +19,16 @@ fun HilingualBannerAd(
 ) {
     val adHolder = rememberBannerAdView(type = type)
 
+    val placeHolderResId = if (type.maxHeight == 70) {
+        R.drawable.loading_mypage_and
+    } else {
+        R.drawable.loading_feed_and
+    }
+
     HilingualBannerAd(
         adHolder = adHolder,
         modifier = modifier,
+        placeHolderResId = placeHolderResId,
     )
 }
 
@@ -28,13 +36,14 @@ fun HilingualBannerAd(
 fun HilingualBannerAd(
     adHolder: BannerAdHolder,
     modifier: Modifier = Modifier,
+    @DrawableRes placeHolderResId: Int = R.drawable.loading_feed_and,
 ) {
     val isPreviewMode = LocalInspectionMode.current
 
     Box(modifier = modifier.fillMaxWidth()) {
         if (isPreviewMode || !adHolder.isLoaded) {
             Image(
-                painter = painterResource(id = R.drawable.loading_feed_and),
+                painter = painterResource(id = placeHolderResId),
                 contentDescription = null,
                 modifier = Modifier.fillMaxWidth(),
                 contentScale = ContentScale.Crop,
