@@ -32,7 +32,7 @@ security = "1.1.0"
 datastorePreferences = "1.2.1"
 material = "1.13.0"
 desugarJdkLibs = "2.1.5"
-browser="1.9.0"
+browser="1.10.0"
 
 # Room
 room = "2.8.4"
