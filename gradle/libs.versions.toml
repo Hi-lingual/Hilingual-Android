@@ -61,7 +61,7 @@ ktlint = "14.2.0"
 pebble = "0.1.0"
 balloonCompose = "1.7.5"
 richeditorCompose = "1.0.0-rc13"
-gmaAds = "0.24.0-beta03"
+gmaAds = "0.25.0-beta01"
 
 # Firebase
 firebaseBom = "34.11.0"
