@@ -20,11 +20,9 @@ import androidx.credentials.CredentialManager
 import com.hilingual.core.network.auth.TokenProvider
 import com.hilingual.data.auth.datasource.AuthLocalDataSource
 import com.hilingual.data.auth.datasource.AuthRemoteDataSource
-import com.hilingual.data.auth.datasource.DeviceInfoLocalDataSource
 import com.hilingual.data.auth.datasource.GoogleAuthDataSource
 import com.hilingual.data.auth.datasourceimpl.AuthLocalDataSourceImpl
 import com.hilingual.data.auth.datasourceimpl.AuthRemoteDataSourceImpl
-import com.hilingual.data.auth.datasourceimpl.DeviceInfoLocalDatasourceImpl
 import com.hilingual.data.auth.datasourceimpl.GoogleAuthDataSourceImpl
 import dagger.Binds
 import dagger.Module
@@ -54,12 +52,6 @@ internal abstract class DataSourceModule {
     abstract fun bindAuthLocalDataSource(
         authLocalDataSourceImpl: AuthLocalDataSourceImpl,
     ): AuthLocalDataSource
-
-    @Binds
-    @Singleton
-    abstract fun bindDeviceInfoLocalDataSource(
-        deviceInfoLocalDatasourceImpl: DeviceInfoLocalDatasourceImpl,
-    ): DeviceInfoLocalDataSource
 
     @Binds
     @Singleton

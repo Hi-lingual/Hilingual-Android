@@ -2,9 +2,7 @@ package com.hilingual.data.auth.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import com.hilingual.core.localstorage.builder.DataStoreBuilder
-import com.hilingual.data.auth.di.qualifier.DeviceInfoDataStore
 import com.hilingual.data.auth.di.qualifier.TokenDataStore
 import com.hilingual.data.auth.localstorage.model.TokenPreferences
 import dagger.Module
@@ -19,7 +17,6 @@ import javax.inject.Singleton
 object AuthDataStoreModule {
 
     private const val ENCRYPTED_USER_PREFS = "encrypted_user_prefs.bin"
-    private const val DEVICE_INFO_PREFS = "device_info_prefs"
 
     @Provides
     @Singleton
@@ -31,15 +28,5 @@ object AuthDataStoreModule {
         fileName = ENCRYPTED_USER_PREFS,
         kSerializer = TokenPreferences.serializer(),
         defaultValue = TokenPreferences(),
-    )
-
-    @Provides
-    @Singleton
-    @DeviceInfoDataStore
-    fun provideUserInfoDataStore(
-        @ApplicationContext context: Context,
-    ): DataStore<Preferences> = DataStoreBuilder.createPreferencesDataStore(
-        context = context,
-        name = DEVICE_INFO_PREFS,
     )
 }
