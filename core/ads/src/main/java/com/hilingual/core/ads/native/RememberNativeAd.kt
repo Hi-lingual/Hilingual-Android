@@ -33,8 +33,8 @@ import com.hilingual.core.ads.native.component.NativeLineAdContent
 import timber.log.Timber
 
 @Composable
-internal fun rememberNativeAd(adUnitId: String): NativeAd? {
-    var loadedAdState by remember { mutableStateOf<NativeAd?>(null) }
+internal fun rememberNativeAdState(adUnitId: String): NativeAdState {
+    var state by remember { mutableStateOf<NativeAdState>(NativeAdState.Loading) }
 
     DisposableEffect(adUnitId) {
         var isDisposed = false
@@ -46,11 +46,12 @@ internal fun rememberNativeAd(adUnitId: String): NativeAd? {
 
         val adCallback = object : NativeAdLoaderCallback {
             override fun onNativeAdLoaded(nativeAd: NativeAd) {
-                if (isDisposed) nativeAd.destroy() else loadedAdState = nativeAd
+                if (isDisposed) nativeAd.destroy() else state = NativeAdState.Loaded(nativeAd)
             }
 
             override fun onAdFailedToLoad(adError: LoadAdError) {
                 Timber.tag("GMA").e("GMA Next Gen 네이티브 광고 로드 실패: %s", adError)
+                if (!isDisposed) state = NativeAdState.Failed
             }
         }
 
@@ -58,12 +59,12 @@ internal fun rememberNativeAd(adUnitId: String): NativeAd? {
 
         onDispose {
             isDisposed = true
-            loadedAdState?.destroy()
-            loadedAdState = null
+            (state as? NativeAdState.Loaded)?.ad?.destroy()
+            state = NativeAdState.Loading
         }
     }
 
-    return loadedAdState
+    return state
 }
 
 internal fun createNativeAdView(
@@ -85,4 +86,10 @@ internal fun createNativeAdView(
         callToActionView = composeView
         registerNativeAd(nativeAd, null)
     }
+}
+
+internal sealed interface NativeAdState {
+    data object Loading : NativeAdState
+    data class Loaded(val ad: NativeAd) : NativeAdState
+    data object Failed : NativeAdState
 }

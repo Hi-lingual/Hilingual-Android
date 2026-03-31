@@ -28,7 +28,6 @@ import androidx.compose.ui.platform.LocalContext
 import com.google.android.libraries.ads.mobile.sdk.banner.AdSize
 import com.google.android.libraries.ads.mobile.sdk.banner.AdView
 import com.google.android.libraries.ads.mobile.sdk.banner.BannerAd
-import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdPreloader
 import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdRequest
 import com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback
 import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError
@@ -40,8 +39,10 @@ import timber.log.Timber
 data class BannerAdHolder internal constructor(
     internal val adView: AdView,
     private val _isLoaded: State<Boolean>,
+    private val _isFailed: State<Boolean>,
 ) {
     val isLoaded: Boolean get() = _isLoaded.value
+    val isFailed: Boolean get() = _isFailed.value
 }
 
 @Composable
@@ -53,6 +54,7 @@ fun rememberBannerAdView(
     val screenWidth = context.screenWidthDp
 
     val isLoadedState = remember { mutableStateOf(false) }
+    val isFailedState = remember { mutableStateOf(false) }
 
     val adView = remember {
         createAndLoadAdView(
@@ -62,6 +64,7 @@ fun rememberBannerAdView(
             screenWidth = screenWidth,
             maxHeight = type.maxHeight,
             onLoaded = { isLoadedState.value = true },
+            onFailed = { isFailedState.value = true },
         )
     }
 
@@ -71,7 +74,7 @@ fun rememberBannerAdView(
         }
     }
 
-    return remember { BannerAdHolder(adView, isLoadedState) }
+    return remember { BannerAdHolder(adView, isLoadedState, isFailedState) }
 }
 
 private fun createAndLoadAdView(
@@ -81,27 +84,20 @@ private fun createAndLoadAdView(
     screenWidth: Int,
     maxHeight: Int?,
     onLoaded: () -> Unit,
+    onFailed: () -> Unit,
 ): AdView = AdView(context).apply {
     if (activity == null) {
         Timber.tag("GMA").w("Activity가 null이므로 광고를 로드할 수 없습니다.")
         return@apply
     }
 
-    val preloadedAd = BannerAdPreloader.pollAd(adUnitId)
-    if (preloadedAd != null) {
-        Timber.tag("GMA").d("프리로드된 배너 광고를 화면에 등록합니다.")
-        registerBannerAd(preloadedAd, activity)
-        onLoaded()
-    } else {
-        Timber.tag("GMA").d("프리로드된 광고가 없어 새로 로드를 요청합니다.")
-        val adSize = getAdSize(context, screenWidth, maxHeight)
-        val adRequest = BannerAdRequest.Builder(adUnitId, adSize).build()
+    val adSize = getAdSize(context, screenWidth, maxHeight)
+    val adRequest = BannerAdRequest.Builder(adUnitId, adSize).build()
 
-        loadAd(adRequest, createAdLoadCallback(onLoaded))
-    }
+    loadAd(adRequest, createAdLoadCallback(onLoaded, onFailed))
 }
 
-private fun createAdLoadCallback(onLoaded: () -> Unit) = object : AdLoadCallback<BannerAd> {
+private fun createAdLoadCallback(onLoaded: () -> Unit, onFailed: () -> Unit) = object : AdLoadCallback<BannerAd> {
     override fun onAdLoaded(ad: BannerAd) {
         Timber.tag("GMA").d("GMA Next Gen 배너 광고 새로 로드 성공")
         onLoaded()
@@ -109,6 +105,7 @@ private fun createAdLoadCallback(onLoaded: () -> Unit) = object : AdLoadCallback
 
     override fun onAdFailedToLoad(adError: LoadAdError) {
         Timber.tag("GMA").e("GMA Next Gen 배너 광고 로드 실패: %s", adError)
+        onFailed()
     }
 }
 
