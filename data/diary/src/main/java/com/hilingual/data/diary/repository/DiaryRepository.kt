@@ -58,4 +58,6 @@ interface DiaryRepository {
     suspend fun patchAdWatch(
         diaryId: Long,
     ): Result<Unit>
+
+    fun scheduleAdWatchSync(diaryId: Long)
 }

@@ -8,14 +8,14 @@ minSdk = "30"
 targetSdk = "36"
 jvmTarget = "17"
 androidGradlePlugin = "9.1.0"
-spotless = "8.3.0"
+spotless = "8.4.0"
 
 # App version
-versionCode = "2030100"
-versionName = "2.3.1"
+versionCode = "2040000"
+versionName = "2.4.0"
 
 # Kotlin
-kotlin = "2.3.10"
+kotlin = "2.3.20"
 kotlinxImmutable = "0.4.0"
 ksp = "2.3.6"
 
@@ -26,19 +26,19 @@ androidxAppCompat = "1.7.1"
 lifecycleRuntimeKtx = "2.10.0"
 lifecycleRuntimeComposeAndroid = "2.10.0"
 activityCompose = "1.13.0"
-composeBom = "2026.03.00"
+composeBom = "2026.03.01"
 composeNavigation = "2.9.7"
 security = "1.1.0"
 datastorePreferences = "1.2.1"
 material = "1.13.0"
 desugarJdkLibs = "2.1.5"
-browser="1.9.0"
+browser="1.10.0"
 
 # Room
 room = "2.8.4"
 
 # WorkManager
-work = "2.11.1"
+work = "2.11.2"
 startup = "1.2.0"
 
 # Test
@@ -57,14 +57,14 @@ coil = "3.4.0"
 timber = "5.0.1"
 lottieCompose = "6.7.1"
 coroutine = "1.10.2"
-ktlint = "14.1.0"
+ktlint = "14.2.0"
 pebble = "0.1.0"
 balloonCompose = "1.7.5"
 richeditorCompose = "1.0.0-rc13"
-gmaAds = "0.24.0-beta03"
+gmaAds = "0.25.0-beta01"
 
 # Firebase
-firebaseBom = "34.10.0"
+firebaseBom = "34.11.0"
 firebaseCrashlyticsPlugin = "3.0.6"
 
 # ML Kit
@@ -73,13 +73,13 @@ coroutinesPlayServices = "1.10.2"
 
 uiautomator = "2.3.0"
 benchmarkMacroJunit4 = "1.4.1"
-baselineprofile = "1.5.0-alpha04"
+baselineprofile = "1.5.0-alpha05"
 profileinstaller = "1.4.1"
 runner = "1.7.0"
 
 # AboutLibraries
-aboutLibraries = "14.0.0-b02"
-amplitude = "1.26.1"
+aboutLibraries = "14.0.0-b03"
+amplitude = "1.27.0"
 
 [libraries]
 # Analytics
