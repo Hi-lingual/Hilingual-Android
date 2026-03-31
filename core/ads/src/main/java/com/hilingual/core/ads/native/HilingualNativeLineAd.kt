@@ -29,24 +29,21 @@ fun HilingualNativeLineAd(
     adUnitId: String,
     modifier: Modifier = Modifier,
 ) {
-    val isPreviewMode = LocalInspectionMode.current
+    val state = if (LocalInspectionMode.current) NativeAdState.Loading else rememberNativeAdState(adUnitId)
 
-    if (isPreviewMode) {
-        NativeLineAdContent(
-            title = "광고 이름",
-            body = "메인 카피",
+    when (state) {
+        NativeAdState.Loading -> NativeLineAdContent(
+            title = "Ad Loading...",
+            body = "",
             modifier = modifier,
         )
-    } else {
-        val nativeAd = rememberNativeAd(adUnitId)
-        if (nativeAd != null) {
-            AndroidView(
-                modifier = modifier.fillMaxWidth(),
-                factory = { context ->
-                    createNativeAdView(context, nativeAd)
-                },
-            )
-        }
+
+        is NativeAdState.Loaded -> AndroidView(
+            modifier = modifier.fillMaxWidth(),
+            factory = { context -> createNativeAdView(context, state.ad) },
+        )
+
+        NativeAdState.Failed -> {}
     }
 }
 
