@@ -55,21 +55,23 @@ fun HilingualBannerAd(
 ) {
     val isPreviewMode = LocalInspectionMode.current
 
-    Box(modifier = modifier.fillMaxWidth()) {
-        if (isPreviewMode || !adHolder.isLoaded) {
-            Image(
-                painter = painterResource(id = placeHolderResId),
-                contentDescription = null,
-                modifier = Modifier.fillMaxWidth(),
-                contentScale = ContentScale.Crop,
-            )
-        }
+    if (isPreviewMode || !adHolder.isFailed) {
+        Box(modifier = modifier.fillMaxWidth()) {
+            if (isPreviewMode || !adHolder.isLoaded) {
+                Image(
+                    painter = painterResource(id = placeHolderResId),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = ContentScale.Crop,
+                )
+            }
 
-        if (!isPreviewMode && adHolder.isLoaded) {
-            AndroidView(
-                modifier = Modifier.fillMaxWidth(),
-                factory = { adHolder.adView },
-            )
+            if (!isPreviewMode && adHolder.isLoaded) {
+                AndroidView(
+                    modifier = Modifier.fillMaxWidth(),
+                    factory = { adHolder.adView },
+                )
+            }
         }
     }
 }

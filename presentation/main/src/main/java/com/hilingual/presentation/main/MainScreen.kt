@@ -20,7 +20,6 @@ import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
@@ -45,7 +44,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
@@ -89,7 +87,6 @@ internal fun MainScreen(
     appState: MainAppState,
     tracker: Tracker,
     appRestarter: AppRestarter,
-    viewModel: MainViewModel = hiltViewModel(),
 ) {
     val isOffline by appState.isOffline.collectAsStateWithLifecycle()
     val isBottomBarVisible by appState.isBottomBarVisible.collectAsStateWithLifecycle()
@@ -316,21 +313,24 @@ private fun BottomSection(
     onTabSelected: (MainTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    AnimatedVisibility(
-        visible = isVisible,
-        enter = fadeIn() + slideIn { IntOffset(0, it.height) },
-        exit = fadeOut() + slideOut { IntOffset(0, it.height) },
-    ) {
-        Column(
-            modifier = modifier
-                .animateContentSize()
-                .navigationBarsPadding(),
+    Column(modifier = modifier) {
+        AnimatedVisibility(
+            visible = isVisible,
+            enter = fadeIn() + slideIn { IntOffset(0, it.height) },
+            exit = fadeOut() + slideOut { IntOffset(0, it.height) },
         ) {
             MainBottomBar(
                 tabs = MainTab.entries.toPersistentList(),
                 currentTab = currentTab,
                 onTabSelected = onTabSelected,
             )
+        }
+        AnimatedVisibility(
+            visible = isVisible,
+            modifier = Modifier.navigationBarsPadding(),
+            enter = EnterTransition.None,
+            exit = ExitTransition.None,
+        ) {
             HilingualNativeLineAd(adUnitId = BuildConfig.ADMOB_NATIVE_UNIT_ID)
         }
     }
