@@ -11,8 +11,8 @@ androidGradlePlugin = "9.1.0"
 spotless = "8.4.0"
 
 # App version
-versionCode = "2040000"
-versionName = "2.4.0"
+versionCode = "2040100"
+versionName = "2.4.1"
 
 # Kotlin
 kotlin = "2.3.20"
