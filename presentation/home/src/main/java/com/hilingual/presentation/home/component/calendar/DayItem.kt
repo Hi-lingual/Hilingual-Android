@@ -71,7 +71,10 @@ internal fun DayItem(
     Box(
         modifier = modifier
             .aspectRatio(1f)
-            .noRippleClickable(onClick = onClick),
+            .noRippleClickable(
+                enabled = day.position == DayPosition.MonthDate,
+                onClick = onClick,
+            ),
         contentAlignment = Alignment.Center,
     ) {
         when {
