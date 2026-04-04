@@ -31,4 +31,6 @@ interface DeviceInfoProvider {
     fun getOsType(): String
 
     fun getUuid(): String
+
+    fun getTimezone(): String
 }

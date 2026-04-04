@@ -23,7 +23,6 @@ import com.hilingual.data.auth.repository.AuthRepository
 import com.hilingual.data.onboarding.repository.OnboardingRepository
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.TimeZone
 import javax.inject.Inject
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -80,8 +79,7 @@ class AuthViewModel @Inject constructor(
 
     private suspend fun putDeviceInfo() {
         runCatching {
-            val timezone = TimeZone.getDefault().id
-            userRepository.putDeviceInfo(timezone)
+            userRepository.putDeviceInfo()
         }.onLogFailure { }
     }
 

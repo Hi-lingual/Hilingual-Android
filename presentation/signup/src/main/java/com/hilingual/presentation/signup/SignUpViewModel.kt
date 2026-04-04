@@ -24,7 +24,6 @@ import com.hilingual.data.user.model.user.NicknameValidationResult
 import com.hilingual.data.user.model.user.UserProfileModel
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.TimeZone
 import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -191,8 +190,7 @@ internal class SignUpViewModel @Inject constructor(
 
     private suspend fun putDeviceInfo() {
         runCatching {
-            val timezone = TimeZone.getDefault().id
-            userRepository.putDeviceInfo(timezone)
+            userRepository.putDeviceInfo()
         }.onLogFailure { }
     }
 }

@@ -22,6 +22,7 @@ import android.provider.Settings
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.extension.appVersionName
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.util.TimeZone
 import javax.inject.Inject
 
 internal class DeviceInfoProviderImpl @Inject constructor(
@@ -47,4 +48,6 @@ internal class DeviceInfoProviderImpl @Inject constructor(
         context.contentResolver,
         Settings.Secure.ANDROID_ID,
     )
+
+    override fun getTimezone(): String = TimeZone.getDefault().id
 }

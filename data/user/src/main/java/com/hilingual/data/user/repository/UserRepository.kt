@@ -83,7 +83,5 @@ interface UserRepository {
         targetUserId: Long,
     ): Result<Unit>
 
-    suspend fun putDeviceInfo(
-        timezone: String,
-    ): Result<Unit>
+    suspend fun putDeviceInfo(): Result<Unit>
 }

@@ -170,15 +170,15 @@ internal class UserRepositoryImpl @Inject constructor(
             userRemoteDataSource.deleteFollow(targetUserId = targetUserId)
         }
 
-    override suspend fun putDeviceInfo(timezone: String): Result<Unit> =
+    override suspend fun putDeviceInfo(): Result<Unit> =
         suspendRunCatching {
             userRemoteDataSource.putDeviceInfo(
-                putDeviceInfoRequestDto = deviceInfoProvider.toPutDeviceInfoRequestDto(timezone),
+                putDeviceInfoRequestDto = deviceInfoProvider.toPutDeviceInfoRequestDto(),
             )
         }
 
-    private fun DeviceInfoProvider.toPutDeviceInfoRequestDto(timezone: String) = PutDeviceInfoRequestDto(
-        timezone = timezone,
+    private fun DeviceInfoProvider.toPutDeviceInfoRequestDto() = PutDeviceInfoRequestDto(
+        timezone = getTimezone(),
         deviceUuid = getUuid(),
         deviceName = getDeviceName(),
         deviceType = getDeviceType(),
