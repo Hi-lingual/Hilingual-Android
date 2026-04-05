@@ -88,24 +88,8 @@ internal class SignUpViewModel @Inject constructor(
                 imageUri = imageUri,
             )
             userRepository.postUserProfile(userProfile)
-                .onSuccess {
-                    userRepository.saveRegisterStatus(true)
-                    onboardingRepository.updateIsHomeOnboardingCompleted(false)
-                    updateIsSplashOnboardingCompleted()
-                    _sideEffect.emit(SignUpSideEffect.NavigateToHome)
-                }
-                .onLogFailure {
-                    _uiState.update { it.copy(isLoading = false) }
-                    _sideEffect.emit(
-                        SignUpSideEffect.ShowRetryDialog {
-                            onRegisterClick(
-                                nickname,
-                                isMarketingAgreed,
-                                imageUri,
-                            )
-                        },
-                    )
-                }
+                .onSuccess { onProfileRegistered(nickname, isMarketingAgreed, imageUri) }
+                .onLogFailure { showRegisterRetryDialog(nickname, isMarketingAgreed, imageUri) }
         }
     }
 
@@ -180,6 +164,25 @@ internal class SignUpViewModel @Inject constructor(
                     _sideEffect.emit(SignUpSideEffect.ShowRetryDialog { validateNickname(nickname) })
                 }
         }
+    }
+
+    private suspend fun onProfileRegistered(nickname: String, isMarketingAgreed: Boolean, imageUri: Uri?) {
+        if (!putDeviceInfo()) {
+            showRegisterRetryDialog(nickname, isMarketingAgreed, imageUri)
+            return
+        }
+        userRepository.saveRegisterStatus(true)
+        onboardingRepository.updateIsHomeOnboardingCompleted(false)
+        updateIsSplashOnboardingCompleted()
+        _sideEffect.emit(SignUpSideEffect.NavigateToHome)
+    }
+
+    private suspend fun putDeviceInfo(): Boolean =
+        userRepository.putDeviceInfo().onLogFailure { }.isSuccess
+
+    private suspend fun showRegisterRetryDialog(nickname: String, isMarketingAgreed: Boolean, imageUri: Uri?) {
+        _uiState.update { it.copy(isLoading = false) }
+        _sideEffect.emit(SignUpSideEffect.ShowRetryDialog { onRegisterClick(nickname, isMarketingAgreed, imageUri) })
     }
 
     private suspend fun updateIsSplashOnboardingCompleted() {

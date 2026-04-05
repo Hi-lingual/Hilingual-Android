@@ -16,10 +16,12 @@
 package com.hilingual.data.user.repositoryimpl
 
 import android.net.Uri
+import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.data.presigned.repository.FileUploaderRepository
 import com.hilingual.data.user.datasource.UserLocalDataSource
 import com.hilingual.data.user.datasource.UserRemoteDataSource
+import com.hilingual.data.user.dto.request.PutDeviceInfoRequestDto
 import com.hilingual.data.user.model.follow.FollowUserListResultModel
 import com.hilingual.data.user.model.follow.toModel
 import com.hilingual.data.user.model.notification.NotificationDetailModel
@@ -39,6 +41,7 @@ internal class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
     private val fileUploaderRepository: FileUploaderRepository,
     private val userLocalDataSource: UserLocalDataSource,
+    private val deviceInfoProvider: DeviceInfoProvider,
 ) : UserRepository {
     override suspend fun getNicknameAvailability(nickname: String): Result<NicknameValidationResult> =
         suspendRunCatching {
@@ -166,4 +169,21 @@ internal class UserRepositoryImpl @Inject constructor(
         suspendRunCatching {
             userRemoteDataSource.deleteFollow(targetUserId = targetUserId)
         }
+
+    override suspend fun putDeviceInfo(): Result<Unit> =
+        suspendRunCatching {
+            userRemoteDataSource.putDeviceInfo(
+                putDeviceInfoRequestDto = deviceInfoProvider.toPutDeviceInfoRequestDto(),
+            )
+        }
+
+    private fun DeviceInfoProvider.toPutDeviceInfoRequestDto() = PutDeviceInfoRequestDto(
+        timezone = getTimezone(),
+        deviceUuid = getUuid(),
+        deviceName = getDeviceName(),
+        deviceType = getDeviceType(),
+        osType = getOsType(),
+        osVersion = getOsVersion(),
+        appVersion = getAppVersion(),
+    )
 }

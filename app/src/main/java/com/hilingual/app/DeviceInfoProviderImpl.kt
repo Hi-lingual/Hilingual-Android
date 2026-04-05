@@ -15,17 +15,19 @@
  */
 package com.hilingual.app
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.provider.Settings
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.extension.appVersionName
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.util.TimeZone
 import javax.inject.Inject
 
 internal class DeviceInfoProviderImpl @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : DeviceInfoProvider {
-
     override fun getDeviceName(): String = Build.MODEL
 
     override fun getDeviceType(): String =
@@ -40,4 +42,12 @@ internal class DeviceInfoProviderImpl @Inject constructor(
     override fun getRole(): String = "USER"
 
     override fun getOsType(): String = "Android"
+
+    @SuppressLint("HardwareIds")
+    override fun getUuid(): String = Settings.Secure.getString(
+        context.contentResolver,
+        Settings.Secure.ANDROID_ID,
+    )
+
+    override fun getTimezone(): String = TimeZone.getDefault().id
 }

@@ -29,4 +29,8 @@ interface DeviceInfoProvider {
     fun getRole(): String
 
     fun getOsType(): String
+
+    fun getUuid(): String
+
+    fun getTimezone(): String
 }
