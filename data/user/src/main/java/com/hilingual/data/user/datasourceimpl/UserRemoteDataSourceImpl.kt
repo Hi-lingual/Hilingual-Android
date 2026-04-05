@@ -32,7 +32,6 @@ import com.hilingual.data.user.dto.response.user.UserInfoResponseDto
 import com.hilingual.data.user.dto.response.user.UserLoginInfoResponseDto
 import com.hilingual.data.user.service.UserService
 import javax.inject.Inject
-import timber.log.Timber
 
 internal class UserRemoteDataSourceImpl @Inject constructor(
     private val userService: UserService,
