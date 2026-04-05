@@ -21,13 +21,18 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import okhttp3.Interceptor
 import okhttp3.Response
+import timber.log.Timber
 
 @Singleton
 class TimezoneInterceptor @Inject constructor() : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
+        val timezoneId = TimeZone.getDefault().id
+        Timber.d("X_TIMEZONE: $timezoneId")
+
         val request = chain.request().newBuilder()
-            .header(X_TIMEZONE, TimeZone.getDefault().id)
+            .header(X_TIMEZONE, timezoneId)
             .build()
+
         return chain.proceed(request)
     }
 }
