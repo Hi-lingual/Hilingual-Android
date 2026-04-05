@@ -22,6 +22,7 @@ import com.hilingual.core.network.auth.TokenAuthenticator
 import com.hilingual.core.network.di.qualifier.LongTimeoutClient
 import com.hilingual.core.network.di.qualifier.NoAuthClient
 import com.hilingual.core.network.di.qualifier.RefreshClient
+import com.hilingual.core.network.timezone.TimezoneInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -87,10 +88,12 @@ object NetworkModule {
     fun provideDefaultOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
         authInterceptor: AuthInterceptor,
+        timezoneInterceptor: TimezoneInterceptor,
         tokenAuthenticator: TokenAuthenticator,
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .addInterceptor(authInterceptor)
+        .addInterceptor(timezoneInterceptor)
         .authenticator(tokenAuthenticator)
         .build()
 
@@ -99,8 +102,10 @@ object NetworkModule {
     @NoAuthClient
     fun provideLoginOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
+        timezoneInterceptor: TimezoneInterceptor,
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
+        .addInterceptor(timezoneInterceptor)
         .build()
 
     @Provides
@@ -108,8 +113,10 @@ object NetworkModule {
     @RefreshClient
     fun provideRefreshOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
+        timezoneInterceptor: TimezoneInterceptor,
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
+        .addInterceptor(timezoneInterceptor)
         .build()
 
     @Provides
@@ -118,10 +125,12 @@ object NetworkModule {
     fun provideLongTimeoutOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
         authInterceptor: AuthInterceptor,
+        timezoneInterceptor: TimezoneInterceptor,
         tokenAuthenticator: TokenAuthenticator,
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .addInterceptor(authInterceptor)
+        .addInterceptor(timezoneInterceptor)
         .authenticator(tokenAuthenticator)
         .connectTimeout(60.seconds)
         .readTimeout(60.seconds)
