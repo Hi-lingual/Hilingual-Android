@@ -60,14 +60,7 @@ class AuthViewModel @Inject constructor(
                     Timber.d("Google ID Token: $idToken")
                     authRepository.login(idToken)
                         .onSuccess { authResult ->
-                            val sideEffect = if (authResult.registerStatus) {
-                                updateIsSplashOnboardingCompleted()
-                                putDeviceInfo()
-                                AuthSideEffect.NavigateToHome
-                            } else {
-                                AuthSideEffect.NavigateToSignUp
-                            }
-                            _navigationEvent.tryEmit(sideEffect)
+                            onLoginSuccess(authResult.registerStatus)
                         }
                         .onLogFailure { }
                 }
@@ -77,11 +70,17 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    private suspend fun putDeviceInfo() {
-        runCatching {
-            userRepository.putDeviceInfo()
-        }.onLogFailure { }
+    private suspend fun onLoginSuccess(isRegistered: Boolean) {
+        if (isRegistered) {
+            updateIsSplashOnboardingCompleted()
+            if (putDeviceInfo()) _navigationEvent.tryEmit(AuthSideEffect.NavigateToHome)
+        } else {
+            _navigationEvent.tryEmit(AuthSideEffect.NavigateToSignUp)
+        }
     }
+
+    private suspend fun putDeviceInfo(): Boolean =
+        userRepository.putDeviceInfo().onLogFailure { }.isSuccess
 
     private suspend fun updateIsSplashOnboardingCompleted() {
         onboardingRepository.completeSplashOnboarding()
