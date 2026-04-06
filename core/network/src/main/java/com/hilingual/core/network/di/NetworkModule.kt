@@ -91,9 +91,9 @@ object NetworkModule {
         timezoneInterceptor: TimezoneInterceptor,
         tokenAuthenticator: TokenAuthenticator,
     ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
         .addInterceptor(authInterceptor)
         .addInterceptor(timezoneInterceptor)
+        .addInterceptor(loggingInterceptor)
         .authenticator(tokenAuthenticator)
         .build()
 
@@ -104,8 +104,8 @@ object NetworkModule {
         loggingInterceptor: HttpLoggingInterceptor,
         timezoneInterceptor: TimezoneInterceptor,
     ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
         .addInterceptor(timezoneInterceptor)
+        .addInterceptor(loggingInterceptor)
         .build()
 
     @Provides
@@ -115,8 +115,8 @@ object NetworkModule {
         loggingInterceptor: HttpLoggingInterceptor,
         timezoneInterceptor: TimezoneInterceptor,
     ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
         .addInterceptor(timezoneInterceptor)
+        .addInterceptor(loggingInterceptor)
         .build()
 
     @Provides
@@ -128,9 +128,9 @@ object NetworkModule {
         timezoneInterceptor: TimezoneInterceptor,
         tokenAuthenticator: TokenAuthenticator,
     ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
         .addInterceptor(authInterceptor)
         .addInterceptor(timezoneInterceptor)
+        .addInterceptor(loggingInterceptor)
         .authenticator(tokenAuthenticator)
         .connectTimeout(60.seconds)
         .readTimeout(60.seconds)
