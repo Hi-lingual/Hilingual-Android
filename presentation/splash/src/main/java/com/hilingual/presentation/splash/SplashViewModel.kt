@@ -105,11 +105,11 @@ internal class SplashViewModel @Inject constructor(
                 !accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty() && isRegistered
             }.getOrElse { false }
 
-            val shouldNavigateToHome = isLoggedIn && putDeviceInfo()
+            if (isLoggedIn) putDeviceInfo()
 
             delay(1400L)
 
-            _sideEffect.tryEmit(if (shouldNavigateToHome) NavigateToHome else NavigateToAuth)
+            _sideEffect.tryEmit(if (isLoggedIn) NavigateToHome else NavigateToAuth)
         }
     }
 
