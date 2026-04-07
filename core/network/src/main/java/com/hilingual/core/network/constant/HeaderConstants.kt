@@ -18,3 +18,4 @@ package com.hilingual.core.network.constant
 const val AUTHORIZATION = "Authorization"
 const val PROVIDER_TOKEN = "Provider-Token"
 const val BEARER = "Bearer"
+const val X_TIMEZONE = "X-Timezone"
