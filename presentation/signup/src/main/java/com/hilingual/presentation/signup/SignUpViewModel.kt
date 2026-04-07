@@ -51,6 +51,8 @@ internal class SignUpViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SignUpUiState())
     val uiState: StateFlow<SignUpUiState> = _uiState.asStateFlow()
 
+    private var isProfileCreated = false
+
     private val _sideEffect = MutableSharedFlow<SignUpSideEffect>()
     val sideEffect: SharedFlow<SignUpSideEffect> = _sideEffect.asSharedFlow()
 
@@ -82,14 +84,19 @@ internal class SignUpViewModel @Inject constructor(
         if (uiState.value.isLoading) return
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val userProfile = UserProfileModel(
-                nickname = nickname,
-                adAlarmAgree = isMarketingAgreed,
-                imageUri = imageUri,
-            )
-            userRepository.postUserProfile(userProfile)
-                .onSuccess { onProfileRegistered(nickname, isMarketingAgreed, imageUri) }
-                .onLogFailure { showRegisterRetryDialog(nickname, isMarketingAgreed, imageUri) }
+            if (!isProfileCreated) {
+                val userProfile = UserProfileModel(
+                    nickname = nickname,
+                    adAlarmAgree = isMarketingAgreed,
+                    imageUri = imageUri,
+                )
+                val profileResult = userRepository.postUserProfile(userProfile)
+                profileResult
+                    .onSuccess { isProfileCreated = true }
+                    .onLogFailure { showRegisterRetryDialog(nickname, isMarketingAgreed, imageUri) }
+                if (profileResult.isFailure) return@launch
+            }
+            onProfileRegistered(nickname, isMarketingAgreed, imageUri)
         }
     }
 
