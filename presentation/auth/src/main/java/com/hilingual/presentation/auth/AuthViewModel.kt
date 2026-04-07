@@ -73,7 +73,8 @@ class AuthViewModel @Inject constructor(
     private suspend fun onLoginSuccess(isRegistered: Boolean) {
         if (isRegistered) {
             updateIsSplashOnboardingCompleted()
-            if (putDeviceInfo()) _navigationEvent.tryEmit(AuthSideEffect.NavigateToHome)
+            putDeviceInfo()
+            _navigationEvent.tryEmit(AuthSideEffect.NavigateToHome)
         } else {
             _navigationEvent.tryEmit(AuthSideEffect.NavigateToSignUp)
         }
