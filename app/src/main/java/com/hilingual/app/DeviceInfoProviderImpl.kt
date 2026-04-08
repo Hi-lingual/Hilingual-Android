@@ -23,6 +23,7 @@ import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.extension.appVersionName
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.TimeZone
+import java.util.UUID
 import javax.inject.Inject
 
 internal class DeviceInfoProviderImpl @Inject constructor(
@@ -47,7 +48,7 @@ internal class DeviceInfoProviderImpl @Inject constructor(
     override fun getUuid(): String = Settings.Secure.getString(
         context.contentResolver,
         Settings.Secure.ANDROID_ID,
-    )
+    ) ?: UUID.randomUUID().toString()
 
     override fun getTimezone(): String = TimeZone.getDefault().id
 }
