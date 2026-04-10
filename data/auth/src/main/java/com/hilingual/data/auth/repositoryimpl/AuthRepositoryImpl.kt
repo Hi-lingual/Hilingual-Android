@@ -69,12 +69,8 @@ internal class AuthRepositoryImpl @Inject constructor(
     }
 
     private fun DeviceInfoProvider.toLoginRequestDto() = LoginRequestDto(
-        provider = this.getProvider(),
-        role = this.getRole(),
-        deviceName = this.getDeviceName(),
-        deviceType = this.getDeviceType(),
-        osType = this.getOsType(),
-        osVersion = this.getOsVersion(),
-        appVersion = this.getAppVersion(),
+        provider = getProvider(),
+        role = getRole(),
+        deviceUuid = getUuid(),
     )
 }
