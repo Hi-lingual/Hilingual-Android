@@ -65,7 +65,7 @@ gmaAds = "0.25.0-beta01"
 
 # Firebase
 firebaseBom = "34.11.0"
-firebaseCrashlyticsPlugin = "3.0.6"
+firebaseCrashlyticsPlugin = "3.0.7"
 
 # ML Kit
 mlkitTextRecognition = "16.0.1"
