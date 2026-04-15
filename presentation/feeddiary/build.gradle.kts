@@ -27,4 +27,5 @@ dependencies {
     implementation(projects.data.diary)
     implementation(projects.data.feed)
     implementation(projects.data.user)
+    implementation(projects.data.calendar)
 }
