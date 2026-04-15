@@ -46,6 +46,8 @@ import com.hilingual.core.ads.banner.BannerAdType.INLINE_BANNER
 import com.hilingual.core.ads.banner.HilingualBannerAd
 import com.hilingual.core.ads.banner.rememberBannerAdView
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.ui.component.dropdown.TopicDropdown
+import com.hilingual.core.ui.component.dropdown.Topics
 import com.hilingual.core.ui.component.item.diary.card.DiaryCard
 import com.hilingual.core.ui.component.item.diary.card.FeedbackCard
 import com.hilingual.core.ui.component.item.diary.card.FeedbackEmptyCard
@@ -59,6 +61,7 @@ import kotlinx.collections.immutable.persistentListOf
 fun GrammarSpellingTab(
     listState: LazyListState,
     writtenDate: String,
+    topics: Topics,
     diaryContent: DiaryContent,
     feedbackList: ImmutableList<FeedbackContent>,
     isAIWrittenDiary: Boolean,
@@ -95,6 +98,17 @@ fun GrammarSpellingTab(
                 )
             }
             Spacer(Modifier.height(12.dp))
+        }
+
+        item {
+            TopicDropdown(
+                topics = topics,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+            Spacer(Modifier.height(12.dp))
+        }
+
+        item {
             with(diaryContent) {
                 DiaryCard(
                     isAIWritten = isAIWrittenDiary,
@@ -187,6 +201,7 @@ private fun GrammarSpellingTabPreview() {
             listState = rememberLazyListState(),
             writtenDate = "7월 11일 금요일",
             diaryContent = DiaryContent(),
+            topics = Topics(),
             feedbackList = persistentListOf(),
             isAIWrittenDiary = isAIWritten,
             onImageClick = {},
