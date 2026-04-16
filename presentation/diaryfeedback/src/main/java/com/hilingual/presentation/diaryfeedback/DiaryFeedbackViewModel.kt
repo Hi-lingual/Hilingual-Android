@@ -22,7 +22,9 @@ import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.common.util.parseKoreanFullDateToIso
 import com.hilingual.core.common.util.suspendRunCatching
+import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
@@ -45,6 +47,7 @@ import kotlinx.coroutines.launch
 internal class DiaryFeedbackViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val diaryRepository: DiaryRepository,
+    private val calendarRepository: CalendarRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<DiaryFeedbackUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<DiaryFeedbackUiState>> = _uiState.asStateFlow()
@@ -82,10 +85,15 @@ internal class DiaryFeedbackViewModel @Inject constructor(
             val feedbacksResult = feedbacksDeferred.await().getOrThrow()
             val recommendExpressionsResult = recommendExpressionsDeferred.await().getOrThrow()
 
+            val topicResult = calendarRepository.getTopic(
+                diaryResult.writtenDate.parseKoreanFullDateToIso(),
+            ).getOrThrow()
+
             DiaryFeedbackUiState(
                 isPublished = diaryResult.isPublished,
                 isAdWatched = diaryResult.isAdWatched,
                 writtenDate = diaryResult.writtenDate,
+                topics = topicResult.toState(),
                 diaryContent = diaryResult.toState(),
                 feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),
                 recommendExpressionList = recommendExpressionsResult.map { it.toState() }.toImmutableList(),

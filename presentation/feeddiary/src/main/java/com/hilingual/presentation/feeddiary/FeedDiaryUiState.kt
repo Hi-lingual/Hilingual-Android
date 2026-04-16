@@ -16,9 +16,11 @@
 package com.hilingual.presentation.feeddiary
 
 import androidx.compose.runtime.Immutable
+import com.hilingual.core.ui.component.dropdown.Topics
 import com.hilingual.core.ui.model.DiaryContent
 import com.hilingual.core.ui.model.FeedbackContent
 import com.hilingual.core.ui.model.RecommendExpression
+import com.hilingual.data.calendar.model.TopicModel
 import com.hilingual.data.diary.model.DiaryContentModel
 import com.hilingual.data.diary.model.DiaryFeedbackModel
 import com.hilingual.data.diary.model.DiaryRecommendExpressionModel
@@ -32,6 +34,7 @@ import kotlinx.collections.immutable.toImmutableList
 internal data class FeedDiaryUiState(
     val writtenDate: String = "",
     val isMine: Boolean = false,
+    val topics: Topics = Topics(),
     val profileContent: ProfileContentUiModel = ProfileContentUiModel(),
     val diaryContent: DiaryContent = DiaryContent(),
     val feedbackList: ImmutableList<FeedbackContent> = persistentListOf(),
@@ -41,6 +44,10 @@ internal data class FeedDiaryUiState(
         val Fake = FeedDiaryUiState(
             isMine = true,
             writtenDate = "8월 28일 목요일",
+            topics = Topics(
+                enTopic = "영어 주제",
+                koTopic = "한국어 주제",
+            ),
             profileContent = ProfileContentUiModel(
                 userId = 0,
                 profileUrl = "",
@@ -115,6 +122,11 @@ internal fun FeedDiaryProfileModel.toState() = ProfileContentUiModel(
     sharedDateInMinutes = this.diary.sharedDate,
     isLiked = this.diary.isLiked,
     likeCount = this.diary.likeCount,
+)
+
+internal fun TopicModel.toState() = Topics(
+    enTopic = this.topicEn,
+    koTopic = this.topicKor,
 )
 
 internal fun DiaryContentModel.toState() = DiaryContent(

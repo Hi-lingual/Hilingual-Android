@@ -16,9 +16,11 @@
 package com.hilingual.presentation.diaryfeedback
 
 import androidx.compose.runtime.Immutable
+import com.hilingual.core.ui.component.dropdown.Topics
 import com.hilingual.core.ui.model.DiaryContent
 import com.hilingual.core.ui.model.FeedbackContent
 import com.hilingual.core.ui.model.RecommendExpression
+import com.hilingual.data.calendar.model.TopicModel
 import com.hilingual.data.diary.model.DiaryContentModel
 import com.hilingual.data.diary.model.DiaryFeedbackModel
 import com.hilingual.data.diary.model.DiaryRecommendExpressionModel
@@ -31,6 +33,7 @@ internal data class DiaryFeedbackUiState(
     val writtenDate: String = "",
     val isPublished: Boolean = false,
     val isAdWatched: Boolean = false,
+    val topics: Topics = Topics(),
     val diaryContent: DiaryContent = DiaryContent(),
     val feedbackList: ImmutableList<FeedbackContent> = persistentListOf(),
     val recommendExpressionList: ImmutableList<RecommendExpression> = persistentListOf(),
@@ -38,6 +41,10 @@ internal data class DiaryFeedbackUiState(
     companion object {
         val Fake = DiaryFeedbackUiState(
             writtenDate = "8월 28일 목요일",
+            topics = Topics(
+                enTopic = "영어 주제",
+                koTopic = "한국어 주제",
+            ),
             diaryContent = DiaryContent(
                 originalText = "Today my friend called to me. She sent message a few days ago, " +
                     "but I forgot to replying her. I apolozied to her. " +
@@ -86,6 +93,11 @@ internal data class DiaryFeedbackUiState(
         )
     }
 }
+
+internal fun TopicModel.toState() = Topics(
+    enTopic = this.topicEn,
+    koTopic = this.topicKor,
+)
 
 internal fun DiaryContentModel.toState() = DiaryContent(
     originalText = this.originalText,

@@ -271,6 +271,7 @@ private fun FeedDiaryScreen(
                             writtenDate = writtenDate,
                             diaryContent = diaryContent,
                             feedbackList = feedbackList,
+                            topics = topics,
                             isAIWrittenDiary = isAIWrittenDiary,
                             onImageClick = onChangeImageDetailVisible,
                             onToggleViewMode = { isAIWrittenDiary = it },
