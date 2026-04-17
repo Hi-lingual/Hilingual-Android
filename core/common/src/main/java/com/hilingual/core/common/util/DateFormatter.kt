@@ -33,9 +33,50 @@ object DateFormatters {
     val ISO_DATE: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 }
 
+/**
+ * ISO 8601(UTC) 형식의 문자열을 Instant로 변환합니다.
+ * @return 파싱된 Instant (예: "2026-04-12T14:30:00Z" → Instant)
+ */
 fun String.toUtcInstant(): Instant = Instant.parse(this)
 
+/**
+ * Instant를 주어진 타임존 기준의 LocalDate로 변환합니다.
+ * @param zoneId 변환에 사용할 타임존 (기본값: 시스템 타임존)
+ * @return 해당 타임존 기준의 LocalDate
+ */
 fun Instant.toLocalDate(zoneId: ZoneId = ZoneId.systemDefault()): LocalDate = atZone(zoneId).toLocalDate()
+
+/**
+ * Instant를 한국어 전체 날짜 형식으로 변환합니다.
+ * @param zoneId 변환에 사용할 타임존 (기본값: 시스템 타임존)
+ * @return "M월 d일 EEEE" 형식의 문자열 (예: "4월 12일 일요일")
+ */
+fun Instant.toKoreanFullDate(zoneId: ZoneId = ZoneId.systemDefault()): String =
+    toLocalDate(zoneId).format(DateFormatters.KOREAN_FULL_DATE)
+
+/**
+ * Instant를 한국어 짧은 날짜 형식으로 변환합니다.
+ * @param zoneId 변환에 사용할 타임존 (기본값: 시스템 타임존)
+ * @return "M월 d일" 형식의 문자열 (예: "4월 12일")
+ */
+fun Instant.toKoreanShortDate(zoneId: ZoneId = ZoneId.systemDefault()): String =
+    toLocalDate(zoneId).format(DateFormatters.KOREAN_SHORT_DATE)
+
+/**
+ * Instant를 점으로 구분된 전체 날짜 형식으로 변환합니다.
+ * @param zoneId 변환에 사용할 타임존 (기본값: 시스템 타임존)
+ * @return "yyyy.MM.dd" 형식의 문자열 (예: "2026.04.12")
+ */
+fun Instant.toFullDotDate(zoneId: ZoneId = ZoneId.systemDefault()): String =
+    toLocalDate(zoneId).format(DateFormatters.FULL_DOT_DATE)
+
+/**
+ * Instant를 연도 두 자리의 점으로 구분된 날짜 형식으로 변환합니다.
+ * @param zoneId 변환에 사용할 타임존 (기본값: 시스템 타임존)
+ * @return "yy.MM.dd" 형식의 문자열 (예: "26.04.12")
+ */
+fun Instant.toShortYearDotDate(zoneId: ZoneId = ZoneId.systemDefault()): String =
+    toLocalDate(zoneId).format(DateFormatters.SHORT_YEAR_DOT_DATE)
 
 /**
  * LocalDate를 한국어 전체 날짜 형식으로 변환합니다.
@@ -43,23 +84,11 @@ fun Instant.toLocalDate(zoneId: ZoneId = ZoneId.systemDefault()): LocalDate = at
  */
 fun LocalDate.toKoreanFullDate(): String = this.format(DateFormatters.KOREAN_FULL_DATE)
 
-fun Instant.toKoreanFullDate(zoneId: ZoneId = ZoneId.systemDefault()): String =
-    toLocalDate(zoneId).format(DateFormatters.KOREAN_FULL_DATE)
-
 /**
  * LocalDate를 한국어 짧은 날짜 형식으로 변환합니다.
  * @return "M월 d일" 형식의 문자열 (예: "2월 6일")
  */
 fun LocalDate.toKoreanShortDate(): String = this.format(DateFormatters.KOREAN_SHORT_DATE)
-
-fun Instant.toKoreanShortDate(zoneId: ZoneId = ZoneId.systemDefault()): String =
-    toLocalDate(zoneId).format(DateFormatters.KOREAN_SHORT_DATE)
-
-fun Instant.toFullDotDate(zoneId: ZoneId = ZoneId.systemDefault()): String =
-    toLocalDate(zoneId).format(DateFormatters.FULL_DOT_DATE)
-
-fun Instant.toShortYearDotDate(zoneId: ZoneId = ZoneId.systemDefault()): String =
-    toLocalDate(zoneId).format(DateFormatters.SHORT_YEAR_DOT_DATE)
 
 /**
  * LocalDate를 ISO 날짜 형식으로 변환합니다.
