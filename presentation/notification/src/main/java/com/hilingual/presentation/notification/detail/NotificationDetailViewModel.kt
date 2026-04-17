@@ -19,8 +19,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.hilingual.core.common.util.toFullDotDate
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.util.toFullDotDate
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.notification.navigation.NotificationDetail
 import dagger.hilt.android.lifecycle.HiltViewModel

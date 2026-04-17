@@ -24,7 +24,6 @@ import com.hilingual.data.voca.model.VocaItemModel
 import com.hilingual.presentation.voca.component.WordSortType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import timber.log.Timber
 
 @Immutable
 data class VocaDetailUiModel(
