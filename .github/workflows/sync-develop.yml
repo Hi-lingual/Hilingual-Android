@@ -9,7 +9,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   sync_develop:
@@ -19,13 +18,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
-      - name: Sync Main to Develop (Create PR)
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Merge main into develop
         run: |
-          echo "Creating sync PR..."
-          gh pr create --base develop --head main \
-            --title "[CHORE] Sync main to develop" \
-            --body "🚀 **Release deployed successfully!**\n\nPlease approve and merge this PR to sync `main` changes back to `develop`." \
-            || echo "PR already exists or creation failed."
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout develop
+          git merge origin/main --no-ff -m "[CHORE] Sync main to develop [skip ci]"
+          git push origin develop
