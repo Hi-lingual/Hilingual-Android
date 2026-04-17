@@ -26,7 +26,7 @@ object DateFormatters {
 
     val KOREAN_SHORT_DATE: DateTimeFormatter = DateTimeFormatter.ofPattern("M월 d일", Locale.KOREA)
 
-    val DOT_DATE: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+    val FULL_DOT_DATE: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
 
     val SHORT_YEAR_DOT_DATE: DateTimeFormatter = DateTimeFormatter.ofPattern("yy.MM.dd")
 
@@ -55,8 +55,8 @@ fun LocalDate.toKoreanShortDate(): String = this.format(DateFormatters.KOREAN_SH
 fun Instant.toKoreanShortDate(zoneId: ZoneId = ZoneId.systemDefault()): String =
     toLocalDate(zoneId).format(DateFormatters.KOREAN_SHORT_DATE)
 
-fun Instant.toDotDate(zoneId: ZoneId = ZoneId.systemDefault()): String =
-    toLocalDate(zoneId).format(DateFormatters.DOT_DATE)
+fun Instant.toFullDotDate(zoneId: ZoneId = ZoneId.systemDefault()): String =
+    toLocalDate(zoneId).format(DateFormatters.FULL_DOT_DATE)
 
 fun Instant.toShortYearDotDate(zoneId: ZoneId = ZoneId.systemDefault()): String =
     toLocalDate(zoneId).format(DateFormatters.SHORT_YEAR_DOT_DATE)

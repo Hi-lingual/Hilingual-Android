@@ -22,9 +22,9 @@ import com.hilingual.data.voca.model.GroupingVocaModel
 import com.hilingual.data.voca.model.VocaDetailModel
 import com.hilingual.data.voca.model.VocaItemModel
 import com.hilingual.presentation.voca.component.WordSortType
-import timber.log.Timber
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import timber.log.Timber
 
 @Immutable
 data class VocaDetailUiModel(
@@ -60,10 +60,7 @@ internal fun VocaDetailModel.toState(): VocaDetailUiModel {
     val writtenDate = when {
         fromFeed -> "피드에서 저장됨"
         writtenFromInstant != null -> "${writtenFromInstant.toShortYearDotDate()} 일기에서 저장됨"
-        else -> {
-            Timber.tag("VocaDetail").w("writtenFrom is null while fromFeed is false. phraseId=%s", phraseId)
-            ""
-        }
+        else -> ""
     }
 
     return VocaDetailUiModel(

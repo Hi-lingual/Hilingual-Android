@@ -16,7 +16,7 @@
 package com.hilingual.presentation.notification.main.model
 
 import androidx.compose.runtime.Stable
-import com.hilingual.core.common.util.toDotDate
+import com.hilingual.core.common.util.toFullDotDate
 import com.hilingual.data.user.model.notification.NotificationModel
 
 enum class FeedNotificationType {
@@ -42,7 +42,7 @@ internal fun NotificationModel.toFeedStateOrNull(): FeedNotificationItemUiModel?
         id = id,
         title = title,
         isRead = isRead,
-        publishedAt = publishedAt.toDotDate(),
+        publishedAt = publishedAt.toFullDotDate(),
         feedType = FeedNotificationType.valueOf(currentType),
         targetId = currentTargetId,
     )
