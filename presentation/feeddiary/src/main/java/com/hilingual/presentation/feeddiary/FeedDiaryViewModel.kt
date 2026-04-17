@@ -22,7 +22,9 @@ import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.common.util.parseKoreanFullDateToIso
 import com.hilingual.core.common.util.suspendRunCatching
+import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
@@ -49,6 +51,7 @@ internal class FeedDiaryViewModel @Inject constructor(
     private val diaryRepository: DiaryRepository,
     private val feedRepository: FeedRepository,
     private val userRepository: UserRepository,
+    private val calendarRepository: CalendarRepository,
 ) : ViewModel() {
     val diaryId = savedStateHandle.toRoute<FeedDiary>().diaryId
 
@@ -84,10 +87,15 @@ internal class FeedDiaryViewModel @Inject constructor(
                     val recommendExpressionsResult =
                         recommendExpressionsDeferred.await().getOrThrow()
 
+                    val topicResult = calendarRepository.getTopic(
+                        contentResult.writtenDate.parseKoreanFullDateToIso(),
+                    ).getOrThrow()
+
                     FeedDiaryUiState(
                         isMine = profileInfo.isMine,
                         profileContent = profileInfo.toState(),
                         writtenDate = contentResult.writtenDate,
+                        topics = topicResult.toState(),
                         diaryContent = contentResult.toState(),
                         feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),
                         recommendExpressionList = recommendExpressionsResult.map { it.toState() }

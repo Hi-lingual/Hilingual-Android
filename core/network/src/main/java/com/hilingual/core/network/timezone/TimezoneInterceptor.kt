@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.common.app
+package com.hilingual.core.network.timezone
 
-interface DeviceInfoProvider {
-    fun getDeviceName(): String
+import com.hilingual.core.network.constant.X_TIMEZONE
+import java.util.TimeZone
+import javax.inject.Inject
+import javax.inject.Singleton
+import okhttp3.Interceptor
+import okhttp3.Response
 
-    fun getDeviceType(): String
+@Singleton
+class TimezoneInterceptor @Inject constructor() : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request().newBuilder()
+            .header(X_TIMEZONE, TimeZone.getDefault().id)
+            .build()
 
-    fun getOsVersion(): String
-
-    fun getAppVersion(): String
-
-    fun getProvider(): String
-
-    fun getRole(): String
-
-    fun getOsType(): String
-
-    fun getUuid(): String
-
-    fun getTimezone(): String
+        return chain.proceed(request)
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Hilingual Project
+ * Copyright 2026 The Hilingual Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.network.constant
+package com.hilingual.core.ui.component.dropdown
 
-const val AUTHORIZATION = "Authorization"
-const val PROVIDER_TOKEN = "Provider-Token"
-const val BEARER = "Bearer"
-const val X_TIMEZONE = "X-Timezone"
+import androidx.compose.runtime.Stable
+
+@Stable
+data class Topics(
+    val enTopic: String = "",
+    val koTopic: String = "",
+)

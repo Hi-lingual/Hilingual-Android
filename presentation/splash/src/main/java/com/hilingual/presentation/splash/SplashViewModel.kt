@@ -105,11 +105,16 @@ internal class SplashViewModel @Inject constructor(
                 !accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty() && isRegistered
             }.getOrElse { false }
 
+            if (isLoggedIn) putDeviceInfo()
+
             delay(1400L)
 
             _sideEffect.tryEmit(if (isLoggedIn) NavigateToHome else NavigateToAuth)
         }
     }
+
+    private suspend fun putDeviceInfo(): Boolean =
+        userRepository.putDeviceInfo().onLogFailure { }.isSuccess
 
     fun onUpdateConfirm() {
         _sideEffect.tryEmit(NavigateToStore)

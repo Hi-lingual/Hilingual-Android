@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Hilingual Project
+ * Copyright 2026 The Hilingual Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.data.auth.dto.request
+package com.hilingual.data.user.dto.request
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LoginRequestDto(
-    @SerialName("provider")
-    val provider: String,
-    @SerialName("role")
-    val role: String,
+data class PutDeviceInfoRequestDto(
+    @SerialName("timezone")
+    val timezone: String,
     @SerialName("deviceUuid")
     val deviceUuid: String,
+    @SerialName("deviceName")
+    val deviceName: String,
+    @SerialName("deviceType")
+    val deviceType: String,
+    @SerialName("osType")
+    val osType: String,
+    @SerialName("osVersion")
+    val osVersion: String,
+    @SerialName("appVersion")
+    val appVersion: String,
 )

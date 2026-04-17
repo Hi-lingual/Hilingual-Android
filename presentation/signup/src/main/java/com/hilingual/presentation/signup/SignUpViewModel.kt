@@ -51,6 +51,8 @@ internal class SignUpViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SignUpUiState())
     val uiState: StateFlow<SignUpUiState> = _uiState.asStateFlow()
 
+    private var isProfileCreated = false
+
     private val _sideEffect = MutableSharedFlow<SignUpSideEffect>()
     val sideEffect: SharedFlow<SignUpSideEffect> = _sideEffect.asSharedFlow()
 
@@ -82,30 +84,19 @@ internal class SignUpViewModel @Inject constructor(
         if (uiState.value.isLoading) return
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val userProfile = UserProfileModel(
-                nickname = nickname,
-                adAlarmAgree = isMarketingAgreed,
-                imageUri = imageUri,
-            )
-            userRepository.postUserProfile(userProfile)
-                .onSuccess {
-                    userRepository.saveRegisterStatus(true)
-                    onboardingRepository.updateIsHomeOnboardingCompleted(false)
-                    updateIsSplashOnboardingCompleted()
-                    _sideEffect.emit(SignUpSideEffect.NavigateToHome)
-                }
-                .onLogFailure {
-                    _uiState.update { it.copy(isLoading = false) }
-                    _sideEffect.emit(
-                        SignUpSideEffect.ShowRetryDialog {
-                            onRegisterClick(
-                                nickname,
-                                isMarketingAgreed,
-                                imageUri,
-                            )
-                        },
-                    )
-                }
+            if (!isProfileCreated) {
+                val userProfile = UserProfileModel(
+                    nickname = nickname,
+                    adAlarmAgree = isMarketingAgreed,
+                    imageUri = imageUri,
+                )
+                val profileResult = userRepository.postUserProfile(userProfile)
+                profileResult
+                    .onSuccess { isProfileCreated = true }
+                    .onLogFailure { showRegisterRetryDialog(nickname, isMarketingAgreed, imageUri) }
+                if (profileResult.isFailure) return@launch
+            }
+            onProfileRegistered(nickname, isMarketingAgreed, imageUri)
         }
     }
 
@@ -180,6 +171,25 @@ internal class SignUpViewModel @Inject constructor(
                     _sideEffect.emit(SignUpSideEffect.ShowRetryDialog { validateNickname(nickname) })
                 }
         }
+    }
+
+    private suspend fun onProfileRegistered(nickname: String, isMarketingAgreed: Boolean, imageUri: Uri?) {
+        if (!putDeviceInfo()) {
+            showRegisterRetryDialog(nickname, isMarketingAgreed, imageUri)
+            return
+        }
+        userRepository.saveRegisterStatus(true)
+        onboardingRepository.updateIsHomeOnboardingCompleted(false)
+        updateIsSplashOnboardingCompleted()
+        _sideEffect.emit(SignUpSideEffect.NavigateToHome)
+    }
+
+    private suspend fun putDeviceInfo(): Boolean =
+        userRepository.putDeviceInfo().onLogFailure { }.isSuccess
+
+    private suspend fun showRegisterRetryDialog(nickname: String, isMarketingAgreed: Boolean, imageUri: Uri?) {
+        _uiState.update { it.copy(isLoading = false) }
+        _sideEffect.emit(SignUpSideEffect.ShowRetryDialog { onRegisterClick(nickname, isMarketingAgreed, imageUri) })
     }
 
     private suspend fun updateIsSplashOnboardingCompleted() {
