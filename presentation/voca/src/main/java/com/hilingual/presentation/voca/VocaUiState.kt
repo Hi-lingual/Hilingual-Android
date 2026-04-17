@@ -17,12 +17,24 @@ package com.hilingual.presentation.voca
 
 import androidx.compose.runtime.Immutable
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.common.util.toShortYearDotDate
 import com.hilingual.data.voca.model.GroupingVocaModel
 import com.hilingual.data.voca.model.VocaDetailModel
 import com.hilingual.data.voca.model.VocaItemModel
 import com.hilingual.presentation.voca.component.WordSortType
+import timber.log.Timber
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+
+@Immutable
+data class VocaDetailUiModel(
+    val phraseId: Long,
+    val phrase: String,
+    val phraseType: List<String>,
+    val explanation: String,
+    val writtenDate: String,
+    val isBookmarked: Boolean,
+)
 
 @Immutable
 data class VocaUiState(
@@ -34,11 +46,32 @@ data class VocaUiState(
     val latestList: ImmutableList<GroupingVocaModel> = persistentListOf(),
     val searchKeyword: String = "",
     val searchResultList: ImmutableList<VocaItemModel> = persistentListOf(),
-    val vocaItemDetail: UiState<VocaDetailModel> = UiState.Loading,
+    val vocaItemDetail: UiState<VocaDetailUiModel> = UiState.Loading,
     val isRefreshing: Boolean = false,
 )
 
 enum class ScreenType {
     DEFAULT,
     SEARCH,
+}
+
+internal fun VocaDetailModel.toState(): VocaDetailUiModel {
+    val writtenFromInstant = writtenFrom
+    val writtenDate = when {
+        fromFeed -> "피드에서 저장됨"
+        writtenFromInstant != null -> "${writtenFromInstant.toShortYearDotDate()} 일기에서 저장됨"
+        else -> {
+            Timber.tag("VocaDetail").w("writtenFrom is null while fromFeed is false. phraseId=%s", phraseId)
+            ""
+        }
+    }
+
+    return VocaDetailUiModel(
+        phraseId = phraseId,
+        phrase = phrase,
+        phraseType = phraseType,
+        explanation = explanation,
+        writtenDate = writtenDate,
+        isBookmarked = isBookmarked,
+    )
 }

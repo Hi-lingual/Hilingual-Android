@@ -22,7 +22,9 @@ import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
-import com.hilingual.core.common.util.parseKoreanFullDateToIso
+import com.hilingual.core.common.util.toIsoDate
+import com.hilingual.core.common.util.toKoreanFullDate
+import com.hilingual.core.common.util.toLocalDate
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.model.BookmarkResult
@@ -88,13 +90,13 @@ internal class FeedDiaryViewModel @Inject constructor(
                         recommendExpressionsDeferred.await().getOrThrow()
 
                     val topicResult = calendarRepository.getTopic(
-                        contentResult.writtenDate.parseKoreanFullDateToIso(),
+                        contentResult.writtenDate.toLocalDate().toIsoDate(),
                     ).getOrThrow()
 
                     FeedDiaryUiState(
                         isMine = profileInfo.isMine,
                         profileContent = profileInfo.toState(),
-                        writtenDate = contentResult.writtenDate,
+                        writtenDate = contentResult.writtenDate.toKoreanFullDate(),
                         topics = topicResult.toState(),
                         diaryContent = contentResult.toState(),
                         feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),

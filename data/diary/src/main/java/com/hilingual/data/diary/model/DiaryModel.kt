@@ -15,10 +15,12 @@
  */
 package com.hilingual.data.diary.model
 
+import com.hilingual.core.common.util.toUtcInstant
 import com.hilingual.data.diary.dto.response.DiaryContentResponseDto
+import java.time.Instant
 
 data class DiaryContentModel(
-    val writtenDate: String,
+    val writtenDate: Instant,
     val originalText: String,
     val rewriteText: String,
     val diffRanges: List<DiaryContentFeedback>,
@@ -32,7 +34,7 @@ data class DiaryContentFeedback(
 )
 
 internal fun DiaryContentResponseDto.toModel() = DiaryContentModel(
-    writtenDate = this.date,
+    writtenDate = this.date.toUtcInstant(),
     originalText = this.originalText,
     rewriteText = this.rewriteText,
     imageUrl = this.imageUrl,

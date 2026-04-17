@@ -15,14 +15,17 @@
  */
 package com.hilingual.data.voca.model
 
+import com.hilingual.core.common.util.toUtcInstant
 import com.hilingual.data.voca.dto.response.VocaDetailResponseDto
+import java.time.Instant
 
 data class VocaDetailModel(
     val phraseId: Long,
     val phrase: String,
     val phraseType: List<String>,
     val explanation: String,
-    val writtenFrom: String,
+    val writtenFrom: Instant?,
+    val fromFeed: Boolean,
     val isBookmarked: Boolean,
 )
 
@@ -32,6 +35,7 @@ internal fun VocaDetailResponseDto.toModel(): VocaDetailModel =
         phrase = this.phrase,
         phraseType = this.phraseType,
         explanation = this.explanation,
-        writtenFrom = this.writtenFrom,
+        writtenFrom = this.writtenFrom?.toUtcInstant(),
+        fromFeed = this.fromFeed,
         isBookmarked = this.isBookmarked,
     )

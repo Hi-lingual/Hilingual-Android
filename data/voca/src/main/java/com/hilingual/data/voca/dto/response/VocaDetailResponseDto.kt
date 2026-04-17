@@ -29,7 +29,9 @@ data class VocaDetailResponseDto(
     @SerialName("explanation")
     val explanation: String,
     @SerialName("writtenFrom")
-    val writtenFrom: String,
+    val writtenFrom: String?,
+    @SerialName("fromFeed")
+    val fromFeed: Boolean,
     @SerialName("isBookmarked")
     val isBookmarked: Boolean,
 )
