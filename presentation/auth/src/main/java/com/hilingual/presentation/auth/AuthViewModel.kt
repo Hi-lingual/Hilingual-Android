@@ -21,7 +21,6 @@ import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.auth.repository.AuthRepository
 import com.hilingual.data.onboarding.repository.OnboardingRepository
-import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.channels.BufferOverflow
@@ -37,7 +36,6 @@ import timber.log.Timber
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val onboardingRepository: OnboardingRepository,
-    private val userRepository: UserRepository,
 ) : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -60,7 +58,13 @@ class AuthViewModel @Inject constructor(
                     Timber.d("Google ID Token: $idToken")
                     authRepository.login(idToken)
                         .onSuccess { authResult ->
-                            onLoginSuccess(authResult.registerStatus)
+                            val sideEffect = if (authResult.registerStatus) {
+                                updateIsSplashOnboardingCompleted()
+                                AuthSideEffect.NavigateToHome
+                            } else {
+                                AuthSideEffect.NavigateToSignUp
+                            }
+                            _navigationEvent.tryEmit(sideEffect)
                         }
                         .onLogFailure { }
                 }
@@ -69,19 +73,6 @@ class AuthViewModel @Inject constructor(
             setIsLoading(false)
         }
     }
-
-    private suspend fun onLoginSuccess(isRegistered: Boolean) {
-        if (isRegistered) {
-            updateIsSplashOnboardingCompleted()
-            putDeviceInfo()
-            _navigationEvent.tryEmit(AuthSideEffect.NavigateToHome)
-        } else {
-            _navigationEvent.tryEmit(AuthSideEffect.NavigateToSignUp)
-        }
-    }
-
-    private suspend fun putDeviceInfo(): Boolean =
-        userRepository.putDeviceInfo().onLogFailure { }.isSuccess
 
     private suspend fun updateIsSplashOnboardingCompleted() {
         onboardingRepository.completeSplashOnboarding()
