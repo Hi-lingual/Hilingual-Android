@@ -82,6 +82,4 @@ interface UserRepository {
     suspend fun deleteFollow(
         targetUserId: Long,
     ): Result<Unit>
-
-    suspend fun putDeviceInfo(): Result<Unit>
 }

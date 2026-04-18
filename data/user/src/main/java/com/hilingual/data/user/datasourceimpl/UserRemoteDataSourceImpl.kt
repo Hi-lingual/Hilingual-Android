@@ -18,7 +18,6 @@ package com.hilingual.data.user.datasourceimpl
 import com.hilingual.core.network.model.BaseResponse
 import com.hilingual.data.user.datasource.UserRemoteDataSource
 import com.hilingual.data.user.dto.request.ImageRequestDto
-import com.hilingual.data.user.dto.request.PutDeviceInfoRequestDto
 import com.hilingual.data.user.dto.request.RegisterProfileRequestDto
 import com.hilingual.data.user.dto.request.UpdateProfileImageRequestDto
 import com.hilingual.data.user.dto.response.follow.FollowerResponseDto
@@ -119,7 +118,4 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
             ),
         )
     }
-
-    override suspend fun putDeviceInfo(putDeviceInfoRequestDto: PutDeviceInfoRequestDto): BaseResponse<Unit> =
-        userService.putDeviceInfo(putDeviceInfoRequestDto)
 }
