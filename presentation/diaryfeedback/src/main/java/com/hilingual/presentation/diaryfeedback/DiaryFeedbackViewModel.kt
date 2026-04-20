@@ -25,7 +25,6 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.common.util.toIsoDate
 import com.hilingual.core.common.util.toKoreanFullDate
-import com.hilingual.core.common.util.toLocalDate
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.PhraseBookmarkModel
@@ -88,7 +87,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
             val recommendExpressionsResult = recommendExpressionsDeferred.await().getOrThrow()
 
             val topicResult = calendarRepository.getTopic(
-                diaryResult.writtenDate.toLocalDate().toIsoDate(),
+                diaryResult.writtenDate.toIsoDate(),
             ).getOrThrow()
 
             DiaryFeedbackUiState(

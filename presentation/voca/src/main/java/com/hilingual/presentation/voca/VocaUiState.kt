@@ -55,10 +55,10 @@ enum class ScreenType {
 }
 
 internal fun VocaDetailModel.toState(): VocaDetailUiModel {
-    val writtenFromInstant = writtenFrom
+    val writtenFromLocalDate = writtenFrom
     val writtenDate = when {
         fromFeed -> "피드에서 저장됨"
-        writtenFromInstant != null -> "${writtenFromInstant.toShortYearDotDate()} 일기에서 저장됨"
+        writtenFromLocalDate != null -> "${writtenFromLocalDate.toShortYearDotDate()} 일기에서 저장됨"
         else -> ""
     }
 
