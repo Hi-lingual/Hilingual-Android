@@ -59,7 +59,7 @@ lottieCompose = "6.7.1"
 coroutine = "1.10.2"
 ktlint = "14.2.0"
 pebble = "0.1.0"
-balloonCompose = "1.7.5"
+balloonCompose = "1.7.6"
 richeditorCompose = "1.0.0-rc13"
 gmaAds = "1.0.0"
 
