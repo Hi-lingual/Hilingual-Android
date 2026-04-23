@@ -21,12 +21,12 @@ import java.time.Instant
 
 data class NotificationDetailModel(
     val title: String,
-    val createdAt: Instant,
+    val createdAtUtc: Instant,
     val content: String,
 )
 
 internal fun NotificationDetailResponseDto.toModel() = NotificationDetailModel(
     title = this.title,
-    createdAt = this.createdAt.toUtcInstant(),
+    createdAtUtc = this.createdAtUtc.toUtcInstant(),
     content = this.content,
 )
