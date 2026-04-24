@@ -22,7 +22,7 @@ import kotlinx.serialization.Serializable
 data class NotificationDetailResponseDto(
     @SerialName("title")
     val title: String,
-    @SerialName("createdAtUTC")
+    @SerialName("createdAtUtc")
     val createdAtUtc: String,
     @SerialName("content")
     val content: String,
