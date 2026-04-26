@@ -22,6 +22,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.common.util.toLocalDate
 import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.repository.DiaryLocalRepository
@@ -88,7 +89,7 @@ internal class DiaryWriteViewModel @Inject constructor(
 
     private fun getTopic(date: String) {
         viewModelScope.launch {
-            calendarRepository.getTopic(date)
+            calendarRepository.getTopic(date.toLocalDate())
                 .onSuccess { topic ->
                     _uiState.update { it.copy(topicKo = topic.topicKor, topicEn = topic.topicEn) }
                 }

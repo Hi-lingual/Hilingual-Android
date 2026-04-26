@@ -89,7 +89,7 @@ internal class FeedDiaryViewModel @Inject constructor(
                         recommendExpressionsDeferred.await().getOrThrow()
 
                     val topicResult = calendarRepository.getTopic(
-                        contentResult.writtenDate.toIsoDate(),
+                        contentResult.writtenDate
                     ).getOrThrow()
 
                     FeedDiaryUiState(
