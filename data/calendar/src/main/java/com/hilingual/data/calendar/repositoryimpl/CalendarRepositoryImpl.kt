@@ -16,12 +16,14 @@
 package com.hilingual.data.calendar.repositoryimpl
 
 import com.hilingual.core.common.util.suspendRunCatching
+import com.hilingual.core.common.util.toIsoDate
 import com.hilingual.data.calendar.datasource.CalendarRemoteDataSource
 import com.hilingual.data.calendar.model.CalendarModel
 import com.hilingual.data.calendar.model.DiaryThumbnailModel
 import com.hilingual.data.calendar.model.toModel
 import com.hilingual.data.calendar.repository.CalendarRepository
 import jakarta.inject.Inject
+import java.time.LocalDate
 
 internal class CalendarRepositoryImpl @Inject constructor(
     private val calendarRemoteDataSource: CalendarRemoteDataSource,
@@ -36,8 +38,8 @@ internal class CalendarRepositoryImpl @Inject constructor(
             calendarRemoteDataSource.getDiaryThumbnail(date = date).data!!.toModel()
         }
 
-    override suspend fun getTopic(date: String): Result<com.hilingual.data.calendar.model.TopicModel> =
+    override suspend fun getTopic(date: LocalDate): Result<com.hilingual.data.calendar.model.TopicModel> =
         suspendRunCatching {
-            calendarRemoteDataSource.getTopic(date = date).data!!.toModel()
+            calendarRemoteDataSource.getTopic(date = date.toIsoDate()).data!!.toModel()
         }
 }
