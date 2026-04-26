@@ -40,7 +40,7 @@ internal fun NotificationModel.toNoticeStateOrNull(): NoticeNotificationItemUiMo
         id = id,
         title = title,
         isRead = isRead,
-        publishedAt = publishedAtUtc.toFullDotDate(),
+        publishedAt = publishedAt.toFullDotDate(),
         noticeCategory = NoticeCategoryType.valueOf(currentCategory),
     )
 }

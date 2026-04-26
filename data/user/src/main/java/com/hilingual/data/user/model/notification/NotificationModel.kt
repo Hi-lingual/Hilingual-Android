@@ -26,7 +26,7 @@ data class NotificationModel(
     val title: String,
     val targetId: Long?,
     val isRead: Boolean,
-    val publishedAtUtc: Instant,
+    val publishedAt: Instant,
 )
 
 internal fun NotificationResponseDto.toModel() = NotificationModel(
@@ -36,5 +36,5 @@ internal fun NotificationResponseDto.toModel() = NotificationModel(
     title = this.title,
     targetId = this.targetId,
     isRead = this.isRead,
-    publishedAtUtc = this.publishedAtUtc.toUtcInstant(),
+    publishedAt = this.publishedAtUtc.toUtcInstant(),
 )

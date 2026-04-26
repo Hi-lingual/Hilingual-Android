@@ -52,7 +52,7 @@ internal class NotificationDetailViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             title = detail.title,
-                            date = detail.createdAtUtc.toFullDotDate(),
+                            date = detail.createdAt.toFullDotDate(),
                             content = detail.content,
                         )
                     }
