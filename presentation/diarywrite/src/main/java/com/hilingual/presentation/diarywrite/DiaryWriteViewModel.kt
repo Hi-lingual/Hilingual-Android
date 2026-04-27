@@ -56,7 +56,7 @@ internal class DiaryWriteViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(
         DiaryWriteUiState(
-            selectedDate = LocalDate.parse(route.selectedDate),
+            selectedDate = route.selectedDate.toLocalDate(),
         ),
     )
     val uiState: StateFlow<DiaryWriteUiState> = _uiState.asStateFlow()

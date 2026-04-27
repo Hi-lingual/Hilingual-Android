@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.hilingual.core.common.util.toIsoDate
 import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.diarywrite.DiaryWriteRoute
@@ -38,7 +39,7 @@ fun NavController.navigateToDiaryWrite(
     navOptions: NavOptions? = null,
 ) {
     navigate(
-        route = DiaryWrite(selectedDate = selectedDate.toString(), mode = mode),
+        route = DiaryWrite(selectedDate = selectedDate.toIsoDate(), mode = mode),
         navOptions = navOptions,
     )
 }
