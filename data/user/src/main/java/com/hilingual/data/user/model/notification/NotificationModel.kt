@@ -15,7 +15,7 @@
  */
 package com.hilingual.data.user.model.notification
 
-import com.hilingual.core.common.util.toUtcInstant
+import com.hilingual.core.common.util.toUtcInstantOrNull
 import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import java.time.Instant
 
@@ -26,7 +26,7 @@ data class NotificationModel(
     val title: String,
     val targetId: Long?,
     val isRead: Boolean,
-    val publishedAt: Instant,
+    val publishedAt: Instant?,
 )
 
 internal fun NotificationResponseDto.toModel() = NotificationModel(
@@ -36,5 +36,5 @@ internal fun NotificationResponseDto.toModel() = NotificationModel(
     title = this.title,
     targetId = this.targetId,
     isRead = this.isRead,
-    publishedAt = this.publishedAtUtc.toUtcInstant(),
+    publishedAt = this.publishedAtUtc.toUtcInstantOrNull(),
 )

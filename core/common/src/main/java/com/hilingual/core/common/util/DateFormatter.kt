@@ -37,15 +37,15 @@ object DateFormatters {
 
 /**
  * ISO 8601(UTC) 형식의 문자열을 Instant로 변환합니다.
- * @return 파싱된 Instant (예: "2026-04-12T14:30:00Z" → Instant)
+ * @return 파싱된 Instant (예: "2026-04-12T14:30:00Z" → Instant), 형식이 잘못된 경우 null
  */
-fun String.toUtcInstant(): Instant = Instant.parse(this)
+fun String.toUtcInstantOrNull(): Instant? = runCatching { Instant.parse(this) }.getOrNull()
 
 /**
  * "yyyy-MM-dd" 형식의 문자열을 LocalDate로 변환합니다.
- * @return 파싱된 LocalDate (예: "2026-04-12" → LocalDate)
+ * @return 파싱된 LocalDate (예: "2026-04-12" → LocalDate), 형식이 잘못된 경우 null
  */
-fun String.toLocalDate(): LocalDate = LocalDate.parse(this, DateFormatters.ISO_DATE)
+fun String.toLocalDateOrNull(): LocalDate? = runCatching { LocalDate.parse(this, DateFormatters.ISO_DATE) }.getOrNull()
 
 /**
  * Instant를 한국어 짧은 날짜 형식으로 변환합니다.

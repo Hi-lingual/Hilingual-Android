@@ -85,14 +85,16 @@ internal class DiaryFeedbackViewModel @Inject constructor(
             val feedbacksResult = feedbacksDeferred.await().getOrThrow()
             val recommendExpressionsResult = recommendExpressionsDeferred.await().getOrThrow()
 
+            val writtenDate = checkNotNull(diaryResult.writtenDate)
+
             val topicResult = calendarRepository.getTopic(
-                diaryResult.writtenDate,
+                writtenDate,
             ).getOrThrow()
 
             DiaryFeedbackUiState(
                 isPublished = diaryResult.isPublished,
                 isAdWatched = diaryResult.isAdWatched,
-                writtenDate = diaryResult.writtenDate.toKoreanFullDate(),
+                writtenDate = writtenDate.toKoreanFullDate(),
                 topics = topicResult.toState(),
                 diaryContent = diaryResult.toState(),
                 feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),
