@@ -60,7 +60,7 @@ coroutine = "1.10.2"
 ktlint = "14.2.0"
 pebble = "0.1.0"
 balloonCompose = "1.7.6"
-richeditorCompose = "1.0.0-rc13"
+richeditorCompose = "1.0.0-rc14"
 gmaAds = "1.0.0"
 
 # Firebase
