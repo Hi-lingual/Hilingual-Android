@@ -25,9 +25,15 @@ data class VocaDetailModel(
     val phraseType: List<String>,
     val explanation: String,
     val writtenDate: LocalDate?,
-    val savedRoot: Int,
+    val savedRoot: SavedRootType,
     val isBookmarked: Boolean,
 )
+
+enum class SavedRootType(val value: Int) {
+    DIARY(1),
+    FEED(2),
+    ELSE(3)
+}
 
 internal fun VocaDetailResponseDto.toModel(): VocaDetailModel =
     VocaDetailModel(
@@ -36,6 +42,6 @@ internal fun VocaDetailResponseDto.toModel(): VocaDetailModel =
         phraseType = this.phraseType,
         explanation = this.explanation,
         writtenDate = this.writtenDate?.toLocalDate(),
-        savedRoot = this.savedRoot,
+        savedRoot = SavedRootType.entries.find { it.value == this.savedRoot } ?: SavedRootType.ELSE,
         isBookmarked = this.isBookmarked,
     )

@@ -19,6 +19,7 @@ import androidx.compose.runtime.Immutable
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.common.util.toShortYearDotDate
 import com.hilingual.data.voca.model.GroupingVocaModel
+import com.hilingual.data.voca.model.SavedRootType
 import com.hilingual.data.voca.model.VocaDetailModel
 import com.hilingual.data.voca.model.VocaItemModel
 import com.hilingual.presentation.voca.component.WordSortType
@@ -56,7 +57,7 @@ enum class ScreenType {
 
 internal fun VocaDetailModel.toState(): VocaDetailUiModel {
     val displayWrittenDate = when (savedRoot) {
-        1 -> "${writtenDate?.toShortYearDotDate()} 일기에서 저장됨"
+        SavedRootType.DIARY -> (writtenDate?.toShortYearDotDate() ?: "") + " 일기에서 저장됨"
         else -> "피드에서 저장됨"
     }
 
