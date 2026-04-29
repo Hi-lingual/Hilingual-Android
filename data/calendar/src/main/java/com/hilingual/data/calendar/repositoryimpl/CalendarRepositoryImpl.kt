@@ -20,6 +20,7 @@ import com.hilingual.core.common.util.toIsoDate
 import com.hilingual.data.calendar.datasource.CalendarRemoteDataSource
 import com.hilingual.data.calendar.model.CalendarModel
 import com.hilingual.data.calendar.model.DiaryThumbnailModel
+import com.hilingual.data.calendar.model.TopicModel
 import com.hilingual.data.calendar.model.toModel
 import com.hilingual.data.calendar.repository.CalendarRepository
 import jakarta.inject.Inject
@@ -38,7 +39,7 @@ internal class CalendarRepositoryImpl @Inject constructor(
             calendarRemoteDataSource.getDiaryThumbnail(date = date).data!!.toModel()
         }
 
-    override suspend fun getTopic(date: LocalDate): Result<com.hilingual.data.calendar.model.TopicModel> =
+    override suspend fun getTopic(date: LocalDate): Result<TopicModel> =
         suspendRunCatching {
             calendarRemoteDataSource.getTopic(date = date.toIsoDate()).data!!.toModel()
         }
