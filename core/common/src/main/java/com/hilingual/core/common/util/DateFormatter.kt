@@ -21,7 +21,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-val SYSTEM_ZONE_ID: ZoneId = ZoneId.systemDefault()
+private val SYSTEM_ZONE_ID: ZoneId = ZoneId.systemDefault()
 
 object DateFormatters {
     val KOREAN_FULL_DATE: DateTimeFormatter = DateTimeFormatter.ofPattern("M월 d일 EEEE", Locale.KOREA)
