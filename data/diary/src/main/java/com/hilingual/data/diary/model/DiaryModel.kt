@@ -15,12 +15,12 @@
  */
 package com.hilingual.data.diary.model
 
-import com.hilingual.core.common.util.toLocalDate
+import com.hilingual.core.common.util.toLocalDateOrNull
 import com.hilingual.data.diary.dto.response.DiaryContentResponseDto
 import java.time.LocalDate
 
 data class DiaryContentModel(
-    val writtenDate: LocalDate,
+    val writtenDate: LocalDate?,
     val originalText: String,
     val rewriteText: String,
     val diffRanges: List<DiaryContentFeedback>,
@@ -34,7 +34,7 @@ data class DiaryContentFeedback(
 )
 
 internal fun DiaryContentResponseDto.toModel() = DiaryContentModel(
-    writtenDate = this.date.toLocalDate(),
+    writtenDate = this.date.toLocalDateOrNull(),
     originalText = this.originalText,
     rewriteText = this.rewriteText,
     imageUrl = this.imageUrl,

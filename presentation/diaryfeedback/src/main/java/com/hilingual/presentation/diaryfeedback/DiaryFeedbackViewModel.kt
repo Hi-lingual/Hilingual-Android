@@ -23,7 +23,6 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.common.util.suspendRunCatching
-import com.hilingual.core.common.util.toIsoDate
 import com.hilingual.core.common.util.toKoreanFullDate
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.model.BookmarkResult
@@ -86,14 +85,16 @@ internal class DiaryFeedbackViewModel @Inject constructor(
             val feedbacksResult = feedbacksDeferred.await().getOrThrow()
             val recommendExpressionsResult = recommendExpressionsDeferred.await().getOrThrow()
 
+            val writtenDate = checkNotNull(diaryResult.writtenDate)
+
             val topicResult = calendarRepository.getTopic(
-                diaryResult.writtenDate.toIsoDate(),
+                writtenDate,
             ).getOrThrow()
 
             DiaryFeedbackUiState(
                 isPublished = diaryResult.isPublished,
                 isAdWatched = diaryResult.isAdWatched,
-                writtenDate = diaryResult.writtenDate.toKoreanFullDate(),
+                writtenDate = writtenDate.toKoreanFullDate(),
                 topics = topicResult.toState(),
                 diaryContent = diaryResult.toState(),
                 feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),

@@ -42,7 +42,7 @@ internal fun NotificationModel.toFeedStateOrNull(): FeedNotificationItemUiModel?
         id = id,
         title = title,
         isRead = isRead,
-        publishedAt = publishedAtUtc.toFullDotDate(),
+        publishedAt = publishedAt?.toFullDotDate() ?: "",
         feedType = FeedNotificationType.valueOf(currentType),
         targetId = currentTargetId,
     )

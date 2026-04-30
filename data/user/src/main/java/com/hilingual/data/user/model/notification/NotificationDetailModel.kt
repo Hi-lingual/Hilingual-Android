@@ -15,18 +15,18 @@
  */
 package com.hilingual.data.user.model.notification
 
-import com.hilingual.core.common.util.toUtcInstant
+import com.hilingual.core.common.util.toUtcInstantOrNull
 import com.hilingual.data.user.dto.response.notification.NotificationDetailResponseDto
 import java.time.Instant
 
 data class NotificationDetailModel(
     val title: String,
-    val createdAtUtc: Instant,
+    val createdAt: Instant?,
     val content: String,
 )
 
 internal fun NotificationDetailResponseDto.toModel() = NotificationDetailModel(
     title = this.title,
-    createdAtUtc = this.createdAtUtc.toUtcInstant(),
+    createdAt = this.createdAtUtc.toUtcInstantOrNull(),
     content = this.content,
 )
