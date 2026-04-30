@@ -15,19 +15,57 @@
  */
 package com.hilingual.core.common.util
 
+import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoField
 import java.util.Locale
+
+private val SYSTEM_ZONE_ID: ZoneId = ZoneId.systemDefault()
 
 object DateFormatters {
     val KOREAN_FULL_DATE: DateTimeFormatter = DateTimeFormatter.ofPattern("M월 d일 EEEE", Locale.KOREA)
 
     val KOREAN_SHORT_DATE: DateTimeFormatter = DateTimeFormatter.ofPattern("M월 d일", Locale.KOREA)
 
+    val FULL_DOT_DATE: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+
+    val SHORT_YEAR_DOT_DATE: DateTimeFormatter = DateTimeFormatter.ofPattern("yy.MM.dd")
+
     val ISO_DATE: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 }
+
+/**
+ * ISO 8601(UTC) 형식의 문자열을 Instant로 변환합니다.
+ * @return 파싱된 Instant (예: "2026-04-12T14:30:00Z" → Instant), 형식이 잘못된 경우 null
+ */
+fun String.toUtcInstantOrNull(): Instant? = runCatching { Instant.parse(this) }.getOrNull()
+
+/**
+ * "yyyy-MM-dd" 형식의 문자열을 LocalDate로 변환합니다.
+ * @return 파싱된 LocalDate (예: "2026-04-12" → LocalDate), 형식이 잘못된 경우 null
+ */
+fun String.toLocalDateOrNull(): LocalDate? = runCatching { LocalDate.parse(this, DateFormatters.ISO_DATE) }.getOrNull()
+
+/**
+ * Instant를 한국어 짧은 날짜 형식으로 변환합니다.
+ * @return "M월 d일" 형식의 문자열 (예: "4월 12일")
+ */
+fun Instant.toKoreanShortDate(): String =
+    atZone(SYSTEM_ZONE_ID).toLocalDate().format(DateFormatters.KOREAN_SHORT_DATE)
+
+/**
+ * Instant를 점으로 구분된 전체 날짜 형식으로 변환합니다.
+ * @return "yyyy.MM.dd" 형식의 문자열 (예: "2026.04.12")
+ */
+fun Instant.toFullDotDate(): String =
+    atZone(SYSTEM_ZONE_ID).toLocalDate().format(DateFormatters.FULL_DOT_DATE)
+
+/**
+ * LocalDate를 연도 두 자리의 점으로 구분된 날짜 형식으로 변환합니다.
+ * @return "yy.MM.dd" 형식의 문자열 (예: "26.04.12")
+ */
+fun LocalDate.toShortYearDotDate(): String = this.format(DateFormatters.SHORT_YEAR_DOT_DATE)
 
 /**
  * LocalDate를 한국어 전체 날짜 형식으로 변환합니다.
@@ -35,41 +73,8 @@ object DateFormatters {
  */
 fun LocalDate.toKoreanFullDate(): String = this.format(DateFormatters.KOREAN_FULL_DATE)
 
-fun LocalDateTime.toKoreanFullDate(): String = this.format(DateFormatters.KOREAN_FULL_DATE)
-
-/**
- * LocalDate를 한국어 짧은 날짜 형식으로 변환합니다.
- * @return "M월 d일" 형식의 문자열 (예: "2월 6일")
- */
-fun LocalDate.toKoreanShortDate(): String = this.format(DateFormatters.KOREAN_SHORT_DATE)
-
-fun LocalDateTime.toKoreanShortDate(): String = this.format(DateFormatters.KOREAN_SHORT_DATE)
-
 /**
  * LocalDate를 ISO 날짜 형식으로 변환합니다.
  * @return "yyyy-MM-dd" 형식의 문자열 (예: "2026-02-06")
  */
 fun LocalDate.toIsoDate(): String = this.format(DateFormatters.ISO_DATE)
-
-fun LocalDateTime.toIsoDate(): String = this.format(DateFormatters.ISO_DATE)
-
-/**
- * "M월 d일 EEEE" 형식의 한국어 날짜 문자열을 ISO 날짜("yyyy-MM-dd") 형식으로 변환합니다.
- * 요일 정보를 활용해 현재 연도 기준으로 역산합니다.
- * @return "yyyy-MM-dd" 형식의 문자열 (예: "2025-08-21")
- */
-fun String.parseKoreanFullDateToIso(): String {
-    val parsed = DateFormatters.KOREAN_FULL_DATE.parse(this)
-    val month = parsed.get(ChronoField.MONTH_OF_YEAR)
-    val day = parsed.get(ChronoField.DAY_OF_MONTH)
-    val dayOfWeek = parsed.get(ChronoField.DAY_OF_WEEK)
-
-    val currentYear = LocalDate.now().year
-    for (year in currentYear downTo (currentYear - 2)) {
-        val candidate = LocalDate.of(year, month, day)
-        if (candidate.dayOfWeek.value == dayOfWeek) {
-            return candidate.toIsoDate()
-        }
-    }
-    return LocalDate.of(currentYear, month, day).toIsoDate()
-}

@@ -16,8 +16,6 @@
 package com.hilingual.core.common.util
 
 import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 
 private const val ONE_MINUTE = 1L
@@ -37,7 +35,6 @@ fun formatRelativeTime(minutesAgo: Long): String = when {
     else -> {
         val pastTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(minutesAgo)
         val instant = Instant.ofEpochMilli(pastTime)
-        val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
-        localDateTime.toKoreanShortDate()
+        instant.toKoreanShortDate()
     }
 }

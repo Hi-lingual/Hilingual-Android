@@ -16,6 +16,7 @@
 package com.hilingual.presentation.notification.main.model
 
 import androidx.compose.runtime.Stable
+import com.hilingual.core.common.util.toFullDotDate
 import com.hilingual.data.user.model.notification.NotificationModel
 
 enum class NoticeCategoryType {
@@ -39,7 +40,7 @@ internal fun NotificationModel.toNoticeStateOrNull(): NoticeNotificationItemUiMo
         id = id,
         title = title,
         isRead = isRead,
-        publishedAt = publishedAt,
+        publishedAt = publishedAt?.toFullDotDate() ?: "",
         noticeCategory = NoticeCategoryType.valueOf(currentCategory),
     )
 }
