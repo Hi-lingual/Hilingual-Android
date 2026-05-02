@@ -101,20 +101,20 @@ data class HomeDiaryUiState(
         // Use Rich Model Logic
         val selectedDateModel = DateUiModel(selectedDate)
 
-        if (selectedDateModel.isFuture) {
-            return copy(
-                cardState = DiaryCardState.FUTURE,
-                diaryThumbnail = null,
-                todayTopic = null,
-                isDiaryTempExist = isTempExist,
-            )
-        }
-
         val isWritten = dates.any { it.date == selectedDate }
         if (isWritten) {
             return copy(
                 cardState = DiaryCardState.WRITTEN,
                 diaryThumbnail = fetchedThumbnail,
+                todayTopic = null,
+                isDiaryTempExist = isTempExist,
+            )
+        }
+
+        if (selectedDateModel.isFuture) {
+            return copy(
+                cardState = DiaryCardState.FUTURE,
+                diaryThumbnail = null,
                 todayTopic = null,
                 isDiaryTempExist = isTempExist,
             )
