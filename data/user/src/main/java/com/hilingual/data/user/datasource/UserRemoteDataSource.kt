@@ -16,7 +16,6 @@
 package com.hilingual.data.user.datasource
 
 import com.hilingual.core.network.model.BaseResponse
-import com.hilingual.data.user.dto.request.PutDeviceInfoRequestDto
 import com.hilingual.data.user.dto.response.follow.FollowerResponseDto
 import com.hilingual.data.user.dto.response.follow.FollowingResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationDetailResponseDto
@@ -73,6 +72,4 @@ interface UserRemoteDataSource {
     suspend fun updateNotificationSetting(notiType: String): BaseResponse<NotificationSettingsResponseDto>
 
     suspend fun updateProfileImage(fileKey: String?): BaseResponse<Unit>
-
-    suspend fun putDeviceInfo(putDeviceInfoRequestDto: PutDeviceInfoRequestDto): BaseResponse<Unit>
 }

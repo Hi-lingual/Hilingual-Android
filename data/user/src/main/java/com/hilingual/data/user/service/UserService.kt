@@ -16,7 +16,6 @@
 package com.hilingual.data.user.service
 
 import com.hilingual.core.network.model.BaseResponse
-import com.hilingual.data.user.dto.request.PutDeviceInfoRequestDto
 import com.hilingual.data.user.dto.request.RegisterProfileRequestDto
 import com.hilingual.data.user.dto.request.UpdateProfileImageRequestDto
 import com.hilingual.data.user.dto.response.follow.FollowerResponseDto
@@ -113,10 +112,5 @@ interface UserService {
     @PATCH("/api/v1/users/mypage/profileImg")
     suspend fun updateProfileImage(
         @Body updateProfileImageRequestDto: UpdateProfileImageRequestDto,
-    ): BaseResponse<Unit>
-
-    @PUT("/api/v1/users/device")
-    suspend fun putDeviceInfo(
-        @Body putDeviceInfoRequestDto: PutDeviceInfoRequestDto,
     ): BaseResponse<Unit>
 }

@@ -24,6 +24,14 @@ data class LoginRequestDto(
     val provider: String,
     @SerialName("role")
     val role: String,
-    @SerialName("deviceUuid")
-    val deviceUuid: String,
+    @SerialName("deviceName")
+    val deviceName: String,
+    @SerialName("deviceType")
+    val deviceType: String,
+    @SerialName("osType")
+    val osType: String,
+    @SerialName("osVersion")
+    val osVersion: String,
+    @SerialName("appVersion")
+    val appVersion: String,
 )
