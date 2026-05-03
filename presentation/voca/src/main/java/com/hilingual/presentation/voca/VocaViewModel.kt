@@ -185,7 +185,7 @@ constructor(
             vocaRepository.getVocaDetail(phraseId = phraseId)
                 .onSuccess { vocaDetail ->
                     _uiState.update {
-                        it.copy(vocaItemDetail = UiState.Success(vocaDetail))
+                        it.copy(vocaItemDetail = UiState.Success(vocaDetail.toState()))
                     }
                 }
                 .onLogFailure {

@@ -46,9 +46,9 @@ internal fun DiaryDateInfo(
     }
 
     val (diaryStatusText, diaryStatusColor) = when {
-        isFuture -> "작성 불가" to HilingualTheme.colors.gray300
         isWritten && isPublished -> "게시된 일기" to HilingualTheme.colors.hilingualBlue
         isWritten && !isPublished -> "비공개 일기" to HilingualTheme.colors.gray400
+        isFuture -> "작성 불가" to HilingualTheme.colors.gray300
         else -> "미작성" to HilingualTheme.colors.gray300
     }
 

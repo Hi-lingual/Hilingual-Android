@@ -22,6 +22,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.common.util.toLocalDateOrNull
 import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.repository.DiaryLocalRepository
@@ -30,7 +31,6 @@ import com.hilingual.data.diary.repository.TextRecognitionRepository
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
-import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -55,7 +55,7 @@ internal class DiaryWriteViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(
         DiaryWriteUiState(
-            selectedDate = LocalDate.parse(route.selectedDate),
+            selectedDate = route.selectedDate.toLocalDateOrNull()!!,
         ),
     )
     val uiState: StateFlow<DiaryWriteUiState> = _uiState.asStateFlow()
@@ -88,7 +88,7 @@ internal class DiaryWriteViewModel @Inject constructor(
 
     private fun getTopic(date: String) {
         viewModelScope.launch {
-            calendarRepository.getTopic(date)
+            calendarRepository.getTopic(date.toLocalDateOrNull() ?: return@launch)
                 .onSuccess { topic ->
                     _uiState.update { it.copy(topicKo = topic.topicKor, topicEn = topic.topicEn) }
                 }

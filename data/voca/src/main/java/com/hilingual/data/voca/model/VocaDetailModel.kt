@@ -15,16 +15,25 @@
  */
 package com.hilingual.data.voca.model
 
+import com.hilingual.core.common.util.toLocalDateOrNull
 import com.hilingual.data.voca.dto.response.VocaDetailResponseDto
+import java.time.LocalDate
 
 data class VocaDetailModel(
     val phraseId: Long,
     val phrase: String,
     val phraseType: List<String>,
     val explanation: String,
-    val writtenFrom: String,
+    val writtenDate: LocalDate?,
+    val savedRoot: SavedRootType,
     val isBookmarked: Boolean,
 )
+
+enum class SavedRootType(val value: Int) {
+    DIARY(1),
+    FEED(2),
+    UNKNOWN(3),
+}
 
 internal fun VocaDetailResponseDto.toModel(): VocaDetailModel =
     VocaDetailModel(
@@ -32,6 +41,7 @@ internal fun VocaDetailResponseDto.toModel(): VocaDetailModel =
         phrase = this.phrase,
         phraseType = this.phraseType,
         explanation = this.explanation,
-        writtenFrom = this.writtenFrom,
+        writtenDate = this.writtenDate?.toLocalDateOrNull(),
+        savedRoot = SavedRootType.entries.find { it.value == this.savedRoot } ?: SavedRootType.UNKNOWN,
         isBookmarked = this.isBookmarked,
     )

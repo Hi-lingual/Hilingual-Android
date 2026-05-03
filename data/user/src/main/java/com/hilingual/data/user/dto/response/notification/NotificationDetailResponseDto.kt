@@ -22,8 +22,8 @@ import kotlinx.serialization.Serializable
 data class NotificationDetailResponseDto(
     @SerialName("title")
     val title: String,
-    @SerialName("createdAt")
-    val createdAt: String,
+    @SerialName("createdAtUtc")
+    val createdAtUtc: String,
     @SerialName("content")
     val content: String,
 )

@@ -18,6 +18,7 @@ package com.hilingual.data.calendar.repository
 import com.hilingual.data.calendar.model.CalendarModel
 import com.hilingual.data.calendar.model.DiaryThumbnailModel
 import com.hilingual.data.calendar.model.TopicModel
+import java.time.LocalDate
 
 interface CalendarRepository {
     suspend fun getCalendar(
@@ -29,5 +30,5 @@ interface CalendarRepository {
         date: String,
     ): Result<DiaryThumbnailModel>
 
-    suspend fun getTopic(date: String): Result<TopicModel>
+    suspend fun getTopic(date: LocalDate): Result<TopicModel>
 }

@@ -314,7 +314,7 @@ class HomeViewModel @Inject constructor(
     ): HomeDiaryUiState {
         val tempExistDeferred = viewModelScope.async { diaryLocalRepository.isDiaryTempExist(date) }
         val thumbnailDeferred = viewModelScope.async { calendarRepository.getDiaryThumbnail(date.toString()) }
-        val topicDeferred = viewModelScope.async { calendarRepository.getTopic(date.toString()) }
+        val topicDeferred = viewModelScope.async { calendarRepository.getTopic(date) }
 
         val isTempExist = tempExistDeferred.await().getOrDefault(false)
         val thumbnail = thumbnailDeferred.await().getOrNull()?.toState()
