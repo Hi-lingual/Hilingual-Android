@@ -14,7 +14,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.home.R
 
 @Composable
-fun NotificationDialog(
+internal fun NotificationDialog(
     state: DialogState,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
