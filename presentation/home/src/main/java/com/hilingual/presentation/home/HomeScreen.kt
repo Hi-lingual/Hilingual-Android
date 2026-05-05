@@ -17,8 +17,10 @@ package com.hilingual.presentation.home
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
@@ -39,6 +41,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,6 +64,7 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalTracker
+import com.hilingual.core.common.trigger.DialogState
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
@@ -69,6 +75,7 @@ import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.presentation.home.component.DiaryContinueDialog
 import com.hilingual.presentation.home.component.HomeHeader
+import com.hilingual.presentation.home.component.NotificationDialog
 import com.hilingual.presentation.home.component.calendar.HilingualCalendar
 import com.hilingual.presentation.home.component.footer.DiaryDateInfo
 import com.hilingual.presentation.home.component.footer.DiaryEmptyCard
@@ -108,6 +115,8 @@ internal fun HomeRoute(
         viewModel.onNotificationPermissionResult(isGranted = isGranted)
     }
 
+    var isNotificationDialogVisible by remember { mutableStateOf(false) }
+
     if (homeState.isErrorDialogVisible) {
         dialogTrigger.show(
             onClick = {
@@ -138,6 +147,10 @@ internal fun HomeRoute(
             }
 
             is HomeSideEffect.ShowOnboarding -> homeState.showOnboardingBottomSheet()
+
+            is HomeSideEffect.ShowNotificationDialog -> {
+                isNotificationDialogVisible = true
+            }
         }
     }
 
@@ -150,6 +163,19 @@ internal fun HomeRoute(
         context = context,
         isDataLoaded = isSuccess,
         onCheck = viewModel::handleNotificationPermission,
+    )
+
+    NotificationDialog(
+        state = DialogState(isVisible = isNotificationDialogVisible),
+        onDismiss = {
+            isNotificationDialogVisible = false
+        },
+        onConfirm = {
+            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+            }
+            context.startActivity(intent)
+        },
     )
 
     when (val state = uiState) {

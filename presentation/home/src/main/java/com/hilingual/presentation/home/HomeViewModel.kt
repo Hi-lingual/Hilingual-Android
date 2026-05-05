@@ -141,7 +141,9 @@ class HomeViewModel @Inject constructor(
         }
 
         if (previousState == NotificationPermissionState.NOT_DETERMINED && !isPermissionGranted) {
-            requestNotificationPermission()
+            viewModelScope.launch {
+                _sideEffect.emit(HomeSideEffect.ShowNotificationDialog)
+            }
         }
     }
 
@@ -158,16 +160,6 @@ class HomeViewModel @Inject constructor(
         _uiState.updateSuccess { state ->
             state.copy(
                 header = state.header.copy(notificationPermissionState = newPermissionState),
-            )
-        }
-    }
-
-    private fun requestNotificationPermission() {
-        viewModelScope.launch {
-            _sideEffect.emit(
-                HomeSideEffect.RequestNotificationPermission(
-                    permission = Manifest.permission.POST_NOTIFICATIONS,
-                ),
             )
         }
     }
@@ -356,6 +348,8 @@ class HomeViewModel @Inject constructor(
 
 sealed interface HomeSideEffect {
     data class ShowErrorDialog(val onRetry: () -> Unit) : HomeSideEffect
+
+    data object ShowNotificationDialog : HomeSideEffect
 
     data class ShowToast(val text: String) : HomeSideEffect
 
