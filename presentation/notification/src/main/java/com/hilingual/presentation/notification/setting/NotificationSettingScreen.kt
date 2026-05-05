@@ -15,25 +15,35 @@
  */
 package com.hilingual.presentation.notification.setting
 
+import android.content.Intent
+import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
+import com.hilingual.presentation.notification.setting.component.NotificationSettingBanner
+import com.hilingual.presentation.notification.setting.component.NotificationSettingDialog
 import com.hilingual.presentation.notification.setting.component.NotificationSwitchItem
 
 @Composable
@@ -43,6 +53,38 @@ internal fun NotificationSettingRoute(
     viewModel: NotificationSettingViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isNotificationGranted by viewModel.isNotificationGranted.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val isSuccess = uiState is UiState.Success
+
+    var isNotificationSettingDialogVisible by remember { mutableStateOf(false) }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        val isGranted = NotificationManagerCompat.from(context).areNotificationsEnabled()
+        viewModel.checkNotificationPermission(isGranted)
+    }
+
+    LaunchedEffect(isSuccess) {
+        if (isSuccess) {
+            val isGranted = NotificationManagerCompat.from(context).areNotificationsEnabled()
+            viewModel.checkNotificationPermission(isGranted)
+        }
+    }
+
+    viewModel.sideEffect.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            NotificationSettingSideEffect.ShowPermissionDialog -> {
+                isNotificationSettingDialogVisible = true
+            }
+        }
+    }
+
+    val navigateToSettings = {
+        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+        }
+        context.startActivity(intent)
+    }
 
     when (val state = uiState) {
         is UiState.Loading -> {
@@ -55,6 +97,14 @@ internal fun NotificationSettingRoute(
                 onMarketingCheckedChange = viewModel::updateMarketingChecked,
                 isFeedChecked = state.data.isFeedChecked,
                 onFeedCheckedChange = viewModel::updateFeedChecked,
+                isNotificationGranted = isNotificationGranted,
+                onBannerClick = navigateToSettings,
+                isPermissionDialogVisible = isNotificationSettingDialogVisible,
+                onPermissionDialogDismiss = { isNotificationSettingDialogVisible = false },
+                onPermissionDialogConfirm = {
+                    isNotificationSettingDialogVisible = false
+                    navigateToSettings()
+                },
                 paddingValues = paddingValues,
                 onBackClick = navigateUp,
             )
@@ -70,6 +120,11 @@ private fun NotificationSettingScreen(
     onMarketingCheckedChange: (Boolean) -> Unit,
     isFeedChecked: Boolean,
     onFeedCheckedChange: (Boolean) -> Unit,
+    isNotificationGranted: Boolean,
+    onBannerClick: () -> Unit,
+    isPermissionDialogVisible: Boolean,
+    onPermissionDialogDismiss: () -> Unit,
+    onPermissionDialogConfirm: () -> Unit,
     paddingValues: PaddingValues,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -85,6 +140,12 @@ private fun NotificationSettingScreen(
             onBackClicked = onBackClick,
         )
 
+        NotificationSettingBanner(
+            isVisible = !isNotificationGranted,
+            onClick = onBannerClick,
+            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+        )
+
         NotificationSwitchItem(
             text = "마케팅 알림",
             isChecked = isMarketingChecked,
@@ -97,6 +158,12 @@ private fun NotificationSettingScreen(
             onCheckedChange = onFeedCheckedChange,
         )
     }
+
+    NotificationSettingDialog(
+        isVisible = isPermissionDialogVisible,
+        onDismiss = onPermissionDialogDismiss,
+        onConfirmClick = onPermissionDialogConfirm,
+    )
 }
 
 @Preview(showBackground = true)
@@ -111,8 +178,13 @@ private fun NotificationSettingScreenPreview() {
             onMarketingCheckedChange = { isMarketingChecked = it },
             isFeedChecked = isFeedChecked,
             onFeedCheckedChange = { isFeedChecked = it },
+            isNotificationGranted = false,
+            onBannerClick = {},
             paddingValues = PaddingValues(0.dp),
             onBackClick = {},
+            isPermissionDialogVisible = false,
+            onPermissionDialogDismiss = {},
+            onPermissionDialogConfirm = {},
         )
     }
 }
