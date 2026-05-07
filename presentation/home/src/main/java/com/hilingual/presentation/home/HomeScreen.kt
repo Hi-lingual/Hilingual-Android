@@ -171,6 +171,7 @@ internal fun HomeRoute(
             isNotificationDialogVisible = false
         },
         onConfirm = {
+            isNotificationDialogVisible = false
             val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
                 putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
             }
