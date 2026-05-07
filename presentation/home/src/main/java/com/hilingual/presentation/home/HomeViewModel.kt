@@ -354,7 +354,5 @@ sealed interface HomeSideEffect {
 
     data class ShowSnackBar(val message: String, val actionLabel: String) : HomeSideEffect
 
-    data class RequestNotificationPermission(val permission: String) : HomeSideEffect
-
     data object ShowOnboarding : HomeSideEffect
 }

@@ -21,8 +21,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -109,12 +107,6 @@ internal fun HomeRoute(
     val context = LocalContext.current
     val isSuccess = uiState is UiState.Success
 
-    val notificationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-    ) { isGranted ->
-        viewModel.onNotificationPermissionResult(isGranted = isGranted)
-    }
-
     var isNotificationDialogVisible by remember { mutableStateOf(false) }
 
     if (homeState.isErrorDialogVisible) {
@@ -140,10 +132,6 @@ internal fun HomeRoute(
                         onAction = navigateToFeed,
                     ),
                 )
-            }
-
-            is HomeSideEffect.RequestNotificationPermission -> {
-                notificationPermissionLauncher.launch(sideEffect.permission)
             }
 
             is HomeSideEffect.ShowOnboarding -> homeState.showOnboardingBottomSheet()
