@@ -17,6 +17,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
@@ -55,7 +56,7 @@ internal fun NotificationSettingBanner(
 
             Icon(
                 imageVector = ImageVector.vectorResource(
-                    com.hilingual.core.designsystem.R.drawable.ic_arrow_right_16_bold,
+                  R.drawable.ic_arrow_right_16_bold,
                 ),
                 contentDescription = null,
                 tint = HilingualTheme.colors.gray400,

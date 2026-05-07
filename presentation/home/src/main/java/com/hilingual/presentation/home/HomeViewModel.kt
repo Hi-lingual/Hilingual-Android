@@ -141,25 +141,8 @@ class HomeViewModel @Inject constructor(
 
         if (previousState == NotificationPermissionState.NOT_DETERMINED && !isPermissionGranted) {
             viewModelScope.launch {
-                _sideEffect.emit(HomeSideEffect.ShowNotificationDialog)
+                emitNotificationDialogSideEffect()
             }
-        }
-    }
-
-    fun onNotificationPermissionResult(isGranted: Boolean) {
-        val currentState = uiState.value
-        if (currentState !is UiState.Success) return
-
-        val newPermissionState = if (isGranted) {
-            NotificationPermissionState.GRANTED
-        } else {
-            NotificationPermissionState.DENIED
-        }
-
-        _uiState.updateSuccess { state ->
-            state.copy(
-                header = state.header.copy(notificationPermissionState = newPermissionState),
-            )
         }
     }
 
@@ -343,6 +326,9 @@ class HomeViewModel @Inject constructor(
 
     private suspend fun emitOnboardingSideEffect() =
         _sideEffect.emit(HomeSideEffect.ShowOnboarding)
+
+    private suspend fun emitNotificationDialogSideEffect() =
+        _sideEffect.emit(HomeSideEffect.ShowNotificationDialog)
 }
 
 sealed interface HomeSideEffect {
