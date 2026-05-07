@@ -19,7 +19,7 @@ internal fun NotificationSettingDialog(
         TwoButtonDialog(
             modifier = modifier,
             title = "기기의 알림 설정이 꺼져있어요!",
-            description = "휴대폰 설정 > 알림 > 하이링구얼에서\n 설정을 변경해 주세요.",
+            description = "휴대폰 설정 > 알림 > 하이링구얼에서\n설정을 변경해 주세요.",
             cancelText = "취소하기",
             confirmText = "설정 변경하기",
             onNegative = onDismiss,
