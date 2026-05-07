@@ -31,7 +31,7 @@ internal fun NotificationDialog(
             description = "알림을 키고 누가 당신의 일기에 반응했는지\n바로 확인해 보세요.",
             properties = DialogProperties(
                 dismissOnBackPress = false,
-                dismissOnClickOutside = false,
+                dismissOnClickOutside = true,
                 usePlatformDefaultWidth = false,
                 decorFitsSystemWindows = false,
             ),
