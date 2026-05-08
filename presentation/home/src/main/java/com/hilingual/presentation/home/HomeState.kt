@@ -43,6 +43,9 @@ class HomeState(
     var onErrorRetry: (() -> Unit)? = null
         private set
 
+    var isNotificationDialogVisible by mutableStateOf(false)
+        private set
+
     fun showDiaryContinueDialog() {
         isDiaryContinueDialogVisible = true
     }
@@ -75,6 +78,14 @@ class HomeState(
 
     fun hideOnboardingBottomSheet() {
         isOnboardingBottomSheetVisible = false
+    }
+
+    fun showNotificationDialog() {
+        isNotificationDialogVisible = true
+    }
+
+    fun hideNotificationDialog() {
+        isNotificationDialogVisible = false
     }
 }
 

@@ -28,4 +28,5 @@ dependencies {
     implementation(projects.data.diary)
     implementation(projects.data.calendar)
     implementation(projects.data.onboarding)
+    implementation(projects.data.notification)
 }

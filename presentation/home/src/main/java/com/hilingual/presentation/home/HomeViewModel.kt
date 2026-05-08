@@ -23,11 +23,11 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.repository.DiaryLocalRepository
 import com.hilingual.data.diary.repository.DiaryRepository
+import com.hilingual.data.notification.repository.NotificationRepository
 import com.hilingual.data.onboarding.repository.OnboardingRepository
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.home.model.DateUiModel
 import com.hilingual.presentation.home.model.toState
-import com.hilingual.presentation.home.type.NotificationPermissionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import java.time.YearMonth
@@ -52,6 +52,7 @@ class HomeViewModel @Inject constructor(
     private val diaryRepository: DiaryRepository,
     private val diaryLocalRepository: DiaryLocalRepository,
     private val onboardingRepository: OnboardingRepository,
+    private val notificationRepository: NotificationRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Loading)
@@ -63,6 +64,8 @@ class HomeViewModel @Inject constructor(
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
     val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
+
+    private var isOnboardingVisible = false
 
     init {
         checkOnboardingCompleted()
@@ -123,25 +126,35 @@ class HomeViewModel @Inject constructor(
         if (currentState !is UiState.Success) return
 
         val isPermissionGranted = !requiresPermission || isGranted
-        val previousState = currentState.data.header.notificationPermissionState
 
-        val newPermissionState = if (isPermissionGranted) {
-            NotificationPermissionState.GRANTED
-        } else {
-            NotificationPermissionState.DENIED
-        }
-
-        if (previousState == newPermissionState) return
-
-        _uiState.updateSuccess { state ->
-            state.copy(
-                header = state.header.copy(notificationPermissionState = newPermissionState),
-            )
-        }
-
-        if (previousState == NotificationPermissionState.NOT_DETERMINED && !isPermissionGranted) {
+        if (!isPermissionGranted && !isOnboardingVisible) {
             viewModelScope.launch {
-                emitNotificationDialogSideEffect()
+                val alreadyShown = notificationRepository
+                    .getIsNotificationDialogShown()
+                    .getOrDefault(false)
+                if (!alreadyShown) {
+                    notificationRepository.updateIsNotificationDialogShown(true)
+                    emitNotificationDialogSideEffect()
+                }
+            }
+        }
+    }
+
+    fun onNotificationPermissionAfterOnboarding(
+        isGranted: Boolean,
+        requiresPermission: Boolean,
+    ) {
+        isOnboardingVisible = false
+        val isPermissionGranted = !requiresPermission || isGranted
+        if (!isPermissionGranted) {
+            viewModelScope.launch {
+                val alreadyShown = notificationRepository
+                    .getIsNotificationDialogShown()
+                    .getOrDefault(false)
+                if (!alreadyShown) {
+                    notificationRepository.updateIsNotificationDialogShown(true)
+                    emitNotificationDialogSideEffect()
+                }
             }
         }
     }
@@ -308,6 +321,7 @@ class HomeViewModel @Inject constructor(
             onboardingRepository.getIsHomeOnboardingCompleted()
                 .onSuccess { isCompleted ->
                     if (!isCompleted) {
+                        isOnboardingVisible = true
                         emitOnboardingSideEffect()
                         onboardingRepository.updateIsHomeOnboardingCompleted(true)
                     }

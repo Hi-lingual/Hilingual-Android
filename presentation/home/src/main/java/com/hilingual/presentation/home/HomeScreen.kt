@@ -107,8 +107,6 @@ internal fun HomeRoute(
     val context = LocalContext.current
     val isSuccess = uiState is UiState.Success
 
-    var isNotificationDialogVisible by remember { mutableStateOf(false) }
-
     if (homeState.isErrorDialogVisible) {
         dialogTrigger.show(
             onClick = {
@@ -134,10 +132,12 @@ internal fun HomeRoute(
                 )
             }
 
-            is HomeSideEffect.ShowOnboarding -> homeState.showOnboardingBottomSheet()
+            is HomeSideEffect.ShowOnboarding -> {
+                homeState.showOnboardingBottomSheet()
+            }
 
             is HomeSideEffect.ShowNotificationDialog -> {
-                isNotificationDialogVisible = true
+                homeState.showNotificationDialog()
             }
         }
     }
@@ -154,12 +154,12 @@ internal fun HomeRoute(
     )
 
     NotificationDialog(
-        state = DialogState(isVisible = isNotificationDialogVisible),
+        state = DialogState(isVisible = homeState.isNotificationDialogVisible),
         onDismiss = {
-            isNotificationDialogVisible = false
+            homeState.hideNotificationDialog()
         },
         onConfirm = {
-            isNotificationDialogVisible = false
+            homeState.hideNotificationDialog()
             val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
                 putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
             }
@@ -215,10 +215,26 @@ internal fun HomeRoute(
 
     HomeOnboardingBottomSheet(
         isVisible = homeState.isOnboardingBottomSheetVisible,
-        onCloseButtonClick = homeState::hideOnboardingBottomSheet,
+        onCloseButtonClick = {
+            homeState.hideOnboardingBottomSheet()
+        },
     ) {
         HomeOnboardingContent(
-            onStartButtonClick = homeState::hideOnboardingBottomSheet,
+            onStartButtonClick = {
+                homeState.hideOnboardingBottomSheet()
+                val requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                val isGranted = when {
+                    requiresPermission -> ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.POST_NOTIFICATIONS,
+                    ) == PackageManager.PERMISSION_GRANTED
+                    else -> true
+                }
+                viewModel.onNotificationPermissionAfterOnboarding(
+                    isGranted = isGranted,
+                    requiresPermission = requiresPermission,
+                )
+            },
         )
     }
 }
@@ -419,27 +435,28 @@ private fun CheckNotificationPermission(
     onCheck: (isGranted: Boolean, requiresPermission: Boolean) -> Unit,
 ) {
     val requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+    var isInitialLoad by remember { mutableStateOf(true) }
 
     fun checkPermission() {
         val isGranted = when {
-            requiresPermission -> {
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.POST_NOTIFICATIONS,
-                ) == PackageManager.PERMISSION_GRANTED
-            }
-
+            requiresPermission -> ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS,
+            ) == PackageManager.PERMISSION_GRANTED
             else -> true
         }
         onCheck(isGranted, requiresPermission)
     }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-        checkPermission()
+        if (isDataLoaded && !isInitialLoad) checkPermission()
     }
 
     LaunchedEffect(isDataLoaded) {
-        if (isDataLoaded) checkPermission()
+        if (isDataLoaded) {
+            checkPermission()
+            isInitialLoad = false
+        }
     }
 }
 
