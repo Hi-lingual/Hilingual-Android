@@ -223,16 +223,8 @@ internal fun HomeRoute(
             onStartButtonClick = {
                 homeState.hideOnboardingBottomSheet()
                 val requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                val isGranted = when {
-                    requiresPermission -> ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.POST_NOTIFICATIONS,
-                    ) == PackageManager.PERMISSION_GRANTED
-
-                    else -> true
-                }
                 viewModel.onNotificationPermissionAfterOnboarding(
-                    isGranted = isGranted,
+                    isGranted = context.isNotificationPermissionGranted(),
                     requiresPermission = requiresPermission,
                 )
             },
@@ -439,15 +431,7 @@ private fun CheckNotificationPermission(
     var isInitialLoad by remember { mutableStateOf(true) }
 
     fun checkPermission() {
-        val isGranted = when {
-            requiresPermission -> ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.POST_NOTIFICATIONS,
-            ) == PackageManager.PERMISSION_GRANTED
-
-            else -> true
-        }
-        onCheck(isGranted, requiresPermission)
+        onCheck(context.isNotificationPermissionGranted(), requiresPermission)
     }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
@@ -459,6 +443,17 @@ private fun CheckNotificationPermission(
             checkPermission()
             isInitialLoad = false
         }
+    }
+}
+
+private fun Context.isNotificationPermissionGranted(): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.POST_NOTIFICATIONS,
+        ) == PackageManager.PERMISSION_GRANTED
+    } else {
+        true
     }
 }
 
