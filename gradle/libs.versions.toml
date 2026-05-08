@@ -64,7 +64,7 @@ richeditorCompose = "1.0.0-rc13"
 gmaAds = "1.0.0"
 
 # Firebase
-firebaseBom = "34.12.0"
+firebaseBom = "34.13.0"
 firebaseCrashlyticsPlugin = "3.0.7"
 
 # ML Kit
