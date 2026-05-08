@@ -56,7 +56,7 @@ internal fun NotificationSettingBanner(
 
             Icon(
                 imageVector = ImageVector.vectorResource(
-                  R.drawable.ic_arrow_right_16_bold,
+                    R.drawable.ic_arrow_right_16_bold,
                 ),
                 contentDescription = null,
                 tint = HilingualTheme.colors.gray400,

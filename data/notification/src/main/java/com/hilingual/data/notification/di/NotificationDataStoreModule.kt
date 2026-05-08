@@ -25,6 +25,6 @@ object NotificationDataStoreModule {
         @ApplicationContext context: Context,
     ): DataStore<Preferences> = DataStoreBuilder.createPreferencesDataStore(
         context = context,
-        name = HILINGUAL_NOTIFICATION_STATE_PREFS
+        name = HILINGUAL_NOTIFICATION_STATE_PREFS,
     )
 }

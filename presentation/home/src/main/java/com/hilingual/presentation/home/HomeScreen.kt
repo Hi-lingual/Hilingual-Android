@@ -228,6 +228,7 @@ internal fun HomeRoute(
                         context,
                         Manifest.permission.POST_NOTIFICATIONS,
                     ) == PackageManager.PERMISSION_GRANTED
+
                     else -> true
                 }
                 viewModel.onNotificationPermissionAfterOnboarding(
@@ -443,6 +444,7 @@ private fun CheckNotificationPermission(
                 context,
                 Manifest.permission.POST_NOTIFICATIONS,
             ) == PackageManager.PERMISSION_GRANTED
+
             else -> true
         }
         onCheck(isGranted, requiresPermission)
