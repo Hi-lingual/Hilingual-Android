@@ -125,18 +125,8 @@ class HomeViewModel @Inject constructor(
         val currentState = uiState.value
         if (currentState !is UiState.Success) return
 
-        val isPermissionGranted = !requiresPermission || isGranted
-
-        if (!isPermissionGranted && !isOnboardingVisible) {
-            viewModelScope.launch {
-                val alreadyShown = notificationRepository
-                    .getIsNotificationDialogShown()
-                    .getOrDefault(false)
-                if (!alreadyShown) {
-                    notificationRepository.updateIsNotificationDialogShown(true)
-                    emitNotificationDialogSideEffect()
-                }
-            }
+        if (!isOnboardingVisible) {
+            showNotificationDialogIfNeeded(isGranted, requiresPermission)
         }
     }
 
@@ -145,13 +135,20 @@ class HomeViewModel @Inject constructor(
         requiresPermission: Boolean,
     ) {
         isOnboardingVisible = false
+        showNotificationDialogIfNeeded(isGranted, requiresPermission)
+    }
+
+    private fun showNotificationDialogIfNeeded(
+        isGranted: Boolean,
+        requiresPermission: Boolean,
+    ) {
         val isPermissionGranted = !requiresPermission || isGranted
         if (!isPermissionGranted) {
             viewModelScope.launch {
-                val alreadyShown = notificationRepository
+                val isAlreadyShown = notificationRepository
                     .getIsNotificationDialogShown()
                     .getOrDefault(false)
-                if (!alreadyShown) {
+                if (!isAlreadyShown) {
                     notificationRepository.updateIsNotificationDialogShown(true)
                     emitNotificationDialogSideEffect()
                 }
