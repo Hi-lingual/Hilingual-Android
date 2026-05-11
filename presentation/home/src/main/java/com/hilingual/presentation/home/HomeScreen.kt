@@ -445,6 +445,7 @@ private fun Context.isNotificationPermissionGranted(): Boolean =
                 this,
                 Manifest.permission.POST_NOTIFICATIONS,
             ) == PackageManager.PERMISSION_GRANTED
+
         else -> true
     }
 
