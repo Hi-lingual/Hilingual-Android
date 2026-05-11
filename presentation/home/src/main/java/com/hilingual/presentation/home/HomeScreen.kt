@@ -210,26 +210,20 @@ internal fun HomeRoute(
         else -> {}
     }
 
+    fun handleOnboardingDismiss() {
+        homeState.hideOnboardingBottomSheet()
+        viewModel.onNotificationPermissionAfterOnboarding(
+            isGranted = context.isNotificationPermissionGranted(),
+            requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU,
+        )
+    }
+
     HomeOnboardingBottomSheet(
         isVisible = homeState.isOnboardingBottomSheetVisible,
-        onCloseButtonClick = {
-            homeState.hideOnboardingBottomSheet()
-            val requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-            viewModel.onNotificationPermissionAfterOnboarding(
-                isGranted = context.isNotificationPermissionGranted(),
-                requiresPermission = requiresPermission,
-            )
-        },
+        onCloseButtonClick = ::handleOnboardingDismiss,
     ) {
         HomeOnboardingContent(
-            onStartButtonClick = {
-                homeState.hideOnboardingBottomSheet()
-                val requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                viewModel.onNotificationPermissionAfterOnboarding(
-                    isGranted = context.isNotificationPermissionGranted(),
-                    requiresPermission = requiresPermission,
-                )
-            },
+            onStartButtonClick = ::handleOnboardingDismiss,
         )
     }
 }
