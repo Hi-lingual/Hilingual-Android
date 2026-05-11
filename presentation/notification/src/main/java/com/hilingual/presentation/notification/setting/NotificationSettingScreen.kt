@@ -55,7 +55,6 @@ internal fun NotificationSettingRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isNotificationGranted by viewModel.isNotificationGranted.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val isSuccess = uiState is UiState.Success
 
     var isNotificationSettingDialogVisible by remember { mutableStateOf(false) }
 
@@ -64,12 +63,12 @@ internal fun NotificationSettingRoute(
         viewModel.checkNotificationPermission(isGranted)
     }
 
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+    LaunchedEffect(Unit) {
         checkNotificationPermission()
     }
 
-    LaunchedEffect(isSuccess) {
-        if (isSuccess) checkNotificationPermission()
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        checkNotificationPermission()
     }
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
