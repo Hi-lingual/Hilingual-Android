@@ -39,9 +39,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -433,21 +430,17 @@ private fun CheckNotificationPermission(
     onCheck: (isGranted: Boolean, requiresPermission: Boolean) -> Unit,
 ) {
     val requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-    var isInitialLoad by remember { mutableStateOf(true) }
 
     fun checkPermission() {
         onCheck(context.isNotificationPermissionGranted(), requiresPermission)
     }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-        if (isDataLoaded && !isInitialLoad) checkPermission()
+        if (isDataLoaded) checkPermission()
     }
 
     LaunchedEffect(isDataLoaded) {
-        if (isDataLoaded) {
-            checkPermission()
-            isInitialLoad = false
-        }
+        if (isDataLoaded) checkPermission()
     }
 }
 
