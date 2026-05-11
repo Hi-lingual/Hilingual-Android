@@ -217,6 +217,11 @@ internal fun HomeRoute(
         isVisible = homeState.isOnboardingBottomSheetVisible,
         onCloseButtonClick = {
             homeState.hideOnboardingBottomSheet()
+            val requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+            viewModel.onNotificationPermissionAfterOnboarding(
+                isGranted = context.isNotificationPermissionGranted(),
+                requiresPermission = requiresPermission,
+            )
         },
     ) {
         HomeOnboardingContent(
