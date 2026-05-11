@@ -21,7 +21,6 @@ import com.hilingual.presentation.home.model.DiaryThumbnailUiModel
 import com.hilingual.presentation.home.model.TodayTopicUiModel
 import com.hilingual.presentation.home.model.UserProfileUiModel
 import com.hilingual.presentation.home.type.DiaryCardState
-import com.hilingual.presentation.home.type.NotificationPermissionState
 import java.time.LocalDate
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -73,7 +72,6 @@ data class HomeUiState(
 @Immutable
 data class HomeHeaderUiState(
     val userProfile: UserProfileUiModel = UserProfileUiModel(),
-    val notificationPermissionState: NotificationPermissionState = NotificationPermissionState.NOT_DETERMINED,
 )
 
 @Immutable
