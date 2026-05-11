@@ -446,16 +446,15 @@ private fun CheckNotificationPermission(
     }
 }
 
-private fun Context.isNotificationPermissionGranted(): Boolean = if (Build.VERSION.SDK_INT >=
-    Build.VERSION_CODES.TIRAMISU
-) {
-    ContextCompat.checkSelfPermission(
-        this,
-        Manifest.permission.POST_NOTIFICATIONS,
-    ) == PackageManager.PERMISSION_GRANTED
-} else {
-    true
-}
+private fun Context.isNotificationPermissionGranted(): Boolean =
+    when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS,
+            ) == PackageManager.PERMISSION_GRANTED
+        else -> true
+    }
 
 @Preview
 @Composable
