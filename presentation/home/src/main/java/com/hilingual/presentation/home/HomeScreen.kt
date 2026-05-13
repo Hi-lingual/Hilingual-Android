@@ -154,9 +154,11 @@ internal fun HomeRoute(
         state = DialogState(isVisible = homeState.isNotificationDialogVisible),
         onDismiss = {
             homeState.hideNotificationDialog()
+            viewModel.onNotificationDialogDismissed()
         },
         onConfirm = {
             homeState.hideNotificationDialog()
+            viewModel.onNotificationDialogDismissed()
             val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
                 putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
             }

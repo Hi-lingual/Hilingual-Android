@@ -149,10 +149,15 @@ class HomeViewModel @Inject constructor(
                     .getIsNotificationDialogShown()
                     .getOrDefault(false)
                 if (!isAlreadyShown) {
-                    notificationRepository.updateIsNotificationDialogShown(true)
                     emitNotificationDialogSideEffect()
                 }
             }
+        }
+    }
+
+    fun onNotificationDialogDismissed() {
+        viewModelScope.launch {
+            notificationRepository.updateIsNotificationDialogShown(true)
         }
     }
 
