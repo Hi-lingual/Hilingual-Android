@@ -42,6 +42,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -65,7 +66,9 @@ class HomeViewModel @Inject constructor(
     )
     val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
 
-    private var isOnboardingVisible = false
+    private val isOnboardingVisible = MutableStateFlow(false)
+
+    private val onboardingCheckCompleted = MutableSharedFlow<Unit>(replay = 1)
 
     init {
         checkOnboardingCompleted()
@@ -125,8 +128,12 @@ class HomeViewModel @Inject constructor(
         val currentState = uiState.value
         if (currentState !is UiState.Success) return
 
-        if (!isOnboardingVisible) {
-            showNotificationDialogIfNeeded(isGranted, requiresPermission)
+        viewModelScope.launch {
+            onboardingCheckCompleted.first()
+
+            if (!isOnboardingVisible.value) {
+                showNotificationDialogIfNeeded(isGranted, requiresPermission)
+            }
         }
     }
 
@@ -134,7 +141,7 @@ class HomeViewModel @Inject constructor(
         isGranted: Boolean,
         requiresPermission: Boolean,
     ) {
-        isOnboardingVisible = false
+        isOnboardingVisible.update { false }
         showNotificationDialogIfNeeded(isGranted, requiresPermission)
     }
 
@@ -323,11 +330,13 @@ class HomeViewModel @Inject constructor(
             onboardingRepository.getIsHomeOnboardingCompleted()
                 .onSuccess { isCompleted ->
                     if (!isCompleted) {
-                        isOnboardingVisible = true
+                        isOnboardingVisible.update { true }
                         emitOnboardingSideEffect()
                         onboardingRepository.updateIsHomeOnboardingCompleted(true)
                     }
                 }.onLogFailure { }
+
+            onboardingCheckCompleted.emit(Unit)
         }
     }
 
