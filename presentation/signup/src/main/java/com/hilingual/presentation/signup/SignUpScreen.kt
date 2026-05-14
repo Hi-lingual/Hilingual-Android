@@ -175,13 +175,7 @@ private fun SignUpScreen(
             },
         )
 
-        Spacer(Modifier.weight(73f))
-
-        Text(
-            text = "설정한 닉네임은 변경이 불가능해요.",
-            style = HilingualTheme.typography.bodyM14,
-            color = HilingualTheme.colors.gray400,
-        )
+        Spacer(Modifier.weight(78f))
 
         HilingualButton(
             text = "가입하기",
