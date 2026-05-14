@@ -26,7 +26,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,6 +38,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,12 +57,14 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.bottomsheet.HilingualProfileImageBottomSheet
 import com.hilingual.core.ui.component.picker.ProfileImagePicker
+import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.core.ui.component.topappbar.TitleCenterAlignedTopAppBar
 import com.hilingual.presentation.mypage.MyPageSideEffect
 import com.hilingual.presentation.mypage.MyPageUiState
 import com.hilingual.presentation.mypage.MyPageViewModel
 import com.hilingual.presentation.mypage.component.ProfileItem
 import com.hilingual.presentation.mypage.component.WithdrawDialog
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun ProfileEditRoute(
@@ -82,6 +89,7 @@ internal fun ProfileEditRoute(
         is UiState.Success -> {
             ProfileEditScreen(
                 paddingValues = paddingValues,
+                onBackClick = navigateUp,
                 profileLoginInfo = state.data,
                 onProfileImageUriChanged = viewModel::patchProfileImage,
                 onWithdrawClick = viewModel::withdraw,
@@ -96,6 +104,7 @@ internal fun ProfileEditRoute(
 private fun ProfileEditScreen(
     paddingValues: PaddingValues,
     profileLoginInfo: MyPageUiState,
+    onBackClick: () -> Unit,
     onProfileImageUriChanged: (Uri?) -> Unit,
     onWithdrawClick: () -> Unit,
 ) {
@@ -121,8 +130,9 @@ private fun ProfileEditScreen(
             .subScreenPadding(paddingValues),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        TitleCenterAlignedTopAppBar(
-            title = "프로필 작성",
+        BackTopAppBar(
+            title = "내 정보 수정",
+            onBackClicked = onBackClick,
         )
 
         Spacer(modifier = Modifier.height(46.dp))
@@ -138,7 +148,20 @@ private fun ProfileEditScreen(
             modifier = Modifier.padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            ProfileItem(label = "닉네임", value = profileLoginInfo.profileNickname)
+            ProfileItem(
+                modifier = Modifier.heightIn(max = 58.dp),
+                label = "닉네임",
+                value = profileLoginInfo.profileNickname,
+                trailingContent = {
+                    Icon(
+                        modifier = Modifier
+                            .size(32.dp),
+                        imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_pen_24),
+                        contentDescription = null,
+                        tint = HilingualTheme.colors.gray300,
+                    )
+                },
+            )
             ProfileItem(label = "연결된 소셜 계정", value = profileLoginInfo.profileProvider)
         }
 
@@ -195,6 +218,7 @@ private fun ProfileEditScreenPreview() {
                 profileNickname = "하링이",
                 profileProvider = "구글 로그인",
             ),
+            onBackClick = {},
             onProfileImageUriChanged = {},
             onWithdrawClick = {},
         )
