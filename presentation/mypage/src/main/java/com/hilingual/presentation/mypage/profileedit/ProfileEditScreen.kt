@@ -70,6 +70,7 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 internal fun ProfileEditRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
+    navigateToNicknameEdit: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -93,6 +94,7 @@ internal fun ProfileEditRoute(
                 profileLoginInfo = state.data,
                 onProfileImageUriChanged = viewModel::patchProfileImage,
                 onWithdrawClick = viewModel::withdraw,
+                onNicknameEditClick = navigateToNicknameEdit,
             )
         }
 
@@ -107,6 +109,7 @@ private fun ProfileEditScreen(
     onBackClick: () -> Unit,
     onProfileImageUriChanged: (Uri?) -> Unit,
     onWithdrawClick: () -> Unit,
+    onNicknameEditClick: () -> Unit,
 ) {
     var imageUri by remember { mutableStateOf<String?>(profileLoginInfo.profileImageUrl.takeIf { it.isNotBlank() }) }
     var isImageSheetVisible by remember { mutableStateOf(false) }
@@ -152,6 +155,7 @@ private fun ProfileEditScreen(
                 modifier = Modifier.heightIn(max = 58.dp),
                 label = "닉네임",
                 value = profileLoginInfo.profileNickname,
+                onClick = onNicknameEditClick,
                 trailingContent = {
                     Icon(
                         modifier = Modifier
@@ -221,6 +225,7 @@ private fun ProfileEditScreenPreview() {
             onBackClick = {},
             onProfileImageUriChanged = {},
             onWithdrawClick = {},
+            onNicknameEditClick = {},
         )
     }
 }

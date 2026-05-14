@@ -25,3 +25,10 @@ internal data class MyPageUiState(
     val profileProvider: String = "",
     val appVersion: String = STABLE_VERSION,
 )
+
+@Immutable
+internal data class NicknameEditState(
+    val nickname: String = "",
+    val validationMessage: String = "",
+    val isNicknameValid: Boolean = false,
+)
