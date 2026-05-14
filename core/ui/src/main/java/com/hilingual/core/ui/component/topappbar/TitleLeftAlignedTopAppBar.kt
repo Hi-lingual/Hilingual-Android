@@ -37,7 +37,7 @@ fun TitleLeftAlignedTopAppBar(
         modifier = modifier
             .fillMaxWidth()
             .background(Color.Transparent)
-            .padding(start = 16.dp, top = 15.dp, end = 16.dp, bottom = 14.dp),
+            .padding(15.dp),
         textAlign = TextAlign.Start,
         text = title,
         color = textColor,
