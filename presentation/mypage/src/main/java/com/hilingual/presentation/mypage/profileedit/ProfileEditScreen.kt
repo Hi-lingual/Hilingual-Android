@@ -81,6 +81,7 @@ internal fun ProfileEditRoute(
             is MyPageSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = navigateUp)
             is MyPageSideEffect.ShowToast -> messageController(HilingualMessage.Toast(sideEffect.message))
             is MyPageSideEffect.RestartApp -> appRestarter.restartApp()
+            else -> {}
         }
     }
 

@@ -82,6 +82,7 @@ internal fun MyPageRoute(
             is MyPageSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = sideEffect.onRetry)
             is MyPageSideEffect.ShowToast -> messageController(HilingualMessage.Toast(sideEffect.message))
             is MyPageSideEffect.RestartApp -> appRestarter.restartApp()
+            else -> {}
         }
     }
 

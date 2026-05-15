@@ -20,14 +20,18 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.extension.subScreenPadding
+import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualShortTextField
 import com.hilingual.core.designsystem.component.textfield.TextFieldState
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
+import com.hilingual.presentation.mypage.MyPageSideEffect
 import com.hilingual.presentation.mypage.MyPageViewModel
 
 @Composable
@@ -37,9 +41,18 @@ internal fun NicknameEditRoute(
     viewModel: MyPageViewModel,
 ) {
     val nicknameEditState by viewModel.nicknameEditState.collectAsStateWithLifecycle()
+    val messageController = LocalMessageController.current
 
     LaunchedEffect(Unit) {
         viewModel.initNicknameEdit()
+    }
+
+    viewModel.sideEffect.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is MyPageSideEffect.NavigateToProfileEdit -> navigateUp()
+            is MyPageSideEffect.ShowToast -> messageController(HilingualMessage.Toast(sideEffect.message))
+            else -> {}
+        }
     }
 
     var textFieldState by remember { mutableStateOf(TextFieldState.NORMAL) }
@@ -66,7 +79,7 @@ internal fun NicknameEditRoute(
         validationMessage = { nicknameEditState.validationMessage },
         isNicknameValid = { nicknameEditState.isNicknameValid },
         onDoneAction = viewModel::onSubmitNickname,
-        onConfirmClick = {},
+        onConfirmClick = viewModel::onConfirmNicknameChange,
     )
 }
 
@@ -97,7 +110,7 @@ private fun NicknameEditScreen(
             onBackClicked = onBackClick,
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Column(
             modifier = Modifier.padding(horizontal = 16.dp),

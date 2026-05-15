@@ -150,6 +150,20 @@ internal class MyPageViewModel @Inject constructor(
         validateNickname(nickname)
     }
 
+    fun onConfirmNicknameChange() {
+        val nickname = _nicknameEditState.value.nickname
+        viewModelScope.launch {
+            userRepository.updateNickname(nickname)
+                .onSuccess {
+                    getProfileInfo()
+                    _sideEffect.emit(MyPageSideEffect.NavigateToProfileEdit)
+                }
+                .onLogFailure {
+                    _sideEffect.emit(MyPageSideEffect.ShowToast("닉네임 업데이트에 실패했어요."))
+                }
+        }
+    }
+
     private fun validateNickname(nickname: String) {
         val currentNickname = (_uiState.value as? UiState.Success)?.data?.profileNickname
         if (nickname == currentNickname) {
@@ -196,4 +210,6 @@ sealed interface MyPageSideEffect {
     data class ShowErrorDialog(val onRetry: () -> Unit) : MyPageSideEffect
     data class ShowToast(val message: String) : MyPageSideEffect
     data object RestartApp : MyPageSideEffect
+    data object NavigateToProfileEdit : MyPageSideEffect
+
 }
