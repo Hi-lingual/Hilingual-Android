@@ -327,16 +327,18 @@ class HomeViewModel @Inject constructor(
 
     private fun checkOnboardingCompleted() {
         viewModelScope.launch {
-            onboardingRepository.getIsHomeOnboardingCompleted()
-                .onSuccess { isCompleted ->
-                    if (!isCompleted) {
-                        isOnboardingVisible.update { true }
-                        emitOnboardingSideEffect()
-                        onboardingRepository.updateIsHomeOnboardingCompleted(true)
-                    }
-                }.onLogFailure { }
-
-            onboardingCheckCompleted.emit(Unit)
+            try {
+                onboardingRepository.getIsHomeOnboardingCompleted()
+                    .onSuccess { isCompleted ->
+                        if (!isCompleted) {
+                            isOnboardingVisible.update { true }
+                            emitOnboardingSideEffect()
+                            onboardingRepository.updateIsHomeOnboardingCompleted(true)
+                        }
+                    }.onLogFailure { }
+            } finally {
+                onboardingCheckCompleted.emit(Unit)
+            }
         }
     }
 
