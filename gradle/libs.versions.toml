@@ -30,7 +30,7 @@ composeBom = "2026.05.00"
 composeNavigation = "2.9.8"
 security = "1.1.0"
 datastorePreferences = "1.2.1"
-material = "1.13.0"
+material = "1.14.0"
 desugarJdkLibs = "2.1.5"
 browser="1.10.0"
 
