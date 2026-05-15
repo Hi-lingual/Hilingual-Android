@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,10 +62,6 @@ internal fun NotificationSettingRoute(
         viewModel.checkNotificationPermission(isGranted)
     }
 
-    LaunchedEffect(Unit) {
-        checkNotificationPermission()
-    }
-
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         checkNotificationPermission()
     }
@@ -92,22 +87,24 @@ internal fun NotificationSettingRoute(
         }
 
         is UiState.Success -> {
-            NotificationSettingScreen(
-                isMarketingChecked = state.data.isMarketingChecked,
-                onMarketingCheckedChange = viewModel::updateMarketingChecked,
-                isFeedChecked = state.data.isFeedChecked,
-                onFeedCheckedChange = viewModel::updateFeedChecked,
-                isNotificationGranted = isNotificationGranted,
-                onBannerClick = navigateToSettings,
-                isPermissionDialogVisible = isNotificationSettingDialogVisible,
-                onPermissionDialogDismiss = { isNotificationSettingDialogVisible = false },
-                onPermissionDialogConfirm = {
-                    isNotificationSettingDialogVisible = false
-                    navigateToSettings()
-                },
-                paddingValues = paddingValues,
-                onBackClick = navigateUp,
-            )
+            isNotificationGranted?.let { granted ->
+                NotificationSettingScreen(
+                    isMarketingChecked = state.data.isMarketingChecked,
+                    onMarketingCheckedChange = viewModel::updateMarketingChecked,
+                    isFeedChecked = state.data.isFeedChecked,
+                    onFeedCheckedChange = viewModel::updateFeedChecked,
+                    isNotificationGranted = granted,
+                    onBannerClick = navigateToSettings,
+                    isPermissionDialogVisible = isNotificationSettingDialogVisible,
+                    onPermissionDialogDismiss = { isNotificationSettingDialogVisible = false },
+                    onPermissionDialogConfirm = {
+                        isNotificationSettingDialogVisible = false
+                        navigateToSettings()
+                    },
+                    paddingValues = paddingValues,
+                    onBackClick = navigateUp,
+                )
+            }
         }
 
         else -> {}

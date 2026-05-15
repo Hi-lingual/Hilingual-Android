@@ -45,7 +45,7 @@ internal class NotificationSettingViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<NotificationSettingSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
 
-    private val _isNotificationGranted = MutableStateFlow(true)
+    private val _isNotificationGranted = MutableStateFlow<Boolean?>(null)
     val isNotificationGranted = _isNotificationGranted.asStateFlow()
 
     private val serverState = MutableStateFlow(NotificationSettingUiState())
@@ -99,7 +99,7 @@ internal class NotificationSettingViewModel @Inject constructor(
         val currentUiState = _uiState.value
         if (currentUiState !is UiState.Success) return
 
-        if (!_isNotificationGranted.value) {
+        if (_isNotificationGranted.value == false) {
             viewModelScope.launch { _sideEffect.emit(NotificationSettingSideEffect.ShowPermissionDialog) }
             return
         }
@@ -112,7 +112,7 @@ internal class NotificationSettingViewModel @Inject constructor(
         val currentUiState = _uiState.value
         if (currentUiState !is UiState.Success) return
 
-        if (!_isNotificationGranted.value) {
+        if (_isNotificationGranted.value == false) {
             viewModelScope.launch { _sideEffect.emit(NotificationSettingSideEffect.ShowPermissionDialog) }
             return
         }
