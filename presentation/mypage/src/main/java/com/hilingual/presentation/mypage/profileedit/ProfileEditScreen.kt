@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -151,14 +150,13 @@ private fun ProfileEditScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             ProfileItem(
-                modifier = Modifier.heightIn(max = 58.dp),
                 label = "닉네임",
                 value = profileLoginInfo.profileNickname,
                 onClick = onNicknameEditClick,
                 trailingContent = {
                     Icon(
                         modifier = Modifier
-                            .size(32.dp),
+                            .size(24.dp),
                         imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_pen_24),
                         contentDescription = null,
                         tint = HilingualTheme.colors.gray300,
