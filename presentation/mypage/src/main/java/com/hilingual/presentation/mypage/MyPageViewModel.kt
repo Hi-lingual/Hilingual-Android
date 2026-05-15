@@ -210,5 +210,4 @@ sealed interface MyPageSideEffect {
     data class ShowToast(val message: String) : MyPageSideEffect
     data object RestartApp : MyPageSideEffect
     data object NavigateToProfileEdit : MyPageSideEffect
-
 }
