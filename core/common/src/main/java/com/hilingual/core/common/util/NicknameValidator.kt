@@ -18,6 +18,23 @@ object NicknameValidator {
     }
 }
 
+enum class NicknameValidationResult {
+    AVAILABLE,
+    DUPLICATE,
+    FORBIDDEN_WORD,
+    ;
+
+    val isValid: Boolean
+        get() = this == AVAILABLE
+
+    val message: String
+        get() = when (this) {
+            AVAILABLE -> NicknameValidator.MESSAGE_AVAILABLE
+            DUPLICATE -> NicknameValidator.MESSAGE_DUPLICATE
+            FORBIDDEN_WORD -> NicknameValidator.MESSAGE_FORBIDDEN_WORD
+        }
+}
+
 sealed interface NicknameLocalValidation {
     data object Valid : NicknameLocalValidation
     data object Blank : NicknameLocalValidation

@@ -16,12 +16,12 @@
 package com.hilingual.data.user.repository
 
 import android.net.Uri
+import com.hilingual.core.common.util.NicknameValidationResult
 import com.hilingual.data.user.model.follow.FollowUserListResultModel
 import com.hilingual.data.user.model.notification.NotificationDetailModel
 import com.hilingual.data.user.model.notification.NotificationModel
 import com.hilingual.data.user.model.notification.NotificationSettingsModel
 import com.hilingual.data.user.model.user.BlockListModel
-import com.hilingual.data.user.model.user.NicknameValidationResult
 import com.hilingual.data.user.model.user.UserInfoModel
 import com.hilingual.data.user.model.user.UserLoginInfoModel
 import com.hilingual.data.user.model.user.UserProfileModel

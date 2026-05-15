@@ -190,9 +190,8 @@ internal class MyPageViewModel @Inject constructor(
                 viewModelScope.launch {
                     userRepository.getNicknameAvailability(nickname)
                         .onSuccess { result ->
-                            val (message, isValid) = result.toValidationPair()
                             _nicknameEditState.update {
-                                it.copy(validationMessage = message, isNicknameValid = isValid)
+                                it.copy(validationMessage = result.message, isNicknameValid = result.isValid)
                             }
                         }
                         .onLogFailure {

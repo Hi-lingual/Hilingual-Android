@@ -17,6 +17,7 @@ package com.hilingual.data.user.repositoryimpl
 
 import android.net.Uri
 import com.hilingual.core.common.app.DeviceInfoProvider
+import com.hilingual.core.common.util.NicknameValidationResult
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.data.presigned.repository.FileUploaderRepository
 import com.hilingual.data.user.datasource.UserLocalDataSource
@@ -29,7 +30,6 @@ import com.hilingual.data.user.model.notification.NotificationModel
 import com.hilingual.data.user.model.notification.NotificationSettingsModel
 import com.hilingual.data.user.model.notification.toModel
 import com.hilingual.data.user.model.user.BlockListModel
-import com.hilingual.data.user.model.user.NicknameValidationResult
 import com.hilingual.data.user.model.user.UserInfoModel
 import com.hilingual.data.user.model.user.UserLoginInfoModel
 import com.hilingual.data.user.model.user.UserProfileModel
