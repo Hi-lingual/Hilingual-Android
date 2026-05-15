@@ -20,9 +20,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.util.NicknameLocalValidation
+import com.hilingual.core.common.util.NicknameValidator
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.auth.repository.AuthRepository
-import com.hilingual.data.user.model.user.NicknameValidationResult
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -40,8 +41,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
-private val specialCharRegex = Regex("[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]")
 
 @HiltViewModel
 internal class MyPageViewModel @Inject constructor(
@@ -152,13 +151,6 @@ internal class MyPageViewModel @Inject constructor(
     }
 
     private fun validateNickname(nickname: String) {
-        if (nickname.isBlank()) {
-            _nicknameEditState.update {
-                it.copy(validationMessage = "", isNicknameValid = false)
-            }
-            return
-        }
-
         val currentNickname = (_uiState.value as? UiState.Success)?.data?.profileNickname
         if (nickname == currentNickname) {
             _nicknameEditState.update {
@@ -167,48 +159,35 @@ internal class MyPageViewModel @Inject constructor(
             return
         }
 
-        viewModelScope.launch {
-            if (nickname.length < 2) {
+        when (val local = NicknameValidator.validateNickname(nickname)) {
+            is NicknameLocalValidation.Blank -> {
                 _nicknameEditState.update {
-                    it.copy(validationMessage = "최소 2글자 이상 입력해주세요", isNicknameValid = false)
+                    it.copy(validationMessage = "", isNicknameValid = false)
                 }
-                return@launch
             }
 
-            if (specialCharRegex.containsMatchIn(nickname)) {
+            is NicknameLocalValidation.Invalid -> {
                 _nicknameEditState.update {
-                    it.copy(validationMessage = "특수문자, 이모지는 사용이 불가능해요", isNicknameValid = false)
+                    it.copy(validationMessage = local.message, isNicknameValid = false)
                 }
-                return@launch
             }
 
-            userRepository.getNicknameAvailability(nickname)
-                .onSuccess { result ->
-                    when (result) {
-                        NicknameValidationResult.AVAILABLE -> {
+            is NicknameLocalValidation.Valid -> {
+                viewModelScope.launch {
+                    userRepository.getNicknameAvailability(nickname)
+                        .onSuccess { result ->
+                            val (message, isValid) = result.toValidationPair()
                             _nicknameEditState.update {
-                                it.copy(validationMessage = "사용 가능한 닉네임이에요", isNicknameValid = true)
+                                it.copy(validationMessage = message, isNicknameValid = isValid)
                             }
                         }
-
-                        NicknameValidationResult.DUPLICATE -> {
+                        .onLogFailure {
                             _nicknameEditState.update {
-                                it.copy(validationMessage = "이미 사용중인 닉네임이에요", isNicknameValid = false)
+                                it.copy(isNicknameValid = false)
                             }
                         }
-
-                        NicknameValidationResult.FORBIDDEN_WORD -> {
-                            _nicknameEditState.update {
-                                it.copy(validationMessage = "금지어가 포함된 닉네임이에요", isNicknameValid = false)
-                            }
-                        }
-                    }
                 }
-                .onLogFailure {
-                    _nicknameEditState.update {
-                        it.copy(isNicknameValid = false)
-                    }
-                }
+            }
         }
     }
 }

@@ -15,8 +15,17 @@
  */
 package com.hilingual.data.user.model.user
 
+import com.hilingual.core.common.util.NicknameValidator
+
 enum class NicknameValidationResult {
     AVAILABLE,
     DUPLICATE,
     FORBIDDEN_WORD,
+    ;
+
+    fun toValidationPair(): Pair<String, Boolean> = when (this) {
+        AVAILABLE -> NicknameValidator.MESSAGE_AVAILABLE to true
+        DUPLICATE -> NicknameValidator.MESSAGE_DUPLICATE to false
+        FORBIDDEN_WORD -> NicknameValidator.MESSAGE_FORBIDDEN_WORD to false
+    }
 }
