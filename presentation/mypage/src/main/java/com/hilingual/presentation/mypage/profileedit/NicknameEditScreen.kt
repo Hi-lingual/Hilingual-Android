@@ -93,7 +93,7 @@ private fun NicknameEditScreen(
             .addFocusCleaner(focusManager),
     ) {
         BackTopAppBar(
-            title = "내 정보 수정",
+            title = "닉네임 변경",
             onBackClicked = onBackClick,
         )
 

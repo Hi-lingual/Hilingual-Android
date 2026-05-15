@@ -58,7 +58,6 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.bottomsheet.HilingualProfileImageBottomSheet
 import com.hilingual.core.ui.component.picker.ProfileImagePicker
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
-import com.hilingual.core.ui.component.topappbar.TitleCenterAlignedTopAppBar
 import com.hilingual.presentation.mypage.MyPageSideEffect
 import com.hilingual.presentation.mypage.MyPageUiState
 import com.hilingual.presentation.mypage.MyPageViewModel
