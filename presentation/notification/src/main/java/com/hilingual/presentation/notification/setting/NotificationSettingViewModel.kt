@@ -25,6 +25,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
@@ -40,6 +41,12 @@ internal class NotificationSettingViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<NotificationSettingUiState>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<NotificationSettingSideEffect>()
+    val sideEffect = _sideEffect.asSharedFlow()
+
+    private val _isNotificationGranted = MutableStateFlow<Boolean?>(null)
+    val isNotificationGranted = _isNotificationGranted.asStateFlow()
 
     private val serverState = MutableStateFlow(NotificationSettingUiState())
 
@@ -68,6 +75,10 @@ internal class NotificationSettingViewModel @Inject constructor(
         }
     }
 
+    fun checkNotificationPermission(isGranted: Boolean) {
+        _isNotificationGranted.update { isGranted }
+    }
+
     private fun observeMarketingToggle() {
         marketingToggleFlow
             .debounce(400L)
@@ -88,6 +99,11 @@ internal class NotificationSettingViewModel @Inject constructor(
         val currentUiState = _uiState.value
         if (currentUiState !is UiState.Success) return
 
+        if (_isNotificationGranted.value == false) {
+            viewModelScope.launch { _sideEffect.emit(NotificationSettingSideEffect.ShowPermissionDialog) }
+            return
+        }
+
         _uiState.update { UiState.Success(currentUiState.data.copy(isMarketingChecked = isChecked)) }
         viewModelScope.launch { marketingToggleFlow.emit(isChecked) }
     }
@@ -95,6 +111,11 @@ internal class NotificationSettingViewModel @Inject constructor(
     fun updateFeedChecked(isChecked: Boolean) {
         val currentUiState = _uiState.value
         if (currentUiState !is UiState.Success) return
+
+        if (_isNotificationGranted.value == false) {
+            viewModelScope.launch { _sideEffect.emit(NotificationSettingSideEffect.ShowPermissionDialog) }
+            return
+        }
 
         _uiState.update { UiState.Success(currentUiState.data.copy(isFeedChecked = isChecked)) }
         viewModelScope.launch { feedToggleFlow.emit(isChecked) }
@@ -121,4 +142,8 @@ internal class NotificationSettingViewModel @Inject constructor(
 private enum class NotiType {
     FEED,
     MARKETING,
+}
+
+internal sealed interface NotificationSettingSideEffect {
+    data object ShowPermissionDialog : NotificationSettingSideEffect
 }

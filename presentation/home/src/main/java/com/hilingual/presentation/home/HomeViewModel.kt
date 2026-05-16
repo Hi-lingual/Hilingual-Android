@@ -15,7 +15,6 @@
  */
 package com.hilingual.presentation.home
 
-import android.Manifest
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
@@ -24,11 +23,11 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.repository.DiaryLocalRepository
 import com.hilingual.data.diary.repository.DiaryRepository
+import com.hilingual.data.notification.repository.NotificationRepository
 import com.hilingual.data.onboarding.repository.OnboardingRepository
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.home.model.DateUiModel
 import com.hilingual.presentation.home.model.toState
-import com.hilingual.presentation.home.type.NotificationPermissionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import java.time.YearMonth
@@ -43,6 +42,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -53,6 +53,7 @@ class HomeViewModel @Inject constructor(
     private val diaryRepository: DiaryRepository,
     private val diaryLocalRepository: DiaryLocalRepository,
     private val onboardingRepository: OnboardingRepository,
+    private val notificationRepository: NotificationRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Loading)
@@ -64,6 +65,10 @@ class HomeViewModel @Inject constructor(
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
     val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
+
+    private val isOnboardingVisible = MutableStateFlow(false)
+
+    private val onboardingCheckCompleted = MutableSharedFlow<Unit>(replay = 1)
 
     init {
         checkOnboardingCompleted()
@@ -123,52 +128,43 @@ class HomeViewModel @Inject constructor(
         val currentState = uiState.value
         if (currentState !is UiState.Success) return
 
-        val isPermissionGranted = !requiresPermission || isGranted
-        val previousState = currentState.data.header.notificationPermissionState
-
-        val newPermissionState = if (isPermissionGranted) {
-            NotificationPermissionState.GRANTED
-        } else {
-            NotificationPermissionState.DENIED
-        }
-
-        if (previousState == newPermissionState) return
-
-        _uiState.updateSuccess { state ->
-            state.copy(
-                header = state.header.copy(notificationPermissionState = newPermissionState),
-            )
-        }
-
-        if (previousState == NotificationPermissionState.NOT_DETERMINED && !isPermissionGranted) {
-            requestNotificationPermission()
-        }
-    }
-
-    fun onNotificationPermissionResult(isGranted: Boolean) {
-        val currentState = uiState.value
-        if (currentState !is UiState.Success) return
-
-        val newPermissionState = if (isGranted) {
-            NotificationPermissionState.GRANTED
-        } else {
-            NotificationPermissionState.DENIED
-        }
-
-        _uiState.updateSuccess { state ->
-            state.copy(
-                header = state.header.copy(notificationPermissionState = newPermissionState),
-            )
-        }
-    }
-
-    private fun requestNotificationPermission() {
         viewModelScope.launch {
-            _sideEffect.emit(
-                HomeSideEffect.RequestNotificationPermission(
-                    permission = Manifest.permission.POST_NOTIFICATIONS,
-                ),
-            )
+            onboardingCheckCompleted.first()
+
+            if (!isOnboardingVisible.value) {
+                showNotificationDialogIfNeeded(isGranted, requiresPermission)
+            }
+        }
+    }
+
+    fun onNotificationPermissionAfterOnboarding(
+        isGranted: Boolean,
+        requiresPermission: Boolean,
+    ) {
+        isOnboardingVisible.update { false }
+        showNotificationDialogIfNeeded(isGranted, requiresPermission)
+    }
+
+    private fun showNotificationDialogIfNeeded(
+        isGranted: Boolean,
+        requiresPermission: Boolean,
+    ) {
+        val isPermissionGranted = !requiresPermission || isGranted
+        if (!isPermissionGranted) {
+            viewModelScope.launch {
+                val isAlreadyShown = notificationRepository
+                    .getIsNotificationDialogShown()
+                    .getOrDefault(false)
+                if (!isAlreadyShown) {
+                    emitNotificationDialogSideEffect()
+                }
+            }
+        }
+    }
+
+    fun onNotificationDialogDismissed() {
+        viewModelScope.launch {
+            notificationRepository.updateIsNotificationDialogShown(true)
         }
     }
 
@@ -331,13 +327,18 @@ class HomeViewModel @Inject constructor(
 
     private fun checkOnboardingCompleted() {
         viewModelScope.launch {
-            onboardingRepository.getIsHomeOnboardingCompleted()
-                .onSuccess { isCompleted ->
-                    if (!isCompleted) {
-                        emitOnboardingSideEffect()
-                        onboardingRepository.updateIsHomeOnboardingCompleted(true)
-                    }
-                }.onLogFailure { }
+            try {
+                onboardingRepository.getIsHomeOnboardingCompleted()
+                    .onSuccess { isCompleted ->
+                        if (!isCompleted) {
+                            isOnboardingVisible.update { true }
+                            emitOnboardingSideEffect()
+                            onboardingRepository.updateIsHomeOnboardingCompleted(true)
+                        }
+                    }.onLogFailure { }
+            } finally {
+                onboardingCheckCompleted.emit(Unit)
+            }
         }
     }
 
@@ -352,16 +353,19 @@ class HomeViewModel @Inject constructor(
 
     private suspend fun emitOnboardingSideEffect() =
         _sideEffect.emit(HomeSideEffect.ShowOnboarding)
+
+    private suspend fun emitNotificationDialogSideEffect() =
+        _sideEffect.emit(HomeSideEffect.ShowNotificationDialog)
 }
 
 sealed interface HomeSideEffect {
     data class ShowErrorDialog(val onRetry: () -> Unit) : HomeSideEffect
 
+    data object ShowNotificationDialog : HomeSideEffect
+
     data class ShowToast(val text: String) : HomeSideEffect
 
     data class ShowSnackBar(val message: String, val actionLabel: String) : HomeSideEffect
-
-    data class RequestNotificationPermission(val permission: String) : HomeSideEffect
 
     data object ShowOnboarding : HomeSideEffect
 }

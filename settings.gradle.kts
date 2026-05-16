@@ -46,6 +46,7 @@ include(":data:feed")
 include(":data:presigned")
 include(":data:config")
 include(":data:onboarding")
+include(":data:notification")
 
 //presentation
 include(":presentation:auth")

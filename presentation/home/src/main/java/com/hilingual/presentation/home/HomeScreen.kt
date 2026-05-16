@@ -17,10 +17,10 @@ package com.hilingual.presentation.home
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import android.provider.Settings
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -59,6 +59,7 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalTracker
+import com.hilingual.core.common.trigger.DialogState
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
@@ -69,6 +70,7 @@ import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.presentation.home.component.DiaryContinueDialog
 import com.hilingual.presentation.home.component.HomeHeader
+import com.hilingual.presentation.home.component.NotificationDialog
 import com.hilingual.presentation.home.component.calendar.HilingualCalendar
 import com.hilingual.presentation.home.component.footer.DiaryDateInfo
 import com.hilingual.presentation.home.component.footer.DiaryEmptyCard
@@ -102,12 +104,6 @@ internal fun HomeRoute(
     val context = LocalContext.current
     val isSuccess = uiState is UiState.Success
 
-    val notificationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-    ) { isGranted ->
-        viewModel.onNotificationPermissionResult(isGranted = isGranted)
-    }
-
     if (homeState.isErrorDialogVisible) {
         dialogTrigger.show(
             onClick = {
@@ -133,11 +129,13 @@ internal fun HomeRoute(
                 )
             }
 
-            is HomeSideEffect.RequestNotificationPermission -> {
-                notificationPermissionLauncher.launch(sideEffect.permission)
+            is HomeSideEffect.ShowOnboarding -> {
+                homeState.showOnboardingBottomSheet()
             }
 
-            is HomeSideEffect.ShowOnboarding -> homeState.showOnboardingBottomSheet()
+            is HomeSideEffect.ShowNotificationDialog -> {
+                homeState.showNotificationDialog()
+            }
         }
     }
 
@@ -150,6 +148,22 @@ internal fun HomeRoute(
         context = context,
         isDataLoaded = isSuccess,
         onCheck = viewModel::handleNotificationPermission,
+    )
+
+    NotificationDialog(
+        state = DialogState(isVisible = homeState.isNotificationDialogVisible),
+        onDismiss = {
+            homeState.hideNotificationDialog()
+            viewModel.onNotificationDialogDismissed()
+        },
+        onConfirm = {
+            homeState.hideNotificationDialog()
+            viewModel.onNotificationDialogDismissed()
+            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+            }
+            context.startActivity(intent)
+        },
     )
 
     when (val state = uiState) {
@@ -198,12 +212,20 @@ internal fun HomeRoute(
         else -> {}
     }
 
+    fun handleOnboardingDismiss() {
+        homeState.hideOnboardingBottomSheet()
+        viewModel.onNotificationPermissionAfterOnboarding(
+            isGranted = context.isNotificationPermissionGranted(),
+            requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU,
+        )
+    }
+
     HomeOnboardingBottomSheet(
         isVisible = homeState.isOnboardingBottomSheetVisible,
-        onCloseButtonClick = homeState::hideOnboardingBottomSheet,
+        onCloseButtonClick = ::handleOnboardingDismiss,
     ) {
         HomeOnboardingContent(
-            onStartButtonClick = homeState::hideOnboardingBottomSheet,
+            onStartButtonClick = ::handleOnboardingDismiss,
         )
     }
 }
@@ -406,27 +428,28 @@ private fun CheckNotificationPermission(
     val requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 
     fun checkPermission() {
-        val isGranted = when {
-            requiresPermission -> {
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.POST_NOTIFICATIONS,
-                ) == PackageManager.PERMISSION_GRANTED
-            }
-
-            else -> true
-        }
-        onCheck(isGranted, requiresPermission)
+        onCheck(context.isNotificationPermissionGranted(), requiresPermission)
     }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-        checkPermission()
+        if (isDataLoaded) checkPermission()
     }
 
     LaunchedEffect(isDataLoaded) {
         if (isDataLoaded) checkPermission()
     }
 }
+
+private fun Context.isNotificationPermissionGranted(): Boolean =
+    when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS,
+            ) == PackageManager.PERMISSION_GRANTED
+
+        else -> true
+    }
 
 @Preview
 @Composable

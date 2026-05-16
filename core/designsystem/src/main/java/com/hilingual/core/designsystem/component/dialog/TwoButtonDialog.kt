@@ -41,6 +41,7 @@ fun TwoButtonDialog(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     description: String? = null,
+    content: (@Composable () -> Unit)? = null,
     properties: DialogProperties = DialogProperties(
         usePlatformDefaultWidth = false,
         decorFitsSystemWindows = false,
@@ -67,6 +68,11 @@ fun TwoButtonDialog(
                 maxLines = 2,
                 textAlign = TextAlign.Center,
             )
+        }
+
+        if (content != null) {
+            Spacer(modifier = Modifier.height(8.dp))
+            content()
         }
 
         Row(
