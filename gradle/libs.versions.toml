@@ -8,7 +8,7 @@ minSdk = "30"
 targetSdk = "36"
 jvmTarget = "17"
 androidGradlePlugin = "9.2.1"
-spotless = "8.4.0"
+spotless = "8.5.0"
 
 # App version
 versionCode = "2040401"
@@ -17,7 +17,7 @@ versionName = "2.4.4"
 # Kotlin
 kotlin = "2.3.21"
 kotlinxImmutable = "0.4.0"
-ksp = "2.3.7"
+ksp = "2.3.8"
 
 # AndroidX
 coreKtx = "1.18.0"
@@ -30,7 +30,7 @@ composeBom = "2026.05.00"
 composeNavigation = "2.9.8"
 security = "1.1.0"
 datastorePreferences = "1.2.1"
-material = "1.13.0"
+material = "1.14.0"
 desugarJdkLibs = "2.1.5"
 browser="1.10.0"
 
