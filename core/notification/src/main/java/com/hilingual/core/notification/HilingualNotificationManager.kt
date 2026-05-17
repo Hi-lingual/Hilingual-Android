@@ -19,8 +19,10 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
+import androidx.core.net.toUri
 import com.hilingual.core.designsystem.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -58,13 +60,19 @@ class HilingualNotificationManager @Inject constructor(
         notificationManager?.createNotificationChannels(listOf(dailyChannel, weeklyChannel))
     }
 
-    fun sendReminderNotification(channelId: String?, title: String, message: String) {
+    fun sendReminderNotification(
+        channelId: String?,
+        title: String,
+        message: String,
+        deepLink: String? = null,
+    ) {
         val targetChannelId = channelId ?: CHANNEL_ID_DAILY
         showReminderNotification(
             channelId = targetChannelId,
             notificationId = System.currentTimeMillis().toInt(),
             title = title,
             message = message,
+            deepLink = deepLink,
         )
     }
 
@@ -73,16 +81,33 @@ class HilingualNotificationManager @Inject constructor(
         notificationId: Int,
         title: String,
         message: String,
+        deepLink: String? = null,
     ) {
-        val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
+        val pendingIntent = if (!deepLink.isNullOrBlank()) {
 
-        val pendingIntent = launchIntent?.let {
-            PendingIntent.getActivity(
-                context,
-                notificationId,
-                it,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-            )
+            val intent = context.packageManager
+                .getLaunchIntentForPackage(context.packageName)
+                ?.apply {
+                    putExtra("link", deepLink)
+                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                }
+            intent?.let {
+                PendingIntent.getActivity(
+                    context,
+                    notificationId,
+                    it,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                )
+            }
+        } else {
+            context.packageManager.getLaunchIntentForPackage(context.packageName)?.let {
+                PendingIntent.getActivity(
+                    context,
+                    notificationId,
+                    it,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                )
+            }
         }
 
         val builder = NotificationCompat.Builder(context, channelId)
@@ -96,7 +121,7 @@ class HilingualNotificationManager @Inject constructor(
         if (pendingIntent != null) {
             builder.setContentIntent(pendingIntent)
         } else {
-            Timber.e("Launch Intent is null. Cannot set ContentIntent.")
+            Timber.e("PendingIntent is null.")
         }
 
         try {
