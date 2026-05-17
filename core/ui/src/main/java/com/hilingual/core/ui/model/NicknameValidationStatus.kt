@@ -6,7 +6,8 @@ enum class NicknameValidationStatus {
     TOO_SHORT,
     SPECIAL_CHAR,
     DUPLICATE,
-    FORBIDDEN_WORD;
+    FORBIDDEN_WORD,
+    ;
 
     fun toMessage(): String = when (this) {
         NONE -> ""

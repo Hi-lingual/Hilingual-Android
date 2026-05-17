@@ -20,11 +20,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.util.UiState
+import com.hilingual.core.ui.model.NicknameValidationStatus
 import com.hilingual.core.ui.util.NicknameLocalValidation
 import com.hilingual.core.ui.util.NicknameLocalValidationReason
 import com.hilingual.core.ui.util.NicknameValidator
-import com.hilingual.core.common.util.UiState
-import com.hilingual.core.ui.model.NicknameValidationStatus
 import com.hilingual.data.auth.repository.AuthRepository
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

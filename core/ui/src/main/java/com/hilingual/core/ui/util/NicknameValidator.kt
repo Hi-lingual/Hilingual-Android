@@ -5,8 +5,13 @@ object NicknameValidator {
 
     fun validateNickname(nickname: String): NicknameLocalValidation = when {
         nickname.isBlank() -> NicknameLocalValidation.Blank
+
         nickname.length < 2 -> NicknameLocalValidation.Invalid(NicknameLocalValidationReason.TOO_SHORT)
-        SPECIAL_CHAR_REGEX.containsMatchIn(nickname) -> NicknameLocalValidation.Invalid(NicknameLocalValidationReason.SPECIAL_CHAR)
+
+        SPECIAL_CHAR_REGEX.containsMatchIn(
+            nickname,
+        ) -> NicknameLocalValidation.Invalid(NicknameLocalValidationReason.SPECIAL_CHAR)
+
         else -> NicknameLocalValidation.Valid
     }
 }
