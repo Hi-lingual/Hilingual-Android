@@ -22,10 +22,12 @@ plugins {
 android {
     setNamespace("presentation.splash")
 }
-
 dependencies {
     implementation(projects.data.auth)
     implementation(projects.data.user)
     implementation(projects.data.config)
     implementation(projects.data.onboarding)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
+    implementation(libs.kotlinx.coroutines.play.services)
 }
