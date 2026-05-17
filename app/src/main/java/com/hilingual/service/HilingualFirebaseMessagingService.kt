@@ -18,8 +18,12 @@ package com.hilingual.service
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.hilingual.core.notification.HilingualNotificationManager
+import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -28,21 +32,34 @@ class HilingualFirebaseMessagingService : FirebaseMessagingService() {
     @Inject
     lateinit var notificationManager: HilingualNotificationManager
 
+    @Inject
+    lateinit var userRepository: UserRepository
+
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
+
+        Timber.tag("FCM_TOKEN").d("FCM 수신됨: ${remoteMessage.data}")
 
         remoteMessage.notification?.let { notification ->
             val title = notification.title ?: return@let
             val body = notification.body ?: return@let
             val channelId = remoteMessage.data["channelId"]
+            val deepLink = remoteMessage.data["link"]
 
-            notificationManager.sendReminderNotification(channelId, title, body)
+            notificationManager.sendReminderNotification(
+                channelId = channelId,
+                title = title,
+                message = body,
+                deepLink = deepLink,
+            )
         }
     }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Timber.d("New FCM Token: $token")
-        // TODO: 추후 WorkManager를 통해 서버로 토큰 전송 로직 구현 예정
+        CoroutineScope(Dispatchers.IO).launch {
+            userRepository.patchFcmToken(fcmToken = token)
+        }
     }
 }
