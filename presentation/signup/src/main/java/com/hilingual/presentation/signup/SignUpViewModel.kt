@@ -19,9 +19,12 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
-import com.hilingual.core.common.util.NicknameLocalValidation
-import com.hilingual.core.common.util.NicknameValidator
+import com.hilingual.core.ui.util.NicknameLocalValidation
+import com.hilingual.core.ui.model.NicknameValidationStatus
+import com.hilingual.core.ui.util.NicknameLocalValidationReason
+import com.hilingual.core.ui.util.NicknameValidator
 import com.hilingual.data.onboarding.repository.OnboardingRepository
+import com.hilingual.data.user.model.user.NicknameValidationResult
 import com.hilingual.data.user.model.user.UserProfileModel
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -69,8 +72,7 @@ internal class SignUpViewModel @Inject constructor(
         _uiState.update { currentState ->
             currentState.copy(
                 nickname = newNickname,
-                validationMessage = "",
-                isNicknameValid = false,
+                validationStatus = NicknameValidationStatus.NONE,
             )
         }
     }
@@ -100,16 +102,26 @@ internal class SignUpViewModel @Inject constructor(
     }
 
     private fun validateNickname(nickname: String) {
-        when (val local = NicknameValidator.validateNickname(nickname)) {
+        when (val localValidationResult = NicknameValidator.validateNickname(nickname)) {
             is NicknameLocalValidation.Blank -> {
                 _uiState.update {
-                    it.copy(validationMessage = "", isNicknameValid = false)
+                    it.copy(validationStatus = NicknameValidationStatus.NONE)
                 }
             }
 
             is NicknameLocalValidation.Invalid -> {
-                _uiState.update {
-                    it.copy(validationMessage = local.message, isNicknameValid = false)
+                when (localValidationResult.reason) {
+                    NicknameLocalValidationReason.TOO_SHORT -> {
+                        _uiState.update {
+                            it.copy(validationStatus = NicknameValidationStatus.TOO_SHORT)
+                        }
+                    }
+
+                    NicknameLocalValidationReason.SPECIAL_CHAR -> {
+                        _uiState.update {
+                            it.copy(validationStatus = NicknameValidationStatus.SPECIAL_CHAR)
+                        }
+                    }
                 }
             }
 
@@ -118,17 +130,24 @@ internal class SignUpViewModel @Inject constructor(
                     userRepository.getNicknameAvailability(nickname)
                         .onSuccess { result ->
                             _uiState.update {
-                                it.copy(validationMessage = result.message, isNicknameValid = result.isValid)
+                                it.copy(validationStatus = result.toValidationStatus())
                             }
                         }
                         .onLogFailure {
-                            _uiState.update { it.copy(isNicknameValid = false) }
+                            _uiState.update { it.copy(validationStatus = NicknameValidationStatus.NONE) }
                             _sideEffect.emit(SignUpSideEffect.ShowRetryDialog { validateNickname(nickname) })
                         }
                 }
             }
         }
     }
+
+    private fun NicknameValidationResult.toValidationStatus(): NicknameValidationStatus =
+        when (this) {
+            NicknameValidationResult.AVAILABLE -> NicknameValidationStatus.AVAILABLE
+            NicknameValidationResult.DUPLICATE -> NicknameValidationStatus.DUPLICATE
+            NicknameValidationResult.FORBIDDEN_WORD -> NicknameValidationStatus.FORBIDDEN_WORD
+        }
 
     private suspend fun onProfileRegistered(nickname: String, isMarketingAgreed: Boolean, imageUri: Uri?) {
         if (!putDeviceInfo()) {

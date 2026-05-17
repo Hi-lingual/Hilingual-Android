@@ -16,11 +16,14 @@
 package com.hilingual.presentation.signup
 
 import androidx.compose.runtime.Immutable
+import com.hilingual.core.ui.model.NicknameValidationStatus
 
 @Immutable
 data class SignUpUiState(
     val nickname: String = "",
-    val validationMessage: String = "",
-    val isNicknameValid: Boolean = false,
+    val validationStatus: NicknameValidationStatus = NicknameValidationStatus.NONE,
     val isLoading: Boolean = false,
-)
+) {
+    val isNicknameValid: Boolean
+        get() = validationStatus == NicknameValidationStatus.AVAILABLE
+}

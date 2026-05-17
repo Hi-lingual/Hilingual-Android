@@ -31,6 +31,8 @@ import com.hilingual.core.designsystem.component.textfield.HilingualShortTextFie
 import com.hilingual.core.designsystem.component.textfield.TextFieldState
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
+import com.hilingual.core.ui.model.NICKNAME_AVAILABLE_MESSAGE
+import com.hilingual.core.ui.model.NicknameValidationStatus
 import com.hilingual.presentation.mypage.MyPageSideEffect
 import com.hilingual.presentation.mypage.MyPageViewModel
 
@@ -57,12 +59,12 @@ internal fun NicknameEditRoute(
 
     var textFieldState by remember { mutableStateOf(TextFieldState.NORMAL) }
 
-    LaunchedEffect(nicknameEditState.isNicknameValid, nicknameEditState.validationMessage, nicknameEditState.nickname) {
+    LaunchedEffect(nicknameEditState.validationStatus, nicknameEditState.nickname) {
         if (nicknameEditState.nickname.isNotEmpty()) {
-            textFieldState = when {
-                nicknameEditState.isNicknameValid -> TextFieldState.SUCCESS
-                nicknameEditState.validationMessage.isNotEmpty() -> TextFieldState.ERROR
-                else -> TextFieldState.NORMAL
+            textFieldState = when (nicknameEditState.validationStatus) {
+                NicknameValidationStatus.AVAILABLE -> TextFieldState.SUCCESS
+                NicknameValidationStatus.NONE -> TextFieldState.NORMAL
+                else -> TextFieldState.ERROR
             }
         }
     }
@@ -76,7 +78,7 @@ internal fun NicknameEditRoute(
             viewModel.onNicknameInputChanged(newNickname)
         },
         textFieldState = { textFieldState },
-        validationMessage = { nicknameEditState.validationMessage },
+        validationMessage = { nicknameEditState.validationStatus.toMessage() },
         isNicknameValid = { nicknameEditState.isNicknameValid },
         onDoneAction = viewModel::onSubmitNickname,
         onConfirmClick = viewModel::onConfirmNicknameChange,
@@ -131,7 +133,7 @@ private fun NicknameEditScreen(
                 maxLength = 10,
                 state = textFieldState,
                 errorMessage = validationMessage,
-                successMessage = "사용 가능한 닉네임이에요",
+                successMessage = NICKNAME_AVAILABLE_MESSAGE,
                 onDoneAction = {
                     onDoneAction(nickname())
                     focusManager.clearFocus()

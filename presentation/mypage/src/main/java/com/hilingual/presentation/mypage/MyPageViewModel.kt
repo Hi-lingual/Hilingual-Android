@@ -20,9 +20,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.extension.onLogFailure
-import com.hilingual.core.common.util.NicknameLocalValidation
-import com.hilingual.core.common.util.NicknameValidator
+import com.hilingual.core.ui.util.NicknameLocalValidation
+import com.hilingual.core.ui.util.NicknameLocalValidationReason
+import com.hilingual.core.ui.util.NicknameValidator
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.ui.model.NicknameValidationStatus
 import com.hilingual.data.auth.repository.AuthRepository
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -140,8 +142,7 @@ internal class MyPageViewModel @Inject constructor(
         _nicknameEditState.update {
             it.copy(
                 nickname = newNickname,
-                validationMessage = "",
-                isNicknameValid = false,
+                validationStatus = NicknameValidationStatus.NONE,
             )
         }
     }
@@ -168,21 +169,31 @@ internal class MyPageViewModel @Inject constructor(
         val currentNickname = (_uiState.value as? UiState.Success)?.data?.profileNickname
         if (nickname == currentNickname) {
             _nicknameEditState.update {
-                it.copy(validationMessage = "", isNicknameValid = false)
+                it.copy(validationStatus = NicknameValidationStatus.NONE)
             }
             return
         }
 
-        when (val local = NicknameValidator.validateNickname(nickname)) {
+        when (val localValidationResult = NicknameValidator.validateNickname(nickname)) {
             is NicknameLocalValidation.Blank -> {
                 _nicknameEditState.update {
-                    it.copy(validationMessage = "", isNicknameValid = false)
+                    it.copy(validationStatus = NicknameValidationStatus.NONE)
                 }
             }
 
             is NicknameLocalValidation.Invalid -> {
-                _nicknameEditState.update {
-                    it.copy(validationMessage = local.message, isNicknameValid = false)
+                when (localValidationResult.reason) {
+                    NicknameLocalValidationReason.TOO_SHORT -> {
+                        _nicknameEditState.update {
+                            it.copy(validationStatus = NicknameValidationStatus.TOO_SHORT)
+                        }
+                    }
+
+                    NicknameLocalValidationReason.SPECIAL_CHAR -> {
+                        _nicknameEditState.update {
+                            it.copy(validationStatus = NicknameValidationStatus.SPECIAL_CHAR)
+                        }
+                    }
                 }
             }
 
@@ -191,12 +202,12 @@ internal class MyPageViewModel @Inject constructor(
                     userRepository.getNicknameAvailability(nickname)
                         .onSuccess { result ->
                             _nicknameEditState.update {
-                                it.copy(validationMessage = result.message, isNicknameValid = result.isValid)
+                                it.copy(validationStatus = result.toValidationStatus())
                             }
                         }
                         .onLogFailure {
                             _nicknameEditState.update {
-                                it.copy(isNicknameValid = false)
+                                it.copy(validationStatus = NicknameValidationStatus.NONE)
                             }
                         }
                 }

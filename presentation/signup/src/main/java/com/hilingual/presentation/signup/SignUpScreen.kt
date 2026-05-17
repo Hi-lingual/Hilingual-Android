@@ -54,6 +54,8 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.ui.component.bottomsheet.HilingualProfileImageBottomSheet
 import com.hilingual.core.ui.component.picker.ProfileImagePicker
+import com.hilingual.core.ui.model.NICKNAME_AVAILABLE_MESSAGE
+import com.hilingual.core.ui.model.NicknameValidationStatus
 import com.hilingual.presentation.signup.component.TermsBottomSheet
 
 @Composable
@@ -68,12 +70,12 @@ internal fun SignUpRoute(
 
     var textFieldState by remember { mutableStateOf(TextFieldState.NORMAL) }
 
-    LaunchedEffect(uiState.isNicknameValid, uiState.validationMessage, uiState.nickname) {
+    LaunchedEffect(uiState.validationStatus, uiState.nickname) {
         if (uiState.nickname.isNotEmpty()) {
-            textFieldState = when {
-                uiState.isNicknameValid -> TextFieldState.SUCCESS
-                uiState.validationMessage.isNotEmpty() -> TextFieldState.ERROR
-                else -> TextFieldState.NORMAL
+            textFieldState = when (uiState.validationStatus) {
+                NicknameValidationStatus.AVAILABLE -> TextFieldState.SUCCESS
+                NicknameValidationStatus.NONE -> TextFieldState.NORMAL
+                else -> TextFieldState.ERROR
             }
         }
     }
@@ -96,7 +98,7 @@ internal fun SignUpRoute(
             viewModel.onNicknameChanged(it)
         },
         textFieldState = { textFieldState },
-        validationMessage = { uiState.validationMessage },
+        validationMessage = { uiState.validationStatus.toMessage() },
         isNicknameValid = { uiState.isNicknameValid },
         onDoneAction = viewModel::onSubmitNickname,
         onRegisterClick = viewModel::onRegisterClick,
@@ -168,7 +170,7 @@ private fun SignUpScreen(
             maxLength = 10,
             state = textFieldState,
             errorMessage = validationMessage,
-            successMessage = "사용 가능한 닉네임이에요",
+            successMessage = NICKNAME_AVAILABLE_MESSAGE,
             onDoneAction = {
                 onDoneAction(nickname())
                 focusManager.clearFocus()
