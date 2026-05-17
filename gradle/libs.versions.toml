@@ -9,6 +9,7 @@ targetSdk = "36"
 jvmTarget = "17"
 androidGradlePlugin = "9.2.1"
 spotless = "8.5.0"
+wisp = "0.1.0"
 
 # App version
 versionCode = "2040401"
@@ -80,6 +81,7 @@ runner = "1.7.0"
 # AboutLibraries
 aboutLibraries = "14.2.0"
 amplitude = "1.28.2"
+firebaseMessagingKtx = "25.0.2"
 
 [libraries]
 # Analytics
@@ -199,6 +201,11 @@ androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomato
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
+
+# wispLibraries
+wisp-runtime = { module = "io.github.angrypodo:wisp-runtime", version.ref = "wisp" }
+wisp-processor = { module = "io.github.angrypodo:wisp-processor", version.ref = "wisp" }
+firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
 
 [plugins]
 # Android
