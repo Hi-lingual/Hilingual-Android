@@ -16,6 +16,7 @@
 package com.hilingual.data.user.service
 
 import com.hilingual.core.network.model.BaseResponse
+import com.hilingual.data.user.dto.request.PatchFcmTokenRequestDto
 import com.hilingual.data.user.dto.request.PutDeviceInfoRequestDto
 import com.hilingual.data.user.dto.request.RegisterProfileRequestDto
 import com.hilingual.data.user.dto.request.UpdateProfileImageRequestDto
@@ -118,5 +119,10 @@ interface UserService {
     @PUT("/api/v1/users/device")
     suspend fun putDeviceInfo(
         @Body putDeviceInfoRequestDto: PutDeviceInfoRequestDto,
+    ): BaseResponse<Unit>
+
+    @PATCH("/api/v1/users/device/fcm-token")
+    suspend fun patchFcmToken(
+        @Body patchFcmTokenRequestDto: PatchFcmTokenRequestDto
     ): BaseResponse<Unit>
 }
