@@ -152,9 +152,11 @@ internal class MyPageViewModel @Inject constructor(
     }
 
     fun onConfirmNicknameChange() {
-        val nickname = _nicknameEditState.value.nickname
+        val nicknameEditState = _nicknameEditState.value
+        if (!nicknameEditState.isNicknameValid) return
+
         viewModelScope.launch {
-            userRepository.updateNickname(nickname)
+            userRepository.updateNickname(nicknameEditState.nickname)
                 .onSuccess {
                     getProfileInfo()
                     _sideEffect.emit(MyPageSideEffect.NavigateToProfileEdit)
