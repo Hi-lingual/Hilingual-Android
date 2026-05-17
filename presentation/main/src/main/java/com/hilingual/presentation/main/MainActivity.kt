@@ -16,7 +16,9 @@
 package com.hilingual.presentation.main
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,6 +30,7 @@ import com.hilingual.core.network.monitor.NetworkMonitor
 import com.hilingual.presentation.main.state.rememberMainAppState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -40,21 +43,35 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var appRestarter: AppRestarter
 
+    private val deepLinkUri = MutableSharedFlow<Uri>(extraBufferCapacity = 1)
+
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         enableEdgeToEdge()
+
+        val initialDeepLink = intent?.data
+            ?: intent?.getStringExtra("link")?.let { Uri.parse(it) }
+
         setContent {
             HilingualTheme {
                 val appState = rememberMainAppState(networkMonitor = networkMonitor)
-
                 MainScreen(
                     appState = appState,
                     tracker = tracker,
                     appRestarter = appRestarter,
+                    initialDeepLinkUri = initialDeepLink,
+                    deepLinkUri = deepLinkUri,
                 )
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        val uri = intent.data
+            ?: intent.getStringExtra("link")?.let { Uri.parse(it) }
+        uri?.let { deepLinkUri.tryEmit(it) }
     }
 }

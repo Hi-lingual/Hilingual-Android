@@ -15,6 +15,7 @@
  */
 package com.hilingual.presentation.main
 
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
@@ -47,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
+import com.angrypodo.wisp.runtime.navigateTo
 import com.hilingual.core.ads.native.HilingualNativeLineAd
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.app.AppRestarter
@@ -80,6 +82,7 @@ import com.hilingual.presentation.splash.navigation.splashNavGraph
 import com.hilingual.presentation.voca.navigation.vocaNavGraph
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -87,6 +90,8 @@ internal fun MainScreen(
     appState: MainAppState,
     tracker: Tracker,
     appRestarter: AppRestarter,
+    initialDeepLinkUri: Uri? = null,
+    deepLinkUri: MutableSharedFlow<Uri>? = null,
 ) {
     val isOffline by appState.isOffline.collectAsStateWithLifecycle()
     val isBottomBarVisible by appState.isBottomBarVisible.collectAsStateWithLifecycle()
@@ -250,6 +255,11 @@ internal fun MainScreen(
                     paddingValues = innerPadding,
                     navigateToAuth = appState::navigateToAuth,
                 )
+            }
+
+            LaunchedEffect(appState.navController) {
+                initialDeepLinkUri?.let { appState.navController.navigateTo(it) }
+                deepLinkUri?.collect { appState.navController.navigateTo(it) }
             }
 
             HilingualErrorDialog(

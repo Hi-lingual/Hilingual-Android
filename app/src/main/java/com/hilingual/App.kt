@@ -20,6 +20,7 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
+import com.angrypodo.wisp.runtime.Wisp
 import com.hilingual.core.ads.initializer.AdsInitializer
 import com.hilingual.core.common.util.HilingualReleaseTree
 import com.hilingual.core.work.scheduler.HilingualWorkManagerConfigurator
@@ -47,6 +48,7 @@ class App : Application(), SingletonImageLoader.Factory {
         initTimber()
         initWorkManager()
         initAds()
+        Wisp.initialize()
     }
 
     override fun newImageLoader(context: Context): ImageLoader = imageLoader.get()
