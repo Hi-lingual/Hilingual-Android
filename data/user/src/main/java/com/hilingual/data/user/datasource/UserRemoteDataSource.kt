@@ -16,6 +16,7 @@
 package com.hilingual.data.user.datasource
 
 import com.hilingual.core.network.model.BaseResponse
+import com.hilingual.data.user.dto.request.PatchFcmTokenRequestDto
 import com.hilingual.data.user.dto.request.PutDeviceInfoRequestDto
 import com.hilingual.data.user.dto.response.follow.FollowerResponseDto
 import com.hilingual.data.user.dto.response.follow.FollowingResponseDto
@@ -75,4 +76,6 @@ interface UserRemoteDataSource {
     suspend fun updateProfileImage(fileKey: String?): BaseResponse<Unit>
 
     suspend fun putDeviceInfo(putDeviceInfoRequestDto: PutDeviceInfoRequestDto): BaseResponse<Unit>
+
+    suspend fun patchFcmToken(patchFcmTokenRequestDto: PatchFcmTokenRequestDto): BaseResponse<Unit>
 }

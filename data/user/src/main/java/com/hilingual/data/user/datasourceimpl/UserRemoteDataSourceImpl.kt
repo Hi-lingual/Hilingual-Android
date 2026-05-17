@@ -18,6 +18,7 @@ package com.hilingual.data.user.datasourceimpl
 import com.hilingual.core.network.model.BaseResponse
 import com.hilingual.data.user.datasource.UserRemoteDataSource
 import com.hilingual.data.user.dto.request.ImageRequestDto
+import com.hilingual.data.user.dto.request.PatchFcmTokenRequestDto
 import com.hilingual.data.user.dto.request.PutDeviceInfoRequestDto
 import com.hilingual.data.user.dto.request.RegisterProfileRequestDto
 import com.hilingual.data.user.dto.request.UpdateProfileImageRequestDto
@@ -122,4 +123,7 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun putDeviceInfo(putDeviceInfoRequestDto: PutDeviceInfoRequestDto): BaseResponse<Unit> =
         userService.putDeviceInfo(putDeviceInfoRequestDto)
+
+    override suspend fun patchFcmToken(patchFcmTokenRequestDto: PatchFcmTokenRequestDto): BaseResponse<Unit> =
+        userService.patchFcmToken(patchFcmTokenRequestDto)
 }
