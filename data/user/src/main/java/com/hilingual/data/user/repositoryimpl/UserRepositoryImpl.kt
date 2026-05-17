@@ -16,11 +16,14 @@
 package com.hilingual.data.user.repositoryimpl
 
 import android.net.Uri
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.tasks.await
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.data.presigned.repository.FileUploaderRepository
 import com.hilingual.data.user.datasource.UserLocalDataSource
 import com.hilingual.data.user.datasource.UserRemoteDataSource
+import com.hilingual.data.user.dto.request.PatchFcmTokenRequestDto
 import com.hilingual.data.user.dto.request.PutDeviceInfoRequestDto
 import com.hilingual.data.user.model.follow.FollowUserListResultModel
 import com.hilingual.data.user.model.follow.toModel
@@ -186,4 +189,19 @@ internal class UserRepositoryImpl @Inject constructor(
         osVersion = getOsVersion(),
         appVersion = getAppVersion(),
     )
+
+    override suspend fun patchFcmToken(fcmToken: String): Result<Unit> =
+        suspendRunCatching {
+            userRemoteDataSource.patchFcmToken(
+                patchFcmTokenRequestDto = PatchFcmTokenRequestDto(
+                    uuid = deviceInfoProvider.getUuid(),
+                    fcmToken = fcmToken,
+                ),
+            )
+        }
+
+    override suspend fun getCurrentFcmToken(): Result<String> =
+        suspendRunCatching {
+            FirebaseMessaging.getInstance().token.await()
+        }
 }
