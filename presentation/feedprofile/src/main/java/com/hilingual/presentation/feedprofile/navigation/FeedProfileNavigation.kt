@@ -30,6 +30,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.angrypodo.wisp.annotations.Wisp
 import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.feedprofile.FeedProfileRoute
 import com.hilingual.presentation.feedprofile.FeedProfileViewModel
@@ -40,6 +41,7 @@ import kotlinx.serialization.Serializable
 private const val ANIMATION_DURATION = 300
 
 @Serializable
+@Wisp("feedprofile")
 internal data class FeedProfileGraph(val userId: Long, val showLikedDiaries: Boolean = false)
 
 @Serializable
