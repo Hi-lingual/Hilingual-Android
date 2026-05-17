@@ -31,7 +31,6 @@ import com.hilingual.core.designsystem.component.textfield.HilingualShortTextFie
 import com.hilingual.core.designsystem.component.textfield.TextFieldState
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
-import com.hilingual.core.ui.model.NICKNAME_AVAILABLE_MESSAGE
 import com.hilingual.core.ui.model.NicknameValidationStatus
 import com.hilingual.presentation.mypage.MyPageSideEffect
 import com.hilingual.presentation.mypage.MyPageViewModel
@@ -132,8 +131,7 @@ private fun NicknameEditScreen(
                 placeholder = "한글, 영문, 숫자 조합만 가능",
                 maxLength = 10,
                 state = textFieldState,
-                errorMessage = validationMessage,
-                successMessage = NICKNAME_AVAILABLE_MESSAGE,
+                supportingText = validationMessage,
                 onDoneAction = {
                     onDoneAction(nickname())
                     focusManager.clearFocus()
