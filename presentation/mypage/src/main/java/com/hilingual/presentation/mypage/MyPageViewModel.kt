@@ -132,7 +132,7 @@ internal class MyPageViewModel @Inject constructor(
     }
 
     fun initNicknameEdit() {
-        val currentNickname = (_uiState.value as? UiState.Success)?.data?.profileNickname ?: ""
+        val currentNickname = (_uiState.value as? UiState.Success)?.data?.profileNickname ?: return
         _nicknameEditState.update {
             NicknameEditState(nickname = currentNickname)
         }
