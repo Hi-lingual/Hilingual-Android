@@ -29,18 +29,14 @@ import com.hilingual.data.auth.repository.AuthRepository
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -59,19 +55,11 @@ internal class MyPageViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<MyPageSideEffect>()
     val sideEffect: SharedFlow<MyPageSideEffect> = _sideEffect.asSharedFlow()
 
+    private var nicknameValidationDebounceJob: Job? = null
+    private var nicknameValidationJob: Job? = null
+
     init {
         getProfileInfo()
-        observeNicknameInput()
-    }
-
-    @OptIn(FlowPreview::class)
-    private fun observeNicknameInput() {
-        _nicknameEditState
-            .map { it.nickname }
-            .distinctUntilChanged()
-            .debounce(700L)
-            .onEach(::validateNickname)
-            .launchIn(viewModelScope)
     }
 
     fun getProfileInfo() {
@@ -132,6 +120,7 @@ internal class MyPageViewModel @Inject constructor(
     }
 
     fun initNicknameEdit() {
+        cancelNicknameValidation()
         val currentNickname = (_uiState.value as? UiState.Success)?.data?.profileNickname ?: return
         _nicknameEditState.update {
             NicknameEditState(nickname = currentNickname)
@@ -139,16 +128,24 @@ internal class MyPageViewModel @Inject constructor(
     }
 
     fun onNicknameInputChanged(newNickname: String) {
+        cancelNicknameValidation()
+
         _nicknameEditState.update {
             it.copy(
                 nickname = newNickname,
                 validationStatus = NicknameValidationStatus.NONE,
             )
         }
+
+        nicknameValidationDebounceJob = viewModelScope.launch {
+            delay(700L)
+            runNicknameValidation(newNickname)
+        }
     }
 
     fun onSubmitNickname(nickname: String) {
-        validateNickname(nickname)
+        nicknameValidationDebounceJob?.cancel()
+        runNicknameValidation(nickname)
     }
 
     fun onConfirmNicknameChange() {
@@ -167,52 +164,63 @@ internal class MyPageViewModel @Inject constructor(
         }
     }
 
-    private fun validateNickname(nickname: String) {
+    private fun runNicknameValidation(nickname: String) {
+        nicknameValidationJob?.cancel()
+        nicknameValidationJob = viewModelScope.launch {
+            validateNickname(nickname)
+        }
+    }
+
+    private fun cancelNicknameValidation() {
+        nicknameValidationDebounceJob?.cancel()
+        nicknameValidationJob?.cancel()
+    }
+
+    private suspend fun validateNickname(nickname: String) {
         val currentNickname = (_uiState.value as? UiState.Success)?.data?.profileNickname
         if (nickname == currentNickname) {
-            _nicknameEditState.update {
-                it.copy(validationStatus = NicknameValidationStatus.NONE)
-            }
+            updateNicknameValidationStatus(nickname, NicknameValidationStatus.NONE)
             return
         }
 
         when (val localValidationResult = NicknameValidator.validateNickname(nickname)) {
             is NicknameLocalValidation.Blank -> {
-                _nicknameEditState.update {
-                    it.copy(validationStatus = NicknameValidationStatus.NONE)
-                }
+                updateNicknameValidationStatus(nickname, NicknameValidationStatus.NONE)
             }
 
             is NicknameLocalValidation.Invalid -> {
                 when (localValidationResult.reason) {
                     NicknameLocalValidationReason.TOO_SHORT -> {
-                        _nicknameEditState.update {
-                            it.copy(validationStatus = NicknameValidationStatus.TOO_SHORT)
-                        }
+                        updateNicknameValidationStatus(nickname, NicknameValidationStatus.TOO_SHORT)
                     }
 
                     NicknameLocalValidationReason.SPECIAL_CHAR -> {
-                        _nicknameEditState.update {
-                            it.copy(validationStatus = NicknameValidationStatus.SPECIAL_CHAR)
-                        }
+                        updateNicknameValidationStatus(nickname, NicknameValidationStatus.SPECIAL_CHAR)
                     }
                 }
             }
 
             is NicknameLocalValidation.Valid -> {
-                viewModelScope.launch {
-                    userRepository.getNicknameAvailability(nickname)
-                        .onSuccess { result ->
-                            _nicknameEditState.update {
-                                it.copy(validationStatus = result.toValidationStatus())
-                            }
-                        }
-                        .onLogFailure {
-                            _nicknameEditState.update {
-                                it.copy(validationStatus = NicknameValidationStatus.NONE)
-                            }
-                        }
-                }
+                userRepository.getNicknameAvailability(nickname)
+                    .onSuccess { result ->
+                        updateNicknameValidationStatus(nickname, result.toValidationStatus())
+                    }
+                    .onLogFailure {
+                        updateNicknameValidationStatus(nickname, NicknameValidationStatus.NONE)
+                    }
+            }
+        }
+    }
+
+    private fun updateNicknameValidationStatus(
+        nickname: String,
+        validationStatus: NicknameValidationStatus,
+    ) {
+        _nicknameEditState.update {
+            if (it.nickname == nickname) {
+                it.copy(validationStatus = validationStatus)
+            } else {
+                it
             }
         }
     }
