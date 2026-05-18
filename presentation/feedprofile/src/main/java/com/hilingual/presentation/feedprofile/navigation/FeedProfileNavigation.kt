@@ -71,23 +71,30 @@ fun NavGraphBuilder.feedProfileNavGraph(
         exitTransition = { ExitTransition.None },
         popEnterTransition = { EnterTransition.None },
     ) {
-        composable<FeedProfile> { backStackEntry ->
+        composable<FeedProfile>(
+            enterTransition = enterTransition,
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = popExitTransition,
+        ) { backStackEntry ->
             val parentEntry = remember(backStackEntry) {
                 navController.getBackStackEntry(FeedProfileGraph::class)
             }
             val lifecycleState by parentEntry.lifecycle.currentStateFlow.collectAsStateWithLifecycle()
-            if (lifecycleState != Lifecycle.State.DESTROYED) {
-                val viewModel: FeedProfileViewModel = hiltViewModel(parentEntry)
-                FeedProfileRoute(
-                    viewModel = viewModel,
-                    paddingValues = paddingValues,
-                    navigateUp = navigateUp,
-                    navigateToMyFeedProfile = navigateToMyFeedProfile,
-                    navigateToFollowList = { navController.navigateToFollowList(userId = 0L) },
-                    navigateToFeedProfile = navigateToFeedProfile,
-                    navigateToFeedDiary = navigateToFeedDiary,
-                )
-            }
+
+            if (lifecycleState == Lifecycle.State.DESTROYED) return@composable
+
+            val viewModel: FeedProfileViewModel = hiltViewModel(parentEntry)
+
+            FeedProfileRoute(
+                viewModel = viewModel,
+                paddingValues = paddingValues,
+                navigateUp = navigateUp,
+                navigateToMyFeedProfile = navigateToMyFeedProfile,
+                navigateToFollowList = { navController.navigateToFollowList(userId = 0L) },
+                navigateToFeedProfile = navigateToFeedProfile,
+                navigateToFeedDiary = navigateToFeedDiary,
+            )
         }
         composable<FollowList>(
             enterTransition = enterTransition,
