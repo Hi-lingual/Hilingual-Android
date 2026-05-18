@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.collectSideEffect
@@ -39,7 +40,7 @@ import com.hilingual.presentation.mypage.MyPageViewModel
 internal fun NicknameEditRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
-    viewModel: MyPageViewModel,
+    viewModel: MyPageViewModel = hiltViewModel(),
 ) {
     val nicknameEditState by viewModel.nicknameEditState.collectAsStateWithLifecycle()
     val messageController = LocalMessageController.current
