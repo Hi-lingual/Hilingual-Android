@@ -70,7 +70,9 @@ fun NavController.navigateToMyPage(
 }
 
 private fun NavController.navigateToProfileEdit(
-    navOptions: NavOptions? = null,
+    navOptions: NavOptions? = navOptions {
+        launchSingleTop = true
+    },
 ) {
     navigate(
         route = ProfileEdit,
@@ -79,7 +81,9 @@ private fun NavController.navigateToProfileEdit(
 }
 
 private fun NavController.navigateToBlockedUser(
-    navOptions: NavOptions? = null,
+    navOptions: NavOptions? = navOptions {
+        launchSingleTop = true
+    },
 ) {
     navigate(
         route = BlockedUser,
@@ -88,7 +92,9 @@ private fun NavController.navigateToBlockedUser(
 }
 
 private fun NavController.navigateToNicknameEdit(
-    navOptions: NavOptions? = null,
+    navOptions: NavOptions? = navOptions {
+        launchSingleTop = true
+    },
 ) {
     navigate(
         route = NicknameEdit,
