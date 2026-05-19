@@ -17,7 +17,7 @@ package com.hilingual.presentation.mypage
 
 import androidx.compose.runtime.Immutable
 import com.hilingual.core.common.constant.STABLE_VERSION
-import com.hilingual.core.ui.model.NicknameValidationStatus
+import com.hilingual.core.ui.model.user.NicknameValidationStatus
 
 @Immutable
 internal data class MyPageUiState(

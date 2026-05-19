@@ -1,4 +1,4 @@
-package com.hilingual.core.ui.model
+package com.hilingual.core.ui.model.user
 
 sealed interface NicknameLocalValidation {
     data object Blank : NicknameLocalValidation

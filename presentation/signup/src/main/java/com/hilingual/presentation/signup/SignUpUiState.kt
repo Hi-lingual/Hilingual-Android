@@ -16,7 +16,7 @@
 package com.hilingual.presentation.signup
 
 import androidx.compose.runtime.Immutable
-import com.hilingual.core.ui.model.NicknameValidationStatus
+import com.hilingual.core.ui.model.user.NicknameValidationStatus
 
 @Immutable
 data class SignUpUiState(

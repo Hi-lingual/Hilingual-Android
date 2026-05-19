@@ -1,7 +1,7 @@
 package com.hilingual.core.ui.util
 
-import com.hilingual.core.ui.model.NicknameLocalValidation
-import com.hilingual.core.ui.model.NicknameLocalValidationReason
+import com.hilingual.core.ui.model.user.NicknameLocalValidation
+import com.hilingual.core.ui.model.user.NicknameLocalValidationReason
 
 object NicknameValidator {
     private val SPECIAL_CHAR_REGEX = Regex("[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]")

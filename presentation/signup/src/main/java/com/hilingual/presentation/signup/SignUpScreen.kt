@@ -54,7 +54,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.ui.component.bottomsheet.HilingualProfileImageBottomSheet
 import com.hilingual.core.ui.component.picker.ProfileImagePicker
-import com.hilingual.core.ui.model.NicknameValidationStatus
+import com.hilingual.core.ui.model.user.NicknameValidationStatus
 import com.hilingual.presentation.signup.component.TermsBottomSheet
 
 @Composable

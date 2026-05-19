@@ -32,7 +32,7 @@ import com.hilingual.core.designsystem.component.textfield.HilingualShortTextFie
 import com.hilingual.core.designsystem.component.textfield.TextFieldState
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
-import com.hilingual.core.ui.model.NicknameValidationStatus
+import com.hilingual.core.ui.model.user.NicknameValidationStatus
 import com.hilingual.presentation.mypage.MyPageSideEffect
 import com.hilingual.presentation.mypage.MyPageViewModel
 
