@@ -65,12 +65,12 @@ import com.hilingual.presentation.voca.component.AddVocaButton
 import com.hilingual.presentation.voca.component.VocaCard
 import com.hilingual.presentation.voca.component.VocaDialog
 import com.hilingual.presentation.voca.component.VocaEmptyCard
-import com.hilingual.presentation.voca.component.rememberVocaTts
 import com.hilingual.presentation.voca.component.VocaEmptyCardType
 import com.hilingual.presentation.voca.component.VocaHeader
 import com.hilingual.presentation.voca.component.VocaInfo
 import com.hilingual.presentation.voca.component.WordSortBottomSheet
 import com.hilingual.presentation.voca.component.WordSortType
+import com.hilingual.presentation.voca.component.rememberVocaTts
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
