@@ -28,7 +28,7 @@ private sealed interface TtsEvent {
 @Stable
 internal class TtsController(scope: CoroutineScope) {
     private var tts: TextToSpeech? = null
-    private val _events = Channel<TtsEvent>(Channel.UNLIMITED)
+    private val events = Channel<TtsEvent>(Channel.UNLIMITED)
     private var resumeOffset = 0
     private var lastRangeStart = 0
 
@@ -39,7 +39,7 @@ internal class TtsController(scope: CoroutineScope) {
 
     init {
         scope.launch {
-            _events.receiveAsFlow().collect { event ->
+            events.receiveAsFlow().collect { event ->
                 when (event) {
                     TtsEvent.Done -> onDone()
                     is TtsEvent.RangeStart -> onRange(event.start, event.end)
@@ -55,18 +55,18 @@ internal class TtsController(scope: CoroutineScope) {
                 override fun onStart(utteranceId: String) = Unit
 
                 override fun onDone(utteranceId: String) {
-                    _events.trySend(TtsEvent.Done)
+                    events.trySend(TtsEvent.Done)
                 }
 
                 @Suppress("OVERRIDE_DEPRECATION")
                 override fun onError(utteranceId: String) = Unit
 
                 override fun onError(utteranceId: String, errorCode: Int) {
-                    _events.trySend(TtsEvent.Done)
+                    events.trySend(TtsEvent.Done)
                 }
 
                 override fun onRangeStart(utteranceId: String, start: Int, end: Int, frame: Int) {
-                    _events.trySend(TtsEvent.RangeStart(start, end))
+                    events.trySend(TtsEvent.RangeStart(start, end))
                 }
             },
         )
@@ -97,7 +97,7 @@ internal class TtsController(scope: CoroutineScope) {
 
     internal fun release() {
         tts?.setOnUtteranceProgressListener(null)
-        _events.close()
+        events.close()
         tts?.stop()
         tts?.shutdown()
         tts = null
