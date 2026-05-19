@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.ui.model
+package com.hilingual.core.ui.model.diary
 
 import androidx.compose.runtime.Immutable
-import kotlinx.collections.immutable.ImmutableList
 
 @Immutable
-data class RecommendExpression(
-    val phraseId: Long,
-    val phraseType: ImmutableList<String>,
-    val phrase: String,
-    val explanation: String,
-    val reason: String,
-    val isMarked: Boolean = false,
+data class FeedbackContent(
+    val originalText: String,
+    val feedbackText: String,
+    val explain: String,
 )

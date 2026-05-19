@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -81,6 +82,7 @@ internal fun MyPageRoute(
             is MyPageSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = sideEffect.onRetry)
             is MyPageSideEffect.ShowToast -> messageController(HilingualMessage.Toast(sideEffect.message))
             is MyPageSideEffect.RestartApp -> appRestarter.restartApp()
+            else -> {}
         }
     }
 
@@ -134,6 +136,8 @@ private fun MyPageScreen(
             title = "마이페이지",
             textColor = HilingualTheme.colors.black,
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Column(
             modifier = Modifier

@@ -36,6 +36,7 @@ import com.hilingual.presentation.mypage.MyPageRoute
 import com.hilingual.presentation.mypage.MyPageViewModel
 import com.hilingual.presentation.mypage.blockeduser.BlockedUserRoute
 import com.hilingual.presentation.mypage.licenses.OssLicensesScreen
+import com.hilingual.presentation.mypage.profileedit.NicknameEditRoute
 import com.hilingual.presentation.mypage.profileedit.ProfileEditRoute
 import kotlinx.serialization.Serializable
 
@@ -54,6 +55,9 @@ internal data object ProfileEdit : Route
 internal data object BlockedUser : Route
 
 @Serializable
+internal data object NicknameEdit : Route
+
+@Serializable
 internal data object OssLicenses : Route
 
 fun NavController.navigateToMyPage(
@@ -66,7 +70,9 @@ fun NavController.navigateToMyPage(
 }
 
 private fun NavController.navigateToProfileEdit(
-    navOptions: NavOptions? = null,
+    navOptions: NavOptions? = navOptions {
+        launchSingleTop = true
+    },
 ) {
     navigate(
         route = ProfileEdit,
@@ -75,10 +81,23 @@ private fun NavController.navigateToProfileEdit(
 }
 
 private fun NavController.navigateToBlockedUser(
-    navOptions: NavOptions? = null,
+    navOptions: NavOptions? = navOptions {
+        launchSingleTop = true
+    },
 ) {
     navigate(
         route = BlockedUser,
+        navOptions = navOptions,
+    )
+}
+
+private fun NavController.navigateToNicknameEdit(
+    navOptions: NavOptions? = navOptions {
+        launchSingleTop = true
+    },
+) {
+    navigate(
+        route = NicknameEdit,
         navOptions = navOptions,
     )
 }
@@ -128,6 +147,22 @@ fun NavGraphBuilder.myPageNavGraph(
             val viewModel = sharedMyPageViewModel(navController, backStackEntry)
 
             ProfileEditRoute(
+                paddingValues = paddingValues,
+                navigateUp = navigateUp,
+                navigateToNicknameEdit = navController::navigateToNicknameEdit,
+                viewModel = viewModel,
+            )
+        }
+
+        composable<NicknameEdit>(
+            enterTransition = enterTransition,
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = popExitTransition,
+        ) { backStackEntry ->
+            val viewModel = sharedMyPageViewModel(navController, backStackEntry)
+
+            NicknameEditRoute(
                 paddingValues = paddingValues,
                 navigateUp = navigateUp,
                 viewModel = viewModel,
