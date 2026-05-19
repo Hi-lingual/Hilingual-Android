@@ -21,7 +21,7 @@ private const val VOCA_TTS_UTTERANCE_ID = "voca_tts"
 
 @Stable
 internal class VocaTtsState(scope: CoroutineScope) {
-    private val ttsRef = arrayOfNulls<TextToSpeech>(1)
+    private var tts: TextToSpeech? = null
     private val doneChannel = Channel<Unit>(Channel.UNLIMITED)
 
     var isPlaying by mutableStateOf(false)
@@ -33,8 +33,8 @@ internal class VocaTtsState(scope: CoroutineScope) {
         }
     }
 
-    internal fun onTtsReady(tts: TextToSpeech) {
-        tts.setOnUtteranceProgressListener(
+    internal fun onTtsReady(instance: TextToSpeech) {
+        instance.setOnUtteranceProgressListener(
             object : UtteranceProgressListener() {
                 override fun onStart(utteranceId: String) = Unit
                 override fun onDone(utteranceId: String) {
@@ -48,30 +48,30 @@ internal class VocaTtsState(scope: CoroutineScope) {
                 }
             },
         )
-        ttsRef[0] = tts
+        tts = instance
     }
 
     internal fun release() {
         doneChannel.close()
-        ttsRef[0]?.setOnUtteranceProgressListener(null)
-        ttsRef[0]?.stop()
-        ttsRef[0]?.shutdown()
-        ttsRef[0] = null
+        tts?.setOnUtteranceProgressListener(null)
+        tts?.stop()
+        tts?.shutdown()
+        tts = null
     }
 
     fun toggle(text: String) {
-        val tts = ttsRef[0] ?: return
+        val instance = tts ?: return
         if (isPlaying) {
-            tts.stop()
+            instance.stop()
             isPlaying = false
         } else {
-            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, VOCA_TTS_UTTERANCE_ID)
+            instance.speak(text, TextToSpeech.QUEUE_FLUSH, null, VOCA_TTS_UTTERANCE_ID)
             isPlaying = true
         }
     }
 
     fun stop() {
-        ttsRef[0]?.stop()
+        tts?.stop()
         isPlaying = false
     }
 }
