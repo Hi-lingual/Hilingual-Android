@@ -20,6 +20,7 @@ import com.hilingual.data.user.datasource.UserRemoteDataSource
 import com.hilingual.data.user.dto.request.ImageRequestDto
 import com.hilingual.data.user.dto.request.PutDeviceInfoRequestDto
 import com.hilingual.data.user.dto.request.RegisterProfileRequestDto
+import com.hilingual.data.user.dto.request.UpdateNicknameRequestDto
 import com.hilingual.data.user.dto.request.UpdateProfileImageRequestDto
 import com.hilingual.data.user.dto.response.follow.FollowerResponseDto
 import com.hilingual.data.user.dto.response.follow.FollowingResponseDto
@@ -28,6 +29,7 @@ import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
 import com.hilingual.data.user.dto.response.user.BlockListResponseDto
 import com.hilingual.data.user.dto.response.user.NicknameResponseDto
+import com.hilingual.data.user.dto.response.user.UpdateNicknameResponseDto
 import com.hilingual.data.user.dto.response.user.UserInfoResponseDto
 import com.hilingual.data.user.dto.response.user.UserLoginInfoResponseDto
 import com.hilingual.data.user.service.UserService
@@ -119,6 +121,9 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
             ),
         )
     }
+
+    override suspend fun updateNickname(nickname: String): BaseResponse<UpdateNicknameResponseDto> =
+        userService.patchNickname(UpdateNicknameRequestDto(nickname))
 
     override suspend fun putDeviceInfo(putDeviceInfoRequestDto: PutDeviceInfoRequestDto): BaseResponse<Unit> =
         userService.putDeviceInfo(putDeviceInfoRequestDto)

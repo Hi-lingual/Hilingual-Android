@@ -39,7 +39,7 @@ import com.hilingual.core.ads.banner.HilingualBannerAd
 import com.hilingual.core.ads.banner.rememberBannerAdView
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.item.diary.card.RecommendExpressionCard
-import com.hilingual.core.ui.model.RecommendExpression
+import com.hilingual.core.ui.model.diary.RecommendExpression
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 

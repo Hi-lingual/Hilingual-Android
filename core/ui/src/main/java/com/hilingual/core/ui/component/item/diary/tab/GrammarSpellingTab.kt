@@ -52,8 +52,8 @@ import com.hilingual.core.ui.component.item.diary.card.DiaryCard
 import com.hilingual.core.ui.component.item.diary.card.FeedbackCard
 import com.hilingual.core.ui.component.item.diary.card.FeedbackEmptyCard
 import com.hilingual.core.ui.component.item.diary.toggle.DiaryViewModeToggle
-import com.hilingual.core.ui.model.DiaryContent
-import com.hilingual.core.ui.model.FeedbackContent
+import com.hilingual.core.ui.model.diary.DiaryContent
+import com.hilingual.core.ui.model.diary.FeedbackContent
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
