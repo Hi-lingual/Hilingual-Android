@@ -17,9 +17,9 @@ package com.hilingual.presentation.feeddiary
 
 import androidx.compose.runtime.Immutable
 import com.hilingual.core.ui.component.dropdown.Topics
-import com.hilingual.core.ui.model.DiaryContent
-import com.hilingual.core.ui.model.FeedbackContent
-import com.hilingual.core.ui.model.RecommendExpression
+import com.hilingual.core.ui.model.diary.DiaryContent
+import com.hilingual.core.ui.model.diary.FeedbackContent
+import com.hilingual.core.ui.model.diary.RecommendExpression
 import com.hilingual.data.calendar.model.TopicModel
 import com.hilingual.data.diary.model.DiaryContentModel
 import com.hilingual.data.diary.model.DiaryFeedbackModel

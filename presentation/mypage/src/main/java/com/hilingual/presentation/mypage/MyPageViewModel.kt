@@ -21,10 +21,16 @@ import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.ui.model.user.NicknameLocalValidation
+import com.hilingual.core.ui.model.user.NicknameLocalValidationReason
+import com.hilingual.core.ui.model.user.NicknameValidationStatus
+import com.hilingual.core.ui.util.NicknameValidator
 import com.hilingual.data.auth.repository.AuthRepository
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -43,8 +49,14 @@ internal class MyPageViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState<MyPageUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<MyPageUiState>> = _uiState.asStateFlow()
 
+    private val _nicknameEditState = MutableStateFlow(NicknameEditState())
+    val nicknameEditState: StateFlow<NicknameEditState> = _nicknameEditState.asStateFlow()
+
     private val _sideEffect = MutableSharedFlow<MyPageSideEffect>()
     val sideEffect: SharedFlow<MyPageSideEffect> = _sideEffect.asSharedFlow()
+
+    private var nicknameValidationDebounceJob: Job? = null
+    private var nicknameValidationJob: Job? = null
 
     init {
         getProfileInfo()
@@ -106,10 +118,124 @@ internal class MyPageViewModel @Inject constructor(
                 }
         }
     }
+
+    fun initNicknameEdit() {
+        cancelNicknameValidation()
+        val currentNickname = (_uiState.value as? UiState.Success)?.data?.profileNickname ?: return
+        _nicknameEditState.update {
+            NicknameEditState(nickname = currentNickname)
+        }
+    }
+
+    fun onNicknameInputChanged(newNickname: String) {
+        cancelNicknameValidation()
+
+        _nicknameEditState.update {
+            it.copy(
+                nickname = newNickname,
+                validationStatus = NicknameValidationStatus.NONE,
+            )
+        }
+
+        nicknameValidationDebounceJob = viewModelScope.launch {
+            delay(700L)
+            runNicknameValidation(newNickname)
+        }
+    }
+
+    fun onSubmitNickname(nickname: String) {
+        nicknameValidationDebounceJob?.cancel()
+        runNicknameValidation(nickname)
+    }
+
+    fun onConfirmNicknameChange() {
+        val nicknameEditState = _nicknameEditState.value
+        if (!nicknameEditState.isNicknameValid) return
+
+        viewModelScope.launch {
+            userRepository.updateNickname(nicknameEditState.nickname)
+                .onSuccess {
+                    getProfileInfo()
+                    _sideEffect.emit(MyPageSideEffect.NavigateToProfileEdit)
+                }
+                .onLogFailure {
+                    _sideEffect.emit(MyPageSideEffect.ShowToast("닉네임 업데이트에 실패했어요."))
+                }
+        }
+    }
+
+    private fun runNicknameValidation(nickname: String) {
+        nicknameValidationJob?.cancel()
+        nicknameValidationJob = viewModelScope.launch {
+            validateNickname(nickname)
+        }
+    }
+
+    private fun cancelNicknameValidation() {
+        nicknameValidationDebounceJob?.cancel()
+        nicknameValidationJob?.cancel()
+    }
+
+    private suspend fun validateNickname(nickname: String) {
+        val currentNickname = (_uiState.value as? UiState.Success)?.data?.profileNickname
+        if (nickname == currentNickname) {
+            updateNicknameValidationStatus(nickname, NicknameValidationStatus.NONE)
+            return
+        }
+
+        when (val localValidationResult = NicknameValidator.validateNickname(nickname)) {
+            is NicknameLocalValidation.Blank -> {
+                updateNicknameValidationStatus(nickname, NicknameValidationStatus.NONE)
+            }
+
+            is NicknameLocalValidation.Invalid -> {
+                updateInvalidNicknameValidationStatus(nickname, localValidationResult.reason)
+            }
+
+            is NicknameLocalValidation.Valid -> {
+                updateAvailableNicknameValidationStatus(nickname)
+            }
+        }
+    }
+
+    private fun updateInvalidNicknameValidationStatus(
+        nickname: String,
+        reason: NicknameLocalValidationReason,
+    ) {
+        val validationStatus = when (reason) {
+            NicknameLocalValidationReason.TOO_SHORT -> NicknameValidationStatus.TOO_SHORT
+            NicknameLocalValidationReason.SPECIAL_CHAR -> NicknameValidationStatus.SPECIAL_CHAR
+        }
+        updateNicknameValidationStatus(nickname, validationStatus)
+    }
+
+    private suspend fun updateAvailableNicknameValidationStatus(nickname: String) {
+        userRepository.getNicknameAvailability(nickname)
+            .onSuccess { result ->
+                updateNicknameValidationStatus(nickname, NicknameValidationStatus.fromName(result.name))
+            }
+            .onLogFailure {
+                updateNicknameValidationStatus(nickname, NicknameValidationStatus.NONE)
+            }
+    }
+
+    private fun updateNicknameValidationStatus(
+        nickname: String,
+        validationStatus: NicknameValidationStatus,
+    ) {
+        _nicknameEditState.update {
+            if (it.nickname == nickname) {
+                it.copy(validationStatus = validationStatus)
+            } else {
+                it
+            }
+        }
+    }
 }
 
 sealed interface MyPageSideEffect {
     data class ShowErrorDialog(val onRetry: () -> Unit) : MyPageSideEffect
     data class ShowToast(val message: String) : MyPageSideEffect
     data object RestartApp : MyPageSideEffect
+    data object NavigateToProfileEdit : MyPageSideEffect
 }
