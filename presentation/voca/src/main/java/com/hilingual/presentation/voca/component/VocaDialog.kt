@@ -48,11 +48,11 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.item.voca.WordPhraseTypeTag
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun VocaDialog(
@@ -64,6 +64,8 @@ internal fun VocaDialog(
     writtenDate: String,
     isBookmarked: Boolean,
     onBookmarkClick: (Long, Boolean) -> Unit,
+    isTtsPlaying: Boolean,
+    onTtsClick: () -> Unit,
     modifier: Modifier = Modifier,
     properties: DialogProperties = DialogProperties(
         usePlatformDefaultWidth = false,
@@ -90,6 +92,8 @@ internal fun VocaDialog(
                 onBookmarkClick(phraseId, isMarked)
             },
             onDismiss = onDismiss,
+            isTtsPlaying = isTtsPlaying,
+            onTtsClick = onTtsClick,
             modifier = modifier,
         )
     }
@@ -104,6 +108,8 @@ internal fun VocaDialogContent(
     isMarked: Boolean,
     onBookmarkClick: () -> Unit,
     onDismiss: () -> Unit,
+    isTtsPlaying: Boolean,
+    onTtsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -156,11 +162,7 @@ internal fun VocaDialogContent(
 
             Icon(
                 imageVector = ImageVector.vectorResource(
-                    id = if (isMarked) {
-                        DesignSystemR.drawable.ic_save_28_filled
-                    } else {
-                        DesignSystemR.drawable.ic_save_28_empty
-                    },
+                    id = if (isMarked) R.drawable.ic_save_28_filled else R.drawable.ic_save_28_empty,
                 ),
                 contentDescription = null,
                 modifier = Modifier
@@ -170,12 +172,26 @@ internal fun VocaDialogContent(
                 tint = Color.Unspecified,
             )
 
-            Text(
-                text = writtenDate,
-                style = HilingualTheme.typography.captionR12,
-                color = HilingualTheme.colors.gray400,
-                modifier = Modifier.align(Alignment.BottomEnd),
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_play_24_and),
+                    contentDescription = null,
+                    tint = if (isTtsPlaying) HilingualTheme.colors.gray400 else Color.Unspecified,
+                    modifier = Modifier.noRippleClickable { onTtsClick() },
+                )
+
+                Text(
+                    text = writtenDate,
+                    style = HilingualTheme.typography.captionR12,
+                    color = HilingualTheme.colors.gray400,
+                )
+            }
         }
     }
 }
@@ -192,6 +208,8 @@ private fun VocaDialogPreview() {
             isMarked = true,
             onBookmarkClick = { },
             onDismiss = { },
+            isTtsPlaying = false,
+            onTtsClick = { },
         )
     }
 }

@@ -65,6 +65,7 @@ import com.hilingual.presentation.voca.component.AddVocaButton
 import com.hilingual.presentation.voca.component.VocaCard
 import com.hilingual.presentation.voca.component.VocaDialog
 import com.hilingual.presentation.voca.component.VocaEmptyCard
+import com.hilingual.presentation.voca.component.rememberVocaTts
 import com.hilingual.presentation.voca.component.VocaEmptyCardType
 import com.hilingual.presentation.voca.component.VocaHeader
 import com.hilingual.presentation.voca.component.VocaInfo
@@ -85,6 +86,7 @@ internal fun VocaRoute(
     val focusManager = LocalFocusManager.current
     val dialogTrigger = LocalDialogTrigger.current
     val tracker = LocalTracker.current
+    val ttsState = rememberVocaTts()
 
     LaunchedEffect(Unit) {
         tracker.logEvent(trigger = TriggerType.VIEW, page = VOCABULARY, event = "page")
@@ -94,6 +96,7 @@ internal fun VocaRoute(
         if (uiState.vocaItemDetail is UiState.Success) {
             focusManager.clearFocus()
         }
+        ttsState.stop()
     }
 
     viewModel.sideEffect.collectSideEffect {
@@ -160,6 +163,8 @@ internal fun VocaRoute(
                 onBookmarkClick = { phraseId, isMarked ->
                     viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
                 },
+                isTtsPlaying = ttsState.isPlaying,
+                onTtsClick = { ttsState.toggle(vocaDetail.phrase) },
             )
         }
 
