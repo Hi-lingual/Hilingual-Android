@@ -79,80 +79,103 @@ internal fun VocaDialog(
         val dialogWindowProvider = LocalView.current.parent as? DialogWindowProvider
         dialogWindowProvider?.window?.setGravity(Gravity.BOTTOM)
 
+        VocaDialogContent(
+            phrase = phrase,
+            phraseType = phraseType,
+            explanation = explanation,
+            writtenDate = writtenDate,
+            isMarked = isMarked,
+            onBookmarkClick = {
+                isMarked = !isMarked
+                onBookmarkClick(phraseId, isMarked)
+            },
+            onDismiss = onDismiss,
+            modifier = modifier,
+        )
+    }
+}
+
+@Composable
+internal fun VocaDialogContent(
+    phrase: String,
+    phraseType: ImmutableList<String>,
+    explanation: String,
+    writtenDate: String,
+    isMarked: Boolean,
+    onBookmarkClick: () -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(HilingualTheme.colors.dim2)
+            .noRippleClickable(onClick = onDismiss)
+            .navigationBarsPadding()
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 20.dp),
+        contentAlignment = Alignment.BottomCenter,
+    ) {
         Box(
-            modifier = modifier
-                .fillMaxSize()
-                .background(HilingualTheme.colors.dim2)
-                .noRippleClickable(onClick = onDismiss)
-                .navigationBarsPadding()
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 20.dp),
-            contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier
+                .clip(RoundedCornerShape(12.dp))
+                .fillMaxWidth()
+                .background(
+                    color = HilingualTheme.colors.white,
+                    shape = RoundedCornerShape(12.dp),
+                )
+                .padding(top = 28.dp, bottom = 40.dp)
+                .padding(horizontal = 24.dp),
         ) {
-            Box(
+            Column(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .fillMaxWidth()
-                    .background(
-                        color = HilingualTheme.colors.white,
-                        shape = RoundedCornerShape(12.dp),
-                    )
-                    .padding(top = 28.dp, bottom = 40.dp)
-                    .padding(horizontal = 24.dp),
+                    .align(Alignment.TopStart)
+                    .padding(bottom = 80.dp, end = 44.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(bottom = 80.dp, end = 44.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                        phraseType.forEach { type ->
-                            key(type) {
-                                WordPhraseTypeTag(phraseType = type)
-                            }
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    phraseType.forEach { type ->
+                        key(type) {
+                            WordPhraseTypeTag(phraseType = type)
                         }
                     }
-
-                    Text(
-                        text = phrase,
-                        style = HilingualTheme.typography.headR20,
-                        color = HilingualTheme.colors.black,
-                    )
-
-                    Text(
-                        text = explanation,
-                        style = HilingualTheme.typography.bodyR14,
-                        color = HilingualTheme.colors.black,
-                    )
                 }
 
-                Icon(
-                    imageVector = ImageVector.vectorResource(
-                        id = if (isMarked) {
-                            DesignSystemR.drawable.ic_save_28_filled
-                        } else {
-                            DesignSystemR.drawable.ic_save_28_empty
-                        },
-                    ),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(36.dp)
-                        .align(Alignment.TopEnd)
-                        .noRippleClickable {
-                            isMarked = !isMarked
-                            onBookmarkClick(phraseId, isMarked)
-                        },
-                    tint = Color.Unspecified,
+                Text(
+                    text = phrase,
+                    style = HilingualTheme.typography.headR20,
+                    color = HilingualTheme.colors.black,
                 )
 
                 Text(
-                    text = writtenDate,
-                    style = HilingualTheme.typography.captionR12,
-                    color = HilingualTheme.colors.gray400,
-                    modifier = Modifier.align(Alignment.BottomEnd),
+                    text = explanation,
+                    style = HilingualTheme.typography.bodyR14,
+                    color = HilingualTheme.colors.black,
                 )
             }
+
+            Icon(
+                imageVector = ImageVector.vectorResource(
+                    id = if (isMarked) {
+                        DesignSystemR.drawable.ic_save_28_filled
+                    } else {
+                        DesignSystemR.drawable.ic_save_28_empty
+                    },
+                ),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(36.dp)
+                    .align(Alignment.TopEnd)
+                    .noRippleClickable(onClick = onBookmarkClick),
+                tint = Color.Unspecified,
+            )
+
+            Text(
+                text = writtenDate,
+                style = HilingualTheme.typography.captionR12,
+                color = HilingualTheme.colors.gray400,
+                modifier = Modifier.align(Alignment.BottomEnd),
+            )
         }
     }
 }
@@ -161,15 +184,14 @@ internal fun VocaDialog(
 @Composable
 private fun VocaDialogPreview() {
     HilingualTheme {
-        VocaDialog(
-            onDismiss = {},
-            phraseId = 1L,
+        VocaDialogContent(
             phrase = "take a rain check",
             phraseType = persistentListOf("동사", "숙어"),
             explanation = "다음 기회로 미루다, 나중에 하자고 하다",
             writtenDate = "2024.03.15",
-            isBookmarked = true,
-            onBookmarkClick = { _, _ -> },
+            isMarked = true,
+            onBookmarkClick = { },
+            onDismiss = { },
         )
     }
 }
