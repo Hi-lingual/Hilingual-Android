@@ -20,8 +20,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.ui.model.NicknameValidationStatus
-import com.hilingual.core.ui.util.NicknameLocalValidation
-import com.hilingual.core.ui.util.NicknameLocalValidationReason
+import com.hilingual.core.ui.model.NicknameLocalValidation
+import com.hilingual.core.ui.model.NicknameLocalValidationReason
 import com.hilingual.core.ui.util.NicknameValidator
 import com.hilingual.data.onboarding.repository.OnboardingRepository
 import com.hilingual.data.user.model.user.UserProfileModel
