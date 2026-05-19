@@ -189,27 +189,34 @@ internal class MyPageViewModel @Inject constructor(
             }
 
             is NicknameLocalValidation.Invalid -> {
-                when (localValidationResult.reason) {
-                    NicknameLocalValidationReason.TOO_SHORT -> {
-                        updateNicknameValidationStatus(nickname, NicknameValidationStatus.TOO_SHORT)
-                    }
-
-                    NicknameLocalValidationReason.SPECIAL_CHAR -> {
-                        updateNicknameValidationStatus(nickname, NicknameValidationStatus.SPECIAL_CHAR)
-                    }
-                }
+                updateInvalidNicknameValidationStatus(nickname, localValidationResult.reason)
             }
 
             is NicknameLocalValidation.Valid -> {
-                userRepository.getNicknameAvailability(nickname)
-                    .onSuccess { result ->
-                        updateNicknameValidationStatus(nickname, NicknameValidationStatus.fromName(result.name))
-                    }
-                    .onLogFailure {
-                        updateNicknameValidationStatus(nickname, NicknameValidationStatus.NONE)
-                    }
+                updateAvailableNicknameValidationStatus(nickname)
             }
         }
+    }
+
+    private fun updateInvalidNicknameValidationStatus(
+        nickname: String,
+        reason: NicknameLocalValidationReason,
+    ) {
+        val validationStatus = when (reason) {
+            NicknameLocalValidationReason.TOO_SHORT -> NicknameValidationStatus.TOO_SHORT
+            NicknameLocalValidationReason.SPECIAL_CHAR -> NicknameValidationStatus.SPECIAL_CHAR
+        }
+        updateNicknameValidationStatus(nickname, validationStatus)
+    }
+
+    private suspend fun updateAvailableNicknameValidationStatus(nickname: String) {
+        userRepository.getNicknameAvailability(nickname)
+            .onSuccess { result ->
+                updateNicknameValidationStatus(nickname, NicknameValidationStatus.fromName(result.name))
+            }
+            .onLogFailure {
+                updateNicknameValidationStatus(nickname, NicknameValidationStatus.NONE)
+            }
     }
 
     private fun updateNicknameValidationStatus(
