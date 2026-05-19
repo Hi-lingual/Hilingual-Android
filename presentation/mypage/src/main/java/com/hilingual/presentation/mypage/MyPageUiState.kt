@@ -18,7 +18,6 @@ package com.hilingual.presentation.mypage
 import androidx.compose.runtime.Immutable
 import com.hilingual.core.common.constant.STABLE_VERSION
 import com.hilingual.core.ui.model.NicknameValidationStatus
-import com.hilingual.data.user.model.user.NicknameValidationResult
 
 @Immutable
 internal data class MyPageUiState(
@@ -36,10 +35,3 @@ internal data class NicknameEditState(
     val isNicknameValid: Boolean
         get() = validationStatus == NicknameValidationStatus.AVAILABLE
 }
-
-internal fun NicknameValidationResult.toValidationStatus(): NicknameValidationStatus =
-    when (this) {
-        NicknameValidationResult.AVAILABLE -> NicknameValidationStatus.AVAILABLE
-        NicknameValidationResult.DUPLICATE -> NicknameValidationStatus.DUPLICATE
-        NicknameValidationResult.FORBIDDEN_WORD -> NicknameValidationStatus.FORBIDDEN_WORD
-    }

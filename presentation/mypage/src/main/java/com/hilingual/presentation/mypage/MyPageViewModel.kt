@@ -203,7 +203,7 @@ internal class MyPageViewModel @Inject constructor(
             is NicknameLocalValidation.Valid -> {
                 userRepository.getNicknameAvailability(nickname)
                     .onSuccess { result ->
-                        updateNicknameValidationStatus(nickname, result.toValidationStatus())
+                        updateNicknameValidationStatus(nickname, NicknameValidationStatus.fromName(result.name))
                     }
                     .onLogFailure {
                         updateNicknameValidationStatus(nickname, NicknameValidationStatus.NONE)

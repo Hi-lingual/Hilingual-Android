@@ -17,4 +17,9 @@ enum class NicknameValidationStatus {
         DUPLICATE -> "이미 사용중인 닉네임이에요"
         FORBIDDEN_WORD -> "금지어가 포함된 닉네임이에요"
     }
+
+    companion object {
+        fun fromName(name: String): NicknameValidationStatus =
+            entries.firstOrNull { it.name == name } ?: NONE
+    }
 }

@@ -24,7 +24,6 @@ import com.hilingual.core.ui.util.NicknameLocalValidation
 import com.hilingual.core.ui.util.NicknameLocalValidationReason
 import com.hilingual.core.ui.util.NicknameValidator
 import com.hilingual.data.onboarding.repository.OnboardingRepository
-import com.hilingual.data.user.model.user.NicknameValidationResult
 import com.hilingual.data.user.model.user.UserProfileModel
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -130,7 +129,7 @@ internal class SignUpViewModel @Inject constructor(
                     userRepository.getNicknameAvailability(nickname)
                         .onSuccess { result ->
                             _uiState.update {
-                                it.copy(validationStatus = result.toValidationStatus())
+                                it.copy(validationStatus = NicknameValidationStatus.fromName(result.name))
                             }
                         }
                         .onLogFailure {
@@ -141,13 +140,6 @@ internal class SignUpViewModel @Inject constructor(
             }
         }
     }
-
-    private fun NicknameValidationResult.toValidationStatus(): NicknameValidationStatus =
-        when (this) {
-            NicknameValidationResult.AVAILABLE -> NicknameValidationStatus.AVAILABLE
-            NicknameValidationResult.DUPLICATE -> NicknameValidationStatus.DUPLICATE
-            NicknameValidationResult.FORBIDDEN_WORD -> NicknameValidationStatus.FORBIDDEN_WORD
-        }
 
     private suspend fun onProfileRegistered(nickname: String, isMarketingAgreed: Boolean, imageUri: Uri?) {
         if (!putDeviceInfo()) {
