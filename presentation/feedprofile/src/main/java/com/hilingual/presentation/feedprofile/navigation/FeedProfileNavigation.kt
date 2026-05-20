@@ -21,7 +21,9 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -82,9 +84,13 @@ fun NavGraphBuilder.feedProfileNavGraph(
             }
             val lifecycleState by parentEntry.lifecycle.currentStateFlow.collectAsStateWithLifecycle()
 
-            if (lifecycleState == Lifecycle.State.DESTROYED) return@composable
+            var cachedViewModel by remember(parentEntry) { mutableStateOf<FeedProfileViewModel?>(null) }
 
-            val viewModel: FeedProfileViewModel = hiltViewModel(parentEntry)
+            if (lifecycleState != Lifecycle.State.DESTROYED) {
+                cachedViewModel = hiltViewModel(parentEntry)
+            }
+
+            val viewModel = cachedViewModel ?: return@composable
 
             FeedProfileRoute(
                 viewModel = viewModel,
