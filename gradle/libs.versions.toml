@@ -8,7 +8,7 @@ minSdk = "30"
 targetSdk = "36"
 jvmTarget = "17"
 androidGradlePlugin = "9.2.1"
-spotless = "8.5.0"
+spotless = "8.5.1"
 
 # App version
 versionCode = "2040401"
@@ -61,7 +61,7 @@ ktlint = "14.2.0"
 pebble = "0.1.0"
 balloonCompose = "1.7.6"
 richeditorCompose = "1.0.0-rc14"
-gmaAds = "1.0.1"
+gmaAds = "1.1.0"
 
 # Firebase
 firebaseBom = "34.13.0"

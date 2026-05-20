@@ -17,6 +17,7 @@ package com.hilingual.presentation.mypage
 
 import androidx.compose.runtime.Immutable
 import com.hilingual.core.common.constant.STABLE_VERSION
+import com.hilingual.core.ui.model.user.NicknameValidationStatus
 
 @Immutable
 internal data class MyPageUiState(
@@ -25,3 +26,12 @@ internal data class MyPageUiState(
     val profileProvider: String = "",
     val appVersion: String = STABLE_VERSION,
 )
+
+@Immutable
+internal data class NicknameEditState(
+    val nickname: String = "",
+    val validationStatus: NicknameValidationStatus = NicknameValidationStatus.NONE,
+) {
+    val isNicknameValid: Boolean
+        get() = validationStatus == NicknameValidationStatus.AVAILABLE
+}
