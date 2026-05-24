@@ -70,6 +70,7 @@ import com.hilingual.presentation.voca.component.VocaHeader
 import com.hilingual.presentation.voca.component.VocaInfo
 import com.hilingual.presentation.voca.component.WordSortBottomSheet
 import com.hilingual.presentation.voca.component.WordSortType
+import com.hilingual.presentation.voca.component.rememberVocaTts
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -85,6 +86,7 @@ internal fun VocaRoute(
     val focusManager = LocalFocusManager.current
     val dialogTrigger = LocalDialogTrigger.current
     val tracker = LocalTracker.current
+    val ttsState = rememberVocaTts()
 
     LaunchedEffect(Unit) {
         tracker.logEvent(trigger = TriggerType.VIEW, page = VOCABULARY, event = "page")
@@ -94,6 +96,7 @@ internal fun VocaRoute(
         if (uiState.vocaItemDetail is UiState.Success) {
             focusManager.clearFocus()
         }
+        ttsState.stop()
     }
 
     viewModel.sideEffect.collectSideEffect {
@@ -160,6 +163,8 @@ internal fun VocaRoute(
                 onBookmarkClick = { phraseId, isMarked ->
                     viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
                 },
+                isTtsPlaying = ttsState.isPlaying,
+                onTtsClick = { ttsState.toggle(vocaDetail.phrase) },
             )
         }
 

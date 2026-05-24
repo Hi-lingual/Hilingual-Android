@@ -48,11 +48,11 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.item.voca.WordPhraseTypeTag
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun VocaDialog(
@@ -64,6 +64,8 @@ internal fun VocaDialog(
     writtenDate: String,
     isBookmarked: Boolean,
     onBookmarkClick: (Long, Boolean) -> Unit,
+    isTtsPlaying: Boolean,
+    onTtsClick: () -> Unit,
     modifier: Modifier = Modifier,
     properties: DialogProperties = DialogProperties(
         usePlatformDefaultWidth = false,
@@ -79,78 +81,115 @@ internal fun VocaDialog(
         val dialogWindowProvider = LocalView.current.parent as? DialogWindowProvider
         dialogWindowProvider?.window?.setGravity(Gravity.BOTTOM)
 
+        VocaDialogContent(
+            phrase = phrase,
+            phraseType = phraseType,
+            explanation = explanation,
+            writtenDate = writtenDate,
+            isMarked = isMarked,
+            onBookmarkClick = {
+                isMarked = !isMarked
+                onBookmarkClick(phraseId, isMarked)
+            },
+            onDismiss = onDismiss,
+            isTtsPlaying = isTtsPlaying,
+            onTtsClick = onTtsClick,
+            modifier = modifier,
+        )
+    }
+}
+
+@Composable
+private fun VocaDialogContent(
+    phrase: String,
+    phraseType: ImmutableList<String>,
+    explanation: String,
+    writtenDate: String,
+    isMarked: Boolean,
+    onBookmarkClick: () -> Unit,
+    onDismiss: () -> Unit,
+    isTtsPlaying: Boolean,
+    onTtsClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(HilingualTheme.colors.dim2)
+            .noRippleClickable(onClick = onDismiss)
+            .navigationBarsPadding()
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 20.dp),
+        contentAlignment = Alignment.BottomCenter,
+    ) {
         Box(
-            modifier = modifier
-                .fillMaxSize()
-                .background(HilingualTheme.colors.dim2)
-                .noRippleClickable(onClick = onDismiss)
-                .navigationBarsPadding()
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 20.dp),
-            contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier
+                .clip(RoundedCornerShape(12.dp))
+                .fillMaxWidth()
+                .background(
+                    color = HilingualTheme.colors.white,
+                    shape = RoundedCornerShape(12.dp),
+                )
+                .padding(top = 28.dp, bottom = 40.dp)
+                .padding(horizontal = 24.dp),
         ) {
-            Box(
+            Column(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .fillMaxWidth()
-                    .background(
-                        color = HilingualTheme.colors.white,
-                        shape = RoundedCornerShape(12.dp),
-                    )
-                    .padding(top = 28.dp, bottom = 40.dp)
-                    .padding(horizontal = 24.dp),
+                    .align(Alignment.TopStart)
+                    .padding(bottom = 80.dp, end = 44.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(bottom = 80.dp, end = 44.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                        phraseType.forEach { type ->
-                            key(type) {
-                                WordPhraseTypeTag(phraseType = type)
-                            }
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    phraseType.forEach { type ->
+                        key(type) {
+                            WordPhraseTypeTag(phraseType = type)
                         }
                     }
-
-                    Text(
-                        text = phrase,
-                        style = HilingualTheme.typography.headR20,
-                        color = HilingualTheme.colors.black,
-                    )
-
-                    Text(
-                        text = explanation,
-                        style = HilingualTheme.typography.bodyR14,
-                        color = HilingualTheme.colors.black,
-                    )
                 }
 
+                Text(
+                    text = phrase,
+                    style = HilingualTheme.typography.headR20,
+                    color = HilingualTheme.colors.black,
+                )
+
+                Text(
+                    text = explanation,
+                    style = HilingualTheme.typography.bodyR14,
+                    color = HilingualTheme.colors.black,
+                )
+            }
+
+            Icon(
+                imageVector = ImageVector.vectorResource(
+                    id = if (isMarked) R.drawable.ic_save_28_filled else R.drawable.ic_save_28_empty,
+                ),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(36.dp)
+                    .align(Alignment.TopEnd)
+                    .noRippleClickable(onClick = onBookmarkClick),
+                tint = Color.Unspecified,
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom,
+            ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(
-                        id = if (isMarked) {
-                            DesignSystemR.drawable.ic_save_28_filled
-                        } else {
-                            DesignSystemR.drawable.ic_save_28_empty
-                        },
-                    ),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_play_24_and),
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(36.dp)
-                        .align(Alignment.TopEnd)
-                        .noRippleClickable {
-                            isMarked = !isMarked
-                            onBookmarkClick(phraseId, isMarked)
-                        },
-                    tint = Color.Unspecified,
+                    tint = if (isTtsPlaying) HilingualTheme.colors.gray400 else Color.Unspecified,
+                    modifier = Modifier.noRippleClickable(onClick = onTtsClick),
                 )
 
                 Text(
                     text = writtenDate,
                     style = HilingualTheme.typography.captionR12,
                     color = HilingualTheme.colors.gray400,
-                    modifier = Modifier.align(Alignment.BottomEnd),
                 )
             }
         }
@@ -161,15 +200,16 @@ internal fun VocaDialog(
 @Composable
 private fun VocaDialogPreview() {
     HilingualTheme {
-        VocaDialog(
-            onDismiss = {},
-            phraseId = 1L,
+        VocaDialogContent(
             phrase = "take a rain check",
             phraseType = persistentListOf("동사", "숙어"),
             explanation = "다음 기회로 미루다, 나중에 하자고 하다",
             writtenDate = "2024.03.15",
-            isBookmarked = true,
-            onBookmarkClick = { _, _ -> },
+            isMarked = true,
+            onBookmarkClick = { },
+            onDismiss = { },
+            isTtsPlaying = false,
+            onTtsClick = { },
         )
     }
 }

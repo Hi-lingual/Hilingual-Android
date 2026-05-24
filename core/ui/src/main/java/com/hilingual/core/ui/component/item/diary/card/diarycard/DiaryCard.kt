@@ -1,33 +1,31 @@
-/*
- * Copyright 2025 The Hilingual Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package com.hilingual.core.ui.component.item.diary.card
+package com.hilingual.core.ui.component.item.diary.card.diarycard
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +33,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.image.ErrorImageSize
 import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -55,15 +54,25 @@ internal fun DiaryCard(
     imageUrl: String? = null,
 ) {
     val maxContentLength = if (isAIWritten) MAX_AI else MAX_ORIGINAL
+    val content = diaryContent.take(maxContentLength)
 
-    val clipContent = diaryContent.run {
-        if (length > maxContentLength) this.take(maxContentLength) else this
+    val ttsController = rememberTtsController()
+    val textLayoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
+
+    LaunchedEffect(isAIWritten) {
+        if (!isAIWritten) ttsController.stop()
     }
 
-    val displayText: AnnotatedString = if (isAIWritten) {
-        getAnnotatedString(clipContent, diffRanges)
+    val displayText = if (isAIWritten) {
+        buildDiaryAnnotatedString(
+            content = content,
+            diffRanges = diffRanges,
+            diffColor = HilingualTheme.colors.hilingualOrange,
+            unspokenColor = HilingualTheme.colors.gray300,
+            spokenUpTo = ttsController.spokenUpTo,
+        )
     } else {
-        AnnotatedString(clipContent)
+        AnnotatedString(content)
     }
 
     Column(
@@ -82,9 +91,7 @@ internal fun DiaryCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f / 0.6f)
-                    .noRippleClickable(
-                        onClick = onImageClick,
-                    ),
+                    .noRippleClickable(onClick = onImageClick),
             )
         }
 
@@ -92,18 +99,78 @@ internal fun DiaryCard(
             text = displayText,
             style = HilingualTheme.typography.bodyR15,
             color = HilingualTheme.colors.black,
-            modifier = Modifier.fillMaxWidth(),
+            onTextLayout = { textLayoutResult.value = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(
+                    if (isAIWritten) {
+                        Modifier.pointerInput(content) {
+                            detectTapGestures { tapOffset ->
+                                val charOffset = textLayoutResult.value
+                                    ?.getOffsetForPosition(tapOffset)
+                                    ?: return@detectTapGestures
+                                ttsController.playFrom(findSentenceStart(content, charOffset), content)
+                            }
+                        }
+                    } else {
+                        Modifier
+                    },
+                ),
         )
 
-        Text(
-            text = "${clipContent.length}/$maxContentLength",
-            style = HilingualTheme.typography.captionR12,
-            color = HilingualTheme.colors.gray400,
-            textAlign = TextAlign.End,
-            modifier = Modifier
-                .fillMaxWidth(),
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom,
+        ) {
+            if (isAIWritten) {
+                TtsPlayButton(
+                    isPlaying = ttsController.isPlaying,
+                    onClick = { ttsController.toggle(content) },
+                )
+            }
+            Text(
+                text = "${content.length}/$maxContentLength",
+                style = HilingualTheme.typography.captionR12,
+                color = HilingualTheme.colors.gray400,
+                textAlign = TextAlign.End,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
+}
+
+@Composable
+private fun TtsPlayButton(
+    isPlaying: Boolean,
+    onClick: () -> Unit,
+) {
+    val icon = if (isPlaying) R.drawable.ic_pause_20_and else R.drawable.ic_play_20_and
+    val backgroundColor = if (isPlaying) HilingualTheme.colors.white else HilingualTheme.colors.hilingualBlue50
+    val borderModifier = if (isPlaying) {
+        Modifier.border(1.dp, HilingualTheme.colors.hilingualBlue, RoundedCornerShape(12.dp))
+    } else {
+        Modifier
+    }
+    Icon(
+        imageVector = ImageVector.vectorResource(icon),
+        contentDescription = null,
+        tint = Color.Unspecified,
+        modifier = Modifier
+            .noRippleClickable(onClick = onClick)
+            .background(color = backgroundColor, shape = RoundedCornerShape(12.dp))
+            .then(borderModifier)
+            .padding(horizontal = 12.dp, vertical = 4.dp),
+    )
+}
+
+private fun findSentenceStart(text: String, offset: Int): Int {
+    for (i in offset.coerceAtMost(text.lastIndex) downTo 0) {
+        if (text[i] == '.' || text[i] == '!' || text[i] == '?' || text[i] == '\n') {
+            return (i + 1 until text.length).firstOrNull { !text[it].isWhitespace() } ?: 0
+        }
+    }
+    return 0
 }
 
 private fun Pair<Int, Int>.isValid(textLength: Int): Boolean {
@@ -111,26 +178,21 @@ private fun Pair<Int, Int>.isValid(textLength: Int): Boolean {
     return start in 0 until textLength && end <= textLength && start < end
 }
 
-@Composable
-private fun getAnnotatedString(
+private fun buildDiaryAnnotatedString(
     content: String,
     diffRanges: ImmutableList<Pair<Int, Int>>,
-): AnnotatedString {
-    val contentLength = content.length
-    return buildAnnotatedString {
-        append(content)
-        diffRanges
-            .filter { it.isValid(contentLength) }
-            .forEach { (start, end) ->
-                addStyle(
-                    style = SpanStyle(
-                        color = HilingualTheme.colors.hilingualOrange,
-                        fontFamily = PretendardMedium,
-                    ),
-                    start = start,
-                    end = end,
-                )
-            }
+    diffColor: Color,
+    unspokenColor: Color,
+    spokenUpTo: Int,
+): AnnotatedString = buildAnnotatedString {
+    append(content)
+    diffRanges
+        .filter { it.isValid(content.length) }
+        .forEach { (start, end) ->
+            addStyle(SpanStyle(color = diffColor, fontFamily = PretendardMedium), start, end)
+        }
+    if (spokenUpTo in 1 until content.length) {
+        addStyle(SpanStyle(color = unspokenColor), spokenUpTo, content.length)
     }
 }
 
