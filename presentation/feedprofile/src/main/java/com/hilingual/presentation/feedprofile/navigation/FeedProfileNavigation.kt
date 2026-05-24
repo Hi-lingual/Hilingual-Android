@@ -15,6 +15,7 @@
  */
 package com.hilingual.presentation.feedprofile.navigation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -71,11 +72,21 @@ fun NavGraphBuilder.feedProfileNavGraph(
         exitTransition = { ExitTransition.None },
         popEnterTransition = { EnterTransition.None },
     ) {
-        composable<FeedProfile> { backStackEntry ->
+        composable<FeedProfile>(
+            enterTransition = enterTransition,
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = popExitTransition,
+        ) { backStackEntry ->
             val parentEntry = remember(backStackEntry) {
                 navController.getBackStackEntry(FeedProfileGraph::class)
             }
             val lifecycleState by parentEntry.lifecycle.currentStateFlow.collectAsStateWithLifecycle()
+
+            BackHandler {
+                navigateUp()
+            }
+
             if (lifecycleState != Lifecycle.State.DESTROYED) {
                 val viewModel: FeedProfileViewModel = hiltViewModel(parentEntry)
                 FeedProfileRoute(
@@ -89,6 +100,7 @@ fun NavGraphBuilder.feedProfileNavGraph(
                 )
             }
         }
+
         composable<FollowList>(
             enterTransition = enterTransition,
             exitTransition = { ExitTransition.None },
