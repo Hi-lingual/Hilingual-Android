@@ -100,7 +100,7 @@ internal fun VocaDialog(
 }
 
 @Composable
-internal fun VocaDialogContent(
+private fun VocaDialogContent(
     phrase: String,
     phraseType: ImmutableList<String>,
     explanation: String,
@@ -183,7 +183,7 @@ internal fun VocaDialogContent(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_play_24_and),
                     contentDescription = null,
                     tint = if (isTtsPlaying) HilingualTheme.colors.gray400 else Color.Unspecified,
-                    modifier = Modifier.noRippleClickable { onTtsClick() },
+                    modifier = Modifier.noRippleClickable(onClick = onTtsClick),
                 )
 
                 Text(

@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 private const val VOCA_TTS_UTTERANCE_ID = "voca_tts"
 
 @Stable
-internal class VocaTtsState(scope: CoroutineScope) {
+internal class VocaTtsController(scope: CoroutineScope) {
     private var tts: TextToSpeech? = null
     private val doneChannel = Channel<Unit>(Channel.UNLIMITED)
 
@@ -77,10 +77,10 @@ internal class VocaTtsState(scope: CoroutineScope) {
 }
 
 @Composable
-internal fun rememberVocaTts(): VocaTtsState {
+internal fun rememberVocaTts(): VocaTtsController {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val state = remember { VocaTtsState(scope) }
+    val state = remember { VocaTtsController(scope) }
 
     DisposableEffect(Unit) {
         var tts: TextToSpeech? = null

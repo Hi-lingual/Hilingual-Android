@@ -146,23 +146,20 @@ private fun TtsPlayButton(
     onClick: () -> Unit,
 ) {
     val icon = if (isPlaying) R.drawable.ic_pause_20_and else R.drawable.ic_play_20_and
+    val backgroundColor = if (isPlaying) HilingualTheme.colors.white else HilingualTheme.colors.hilingualBlue50
+    val borderModifier = if (isPlaying) {
+        Modifier.border(1.dp, HilingualTheme.colors.hilingualBlue, RoundedCornerShape(12.dp))
+    } else {
+        Modifier
+    }
     Icon(
         imageVector = ImageVector.vectorResource(icon),
         contentDescription = null,
         tint = Color.Unspecified,
         modifier = Modifier
             .noRippleClickable(onClick = onClick)
-            .background(
-                color = if (isPlaying) HilingualTheme.colors.white else HilingualTheme.colors.hilingualBlue50,
-                shape = RoundedCornerShape(12.dp),
-            )
-            .then(
-                if (isPlaying) {
-                    Modifier.border(1.dp, HilingualTheme.colors.hilingualBlue, RoundedCornerShape(12.dp))
-                } else {
-                    Modifier
-                },
-            )
+            .background(color = backgroundColor, shape = RoundedCornerShape(12.dp))
+            .then(borderModifier)
             .padding(horizontal = 12.dp, vertical = 4.dp),
     )
 }
