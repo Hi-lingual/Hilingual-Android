@@ -160,6 +160,11 @@ internal class UserRepositoryImpl @Inject constructor(
             userRemoteDataSource.updateProfileImage(fileKey)
         }
 
+    override suspend fun updateNickname(nickname: String): Result<Unit> =
+        suspendRunCatching {
+            userRemoteDataSource.updateNickname(nickname)
+        }
+
     override suspend fun putFollow(targetUserId: Long): Result<Unit> =
         suspendRunCatching {
             userRemoteDataSource.putFollow(targetUserId = targetUserId)

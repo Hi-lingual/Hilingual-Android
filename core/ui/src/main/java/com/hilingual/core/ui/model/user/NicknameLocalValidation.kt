@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Hilingual Project
+ * Copyright 2026 The Hilingual Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.ui.model
+package com.hilingual.core.ui.model.user
 
-import androidx.compose.runtime.Immutable
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
-
-@Immutable
-data class DiaryContent(
-    val originalText: String = "",
-    val aiText: String = "",
-    val diffRanges: ImmutableList<Pair<Int, Int>> = persistentListOf(),
-    val imageUrl: String? = null,
-    val isPublished: Boolean = false,
-)
+sealed interface NicknameLocalValidation {
+    data object Blank : NicknameLocalValidation
+    data object Valid : NicknameLocalValidation
+    data class Invalid(val reason: NicknameLocalValidationReason) : NicknameLocalValidation
+}

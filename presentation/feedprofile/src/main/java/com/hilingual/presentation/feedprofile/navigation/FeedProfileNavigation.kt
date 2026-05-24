@@ -15,13 +15,17 @@
  */
 package com.hilingual.presentation.feedprofile.navigation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -68,21 +72,35 @@ fun NavGraphBuilder.feedProfileNavGraph(
         exitTransition = { ExitTransition.None },
         popEnterTransition = { EnterTransition.None },
     ) {
-        composable<FeedProfile> { backStackEntry ->
+        composable<FeedProfile>(
+            enterTransition = enterTransition,
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = popExitTransition,
+        ) { backStackEntry ->
             val parentEntry = remember(backStackEntry) {
                 navController.getBackStackEntry(FeedProfileGraph::class)
             }
-            val viewModel: FeedProfileViewModel = hiltViewModel(parentEntry)
-            FeedProfileRoute(
-                viewModel = viewModel,
-                paddingValues = paddingValues,
-                navigateUp = navigateUp,
-                navigateToMyFeedProfile = navigateToMyFeedProfile,
-                navigateToFollowList = { navController.navigateToFollowList(userId = 0L) },
-                navigateToFeedProfile = navigateToFeedProfile,
-                navigateToFeedDiary = navigateToFeedDiary,
-            )
+            val lifecycleState by parentEntry.lifecycle.currentStateFlow.collectAsStateWithLifecycle()
+
+            BackHandler {
+                navigateUp()
+            }
+
+            if (lifecycleState != Lifecycle.State.DESTROYED) {
+                val viewModel: FeedProfileViewModel = hiltViewModel(parentEntry)
+                FeedProfileRoute(
+                    viewModel = viewModel,
+                    paddingValues = paddingValues,
+                    navigateUp = navigateUp,
+                    navigateToMyFeedProfile = navigateToMyFeedProfile,
+                    navigateToFollowList = { navController.navigateToFollowList(userId = 0L) },
+                    navigateToFeedProfile = navigateToFeedProfile,
+                    navigateToFeedDiary = navigateToFeedDiary,
+                )
+            }
         }
+
         composable<FollowList>(
             enterTransition = enterTransition,
             exitTransition = { ExitTransition.None },

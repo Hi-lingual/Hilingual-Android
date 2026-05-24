@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Hilingual Project
+ * Copyright 2026 The Hilingual Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.core.ui.model
+package com.hilingual.data.user.dto.request
 
-import androidx.compose.runtime.Immutable
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@Immutable
-data class FeedbackContent(
-    val originalText: String,
-    val feedbackText: String,
-    val explain: String,
+@Serializable
+data class UpdateNicknameRequestDto(
+    @SerialName("nickname")
+    val nickname: String,
 )

@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.signup
+package com.hilingual.core.ui.model.diary
 
 import androidx.compose.runtime.Immutable
-import com.hilingual.core.ui.model.user.NicknameValidationStatus
 
 @Immutable
-data class SignUpUiState(
-    val nickname: String = "",
-    val validationStatus: NicknameValidationStatus = NicknameValidationStatus.NONE,
-    val isLoading: Boolean = false,
-) {
-    val isNicknameValid: Boolean
-        get() = validationStatus == NicknameValidationStatus.AVAILABLE
-}
+data class FeedbackContent(
+    val originalText: String,
+    val feedbackText: String,
+    val explain: String,
+)

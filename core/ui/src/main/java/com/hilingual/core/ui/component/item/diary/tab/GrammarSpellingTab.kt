@@ -48,12 +48,12 @@ import com.hilingual.core.ads.banner.rememberBannerAdView
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.dropdown.TopicDropdown
 import com.hilingual.core.ui.component.dropdown.Topics
-import com.hilingual.core.ui.component.item.diary.card.DiaryCard
 import com.hilingual.core.ui.component.item.diary.card.FeedbackCard
 import com.hilingual.core.ui.component.item.diary.card.FeedbackEmptyCard
+import com.hilingual.core.ui.component.item.diary.card.diarycard.DiaryCard
 import com.hilingual.core.ui.component.item.diary.toggle.DiaryViewModeToggle
-import com.hilingual.core.ui.model.DiaryContent
-import com.hilingual.core.ui.model.FeedbackContent
+import com.hilingual.core.ui.model.diary.DiaryContent
+import com.hilingual.core.ui.model.diary.FeedbackContent
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 

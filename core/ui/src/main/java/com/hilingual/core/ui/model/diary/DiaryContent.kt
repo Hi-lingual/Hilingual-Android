@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.signup
+package com.hilingual.core.ui.model.diary
 
 import androidx.compose.runtime.Immutable
-import com.hilingual.core.ui.model.user.NicknameValidationStatus
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
-data class SignUpUiState(
-    val nickname: String = "",
-    val validationStatus: NicknameValidationStatus = NicknameValidationStatus.NONE,
-    val isLoading: Boolean = false,
-) {
-    val isNicknameValid: Boolean
-        get() = validationStatus == NicknameValidationStatus.AVAILABLE
-}
+data class DiaryContent(
+    val originalText: String = "",
+    val aiText: String = "",
+    val diffRanges: ImmutableList<Pair<Int, Int>> = persistentListOf(),
+    val imageUrl: String? = null,
+    val isPublished: Boolean = false,
+)

@@ -44,9 +44,8 @@ fun HilingualShortTextField(
     onValueChanged: (String) -> Unit,
     maxLength: Int,
     state: () -> TextFieldState,
-    errorMessage: () -> String,
-    successMessage: String,
     modifier: Modifier = Modifier,
+    supportingText: () -> String = { "" },
     onDoneAction: () -> Unit = {},
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -84,11 +83,7 @@ fun HilingualShortTextField(
         )
         Row {
             Text(
-                text = when (currentState) {
-                    TextFieldState.ERROR -> errorMessage()
-                    TextFieldState.SUCCESS -> successMessage
-                    else -> ""
-                },
+                text = supportingText(),
                 style = HilingualTheme.typography.captionR12,
                 color = when (currentState) {
                     TextFieldState.ERROR -> HilingualTheme.colors.alertRed

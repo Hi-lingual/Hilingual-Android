@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Hilingual Project
+ * Copyright 2026 The Hilingual Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hilingual.presentation.signup
+package com.hilingual.data.user.dto.response.user
 
-import androidx.compose.runtime.Immutable
-import com.hilingual.core.ui.model.user.NicknameValidationStatus
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@Immutable
-data class SignUpUiState(
-    val nickname: String = "",
-    val validationStatus: NicknameValidationStatus = NicknameValidationStatus.NONE,
-    val isLoading: Boolean = false,
-) {
-    val isNicknameValid: Boolean
-        get() = validationStatus == NicknameValidationStatus.AVAILABLE
-}
+@Serializable
+data class UpdateNicknameResponseDto(
+    @SerialName("nickname")
+    val nickname: String,
+)

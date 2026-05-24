@@ -75,6 +75,8 @@ interface UserRepository {
 
     suspend fun updateProfileImage(imageFileUri: Uri?): Result<Unit>
 
+    suspend fun updateNickname(nickname: String): Result<Unit>
+
     suspend fun putFollow(
         targetUserId: Long,
     ): Result<Unit>
