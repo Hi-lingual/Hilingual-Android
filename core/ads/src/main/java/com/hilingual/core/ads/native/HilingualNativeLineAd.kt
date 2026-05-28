@@ -17,6 +17,7 @@ package com.hilingual.core.ads.native
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,10 +39,21 @@ fun HilingualNativeLineAd(
             modifier = modifier,
         )
 
-        is NativeAdState.Loaded -> AndroidView(
-            modifier = modifier.fillMaxWidth(),
-            factory = { context -> createNativeAdView(context, state.ad) },
-        )
+        is NativeAdState.Loaded -> {
+            key(state.ad) {
+                AndroidView(
+                    modifier = modifier.fillMaxWidth(),
+                    factory = { context ->
+                        val adView = createNativeAdView(context, state.ad)
+                        (adView.parent as? android.view.ViewGroup)?.removeView(adView)
+                        adView
+                    },
+                    onRelease = { _ ->
+                        state.ad.destroy()
+                    }
+                )
+            }
+        }
 
         NativeAdState.Failed -> {}
     }

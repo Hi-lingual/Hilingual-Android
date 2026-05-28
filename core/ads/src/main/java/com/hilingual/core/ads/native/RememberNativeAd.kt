@@ -54,16 +54,6 @@ internal fun rememberNativeAdState(adUnitId: String): NativeAdState {
         }
     }
 
-    DisposableEffect(adUnitId) {
-        onDispose {
-            val currentState = state.value
-            if (currentState is NativeAdState.Loaded) {
-                currentState.ad.destroy()
-            }
-            state.value = NativeAdState.Loading
-        }
-    }
-
     return state.value
 }
 

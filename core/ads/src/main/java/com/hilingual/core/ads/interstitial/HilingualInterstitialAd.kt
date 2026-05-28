@@ -31,32 +31,34 @@ suspend fun showInterstitialAd(
     val adRequest = AdRequest.Builder(adUnitId).build()
     Timber.tag("GMA").d("GMA Next Gen 전면 광고 로드 시작...")
 
+    val runOnMain: (() -> Unit) -> Unit = { callback ->
+        activity.runOnUiThread { callback() }
+    }
+
     when (val result = InterstitialAd.load(adRequest)) {
         is AdLoadResult.Success -> {
             val ad = result.ad
             if (!activity.isFinishing && !activity.isDestroyed) {
-                ad.adEventCallback = createEventCallback(onAdDismissed)
+                ad.adEventCallback = object : InterstitialAdEventCallback {
+                    override fun onAdDismissedFullScreenContent() {
+                        Timber.tag("GMA").d("전면 광고 닫힘 → 피드백 화면으로 이동")
+                        runOnMain(onAdDismissed)
+                    }
+
+                    override fun onAdFailedToShowFullScreenContent(fullScreenContentError: FullScreenContentError) {
+                        Timber.tag("GMA").e("전면 광고 표시 실패: %s", fullScreenContentError)
+                        runOnMain(onAdDismissed)
+                    }
+                }
                 ad.show(activity)
             } else {
                 Timber.tag("GMA").w("Activity가 이미 종료 상태라 전면 광고를 표시하지 않습니다.")
-                onAdDismissed()
+                runOnMain(onAdDismissed)
             }
         }
         is AdLoadResult.Failure -> {
             Timber.tag("GMA").e("전면 광고 로드 실패: %s", result.error)
-            onAdDismissed()
+            runOnMain(onAdDismissed)
         }
-    }
-}
-
-private fun createEventCallback(onAdDismissed: () -> Unit) = object : InterstitialAdEventCallback {
-    override fun onAdDismissedFullScreenContent() {
-        Timber.tag("GMA").d("전면 광고 닫힘 → 피드백 화면으로 이동")
-        onAdDismissed()
-    }
-
-    override fun onAdFailedToShowFullScreenContent(fullScreenContentError: FullScreenContentError) {
-        Timber.tag("GMA").e("전면 광고 표시 실패: %s", fullScreenContentError)
-        onAdDismissed()
     }
 }
