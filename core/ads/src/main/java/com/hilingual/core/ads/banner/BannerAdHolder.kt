@@ -15,11 +15,7 @@
  */
 package com.hilingual.core.ads.banner
 
-import android.app.Activity
-import android.content.Context
-import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -67,20 +63,23 @@ fun rememberBannerAdView(
 
         AdView(context).apply {
             val adRequest = BannerAdRequest.Builder(type.adUnitId, size).build()
-            loadAd(adRequest, object : AdLoadCallback<BannerAd> {
-                override fun onAdLoaded(ad: BannerAd) {
-                    coroutineScope.launch {
-                        isLoadedState.value = true
+            loadAd(
+                adRequest,
+                object : AdLoadCallback<BannerAd> {
+                    override fun onAdLoaded(ad: BannerAd) {
+                        coroutineScope.launch {
+                            isLoadedState.value = true
+                        }
                     }
-                }
 
-                override fun onAdFailedToLoad(adError: LoadAdError) {
-                    Timber.tag("GMA").e("GMA Next Gen 배너 광고 로드 실패: %s", adError)
-                    coroutineScope.launch {
-                        isFailedState.value = true
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        Timber.tag("GMA").e("GMA Next Gen 배너 광고 로드 실패: %s", adError)
+                        coroutineScope.launch {
+                            isFailedState.value = true
+                        }
                     }
-                }
-            })
+                },
+            )
         }
     }
 

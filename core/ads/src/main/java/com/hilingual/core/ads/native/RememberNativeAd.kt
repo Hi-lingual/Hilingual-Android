@@ -17,14 +17,13 @@ package com.hilingual.core.ads.native
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.ComposeView
 import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAd
-import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdLoader
 import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdLoadResult
+import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdLoader
 import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdRequest
 import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdView
 import com.hilingual.core.ads.native.component.NativeLineAdContent
@@ -45,6 +44,7 @@ internal fun rememberNativeAdState(adUnitId: String): NativeAdState {
             is NativeAdLoadResult.NativeAdSuccess -> {
                 state.value = NativeAdState.Loaded(result.ad)
             }
+
             else -> {
                 if (result is NativeAdLoadResult.Failure) {
                     Timber.tag("GMA").e("GMA Next Gen 네이티브 광고 로드 실패: %s", result.error)

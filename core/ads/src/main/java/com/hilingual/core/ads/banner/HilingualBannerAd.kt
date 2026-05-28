@@ -78,7 +78,7 @@ fun HilingualBannerAd(
                         },
                         onRelease = { adView ->
                             adView.destroy()
-                        }
+                        },
                     )
                 }
             }

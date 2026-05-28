@@ -50,7 +50,7 @@ fun HilingualNativeLineAd(
                     },
                     onRelease = { _ ->
                         state.ad.destroy()
-                    }
+                    },
                 )
             }
         }
