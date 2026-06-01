@@ -34,6 +34,9 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
 
+private const val NON_BREAKING_SPACE = ' '
+private val ORDERED_LIST_MARKER_REGEX = Regex("""(?m)^([ \t]*)(\d+)\. """)
+
 @Composable
 internal fun NotificationDetailContent(
     title: String,
@@ -47,7 +50,7 @@ internal fun NotificationDetailContent(
     LaunchedEffect(content) {
         textState.config.linkColor = colors.black
         textState.config.linkTextDecoration = TextDecoration.None
-        textState.setMarkdown(content)
+        textState.setMarkdown(content.escapeOrderedListMarkers())
     }
 
     Column(
@@ -85,6 +88,11 @@ internal fun NotificationDetailContent(
         )
     }
 }
+
+private fun String.escapeOrderedListMarkers(): String =
+    ORDERED_LIST_MARKER_REGEX.replace(this) { match ->
+        "${match.groupValues[1]}${match.groupValues[2]}.${NON_BREAKING_SPACE}"
+    }
 
 @Preview(showBackground = true)
 @Composable
