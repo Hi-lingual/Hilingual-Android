@@ -48,8 +48,8 @@ internal fun NotificationDetailContent(
     val colors = HilingualTheme.colors
 
     LaunchedEffect(content) {
-        textState.config.linkColor = colors.black
-        textState.config.linkTextDecoration = TextDecoration.None
+        textState.config.linkColor = colors.hilingualBlue
+        textState.config.linkTextDecoration = TextDecoration.Underline
         textState.setMarkdown(content.escapeOrderedListMarkers())
     }
 
