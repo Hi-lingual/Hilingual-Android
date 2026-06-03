@@ -34,7 +34,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
 
-private const val NON_BREAKING_SPACE = ' '
+private const val NON_BREAKING_SPACE = '\u00A0'
 private val ORDERED_LIST_MARKER_REGEX = Regex("""(?m)^([ \t]*)(\d+)\. """)
 
 @Composable
