@@ -18,6 +18,7 @@ package com.hilingual.presentation.auth
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.auth.repository.AuthRepository
 import com.hilingual.data.onboarding.repository.OnboardingRepository
@@ -38,6 +39,7 @@ class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val onboardingRepository: OnboardingRepository,
     private val userRepository: UserRepository,
+    private val tracker: Tracker,
 ) : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -60,7 +62,9 @@ class AuthViewModel @Inject constructor(
                     Timber.d("Google ID Token: $idToken")
                     authRepository.login(idToken)
                         .onSuccess { authResult ->
-                            onLoginSuccess(authResult.registerStatus)
+                            onLoginSuccess(
+                                isRegistered = authResult.registerStatus,
+                                userId = authResult.userId)
                         }
                         .onLogFailure { }
                 }
@@ -70,10 +74,11 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    private suspend fun onLoginSuccess(isRegistered: Boolean) {
+    private suspend fun onLoginSuccess(isRegistered: Boolean, userId: Long) {
         if (isRegistered) {
             updateIsSplashOnboardingCompleted()
             putDeviceInfo()
+            setTrackerUserId(userId)
             _navigationEvent.tryEmit(AuthSideEffect.NavigateToHome)
         } else {
             _navigationEvent.tryEmit(AuthSideEffect.NavigateToSignUp)
@@ -90,6 +95,10 @@ class AuthViewModel @Inject constructor(
 
     private fun setIsLoading(isLoading: Boolean) {
         _isLoading.update { isLoading }
+    }
+
+    private fun setTrackerUserId(userId: Long) {
+        tracker.setUserId(userId)
     }
 }
 
