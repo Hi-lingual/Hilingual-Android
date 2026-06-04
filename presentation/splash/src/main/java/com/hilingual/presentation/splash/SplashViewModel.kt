@@ -17,7 +17,6 @@ package com.hilingual.presentation.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.auth.repository.AuthRepository
@@ -48,7 +47,6 @@ internal class SplashViewModel @Inject constructor(
     private val configRepository: ConfigRepository,
     private val deviceInfoProvider: DeviceInfoProvider,
     private val onboardingRepository: OnboardingRepository,
-    private val tracker: Tracker,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SplashUiState())
@@ -99,19 +97,12 @@ internal class SplashViewModel @Inject constructor(
                 val accessTokenDeferred = async { authRepository.getAccessToken() }
                 val refreshTokenDeferred = async { authRepository.getRefreshToken() }
                 val isRegisteredDeferred = async { userRepository.getRegisterStatus() }
-                val userIdDeferred = async { authRepository.getUserId() }
 
                 val accessToken = accessTokenDeferred.await()
                 val refreshToken = refreshTokenDeferred.await()
                 val isRegistered = isRegisteredDeferred.await()
-                val userId = userIdDeferred.await()
 
-                if (!accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty() && isRegistered) {
-                    userId?.let(tracker::setUserId)
-                    true
-                } else {
-                    false
-                }
+                !accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty() && isRegistered
             }.getOrElse { false }
 
             if (isLoggedIn) putDeviceInfo()
