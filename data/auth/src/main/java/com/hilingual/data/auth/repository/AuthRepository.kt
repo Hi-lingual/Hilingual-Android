@@ -24,6 +24,7 @@ interface AuthRepository {
     suspend fun verifyCode(code: String): Result<Unit>
     suspend fun getAccessToken(): String?
     suspend fun getRefreshToken(): String?
+    suspend fun getUserId(): Long?
     suspend fun logout(): Result<Unit>
     suspend fun withdraw(): Result<Unit>
 }

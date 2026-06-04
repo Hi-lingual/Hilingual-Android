@@ -16,7 +16,9 @@
 package com.hilingual.core.localstorage.constant
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 
 object UserInfoDataStoreKey {
     val KEY_IS_REGISTER_COMPLETED = booleanPreferencesKey("is_register_completed")
+    val KEY_USERID = longPreferencesKey("userId")
 }
