@@ -64,7 +64,8 @@ class AuthViewModel @Inject constructor(
                         .onSuccess { authResult ->
                             onLoginSuccess(
                                 isRegistered = authResult.registerStatus,
-                                userId = authResult.userId)
+                                userId = authResult.userId,
+                            )
                         }
                         .onLogFailure { }
                 }
