@@ -15,7 +15,7 @@
  */
 package com.hilingual.di
 
-import com.hilingual.analytics.AmplitudeTracker
+import com.hilingual.analytics.AppTracker
 import com.hilingual.core.common.analytics.Tracker
 import dagger.Binds
 import dagger.Module
@@ -30,6 +30,6 @@ abstract class TrackerModule {
     @Binds
     @Singleton
     abstract fun bindTracker(
-        amplitudeTracker: AmplitudeTracker,
+        appTracker: AppTracker,
     ): Tracker
 }
