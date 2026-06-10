@@ -15,13 +15,16 @@
  */
 package com.hilingual.di
 
-import com.hilingual.analytics.AppTracker
+import com.hilingual.analytics.AmplitudeTracker
+import com.hilingual.analytics.CrashlyticsTracker
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.analytics.UserIdentityTracker
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dagger.multibindings.IntoSet
 import javax.inject.Singleton
 
 @Module
@@ -29,14 +32,26 @@ import javax.inject.Singleton
 abstract class TrackerModule {
 
     @Binds
-    @Singleton
-    abstract fun bindTracker(
-        appTracker: AppTracker,
-    ): Tracker
+    @IntoSet
+    abstract fun bindAmplitudeIdentity(tracker: AmplitudeTracker): UserIdentityTracker
+
+    @Binds
+    @IntoSet
+    abstract fun bindCrashlyticsIdentity(tracker: CrashlyticsTracker): UserIdentityTracker
 
     @Binds
     @Singleton
-    abstract fun bindUserIdentityTracker(
-        appTracker: AppTracker,
-    ): UserIdentityTracker
+    abstract fun bindTracker(tracker: AmplitudeTracker): Tracker
+
+    companion object {
+
+        @Provides
+        @Singleton
+        fun provideUserIdentityTracker(
+            trackers: Set<@JvmSuppressWildcards UserIdentityTracker>,
+        ): UserIdentityTracker = object : UserIdentityTracker {
+            override fun setUserId(userId: Long) = trackers.forEach { it.setUserId(userId) }
+            override fun clearUserId() = trackers.forEach { it.clearUserId() }
+        }
+    }
 }

@@ -18,7 +18,6 @@ package com.hilingual.analytics
 import android.content.Context
 import com.amplitude.android.Amplitude
 import com.amplitude.android.Configuration
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.hilingual.BuildConfig
 import com.hilingual.core.common.analytics.Page
 import com.hilingual.core.common.analytics.Tracker
@@ -30,13 +29,9 @@ import javax.inject.Singleton
 import timber.log.Timber
 
 @Singleton
-class AppTracker @Inject constructor(
+class AmplitudeTracker @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : Tracker, UserIdentityTracker {
-
-    private val crashlytics: FirebaseCrashlytics by lazy {
-        FirebaseCrashlytics.getInstance()
-    }
 
     private val amplitude: Amplitude? = run {
         if (BuildConfig.DEBUG) return@run null
@@ -51,19 +46,19 @@ class AppTracker @Inject constructor(
 
     override fun setUserId(userId: Long) {
         if (BuildConfig.DEBUG) {
-            Timber.tag("AppTracker").d("Set userId: $userId")
+            Timber.tag("AmplitudeTracker").d("Set userId: $userId")
+            return
         }
 
-        crashlytics.setUserId(userId.toString())
         amplitude?.setUserId(userId.toString())
     }
 
     override fun clearUserId() {
         if (BuildConfig.DEBUG) {
-            Timber.tag("AppTracker").d("Clear userId")
+            Timber.tag("AmplitudeTracker").d("Clear userId")
+            return
         }
 
-        crashlytics.setUserId("")
         amplitude?.setUserId(null)
     }
 
@@ -71,7 +66,7 @@ class AppTracker @Inject constructor(
         val eventName = "${trigger.value}_${page.pageName}.$event"
 
         if (BuildConfig.DEBUG) {
-            Timber.tag("AppTracker").d("Tracking event: $eventName, properties: None")
+            Timber.tag("AmplitudeTracker").d("Tracking event: $eventName, properties: None")
             return
         }
 
@@ -87,7 +82,7 @@ class AppTracker @Inject constructor(
         val eventName = "${trigger.value}_${page.pageName}.$event"
 
         if (BuildConfig.DEBUG) {
-            Timber.tag("AppTracker").d("Tracking event: $eventName, properties: $properties")
+            Timber.tag("AmplitudeTracker").d("Tracking event: $eventName, properties: $properties")
             return
         }
 
