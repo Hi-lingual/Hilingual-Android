@@ -23,6 +23,7 @@ import com.hilingual.BuildConfig
 import com.hilingual.core.common.analytics.Page
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.analytics.TriggerType
+import com.hilingual.core.common.analytics.UserIdentityTracker
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,7 +32,7 @@ import timber.log.Timber
 @Singleton
 class AppTracker @Inject constructor(
     @ApplicationContext private val context: Context,
-) : Tracker {
+) : Tracker, UserIdentityTracker {
 
     private val crashlytics: FirebaseCrashlytics by lazy {
         FirebaseCrashlytics.getInstance()

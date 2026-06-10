@@ -17,6 +17,7 @@ package com.hilingual.di
 
 import com.hilingual.analytics.AppTracker
 import com.hilingual.core.common.analytics.Tracker
+import com.hilingual.core.common.analytics.UserIdentityTracker
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -32,4 +33,10 @@ abstract class TrackerModule {
     abstract fun bindTracker(
         appTracker: AppTracker,
     ): Tracker
+
+    @Binds
+    @Singleton
+    abstract fun bindUserIdentityTracker(
+        appTracker: AppTracker,
+    ): UserIdentityTracker
 }
