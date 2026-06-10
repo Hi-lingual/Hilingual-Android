@@ -52,7 +52,6 @@ class AppTracker @Inject constructor(
     override fun setUserId(userId: Long) {
         if (BuildConfig.DEBUG) {
             Timber.tag("AppTracker").d("Set userId: $userId")
-            return
         }
 
         crashlytics.setUserId(userId.toString())
@@ -62,7 +61,6 @@ class AppTracker @Inject constructor(
     override fun clearUserId() {
         if (BuildConfig.DEBUG) {
             Timber.tag("AppTracker").d("Clear userId")
-            return
         }
 
         crashlytics.setUserId("")
