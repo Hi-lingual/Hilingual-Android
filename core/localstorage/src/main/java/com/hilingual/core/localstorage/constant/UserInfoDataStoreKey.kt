@@ -20,5 +20,5 @@ import androidx.datastore.preferences.core.longPreferencesKey
 
 object UserInfoDataStoreKey {
     val KEY_IS_REGISTER_COMPLETED = booleanPreferencesKey("is_register_completed")
-    val KEY_USERID = longPreferencesKey("userId")
+    val KEY_USERID = longPreferencesKey("user_id")
 }
