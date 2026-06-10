@@ -17,6 +17,7 @@ package com.hilingual.presentation.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hilingual.core.common.analytics.UserIdentityTracker
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.auth.repository.AuthRepository
@@ -47,6 +48,7 @@ internal class SplashViewModel @Inject constructor(
     private val configRepository: ConfigRepository,
     private val deviceInfoProvider: DeviceInfoProvider,
     private val onboardingRepository: OnboardingRepository,
+    private val userIdentityTracker: UserIdentityTracker,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SplashUiState())
@@ -97,15 +99,20 @@ internal class SplashViewModel @Inject constructor(
                 val accessTokenDeferred = async { authRepository.getAccessToken() }
                 val refreshTokenDeferred = async { authRepository.getRefreshToken() }
                 val isRegisteredDeferred = async { userRepository.getRegisterStatus() }
+                val userIdDeferred = async { authRepository.getUserId() }
 
                 val accessToken = accessTokenDeferred.await()
                 val refreshToken = refreshTokenDeferred.await()
                 val isRegistered = isRegisteredDeferred.await()
+                val userId = userIdDeferred.await()
 
-                !accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty() && isRegistered
+                !accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty() && isRegistered && userId != null
             }.getOrElse { false }
 
-            if (isLoggedIn) putDeviceInfo()
+            if (isLoggedIn) {
+                putDeviceInfo()
+                setTrackerUserId()
+            }
 
             delay(1400L)
 
@@ -115,6 +122,10 @@ internal class SplashViewModel @Inject constructor(
 
     private suspend fun putDeviceInfo(): Boolean =
         userRepository.putDeviceInfo().onLogFailure { }.isSuccess
+
+    private suspend fun setTrackerUserId() {
+        authRepository.getUserId()?.let { userIdentityTracker.setUserId(it) }
+    }
 
     fun onUpdateConfirm() {
         _sideEffect.tryEmit(NavigateToStore)
