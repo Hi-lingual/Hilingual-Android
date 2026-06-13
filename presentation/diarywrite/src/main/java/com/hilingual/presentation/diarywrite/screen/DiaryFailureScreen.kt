@@ -20,13 +20,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.ui.component.topappbar.CloseOnlyTopAppBar
+import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun DiaryFailureScreen(
     paddingValues: PaddingValues,
-    onCloseButtonClick: () -> Unit,
+    onBackClick: () -> Unit,
     onRequestAgainButtonClick: () -> Unit,
 ) {
     Box(
@@ -39,37 +39,50 @@ internal fun DiaryFailureScreen(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            CloseOnlyTopAppBar(
-                onCloseClicked = onCloseButtonClick,
-                iconTint = HilingualTheme.colors.black,
+            BackTopAppBar(
+                onBackClicked = onBackClick,
+                title = null,
             )
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(120f))
 
-            Text(
-                text = "앗! 일시적인 오류가 발생했어요.",
-                color = HilingualTheme.colors.gray850,
-                style = HilingualTheme.typography.headSB20,
-                textAlign = TextAlign.Center,
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Image(
+                    modifier = Modifier
+                        .width(200.dp)
+                        .height(175.dp),
+                    painter = painterResource(DesignSystemR.drawable.img_error_diary),
+                    contentDescription = null,
+                )
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Image(
-                modifier = Modifier
-                    .width(200.dp)
-                    .height(175.dp),
-                painter = painterResource(DesignSystemR.drawable.img_error),
-                contentDescription = null,
-            )
+                Text(
+                    text = "피드백을 받는 중에\n일시적인 오류가 발생했어요!",
+                    color = HilingualTheme.colors.gray850,
+                    style = HilingualTheme.typography.headSB20,
+                    textAlign = TextAlign.Center,
+                )
 
-            Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(
+                    text = "잠시 후 다시 시도해주세요.",
+                    color = HilingualTheme.colors.gray400,
+                    style = HilingualTheme.typography.headR18,
+                    textAlign = TextAlign.Center,
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(193f))
 
             HilingualButton(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 14.dp),
-                text = "다시 요청하기",
+                text = "피드백 다시 요청하기",
                 onClick = onRequestAgainButtonClick,
             )
         }
@@ -82,7 +95,7 @@ private fun DiaryFailureScreenPreview() {
     HilingualTheme {
         DiaryFailureScreen(
             paddingValues = PaddingValues(0.dp),
-            onCloseButtonClick = {},
+            onBackClick = {},
             onRequestAgainButtonClick = {},
         )
     }

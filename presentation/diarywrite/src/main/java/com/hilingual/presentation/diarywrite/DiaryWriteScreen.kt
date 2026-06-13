@@ -228,7 +228,7 @@ internal fun DiaryWriteRoute(
         is UiState.Failure -> {
             DiaryFailureScreen(
                 paddingValues = paddingValues,
-                onCloseButtonClick = navigateToHome,
+                onBackClick = navigateUp,
                 onRequestAgainButtonClick = viewModel::postDiaryFeedbackCreate,
             )
         }
