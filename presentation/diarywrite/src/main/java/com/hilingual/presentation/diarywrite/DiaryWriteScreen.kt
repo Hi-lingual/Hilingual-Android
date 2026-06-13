@@ -85,10 +85,9 @@ import com.hilingual.presentation.diarywrite.component.PhotoSelectButton
 import com.hilingual.presentation.diarywrite.component.RecommendedTopicDropdown
 import com.hilingual.presentation.diarywrite.component.TextScanButton
 import com.hilingual.presentation.diarywrite.component.WriteGuideTooltip
+import com.hilingual.presentation.diarywrite.screen.DiaryCompleteScreen
 import com.hilingual.presentation.diarywrite.screen.DiaryFailureScreen
 import com.hilingual.presentation.diarywrite.screen.DiaryFeedbackLoadingScreen
-import com.hilingual.presentation.diarywrite.screen.DiarySuccessScreen
-import com.hilingual.presentation.diarywrite.screen.DiaryFeedbackStatusScreen
 import com.skydoves.balloon.BalloonSizeSpec
 import com.skydoves.balloon.compose.balloon
 import com.skydoves.balloon.compose.rememberBalloonBuilder
@@ -218,7 +217,7 @@ internal fun DiaryWriteRoute(
         }
 
         is UiState.Success -> {
-            DiarySuccessScreen(
+            DiaryCompleteScreen(
                 paddingValues = paddingValues,
                 diaryId = feedbackState.data,
                 onCloseButtonClick = navigateToHome,
