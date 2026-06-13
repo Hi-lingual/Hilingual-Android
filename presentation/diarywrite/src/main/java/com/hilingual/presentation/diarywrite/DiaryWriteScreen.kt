@@ -50,7 +50,6 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
@@ -81,16 +80,14 @@ import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.presentation.diarywrite.component.DiaryOverwriteDialog
 import com.hilingual.presentation.diarywrite.component.DiaryWriteCancelBottomSheet
-import com.hilingual.presentation.diarywrite.component.FeedbackCompleteContent
-import com.hilingual.presentation.diarywrite.component.FeedbackFailureContent
-import com.hilingual.presentation.diarywrite.component.FeedbackMedia
-import com.hilingual.presentation.diarywrite.component.FeedbackUIData
 import com.hilingual.presentation.diarywrite.component.ImageSelectBottomSheet
 import com.hilingual.presentation.diarywrite.component.PhotoSelectButton
 import com.hilingual.presentation.diarywrite.component.RecommendedTopicDropdown
 import com.hilingual.presentation.diarywrite.component.TextScanButton
 import com.hilingual.presentation.diarywrite.component.WriteGuideTooltip
+import com.hilingual.presentation.diarywrite.screen.DiaryFailureScreen
 import com.hilingual.presentation.diarywrite.screen.DiaryFeedbackLoadingScreen
+import com.hilingual.presentation.diarywrite.screen.DiarySuccessScreen
 import com.hilingual.presentation.diarywrite.screen.DiaryFeedbackStatusScreen
 import com.skydoves.balloon.BalloonSizeSpec
 import com.skydoves.balloon.compose.balloon
@@ -101,7 +98,6 @@ import java.io.File
 import java.time.LocalDate
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
-import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun DiaryWriteRoute(
@@ -222,50 +218,19 @@ internal fun DiaryWriteRoute(
         }
 
         is UiState.Success -> {
-            val diaryId = feedbackState.data
-            DiaryFeedbackStatusScreen(
+            DiarySuccessScreen(
                 paddingValues = paddingValues,
-                uiData = FeedbackUIData(
-                    title = "일기 저장 완료!",
-                    description = {
-                        Text(
-                            text = "틀린 부분을 고치고,\n더 나은 표현으로 수정했어요!",
-                            color = HilingualTheme.colors.gray400,
-                            style = HilingualTheme.typography.headR18,
-                            textAlign = TextAlign.Center,
-                        )
-                    },
-                    media = FeedbackMedia.Lottie(
-                        resId = R.raw.lottie_feedback_complete,
-                        heightDp = 180.dp,
-                    ),
-                ),
-                content = {
-                    FeedbackCompleteContent(
-                        diaryId = diaryId,
-                        onCloseButtonClick = navigateToHome,
-                        onShowFeedbackButtonClick = navigateToDiaryFeedback,
-                    )
-                },
+                diaryId = feedbackState.data,
+                onCloseButtonClick = navigateToHome,
+                onShowFeedbackButtonClick = navigateToDiaryFeedback,
             )
         }
 
         is UiState.Failure -> {
-            DiaryFeedbackStatusScreen(
+            DiaryFailureScreen(
                 paddingValues = paddingValues,
-                uiData = FeedbackUIData(
-                    title = "앗! 일시적인 오류가 발생했어요.",
-                    media = FeedbackMedia.Image(
-                        resId = DesignSystemR.drawable.img_error,
-                        heightDp = 175.dp,
-                    ),
-                ),
-                content = {
-                    FeedbackFailureContent(
-                        onCloseButtonClick = navigateToHome,
-                        onRequestAgainButtonClick = viewModel::postDiaryFeedbackCreate,
-                    )
-                },
+                onCloseButtonClick = navigateToHome,
+                onRequestAgainButtonClick = viewModel::postDiaryFeedbackCreate,
             )
         }
     }
