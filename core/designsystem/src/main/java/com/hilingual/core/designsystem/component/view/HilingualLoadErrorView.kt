@@ -78,52 +78,49 @@ fun HilingualLoadErrorView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = type.title,
-                    color = HilingualTheme.colors.gray850,
-                    style = HilingualTheme.typography.headSB20,
-                    textAlign = TextAlign.Center,
-                )
+                when (type) {
+                    LoadErrorHandleType.RETRY -> {
+                        Text(
+                            text = "일시적인 오류가 발생해\n내용을 불러오지 못했어요.",
+                            color = HilingualTheme.colors.gray850,
+                            style = HilingualTheme.typography.headSB20,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
 
-                type.description?.let { description ->
-                    Spacer(modifier = Modifier.height(12.dp))
+                    LoadErrorHandleType.BACK -> {
+                        Text(
+                            text = "정보를 불러오지 못했어요.",
+                            color = HilingualTheme.colors.gray850,
+                            style = HilingualTheme.typography.headSB20,
+                            textAlign = TextAlign.Center,
+                        )
 
-                    Text(
-                        text = description,
-                        color = HilingualTheme.colors.gray400,
-                        style = HilingualTheme.typography.headR18,
-                        textAlign = TextAlign.Center,
-                    )
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Text(
+                            text = "이전 화면으로 돌아가 다시 확인 해주세요.",
+                            color = HilingualTheme.colors.gray400,
+                            style = HilingualTheme.typography.headR18,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             ActionButton(
-                text = type.buttonText,
+                text = when (type) {
+                    LoadErrorHandleType.RETRY -> "다시 시도"
+                    LoadErrorHandleType.BACK -> "이전 페이지로 돌아가기"
+                },
                 onClick = onActionClick,
             )
+
         }
     }
 }
-
-private val LoadErrorHandleType.title: String
-    get() = when (this) {
-        LoadErrorHandleType.RETRY -> "일시적인 오류가 발생해\n내용을 불러오지 못했어요."
-        LoadErrorHandleType.BACK -> "정보를 불러오지 못했어요."
-    }
-
-private val LoadErrorHandleType.description: String?
-    get() = when (this) {
-        LoadErrorHandleType.RETRY -> null
-        LoadErrorHandleType.BACK -> "이전 화면으로 돌아가 다시 확인 해주세요."
-    }
-
-private val LoadErrorHandleType.buttonText: String
-    get() = when (this) {
-        LoadErrorHandleType.RETRY -> "다시 시도"
-        LoadErrorHandleType.BACK -> "이전 페이지로 돌아가기"
-    }
 
 @Composable
 private fun ActionButton(
