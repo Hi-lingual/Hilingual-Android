@@ -289,6 +289,9 @@ internal fun MainScreen(
                             onBackClick = appState::navigateUp,
                             onRetryClick = {
                                 shouldShowNetworkError = isOffline
+                                if (!isOffline) {
+                                    loadErrorStateHolder.performAction()
+                                }
                             },
                             modifier = Modifier
                                 .padding(innerPadding)
