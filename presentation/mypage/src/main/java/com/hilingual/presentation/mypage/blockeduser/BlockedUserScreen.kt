@@ -69,7 +69,7 @@ internal fun BlockedUserRoute(
 
     HandleLoadError(
         uiState = uiState.blockedUserList,
-        onRetryClick = viewModel::getBlockList,
+        onActionClick = viewModel::getBlockList,
     )
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->

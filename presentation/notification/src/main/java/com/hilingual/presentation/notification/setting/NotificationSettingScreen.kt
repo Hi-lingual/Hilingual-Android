@@ -60,7 +60,7 @@ internal fun NotificationSettingRoute(
 
     HandleLoadError(
         uiState = uiState,
-        onRetryClick = viewModel::getNotificationSettings,
+        onActionClick = viewModel::getNotificationSettings,
     )
 
     fun checkNotificationPermission() {

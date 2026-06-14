@@ -80,7 +80,7 @@ internal fun MyPageRoute(
 
     HandleLoadError(
         uiState = uiState,
-        onRetryClick = viewModel::getProfileInfo,
+        onActionClick = viewModel::getProfileInfo,
     )
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->

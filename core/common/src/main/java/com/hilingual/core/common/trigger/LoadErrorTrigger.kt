@@ -8,16 +8,25 @@ import androidx.compose.runtime.remember
 @Immutable
 data class LoadErrorState(
     val isVisible: Boolean = false,
-    val onRetryClick: () -> Unit = {},
+    val type: LoadErrorHandleType = LoadErrorHandleType.RETRY,
+    val onActionClick: () -> Unit = {},
 )
+
+enum class LoadErrorHandleType {
+    RETRY,
+    BACK,
+}
 
 @Stable
 class LoadErrorTrigger(
-    private val onShow: (() -> Unit) -> Unit,
+    private val onShow: (LoadErrorHandleType, () -> Unit) -> Unit,
     private val onDismiss: () -> Unit,
 ) {
-    fun show(onRetryClick: () -> Unit) {
-        onShow(onRetryClick)
+    fun show(
+        type: LoadErrorHandleType = LoadErrorHandleType.RETRY,
+        onActionClick: () -> Unit,
+    ) {
+        onShow(type, onActionClick)
     }
 
     fun dismiss() {
@@ -27,7 +36,7 @@ class LoadErrorTrigger(
 
 @Composable
 fun rememberLoadErrorTrigger(
-    show: (() -> Unit) -> Unit,
+    show: (LoadErrorHandleType, () -> Unit) -> Unit,
     dismiss: () -> Unit,
 ): LoadErrorTrigger = remember(show, dismiss) {
     LoadErrorTrigger(

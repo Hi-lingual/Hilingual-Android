@@ -300,7 +300,8 @@ internal fun MainScreen(
                         HilingualLoadErrorView(
                             isBackVisible = !isBottomBarVisible,
                             onBackClick = appState::navigateUp,
-                            onRetryClick = loadErrorStateHolder::retry,
+                            type = loadErrorStateHolder.loadErrorState.type,
+                            onActionClick = loadErrorStateHolder::performAction,
                             modifier = Modifier
                                 .padding(innerPadding)
                                 .fillMaxSize(),

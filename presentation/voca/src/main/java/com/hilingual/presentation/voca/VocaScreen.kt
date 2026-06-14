@@ -91,7 +91,7 @@ internal fun VocaRoute(
 
     HandleLoadError(
         uiState = uiState.vocaGroupList,
-        onRetryClick = viewModel::fetchInitialData,
+        onActionClick = viewModel::fetchInitialData,
     )
 
     LaunchedEffect(Unit) {

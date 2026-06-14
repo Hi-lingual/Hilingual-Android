@@ -100,7 +100,7 @@ internal fun FeedRoute(
 
     HandleLoadError(
         uiState = loadErrorState,
-        onRetryClick = viewModel::loadInitialFeedData,
+        onActionClick = viewModel::loadInitialFeedData,
     )
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->

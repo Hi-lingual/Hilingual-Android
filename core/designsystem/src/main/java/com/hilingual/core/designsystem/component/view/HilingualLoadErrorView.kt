@@ -26,16 +26,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.common.trigger.LoadErrorHandleType
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
-
 @Composable
 fun HilingualLoadErrorView(
+    onActionClick: () -> Unit,
     isBackVisible: Boolean = false,
     onBackClick: () -> Unit = {},
-    onRetryClick: () -> Unit,
+    type: LoadErrorHandleType = LoadErrorHandleType.RETRY,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -78,29 +79,60 @@ fun HilingualLoadErrorView(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "일시적인 오류가 발생해\n내용을 불러오지 못했어요.",
+                    text = type.title,
                     color = HilingualTheme.colors.gray850,
                     style = HilingualTheme.typography.headSB20,
                     textAlign = TextAlign.Center,
                 )
+
+                type.description?.let { description ->
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = description,
+                        color = HilingualTheme.colors.gray400,
+                        style = HilingualTheme.typography.headR18,
+                        textAlign = TextAlign.Center,
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            RetryButton(
-                onClick = onRetryClick,
+            ActionButton(
+                text = type.buttonText,
+                onClick = onActionClick,
             )
         }
     }
 }
 
+private val LoadErrorHandleType.title: String
+    get() = when (this) {
+        LoadErrorHandleType.RETRY -> "일시적인 오류가 발생해\n내용을 불러오지 못했어요."
+        LoadErrorHandleType.BACK -> "정보를 불러오지 못했어요."
+    }
+
+private val LoadErrorHandleType.description: String?
+    get() = when (this) {
+        LoadErrorHandleType.RETRY -> null
+        LoadErrorHandleType.BACK -> "이전 화면으로 돌아가 다시 확인 해주세요."
+    }
+
+private val LoadErrorHandleType.buttonText: String
+    get() = when (this) {
+        LoadErrorHandleType.RETRY -> "다시 시도"
+        LoadErrorHandleType.BACK -> "이전 페이지로 돌아가기"
+    }
+
 @Composable
-private fun RetryButton(
+private fun ActionButton(
+    text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Text(
-        text = "다시 시도",
+        text = text,
         style = HilingualTheme.typography.bodyM16,
         color = HilingualTheme.colors.white,
         modifier = modifier
@@ -116,14 +148,28 @@ private fun RetryButton(
     )
 }
 
-@Preview
+@Preview(name = "Retry")
 @Composable
-private fun HilingualLoadErrorViewPreview() {
+private fun HilingualLoadErrorRetryViewPreview() {
     HilingualTheme {
         HilingualLoadErrorView(
             isBackVisible = true,
             onBackClick = {},
-            onRetryClick = {},
+            type = LoadErrorHandleType.RETRY,
+            onActionClick = {},
+        )
+    }
+}
+
+@Preview(name = "Back")
+@Composable
+private fun HilingualLoadErrorBackViewPreview() {
+    HilingualTheme {
+        HilingualLoadErrorView(
+            isBackVisible = true,
+            onBackClick = {},
+            type = LoadErrorHandleType.BACK,
+            onActionClick = {},
         )
     }
 }

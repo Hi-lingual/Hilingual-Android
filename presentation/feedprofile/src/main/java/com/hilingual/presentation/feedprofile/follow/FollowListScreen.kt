@@ -103,7 +103,7 @@ private fun FollowListScreen(
 
     HandleLoadError(
         uiState = currentFollowState,
-        onRetryClick = { onTabRefresh(currentTabType) },
+        onActionClick = { onTabRefresh(currentTabType) },
     )
 
     LaunchedEffect(pagerState) {

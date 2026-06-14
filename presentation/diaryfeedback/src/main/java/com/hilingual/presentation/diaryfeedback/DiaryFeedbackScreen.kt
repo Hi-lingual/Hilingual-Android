@@ -95,7 +95,7 @@ internal fun DiaryFeedbackRoute(
 
     HandleLoadError(
         uiState = state,
-        onRetryClick = viewModel::loadInitialData,
+        onActionClick = viewModel::loadInitialData,
     )
 
     LaunchedEffect(Unit) {

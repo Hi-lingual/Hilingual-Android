@@ -107,7 +107,7 @@ internal fun HomeRoute(
 
     HandleLoadError(
         uiState = uiState,
-        onRetryClick = viewModel::loadInitialData,
+        onActionClick = viewModel::loadInitialData,
     )
 
     if (homeState.isErrorDialogVisible) {

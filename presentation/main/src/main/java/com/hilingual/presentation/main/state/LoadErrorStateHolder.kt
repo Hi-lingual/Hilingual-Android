@@ -7,16 +7,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.hilingual.core.common.trigger.LoadErrorState
+import com.hilingual.core.common.trigger.LoadErrorHandleType
 
 @Stable
 internal class LoadErrorStateHolder {
     var loadErrorState by mutableStateOf(LoadErrorState())
         private set
 
-    fun showLoadError(onRetryClick: () -> Unit) {
+    fun showLoadError(
+        type: LoadErrorHandleType,
+        onActionClick: () -> Unit,
+    ) {
         loadErrorState = LoadErrorState(
             isVisible = true,
-            onRetryClick = onRetryClick,
+            type = type,
+            onActionClick = onActionClick,
         )
     }
 
@@ -24,10 +29,10 @@ internal class LoadErrorStateHolder {
         loadErrorState = LoadErrorState()
     }
 
-    fun retry() {
-        val retryAction = loadErrorState.onRetryClick
+    fun performAction() {
+        val action = loadErrorState.onActionClick
         dismissLoadError()
-        retryAction()
+        action()
     }
 }
 
