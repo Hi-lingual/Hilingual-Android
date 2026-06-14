@@ -116,9 +116,9 @@ internal fun MainScreen(
             }
         }
 
-    LaunchedEffect(isOffline, appState.dialogStateHolder.dialogState.isVisible) {
-        if (isOffline && !appState.dialogStateHolder.dialogState.isVisible) {
-            appState.dialogStateHolder.showDialog { appState.dialogStateHolder.dismissDialog() }
+    LaunchedEffect(isOffline) {
+        if (isOffline) {
+            onShowMessage(Toast("인터넷 연결이 불안정해요."))
         }
     }
 
