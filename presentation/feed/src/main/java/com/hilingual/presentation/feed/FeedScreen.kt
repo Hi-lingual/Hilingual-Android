@@ -80,26 +80,8 @@ internal fun FeedRoute(
     val dialogTrigger = LocalDialogTrigger.current
     val tracker = LocalTracker.current
 
-    val loadErrorState = remember(uiState.recommendFeedList, uiState.followingFeedList) {
-        when {
-            uiState.recommendFeedList is UiState.Failure || uiState.followingFeedList is UiState.Failure -> {
-                UiState.Failure
-            }
-
-            uiState.recommendFeedList is UiState.Loading || uiState.followingFeedList is UiState.Loading -> {
-                UiState.Loading
-            }
-
-            uiState.recommendFeedList is UiState.Success && uiState.followingFeedList is UiState.Success -> {
-                UiState.Success(Unit)
-            }
-
-            else -> UiState.Empty
-        }
-    }
-
     HandleLoadError(
-        uiState = loadErrorState,
+        uiState = uiState.loadErrorState,
         onActionClick = viewModel::loadInitialFeedData,
     )
 
