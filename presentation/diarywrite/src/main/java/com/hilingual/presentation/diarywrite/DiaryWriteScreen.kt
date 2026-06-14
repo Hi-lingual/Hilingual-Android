@@ -71,6 +71,7 @@ import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.UiState
 import com.hilingual.core.common.util.toKoreanFullDate
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.textfield.HilingualLongTextField
@@ -171,7 +172,7 @@ internal fun DiaryWriteRoute(
     }
 
     when (val feedbackState = feedbackUiState) {
-        is DiaryFeedbackCreationState.Idle -> {
+        is UiState.Empty -> {
             DiaryWriteScreen(
                 paddingValues = paddingValues,
                 isDiaryTempExist = uiState.isDiaryTempExist,
@@ -208,23 +209,23 @@ internal fun DiaryWriteRoute(
             )
         }
 
-        is DiaryFeedbackCreationState.Loading -> {
+        is UiState.Loading -> {
             DiaryFeedbackLoadingScreen(
                 lottieCompositions = lottieCompositions,
                 paddingValues = paddingValues,
             )
         }
 
-        is DiaryFeedbackCreationState.Success -> {
+        is UiState.Success -> {
             DiaryCompleteScreen(
                 paddingValues = paddingValues,
-                diaryId = feedbackState.diaryId,
+                diaryId = feedbackState.data,
                 onCloseButtonClick = navigateToHome,
                 onShowFeedbackButtonClick = navigateToDiaryFeedback,
             )
         }
 
-        is DiaryFeedbackCreationState.Failure -> {
+        is UiState.Failure -> {
             DiaryFailureScreen(
                 paddingValues = paddingValues,
                 onBackClick = viewModel::resetFeedbackStateToWriting,

@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.util.UiState
 import com.hilingual.core.common.util.toLocalDateOrNull
 import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.data.calendar.repository.CalendarRepository
@@ -63,8 +64,8 @@ internal class DiaryWriteViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<DiaryWriteSideEffect>()
     val sideEffect: SharedFlow<DiaryWriteSideEffect> = _sideEffect.asSharedFlow()
 
-    private var _feedbackUiState = MutableStateFlow<DiaryFeedbackCreationState>(DiaryFeedbackCreationState.Idle)
-    val feedbackUiState: StateFlow<DiaryFeedbackCreationState> = _feedbackUiState.asStateFlow()
+    private var _feedbackUiState = MutableStateFlow<UiState<Long>>(UiState.Empty)
+    val feedbackUiState: StateFlow<UiState<Long>> = _feedbackUiState.asStateFlow()
 
     init {
         getTopic(route.selectedDate)
@@ -87,7 +88,7 @@ internal class DiaryWriteViewModel @Inject constructor(
     }
 
     fun resetFeedbackStateToWriting() {
-        _feedbackUiState.update { DiaryFeedbackCreationState.Idle }
+        _feedbackUiState.update { UiState.Empty }
     }
 
     private fun getTopic(date: String) {
@@ -162,9 +163,9 @@ internal class DiaryWriteViewModel @Inject constructor(
     }
 
     fun postDiaryFeedbackCreate() {
-        if (_feedbackUiState.value is DiaryFeedbackCreationState.Loading) return
+        if (_feedbackUiState.value is UiState.Loading) return
 
-        _feedbackUiState.value = DiaryFeedbackCreationState.Loading
+        _feedbackUiState.value = UiState.Loading
 
         viewModelScope.launch {
             val result = diaryRepository.postDiaryFeedbackCreate(
@@ -175,9 +176,9 @@ internal class DiaryWriteViewModel @Inject constructor(
 
             result.onSuccess { response ->
                 diaryLocalRepository.clearDiaryTemp(uiState.value.selectedDate)
-                _feedbackUiState.update { DiaryFeedbackCreationState.Success(response.diaryId) }
+                _feedbackUiState.update { UiState.Success(response.diaryId) }
             }.onLogFailure {
-                _feedbackUiState.update { DiaryFeedbackCreationState.Failure }
+                _feedbackUiState.update { UiState.Failure }
             }
         }
     }

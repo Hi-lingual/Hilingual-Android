@@ -30,15 +30,3 @@ internal data class DiaryWriteUiState(
     val initialDiaryText: String = "",
     val initialDiaryImageUri: Uri? = null,
 )
-
-internal sealed interface DiaryFeedbackCreationState {
-    data object Idle : DiaryFeedbackCreationState
-
-    data object Loading : DiaryFeedbackCreationState
-
-    data class Success(
-        val diaryId: Long,
-    ) : DiaryFeedbackCreationState
-
-    data object Failure : DiaryFeedbackCreationState
-}
