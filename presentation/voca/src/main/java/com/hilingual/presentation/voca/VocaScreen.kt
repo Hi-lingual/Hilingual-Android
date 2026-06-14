@@ -54,6 +54,7 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.util.HandleLoadError
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.pulltorefresh.HilingualPullToRefreshBox
@@ -87,6 +88,11 @@ internal fun VocaRoute(
     val dialogTrigger = LocalDialogTrigger.current
     val tracker = LocalTracker.current
     val ttsState = rememberVocaTts()
+
+    HandleLoadError(
+        uiState = uiState.vocaGroupList,
+        onRetryClick = viewModel::fetchInitialData,
+    )
 
     LaunchedEffect(Unit) {
         tracker.logEvent(trigger = TriggerType.VIEW, page = VOCABULARY, event = "page")

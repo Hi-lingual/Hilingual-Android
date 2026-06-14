@@ -37,6 +37,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.util.HandleLoadError
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -56,6 +57,11 @@ internal fun NotificationSettingRoute(
     val context = LocalContext.current
 
     var isNotificationSettingDialogVisible by remember { mutableStateOf(false) }
+
+    HandleLoadError(
+        uiState = uiState,
+        onRetryClick = viewModel::getNotificationSettings,
+    )
 
     fun checkNotificationPermission() {
         val isGranted = NotificationManagerCompat.from(context).areNotificationsEnabled()

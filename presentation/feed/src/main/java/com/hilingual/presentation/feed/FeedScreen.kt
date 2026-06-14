@@ -51,6 +51,7 @@ import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.HandleLoadError
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
@@ -78,6 +79,29 @@ internal fun FeedRoute(
     val messageController = LocalMessageController.current
     val dialogTrigger = LocalDialogTrigger.current
     val tracker = LocalTracker.current
+
+    val loadErrorState = remember(uiState.recommendFeedList, uiState.followingFeedList) {
+        when {
+            uiState.recommendFeedList is UiState.Failure || uiState.followingFeedList is UiState.Failure -> {
+                UiState.Failure
+            }
+
+            uiState.recommendFeedList is UiState.Loading || uiState.followingFeedList is UiState.Loading -> {
+                UiState.Loading
+            }
+
+            uiState.recommendFeedList is UiState.Success && uiState.followingFeedList is UiState.Success -> {
+                UiState.Success(Unit)
+            }
+
+            else -> UiState.Empty
+        }
+    }
+
+    HandleLoadError(
+        uiState = loadErrorState,
+        onRetryClick = viewModel::loadInitialFeedData,
+    )
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {

@@ -62,6 +62,7 @@ import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.DialogState
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.HandleLoadError
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -103,6 +104,11 @@ internal fun HomeRoute(
     val tracker = LocalTracker.current
     val context = LocalContext.current
     val isSuccess = uiState is UiState.Success
+
+    HandleLoadError(
+        uiState = uiState,
+        onRetryClick = viewModel::loadInitialData,
+    )
 
     if (homeState.isErrorDialogVisible) {
         dialogTrigger.show(

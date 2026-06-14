@@ -103,7 +103,7 @@ constructor(
         return false
     }
 
-    private fun fetchInitialData() {
+    fun fetchInitialData() {
         viewModelScope.launch {
             _uiState.update { it.copy(vocaGroupList = UiState.Loading) }
             loadVocaData()
@@ -119,17 +119,13 @@ constructor(
             val latestResult = latestDeferred.await()
 
             if (aTozResult.isFailure || latestResult.isFailure) {
-                aTozResult.onLogFailure {
-                    _sideEffect.emit(VocaSideEffect.ShowErrorDialog(onRetry = ::fetchInitialData))
-                }
-                latestResult.onLogFailure {
-                    _sideEffect.emit(VocaSideEffect.ShowErrorDialog(onRetry = ::fetchInitialData))
-                }
+                aTozResult.onLogFailure { }
+                latestResult.onLogFailure { }
 
                 if (isRefreshing) {
                     _uiState.update { it.copy(isRefreshing = false) }
                 }
-                _sideEffect.emit(VocaSideEffect.ShowErrorDialog(onRetry = ::fetchInitialData))
+                _uiState.update { it.copy(vocaGroupList = UiState.Failure) }
                 return@coroutineScope
             }
 

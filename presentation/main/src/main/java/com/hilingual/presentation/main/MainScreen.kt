@@ -53,6 +53,7 @@ import androidx.navigation.navOptions
 import com.hilingual.core.ads.native.HilingualNativeLineAd
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.app.AppRestarter
+import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.model.HilingualMessage.Snackbar
 import com.hilingual.core.common.model.HilingualMessage.Toast
@@ -60,11 +61,15 @@ import com.hilingual.core.common.model.MessageDuration
 import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.trigger.LocalLoadErrorTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.trigger.rememberDialogTrigger
+import com.hilingual.core.common.trigger.rememberLoadErrorTrigger
 import com.hilingual.core.designsystem.component.snackbar.HilingualActionSnackbar
 import com.hilingual.core.designsystem.component.toast.TextToast
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.component.view.HilingualNetworkErrorView
+import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.auth.navigation.Auth
 import com.hilingual.presentation.auth.navigation.authNavGraph
 import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
@@ -76,6 +81,7 @@ import com.hilingual.presentation.feedprofile.navigation.feedProfileNavGraph
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.main.state.MainAppState
+import com.hilingual.presentation.main.state.rememberLoadErrorStateHolder
 import com.hilingual.presentation.mypage.navigation.myPageNavGraph
 import com.hilingual.presentation.notification.navigation.notificationNavGraph
 import com.hilingual.presentation.onboarding.navigation.onboardingNavGraph
@@ -99,9 +105,14 @@ internal fun MainScreen(
     val currentBackStackEntry by appState.navController.currentBackStackEntryAsState()
     var shouldShowNetworkError by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
+    val loadErrorStateHolder = rememberLoadErrorStateHolder()
 
     val dialogTrigger = rememberDialogTrigger(
         show = appState.dialogStateHolder::showDialog,
+    )
+    val loadErrorTrigger = rememberLoadErrorTrigger(
+        show = loadErrorStateHolder::showLoadError,
+        dismiss = loadErrorStateHolder::dismissLoadError,
     )
 
     val snackBarHostState = remember { SnackbarHostState() }
@@ -136,6 +147,7 @@ internal fun MainScreen(
         } else {
             isOffline
         }
+        loadErrorStateHolder.dismissLoadError()
     }
 
     HandleBackPressToExit(
@@ -144,6 +156,7 @@ internal fun MainScreen(
 
     CompositionLocalProvider(
         LocalDialogTrigger provides dialogTrigger,
+        LocalLoadErrorTrigger provides loadErrorTrigger,
         LocalMessageController provides onShowMessage,
         LocalTracker provides tracker,
         LocalAppRestarter provides appRestarter,
@@ -269,17 +282,30 @@ internal fun MainScreen(
                     )
                 }
 
-                if (shouldShowNetworkError) {
-                    HilingualNetworkErrorView(
-                        isBackVisible = !isBottomBarVisible,
-                        onBackClick = appState::navigateUp,
-                        onRetryClick = {
-                            shouldShowNetworkError = isOffline
-                        },
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize(),
-                    )
+                when {
+                    shouldShowNetworkError -> {
+                        HilingualNetworkErrorView(
+                            isBackVisible = !isBottomBarVisible,
+                            onBackClick = appState::navigateUp,
+                            onRetryClick = {
+                                shouldShowNetworkError = isOffline
+                            },
+                            modifier = Modifier
+                                .padding(innerPadding)
+                                .fillMaxSize(),
+                        )
+                    }
+
+                    loadErrorStateHolder.loadErrorState.isVisible -> {
+                        HilingualLoadErrorView(
+                            isBackVisible = !isBottomBarVisible,
+                            onBackClick = appState::navigateUp,
+                            onRetryClick = loadErrorStateHolder::retry,
+                            modifier = Modifier
+                                .padding(innerPadding)
+                                .fillMaxSize(),
+                        )
+                    }
                 }
 
                 Box(

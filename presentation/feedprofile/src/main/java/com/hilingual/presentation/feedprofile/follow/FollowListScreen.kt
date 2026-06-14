@@ -36,6 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.util.HandleLoadError
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -96,6 +97,14 @@ private fun FollowListScreen(
     val coroutineScope = rememberCoroutineScope()
     val followerListState = rememberLazyListState()
     val followingListState = rememberLazyListState()
+
+    val currentTabType = if (pagerState.currentPage == 0) FollowTabType.FOLLOWER else FollowTabType.FOLLOWING
+    val currentFollowState = if (pagerState.currentPage == 0) followers else followings
+
+    HandleLoadError(
+        uiState = currentFollowState,
+        onRetryClick = { onTabRefresh(currentTabType) },
+    )
 
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }

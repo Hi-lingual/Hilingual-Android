@@ -58,6 +58,7 @@ import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.HandleLoadError
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
@@ -96,6 +97,11 @@ internal fun FeedProfileRoute(
     val messageController = LocalMessageController.current
     val dialogTrigger = LocalDialogTrigger.current
     val tracker = LocalTracker.current
+
+    HandleLoadError(
+        uiState = uiState,
+        onRetryClick = viewModel::loadFeedProfile,
+    )
 
     LaunchedEffect(Unit) {
         tracker.logEvent(

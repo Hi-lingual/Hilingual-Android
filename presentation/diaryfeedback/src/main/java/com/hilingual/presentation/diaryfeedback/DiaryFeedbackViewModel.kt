@@ -59,6 +59,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
 
     fun loadInitialData() {
         viewModelScope.launch {
+            _uiState.update { UiState.Loading }
             suspendRunCatching {
                 requestDiaryFeedbackData()
             }.onSuccess { newUiState ->
@@ -68,9 +69,6 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                 }
             }.onLogFailure {
                 _uiState.update { UiState.Failure }
-                _sideEffect.emit(
-                    DiaryFeedbackSideEffect.ShowErrorDialog,
-                )
             }
         }
     }
@@ -134,7 +132,6 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                     showToast("일기가 비공개되었어요!")
                 }
             }.onLogFailure {
-                _uiState.update { UiState.Failure }
                 _sideEffect.emit(
                     DiaryFeedbackSideEffect.ShowErrorDialog,
                 )

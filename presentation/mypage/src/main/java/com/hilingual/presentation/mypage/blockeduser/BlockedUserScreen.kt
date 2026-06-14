@@ -47,6 +47,7 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.util.HandleLoadError
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -65,6 +66,11 @@ internal fun BlockedUserRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
+
+    HandleLoadError(
+        uiState = uiState.blockedUserList,
+        onRetryClick = viewModel::getBlockList,
+    )
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {

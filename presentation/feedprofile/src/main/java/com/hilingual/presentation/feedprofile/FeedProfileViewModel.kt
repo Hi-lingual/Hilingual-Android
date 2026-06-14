@@ -75,6 +75,7 @@ internal class FeedProfileViewModel @Inject constructor(
 
     fun loadFeedProfile() {
         viewModelScope.launch {
+            _uiState.update { UiState.Loading }
             val feedProfileDeferred = async { feedRepository.getFeedProfile(targetUserId) }
             val sharedDiariesDeferred = async { feedRepository.getSharedDiaries(targetUserId) }
 
@@ -82,13 +83,9 @@ internal class FeedProfileViewModel @Inject constructor(
             val sharedDiariesResult = sharedDiariesDeferred.await()
 
             if (feedProfileResult.isFailure || sharedDiariesResult.isFailure) {
-                feedProfileResult.onLogFailure {
-                    _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
-                }
-                sharedDiariesResult.onLogFailure {
-                    _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
-                }
-                _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+                feedProfileResult.onLogFailure { }
+                sharedDiariesResult.onLogFailure { }
+                _uiState.update { UiState.Failure }
                 return@launch
             }
 
@@ -100,7 +97,7 @@ internal class FeedProfileViewModel @Inject constructor(
                     onSuccess = { it.diaryList },
                     onFailure = { throwable ->
                         Timber.e(throwable)
-                        _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+                        _uiState.update { UiState.Failure }
                         return@launch
                     },
                 )

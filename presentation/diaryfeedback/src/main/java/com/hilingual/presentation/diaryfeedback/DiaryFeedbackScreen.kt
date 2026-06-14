@@ -57,6 +57,7 @@ import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.HandleLoadError
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -91,6 +92,11 @@ internal fun DiaryFeedbackRoute(
     val dialogTrigger = LocalDialogTrigger.current
     val messageController = LocalMessageController.current
     val tracker = LocalTracker.current
+
+    HandleLoadError(
+        uiState = state,
+        onRetryClick = viewModel::loadInitialData,
+    )
 
     LaunchedEffect(Unit) {
         viewModel.loadInitialData()

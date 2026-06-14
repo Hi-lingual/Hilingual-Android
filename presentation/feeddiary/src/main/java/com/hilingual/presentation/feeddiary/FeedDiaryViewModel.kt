@@ -65,12 +65,14 @@ internal class FeedDiaryViewModel @Inject constructor(
         loadInitialData()
     }
 
-    private fun loadInitialData() {
+    fun loadInitialData() {
         viewModelScope.launch {
+            _uiState.update { UiState.Loading }
             val profileResult = feedRepository.getFeedDiaryProfile(diaryId)
 
             if (profileResult.isFailure) {
-                _sideEffect.emit(FeedDiarySideEffect.ShowErrorDialog)
+                profileResult.onLogFailure { }
+                _uiState.update { UiState.Failure }
                 return@launch
             }
             val profileInfo = profileResult.getOrThrow()
@@ -107,7 +109,7 @@ internal class FeedDiaryViewModel @Inject constructor(
             }.onSuccess { combinedState ->
                 _uiState.update { UiState.Success(combinedState) }
             }.onLogFailure {
-                _sideEffect.emit(FeedDiarySideEffect.ShowErrorDialog)
+                _uiState.update { UiState.Failure }
             }
         }
     }

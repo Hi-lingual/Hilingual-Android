@@ -59,7 +59,7 @@ internal class NotificationSettingViewModel @Inject constructor(
         observeFeedToggle()
     }
 
-    private fun getNotificationSettings() {
+    fun getNotificationSettings() {
         viewModelScope.launch {
             _uiState.update { UiState.Loading }
             userRepository.getNotificationSettings()
@@ -71,7 +71,9 @@ internal class NotificationSettingViewModel @Inject constructor(
                     _uiState.update { UiState.Success(newUiState) }
                     serverState.update { newUiState }
                 }
-                .onLogFailure { /* TODO: 에러 처리 */ }
+                .onLogFailure {
+                    _uiState.update { UiState.Failure }
+                }
         }
     }
 

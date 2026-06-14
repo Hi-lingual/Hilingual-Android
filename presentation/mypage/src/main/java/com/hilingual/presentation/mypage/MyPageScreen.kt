@@ -53,6 +53,7 @@ import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.HandleLoadError
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -76,6 +77,11 @@ internal fun MyPageRoute(
     val dialogTrigger = LocalDialogTrigger.current
     val messageController = LocalMessageController.current
     val appRestarter = LocalAppRestarter.current
+
+    HandleLoadError(
+        uiState = uiState,
+        onRetryClick = viewModel::getProfileInfo,
+    )
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
