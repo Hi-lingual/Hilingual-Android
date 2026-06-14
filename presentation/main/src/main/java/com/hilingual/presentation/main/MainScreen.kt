@@ -62,7 +62,6 @@ import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.trigger.rememberDialogTrigger
-import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
 import com.hilingual.core.designsystem.component.snackbar.HilingualActionSnackbar
 import com.hilingual.core.designsystem.component.toast.TextToast
 import com.hilingual.core.designsystem.component.view.HilingualNetworkErrorView
@@ -272,11 +271,13 @@ internal fun MainScreen(
 
                 if (shouldShowNetworkError) {
                     HilingualNetworkErrorView(
+                        isBackVisible = !isBottomBarVisible,
+                        onBackClick = appState::navigateUp,
                         onRetryClick = {
                             shouldShowNetworkError = isOffline
                         },
                         modifier = Modifier
-                            .padding(bottom = innerPadding.calculateBottomPadding())
+                            .padding(innerPadding)
                             .fillMaxSize(),
                     )
                 }
