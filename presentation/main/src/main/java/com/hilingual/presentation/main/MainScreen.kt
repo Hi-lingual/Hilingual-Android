@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navOptions
@@ -65,6 +66,7 @@ import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
 import com.hilingual.core.designsystem.component.snackbar.HilingualActionSnackbar
 import com.hilingual.core.designsystem.component.toast.TextToast
 import com.hilingual.core.designsystem.component.view.HilingualNetworkErrorView
+import com.hilingual.presentation.auth.navigation.Auth
 import com.hilingual.presentation.auth.navigation.authNavGraph
 import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
@@ -79,6 +81,7 @@ import com.hilingual.presentation.mypage.navigation.myPageNavGraph
 import com.hilingual.presentation.notification.navigation.notificationNavGraph
 import com.hilingual.presentation.onboarding.navigation.onboardingNavGraph
 import com.hilingual.presentation.signup.navigation.signUpGraph
+import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.splash.navigation.splashNavGraph
 import com.hilingual.presentation.voca.navigation.vocaNavGraph
 import kotlinx.collections.immutable.toPersistentList
@@ -128,8 +131,11 @@ internal fun MainScreen(
     }
 
     LaunchedEffect(currentBackStackEntry) {
-        if (currentBackStackEntry != null) {
-            shouldShowNetworkError = isOffline
+        val currentDestination = currentBackStackEntry?.destination ?: return@LaunchedEffect
+        shouldShowNetworkError = if (currentDestination.hasRoute(Splash::class) || currentDestination.hasRoute(Auth::class)) {
+            false
+        } else {
+            isOffline
         }
     }
 
