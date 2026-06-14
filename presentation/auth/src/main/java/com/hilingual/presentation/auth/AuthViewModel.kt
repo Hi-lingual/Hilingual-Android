@@ -58,13 +58,11 @@ class AuthViewModel @Inject constructor(
             authRepository.signInWithGoogle(context)
                 .onSuccess { idToken ->
                     Timber.d("Google ID Token: $idToken")
-                    authRepository.login(idToken)
-                        .onSuccess { authResult ->
-                            onLoginSuccess(authResult.registerStatus)
-                        }
-                        .onLogFailure { }
+                    loginWithProviderToken(idToken)
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    showGoogleLoginErrorDialog(context)
+                }
 
             setIsLoading(false)
         }
@@ -91,9 +89,38 @@ class AuthViewModel @Inject constructor(
     private fun setIsLoading(isLoading: Boolean) {
         _isLoading.update { isLoading }
     }
+
+    private suspend fun loginWithProviderToken(providerToken: String) {
+        authRepository.login(providerToken)
+            .onSuccess { authResult ->
+                onLoginSuccess(authResult.registerStatus)
+            }
+            .onLogFailure {
+                showServerLoginErrorDialog(providerToken)
+            }
+    }
+
+    private fun retryLoginWithProviderToken(providerToken: String) {
+        if (_isLoading.value) return
+
+        viewModelScope.launch {
+            setIsLoading(true)
+            loginWithProviderToken(providerToken)
+            setIsLoading(false)
+        }
+    }
+
+    private suspend fun showGoogleLoginErrorDialog(context: Context) {
+        _navigationEvent.emit(AuthSideEffect.ShowErrorDialog { onGoogleSignClick(context) })
+    }
+
+    private suspend fun showServerLoginErrorDialog(providerToken: String) {
+        _navigationEvent.emit(AuthSideEffect.ShowErrorDialog { retryLoginWithProviderToken(providerToken) })
+    }
 }
 
 sealed interface AuthSideEffect {
     data object NavigateToHome : AuthSideEffect
     data object NavigateToSignUp : AuthSideEffect
+    data class ShowErrorDialog(val onRetry: () -> Unit) : AuthSideEffect
 }
