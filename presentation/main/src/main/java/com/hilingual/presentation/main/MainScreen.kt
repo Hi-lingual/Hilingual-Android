@@ -65,11 +65,11 @@ import com.hilingual.core.common.trigger.LocalLoadErrorTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.trigger.rememberDialogTrigger
 import com.hilingual.core.common.trigger.rememberLoadErrorTrigger
+import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
 import com.hilingual.core.designsystem.component.snackbar.HilingualActionSnackbar
 import com.hilingual.core.designsystem.component.toast.TextToast
 import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.component.view.HilingualNetworkErrorView
-import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.auth.navigation.Auth
 import com.hilingual.presentation.auth.navigation.authNavGraph
 import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
@@ -307,6 +307,11 @@ internal fun MainScreen(
                         )
                     }
                 }
+
+                HilingualErrorDialog(
+                    state = appState.dialogStateHolder.dialogState,
+                    onDismiss = appState.dialogStateHolder::dismissDialog,
+                )
 
                 Box(
                     contentAlignment = Alignment.BottomCenter,
