@@ -31,6 +31,7 @@ import com.hilingual.data.diary.repository.TextRecognitionRepository
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
+import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -84,6 +85,10 @@ internal class DiaryWriteViewModel @Inject constructor(
 
     fun updateDiaryImageUri(newImageUri: Uri?) {
         _uiState.update { it.copy(diaryImageUri = newImageUri) }
+    }
+
+    fun resetFeedbackStateToWriting() {
+        _feedbackUiState.update { UiState.Empty }
     }
 
     private fun getTopic(date: String) {
