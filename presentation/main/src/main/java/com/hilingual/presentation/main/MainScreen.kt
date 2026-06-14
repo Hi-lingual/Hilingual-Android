@@ -62,6 +62,7 @@ import com.hilingual.core.common.trigger.rememberDialogTrigger
 import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
 import com.hilingual.core.designsystem.component.snackbar.HilingualActionSnackbar
 import com.hilingual.core.designsystem.component.toast.TextToast
+import com.hilingual.core.designsystem.component.view.HilingualNetworkErrorView
 import com.hilingual.presentation.auth.navigation.authNavGraph
 import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
@@ -141,145 +142,151 @@ internal fun MainScreen(
                 )
             },
         ) { innerPadding ->
-            NavHost(
-                enterTransition = { EnterTransition.None },
-                exitTransition = { ExitTransition.None },
-                popEnterTransition = { EnterTransition.None },
-                popExitTransition = { ExitTransition.None },
-                navController = appState.navController,
-                startDestination = appState.startDestination,
-            ) {
-                splashNavGraph(
-                    navigateToAuth = appState::navigateToAuth,
-                    navigateToHome = appState::navigateToHome,
-                    navigateToOnboarding = appState::navigateToOnboarding,
-                )
-
-                authNavGraph(
-                    paddingValues = innerPadding,
-                    navigateToHome = appState::navigateToHome,
-                    navigateToSignUp = appState::navigateToSignUp,
-                )
-
-                signUpGraph(
-                    paddingValues = innerPadding,
-                    navigateToHome = appState::navigateToHome,
-                )
-
-                homeNavGraph(
-                    paddingValues = innerPadding,
-                    navigateToDiaryFeedback = appState::navigateToDiaryFeedback,
-                    navigateToDiaryWrite = appState::navigateToDiaryWrite,
-                    navigateToNotification = appState::navigateToNotification,
-                    navigateToFeedProfile = appState::navigateToFeedProfile,
-                    navigateToFeed = appState::navigateToFeed,
-                )
-
-                notificationNavGraph(
-                    paddingValues = innerPadding,
+            Box(modifier = Modifier.fillMaxSize()) {
+                NavHost(
+                    enterTransition = { EnterTransition.None },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { ExitTransition.None },
                     navController = appState.navController,
-                    navigateUp = appState::navigateUp,
-                    navigateToFeedDiary = appState::navigateToFeedDiary,
-                    navigateToFeedProfile = appState::navigateToFeedProfile,
-                )
+                    startDestination = appState.startDestination,
+                ) {
+                    splashNavGraph(
+                        navigateToAuth = appState::navigateToAuth,
+                        navigateToHome = appState::navigateToHome,
+                        navigateToOnboarding = appState::navigateToOnboarding,
+                    )
 
-                diaryWriteNavGraph(
-                    paddingValues = innerPadding,
-                    navigateUp = appState::navigateUp,
-                    navigateToHome = appState::navigateToHome,
-                    navigateToDiaryFeedback = { diaryId ->
-                        appState.navigateToDiaryFeedback(
-                            diaryId = diaryId,
-                            navOptions = navOptions {
-                                popUpTo<DiaryWrite> {
-                                    inclusive = true
-                                }
-                            },
-                        )
-                    },
-                )
+                    authNavGraph(
+                        paddingValues = innerPadding,
+                        navigateToHome = appState::navigateToHome,
+                        navigateToSignUp = appState::navigateToSignUp,
+                    )
 
-                vocaNavGraph(
-                    paddingValues = innerPadding,
-                    navigateToHome = appState::navigateToHome,
-                )
+                    signUpGraph(
+                        paddingValues = innerPadding,
+                        navigateToHome = appState::navigateToHome,
+                    )
 
-                diaryFeedbackNavGraph(
-                    paddingValues = innerPadding,
-                    navigateUp = appState::navigateUp,
-                    navigateToHome = appState::navigateToHome,
-                    navigateToFeed = appState::navigateToFeed,
-                    navigateToVoca = appState::navigateToVoca,
-                )
+                    homeNavGraph(
+                        paddingValues = innerPadding,
+                        navigateToDiaryFeedback = appState::navigateToDiaryFeedback,
+                        navigateToDiaryWrite = appState::navigateToDiaryWrite,
+                        navigateToNotification = appState::navigateToNotification,
+                        navigateToFeedProfile = appState::navigateToFeedProfile,
+                        navigateToFeed = appState::navigateToFeed,
+                    )
 
-                feedNavGraph(
-                    paddingValues = innerPadding,
-                    navController = appState.navController,
-                    navigateToFeedDiary = appState::navigateToFeedDiary,
-                    navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
-                    navigateToFeedProfile = appState::navigateToFeedProfile,
-                )
+                    notificationNavGraph(
+                        paddingValues = innerPadding,
+                        navController = appState.navController,
+                        navigateUp = appState::navigateUp,
+                        navigateToFeedDiary = appState::navigateToFeedDiary,
+                        navigateToFeedProfile = appState::navigateToFeedProfile,
+                    )
 
-                feedDiaryNavGraph(
-                    paddingValues = innerPadding,
-                    navigateUp = appState::navigateUp,
-                    navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
-                    navigateToFeedProfile = appState::navigateToFeedProfile,
-                    navigateToVoca = appState::navigateToVoca,
-                )
-
-                myPageNavGraph(
-                    paddingValues = innerPadding,
-                    navController = appState.navController,
-                    navigateUp = appState::navigateUp,
-                    navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
-                    navigateToFeedProfile = appState::navigateToFeedProfile,
-                    navigateToAlarm = appState::navigateToNotificationSetting,
-                )
-
-                feedProfileNavGraph(
-                    paddingValues = innerPadding,
-                    navigateUp = appState::navigateUp,
-                    navigateToFeedProfile = appState::navigateToFeedProfile,
-                    navController = appState.navController,
-                    navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
-                    navigateToFeedDiary = appState::navigateToFeedDiary,
-                )
-
-                onboardingNavGraph(
-                    paddingValues = innerPadding,
-                    navigateToAuth = appState::navigateToAuth,
-                )
-            }
-
-            HilingualErrorDialog(
-                state = appState.dialogStateHolder.dialogState,
-                onDismiss = appState.dialogStateHolder::dismissDialog,
-            )
-
-            Box(
-                contentAlignment = Alignment.BottomCenter,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .navigationBarsPadding()
-                    .padding(bottom = 106.dp),
-            ) {
-                SnackbarHost(hostState = snackBarHostState) { data ->
-                    when (val visuals = data.visuals) {
-                        is Snackbar -> {
-                            HilingualActionSnackbar(
-                                message = visuals,
-                                modifier = Modifier.padding(horizontal = 16.dp),
-                                onDismiss = { data.dismiss() },
+                    diaryWriteNavGraph(
+                        paddingValues = innerPadding,
+                        navigateUp = appState::navigateUp,
+                        navigateToHome = appState::navigateToHome,
+                        navigateToDiaryFeedback = { diaryId ->
+                            appState.navigateToDiaryFeedback(
+                                diaryId = diaryId,
+                                navOptions = navOptions {
+                                    popUpTo<DiaryWrite> {
+                                        inclusive = true
+                                    }
+                                },
                             )
-                        }
+                        },
+                    )
 
-                        is Toast -> {
-                            TextToast(text = visuals.message)
-                        }
+                    vocaNavGraph(
+                        paddingValues = innerPadding,
+                        navigateToHome = appState::navigateToHome,
+                    )
 
-                        else -> {
-                            TextToast(text = visuals.message)
+                    diaryFeedbackNavGraph(
+                        paddingValues = innerPadding,
+                        navigateUp = appState::navigateUp,
+                        navigateToHome = appState::navigateToHome,
+                        navigateToFeed = appState::navigateToFeed,
+                        navigateToVoca = appState::navigateToVoca,
+                    )
+
+                    feedNavGraph(
+                        paddingValues = innerPadding,
+                        navController = appState.navController,
+                        navigateToFeedDiary = appState::navigateToFeedDiary,
+                        navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
+                        navigateToFeedProfile = appState::navigateToFeedProfile,
+                    )
+
+                    feedDiaryNavGraph(
+                        paddingValues = innerPadding,
+                        navigateUp = appState::navigateUp,
+                        navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
+                        navigateToFeedProfile = appState::navigateToFeedProfile,
+                        navigateToVoca = appState::navigateToVoca,
+                    )
+
+                    myPageNavGraph(
+                        paddingValues = innerPadding,
+                        navController = appState.navController,
+                        navigateUp = appState::navigateUp,
+                        navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
+                        navigateToFeedProfile = appState::navigateToFeedProfile,
+                        navigateToAlarm = appState::navigateToNotificationSetting,
+                    )
+
+                    feedProfileNavGraph(
+                        paddingValues = innerPadding,
+                        navigateUp = appState::navigateUp,
+                        navigateToFeedProfile = appState::navigateToFeedProfile,
+                        navController = appState.navController,
+                        navigateToMyFeedProfile = appState::navigateToMyFeedProfile,
+                        navigateToFeedDiary = appState::navigateToFeedDiary,
+                    )
+
+                    onboardingNavGraph(
+                        paddingValues = innerPadding,
+                        navigateToAuth = appState::navigateToAuth,
+                    )
+                }
+
+                if (isOffline) {
+                    HilingualNetworkErrorView(
+                        onRetryClick = {},
+                        modifier = Modifier
+                            .padding(bottom = innerPadding.calculateBottomPadding())
+                            .fillMaxSize(),
+                    )
+                }
+
+                Box(
+                    contentAlignment = Alignment.BottomCenter,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .navigationBarsPadding()
+                        .padding(bottom = 106.dp),
+                ) {
+                    SnackbarHost(hostState = snackBarHostState) { data ->
+                        when (val visuals = data.visuals) {
+                            is Snackbar -> {
+                                HilingualActionSnackbar(
+                                    message = visuals,
+                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                    onDismiss = { data.dismiss() },
+                                )
+                            }
+
+                            is Toast -> {
+                                TextToast(text = visuals.message)
+                            }
+
+                            else -> {
+                                TextToast(text = visuals.message)
+                            }
                         }
                     }
                 }
