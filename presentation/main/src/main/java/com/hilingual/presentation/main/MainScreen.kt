@@ -37,6 +37,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navOptions
 import com.hilingual.core.ads.native.HilingualNativeLineAd
 import com.hilingual.core.common.analytics.Tracker
@@ -92,6 +94,8 @@ internal fun MainScreen(
     val isOffline by appState.isOffline.collectAsStateWithLifecycle()
     val isBottomBarVisible by appState.isBottomBarVisible.collectAsStateWithLifecycle()
     val currentTab by appState.currentTab.collectAsStateWithLifecycle()
+    val currentBackStackEntry by appState.navController.currentBackStackEntryAsState()
+    var shouldShowNetworkError by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
     val dialogTrigger = rememberDialogTrigger(
@@ -120,6 +124,12 @@ internal fun MainScreen(
     LaunchedEffect(isOffline) {
         if (isOffline) {
             onShowMessage(Toast("인터넷 연결이 불안정해요."))
+        }
+    }
+
+    LaunchedEffect(currentBackStackEntry) {
+        if (currentBackStackEntry != null) {
+            shouldShowNetworkError = isOffline
         }
     }
 
@@ -254,9 +264,11 @@ internal fun MainScreen(
                     )
                 }
 
-                if (isOffline) {
+                if (shouldShowNetworkError) {
                     HilingualNetworkErrorView(
-                        onRetryClick = {},
+                        onRetryClick = {
+                            shouldShowNetworkError = isOffline
+                        },
                         modifier = Modifier
                             .padding(bottom = innerPadding.calculateBottomPadding())
                             .fillMaxSize(),
