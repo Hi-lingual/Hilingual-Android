@@ -15,20 +15,21 @@
  */
 package com.hilingual.core.ui.component.item.diary.toggle
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.hilingual.core.designsystem.component.toggle.HilingualBasicToggleSwitch
+import com.hilingual.core.designsystem.component.toggle.HilingualSegmentedToggle
 import com.hilingual.core.designsystem.theme.HilingualTheme
+
+internal enum class DiaryViewMode(val index: Int) {
+    CORRECTED(0), ORIGINAL(1)
+}
 
 @Composable
 internal fun DiaryViewModeToggle(
@@ -36,24 +37,17 @@ internal fun DiaryViewModeToggle(
     onToggle: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = modifier,
-    ) {
-        Text(
-            text = "교정된 일기",
-            style = HilingualTheme.typography.bodyR14,
-            color = HilingualTheme.colors.gray500,
-        )
-        HilingualBasicToggleSwitch(
-            isChecked = isAIWritten,
-            onCheckedChange = onToggle,
-        )
-    }
+    HilingualSegmentedToggle(
+        options = listOf("교정본", "원본"),
+        selectedIndex = if (isAIWritten) DiaryViewMode.CORRECTED.index else DiaryViewMode.ORIGINAL.index,
+        onSelect = { selectedIndex ->
+            onToggle(selectedIndex == DiaryViewMode.CORRECTED.index)
+        },
+        modifier = modifier.width(133.dp),
+    )
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun AIDiaryTogglePreview() {
     HilingualTheme {
