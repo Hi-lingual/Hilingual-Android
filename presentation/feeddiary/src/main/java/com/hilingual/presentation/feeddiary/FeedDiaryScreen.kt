@@ -181,8 +181,6 @@ private fun FeedDiaryScreen(
     var isReportConfirmDialogVisible by remember { mutableStateOf(false) }
     var isBlockConfirmBottomSheetVisible by remember { mutableStateOf(false) }
 
-    var isAIWrittenDiary by remember { mutableStateOf(true) }
-
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
     val grammarListState = rememberLazyListState()
@@ -272,10 +270,9 @@ private fun FeedDiaryScreen(
                             diaryContent = diaryContent,
                             feedbackList = feedbackList,
                             topics = topics,
-                            isAIWrittenDiary = isAIWrittenDiary,
                             onImageClick = onChangeImageDetailVisible,
-                            onToggleViewMode = { isAIWrittenDiary = it },
                             isAdVisible = true,
+                            onToggleViewMode = {},
                         )
 
                         1 -> RecommendExpressionTab(

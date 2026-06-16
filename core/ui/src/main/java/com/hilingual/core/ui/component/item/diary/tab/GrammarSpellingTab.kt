@@ -32,8 +32,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
@@ -51,6 +51,7 @@ import com.hilingual.core.ui.component.dropdown.Topics
 import com.hilingual.core.ui.component.item.diary.card.FeedbackCard
 import com.hilingual.core.ui.component.item.diary.card.FeedbackEmptyCard
 import com.hilingual.core.ui.component.item.diary.card.diarycard.DiaryCard
+import com.hilingual.core.ui.component.item.diary.toggle.DiaryViewMode
 import com.hilingual.core.ui.component.item.diary.toggle.DiaryViewModeToggle
 import com.hilingual.core.ui.model.diary.DiaryContent
 import com.hilingual.core.ui.model.diary.FeedbackContent
@@ -64,13 +65,13 @@ fun GrammarSpellingTab(
     topics: Topics,
     diaryContent: DiaryContent,
     feedbackList: ImmutableList<FeedbackContent>,
-    isAIWrittenDiary: Boolean,
     onImageClick: () -> Unit,
     onToggleViewMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     isAdVisible: Boolean = false,
 ) {
     val adHolder = if (isAdVisible) rememberBannerAdView(INLINE_BANNER) else null
+    var diaryViewMode by rememberSaveable { mutableStateOf(DiaryViewMode.CORRECTED) }
 
     LazyColumn(
         state = listState,
@@ -93,8 +94,11 @@ fun GrammarSpellingTab(
                     color = HilingualTheme.colors.gray700,
                 )
                 DiaryViewModeToggle(
-                    isAIWritten = isAIWrittenDiary,
-                    onToggle = onToggleViewMode,
+                    viewMode = diaryViewMode,
+                    onToggleDiaryViewMode = {
+                        diaryViewMode = it
+                        onToggleViewMode(it.isAIWritten)
+                    },
                 )
             }
             Spacer(Modifier.height(12.dp))
@@ -111,8 +115,8 @@ fun GrammarSpellingTab(
         item {
             with(diaryContent) {
                 DiaryCard(
-                    isAIWritten = isAIWrittenDiary,
-                    diaryContent = if (isAIWrittenDiary) aiText else originalText,
+                    isAIWritten = diaryViewMode.isAIWritten,
+                    diaryContent = if (diaryViewMode.isAIWritten) aiText else originalText,
                     diffRanges = diffRanges,
                     imageUrl = imageUrl,
                     onImageClick = onImageClick,
@@ -195,7 +199,6 @@ private fun getFeedbackTitleAnnotatedString(
 @Preview(showBackground = true)
 @Composable
 private fun GrammarSpellingTabPreview() {
-    var isAIWritten by remember { mutableStateOf(true) }
     HilingualTheme {
         GrammarSpellingTab(
             listState = rememberLazyListState(),
@@ -203,9 +206,8 @@ private fun GrammarSpellingTabPreview() {
             diaryContent = DiaryContent(),
             topics = Topics(),
             feedbackList = persistentListOf(),
-            isAIWrittenDiary = isAIWritten,
             onImageClick = {},
-            onToggleViewMode = { isAIWritten = it },
+            onToggleViewMode = {},
         )
     }
 }

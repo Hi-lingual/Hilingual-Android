@@ -15,7 +15,6 @@
  */
 package com.hilingual.core.ui.component.item.diary.toggle
 
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,39 +22,42 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.component.toggle.HilingualSegmentedToggle
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import kotlinx.collections.immutable.toImmutableList
 
-internal enum class DiaryViewMode(val index: Int) {
-    CORRECTED(0), ORIGINAL(1)
+internal enum class DiaryViewMode(val text: String) {
+    CORRECTED("교정본"), ORIGINAL("원본");
+
+    val isAIWritten
+        get() = this == CORRECTED
 }
 
 @Composable
 internal fun DiaryViewModeToggle(
-    isAIWritten: Boolean,
-    onToggle: (Boolean) -> Unit,
+    viewMode: DiaryViewMode,
+    onToggleDiaryViewMode: (DiaryViewMode) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     HilingualSegmentedToggle(
-        options = listOf("교정본", "원본"),
-        selectedIndex = if (isAIWritten) DiaryViewMode.CORRECTED.index else DiaryViewMode.ORIGINAL.index,
+        options = DiaryViewMode.entries.map { it.text }.toImmutableList(),
+        selectedIndex = viewMode.ordinal,
         onSelect = { selectedIndex ->
-            onToggle(selectedIndex == DiaryViewMode.CORRECTED.index)
+            onToggleDiaryViewMode(DiaryViewMode.entries[selectedIndex])
         },
-        modifier = modifier.width(133.dp),
+        modifier = modifier
     )
 }
 
 @Preview
 @Composable
-private fun AIDiaryTogglePreview() {
+private fun DiaryViewModeTogglePreview() {
     HilingualTheme {
-        var isAI by remember { mutableStateOf(true) }
+        var viewMode by remember { mutableStateOf(DiaryViewMode.CORRECTED) }
 
         DiaryViewModeToggle(
-            isAIWritten = isAI,
-            onToggle = { isAI = it },
+            viewMode = viewMode,
+            onToggleDiaryViewMode = { viewMode = it },
         )
     }
 }
