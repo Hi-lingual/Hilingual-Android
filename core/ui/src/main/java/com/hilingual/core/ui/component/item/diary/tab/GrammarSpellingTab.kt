@@ -51,7 +51,6 @@ import com.hilingual.core.ui.component.dropdown.Topics
 import com.hilingual.core.ui.component.item.diary.card.FeedbackCard
 import com.hilingual.core.ui.component.item.diary.card.FeedbackEmptyCard
 import com.hilingual.core.ui.component.item.diary.card.diarycard.DiaryCard
-import com.hilingual.core.ui.component.item.diary.toggle.DiaryViewMode
 import com.hilingual.core.ui.component.item.diary.toggle.DiaryViewModeToggle
 import com.hilingual.core.ui.model.diary.DiaryContent
 import com.hilingual.core.ui.model.diary.FeedbackContent
@@ -71,7 +70,7 @@ fun GrammarSpellingTab(
     isAdVisible: Boolean = false,
 ) {
     val adHolder = if (isAdVisible) rememberBannerAdView(INLINE_BANNER) else null
-    var diaryViewMode by rememberSaveable { mutableStateOf(DiaryViewMode.CORRECTED) }
+    var isAIWritten by rememberSaveable { mutableStateOf(true) }
 
     LazyColumn(
         state = listState,
@@ -94,10 +93,10 @@ fun GrammarSpellingTab(
                     color = HilingualTheme.colors.gray700,
                 )
                 DiaryViewModeToggle(
-                    viewMode = diaryViewMode,
-                    onToggleDiaryViewMode = {
-                        diaryViewMode = it
-                        onToggleViewMode(it.isAIWritten)
+                    isAIWritten = isAIWritten,
+                    onToggleViewMode = {
+                        isAIWritten = it
+                        onToggleViewMode(it)
                     },
                 )
             }
@@ -115,8 +114,8 @@ fun GrammarSpellingTab(
         item {
             with(diaryContent) {
                 DiaryCard(
-                    isAIWritten = diaryViewMode.isAIWritten,
-                    diaryContent = if (diaryViewMode.isAIWritten) aiText else originalText,
+                    isAIWritten = isAIWritten,
+                    diaryContent = if (isAIWritten) aiText else originalText,
                     diffRanges = diffRanges,
                     imageUrl = imageUrl,
                     onImageClick = onImageClick,

@@ -24,28 +24,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.hilingual.core.designsystem.component.button.HilingualSegmentedButton
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import kotlinx.collections.immutable.toImmutableList
-
-internal enum class DiaryViewMode(val text: String) {
-    CORRECTED("교정본"), ORIGINAL("원본");
-
-    val isAIWritten
-        get() = this == CORRECTED
-}
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun DiaryViewModeToggle(
-    viewMode: DiaryViewMode,
-    onToggleDiaryViewMode: (DiaryViewMode) -> Unit,
+    isAIWritten: Boolean,
+    onToggleViewMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     HilingualSegmentedButton(
-        options = DiaryViewMode.entries.map { it.text }.toImmutableList(),
-        selectedIndex = viewMode.ordinal,
+        options = persistentListOf("교정본", "원본"),
+        selectedIndex = if (isAIWritten) 0 else 1,
         onSelect = { selectedIndex ->
-            onToggleDiaryViewMode(DiaryViewMode.entries[selectedIndex])
+            val selectedIsAIWritten = selectedIndex == 0
+            if (selectedIsAIWritten != isAIWritten) {
+                onToggleViewMode(selectedIsAIWritten)
+            }
         },
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -53,11 +49,11 @@ internal fun DiaryViewModeToggle(
 @Composable
 private fun DiaryViewModeTogglePreview() {
     HilingualTheme {
-        var viewMode by remember { mutableStateOf(DiaryViewMode.CORRECTED) }
+        var isAIWritten by remember { mutableStateOf(true) }
 
         DiaryViewModeToggle(
-            viewMode = viewMode,
-            onToggleDiaryViewMode = { viewMode = it },
+            isAIWritten = isAIWritten,
+            onToggleViewMode = { isAIWritten = it },
         )
     }
 }
