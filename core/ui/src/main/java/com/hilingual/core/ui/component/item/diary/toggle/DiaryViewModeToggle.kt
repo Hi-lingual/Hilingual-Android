@@ -36,10 +36,7 @@ internal fun DiaryViewModeToggle(
         options = persistentListOf("교정본", "원본"),
         selectedIndex = if (isAIWritten) 0 else 1,
         onSelect = { selectedIndex ->
-            val selectedIsAIWritten = selectedIndex == 0
-            if (selectedIsAIWritten != isAIWritten) {
-                onToggleViewMode(selectedIsAIWritten)
-            }
+            onToggleViewMode(selectedIndex == 0)
         },
         modifier = modifier,
     )
