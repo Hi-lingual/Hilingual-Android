@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -180,6 +181,7 @@ private fun FeedDiaryScreen(
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
     var isReportConfirmDialogVisible by remember { mutableStateOf(false) }
     var isBlockConfirmBottomSheetVisible by remember { mutableStateOf(false) }
+    var toggleClickCount by remember { mutableIntStateOf(0) }
 
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -272,7 +274,20 @@ private fun FeedDiaryScreen(
                             topics = topics,
                             onImageClick = onChangeImageDetailVisible,
                             isAdVisible = true,
-                            onToggleViewMode = {},
+                            onToggleViewMode = {
+                                toggleClickCount++
+                                tracker.logEvent(
+                                    trigger = TriggerType.CLICK,
+                                    page = Page.FEEDBACK,
+                                    event = "toggle",
+                                    properties = mapOf(
+                                        "entry_id" to diaryId,
+                                        "toggle_state" to it,
+                                        "toggle_click_count" to toggleClickCount,
+                                        "page" to Page.POSTED_DIARY.pageName,
+                                    ),
+                                )
+                            },
                         )
 
                         1 -> RecommendExpressionTab(

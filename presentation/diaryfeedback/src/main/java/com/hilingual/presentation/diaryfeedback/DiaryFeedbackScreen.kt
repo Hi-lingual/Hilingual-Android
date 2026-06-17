@@ -315,6 +315,7 @@ private fun DiaryFeedbackScreen(
                                             "entry_id" to diaryId,
                                             "toggle_state" to it,
                                             "toggle_click_count" to toggleClickCount,
+                                            "page" to FEEDBACK.pageName,
                                         ),
                                     )
                                 },
