@@ -1,6 +1,6 @@
 # Hi-lingual
 
-![Kotlin](https://img.shields.io/badge/Kotlin-2.3.0-7F52FF?style=flat&logo=kotlin&logoColor=white)
+![Kotlin](https://img.shields.io/badge/Kotlin-2.3.21-7F52FF?style=flat&logo=kotlin&logoColor=white)
 ![Android](https://img.shields.io/badge/Android-34A853?style=flat&logo=android&logoColor=white)
 ![MinSDK](https://img.shields.io/badge/minSdk-30-3DDC84?style=flat&logo=android&logoColor=white)
 
@@ -65,6 +65,7 @@ graph TD
         home["home"]
         mypage["mypage"]
         notification["notification"]
+        onboarding["onboarding"]
         signup["signup"]
         splash["splash"]
         voca["voca"]
@@ -76,36 +77,45 @@ graph TD
         data_config["data:config"]
         data_diary["data:diary"]
         data_feed["data:feed"]
+        data_notification["data:notification"]
+        data_onboarding["data:onboarding"]
         data_user["data:user"]
         data_voca["data:voca"]
     end
 
     auth --> data_auth
+    auth --> data_onboarding
     auth --> data_user
+    diaryfeedback --> data_calendar
     diaryfeedback --> data_diary
     diarywrite --> data_calendar
     diarywrite --> data_diary
-    feed --> data_feed
     feed --> data_diary
+    feed --> data_feed
     feed --> data_user
+    feeddiary --> data_calendar
     feeddiary --> data_diary
     feeddiary --> data_feed
     feeddiary --> data_user
+    feedprofile --> data_diary
     feedprofile --> data_feed
     feedprofile --> data_user
-    feedprofile --> data_diary
-    home --> data_user
-    home --> data_diary
     home --> data_calendar
-    mypage --> data_user
+    home --> data_diary
+    home --> data_notification
+    home --> data_onboarding
+    home --> data_user
     mypage --> data_auth
+    mypage --> data_user
     notification --> data_user
+    signup --> data_onboarding
     signup --> data_user
     splash --> data_auth
-    splash --> data_user
     splash --> data_config
-    voca --> data_voca
+    splash --> data_onboarding
+    splash --> data_user
     voca --> data_diary
+    voca --> data_voca
 ```
 
 ### Data Layer Dependencies
@@ -118,6 +128,8 @@ graph TD
         config["config"]
         diary["diary"]
         feed["feed"]
+        notification["notification"]
+        onboarding["onboarding"]
         presigned["presigned"]
         user["user"]
         voca["voca"]
@@ -150,6 +162,14 @@ graph TD
     feed --> core_localstorage
     feed --> core_common
 
+    notification --> core_network
+    notification --> core_localstorage
+    notification --> core_common
+
+    onboarding --> core_network
+    onboarding --> core_localstorage
+    onboarding --> core_common
+
     presigned --> core_network
     presigned --> core_localstorage
     presigned --> core_common
@@ -170,6 +190,7 @@ graph TD
 graph TD
     subgraph Core Layer
         ui["ui"]
+        ads["ads"]
         designsystem["designsystem"]
         network["network"]
         localstorage["localstorage"]
@@ -180,8 +201,11 @@ graph TD
         notification["notification"]
     end
 
+    ui --> ads
     ui --> designsystem
     ui --> common
+    ads --> designsystem
+    ads --> common
     designsystem --> common
     network --> localstorage
     network --> common

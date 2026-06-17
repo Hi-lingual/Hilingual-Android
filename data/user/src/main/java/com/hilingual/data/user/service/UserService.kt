@@ -19,6 +19,7 @@ import com.hilingual.core.network.model.BaseResponse
 import com.hilingual.data.user.dto.request.PatchFcmTokenRequestDto
 import com.hilingual.data.user.dto.request.PutDeviceInfoRequestDto
 import com.hilingual.data.user.dto.request.RegisterProfileRequestDto
+import com.hilingual.data.user.dto.request.UpdateNicknameRequestDto
 import com.hilingual.data.user.dto.request.UpdateProfileImageRequestDto
 import com.hilingual.data.user.dto.response.follow.FollowerResponseDto
 import com.hilingual.data.user.dto.response.follow.FollowingResponseDto
@@ -27,6 +28,7 @@ import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
 import com.hilingual.data.user.dto.response.user.BlockListResponseDto
 import com.hilingual.data.user.dto.response.user.NicknameResponseDto
+import com.hilingual.data.user.dto.response.user.UpdateNicknameResponseDto
 import com.hilingual.data.user.dto.response.user.UserInfoResponseDto
 import com.hilingual.data.user.dto.response.user.UserLoginInfoResponseDto
 import retrofit2.http.Body
@@ -115,6 +117,11 @@ interface UserService {
     suspend fun updateProfileImage(
         @Body updateProfileImageRequestDto: UpdateProfileImageRequestDto,
     ): BaseResponse<Unit>
+
+    @PATCH("/api/v1/users/profile/nickname")
+    suspend fun patchNickname(
+        @Body updateNicknameRequestDto: UpdateNicknameRequestDto,
+    ): BaseResponse<UpdateNicknameResponseDto>
 
     @PUT("/api/v1/users/device")
     suspend fun putDeviceInfo(

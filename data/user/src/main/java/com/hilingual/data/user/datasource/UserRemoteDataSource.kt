@@ -25,6 +25,7 @@ import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
 import com.hilingual.data.user.dto.response.user.BlockListResponseDto
 import com.hilingual.data.user.dto.response.user.NicknameResponseDto
+import com.hilingual.data.user.dto.response.user.UpdateNicknameResponseDto
 import com.hilingual.data.user.dto.response.user.UserInfoResponseDto
 import com.hilingual.data.user.dto.response.user.UserLoginInfoResponseDto
 
@@ -74,6 +75,8 @@ interface UserRemoteDataSource {
     suspend fun updateNotificationSetting(notiType: String): BaseResponse<NotificationSettingsResponseDto>
 
     suspend fun updateProfileImage(fileKey: String?): BaseResponse<Unit>
+
+    suspend fun updateNickname(nickname: String): BaseResponse<UpdateNicknameResponseDto>
 
     suspend fun putDeviceInfo(putDeviceInfoRequestDto: PutDeviceInfoRequestDto): BaseResponse<Unit>
 

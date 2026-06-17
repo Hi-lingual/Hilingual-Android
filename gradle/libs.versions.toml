@@ -8,7 +8,7 @@ minSdk = "30"
 targetSdk = "36"
 jvmTarget = "17"
 androidGradlePlugin = "9.2.1"
-spotless = "8.5.0"
+spotless = "8.5.1"
 wisp = "0.1.0"
 
 # App version
@@ -18,7 +18,7 @@ versionName = "2.4.4"
 # Kotlin
 kotlin = "2.3.21"
 kotlinxImmutable = "0.4.0"
-ksp = "2.3.8"
+ksp = "2.3.9"
 
 # AndroidX
 coreKtx = "1.18.0"
@@ -27,7 +27,7 @@ androidxAppCompat = "1.7.1"
 lifecycleRuntimeKtx = "2.10.0"
 lifecycleRuntimeComposeAndroid = "2.10.0"
 activityCompose = "1.13.0"
-composeBom = "2026.05.00"
+composeBom = "2026.05.01"
 composeNavigation = "2.9.8"
 security = "1.1.0"
 datastorePreferences = "1.2.1"
@@ -62,7 +62,7 @@ ktlint = "14.2.0"
 pebble = "0.1.0"
 balloonCompose = "1.7.6"
 richeditorCompose = "1.0.0-rc14"
-gmaAds = "1.0.1"
+gmaAds = "1.1.0"
 
 # Firebase
 firebaseBom = "34.13.0"
@@ -79,7 +79,7 @@ profileinstaller = "1.4.1"
 runner = "1.7.0"
 
 # AboutLibraries
-aboutLibraries = "14.2.0"
+aboutLibraries = "14.2.1"
 amplitude = "1.28.2"
 firebaseMessagingKtx = "25.0.2"
 

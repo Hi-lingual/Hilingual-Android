@@ -79,7 +79,7 @@ fun HilingualBasicTextField(
     backgroundColor: Color = HilingualTheme.colors.gray100,
     borderColor: Color = Color.Unspecified,
     paddingValues: PaddingValues = PaddingValues(12.dp),
-    decorationBoxHeight: Dp = 22.dp,
+    decorationBoxHeight: Dp = Dp.Unspecified,
     leadingIcon: @Composable () -> Unit = {},
     trailingIcon: @Composable () -> Unit = {},
 ) {

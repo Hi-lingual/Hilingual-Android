@@ -19,28 +19,25 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.ui.model.user.NicknameLocalValidation
+import com.hilingual.core.ui.model.user.NicknameLocalValidationReason
+import com.hilingual.core.ui.model.user.NicknameValidationStatus
+import com.hilingual.core.ui.util.NicknameValidator
 import com.hilingual.data.onboarding.repository.OnboardingRepository
-import com.hilingual.data.user.model.user.NicknameValidationResult
 import com.hilingual.data.user.model.user.UserProfileModel
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
-private val specialCharRegex = Regex("[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]")
 
 @HiltViewModel
 internal class SignUpViewModel @Inject constructor(
@@ -56,28 +53,28 @@ internal class SignUpViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<SignUpSideEffect>()
     val sideEffect: SharedFlow<SignUpSideEffect> = _sideEffect.asSharedFlow()
 
-    init {
-        @OptIn(FlowPreview::class)
-        _uiState
-            .map { it.nickname }
-            .distinctUntilChanged()
-            .debounce(700L)
-            .onEach(::validateNickname)
-            .launchIn(viewModelScope)
-    }
+    private var nicknameValidationDebounceJob: Job? = null
+    private var nicknameValidationJob: Job? = null
 
     fun onNicknameChanged(newNickname: String) {
+        cancelNicknameValidation()
+
         _uiState.update { currentState ->
             currentState.copy(
                 nickname = newNickname,
-                validationMessage = "",
-                isNicknameValid = false,
+                validationStatus = NicknameValidationStatus.NONE,
             )
+        }
+
+        nicknameValidationDebounceJob = viewModelScope.launch {
+            delay(700L)
+            runNicknameValidation(newNickname)
         }
     }
 
     fun onSubmitNickname(nickname: String) {
-        validateNickname(nickname)
+        nicknameValidationDebounceJob?.cancel()
+        runNicknameValidation(nickname)
     }
 
     fun onRegisterClick(nickname: String, isMarketingAgreed: Boolean, imageUri: Uri?) {
@@ -100,76 +97,66 @@ internal class SignUpViewModel @Inject constructor(
         }
     }
 
-    private fun validateNickname(nickname: String) {
-        if (nickname.isBlank()) {
-            _uiState.update {
-                it.copy(
-                    validationMessage = "",
-                    isNicknameValid = false,
-                )
-            }
-            return
+    private fun runNicknameValidation(nickname: String) {
+        nicknameValidationJob?.cancel()
+        nicknameValidationJob = viewModelScope.launch {
+            validateNickname(nickname)
         }
-        viewModelScope.launch {
-            if (nickname.length < 2) {
-                _uiState.update {
-                    it.copy(
-                        validationMessage = "최소 2글자 이상 입력해주세요",
-                        isNicknameValid = false,
-                    )
-                }
-                return@launch
+    }
+
+    private fun cancelNicknameValidation() {
+        nicknameValidationDebounceJob?.cancel()
+        nicknameValidationJob?.cancel()
+    }
+
+    private suspend fun validateNickname(nickname: String) {
+        when (val localValidationResult = NicknameValidator.validateNickname(nickname)) {
+            is NicknameLocalValidation.Blank -> {
+                updateNicknameValidationStatus(nickname, NicknameValidationStatus.NONE)
             }
 
-            if (specialCharRegex.containsMatchIn(nickname)) {
-                _uiState.update {
-                    it.copy(
-                        validationMessage = "특수문자, 이모지는 사용이 불가능해요",
-                        isNicknameValid = false,
-                    )
-                }
-                return@launch
+            is NicknameLocalValidation.Invalid -> {
+                updateInvalidNicknameValidationStatus(nickname, localValidationResult.reason)
             }
 
-            userRepository.getNicknameAvailability(nickname)
-                .onSuccess { result ->
-                    when (result) {
-                        NicknameValidationResult.AVAILABLE -> {
-                            _uiState.update {
-                                it.copy(
-                                    validationMessage = "사용 가능한 닉네임이에요",
-                                    isNicknameValid = true,
-                                )
-                            }
-                        }
+            is NicknameLocalValidation.Valid -> {
+                updateAvailableNicknameValidationStatus(nickname)
+            }
+        }
+    }
 
-                        NicknameValidationResult.DUPLICATE -> {
-                            _uiState.update {
-                                it.copy(
-                                    validationMessage = "이미 사용중인 닉네임이에요",
-                                    isNicknameValid = false,
-                                )
-                            }
-                        }
+    private fun updateInvalidNicknameValidationStatus(
+        nickname: String,
+        reason: NicknameLocalValidationReason,
+    ) {
+        val validationStatus = when (reason) {
+            NicknameLocalValidationReason.TOO_SHORT -> NicknameValidationStatus.TOO_SHORT
+            NicknameLocalValidationReason.SPECIAL_CHAR -> NicknameValidationStatus.SPECIAL_CHAR
+        }
+        updateNicknameValidationStatus(nickname, validationStatus)
+    }
 
-                        NicknameValidationResult.FORBIDDEN_WORD -> {
-                            _uiState.update {
-                                it.copy(
-                                    validationMessage = "금지어가 포함된 닉네임이에요",
-                                    isNicknameValid = false,
-                                )
-                            }
-                        }
-                    }
-                }
-                .onLogFailure {
-                    _uiState.update {
-                        it.copy(
-                            isNicknameValid = false,
-                        )
-                    }
-                    _sideEffect.emit(SignUpSideEffect.ShowRetryDialog { validateNickname(nickname) })
-                }
+    private suspend fun updateAvailableNicknameValidationStatus(nickname: String) {
+        userRepository.getNicknameAvailability(nickname)
+            .onSuccess { result ->
+                updateNicknameValidationStatus(nickname, NicknameValidationStatus.fromName(result.name))
+            }
+            .onLogFailure {
+                updateNicknameValidationStatus(nickname, NicknameValidationStatus.NONE)
+                _sideEffect.emit(SignUpSideEffect.ShowRetryDialog { runNicknameValidation(nickname) })
+            }
+    }
+
+    private fun updateNicknameValidationStatus(
+        nickname: String,
+        validationStatus: NicknameValidationStatus,
+    ) {
+        _uiState.update {
+            if (it.nickname == nickname) {
+                it.copy(validationStatus = validationStatus)
+            } else {
+                it
+            }
         }
     }
 
