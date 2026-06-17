@@ -22,7 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.hilingual.core.designsystem.component.toggle.HilingualSegmentedToggle
+import com.hilingual.core.designsystem.component.button.HilingualSegmentedButton
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import kotlinx.collections.immutable.toImmutableList
 
@@ -39,7 +39,7 @@ internal fun DiaryViewModeToggle(
     onToggleDiaryViewMode: (DiaryViewMode) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    HilingualSegmentedToggle(
+    HilingualSegmentedButton(
         options = DiaryViewMode.entries.map { it.text }.toImmutableList(),
         selectedIndex = viewMode.ordinal,
         onSelect = { selectedIndex ->

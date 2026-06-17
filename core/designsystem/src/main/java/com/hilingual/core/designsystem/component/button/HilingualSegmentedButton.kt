@@ -1,4 +1,4 @@
-package com.hilingual.core.designsystem.component.toggle
+package com.hilingual.core.designsystem.component.button
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -32,7 +32,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-fun HilingualSegmentedToggle(
+fun HilingualSegmentedButton(
     options: ImmutableList<String>,
     selectedIndex: Int,
     onSelect: (Int) -> Unit,
@@ -116,11 +116,11 @@ fun HilingualSegmentedToggle(
 
 @Preview
 @Composable
-fun HilingualSegmentedTogglePreview() {
+fun HilingualSegmentedButtonPreview() {
     HilingualTheme {
         var isSelected by remember { mutableIntStateOf(0) }
 
-        HilingualSegmentedToggle(
+        HilingualSegmentedButton(
             options = persistentListOf("교정본", "원본"),
             selectedIndex = isSelected,
             onSelect = { isSelected = it }
