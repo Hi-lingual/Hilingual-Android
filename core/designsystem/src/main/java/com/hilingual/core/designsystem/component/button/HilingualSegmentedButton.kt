@@ -31,6 +31,28 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
+data class SegmentedButtonColors(
+    val backgroundColor: Color,
+    val thumbColor: Color,
+    val activeContentColor: Color,
+    val inactiveContentColor: Color,
+) {
+    companion object {
+        @Composable
+        fun defaults(
+            backgroundColor: Color = HilingualTheme.colors.gray200,
+            thumbColor: Color = HilingualTheme.colors.white,
+            activeContentColor: Color = HilingualTheme.colors.hilingualOrange,
+            inactiveContentColor: Color = HilingualTheme.colors.gray500,
+        ): SegmentedButtonColors = SegmentedButtonColors(
+            backgroundColor = backgroundColor,
+            thumbColor = thumbColor,
+            activeContentColor = activeContentColor,
+            inactiveContentColor = inactiveContentColor,
+        )
+    }
+}
+
 @Composable
 fun HilingualSegmentedButton(
     options: ImmutableList<String>,
@@ -40,10 +62,7 @@ fun HilingualSegmentedButton(
     thumbWidth: Dp = 62.dp,
     itemSpacing: Dp = 3.dp,
     contentPadding: PaddingValues = PaddingValues(3.dp),
-    backgroundColor: Color = HilingualTheme.colors.gray200,
-    thumbColor: Color = HilingualTheme.colors.white,
-    activeContentColor: Color = HilingualTheme.colors.hilingualOrange,
-    inactiveContentColor: Color = HilingualTheme.colors.gray500,
+    colors: SegmentedButtonColors = SegmentedButtonColors.defaults(),
 ) {
     val coercedSelectedIndex = selectedIndex.coerceIn(0, options.lastIndex)
     val animatedIndex by animateFloatAsState(
@@ -58,7 +77,7 @@ fun HilingualSegmentedButton(
     Box(
         modifier = modifier
             .clip(CircleShape)
-            .background(backgroundColor)
+            .background(colors.backgroundColor)
             .padding(contentPadding),
     ) {
         Box( // thumb
@@ -79,7 +98,7 @@ fun HilingualSegmentedButton(
                     }
                 }
                 .clip(CircleShape)
-                .background(thumbColor),
+                .background(colors.thumbColor),
         )
 
         Row {
@@ -99,7 +118,7 @@ fun HilingualSegmentedButton(
                         modifier = Modifier
                             .widthIn(min = 46.dp),
                         textAlign = TextAlign.Center,
-                        color = if (selected) activeContentColor else inactiveContentColor,
+                        color = if (selected) colors.activeContentColor else colors.inactiveContentColor,
                         style = if (selected) HilingualTheme.typography.bodyM14 else HilingualTheme.typography.bodyR14,
                     )
                 }
