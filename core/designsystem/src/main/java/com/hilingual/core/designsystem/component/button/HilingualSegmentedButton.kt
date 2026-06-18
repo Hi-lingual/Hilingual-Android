@@ -43,7 +43,7 @@ fun HilingualSegmentedButton(
     backgroundColor: Color = HilingualTheme.colors.gray200,
     thumbColor: Color = HilingualTheme.colors.white,
     activeContentColor: Color = HilingualTheme.colors.hilingualOrange,
-    inactiveContentColor: Color = HilingualTheme.colors.gray500
+    inactiveContentColor: Color = HilingualTheme.colors.gray500,
 ) {
     if (options.isEmpty()) return
 
@@ -73,7 +73,7 @@ fun HilingualSegmentedButton(
                         constraints.copy(
                             minWidth = thumbWidthPx,
                             maxWidth = thumbWidthPx,
-                        )
+                        ),
                     )
                     layout(constraints.maxWidth, placeable.height) {
                         val x = (animatedIndex * (thumbWidthPx + itemSpacingPx)).toInt()
@@ -123,7 +123,7 @@ fun HilingualSegmentedButtonPreview() {
         HilingualSegmentedButton(
             options = persistentListOf("교정본", "원본"),
             selectedIndex = isSelected,
-            onSelect = { isSelected = it }
+            onSelect = { isSelected = it },
         )
     }
 }
