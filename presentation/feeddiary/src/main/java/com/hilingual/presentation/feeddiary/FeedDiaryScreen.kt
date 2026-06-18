@@ -182,7 +182,7 @@ private fun FeedDiaryScreen(
     var isReportConfirmDialogVisible by remember { mutableStateOf(false) }
     var isBlockConfirmBottomSheetVisible by remember { mutableStateOf(false) }
     var toggleClickCount by remember { mutableIntStateOf(0) }
-    var isAIWritten by remember { mutableStateOf(true) }
+    var isShowCorrectedDiary by remember { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -273,11 +273,11 @@ private fun FeedDiaryScreen(
                             diaryContent = diaryContent,
                             feedbackList = feedbackList,
                             topics = topics,
-                            isAIWritten = isAIWritten,
+                            isShowCorrectedDiary = isShowCorrectedDiary,
                             onImageClick = onChangeImageDetailVisible,
                             isAdVisible = true,
-                            onToggleViewMode = {
-                                isAIWritten = it
+                            onToggleDiaryViewMode = {
+                                isShowCorrectedDiary = it
                                 toggleClickCount++
                                 tracker.logEvent(
                                     trigger = TriggerType.CLICK,

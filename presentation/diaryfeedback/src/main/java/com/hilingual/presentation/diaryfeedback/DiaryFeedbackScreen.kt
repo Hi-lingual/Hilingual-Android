@@ -234,7 +234,7 @@ private fun DiaryFeedbackScreen(
     var isReportDialogVisible by remember { mutableStateOf(false) }
 
     var toggleClickCount by remember { mutableIntStateOf(0) }
-    var isAIWritten by remember { mutableStateOf(true) }
+    var isShowCorrectedDiary by remember { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -305,10 +305,10 @@ private fun DiaryFeedbackScreen(
                                 topics = data.topics,
                                 diaryContent = data.diaryContent,
                                 feedbackList = data.feedbackList,
-                                isAIWritten = isAIWritten,
+                                isShowCorrectedDiary = isShowCorrectedDiary,
                                 onImageClick = onChangeImageDetailVisible,
-                                onToggleViewMode = {
-                                    isAIWritten = it
+                                onToggleDiaryViewMode = {
+                                    isShowCorrectedDiary = it
                                     toggleClickCount++
                                     tracker.logEvent(
                                         trigger = TriggerType.CLICK,

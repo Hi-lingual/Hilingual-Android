@@ -28,13 +28,13 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun DiaryViewModeToggle(
-    isAIWritten: Boolean,
+    isShowCorrectedDiary: Boolean,
     onToggleViewMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     HilingualSegmentedButton(
         options = persistentListOf("교정본", "원본"),
-        selectedIndex = if (isAIWritten) 0 else 1,
+        selectedIndex = if (isShowCorrectedDiary) 0 else 1,
         onSelect = { selectedIndex ->
             onToggleViewMode(selectedIndex == 0)
         },
@@ -46,11 +46,11 @@ internal fun DiaryViewModeToggle(
 @Composable
 private fun DiaryViewModeTogglePreview() {
     HilingualTheme {
-        var isAIWritten by remember { mutableStateOf(true) }
+        var isShowCorrectedDiary by remember { mutableStateOf(true) }
 
         DiaryViewModeToggle(
-            isAIWritten = isAIWritten,
-            onToggleViewMode = { isAIWritten = it },
+            isShowCorrectedDiary = isShowCorrectedDiary,
+            onToggleViewMode = { isShowCorrectedDiary = it },
         )
     }
 }

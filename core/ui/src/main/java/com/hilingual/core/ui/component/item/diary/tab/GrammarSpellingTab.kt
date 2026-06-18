@@ -60,9 +60,9 @@ fun GrammarSpellingTab(
     topics: Topics,
     diaryContent: DiaryContent,
     feedbackList: ImmutableList<FeedbackContent>,
-    isAIWritten: Boolean,
+    isShowCorrectedDiary: Boolean,
     onImageClick: () -> Unit,
-    onToggleViewMode: (Boolean) -> Unit,
+    onToggleDiaryViewMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     isAdVisible: Boolean = false,
 ) {
@@ -89,8 +89,8 @@ fun GrammarSpellingTab(
                     color = HilingualTheme.colors.gray700,
                 )
                 DiaryViewModeToggle(
-                    isAIWritten = isAIWritten,
-                    onToggleViewMode = onToggleViewMode,
+                    isShowCorrectedDiary = isShowCorrectedDiary,
+                    onToggleViewMode = onToggleDiaryViewMode,
                 )
             }
             Spacer(Modifier.height(12.dp))
@@ -107,8 +107,8 @@ fun GrammarSpellingTab(
         item {
             with(diaryContent) {
                 DiaryCard(
-                    isAIWritten = isAIWritten,
-                    diaryContent = if (isAIWritten) aiText else originalText,
+                    isShowCorrectedDiary = isShowCorrectedDiary,
+                    diaryContent = if (isShowCorrectedDiary) correctedText else originalText,
                     diffRanges = diffRanges,
                     imageUrl = imageUrl,
                     onImageClick = onImageClick,
@@ -138,7 +138,7 @@ fun GrammarSpellingTab(
                 with(content) {
                     FeedbackCard(
                         originalText = originalText,
-                        feedbackText = feedbackText,
+                        correctedText = correctedText,
                         explain = explain,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -196,9 +196,9 @@ private fun GrammarSpellingTabPreview() {
             diaryContent = DiaryContent(),
             topics = Topics(),
             feedbackList = persistentListOf(),
-            isAIWritten = true,
+            isShowCorrectedDiary = true,
             onImageClick = {},
-            onToggleViewMode = {},
+            onToggleDiaryViewMode = {},
         )
     }
 }
