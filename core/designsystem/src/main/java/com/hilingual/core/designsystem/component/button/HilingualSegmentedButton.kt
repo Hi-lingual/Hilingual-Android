@@ -45,8 +45,6 @@ fun HilingualSegmentedButton(
     activeContentColor: Color = HilingualTheme.colors.hilingualOrange,
     inactiveContentColor: Color = HilingualTheme.colors.gray500,
 ) {
-    if (options.isEmpty()) return
-
     val coercedSelectedIndex = selectedIndex.coerceIn(0, options.lastIndex)
     val animatedIndex by animateFloatAsState(
         targetValue = coercedSelectedIndex.toFloat(),
