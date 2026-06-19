@@ -21,10 +21,12 @@ data class UserLoginInfoModel(
     val profileImg: String,
     val nickname: String,
     val provider: String,
+    val userId: Long,
 )
 
 internal fun UserLoginInfoResponseDto.toModel() = UserLoginInfoModel(
     profileImg = this.profileImg,
     nickname = this.nickname,
     provider = this.provider,
+    userId = this.userId,
 )

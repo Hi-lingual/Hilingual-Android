@@ -29,6 +29,7 @@ import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
 import com.hilingual.data.user.dto.response.user.BlockListResponseDto
 import com.hilingual.data.user.dto.response.user.NicknameResponseDto
+import com.hilingual.data.user.dto.response.user.RegisterProfileResponseDto
 import com.hilingual.data.user.dto.response.user.UpdateNicknameResponseDto
 import com.hilingual.data.user.dto.response.user.UserInfoResponseDto
 import com.hilingual.data.user.dto.response.user.UserLoginInfoResponseDto
@@ -45,7 +46,7 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
         nickname: String,
         adAlarmAgree: Boolean,
         fileKey: String?,
-    ): BaseResponse<Unit> {
+    ): BaseResponse<RegisterProfileResponseDto> {
         val imageRequest = if (fileKey != null) {
             ImageRequestDto(
                 fileKey = fileKey,
