@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberUpdatedState
+import com.hilingual.core.common.model.LoadErrorHandleType
 import com.hilingual.core.common.trigger.LocalLoadErrorTrigger
-import com.hilingual.core.common.trigger.LoadErrorHandleType
 
 @Composable
 fun HandleLoadError(
@@ -18,15 +18,16 @@ fun HandleLoadError(
 
     LaunchedEffect(uiState, type) {
         when (uiState) {
-            UiState.Failure -> {
-                loadErrorTrigger.show(type = type) {
+            is UiState.Failure -> {
+                loadErrorTrigger.show(type = uiState.errorType ?: type) {
                     currentOnActionClick.value()
                 }
             }
 
             UiState.Empty,
             UiState.Loading,
-            is UiState.Success -> {
+            is UiState.Success,
+            -> {
                 loadErrorTrigger.dismiss()
             }
         }

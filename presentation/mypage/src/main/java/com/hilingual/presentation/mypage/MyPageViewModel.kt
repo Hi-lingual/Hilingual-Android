@@ -81,7 +81,7 @@ internal class MyPageViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    _uiState.update { UiState.Failure }
+                    _uiState.update { UiState.Failure() }
                 }
         }
     }

@@ -108,7 +108,7 @@ internal class FeedViewModel @Inject constructor(
                     if (isUserRefresh) {
                         emitErrorDialogSideEffect { getRecommendFeeds(isUserRefresh) }
                     } else {
-                        _uiState.update { it.copy(recommendFeedList = UiState.Failure) }
+                        _uiState.update { it.copy(recommendFeedList = UiState.Failure()) }
                     }
                 }
 
@@ -139,7 +139,7 @@ internal class FeedViewModel @Inject constructor(
                     if (isUserRefresh) {
                         emitErrorDialogSideEffect { getFollowingFeeds(isUserRefresh) }
                     } else {
-                        _uiState.update { it.copy(followingFeedList = UiState.Failure) }
+                        _uiState.update { it.copy(followingFeedList = UiState.Failure()) }
                     }
                 }
 

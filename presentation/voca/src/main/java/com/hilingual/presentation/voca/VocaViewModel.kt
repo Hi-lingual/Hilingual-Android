@@ -125,7 +125,7 @@ constructor(
                 if (isRefreshing) {
                     _uiState.update { it.copy(isRefreshing = false) }
                 }
-                _uiState.update { it.copy(vocaGroupList = UiState.Failure) }
+                _uiState.update { it.copy(vocaGroupList = UiState.Failure()) }
                 return@coroutineScope
             }
 

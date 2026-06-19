@@ -31,7 +31,6 @@ import com.hilingual.data.diary.repository.TextRecognitionRepository
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
-import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -178,7 +177,7 @@ internal class DiaryWriteViewModel @Inject constructor(
                 diaryLocalRepository.clearDiaryTemp(uiState.value.selectedDate)
                 _feedbackUiState.update { UiState.Success(response.diaryId) }
             }.onLogFailure {
-                _feedbackUiState.update { UiState.Failure }
+                _feedbackUiState.update { UiState.Failure() }
             }
         }
     }

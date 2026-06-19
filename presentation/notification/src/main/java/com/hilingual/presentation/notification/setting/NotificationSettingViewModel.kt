@@ -72,7 +72,7 @@ internal class NotificationSettingViewModel @Inject constructor(
                     serverState.update { newUiState }
                 }
                 .onLogFailure {
-                    _uiState.update { UiState.Failure }
+                    _uiState.update { UiState.Failure() }
                 }
         }
     }

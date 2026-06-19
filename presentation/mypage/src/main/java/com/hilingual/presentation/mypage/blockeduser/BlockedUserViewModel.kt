@@ -58,7 +58,7 @@ internal class BlockedUserViewModel @Inject constructor(
                     _uiState.update { it.copy(blockedUserList = UiState.Success(data = blockUiModel)) }
                 }
                 .onLogFailure {
-                    _uiState.update { it.copy(blockedUserList = UiState.Failure) }
+                    _uiState.update { it.copy(blockedUserList = UiState.Failure()) }
                 }
         }
     }

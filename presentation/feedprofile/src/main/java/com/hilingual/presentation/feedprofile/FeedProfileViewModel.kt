@@ -19,7 +19,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.hilingual.core.common.extension.isHttpNotFound
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.extension.toLoadErrorHandleType
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.repository.DiaryRepository
@@ -85,7 +87,14 @@ internal class FeedProfileViewModel @Inject constructor(
             if (feedProfileResult.isFailure || sharedDiariesResult.isFailure) {
                 feedProfileResult.onLogFailure { }
                 sharedDiariesResult.onLogFailure { }
-                _uiState.update { UiState.Failure }
+                val failure = listOf(feedProfileResult, sharedDiariesResult)
+                    .mapNotNull { it.exceptionOrNull() }
+                    .firstOrNull { it.isHttpNotFound() }
+                    ?: listOf(feedProfileResult, sharedDiariesResult)
+                        .mapNotNull { it.exceptionOrNull() }
+                        .firstOrNull()
+
+                _uiState.update { UiState.Failure(failure?.toLoadErrorHandleType()) }
                 return@launch
             }
 
@@ -97,7 +106,7 @@ internal class FeedProfileViewModel @Inject constructor(
                     onSuccess = { it.diaryList },
                     onFailure = { throwable ->
                         Timber.e(throwable)
-                        _uiState.update { UiState.Failure }
+                        _uiState.update { UiState.Failure(throwable.toLoadErrorHandleType()) }
                         return@launch
                     },
                 )

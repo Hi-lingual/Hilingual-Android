@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
-import com.hilingual.core.common.trigger.LoadErrorHandleType
+import com.hilingual.core.common.model.LoadErrorHandleType
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -39,31 +39,34 @@ fun HilingualLoadErrorView(
     type: LoadErrorHandleType = LoadErrorHandleType.RETRY,
     modifier: Modifier = Modifier,
 ) {
+    val content = type.content
+
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.white),
     ) {
-        if (isBackVisible) {
-            HilingualBasicTopAppBar(
-                navigationIcon = {
-                    Icon(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .noRippleClickable(onClick = onBackClick),
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_24_back),
-                        contentDescription = null,
-                        tint = HilingualTheme.colors.black,
-                    )
-                },
-            )
-        }
-
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            if (isBackVisible) {
+                HilingualBasicTopAppBar(
+                    navigationIcon = {
+                        Icon(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .noRippleClickable(onClick = onBackClick),
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_24_back),
+                            contentDescription = null,
+                            tint = HilingualTheme.colors.black,
+                        )
+                    },
+                )
+            }
+
+            Spacer(Modifier.weight(2f))
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -78,46 +81,33 @@ fun HilingualLoadErrorView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                when (type) {
-                    LoadErrorHandleType.RETRY -> {
-                        Text(
-                            text = "일시적인 오류가 발생해\n내용을 불러오지 못했어요.",
-                            color = HilingualTheme.colors.gray850,
-                            style = HilingualTheme.typography.headSB20,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
+                Text(
+                    text = content.title,
+                    color = HilingualTheme.colors.gray850,
+                    style = HilingualTheme.typography.headSB20,
+                    textAlign = TextAlign.Center,
+                )
 
-                    LoadErrorHandleType.BACK -> {
-                        Text(
-                            text = "정보를 불러오지 못했어요.",
-                            color = HilingualTheme.colors.gray850,
-                            style = HilingualTheme.typography.headSB20,
-                            textAlign = TextAlign.Center,
-                        )
+                content.description?.let { description ->
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        Text(
-                            text = "이전 화면으로 돌아가 다시 확인 해주세요.",
-                            color = HilingualTheme.colors.gray400,
-                            style = HilingualTheme.typography.headR18,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
+                    Text(
+                        text = description,
+                        color = HilingualTheme.colors.gray400,
+                        style = HilingualTheme.typography.headR18,
+                        textAlign = TextAlign.Center,
+                    )
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                ActionButton(
+                    text = content.buttonText,
+                    onClick = onActionClick,
+                )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            ActionButton(
-                text = when (type) {
-                    LoadErrorHandleType.RETRY -> "다시 시도"
-                    LoadErrorHandleType.BACK -> "이전 페이지로 돌아가기"
-                },
-                onClick = onActionClick,
-            )
-
+            Spacer(Modifier.weight(3f))
         }
     }
 }
@@ -145,12 +135,39 @@ private fun ActionButton(
     )
 }
 
+private data class LoadErrorContent(
+    val title: String,
+    val description: String?,
+    val buttonText: String,
+)
+
+private val LoadErrorHandleType.content: LoadErrorContent
+    get() = when (this) {
+        LoadErrorHandleType.RETRY -> LoadErrorContent(
+            title = "일시적인 오류가 발생해\n내용을 불러오지 못했어요.",
+            description = null,
+            buttonText = "다시 시도",
+        )
+
+        LoadErrorHandleType.BACK -> LoadErrorContent(
+            title = "정보를 불러오지 못했어요.",
+            description = "이전 화면으로 돌아가 다시 확인 해주세요.",
+            buttonText = "이전 페이지로 돌아가기",
+        )
+
+        LoadErrorHandleType.NOT_FOUND -> LoadErrorContent(
+            title = "요청한 내용을 찾을 수 없어요",
+            description = "삭제되었거나 더 이상\n제공되지 않는 내용이에요",
+            buttonText = "이전 페이지로 돌아가기",
+        )
+    }
+
 @Preview(name = "Retry")
 @Composable
 private fun HilingualLoadErrorRetryViewPreview() {
     HilingualTheme {
         HilingualLoadErrorView(
-            isBackVisible = true,
+            isBackVisible = false,
             onBackClick = {},
             type = LoadErrorHandleType.RETRY,
             onActionClick = {},
@@ -166,6 +183,19 @@ private fun HilingualLoadErrorBackViewPreview() {
             isBackVisible = true,
             onBackClick = {},
             type = LoadErrorHandleType.BACK,
+            onActionClick = {},
+        )
+    }
+}
+
+@Preview(name = "Not Found")
+@Composable
+private fun HilingualLoadErrorNotFoundViewPreview() {
+    HilingualTheme {
+        HilingualLoadErrorView(
+            isBackVisible = true,
+            onBackClick = {},
+            type = LoadErrorHandleType.NOT_FOUND,
             onActionClick = {},
         )
     }

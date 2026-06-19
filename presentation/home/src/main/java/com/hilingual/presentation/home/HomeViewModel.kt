@@ -94,7 +94,7 @@ class HomeViewModel @Inject constructor(
             if (userInfoResult.isFailure || calendarResult.isFailure) {
                 userInfoResult.onLogFailure { }
                 calendarResult.onLogFailure { }
-                _uiState.update { UiState.Failure }
+                _uiState.update { UiState.Failure() }
                 return@launch
             }
 

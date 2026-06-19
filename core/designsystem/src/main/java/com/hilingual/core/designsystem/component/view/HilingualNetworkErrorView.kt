@@ -30,7 +30,6 @@ import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
-
 @Composable
 fun HilingualNetworkErrorView(
     isBackVisible: Boolean = false,
@@ -63,7 +62,6 @@ fun HilingualNetworkErrorView(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {

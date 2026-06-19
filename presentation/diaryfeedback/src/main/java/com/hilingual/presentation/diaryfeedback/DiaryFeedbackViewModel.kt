@@ -68,7 +68,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                     _sideEffect.emit(DiaryFeedbackSideEffect.ShowInterstitialAd)
                 }
             }.onLogFailure {
-                _uiState.update { UiState.Failure }
+                _uiState.update { UiState.Failure() }
             }
         }
     }

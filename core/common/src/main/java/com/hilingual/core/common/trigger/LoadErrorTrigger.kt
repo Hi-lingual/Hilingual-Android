@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
+import com.hilingual.core.common.model.LoadErrorHandleType
 
 @Immutable
 data class LoadErrorState(
@@ -11,11 +12,6 @@ data class LoadErrorState(
     val type: LoadErrorHandleType = LoadErrorHandleType.RETRY,
     val onActionClick: () -> Unit = {},
 )
-
-enum class LoadErrorHandleType {
-    RETRY,
-    BACK,
-}
 
 @Stable
 class LoadErrorTrigger(

@@ -53,7 +53,6 @@ import androidx.navigation.navOptions
 import com.hilingual.core.ads.native.HilingualNativeLineAd
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.app.AppRestarter
-import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.model.HilingualMessage.Snackbar
 import com.hilingual.core.common.model.HilingualMessage.Toast
@@ -142,11 +141,12 @@ internal fun MainScreen(
 
     LaunchedEffect(currentBackStackEntry) {
         val currentDestination = currentBackStackEntry?.destination ?: return@LaunchedEffect
-        shouldShowNetworkError = if (currentDestination.hasRoute(Splash::class) || currentDestination.hasRoute(Auth::class)) {
-            false
-        } else {
-            isOffline
-        }
+        shouldShowNetworkError =
+            if (currentDestination.hasRoute(Splash::class) || currentDestination.hasRoute(Auth::class)) {
+                false
+            } else {
+                isOffline
+            }
         loadErrorStateHolder.dismissLoadError()
     }
 

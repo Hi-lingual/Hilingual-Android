@@ -100,7 +100,7 @@ internal class FollowListViewModel @Inject constructor(
             updateLoadingState(tabType, UiState.Success(items))
         }.onLogFailure {
             if (shouldShowLoadError) {
-                updateLoadingState(tabType, UiState.Failure)
+                updateLoadingState(tabType, UiState.Failure())
             } else {
                 _sideEffect.emit(FollowListSideEffect.ShowErrorDialog)
             }

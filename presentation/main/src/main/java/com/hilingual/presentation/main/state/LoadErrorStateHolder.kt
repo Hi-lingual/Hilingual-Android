@@ -6,8 +6,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.hilingual.core.common.model.LoadErrorHandleType
 import com.hilingual.core.common.trigger.LoadErrorState
-import com.hilingual.core.common.trigger.LoadErrorHandleType
 
 @Stable
 internal class LoadErrorStateHolder {
