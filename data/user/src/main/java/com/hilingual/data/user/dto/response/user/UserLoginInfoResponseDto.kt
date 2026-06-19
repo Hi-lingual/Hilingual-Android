@@ -26,4 +26,6 @@ data class UserLoginInfoResponseDto(
     val nickname: String,
     @SerialName("provider")
     val provider: String,
+    @SerialName("userId")
+    val userId: Long,
 )

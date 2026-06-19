@@ -18,6 +18,7 @@ package com.hilingual.presentation.signup
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hilingual.core.common.analytics.UserIdentityTracker
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.ui.model.user.NicknameLocalValidation
 import com.hilingual.core.ui.model.user.NicknameLocalValidationReason
@@ -43,6 +44,7 @@ import kotlinx.coroutines.launch
 internal class SignUpViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val onboardingRepository: OnboardingRepository,
+    private val userIdentityTracker: UserIdentityTracker,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpUiState())
@@ -89,7 +91,10 @@ internal class SignUpViewModel @Inject constructor(
                 )
                 val profileResult = userRepository.postUserProfile(userProfile)
                 profileResult
-                    .onSuccess { isProfileCreated = true }
+                    .onSuccess { userId ->
+                        isProfileCreated = true
+                        userIdentityTracker.setUserId(userId)
+                    }
                     .onLogFailure { showRegisterRetryDialog(nickname, isMarketingAgreed, imageUri) }
                 if (profileResult.isFailure) return@launch
             }

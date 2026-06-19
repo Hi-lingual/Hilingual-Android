@@ -62,6 +62,8 @@ internal class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun getUserId(): Long? = authLocalDataSource.getUserId()
 
+    override suspend fun saveUserId(userId: Long) = authLocalDataSource.saveUserId(userId)
+
     override suspend fun logout(): Result<Unit> = suspendRunCatching {
         authRemoteDataSource.logout()
         authLocalDataSource.clearTokens()

@@ -99,14 +99,12 @@ internal class SplashViewModel @Inject constructor(
                 val accessTokenDeferred = async { authRepository.getAccessToken() }
                 val refreshTokenDeferred = async { authRepository.getRefreshToken() }
                 val isRegisteredDeferred = async { userRepository.getRegisterStatus() }
-                val userIdDeferred = async { authRepository.getUserId() }
 
                 val accessToken = accessTokenDeferred.await()
                 val refreshToken = refreshTokenDeferred.await()
                 val isRegistered = isRegisteredDeferred.await()
-                val userId = userIdDeferred.await()
 
-                !accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty() && isRegistered && userId != null
+                !accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty() && isRegistered
             }.getOrElse { false }
 
             if (isLoggedIn) {
@@ -124,8 +122,16 @@ internal class SplashViewModel @Inject constructor(
         userRepository.putDeviceInfo().onLogFailure { }.isSuccess
 
     private suspend fun setTrackerUserId() {
-        authRepository.getUserId()?.let { userIdentityTracker.setUserId(it) }
+        val userId = authRepository.getUserId() ?: fetchUserId()
+        userId?.let { userIdentityTracker.setUserId(it) }
     }
+
+    private suspend fun fetchUserId(): Long? =
+        userRepository.getUserLoginInfo()
+            .onSuccess { authRepository.saveUserId(it.userId) }
+            .onLogFailure { }
+            .map { it.userId }
+            .getOrNull()
 
     fun onUpdateConfirm() {
         _sideEffect.tryEmit(NavigateToStore)

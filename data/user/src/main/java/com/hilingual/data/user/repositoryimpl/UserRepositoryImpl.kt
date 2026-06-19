@@ -54,7 +54,7 @@ internal class UserRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun postUserProfile(userProfileModel: UserProfileModel): Result<Unit> =
+    override suspend fun postUserProfile(userProfileModel: UserProfileModel): Result<Long> =
         suspendRunCatching {
             val fileKey = if (userProfileModel.imageUri != null) {
                 fileUploaderRepository.uploadFile(
@@ -69,7 +69,7 @@ internal class UserRepositoryImpl @Inject constructor(
                 nickname = userProfileModel.nickname,
                 adAlarmAgree = userProfileModel.adAlarmAgree,
                 fileKey = fileKey,
-            )
+            ).data!!.userId
         }
 
     override suspend fun getUserInfo(): Result<UserInfoModel> =
