@@ -15,7 +15,7 @@
  */
 package com.hilingual.core.common.util
 
-import com.hilingual.core.common.model.LoadErrorHandleType
+import com.hilingual.core.common.model.LoadErrorHandleAction
 
 sealed interface UiState<out T> {
     data object Empty : UiState<Nothing>
@@ -27,6 +27,6 @@ sealed interface UiState<out T> {
     ) : UiState<T>
 
     data class Failure(
-        val errorType: LoadErrorHandleType? = null,
+        val handleAction: LoadErrorHandleAction? = null,
     ) : UiState<Nothing>
 }

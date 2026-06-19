@@ -47,7 +47,7 @@ internal data class FeedUiState(
             UiState.Empty -> UiState.Empty
             UiState.Loading -> UiState.Loading
             is UiState.Success -> UiState.Success(Unit)
-            is UiState.Failure -> UiState.Failure(currentFeedList.errorType)
+            is UiState.Failure -> UiState.Failure(currentFeedList.handleAction)
         }
     }
 

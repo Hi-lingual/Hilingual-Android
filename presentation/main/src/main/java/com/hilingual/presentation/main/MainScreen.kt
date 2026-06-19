@@ -303,7 +303,7 @@ internal fun MainScreen(
                         HilingualLoadErrorView(
                             isBackVisible = !isBottomBarVisible,
                             onBackClick = appState::navigateUp,
-                            type = loadErrorStateHolder.loadErrorState.type,
+                            handleAction = loadErrorStateHolder.loadErrorState.handleAction,
                             onActionClick = loadErrorStateHolder::performAction,
                             modifier = Modifier
                                 .padding(innerPadding)

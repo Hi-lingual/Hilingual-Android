@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.hilingual.core.common.model.LoadErrorHandleType
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.trigger.LoadErrorState
 
 @Stable
@@ -15,12 +15,12 @@ internal class LoadErrorStateHolder {
         private set
 
     fun showLoadError(
-        type: LoadErrorHandleType,
+        handleAction: LoadErrorHandleAction,
         onActionClick: () -> Unit,
     ) {
         loadErrorState = LoadErrorState(
             isVisible = true,
-            type = type,
+            handleAction = handleAction,
             onActionClick = onActionClick,
         )
     }

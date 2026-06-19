@@ -4,22 +4,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberUpdatedState
-import com.hilingual.core.common.model.LoadErrorHandleType
+import com.hilingual.core.common.model.LoadErrorActionType
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.trigger.LocalLoadErrorTrigger
 
 @Composable
 fun HandleLoadError(
     uiState: UiState<*>,
-    type: LoadErrorHandleType = LoadErrorHandleType.RETRY,
+    defaultHandleAction: LoadErrorHandleAction = LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
     onActionClick: () -> Unit,
 ) {
     val loadErrorTrigger = LocalLoadErrorTrigger.current
     val currentOnActionClick = rememberUpdatedState(onActionClick)
 
-    LaunchedEffect(uiState, type) {
+    LaunchedEffect(uiState, defaultHandleAction) {
         when (uiState) {
             is UiState.Failure -> {
-                loadErrorTrigger.show(type = uiState.errorType ?: type) {
+                val resolvedHandleAction = uiState.handleAction ?: defaultHandleAction
+
+                loadErrorTrigger.show(handleAction = resolvedHandleAction) {
                     currentOnActionClick.value()
                 }
             }

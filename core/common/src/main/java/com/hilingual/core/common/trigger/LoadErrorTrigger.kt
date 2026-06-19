@@ -4,25 +4,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
-import com.hilingual.core.common.model.LoadErrorHandleType
+import com.hilingual.core.common.model.LoadErrorActionType
+import com.hilingual.core.common.model.LoadErrorHandleAction
 
 @Immutable
 data class LoadErrorState(
     val isVisible: Boolean = false,
-    val type: LoadErrorHandleType = LoadErrorHandleType.RETRY,
+    val handleAction: LoadErrorHandleAction = LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
     val onActionClick: () -> Unit = {},
 )
 
 @Stable
 class LoadErrorTrigger(
-    private val onShow: (LoadErrorHandleType, () -> Unit) -> Unit,
+    private val onShow: (LoadErrorHandleAction, () -> Unit) -> Unit,
     private val onDismiss: () -> Unit,
 ) {
     fun show(
-        type: LoadErrorHandleType = LoadErrorHandleType.RETRY,
+        handleAction: LoadErrorHandleAction = LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
         onActionClick: () -> Unit,
     ) {
-        onShow(type, onActionClick)
+        onShow(handleAction, onActionClick)
     }
 
     fun dismiss() {
@@ -32,7 +33,7 @@ class LoadErrorTrigger(
 
 @Composable
 fun rememberLoadErrorTrigger(
-    show: (LoadErrorHandleType, () -> Unit) -> Unit,
+    show: (LoadErrorHandleAction, () -> Unit) -> Unit,
     dismiss: () -> Unit,
 ): LoadErrorTrigger = remember(show, dismiss) {
     LoadErrorTrigger(

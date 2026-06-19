@@ -49,7 +49,8 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.model.HilingualMessage
-import com.hilingual.core.common.model.LoadErrorHandleType
+import com.hilingual.core.common.model.LoadErrorActionType
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
@@ -91,7 +92,7 @@ internal fun FeedDiaryRoute(
 
     HandleLoadError(
         uiState = uiState,
-        type = LoadErrorHandleType.BACK,
+        handleAction = LoadErrorHandleAction.Common(LoadErrorActionType.BACK),
         onActionClick = navigateUp,
     )
 

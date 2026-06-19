@@ -20,7 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
-import com.hilingual.core.common.extension.toLoadErrorHandleType
+import com.hilingual.core.common.extension.toLoadErrorHandleAction
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.common.util.suspendRunCatching
@@ -73,7 +73,7 @@ internal class FeedDiaryViewModel @Inject constructor(
 
             if (profileResult.isFailure) {
                 profileResult.onLogFailure { throwable ->
-                    _uiState.update { UiState.Failure(throwable.toLoadErrorHandleType()) }
+                    _uiState.update { UiState.Failure(throwable.toLoadErrorHandleAction()) }
                 }
                 return@launch
             }
@@ -111,7 +111,7 @@ internal class FeedDiaryViewModel @Inject constructor(
             }.onSuccess { combinedState ->
                 _uiState.update { UiState.Success(combinedState) }
             }.onLogFailure { throwable ->
-                _uiState.update { UiState.Failure(throwable.toLoadErrorHandleType()) }
+                _uiState.update { UiState.Failure(throwable.toLoadErrorHandleAction()) }
             }
         }
     }

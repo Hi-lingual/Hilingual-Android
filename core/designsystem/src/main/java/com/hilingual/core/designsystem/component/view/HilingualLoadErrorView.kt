@@ -26,7 +26,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
-import com.hilingual.core.common.model.LoadErrorHandleType
+import com.hilingual.core.common.model.LoadErrorActionType
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -36,10 +37,10 @@ fun HilingualLoadErrorView(
     onActionClick: () -> Unit,
     isBackVisible: Boolean = false,
     onBackClick: () -> Unit = {},
-    type: LoadErrorHandleType = LoadErrorHandleType.RETRY,
+    handleAction: LoadErrorHandleAction = LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
     modifier: Modifier = Modifier,
 ) {
-    val content = type.content
+    val content = handleAction.content
 
     Box(
         modifier = modifier
@@ -141,21 +142,23 @@ private data class LoadErrorContent(
     val buttonText: String,
 )
 
-private val LoadErrorHandleType.content: LoadErrorContent
+private val LoadErrorHandleAction.content: LoadErrorContent
     get() = when (this) {
-        LoadErrorHandleType.RETRY -> LoadErrorContent(
-            title = "일시적인 오류가 발생해\n내용을 불러오지 못했어요.",
-            description = null,
-            buttonText = "다시 시도",
-        )
+        is LoadErrorHandleAction.Common -> when (actionType) {
+            LoadErrorActionType.RETRY -> LoadErrorContent(
+                title = "일시적인 오류가 발생해\n내용을 불러오지 못했어요.",
+                description = null,
+                buttonText = "다시 시도",
+            )
 
-        LoadErrorHandleType.BACK -> LoadErrorContent(
-            title = "정보를 불러오지 못했어요.",
-            description = "이전 화면으로 돌아가 다시 확인 해주세요.",
-            buttonText = "이전 페이지로 돌아가기",
-        )
+            LoadErrorActionType.BACK -> LoadErrorContent(
+                title = "정보를 불러오지 못했어요.",
+                description = "이전 화면으로 돌아가 다시 확인 해주세요.",
+                buttonText = "이전 페이지로 돌아가기",
+            )
+        }
 
-        LoadErrorHandleType.NOT_FOUND -> LoadErrorContent(
+        LoadErrorHandleAction.NotFound -> LoadErrorContent(
             title = "요청한 내용을 찾을 수 없어요",
             description = "삭제되었거나 더 이상\n제공되지 않는 내용이에요",
             buttonText = "이전 페이지로 돌아가기",
@@ -169,7 +172,7 @@ private fun HilingualLoadErrorRetryViewPreview() {
         HilingualLoadErrorView(
             isBackVisible = false,
             onBackClick = {},
-            type = LoadErrorHandleType.RETRY,
+            handleAction = LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
             onActionClick = {},
         )
     }
@@ -182,7 +185,7 @@ private fun HilingualLoadErrorBackViewPreview() {
         HilingualLoadErrorView(
             isBackVisible = true,
             onBackClick = {},
-            type = LoadErrorHandleType.BACK,
+            handleAction = LoadErrorHandleAction.Common(LoadErrorActionType.BACK),
             onActionClick = {},
         )
     }
@@ -195,7 +198,7 @@ private fun HilingualLoadErrorNotFoundViewPreview() {
         HilingualLoadErrorView(
             isBackVisible = true,
             onBackClick = {},
-            type = LoadErrorHandleType.NOT_FOUND,
+            handleAction = LoadErrorHandleAction.NotFound,
             onActionClick = {},
         )
     }
