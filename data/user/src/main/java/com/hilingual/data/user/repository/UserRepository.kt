@@ -33,7 +33,7 @@ interface UserRepository {
 
     suspend fun postUserProfile(
         userProfileModel: UserProfileModel,
-    ): Result<Unit>
+    ): Result<Long>
 
     suspend fun getUserInfo(): Result<UserInfoModel>
 

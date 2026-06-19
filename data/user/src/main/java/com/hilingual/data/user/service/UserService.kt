@@ -27,6 +27,7 @@ import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
 import com.hilingual.data.user.dto.response.user.BlockListResponseDto
 import com.hilingual.data.user.dto.response.user.NicknameResponseDto
+import com.hilingual.data.user.dto.response.user.RegisterProfileResponseDto
 import com.hilingual.data.user.dto.response.user.UpdateNicknameResponseDto
 import com.hilingual.data.user.dto.response.user.UserInfoResponseDto
 import com.hilingual.data.user.dto.response.user.UserLoginInfoResponseDto
@@ -48,7 +49,7 @@ interface UserService {
     @POST("/api/v1/users/profile")
     suspend fun postUserProfile(
         @Body userProfileRequestDto: RegisterProfileRequestDto,
-    ): BaseResponse<Unit>
+    ): BaseResponse<RegisterProfileResponseDto>
 
     @GET("/api/v1/users/home/info")
     suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto>
