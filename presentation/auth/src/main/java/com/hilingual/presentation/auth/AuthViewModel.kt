@@ -18,6 +18,7 @@ package com.hilingual.presentation.auth
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hilingual.core.common.analytics.UserIdentityTracker
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.auth.repository.AuthRepository
 import com.hilingual.data.onboarding.repository.OnboardingRepository
@@ -38,6 +39,7 @@ class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val onboardingRepository: OnboardingRepository,
     private val userRepository: UserRepository,
+    private val userIdentityTracker: UserIdentityTracker,
 ) : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -69,6 +71,19 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    private suspend fun loginWithProviderToken(providerToken: String) {
+        authRepository.login(providerToken)
+            .onSuccess { authResult ->
+                onLoginSuccess(
+                    isRegistered = authResult.registerStatus,
+                    userId = authResult.userId,
+                )
+            }
+            .onLogFailure {
+                showServerLoginErrorDialog(providerToken)
+            }
+    }
+
     private suspend fun onLoginSuccess(isRegistered: Boolean, userId: Long) {
         if (isRegistered) {
             updateIsSplashOnboardingCompleted()
@@ -90,19 +105,6 @@ class AuthViewModel @Inject constructor(
 
     private fun setIsLoading(isLoading: Boolean) {
         _isLoading.update { isLoading }
-    }
-
-    private suspend fun loginWithProviderToken(providerToken: String) {
-        authRepository.login(providerToken)
-            .onSuccess { authResult ->
-                onLoginSuccess(
-                    isRegistered = authResult.registerStatus,
-                    userId = authResult.userId,
-                )
-            }
-            .onLogFailure {
-                showServerLoginErrorDialog(providerToken)
-            }
     }
 
     private fun retryLoginWithProviderToken(providerToken: String) {
