@@ -19,6 +19,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import com.hilingual.core.localstorage.constant.UserInfoDataStoreKey.KEY_IS_REGISTER_COMPLETED
+import com.hilingual.core.localstorage.constant.UserInfoDataStoreKey.KEY_USERID
 import com.hilingual.core.localstorage.di.qualifier.UserInfoDataStore
 import com.hilingual.data.auth.datasource.AuthLocalDataSource
 import com.hilingual.data.auth.di.qualifier.TokenDataStore
@@ -60,6 +61,14 @@ class AuthLocalDataSourceImpl @Inject constructor(
             preferences[KEY_IS_REGISTER_COMPLETED] = isCompleted
         }
     }
+
+    override suspend fun saveUserId(userId: Long) {
+        userInfoDataStore.edit { preferences ->
+            preferences[KEY_USERID] = userId
+        }
+    }
+
+    override suspend fun getUserId(): Long? = userInfoDataStore.data.first()[KEY_USERID]
 
     override suspend fun clearUserInfo() {
         userInfoDataStore.edit { preferences ->

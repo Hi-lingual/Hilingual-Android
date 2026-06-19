@@ -63,15 +63,17 @@ class AuthViewModel @Inject constructor(
                 .onLogFailure {
                     showGoogleLoginErrorDialog(context)
                 }
+                .onLogFailure { }
 
             setIsLoading(false)
         }
     }
 
-    private suspend fun onLoginSuccess(isRegistered: Boolean) {
+    private suspend fun onLoginSuccess(isRegistered: Boolean, userId: Long) {
         if (isRegistered) {
             updateIsSplashOnboardingCompleted()
             putDeviceInfo()
+            setUserIdentity(userId)
             _navigationEvent.tryEmit(AuthSideEffect.NavigateToHome)
         } else {
             _navigationEvent.tryEmit(AuthSideEffect.NavigateToSignUp)
@@ -93,7 +95,10 @@ class AuthViewModel @Inject constructor(
     private suspend fun loginWithProviderToken(providerToken: String) {
         authRepository.login(providerToken)
             .onSuccess { authResult ->
-                onLoginSuccess(authResult.registerStatus)
+                onLoginSuccess(
+                    isRegistered = authResult.registerStatus,
+                    userId = authResult.userId,
+                )
             }
             .onLogFailure {
                 showServerLoginErrorDialog(providerToken)
@@ -116,6 +121,10 @@ class AuthViewModel @Inject constructor(
 
     private suspend fun showServerLoginErrorDialog(providerToken: String) {
         _navigationEvent.emit(AuthSideEffect.ShowErrorDialog { retryLoginWithProviderToken(providerToken) })
+    }
+
+    private fun setUserIdentity(userId: Long) {
+        userIdentityTracker.setUserId(userId)
     }
 }
 
