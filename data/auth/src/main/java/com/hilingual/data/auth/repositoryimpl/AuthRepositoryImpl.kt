@@ -44,8 +44,12 @@ internal class AuthRepositoryImpl @Inject constructor(
 
         authLocalDataSource.saveTokens(loginResponse.accessToken, loginResponse.refreshToken)
         authLocalDataSource.saveRegisterStatus(loginResponse.registerStatus)
+        authLocalDataSource.saveUserId(loginResponse.userId)
 
-        LoginModel(loginResponse.registerStatus)
+        LoginModel(
+            registerStatus = loginResponse.registerStatus,
+            userId = loginResponse.userId,
+        )
     }
 
     override suspend fun verifyCode(code: String): Result<Unit> = suspendRunCatching {
@@ -55,6 +59,10 @@ internal class AuthRepositoryImpl @Inject constructor(
     override suspend fun getAccessToken(): String? = authLocalDataSource.getAccessToken()
 
     override suspend fun getRefreshToken(): String? = authLocalDataSource.getRefreshToken()
+
+    override suspend fun getUserId(): Long? = authLocalDataSource.getUserId()
+
+    override suspend fun saveUserId(userId: Long) = authLocalDataSource.saveUserId(userId)
 
     override suspend fun logout(): Result<Unit> = suspendRunCatching {
         authRemoteDataSource.logout()
