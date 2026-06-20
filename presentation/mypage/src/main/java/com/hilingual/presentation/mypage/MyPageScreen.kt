@@ -50,8 +50,7 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.HilingualMessage
-import com.hilingual.core.common.model.LoadErrorActionType
-import com.hilingual.core.common.model.LoadErrorHandleAction
+import com.hilingual.core.common.model.orRetry
 import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
@@ -111,7 +110,7 @@ internal fun MyPageRoute(
         is UiState.Failure -> {
             RetryOnReconnect(onRetry = viewModel::getProfileInfo)
             HilingualLoadErrorView(
-                handleAction = state.handleAction ?: LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
+                handleAction = state.handleAction.orRetry(),
                 onActionClick = viewModel::getProfileInfo,
                 modifier = Modifier.padding(paddingValues),
             )

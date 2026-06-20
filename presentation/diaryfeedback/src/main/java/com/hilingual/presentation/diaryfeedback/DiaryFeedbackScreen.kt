@@ -54,8 +54,7 @@ import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.model.HilingualMessage
-import com.hilingual.core.common.model.LoadErrorActionType
-import com.hilingual.core.common.model.LoadErrorHandleAction
+import com.hilingual.core.common.model.orRetry
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
@@ -215,7 +214,7 @@ internal fun DiaryFeedbackRoute(
         is UiState.Failure -> {
             RetryOnReconnect(onRetry = viewModel::loadInitialData)
             HilingualLoadErrorView(
-                handleAction = currentState.handleAction ?: LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
+                handleAction = currentState.handleAction.orRetry(),
                 isBackVisible = true,
                 onBackClick = navigateUp,
                 onActionClick = viewModel::loadInitialData,

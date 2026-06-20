@@ -55,8 +55,7 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.model.HilingualMessage
-import com.hilingual.core.common.model.LoadErrorActionType
-import com.hilingual.core.common.model.LoadErrorHandleAction
+import com.hilingual.core.common.model.orBack
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
@@ -160,7 +159,7 @@ internal fun FeedProfileRoute(
         is UiState.Failure -> {
             RetryOnReconnect(onRetry = viewModel::loadFeedProfile)
             HilingualLoadErrorView(
-                handleAction = state.handleAction ?: LoadErrorHandleAction.Common(LoadErrorActionType.BACK),
+                handleAction = state.handleAction.orBack(),
                 isBackVisible = true,
                 onBackClick = navigateUp,
                 onActionClick = navigateUp,

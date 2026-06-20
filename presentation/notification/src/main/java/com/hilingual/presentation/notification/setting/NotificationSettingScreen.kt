@@ -37,8 +37,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
-import com.hilingual.core.common.model.LoadErrorActionType
-import com.hilingual.core.common.model.LoadErrorHandleAction
+import com.hilingual.core.common.model.orRetry
 import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
@@ -114,7 +113,7 @@ internal fun NotificationSettingRoute(
         is UiState.Failure -> {
             RetryOnReconnect(onRetry = viewModel::getNotificationSettings)
             HilingualLoadErrorView(
-                handleAction = state.handleAction ?: LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
+                handleAction = state.handleAction.orRetry(),
                 isBackVisible = true,
                 onBackClick = navigateUp,
                 onActionClick = viewModel::getNotificationSettings,

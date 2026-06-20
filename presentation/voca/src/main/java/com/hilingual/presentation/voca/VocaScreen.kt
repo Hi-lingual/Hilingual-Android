@@ -52,8 +52,7 @@ import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
-import com.hilingual.core.common.model.LoadErrorActionType
-import com.hilingual.core.common.model.LoadErrorHandleAction
+import com.hilingual.core.common.model.orRetry
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.RetryOnReconnect
@@ -115,7 +114,7 @@ internal fun VocaRoute(
     if (vocaGroupState is UiState.Failure) {
         RetryOnReconnect(onRetry = viewModel::fetchInitialData)
         HilingualLoadErrorView(
-            handleAction = vocaGroupState.handleAction ?: LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
+            handleAction = vocaGroupState.handleAction.orRetry(),
             onActionClick = viewModel::fetchInitialData,
             modifier = Modifier.padding(paddingValues),
         )

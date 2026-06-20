@@ -35,8 +35,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.subScreenPadding
-import com.hilingual.core.common.model.LoadErrorActionType
-import com.hilingual.core.common.model.LoadErrorHandleAction
+import com.hilingual.core.common.model.orRetry
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
@@ -175,8 +174,7 @@ private fun FollowListScreen(
                 is UiState.Failure -> {
                     RetryOnReconnect(onRetry = { onTabRefresh(pageState.tabType) })
                     HilingualLoadErrorView(
-                        handleAction = pageState.followState.handleAction
-                            ?: LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
+                        handleAction = pageState.followState.handleAction.orRetry(),
                         onActionClick = { onTabRefresh(pageState.tabType) },
                     )
                 }
