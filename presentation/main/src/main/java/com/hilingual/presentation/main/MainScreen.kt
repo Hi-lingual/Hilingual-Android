@@ -61,6 +61,7 @@ import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.trigger.LocalReconnectEvents
 import com.hilingual.core.common.trigger.rememberDialogTrigger
 import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
 import com.hilingual.core.designsystem.component.snackbar.HilingualActionSnackbar
@@ -86,6 +87,9 @@ import com.hilingual.presentation.splash.navigation.splashNavGraph
 import com.hilingual.presentation.voca.navigation.vocaNavGraph
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 @Composable
@@ -106,6 +110,7 @@ internal fun MainScreen(
     )
 
     val snackBarHostState = remember { SnackbarHostState() }
+    val reconnectEvents = remember { MutableSharedFlow<Unit>() }
 
     val onShowMessage: (HilingualMessage) -> Unit =
         remember(
@@ -123,6 +128,13 @@ internal fun MainScreen(
                 }
             }
         }
+
+    LaunchedEffect(Unit) {
+        appState.isOffline
+            .drop(1)
+            .filter { offline -> !offline }
+            .collect { reconnectEvents.emit(Unit) }
+    }
 
     LaunchedEffect(isOffline) {
         if (isOffline) {
@@ -147,6 +159,7 @@ internal fun MainScreen(
     CompositionLocalProvider(
         LocalDialogTrigger provides dialogTrigger,
         LocalMessageController provides onShowMessage,
+        LocalReconnectEvents provides reconnectEvents,
         LocalTracker provides tracker,
         LocalAppRestarter provides appRestarter,
     ) {

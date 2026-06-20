@@ -59,6 +59,7 @@ import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -212,6 +213,7 @@ internal fun DiaryFeedbackRoute(
         is UiState.Loading -> HilingualLoadingIndicator()
 
         is UiState.Failure -> {
+            RetryOnReconnect(onRetry = viewModel::loadInitialData)
             HilingualLoadErrorView(
                 handleAction = currentState.handleAction ?: LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
                 isBackVisible = true,

@@ -38,6 +38,7 @@ import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.model.LoadErrorActionType
 import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
@@ -172,6 +173,7 @@ private fun FollowListScreen(
                 }
 
                 is UiState.Failure -> {
+                    RetryOnReconnect(onRetry = { onTabRefresh(pageState.tabType) })
                     HilingualLoadErrorView(
                         handleAction = pageState.followState.handleAction
                             ?: LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),

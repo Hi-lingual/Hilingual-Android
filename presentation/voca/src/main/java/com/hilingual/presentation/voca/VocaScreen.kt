@@ -56,6 +56,7 @@ import com.hilingual.core.common.model.LoadErrorActionType
 import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.pulltorefresh.HilingualPullToRefreshBox
@@ -112,6 +113,7 @@ internal fun VocaRoute(
 
     val vocaGroupState = uiState.vocaGroupList
     if (vocaGroupState is UiState.Failure) {
+        RetryOnReconnect(onRetry = viewModel::fetchInitialData)
         HilingualLoadErrorView(
             handleAction = vocaGroupState.handleAction ?: LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
             onActionClick = viewModel::fetchInitialData,

@@ -64,6 +64,7 @@ import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.DialogState
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
@@ -213,6 +214,7 @@ internal fun HomeRoute(
         }
 
         is UiState.Failure -> {
+            RetryOnReconnect(onRetry = viewModel::loadInitialData)
             HilingualLoadErrorView(
                 handleAction = state.handleAction ?: LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
                 onActionClick = viewModel::loadInitialData,

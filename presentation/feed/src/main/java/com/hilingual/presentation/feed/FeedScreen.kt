@@ -55,6 +55,7 @@ import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
@@ -123,6 +124,7 @@ internal fun FeedRoute(
 
     val feedLoadError = uiState.loadErrorState(selectedFeedTab)
     if (feedLoadError is UiState.Failure) {
+        RetryOnReconnect(onRetry = { viewModel.loadFeedData(selectedFeedTab) })
         HilingualLoadErrorView(
             handleAction = feedLoadError.handleAction ?: LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
             onActionClick = { viewModel.loadFeedData(selectedFeedTab) },

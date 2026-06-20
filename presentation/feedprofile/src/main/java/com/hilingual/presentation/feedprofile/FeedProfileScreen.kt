@@ -60,6 +60,7 @@ import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
@@ -157,6 +158,7 @@ internal fun FeedProfileRoute(
         }
 
         is UiState.Failure -> {
+            RetryOnReconnect(onRetry = viewModel::loadFeedProfile)
             HilingualLoadErrorView(
                 handleAction = state.handleAction ?: LoadErrorHandleAction.Common(LoadErrorActionType.BACK),
                 isBackVisible = true,
