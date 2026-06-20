@@ -35,10 +35,12 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.subScreenPadding
+import com.hilingual.core.common.model.LoadErrorActionType
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.trigger.LocalDialogTrigger
-import com.hilingual.core.common.util.HandleLoadError
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.presentation.feedprofile.component.card.FeedEmptyCardType
@@ -97,14 +99,6 @@ private fun FollowListScreen(
     val coroutineScope = rememberCoroutineScope()
     val followerListState = rememberLazyListState()
     val followingListState = rememberLazyListState()
-
-    val currentTabType = if (pagerState.currentPage == 0) FollowTabType.FOLLOWER else FollowTabType.FOLLOWING
-    val currentFollowState = if (pagerState.currentPage == 0) followers else followings
-
-    HandleLoadError(
-        uiState = currentFollowState,
-        onActionClick = { onTabRefresh(currentTabType) },
-    )
 
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }
@@ -174,6 +168,14 @@ private fun FollowListScreen(
                         onActionButtonClick = { userId, isFollowing ->
                             onActionButtonClick(userId, isFollowing, pageState.tabType)
                         },
+                    )
+                }
+
+                is UiState.Failure -> {
+                    HilingualLoadErrorView(
+                        handleAction = pageState.followState.handleAction
+                            ?: LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
+                        onActionClick = { onTabRefresh(pageState.tabType) },
                     )
                 }
 

@@ -52,12 +52,14 @@ import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.model.LoadErrorActionType
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
-import com.hilingual.core.common.util.HandleLoadError
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.pulltorefresh.HilingualPullToRefreshBox
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.data.voca.model.GroupingVocaModel
@@ -89,11 +91,6 @@ internal fun VocaRoute(
     val tracker = LocalTracker.current
     val ttsState = rememberVocaTts()
 
-    HandleLoadError(
-        uiState = uiState.vocaGroupList,
-        onActionClick = viewModel::fetchInitialData,
-    )
-
     LaunchedEffect(Unit) {
         tracker.logEvent(trigger = TriggerType.VIEW, page = VOCABULARY, event = "page")
     }
@@ -111,6 +108,16 @@ internal fun VocaRoute(
                 dialogTrigger.show(onClick = it.onRetry)
             }
         }
+    }
+
+    val vocaGroupState = uiState.vocaGroupList
+    if (vocaGroupState is UiState.Failure) {
+        HilingualLoadErrorView(
+            handleAction = vocaGroupState.handleAction ?: LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
+            onActionClick = viewModel::fetchInitialData,
+            modifier = Modifier.padding(paddingValues),
+        )
+        return
     }
 
     with(uiState) {

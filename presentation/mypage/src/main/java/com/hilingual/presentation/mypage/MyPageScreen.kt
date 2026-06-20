@@ -50,12 +50,14 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.model.LoadErrorActionType
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
-import com.hilingual.core.common.util.HandleLoadError
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.TitleLeftAlignedTopAppBar
 import com.hilingual.presentation.mypage.component.LogoutDialog
@@ -77,11 +79,6 @@ internal fun MyPageRoute(
     val dialogTrigger = LocalDialogTrigger.current
     val messageController = LocalMessageController.current
     val appRestarter = LocalAppRestarter.current
-
-    HandleLoadError(
-        uiState = uiState,
-        onActionClick = viewModel::getProfileInfo,
-    )
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -107,6 +104,14 @@ internal fun MyPageRoute(
                 onCustomerCenterClick = { context.launchCustomTabs(UrlConstant.KAKAOTALK_CHANNEL) },
                 onTermsClick = { context.launchCustomTabs(UrlConstant.PRIVACY_POLICY) },
                 onLogoutClick = viewModel::logout,
+            )
+        }
+
+        is UiState.Failure -> {
+            HilingualLoadErrorView(
+                handleAction = state.handleAction ?: LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
+                onActionClick = viewModel::getProfileInfo,
+                modifier = Modifier.padding(paddingValues),
             )
         }
 

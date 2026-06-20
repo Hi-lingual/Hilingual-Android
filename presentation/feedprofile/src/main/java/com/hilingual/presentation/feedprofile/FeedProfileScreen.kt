@@ -60,10 +60,10 @@ import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
-import com.hilingual.core.common.util.HandleLoadError
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.dialog.report.ReportUserDialog
 import com.hilingual.core.ui.component.topappbar.BackAndMoreTopAppBar
@@ -99,12 +99,6 @@ internal fun FeedProfileRoute(
     val messageController = LocalMessageController.current
     val dialogTrigger = LocalDialogTrigger.current
     val tracker = LocalTracker.current
-
-    HandleLoadError(
-        uiState = uiState,
-        handleAction = LoadErrorHandleAction.Common(LoadErrorActionType.BACK),
-        onActionClick = navigateUp,
-    )
 
     LaunchedEffect(Unit) {
         tracker.logEvent(
@@ -159,6 +153,16 @@ internal fun FeedProfileRoute(
                 onReportDiaryClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 onUnpublishClick = viewModel::diaryUnpublish,
                 onTabRefresh = viewModel::refreshTab,
+            )
+        }
+
+        is UiState.Failure -> {
+            HilingualLoadErrorView(
+                handleAction = state.handleAction ?: LoadErrorHandleAction.Common(LoadErrorActionType.BACK),
+                isBackVisible = true,
+                onBackClick = navigateUp,
+                onActionClick = navigateUp,
+                modifier = Modifier.padding(paddingValues),
             )
         }
 

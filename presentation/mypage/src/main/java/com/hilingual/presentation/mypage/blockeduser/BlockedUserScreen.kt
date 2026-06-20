@@ -46,10 +46,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.extension.subScreenPadding
+import com.hilingual.core.common.model.LoadErrorActionType
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.trigger.LocalDialogTrigger
-import com.hilingual.core.common.util.HandleLoadError
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.item.feed.UserActionItem
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
@@ -66,11 +68,6 @@ internal fun BlockedUserRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
-
-    HandleLoadError(
-        uiState = uiState.blockedUserList,
-        onActionClick = viewModel::getBlockList,
-    )
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -90,6 +87,16 @@ internal fun BlockedUserRoute(
                 blockedUserList = state.data,
                 onUserProfileClick = navigateToProfile,
                 onButtonClick = viewModel::onUnblockStatusChanged,
+            )
+        }
+
+        is UiState.Failure -> {
+            HilingualLoadErrorView(
+                handleAction = state.handleAction ?: LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
+                isBackVisible = true,
+                onBackClick = navigateUp,
+                onActionClick = viewModel::getBlockList,
+                modifier = Modifier.padding(paddingValues),
             )
         }
 
