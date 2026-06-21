@@ -55,6 +55,7 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.model.orBack
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
@@ -157,12 +158,22 @@ internal fun FeedProfileRoute(
         }
 
         is UiState.Failure -> {
+            val handleAction = state.handleAction.orBack()
             RetryOnReconnect(onRetry = viewModel::loadFeedProfile)
             HilingualLoadErrorView(
-                handleAction = state.handleAction.orBack(),
+                handleAction = handleAction,
                 isBackVisible = true,
                 onBackClick = navigateUp,
-                onActionClick = navigateUp,
+                onActionClick = {
+                    if (handleAction is LoadErrorHandleAction.NotFound) {
+                        tracker.logEvent(
+                            trigger = TriggerType.CLICK,
+                            page = Page.FEED,
+                            event = "data_not_found_go_back",
+                        )
+                    }
+                    navigateUp()
+                },
                 modifier = Modifier.padding(paddingValues),
             )
         }

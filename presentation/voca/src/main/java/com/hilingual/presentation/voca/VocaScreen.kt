@@ -54,6 +54,7 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.orRetry
 import com.hilingual.core.common.provider.LocalTracker
+import com.hilingual.core.common.trigger.DialogType
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
@@ -105,7 +106,19 @@ internal fun VocaRoute(
     viewModel.sideEffect.collectSideEffect {
         when (it) {
             is VocaSideEffect.ShowErrorDialog -> {
-                dialogTrigger.show(type = it.dialogType, onClick = it.onRetry)
+                dialogTrigger.show(
+                    type = it.dialogType,
+                    onClick = {
+                        if (it.dialogType == DialogType.NOT_FOUND) {
+                            tracker.logEvent(
+                                trigger = TriggerType.CLICK,
+                                page = VOCABULARY,
+                                event = "data_not_found_go_back",
+                            )
+                        }
+                        it.onRetry()
+                    },
+                )
             }
         }
     }
