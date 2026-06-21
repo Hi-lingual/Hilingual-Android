@@ -58,6 +58,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.hilingual.core.common.analytics.FakeTracker
+import com.hilingual.core.common.analytics.Page.AI_FEEDBACK
 import com.hilingual.core.common.analytics.Page.WRITE_DIARY
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.analytics.TriggerType
@@ -229,7 +230,14 @@ internal fun DiaryWriteRoute(
             DiaryFailureScreen(
                 paddingValues = paddingValues,
                 onBackClick = viewModel::resetFeedbackStateToWriting,
-                onRequestAgainButtonClick = viewModel::postDiaryFeedbackCreate,
+                onRequestAgainButtonClick = {
+                    tracker.logEvent(
+                        trigger = TriggerType.CLICK,
+                        page = AI_FEEDBACK,
+                        event = "feedback_retry",
+                    )
+                    viewModel.postDiaryFeedbackCreate()
+                },
             )
         }
     }
