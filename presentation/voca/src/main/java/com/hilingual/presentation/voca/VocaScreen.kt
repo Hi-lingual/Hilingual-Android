@@ -47,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.analytics.AnalyticsEvent
 import com.hilingual.core.common.analytics.Page.VOCABULARY
 import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.addFocusCleaner
@@ -113,7 +114,7 @@ internal fun VocaRoute(
                             tracker.logEvent(
                                 trigger = TriggerType.CLICK,
                                 page = VOCABULARY,
-                                event = "data_not_found_go_back",
+                                event = AnalyticsEvent.DATA_NOT_FOUND_GO_BACK,
                             )
                         }
                         it.onRetry()
