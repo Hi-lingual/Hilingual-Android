@@ -17,7 +17,9 @@ package com.hilingual.presentation.voca
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hilingual.core.common.extension.isHttpNotFound
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.trigger.DialogType
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
@@ -184,8 +186,13 @@ constructor(
                         it.copy(vocaItemDetail = UiState.Success(vocaDetail.toState()))
                     }
                 }
-                .onLogFailure {
-                    _sideEffect.emit(VocaSideEffect.ShowErrorDialog(onRetry = ::refreshVocaList))
+                .onLogFailure { throwable ->
+                    _sideEffect.emit(
+                        VocaSideEffect.ShowErrorDialog(
+                            dialogType = if (throwable.isHttpNotFound()) DialogType.NOT_FOUND else DialogType.ERROR,
+                            onRetry = ::refreshVocaList,
+                        ),
+                    )
                 }
         }
     }
@@ -300,5 +307,8 @@ private sealed interface VocaAction {
 }
 
 sealed interface VocaSideEffect {
-    data class ShowErrorDialog(val onRetry: () -> Unit) : VocaSideEffect
+    data class ShowErrorDialog(
+        val dialogType: DialogType = DialogType.ERROR,
+        val onRetry: () -> Unit,
+    ) : VocaSideEffect
 }
