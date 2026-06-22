@@ -73,6 +73,8 @@ import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.presentation.home.component.dialog.DiaryContinueDialog
 import com.hilingual.presentation.home.component.HomeHeader
 import com.hilingual.presentation.home.component.dialog.NotificationDialog
+import com.hilingual.presentation.home.component.dialog.RecoveryNoticeModal
+import com.hilingual.presentation.home.component.dialog.RecoveryReminderModal
 import com.hilingual.presentation.home.component.calendar.HilingualCalendar
 import com.hilingual.presentation.home.component.footer.DiaryDateInfo
 import com.hilingual.presentation.home.component.footer.DiaryEmptyCard
@@ -155,6 +157,10 @@ internal fun HomeRoute(
                     )
                 }
             }
+
+            is HomeSideEffect.ShowRecoveryNotice -> homeState.showRecoveryNotice()
+
+            is HomeSideEffect.ShowRecoveryReminder -> homeState.showRecoveryReminder()
         }
     }
 
@@ -182,6 +188,33 @@ internal fun HomeRoute(
                 putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
             }
             context.startActivity(intent)
+        },
+    )
+
+    RecoveryNoticeModal(
+        isVisible = homeState.isRecoveryNoticeVisible,
+        onClick = {
+            homeState.hideRecoveryNotice()
+            viewModel.onRecoveryNoticeConfirmed()
+        },
+        onDismiss = {
+            homeState.hideRecoveryNotice()
+            viewModel.onRecoveryNoticeConfirmed()
+        },
+    )
+
+    RecoveryReminderModal(
+        isVisible = homeState.isRecoveryReminderVisible,
+        onClick = {
+            homeState.hideRecoveryReminder()
+            viewModel.onRecoveryReminderConfirmed()
+        },
+        onLaterClick = {
+            homeState.hideRecoveryReminder()
+            viewModel.onRecoveryReminderLater()
+        },
+        onDismiss = {
+            homeState.hideRecoveryReminder()
         },
     )
 

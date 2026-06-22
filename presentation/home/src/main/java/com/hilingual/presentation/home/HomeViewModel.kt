@@ -119,6 +119,8 @@ class HomeViewModel @Inject constructor(
                     ),
                 )
             }
+
+            checkRecoveryModals(userInfo.recoveryTickets, initialDates)
         }
     }
 
@@ -250,6 +252,95 @@ class HomeViewModel @Inject constructor(
                     emitToastSideEffect("기록 살리기에 실패했어요. 잠시 후 다시 시도해주세요.")
                 }
         }
+    }
+
+    fun onRecoveryNoticeConfirmed() {
+        viewModelScope.launch {
+            onboardingRepository.updateIsRecoveryNoticeShown(true)
+        }
+    }
+
+    fun onRecoveryReminderConfirmed() {
+        val currentState = uiState.value
+        if (currentState !is UiState.Success) return
+
+        markReminderShownThisMonth()
+
+        val recentBrokenDate = findRecentBrokenDate(currentState.data.calendar.dates)
+        if (recentBrokenDate != null) {
+            onDateSelected(recentBrokenDate)
+        }
+    }
+
+    fun onRecoveryReminderLater() {
+        markReminderShownThisMonth()
+    }
+
+    private fun markReminderShownThisMonth() {
+        viewModelScope.launch {
+            onboardingRepository.updateRecoveryReminderLastShownMonth(YearMonth.now().toString())
+        }
+    }
+
+    private suspend fun checkRecoveryModals(
+        recoveryTickets: Int,
+        dates: List<DateUiModel>,
+    ) {
+        onboardingCheckCompleted.first()
+        if (isOnboardingVisible.value) return
+
+        val noticeShown = onboardingRepository.getIsRecoveryNoticeShown().getOrDefault(false)
+        if (!noticeShown) {
+            _sideEffect.emit(HomeSideEffect.ShowRecoveryNotice)
+            return
+        }
+
+        if (shouldShowReminder(recoveryTickets, dates)) {
+            _sideEffect.emit(HomeSideEffect.ShowRecoveryReminder)
+        }
+    }
+
+    private suspend fun shouldShowReminder(
+        recoveryTickets: Int,
+        dates: List<DateUiModel>,
+    ): Boolean {
+        if (recoveryTickets <= 0) return false
+
+        val today = LocalDate.now()
+        val isLastWeek = today.dayOfMonth > today.lengthOfMonth() - 7
+        if (!isLastWeek) return false
+
+        val currentMonth = YearMonth.now().toString()
+        val lastShownMonth = onboardingRepository.getRecoveryReminderLastShownMonth().getOrDefault("")
+        if (lastShownMonth == currentMonth) return false
+
+        return hasBrokenDayThisMonth(today, dates)
+    }
+
+    private fun hasBrokenDayThisMonth(
+        today: LocalDate,
+        dates: List<DateUiModel>,
+    ): Boolean {
+        val recordedDates = dates.map { it.date }.toSet()
+        val lastBrokenDate = today.minusDays(1)
+        var date = today.withDayOfMonth(1)
+        while (date.isBefore(lastBrokenDate)) {
+            if (date !in recordedDates) return true
+            date = date.plusDays(1)
+        }
+        return false
+    }
+
+    private fun findRecentBrokenDate(dates: List<DateUiModel>): LocalDate? {
+        val recordedDates = dates.map { it.date }.toSet()
+        val today = LocalDate.now()
+        val firstDay = today.withDayOfMonth(1)
+        var date = today.minusDays(2)
+        while (!date.isBefore(firstDay)) {
+            if (date !in recordedDates) return date
+            date = date.minusDays(1)
+        }
+        return null
     }
 
     fun publishDiary(diaryId: Long) {
@@ -415,4 +506,8 @@ sealed interface HomeSideEffect {
     data object ShowOnboarding : HomeSideEffect
 
     data class ShowRewardedAd(val date: LocalDate) : HomeSideEffect
+
+    data object ShowRecoveryNotice : HomeSideEffect
+
+    data object ShowRecoveryReminder : HomeSideEffect
 }

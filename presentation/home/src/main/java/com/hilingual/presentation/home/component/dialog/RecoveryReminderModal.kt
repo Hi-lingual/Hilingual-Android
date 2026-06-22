@@ -25,6 +25,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 fun RecoveryReminderModal(
     isVisible: Boolean,
     onClick: () -> Unit,
+    onLaterClick: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -72,7 +73,7 @@ fun RecoveryReminderModal(
                 text = "나중에 살리기",
                 style = HilingualTheme.typography.bodyM14,
                 color = HilingualTheme.colors.gray400,
-                modifier = Modifier.noRippleClickable(onClick = onDismiss),
+                modifier = Modifier.noRippleClickable(onClick = onLaterClick),
             )
         }
     }
@@ -88,6 +89,7 @@ private fun RecoveryReminderModalPreview() {
             RecoveryReminderModal(
                 isVisible = true,
                 onClick = {},
+                onLaterClick = {},
                 onDismiss = {},
             )
         }
