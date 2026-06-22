@@ -28,4 +28,6 @@ data class CalendarResponseDto(
 data class DateDto(
     @SerialName("date")
     val date: String,
+    @SerialName("status")
+    val status: String,
 )

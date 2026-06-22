@@ -51,7 +51,7 @@ interface UserService {
         @Body userProfileRequestDto: RegisterProfileRequestDto,
     ): BaseResponse<RegisterProfileResponseDto>
 
-    @GET("/api/v1/users/home/info")
+    @GET("/api/v2/users/home/info")
     suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto>
 
     @GET("/api/v1/users/following/{targetUserId}/followers")

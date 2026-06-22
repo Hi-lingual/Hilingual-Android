@@ -30,4 +30,6 @@ data class UserInfoResponseDto(
     val streak: Int,
     @SerialName("newAlarm")
     val newAlarm: Boolean,
+    @SerialName("recoveryTickets")
+    val recoveryTickets: Int,
 )
