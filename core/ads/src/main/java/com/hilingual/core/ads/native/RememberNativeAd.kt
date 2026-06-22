@@ -17,16 +17,13 @@ package com.hilingual.core.ads.native
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
-import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError
 import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAd
+import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdLoadResult
 import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdLoader
-import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdLoaderCallback
 import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdRequest
 import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdView
 import com.hilingual.core.ads.native.component.NativeLineAdContent
@@ -34,37 +31,30 @@ import timber.log.Timber
 
 @Composable
 internal fun rememberNativeAdState(adUnitId: String): NativeAdState {
-    var state by remember { mutableStateOf<NativeAdState>(NativeAdState.Loading) }
+    val state = remember { mutableStateOf<NativeAdState>(NativeAdState.Loading) }
 
-    DisposableEffect(adUnitId) {
-        var isDisposed = false
-
+    LaunchedEffect(adUnitId) {
+        state.value = NativeAdState.Loading
         val adRequest = NativeAdRequest.Builder(
             adUnitId = adUnitId,
             nativeAdTypes = listOf(NativeAd.NativeAdType.NATIVE),
         ).build()
 
-        val adCallback = object : NativeAdLoaderCallback {
-            override fun onNativeAdLoaded(nativeAd: NativeAd) {
-                if (isDisposed) nativeAd.destroy() else state = NativeAdState.Loaded(nativeAd)
+        when (val result = NativeAdLoader.load(adRequest)) {
+            is NativeAdLoadResult.NativeAdSuccess -> {
+                state.value = NativeAdState.Loaded(result.ad)
             }
 
-            override fun onAdFailedToLoad(adError: LoadAdError) {
-                Timber.tag("GMA").e("GMA Next Gen 네이티브 광고 로드 실패: %s", adError)
-                if (!isDisposed) state = NativeAdState.Failed
+            else -> {
+                if (result is NativeAdLoadResult.Failure) {
+                    Timber.tag("GMA").e("GMA Next Gen 네이티브 광고 로드 실패: %s", result.error)
+                }
+                state.value = NativeAdState.Failed
             }
-        }
-
-        NativeAdLoader.load(adRequest, adCallback)
-
-        onDispose {
-            isDisposed = true
-            (state as? NativeAdState.Loaded)?.ad?.destroy()
-            state = NativeAdState.Loading
         }
     }
 
-    return state
+    return state.value
 }
 
 internal fun createNativeAdView(
