@@ -54,6 +54,11 @@ fun Project.configureBuildTypes(
             "ADMOB_INTERSTITIAL_UNIT_ID",
             properties.getQuotedProperty("admob.interstitial.$prefix.id")
         )
+        buildConfigField(
+            "String",
+            "ADMOB_STREAKREWARD_UNIT_ID",
+            properties.getQuotedProperty("admob.streakreward.$prefix.id")
+        )
     }
 
     commonExtension.apply {
