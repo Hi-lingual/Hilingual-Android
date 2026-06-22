@@ -431,9 +431,13 @@ class HomeViewModel @Inject constructor(
                 state.copy(diaryContent = newDiaryContent)
             }
 
-            val thumbnailResult = calendarRepository.getDiaryThumbnail(date.toString())
-            if (thumbnailResult.isFailure && currentState.data.calendar.dates.any { it.date == date }) {
-                emitErrorDialogSideEffect { updateContentForDate(date) }
+            val matchedStatus = currentState.data.calendar.dates.find { it.date == date }?.status
+            val isWrittenDate = matchedStatus == CalendarStatus.WRITTEN || matchedStatus == CalendarStatus.RECOVERED
+            if (isWrittenDate) {
+                val thumbnailResult = calendarRepository.getDiaryThumbnail(date.toString())
+                if (thumbnailResult.isFailure) {
+                    emitErrorDialogSideEffect { updateContentForDate(date) }
+                }
             }
         }
     }
