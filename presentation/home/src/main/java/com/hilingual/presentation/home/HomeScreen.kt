@@ -42,6 +42,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -147,12 +148,17 @@ internal fun HomeRoute(
 
             is HomeSideEffect.ShowRewardedAd -> {
                 if (activity != null) {
+                    homeState.showRecoveryAdLoading()
                     showRewardedAd(
                         activity = activity,
                         adUnitId = BuildConfig.ADMOB_STREAKREWARD_UNIT_ID,
-                        onRewardEarned = { viewModel.onRewardEarned(sideEffect.date) },
-                        onAdDismissed = {},
+                        onRewardEarned = {
+                            homeState.hideRecoveryAdLoading()
+                            viewModel.onRewardEarned(sideEffect.date)
+                        },
+                        onAdDismissed = { homeState.hideRecoveryAdLoading() },
                         onAdFailedToLoad = {
+                            homeState.hideRecoveryAdLoading()
                             messageController(HilingualMessage.Toast("광고를 불러오지 못했어요.\n잠시 후 다시 시도해주세요."))
                         },
                     )
@@ -280,6 +286,12 @@ internal fun HomeRoute(
     ) {
         HomeOnboardingContent(
             onStartButtonClick = ::handleOnboardingDismiss,
+        )
+    }
+
+    if (homeState.isRecoveryAdLoading) {
+        HilingualLoadingIndicator(
+            backgroundColor = Color.Black.copy(alpha = 0.32f),
         )
     }
 }
