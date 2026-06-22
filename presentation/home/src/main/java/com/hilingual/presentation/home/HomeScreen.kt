@@ -70,6 +70,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.navigation.DiaryWriteMode
+import com.hilingual.data.calendar.model.CalendarStatus
 import com.hilingual.presentation.home.component.dialog.DiaryContinueDialog
 import com.hilingual.presentation.home.component.HomeHeader
 import com.hilingual.presentation.home.component.dialog.NotificationDialog
@@ -343,7 +344,10 @@ private fun HomeScreen(
         with(uiState.calendar) {
             HilingualCalendar(
                 selectedDate = selectedDate,
-                writtenDates = dates.map { it.date }.toSet(),
+                writtenDates = dates
+                    .filter { it.status != CalendarStatus.UNLOCKED }
+                    .map { it.date }
+                    .toSet(),
                 onDateClick = onDateSelected,
                 onMonthChanged = onMonthChanged,
                 modifier = Modifier
