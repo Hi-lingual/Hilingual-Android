@@ -26,7 +26,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
 fun RecoveryButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
@@ -59,7 +59,7 @@ fun RecoveryButton(
 private fun RecoveryButtonPreview() {
     HilingualTheme {
         RecoveryButton(
-            onClick = {}
+            onClick = {},
         )
     }
 }

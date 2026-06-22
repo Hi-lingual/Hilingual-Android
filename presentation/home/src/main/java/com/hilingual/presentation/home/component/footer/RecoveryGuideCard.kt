@@ -33,7 +33,7 @@ fun RecoveryGuideCard(
             text = "연속 작성이 끊겼어요.\n광고 한 편 보면 연속 기록을 살릴 수 있어요.",
             style = HilingualTheme.typography.bodyM14,
             color = HilingualTheme.colors.gray500,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }

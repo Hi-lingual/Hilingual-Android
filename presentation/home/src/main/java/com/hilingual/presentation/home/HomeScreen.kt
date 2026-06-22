@@ -42,8 +42,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -72,12 +72,12 @@ import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.data.calendar.model.CalendarStatus
-import com.hilingual.presentation.home.component.dialog.DiaryContinueDialog
 import com.hilingual.presentation.home.component.HomeHeader
+import com.hilingual.presentation.home.component.calendar.HilingualCalendar
+import com.hilingual.presentation.home.component.dialog.DiaryContinueDialog
 import com.hilingual.presentation.home.component.dialog.NotificationDialog
 import com.hilingual.presentation.home.component.dialog.RecoveryNoticeModal
 import com.hilingual.presentation.home.component.dialog.RecoveryReminderModal
-import com.hilingual.presentation.home.component.calendar.HilingualCalendar
 import com.hilingual.presentation.home.component.footer.DiaryDateInfo
 import com.hilingual.presentation.home.component.footer.DiaryEmptyCard
 import com.hilingual.presentation.home.component.footer.DiaryEmptyCardType

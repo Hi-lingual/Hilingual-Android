@@ -58,7 +58,6 @@ fun RecoveryReminderModal(
                 contentDescription = null,
             )
 
-
             Spacer(modifier = Modifier.height(32.dp))
 
             DialogButton(

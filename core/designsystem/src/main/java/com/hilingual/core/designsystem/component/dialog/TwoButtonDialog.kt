@@ -104,7 +104,7 @@ fun TwoButtonDialog(
 private fun TwoButtonDialogPreview() {
     HilingualTheme {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             TwoButtonDialog(
                 title = "AI 피드백을 신고하시겠어요?",
