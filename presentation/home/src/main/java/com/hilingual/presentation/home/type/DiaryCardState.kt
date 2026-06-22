@@ -21,4 +21,7 @@ enum class DiaryCardState {
     WRITABLE,
     REWRITE_DISABLED,
     PAST,
+    UNLOCKED,
+    RECOVERABLE,
+    RECOVERY_EXHAUSTED,
 }

@@ -45,6 +45,10 @@ enum class DiaryEmptyCardType(
         text = "아직 작성 가능한 시간이 아니에요.\n오늘의 일기를 작성해주세요!",
         imageRes = DesignSystemR.drawable.img_diary_lock,
     ),
+    RECOVERY_EXHAUSTED(
+        text = "이번 달 기록 살리기를 다 사용했어요\n다음 달에 또 만나요!",
+        imageRes = DesignSystemR.drawable.img_diary_empty,
+    ),
 }
 
 @Composable

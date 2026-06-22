@@ -20,6 +20,7 @@ import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
+import com.hilingual.data.calendar.model.CalendarStatus
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.repository.DiaryLocalRepository
 import com.hilingual.data.diary.repository.DiaryRepository
@@ -102,7 +103,7 @@ class HomeViewModel @Inject constructor(
             val calendarData = calendarResult.getOrThrow()
 
             val initialDates = calendarData.dateList.map { it.toState() }.toImmutableList()
-            val initialDiaryContent = fetchDiaryState(today, initialDates)
+            val initialDiaryContent = fetchDiaryState(today, initialDates, userInfo.recoveryTickets)
 
             _uiState.update {
                 UiState.Success(
@@ -195,7 +196,11 @@ class HomeViewModel @Inject constructor(
                     }
 
                     val newDates = calendarModel.dateList.map { data -> data.toState() }.toImmutableList()
-                    val newDiaryContent = fetchDiaryState(newDate, newDates)
+                    val newDiaryContent = fetchDiaryState(
+                        newDate,
+                        newDates,
+                        currentState.data.header.userProfile.recoveryTickets,
+                    )
 
                     _uiState.updateSuccess { state ->
                         state.copy(
@@ -209,6 +214,40 @@ class HomeViewModel @Inject constructor(
                 }
                 .onLogFailure {
                     emitErrorDialogSideEffect { onMonthChanged(yearMonth) }
+                }
+        }
+    }
+
+    fun onRecoveryClick(date: LocalDate) {
+        viewModelScope.launch {
+            _sideEffect.emit(HomeSideEffect.ShowRewardedAd(date))
+        }
+    }
+
+    fun onRewardEarned(date: LocalDate) {
+        val currentState = uiState.value
+        if (currentState !is UiState.Success) return
+
+        viewModelScope.launch {
+            userRepository.postRecoveryTicket(date)
+                .onSuccess { ticket ->
+                    _uiState.updateSuccess { state ->
+                        val newDates = (state.calendar.dates + DateUiModel(date, CalendarStatus.UNLOCKED))
+                            .distinctBy { it.date }
+                            .toImmutableList()
+                        state.copy(
+                            header = state.header.copy(
+                                userProfile = state.header.userProfile.copy(
+                                    recoveryTickets = ticket.remainingChances,
+                                ),
+                            ),
+                            calendar = state.calendar.copy(dates = newDates),
+                        )
+                    }
+                    updateContentForDate(date)
+                }
+                .onLogFailure {
+                    emitToastSideEffect("기록 살리기에 실패했어요. 잠시 후 다시 시도해주세요.")
                 }
         }
     }
@@ -291,7 +330,11 @@ class HomeViewModel @Inject constructor(
         if (currentState !is UiState.Success) return
 
         viewModelScope.launch {
-            val newDiaryContent = fetchDiaryState(date, currentState.data.calendar.dates)
+            val newDiaryContent = fetchDiaryState(
+                date,
+                currentState.data.calendar.dates,
+                currentState.data.header.userProfile.recoveryTickets,
+            )
 
             _uiState.updateSuccess { state ->
                 state.copy(diaryContent = newDiaryContent)
@@ -307,6 +350,7 @@ class HomeViewModel @Inject constructor(
     private suspend fun fetchDiaryState(
         date: LocalDate,
         dates: List<DateUiModel>,
+        recoveryTickets: Int,
     ): HomeDiaryUiState {
         val tempExistDeferred = viewModelScope.async { diaryLocalRepository.isDiaryTempExist(date) }
         val thumbnailDeferred = viewModelScope.async { calendarRepository.getDiaryThumbnail(date.toString()) }
@@ -319,6 +363,7 @@ class HomeViewModel @Inject constructor(
         return HomeDiaryUiState().update(
             selectedDate = date,
             dates = dates,
+            recoveryTickets = recoveryTickets,
             fetchedThumbnail = thumbnail,
             fetchedTopic = topic,
             isTempExist = isTempExist,
@@ -368,4 +413,6 @@ sealed interface HomeSideEffect {
     data class ShowSnackBar(val message: String, val actionLabel: String) : HomeSideEffect
 
     data object ShowOnboarding : HomeSideEffect
+
+    data class ShowRewardedAd(val date: LocalDate) : HomeSideEffect
 }

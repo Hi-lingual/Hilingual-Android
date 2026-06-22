@@ -16,12 +16,14 @@
 package com.hilingual.presentation.home.model
 
 import androidx.compose.runtime.Immutable
+import com.hilingual.data.calendar.model.CalendarStatus
 import com.hilingual.data.calendar.model.DateModel
 import java.time.LocalDate
 
 @Immutable
 data class DateUiModel(
     val date: LocalDate,
+    val status: CalendarStatus = CalendarStatus.WRITTEN,
 ) {
     val isFuture: Boolean
         get() = date.isAfter(LocalDate.now())
@@ -35,4 +37,5 @@ data class DateUiModel(
 
 internal fun DateModel.toState() = DateUiModel(
     date = LocalDate.parse(this.date),
+    status = this.status,
 )

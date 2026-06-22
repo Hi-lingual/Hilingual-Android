@@ -21,6 +21,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -50,6 +51,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.ads.rewarded.showRewardedAd
 import com.hilingual.core.common.analytics.FakeTracker
 import com.hilingual.core.common.analytics.Page.HOME
 import com.hilingual.core.common.analytics.Tracker
@@ -78,6 +80,8 @@ import com.hilingual.presentation.home.component.footer.DiaryEmptyCardType
 import com.hilingual.presentation.home.component.footer.DiaryPreviewCard
 import com.hilingual.presentation.home.component.footer.DiaryTimeInfo
 import com.hilingual.presentation.home.component.footer.HomeDropDownMenu
+import com.hilingual.presentation.home.component.footer.RecoveryButton
+import com.hilingual.presentation.home.component.footer.RecoveryGuideCard
 import com.hilingual.presentation.home.component.footer.TodayTopic
 import com.hilingual.presentation.home.component.footer.WriteDiaryButton
 import com.hilingual.presentation.home.component.onboarding.HomeOnboardingBottomSheet
@@ -102,6 +106,7 @@ internal fun HomeRoute(
     val messageController = LocalMessageController.current
     val tracker = LocalTracker.current
     val context = LocalContext.current
+    val activity = LocalActivity.current
     val isSuccess = uiState is UiState.Success
 
     if (homeState.isErrorDialogVisible) {
@@ -135,6 +140,20 @@ internal fun HomeRoute(
 
             is HomeSideEffect.ShowNotificationDialog -> {
                 homeState.showNotificationDialog()
+            }
+
+            is HomeSideEffect.ShowRewardedAd -> {
+                if (activity != null) {
+                    showRewardedAd(
+                        activity = activity,
+                        adUnitId = BuildConfig.ADMOB_STREAKREWARD_UNIT_ID,
+                        onRewardEarned = { viewModel.onRewardEarned(sideEffect.date) },
+                        onAdDismissed = {},
+                        onAdFailedToLoad = {
+                            messageController(HilingualMessage.Toast("광고를 불러오지 못했어요.\n잠시 후 다시 시도해주세요."))
+                        },
+                    )
+                }
             }
         }
     }
@@ -181,6 +200,7 @@ internal fun HomeRoute(
                 },
                 onDateSelected = viewModel::onDateSelected,
                 onMonthChanged = viewModel::onMonthChanged,
+                onRecoveryClick = viewModel::onRecoveryClick,
                 onWriteDiaryClick = { date, mode ->
                     tracker.logEvent(
                         trigger = TriggerType.CLICK,
@@ -239,6 +259,7 @@ private fun HomeScreen(
     onImageClick: () -> Unit,
     onDateSelected: (LocalDate) -> Unit,
     onMonthChanged: (YearMonth) -> Unit,
+    onRecoveryClick: (LocalDate) -> Unit,
     onWriteDiaryClick: (selectedDate: LocalDate, mode: DiaryWriteMode) -> Unit,
     onDiaryPreviewClick: (diaryId: Long) -> Unit,
     onDeleteClick: (diaryId: Long) -> Unit,
@@ -276,6 +297,7 @@ private fun HomeScreen(
                 totalDiaries = userProfile.totalDiaries,
                 streak = userProfile.streak,
                 isNewAlarm = userProfile.isNewAlarm,
+                count = userProfile.recoveryTickets,
                 onAlarmClick = onAlarmClick,
                 onImageClick = onImageClick,
                 modifier = Modifier
@@ -410,6 +432,35 @@ private fun HomeScreen(
                         )
                     }
 
+                    DiaryCardState.UNLOCKED -> {
+                        if (todayTopic != null) {
+                            TodayTopic(
+                                koTopic = todayTopic.topicKo,
+                                enTopic = todayTopic.topicEn,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .animateContentSize(),
+                            )
+                        }
+                        Spacer(Modifier.height(12.dp))
+                        WriteDiaryButton(
+                            onClick = { onWriteDiaryClick(date, DiaryWriteMode.RECOVERY) },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+
+                    DiaryCardState.RECOVERABLE -> {
+                        RecoveryGuideCard(modifier = Modifier.fillMaxWidth())
+                        Spacer(Modifier.height(12.dp))
+                        RecoveryButton(
+                            onClick = { onRecoveryClick(date) },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+
+                    DiaryCardState.RECOVERY_EXHAUSTED ->
+                        DiaryEmptyCard(type = DiaryEmptyCardType.RECOVERY_EXHAUSTED)
+
                     DiaryCardState.REWRITE_DISABLED,
                     DiaryCardState.PAST,
                     -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
@@ -463,6 +514,7 @@ private fun HomeScreenPreview() {
             onImageClick = {},
             onDateSelected = {},
             onMonthChanged = {},
+            onRecoveryClick = {},
             onWriteDiaryClick = { _, _ -> },
             onDiaryPreviewClick = {},
             onDeleteClick = {},

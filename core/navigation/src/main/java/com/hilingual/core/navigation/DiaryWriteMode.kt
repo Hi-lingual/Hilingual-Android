@@ -21,4 +21,5 @@ import kotlinx.serialization.Serializable
 enum class DiaryWriteMode {
     NEW,
     DEFAULT,
+    RECOVERY,
 }
