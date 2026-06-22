@@ -68,9 +68,9 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.navigation.DiaryWriteMode
-import com.hilingual.presentation.home.component.DiaryContinueDialog
+import com.hilingual.presentation.home.component.dialog.DiaryContinueDialog
 import com.hilingual.presentation.home.component.HomeHeader
-import com.hilingual.presentation.home.component.NotificationDialog
+import com.hilingual.presentation.home.component.dialog.NotificationDialog
 import com.hilingual.presentation.home.component.calendar.HilingualCalendar
 import com.hilingual.presentation.home.component.footer.DiaryDateInfo
 import com.hilingual.presentation.home.component.footer.DiaryEmptyCard
