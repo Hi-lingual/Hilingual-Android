@@ -98,6 +98,27 @@ internal class DiaryRepositoryImpl @Inject constructor(
         ).data!!.toModel()
     }
 
+    override suspend fun postDiaryRecoveryCreate(
+        originalText: String,
+        date: LocalDate,
+        imageFileUri: Uri?,
+    ): Result<DiaryFeedbackCreateModel> = suspendRunCatching {
+        val fileKey = if (imageFileUri != null) {
+            fileUploaderRepository.uploadFile(
+                uri = imageFileUri,
+                purpose = "DIARY_IMAGE",
+            ).getOrThrow()
+        } else {
+            null
+        }
+
+        diaryRemoteDataSource.postDiaryRecoveryCreate(
+            originalText = originalText,
+            date = date.toIsoDate(),
+            fileKey = fileKey,
+        ).data!!.toModel()
+    }
+
     override suspend fun patchDiaryPublish(diaryId: Long): Result<Unit> =
         suspendRunCatching {
             diaryRemoteDataSource.patchDiaryPublish(diaryId)
