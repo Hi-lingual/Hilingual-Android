@@ -17,6 +17,7 @@ package com.hilingual.data.user.service
 
 import com.hilingual.core.network.model.BaseResponse
 import com.hilingual.data.user.dto.request.PutDeviceInfoRequestDto
+import com.hilingual.data.user.dto.request.RecoveryTicketRequestDto
 import com.hilingual.data.user.dto.request.RegisterProfileRequestDto
 import com.hilingual.data.user.dto.request.UpdateNicknameRequestDto
 import com.hilingual.data.user.dto.request.UpdateProfileImageRequestDto
@@ -27,6 +28,7 @@ import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
 import com.hilingual.data.user.dto.response.user.BlockListResponseDto
 import com.hilingual.data.user.dto.response.user.NicknameResponseDto
+import com.hilingual.data.user.dto.response.user.RecoveryTicketResponseDto
 import com.hilingual.data.user.dto.response.user.RegisterProfileResponseDto
 import com.hilingual.data.user.dto.response.user.UpdateNicknameResponseDto
 import com.hilingual.data.user.dto.response.user.UserInfoResponseDto
@@ -53,6 +55,11 @@ interface UserService {
 
     @GET("/api/v2/users/home/info")
     suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto>
+
+    @POST("/api/v1/users/me/recovery-ticket")
+    suspend fun postRecoveryTicket(
+        @Body recoveryTicketRequestDto: RecoveryTicketRequestDto,
+    ): BaseResponse<RecoveryTicketResponseDto>
 
     @GET("/api/v1/users/following/{targetUserId}/followers")
     suspend fun getFollowers(
