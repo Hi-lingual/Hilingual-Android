@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-fun RewardInfoCard(
+fun RecoveryGuideCard(
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -40,8 +40,8 @@ fun RewardInfoCard(
 
 @Preview
 @Composable
-private fun RewardInfoCardPreview() {
+private fun RecoveryGuideCardPreview() {
     HilingualTheme {
-        RewardInfoCard()
+        RecoveryGuideCard()
     }
 }

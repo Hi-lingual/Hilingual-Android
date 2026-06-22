@@ -24,7 +24,7 @@ import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-fun PreserveHistoryButton(
+fun RecoveryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -56,9 +56,9 @@ fun PreserveHistoryButton(
 
 @Preview
 @Composable
-private fun PreserveHistoryButtonPreview() {
+private fun RecoveryButtonPreview() {
     HilingualTheme {
-        PreserveHistoryButton(
+        RecoveryButton(
             onClick = {}
         )
     }

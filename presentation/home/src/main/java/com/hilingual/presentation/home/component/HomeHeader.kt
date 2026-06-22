@@ -140,7 +140,7 @@ private fun UserStatsRow(
 
         StatSeparator()
 
-        RetryStat(count)
+        RecoveryTicketStat(count)
     }
 }
 
@@ -161,7 +161,7 @@ private fun StreakStat(days: Int) {
 }
 
 @Composable
-private fun RetryStat(count: Int) {
+private fun RecoveryTicketStat(count: Int) {
     StatItem(
         icon = R.drawable.ic_return_16_and,
         text = "${count}개",
