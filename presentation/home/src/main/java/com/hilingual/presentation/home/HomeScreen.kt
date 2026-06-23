@@ -156,12 +156,18 @@ internal fun HomeRoute(
                             homeState.hideRecoveryAdLoading()
                             viewModel.onRewardEarned(sideEffect.date)
                         },
-                        onAdDismissed = { homeState.hideRecoveryAdLoading() },
+                        onAdDismissed = {
+                            homeState.hideRecoveryAdLoading()
+                            viewModel.onRecoveryAdFinished()
+                        },
                         onAdFailedToLoad = {
                             homeState.hideRecoveryAdLoading()
+                            viewModel.onRecoveryAdFinished()
                             messageController(HilingualMessage.Toast("광고를 불러오지 못했어요.\n잠시 후 다시 시도해주세요."))
                         },
                     )
+                } else {
+                    viewModel.onRecoveryAdFinished()
                 }
             }
 

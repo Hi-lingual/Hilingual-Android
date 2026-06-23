@@ -37,6 +37,7 @@ import javax.inject.Inject
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -69,6 +70,8 @@ class HomeViewModel @Inject constructor(
     val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
 
     private val isOnboardingVisible = MutableStateFlow(false)
+
+    private val isRecoveryInProgress = MutableStateFlow(false)
 
     private val onboardingCheckCompleted = MutableSharedFlow<Unit>(replay = 1)
 
@@ -222,9 +225,14 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onRecoveryClick(date: LocalDate) {
+        if (!isRecoveryInProgress.compareAndSet(expect = false, update = true)) return
         viewModelScope.launch {
             _sideEffect.emit(HomeSideEffect.ShowRewardedAd(date))
         }
+    }
+
+    fun onRecoveryAdFinished() {
+        isRecoveryInProgress.update { false }
     }
 
     fun onRewardEarned(date: LocalDate) {
@@ -428,6 +436,9 @@ class HomeViewModel @Inject constructor(
                 currentState.data.header.userProfile.recoveryTickets,
             )
 
+            val latestState = uiState.value
+            if (latestState !is UiState.Success || latestState.data.calendar.selectedDate != date) return@launch
+
             _uiState.updateSuccess { state ->
                 state.copy(diaryContent = newDiaryContent)
             }
@@ -442,22 +453,22 @@ class HomeViewModel @Inject constructor(
         date: LocalDate,
         dates: List<DateUiModel>,
         recoveryTickets: Int,
-    ): HomeDiaryUiState {
+    ): HomeDiaryUiState = coroutineScope {
         val matchedDate = dates.find { it.date == date }
         val isUnlocked = matchedDate?.status == CalendarStatus.UNLOCKED
         val needsTopic = isUnlocked || DateUiModel(date).isWritable
         val needsThumbnail = matchedDate != null && !isUnlocked
 
-        val tempExistDeferred = viewModelScope.async { diaryLocalRepository.isDiaryTempExist(date) }
+        val tempExistDeferred = async { diaryLocalRepository.isDiaryTempExist(date) }
         val thumbnailDeferred =
-            if (needsThumbnail) viewModelScope.async { calendarRepository.getDiaryThumbnail(date.toString()) } else null
-        val topicDeferred = if (needsTopic) viewModelScope.async { calendarRepository.getTopic(date) } else null
+            if (needsThumbnail) async { calendarRepository.getDiaryThumbnail(date.toString()) } else null
+        val topicDeferred = if (needsTopic) async { calendarRepository.getTopic(date) } else null
 
         val isTempExist = tempExistDeferred.await().getOrDefault(false)
         val thumbnail = thumbnailDeferred?.await()?.getOrNull()?.toState()
         val topic = topicDeferred?.await()?.getOrNull()?.toState()
 
-        return HomeDiaryUiState().update(
+        HomeDiaryUiState().update(
             selectedDate = date,
             dates = dates,
             recoveryTickets = recoveryTickets,
