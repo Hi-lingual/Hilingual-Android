@@ -42,9 +42,9 @@ fun HilingualSegmentedButton(
     contentPadding: PaddingValues = PaddingValues(3.dp),
     colors: SegmentedButtonColors = SegmentedButtonColors.defaults(),
 ) {
-    val coercedSelectedIndex = selectedIndex.coerceIn(0, options.lastIndex)
+    val coercedSelectedIndex = selectedIndex.takeIf { it in options.indices }
     val animatedIndex by animateFloatAsState(
-        targetValue = coercedSelectedIndex.toFloat(),
+        targetValue = coercedSelectedIndex?.toFloat() ?: 0f,
         animationSpec = spring(
             dampingRatio = 0.8f,
             stiffness = 380f,
@@ -58,26 +58,28 @@ fun HilingualSegmentedButton(
             .background(colors.backgroundColor)
             .padding(contentPadding),
     ) {
-        Box( // Sliding thumb: visual indicator that moves horizontally based on selected index
-            modifier = Modifier
-                .matchParentSize()
-                .layout { measurable, constraints ->
-                    val thumbWidthPx = thumbWidth.roundToPx()
-                    val itemSpacingPx = itemSpacing.roundToPx()
-                    val placeable = measurable.measure(
-                        constraints.copy(
-                            minWidth = thumbWidthPx,
-                            maxWidth = thumbWidthPx,
-                        ),
-                    )
-                    layout(constraints.maxWidth, placeable.height) {
-                        val x = (animatedIndex * (thumbWidthPx + itemSpacingPx)).toInt()
-                        placeable.placeRelative(x, 0)
+        coercedSelectedIndex?.let {
+            Box( // Sliding thumb: visual indicator that moves horizontally based on selected index
+                modifier = Modifier
+                    .matchParentSize()
+                    .layout { measurable, constraints ->
+                        val thumbWidthPx = thumbWidth.roundToPx()
+                        val itemSpacingPx = itemSpacing.roundToPx()
+                        val placeable = measurable.measure(
+                            constraints.copy(
+                                minWidth = thumbWidthPx,
+                                maxWidth = thumbWidthPx,
+                            ),
+                        )
+                        layout(constraints.maxWidth, placeable.height) {
+                            val x = (animatedIndex * (thumbWidthPx + itemSpacingPx)).toInt()
+                            placeable.placeRelative(x, 0)
+                        }
                     }
-                }
-                .clip(CircleShape)
-                .background(colors.thumbColor),
-        )
+                    .clip(CircleShape)
+                    .background(colors.thumbColor),
+            )
+        }
 
         Row {
             options.forEachIndexed { index, label ->
