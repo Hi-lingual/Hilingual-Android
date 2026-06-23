@@ -59,7 +59,7 @@ fun HilingualSegmentedButton(
             .background(colors.backgroundColor)
             .padding(contentPadding),
     ) {
-        Box( // thumb
+        Box(  // Sliding thumb: visual indicator that moves horizontally based on selected index
             modifier = Modifier
                 .matchParentSize()
                 .layout { measurable, constraints ->
