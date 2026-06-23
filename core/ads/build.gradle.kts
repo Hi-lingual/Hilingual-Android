@@ -29,6 +29,10 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.designsystem)
     implementation(libs.gma.ads)
+    implementation(libs.meta.ads.adapter) {
+        exclude(group = "com.google.android.gms", module = "play-services-ads")
+        exclude(group = "com.google.android.gms", module = "play-services-ads-lite")
+    }
 
     implementation(libs.timber)
 }
