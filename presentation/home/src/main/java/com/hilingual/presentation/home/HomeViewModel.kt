@@ -29,6 +29,7 @@ import com.hilingual.data.onboarding.repository.OnboardingRepository
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.home.model.DateUiModel
 import com.hilingual.presentation.home.model.toState
+import com.hilingual.presentation.home.type.DiaryCardState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import java.time.YearMonth
@@ -431,13 +432,8 @@ class HomeViewModel @Inject constructor(
                 state.copy(diaryContent = newDiaryContent)
             }
 
-            val matchedStatus = currentState.data.calendar.dates.find { it.date == date }?.status
-            val isWrittenDate = matchedStatus == CalendarStatus.WRITTEN || matchedStatus == CalendarStatus.RECOVERED
-            if (isWrittenDate) {
-                val thumbnailResult = calendarRepository.getDiaryThumbnail(date.toString())
-                if (thumbnailResult.isFailure) {
-                    emitErrorDialogSideEffect { updateContentForDate(date) }
-                }
+            if (newDiaryContent.cardState == DiaryCardState.WRITTEN && newDiaryContent.diaryThumbnail == null) {
+                emitErrorDialogSideEffect { updateContentForDate(date) }
             }
         }
     }
@@ -447,13 +443,19 @@ class HomeViewModel @Inject constructor(
         dates: List<DateUiModel>,
         recoveryTickets: Int,
     ): HomeDiaryUiState {
+        val matchedDate = dates.find { it.date == date }
+        val isUnlocked = matchedDate?.status == CalendarStatus.UNLOCKED
+        val needsTopic = isUnlocked || DateUiModel(date).isWritable
+        val needsThumbnail = matchedDate != null && !isUnlocked
+
         val tempExistDeferred = viewModelScope.async { diaryLocalRepository.isDiaryTempExist(date) }
-        val thumbnailDeferred = viewModelScope.async { calendarRepository.getDiaryThumbnail(date.toString()) }
-        val topicDeferred = viewModelScope.async { calendarRepository.getTopic(date) }
+        val thumbnailDeferred =
+            if (needsThumbnail) viewModelScope.async { calendarRepository.getDiaryThumbnail(date.toString()) } else null
+        val topicDeferred = if (needsTopic) viewModelScope.async { calendarRepository.getTopic(date) } else null
 
         val isTempExist = tempExistDeferred.await().getOrDefault(false)
-        val thumbnail = thumbnailDeferred.await().getOrNull()?.toState()
-        val topic = topicDeferred.await().getOrNull()?.toState()
+        val thumbnail = thumbnailDeferred?.await()?.getOrNull()?.toState()
+        val topic = topicDeferred?.await()?.getOrNull()?.toState()
 
         return HomeDiaryUiState().update(
             selectedDate = date,
