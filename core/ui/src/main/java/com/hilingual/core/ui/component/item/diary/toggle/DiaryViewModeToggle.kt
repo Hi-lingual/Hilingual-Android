@@ -15,53 +15,42 @@
  */
 package com.hilingual.core.ui.component.item.diary.toggle
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.hilingual.core.designsystem.component.toggle.HilingualBasicToggleSwitch
+import com.hilingual.core.designsystem.component.button.HilingualSegmentedButton
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun DiaryViewModeToggle(
-    isAIWritten: Boolean,
-    onToggle: (Boolean) -> Unit,
+    isShowCorrectedDiary: Boolean,
+    onToggleViewMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    HilingualSegmentedButton(
+        options = persistentListOf("교정본", "원본"),
+        selectedIndex = if (isShowCorrectedDiary) 0 else 1,
+        onSelect = { selectedIndex ->
+            onToggleViewMode(selectedIndex == 0)
+        },
         modifier = modifier,
-    ) {
-        Text(
-            text = "교정된 일기",
-            style = HilingualTheme.typography.bodyR14,
-            color = HilingualTheme.colors.gray500,
-        )
-        HilingualBasicToggleSwitch(
-            isChecked = isAIWritten,
-            onCheckedChange = onToggle,
-        )
-    }
+    )
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-private fun AIDiaryTogglePreview() {
+private fun DiaryViewModeTogglePreview() {
     HilingualTheme {
-        var isAI by remember { mutableStateOf(true) }
+        var isShowCorrectedDiary by remember { mutableStateOf(true) }
 
         DiaryViewModeToggle(
-            isAIWritten = isAI,
-            onToggle = { isAI = it },
+            isShowCorrectedDiary = isShowCorrectedDiary,
+            onToggleViewMode = { isShowCorrectedDiary = it },
         )
     }
 }

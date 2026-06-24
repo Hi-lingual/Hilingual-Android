@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -180,8 +181,8 @@ private fun FeedDiaryScreen(
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
     var isReportConfirmDialogVisible by remember { mutableStateOf(false) }
     var isBlockConfirmBottomSheetVisible by remember { mutableStateOf(false) }
-
-    var isAIWrittenDiary by remember { mutableStateOf(true) }
+    var toggleClickCount by remember { mutableIntStateOf(0) }
+    var isShowCorrectedDiary by remember { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -272,10 +273,24 @@ private fun FeedDiaryScreen(
                             diaryContent = diaryContent,
                             feedbackList = feedbackList,
                             topics = topics,
-                            isAIWrittenDiary = isAIWrittenDiary,
+                            isShowCorrectedDiary = isShowCorrectedDiary,
                             onImageClick = onChangeImageDetailVisible,
-                            onToggleViewMode = { isAIWrittenDiary = it },
                             isAdVisible = true,
+                            onToggleDiaryViewMode = {
+                                isShowCorrectedDiary = it
+                                toggleClickCount++
+                                tracker.logEvent(
+                                    trigger = TriggerType.CLICK,
+                                    page = Page.FEEDBACK,
+                                    event = "toggle",
+                                    properties = mapOf(
+                                        "entry_id" to diaryId,
+                                        "toggle_state" to it,
+                                        "toggle_click_count" to toggleClickCount,
+                                        "page" to Page.POSTED_DIARY.pageName,
+                                    ),
+                                )
+                            },
                         )
 
                         1 -> RecommendExpressionTab(

@@ -60,7 +60,7 @@ internal data class FeedDiaryUiState(
             feedbackList = persistentListOf(
                 FeedbackContent(
                     originalText = "Today my friend called to me.",
-                    feedbackText = "Today my friend called me.",
+                    correctedText = "Today my friend called me.",
                     explain = "'call'은 전화하다라는 의미일 때 'to' 없이 바로 목적어를 씁니다. " +
                         "'called to me'는 '나를 불렀다'라는 의미가 되어 전화 상황에서는 어색합니다.",
                 ),
@@ -70,7 +70,7 @@ internal data class FeedDiaryUiState(
                     "but I forgot to replying her. I apolozied to her. " +
                     "We promissed to playing when our university exams are all done. " +
                     "I hope that it’s be done fastly.",
-                aiText = "Today my friend called me. She sent a message a few days ago, " +
+                correctedText = "Today my friend called me. She sent a message a few days ago, " +
                     "but I forgot to reply to her. I apologized to her. " +
                     "We promised to play when our university exams are all done. " +
                     "I hope that it’s done quickly.",
@@ -131,7 +131,7 @@ internal fun TopicModel.toState() = Topics(
 
 internal fun DiaryContentModel.toState() = DiaryContent(
     originalText = this.originalText,
-    aiText = this.rewriteText,
+    correctedText = this.correctedText,
     diffRanges = this.diffRanges.map {
         it.diffRange.first to it.diffRange.second
     }.toImmutableList(),
@@ -141,7 +141,7 @@ internal fun DiaryContentModel.toState() = DiaryContent(
 
 internal fun DiaryFeedbackModel.toState() = FeedbackContent(
     originalText = this.originalText,
-    feedbackText = this.rewriteText,
+    correctedText = this.correctedText,
     explain = this.explain,
 )
 

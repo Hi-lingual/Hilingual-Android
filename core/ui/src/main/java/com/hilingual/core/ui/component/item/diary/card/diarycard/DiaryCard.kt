@@ -41,29 +41,29 @@ import com.hilingual.core.designsystem.theme.PretendardMedium
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-private const val MAX_AI = 1500
+private const val MAX_CORRECTED = 1500
 private const val MAX_ORIGINAL = 1000
 
 @Composable
 internal fun DiaryCard(
-    isAIWritten: Boolean,
+    isShowCorrectedDiary: Boolean,
     diaryContent: String,
     onImageClick: () -> Unit,
     modifier: Modifier = Modifier,
     diffRanges: ImmutableList<Pair<Int, Int>> = persistentListOf(),
     imageUrl: String? = null,
 ) {
-    val maxContentLength = if (isAIWritten) MAX_AI else MAX_ORIGINAL
+    val maxContentLength = if (isShowCorrectedDiary) MAX_CORRECTED else MAX_ORIGINAL
     val content = diaryContent.take(maxContentLength)
 
     val ttsController = rememberTtsController()
     val textLayoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
 
-    LaunchedEffect(isAIWritten) {
-        if (!isAIWritten) ttsController.stop()
+    LaunchedEffect(isShowCorrectedDiary) {
+        if (!isShowCorrectedDiary) ttsController.stop()
     }
 
-    val displayText = if (isAIWritten) {
+    val displayText = if (isShowCorrectedDiary) {
         buildDiaryAnnotatedString(
             content = content,
             diffRanges = diffRanges,
@@ -103,7 +103,7 @@ internal fun DiaryCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .then(
-                    if (isAIWritten) {
+                    if (isShowCorrectedDiary) {
                         Modifier.pointerInput(content) {
                             detectTapGestures { tapOffset ->
                                 val charOffset = textLayoutResult.value
@@ -123,7 +123,7 @@ internal fun DiaryCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Bottom,
         ) {
-            if (isAIWritten) {
+            if (isShowCorrectedDiary) {
                 TtsPlayButton(
                     isPlaying = ttsController.isPlaying,
                     onClick = { ttsController.toggle(content) },
@@ -197,7 +197,7 @@ private fun buildDiaryAnnotatedString(
 }
 
 private data class DiaryCardPreviewState(
-    val isAIDiary: Boolean,
+    val isShowCorrectedDiary: Boolean,
     val imageUrl: String?,
     val content: String,
     val diffRanges: ImmutableList<Pair<Int, Int>>,
@@ -207,19 +207,19 @@ private class DiaryContentCardPreviewProvider :
     PreviewParameterProvider<DiaryCardPreviewState> {
     override val values = sequenceOf(
         DiaryCardPreviewState(
-            isAIDiary = false,
+            isShowCorrectedDiary = false,
             imageUrl = "",
             content = "이미지 & 텍스트",
             diffRanges = persistentListOf(),
         ),
         DiaryCardPreviewState(
-            isAIDiary = false,
+            isShowCorrectedDiary = false,
             imageUrl = null,
             content = "I want to become a teacher future. Because I like child.",
             diffRanges = persistentListOf(),
         ),
         DiaryCardPreviewState(
-            isAIDiary = true,
+            isShowCorrectedDiary = true,
             imageUrl = null,
             content =
             "Today I went to the cafe Conhas in Yeonnam to meet my teammates.\n " +
@@ -254,7 +254,7 @@ private fun DiaryCardPreview(
 ) {
     HilingualTheme {
         DiaryCard(
-            isAIWritten = state.isAIDiary,
+            isShowCorrectedDiary = state.isShowCorrectedDiary,
             diaryContent = state.content,
             imageUrl = state.imageUrl,
             diffRanges = state.diffRanges,
