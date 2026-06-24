@@ -41,7 +41,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
 internal fun FeedbackCard(
     originalText: String,
-    feedbackText: String,
+    correctedText: String,
     explain: String,
     modifier: Modifier = Modifier,
 ) {
@@ -54,7 +54,7 @@ internal fun FeedbackCard(
     ) {
         FeedbackTopContent(
             originalText = originalText,
-            feedbackText = feedbackText,
+            correctedText = correctedText,
         )
 
         HorizontalDivider(
@@ -73,7 +73,7 @@ internal fun FeedbackCard(
 @Composable
 private fun FeedbackTopContent(
     originalText: String,
-    feedbackText: String,
+    correctedText: String,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -84,7 +84,7 @@ private fun FeedbackTopContent(
         )
 
         FeedbackSentence(
-            text = feedbackText,
+            text = correctedText,
             isFeedback = true,
         )
     }
@@ -135,12 +135,12 @@ private fun FeedbackCardPreview() {
         ) {
             FeedbackCard(
                 originalText = "i’m drinking milk because I easily get stomachache",
-                feedbackText = "I’m drinking milk because I get stomachaches easily",
+                correctedText = "I’m drinking milk because I get stomachaches easily",
                 explain = "a stomachache처럼 가산명사는 ~게 작성하는게 맞는 표현이에요. ‘easily’의 어순을 문장 마지막에 작성하여 더 정확해졌어요.",
             )
             FeedbackCard(
                 originalText = "I was planning to arrive it here around 13:30",
-                feedbackText = "I was planning to arrive here around 1:30 p.m",
+                correctedText = "I was planning to arrive here around 1:30 p.m",
                 explain = "arrive는 자동사이기 때문에 직접 목적어 ‘it’을 쓸 수 없어요. " +
                     "‘arrive at the station’, ‘arrive here’처럼 써야 맞는 표현이에요!",
             )

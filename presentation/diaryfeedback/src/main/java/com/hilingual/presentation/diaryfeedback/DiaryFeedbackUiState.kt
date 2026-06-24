@@ -50,7 +50,7 @@ internal data class DiaryFeedbackUiState(
                     "but I forgot to replying her. I apolozied to her. " +
                     "We promissed to playing when our university exams are all done. " +
                     "I hope that it’s be done fastly.",
-                aiText = "Today my friend called me. She sent a message a few days ago, " +
+                correctedText = "Today my friend called me. She sent a message a few days ago, " +
                     "but I forgot to reply to her. I apologized to her. " +
                     "We promised to play when our university exams are all done. " +
                     "I hope that it’s done quickly.",
@@ -101,7 +101,7 @@ internal fun TopicModel.toState() = Topics(
 
 internal fun DiaryContentModel.toState() = DiaryContent(
     originalText = this.originalText,
-    aiText = this.rewriteText,
+    correctedText = this.correctedText,
     diffRanges = this.diffRanges.map {
         it.diffRange.first to it.diffRange.second
     }.toImmutableList(),
@@ -111,7 +111,7 @@ internal fun DiaryContentModel.toState() = DiaryContent(
 
 internal fun DiaryFeedbackModel.toState() = FeedbackContent(
     originalText = this.originalText,
-    feedbackText = this.rewriteText,
+    correctedText = this.correctedText,
     explain = this.explain,
 )
 

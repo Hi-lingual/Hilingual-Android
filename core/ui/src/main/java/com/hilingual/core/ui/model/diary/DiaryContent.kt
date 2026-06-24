@@ -22,7 +22,7 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 data class DiaryContent(
     val originalText: String = "",
-    val aiText: String = "",
+    val correctedText: String = "",
     val diffRanges: ImmutableList<Pair<Int, Int>> = persistentListOf(),
     val imageUrl: String? = null,
     val isPublished: Boolean = false,

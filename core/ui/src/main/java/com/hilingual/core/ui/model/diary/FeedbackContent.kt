@@ -20,6 +20,6 @@ import androidx.compose.runtime.Immutable
 @Immutable
 data class FeedbackContent(
     val originalText: String,
-    val feedbackText: String,
+    val correctedText: String,
     val explain: String,
 )
