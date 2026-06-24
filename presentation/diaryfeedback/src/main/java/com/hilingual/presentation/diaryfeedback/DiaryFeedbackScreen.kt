@@ -129,7 +129,6 @@ internal fun DiaryFeedbackRoute(
                         onAction = {
                             tracker.logEvent(
                                 trigger = TriggerType.CLICK,
-                                page = FEEDBACK,
                                 event = "toast_action",
                                 properties = mapOf(
                                     "toast_id" to "diary_post_success",
@@ -331,7 +330,6 @@ private fun DiaryFeedbackScreen(
                                 onBookmarkClick = { phraseId, isMarked ->
                                     tracker.logEvent(
                                         trigger = TriggerType.CLICK,
-                                        page = FEEDBACK,
                                         event = "bookmark_action",
                                         properties = mapOf(
                                             "entry_id" to diaryId,
