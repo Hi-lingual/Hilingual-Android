@@ -281,8 +281,7 @@ private fun FeedDiaryScreen(
                                 toggleClickCount++
                                 tracker.logEvent(
                                     trigger = TriggerType.CLICK,
-                                    page = Page.FEEDBACK,
-                                    event = "toggle",
+                                    event = "feedback_toggle",
                                     properties = mapOf(
                                         "entry_id" to diaryId,
                                         "toggle_state" to it,
