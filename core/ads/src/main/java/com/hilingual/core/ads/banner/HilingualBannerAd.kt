@@ -20,6 +20,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -67,10 +68,19 @@ fun HilingualBannerAd(
             }
 
             if (!isPreviewMode && adHolder.isLoaded) {
-                AndroidView(
-                    modifier = Modifier.fillMaxWidth(),
-                    factory = { adHolder.adView },
-                )
+                key(adHolder.adView) {
+                    AndroidView(
+                        modifier = Modifier.fillMaxWidth(),
+                        factory = {
+                            val adView = adHolder.adView
+                            (adView.parent as? android.view.ViewGroup)?.removeView(adView)
+                            adView
+                        },
+                        onRelease = { adView ->
+                            adView.destroy()
+                        },
+                    )
+                }
             }
         }
     }

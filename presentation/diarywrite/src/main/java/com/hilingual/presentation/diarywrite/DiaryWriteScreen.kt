@@ -397,11 +397,11 @@ private fun DiaryWriteScreen(
                         dropdownClickCount++
                         tracker.logEvent(
                             trigger = TriggerType.CLICK,
-                            page = WRITE_DIARY,
                             event = "dropdown",
                             properties = mapOf(
                                 "recommen_topic" to "$topicKo/$topicEn",
                                 "dropdown_click_count" to dropdownClickCount,
+                                "page" to WRITE_DIARY.pageName,
                             ),
                         )
                     },

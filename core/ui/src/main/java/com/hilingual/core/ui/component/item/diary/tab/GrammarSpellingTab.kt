@@ -30,10 +30,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
@@ -64,9 +60,9 @@ fun GrammarSpellingTab(
     topics: Topics,
     diaryContent: DiaryContent,
     feedbackList: ImmutableList<FeedbackContent>,
-    isAIWrittenDiary: Boolean,
+    isShowCorrectedDiary: Boolean,
     onImageClick: () -> Unit,
-    onToggleViewMode: (Boolean) -> Unit,
+    onToggleDiaryViewMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     isAdVisible: Boolean = false,
 ) {
@@ -93,8 +89,8 @@ fun GrammarSpellingTab(
                     color = HilingualTheme.colors.gray700,
                 )
                 DiaryViewModeToggle(
-                    isAIWritten = isAIWrittenDiary,
-                    onToggle = onToggleViewMode,
+                    isShowCorrectedDiary = isShowCorrectedDiary,
+                    onToggleViewMode = onToggleDiaryViewMode,
                 )
             }
             Spacer(Modifier.height(12.dp))
@@ -111,8 +107,8 @@ fun GrammarSpellingTab(
         item {
             with(diaryContent) {
                 DiaryCard(
-                    isAIWritten = isAIWrittenDiary,
-                    diaryContent = if (isAIWrittenDiary) aiText else originalText,
+                    isShowCorrectedDiary = isShowCorrectedDiary,
+                    diaryContent = if (isShowCorrectedDiary) correctedText else originalText,
                     diffRanges = diffRanges,
                     imageUrl = imageUrl,
                     onImageClick = onImageClick,
@@ -142,7 +138,7 @@ fun GrammarSpellingTab(
                 with(content) {
                     FeedbackCard(
                         originalText = originalText,
-                        feedbackText = feedbackText,
+                        correctedText = correctedText,
                         explain = explain,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -168,9 +164,7 @@ private fun FeedbackTitle(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        text = if (feedbackSize ==
-            0
-        ) {
+        text = if (feedbackSize == 0) {
             AnnotatedString("일기에서 발견된 피드백 알려드릴게요!")
         } else {
             getFeedbackTitleAnnotatedString(feedbackSize)
@@ -195,7 +189,6 @@ private fun getFeedbackTitleAnnotatedString(
 @Preview(showBackground = true)
 @Composable
 private fun GrammarSpellingTabPreview() {
-    var isAIWritten by remember { mutableStateOf(true) }
     HilingualTheme {
         GrammarSpellingTab(
             listState = rememberLazyListState(),
@@ -203,9 +196,9 @@ private fun GrammarSpellingTabPreview() {
             diaryContent = DiaryContent(),
             topics = Topics(),
             feedbackList = persistentListOf(),
-            isAIWrittenDiary = isAIWritten,
+            isShowCorrectedDiary = true,
             onImageClick = {},
-            onToggleViewMode = { isAIWritten = it },
+            onToggleDiaryViewMode = {},
         )
     }
 }

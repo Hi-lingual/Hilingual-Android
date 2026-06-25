@@ -132,7 +132,6 @@ internal fun DiaryFeedbackRoute(
                         onAction = {
                             tracker.logEvent(
                                 trigger = TriggerType.CLICK,
-                                page = FEEDBACK,
                                 event = "toast_action",
                                 properties = mapOf(
                                     "toast_id" to "diary_post_success",
@@ -247,8 +246,8 @@ private fun DiaryFeedbackScreen(
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
     var isReportDialogVisible by remember { mutableStateOf(false) }
 
-    var isAIWrittenDiary by remember { mutableStateOf(true) }
     var toggleClickCount by remember { mutableIntStateOf(0) }
+    var isShowCorrectedDiary by remember { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -319,10 +318,10 @@ private fun DiaryFeedbackScreen(
                                 topics = data.topics,
                                 diaryContent = data.diaryContent,
                                 feedbackList = data.feedbackList,
-                                isAIWrittenDiary = isAIWrittenDiary,
+                                isShowCorrectedDiary = isShowCorrectedDiary,
                                 onImageClick = onChangeImageDetailVisible,
-                                onToggleViewMode = {
-                                    isAIWrittenDiary = it
+                                onToggleDiaryViewMode = {
+                                    isShowCorrectedDiary = it
                                     toggleClickCount++
                                     tracker.logEvent(
                                         trigger = TriggerType.CLICK,
@@ -332,6 +331,7 @@ private fun DiaryFeedbackScreen(
                                             "entry_id" to diaryId,
                                             "toggle_state" to it,
                                             "toggle_click_count" to toggleClickCount,
+                                            "page" to FEEDBACK.pageName,
                                         ),
                                     )
                                 },
@@ -344,7 +344,6 @@ private fun DiaryFeedbackScreen(
                                 onBookmarkClick = { phraseId, isMarked ->
                                     tracker.logEvent(
                                         trigger = TriggerType.CLICK,
-                                        page = FEEDBACK,
                                         event = "bookmark_action",
                                         properties = mapOf(
                                             "entry_id" to diaryId,

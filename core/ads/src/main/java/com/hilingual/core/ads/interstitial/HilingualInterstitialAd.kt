@@ -16,50 +16,50 @@
 package com.hilingual.core.ads.interstitial
 
 import android.app.Activity
-import com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback
+import com.google.android.libraries.ads.mobile.sdk.common.AdLoadResult
 import com.google.android.libraries.ads.mobile.sdk.common.AdRequest
 import com.google.android.libraries.ads.mobile.sdk.common.FullScreenContentError
-import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError
 import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAd
 import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAdEventCallback
 import timber.log.Timber
 
-fun showInterstitialAd(
+suspend fun showInterstitialAd(
     activity: Activity,
     adUnitId: String,
     onAdDismissed: () -> Unit,
 ) {
     val adRequest = AdRequest.Builder(adUnitId).build()
+    Timber.tag("GMA").d("GMA Next Gen 전면 광고 로드 시작...")
 
-    InterstitialAd.load(
-        adRequest = adRequest,
-        adLoadCallback = object : AdLoadCallback<InterstitialAd> {
-            override fun onAdLoaded(ad: InterstitialAd) {
-                if (!activity.isFinishing && !activity.isDestroyed) {
-                    ad.adEventCallback = createEventCallback(onAdDismissed)
-                    ad.show(activity)
-                } else {
-                    Timber.tag("GMA").w("Activity가 이미 종료 상태라 전면 광고를 표시하지 않습니다.")
-                    onAdDismissed()
-                }
-            }
-
-            override fun onAdFailedToLoad(adError: LoadAdError) {
-                Timber.tag("GMA").e("전면 광고 로드 실패: %s", adError)
-                onAdDismissed()
-            }
-        },
-    )
-}
-
-private fun createEventCallback(onAdDismissed: () -> Unit) = object : InterstitialAdEventCallback {
-    override fun onAdDismissedFullScreenContent() {
-        Timber.tag("GMA").d("전면 광고 닫힘 → 피드백 화면으로 이동")
-        onAdDismissed()
+    val runOnMain: (() -> Unit) -> Unit = { callback ->
+        activity.runOnUiThread { callback() }
     }
 
-    override fun onAdFailedToShowFullScreenContent(fullScreenContentError: FullScreenContentError) {
-        Timber.tag("GMA").e("전면 광고 표시 실패: %s", fullScreenContentError)
-        onAdDismissed()
+    when (val result = InterstitialAd.load(adRequest)) {
+        is AdLoadResult.Success -> {
+            val ad = result.ad
+            if (!activity.isFinishing && !activity.isDestroyed) {
+                ad.adEventCallback = object : InterstitialAdEventCallback {
+                    override fun onAdDismissedFullScreenContent() {
+                        Timber.tag("GMA").d("전면 광고 닫힘 → 피드백 화면으로 이동")
+                        runOnMain(onAdDismissed)
+                    }
+
+                    override fun onAdFailedToShowFullScreenContent(fullScreenContentError: FullScreenContentError) {
+                        Timber.tag("GMA").e("전면 광고 표시 실패: %s", fullScreenContentError)
+                        runOnMain(onAdDismissed)
+                    }
+                }
+                ad.show(activity)
+            } else {
+                Timber.tag("GMA").w("Activity가 이미 종료 상태라 전면 광고를 표시하지 않습니다.")
+                runOnMain(onAdDismissed)
+            }
+        }
+
+        is AdLoadResult.Failure -> {
+            Timber.tag("GMA").e("전면 광고 로드 실패: %s", result.error)
+            runOnMain(onAdDismissed)
+        }
     }
 }
