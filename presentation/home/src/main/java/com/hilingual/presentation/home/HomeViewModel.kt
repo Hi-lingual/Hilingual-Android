@@ -256,6 +256,7 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                     updateContentForDate(date)
+                    _sideEffect.emit(HomeSideEffect.NavigateToRecoveryWrite(date))
                 }
                 .onLogFailure {
                     emitToastSideEffect("기록 살리기에 실패했어요. 잠시 후 다시 시도해주세요.")
@@ -523,6 +524,8 @@ sealed interface HomeSideEffect {
     data object ShowOnboarding : HomeSideEffect
 
     data class ShowRewardedAd(val date: LocalDate) : HomeSideEffect
+
+    data class NavigateToRecoveryWrite(val date: LocalDate) : HomeSideEffect
 
     data object ShowRecoveryNotice : HomeSideEffect
 

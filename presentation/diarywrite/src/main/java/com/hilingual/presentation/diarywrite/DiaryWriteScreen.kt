@@ -186,6 +186,7 @@ internal fun DiaryWriteRoute(
                 selectedDate = uiState.selectedDate,
                 topicKo = uiState.topicKo,
                 topicEn = uiState.topicEn,
+                isRecovery = uiState.isRecovery,
                 diaryText = uiState.diaryText,
                 initialDiaryText = uiState.initialDiaryText,
                 onDiaryTextChanged = viewModel::updateDiaryText,
@@ -280,6 +281,7 @@ private fun DiaryWriteScreen(
     selectedDate: LocalDate,
     topicKo: String,
     topicEn: String,
+    isRecovery: Boolean,
     diaryText: String,
     initialDiaryText: String,
     onDiaryTextChanged: (String) -> Unit,
@@ -421,6 +423,7 @@ private fun DiaryWriteScreen(
                     enTopic = topicEn,
                     koTopic = topicKo,
                     focusManager = focusManager,
+                    isRecovery = isRecovery,
                     modifier = Modifier.noRippleClickable {
                         dropdownClickCount++
                         tracker.logEvent(
@@ -589,6 +592,7 @@ private fun DiaryWriteScreenPreview() {
             selectedDate = LocalDate.now(),
             topicKo = "오늘 당신을 놀라게 한 일이 있었나요?",
             topicEn = "What surprised you today?",
+            isRecovery = false,
             diaryText = diaryText,
             initialDiaryText = "",
             onDiaryTextChanged = { diaryText = it },

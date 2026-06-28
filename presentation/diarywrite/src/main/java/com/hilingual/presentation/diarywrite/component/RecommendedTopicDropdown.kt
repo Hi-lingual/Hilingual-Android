@@ -51,6 +51,7 @@ internal fun RecommendedTopicDropdown(
     koTopic: String,
     focusManager: FocusManager,
     modifier: Modifier = Modifier,
+    isRecovery: Boolean = false,
 ) {
     var isKo by remember { mutableStateOf(false) }
     var isExpanded by remember { mutableStateOf(false) }
@@ -70,7 +71,7 @@ internal fun RecommendedTopicDropdown(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                text = "오늘의 추천 주제 참고하기",
+                text = if (isRecovery) "이날의 추천 주제 참고하기" else "오늘의 추천 주제 참고하기",
                 style = HilingualTheme.typography.bodyR14,
                 color = HilingualTheme.colors.gray700,
             )

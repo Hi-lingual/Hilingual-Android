@@ -171,6 +171,9 @@ internal fun HomeRoute(
                 }
             }
 
+            is HomeSideEffect.NavigateToRecoveryWrite ->
+                navigateToDiaryWrite(sideEffect.date, DiaryWriteMode.RECOVERY)
+
             is HomeSideEffect.ShowRecoveryNotice -> homeState.showRecoveryNotice()
 
             is HomeSideEffect.ShowRecoveryReminder -> homeState.showRecoveryReminder()
@@ -495,6 +498,7 @@ private fun HomeScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .animateContentSize(),
+                                isRecovery = true,
                             )
                         }
                         Spacer(Modifier.height(12.dp))
