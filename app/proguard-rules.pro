@@ -55,3 +55,10 @@
 -keep class com.amplitude.** { *; }
 -dontwarn com.amplitude.**
 ##---------------종료: Amplitude ----------
+
+##---------------시작: Meta Audience Network ----------
+# 미디에이션 어댑터(com.facebook.ads)가 참조하는 빌드타임 어노테이션 누락 무시
+-keep class com.facebook.ads.** { *; }
+-dontwarn com.facebook.ads.**
+-dontwarn com.facebook.infer.annotation.**
+##---------------종료: Meta Audience Network ----------
