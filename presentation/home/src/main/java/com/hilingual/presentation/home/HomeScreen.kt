@@ -185,11 +185,13 @@ internal fun HomeRoute(
         tracker.logEvent(trigger = TriggerType.VIEW, page = HOME, event = "page")
     }
 
-    CheckNotificationPermission(
-        context = context,
-        isDataLoaded = isSuccess,
-        onCheck = viewModel::handleNotificationPermission,
-    )
+    if (ENABLE_PUSH_NOTIFICATION) {
+        CheckNotificationPermission(
+            context = context,
+            isDataLoaded = isSuccess,
+            onCheck = viewModel::handleNotificationPermission,
+        )
+    }
 
     NotificationDialog(
         state = DialogState(isVisible = homeState.isNotificationDialogVisible),
@@ -283,10 +285,12 @@ internal fun HomeRoute(
 
     fun handleOnboardingDismiss() {
         homeState.hideOnboardingBottomSheet()
-        viewModel.onNotificationPermissionAfterOnboarding(
-            isGranted = context.isNotificationPermissionGranted(),
-            requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU,
-        )
+        if (ENABLE_PUSH_NOTIFICATION) {
+            viewModel.onNotificationPermissionAfterOnboarding(
+                isGranted = context.isNotificationPermissionGranted(),
+                requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU,
+            )
+        }
     }
 
     HomeOnboardingBottomSheet(
@@ -528,6 +532,9 @@ private fun HomeScreen(
         }
     }
 }
+
+// #807 푸시 알림 플로우: 미배포 기능, 당분간 봉인. 재개 시 true로 전환.
+private const val ENABLE_PUSH_NOTIFICATION = false
 
 @Composable
 private fun CheckNotificationPermission(

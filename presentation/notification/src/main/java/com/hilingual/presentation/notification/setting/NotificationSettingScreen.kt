@@ -45,6 +45,9 @@ import com.hilingual.presentation.notification.setting.component.NotificationSet
 import com.hilingual.presentation.notification.setting.component.NotificationSettingDialog
 import com.hilingual.presentation.notification.setting.component.NotificationSwitchItem
 
+// #807 푸시 알림 플로우: 미배포 기능, 당분간 봉인. 재개 시 true로 전환.
+private const val ENABLE_PUSH_NOTIFICATION = false
+
 @Composable
 internal fun NotificationSettingRoute(
     paddingValues: PaddingValues,
@@ -138,7 +141,7 @@ private fun NotificationSettingScreen(
         )
 
         NotificationSettingBanner(
-            isVisible = !isNotificationGranted,
+            isVisible = ENABLE_PUSH_NOTIFICATION && !isNotificationGranted,
             onClick = onBannerClick,
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
         )
@@ -157,7 +160,7 @@ private fun NotificationSettingScreen(
     }
 
     NotificationSettingDialog(
-        isVisible = isPermissionDialogVisible,
+        isVisible = ENABLE_PUSH_NOTIFICATION && isPermissionDialogVisible,
         onDismiss = onPermissionDialogDismiss,
         onConfirmClick = onPermissionDialogConfirm,
     )
