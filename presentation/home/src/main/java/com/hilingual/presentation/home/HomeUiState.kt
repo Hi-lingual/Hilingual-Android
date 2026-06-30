@@ -16,12 +16,14 @@
 package com.hilingual.presentation.home
 
 import androidx.compose.runtime.Immutable
+import com.hilingual.data.calendar.model.CalendarStatus
 import com.hilingual.presentation.home.model.DateUiModel
 import com.hilingual.presentation.home.model.DiaryThumbnailUiModel
 import com.hilingual.presentation.home.model.TodayTopicUiModel
 import com.hilingual.presentation.home.model.UserProfileUiModel
 import com.hilingual.presentation.home.type.DiaryCardState
 import java.time.LocalDate
+import java.time.YearMonth
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -92,6 +94,7 @@ data class HomeDiaryUiState(
     fun update(
         selectedDate: LocalDate,
         dates: List<DateUiModel>,
+        recoveryTickets: Int,
         fetchedThumbnail: DiaryThumbnailUiModel? = null,
         fetchedTopic: TodayTopicUiModel? = null,
         isTempExist: Boolean = this.isDiaryTempExist,
@@ -99,14 +102,23 @@ data class HomeDiaryUiState(
         // Use Rich Model Logic
         val selectedDateModel = DateUiModel(selectedDate)
 
-        val isWritten = dates.any { it.date == selectedDate }
-        if (isWritten) {
-            return copy(
-                cardState = DiaryCardState.WRITTEN,
-                diaryThumbnail = fetchedThumbnail,
-                todayTopic = null,
-                isDiaryTempExist = isTempExist,
-            )
+        val matchedDate = dates.find { it.date == selectedDate }
+        if (matchedDate != null) {
+            return if (matchedDate.status == CalendarStatus.UNLOCKED) {
+                copy(
+                    cardState = DiaryCardState.UNLOCKED,
+                    diaryThumbnail = null,
+                    todayTopic = fetchedTopic,
+                    isDiaryTempExist = isTempExist,
+                )
+            } else {
+                copy(
+                    cardState = DiaryCardState.WRITTEN,
+                    diaryThumbnail = fetchedThumbnail,
+                    todayTopic = null,
+                    isDiaryTempExist = isTempExist,
+                )
+            }
         }
 
         if (selectedDateModel.isFuture) {
@@ -133,8 +145,14 @@ data class HomeDiaryUiState(
             )
         }
 
+        val pastState = when {
+            YearMonth.from(selectedDate) != YearMonth.now() -> DiaryCardState.PAST
+            recoveryTickets > 0 -> DiaryCardState.RECOVERABLE
+            else -> DiaryCardState.RECOVERY_EXHAUSTED
+        }
+
         return copy(
-            cardState = DiaryCardState.PAST,
+            cardState = pastState,
             diaryThumbnail = null,
             todayTopic = null,
             isDiaryTempExist = isTempExist,

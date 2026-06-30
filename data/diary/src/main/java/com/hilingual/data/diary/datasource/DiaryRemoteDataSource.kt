@@ -46,6 +46,12 @@ interface DiaryRemoteDataSource {
         fileKey: String?,
     ): BaseResponse<DiaryFeedbackCreateResponseDto>
 
+    suspend fun postDiaryRecoveryCreate(
+        originalText: String,
+        date: String,
+        fileKey: String?,
+    ): BaseResponse<DiaryFeedbackCreateResponseDto>
+
     suspend fun patchDiaryPublish(
         diaryId: Long,
     ): BaseResponse<Unit>

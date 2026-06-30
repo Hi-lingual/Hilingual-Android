@@ -56,6 +56,11 @@ interface DiaryService {
         @Body diaryFeedbackCreateRequestDto: DiaryFeedbackCreateRequestDto,
     ): BaseResponse<DiaryFeedbackCreateResponseDto>
 
+    @POST("/api/v1/diaries/recovery")
+    suspend fun postDiaryRecoveryCreate(
+        @Body diaryFeedbackCreateRequestDto: DiaryFeedbackCreateRequestDto,
+    ): BaseResponse<DiaryFeedbackCreateResponseDto>
+
     @PATCH("/api/v1/diaries/{diaryId}/publish")
     suspend fun patchDiaryPublish(
         @Path("diaryId") diaryId: Long,

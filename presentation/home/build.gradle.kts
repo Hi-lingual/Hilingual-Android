@@ -24,6 +24,8 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.ads)
+
     implementation(projects.data.user)
     implementation(projects.data.diary)
     implementation(projects.data.calendar)

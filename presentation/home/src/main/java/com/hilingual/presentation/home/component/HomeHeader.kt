@@ -52,6 +52,7 @@ internal fun HomeHeader(
     onAlarmClick: () -> Unit,
     onImageClick: () -> Unit,
     modifier: Modifier = Modifier,
+    count: Int = 0,
 ) {
     Row(
         modifier = modifier,
@@ -67,7 +68,7 @@ internal fun HomeHeader(
 
         Column(modifier = Modifier.weight(1f)) {
             ProfileName(nickname)
-            UserStatsRow(totalDiaries, streak)
+            UserStatsRow(totalDiaries, streak, count)
         }
 
         Box {
@@ -122,7 +123,11 @@ private fun ProfileName(name: String) {
 }
 
 @Composable
-private fun UserStatsRow(totalDiaries: Int, streak: Int) {
+private fun UserStatsRow(
+    totalDiaries: Int,
+    streak: Int,
+    count: Int,
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -132,6 +137,10 @@ private fun UserStatsRow(totalDiaries: Int, streak: Int) {
         StatSeparator()
 
         StreakStat(streak)
+
+        StatSeparator()
+
+        RecoveryTicketStat(count)
     }
 }
 
@@ -147,7 +156,15 @@ private fun DiaryCountStat(count: Int) {
 private fun StreakStat(days: Int) {
     StatItem(
         icon = R.drawable.ic_fire_16,
-        text = "${days}일 연속 작성 중",
+        text = "${days}일 연속",
+    )
+}
+
+@Composable
+private fun RecoveryTicketStat(count: Int) {
+    StatItem(
+        icon = R.drawable.ic_return_16_and,
+        text = "${count}개",
     )
 }
 

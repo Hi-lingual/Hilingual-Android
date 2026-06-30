@@ -42,6 +42,12 @@ interface DiaryRepository {
         imageFileUri: Uri? = null,
     ): Result<DiaryFeedbackCreateModel>
 
+    suspend fun postDiaryRecoveryCreate(
+        originalText: String,
+        date: LocalDate,
+        imageFileUri: Uri? = null,
+    ): Result<DiaryFeedbackCreateModel>
+
     suspend fun patchDiaryPublish(
         diaryId: Long,
     ): Result<Unit>

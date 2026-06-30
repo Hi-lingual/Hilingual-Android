@@ -73,6 +73,29 @@ internal class DiaryRemoteDataSourceImpl @Inject constructor(
         )
     }
 
+    override suspend fun postDiaryRecoveryCreate(
+        originalText: String,
+        date: String,
+        fileKey: String?,
+    ): BaseResponse<DiaryFeedbackCreateResponseDto> {
+        val imageRequest = if (fileKey != null) {
+            ImageRequestDto(
+                fileKey = fileKey,
+                purpose = "DIARY_IMAGE",
+            )
+        } else {
+            null
+        }
+
+        return diaryService.postDiaryRecoveryCreate(
+            diaryFeedbackCreateRequestDto = DiaryFeedbackCreateRequestDto(
+                originalText = originalText,
+                date = date,
+                image = imageRequest,
+            ),
+        )
+    }
+
     override suspend fun patchDiaryPublish(diaryId: Long): BaseResponse<Unit> =
         diaryService.patchDiaryPublish(diaryId)
 

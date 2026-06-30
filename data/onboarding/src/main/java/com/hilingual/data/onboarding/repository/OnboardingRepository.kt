@@ -23,4 +23,12 @@ interface OnboardingRepository {
     suspend fun getIsSplashOnboardingCompleted(): Result<Boolean>
 
     suspend fun completeSplashOnboarding(): Result<Unit>
+
+    suspend fun getIsRecoveryNoticeShown(): Result<Boolean>
+
+    suspend fun updateIsRecoveryNoticeShown(isShown: Boolean): Result<Unit>
+
+    suspend fun getRecoveryReminderLastShownMonth(): Result<String>
+
+    suspend fun updateRecoveryReminderLastShownMonth(month: String): Result<Unit>
 }

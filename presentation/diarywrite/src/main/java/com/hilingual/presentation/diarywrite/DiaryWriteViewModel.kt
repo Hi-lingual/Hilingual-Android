@@ -56,6 +56,7 @@ internal class DiaryWriteViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(
         DiaryWriteUiState(
             selectedDate = route.selectedDate.toLocalDateOrNull()!!,
+            isRecovery = route.mode == DiaryWriteMode.RECOVERY,
         ),
     )
     val uiState: StateFlow<DiaryWriteUiState> = _uiState.asStateFlow()
@@ -74,6 +75,9 @@ internal class DiaryWriteViewModel @Inject constructor(
 
             DiaryWriteMode.NEW -> {
                 // Do nothing, start new diary to.Dalji
+            }
+
+            DiaryWriteMode.RECOVERY -> {
             }
         }
     }
@@ -163,11 +167,19 @@ internal class DiaryWriteViewModel @Inject constructor(
         _feedbackUiState.value = UiState.Loading
 
         viewModelScope.launch {
-            val result = diaryRepository.postDiaryFeedbackCreate(
-                originalText = uiState.value.diaryText,
-                date = uiState.value.selectedDate,
-                imageFileUri = uiState.value.diaryImageUri,
-            )
+            val result = if (route.mode == DiaryWriteMode.RECOVERY) {
+                diaryRepository.postDiaryRecoveryCreate(
+                    originalText = uiState.value.diaryText,
+                    date = uiState.value.selectedDate,
+                    imageFileUri = uiState.value.diaryImageUri,
+                )
+            } else {
+                diaryRepository.postDiaryFeedbackCreate(
+                    originalText = uiState.value.diaryText,
+                    date = uiState.value.selectedDate,
+                    imageFileUri = uiState.value.diaryImageUri,
+                )
+            }
 
             result.onSuccess { response ->
                 diaryLocalRepository.clearDiaryTemp(uiState.value.selectedDate)

@@ -37,7 +37,16 @@ internal class GmaAdsInitializer @Inject constructor() : AdsInitializer {
             try {
                 val initConfig = Builder(BuildConfig.ADMOB_APP_ID).build()
                 MobileAds.initialize(context, initConfig) { status ->
-                    Timber.tag("GMA").d("GMA Next Gen SDK 초기화 완료: %s", status)
+                    Timber.tag("GMA").d("GMA Next Gen SDK 초기화 완료")
+                    status.adapterStatusMap.forEach { (adapter, adapterStatus) ->
+                        Timber.tag("GMA").d(
+                            "어댑터 [%s] 상태=%s, latency=%dms, %s",
+                            adapter,
+                            adapterStatus.initializationState,
+                            adapterStatus.latency,
+                            adapterStatus.description,
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 Timber.tag("GMA").e(e, "GMA Next Gen SDK 초기화 실패")

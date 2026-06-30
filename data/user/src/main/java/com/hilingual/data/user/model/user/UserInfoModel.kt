@@ -23,6 +23,7 @@ data class UserInfoModel(
     val streak: Int,
     val totalDiaries: Int,
     val newAlarm: Boolean,
+    val recoveryTickets: Int,
 )
 
 internal fun UserInfoResponseDto.toModel() = UserInfoModel(
@@ -31,4 +32,5 @@ internal fun UserInfoResponseDto.toModel() = UserInfoModel(
     streak = this.streak,
     totalDiaries = this.totalDiaries,
     newAlarm = this.newAlarm,
+    recoveryTickets = this.recoveryTickets,
 )

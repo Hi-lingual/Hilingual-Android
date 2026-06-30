@@ -42,4 +42,24 @@ class OnboardingRepositoryImpl @Inject constructor(
         suspendRunCatching {
             onboardingLocalDataSource.updateIsSplashOnboardingCompleted(isCompleted = true)
         }
+
+    override suspend fun getIsRecoveryNoticeShown(): Result<Boolean> =
+        suspendRunCatching {
+            onboardingLocalDataSource.getIsRecoveryNoticeShown()
+        }
+
+    override suspend fun updateIsRecoveryNoticeShown(isShown: Boolean): Result<Unit> =
+        suspendRunCatching {
+            onboardingLocalDataSource.updateIsRecoveryNoticeShown(isShown = isShown)
+        }
+
+    override suspend fun getRecoveryReminderLastShownMonth(): Result<String> =
+        suspendRunCatching {
+            onboardingLocalDataSource.getRecoveryReminderLastShownMonth()
+        }
+
+    override suspend fun updateRecoveryReminderLastShownMonth(month: String): Result<Unit> =
+        suspendRunCatching {
+            onboardingLocalDataSource.updateRecoveryReminderLastShownMonth(month = month)
+        }
 }

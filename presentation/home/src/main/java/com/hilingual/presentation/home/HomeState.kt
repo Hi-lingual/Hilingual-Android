@@ -46,6 +46,15 @@ class HomeState(
     var isNotificationDialogVisible by mutableStateOf(false)
         private set
 
+    var isRecoveryNoticeVisible by mutableStateOf(false)
+        private set
+
+    var isRecoveryReminderVisible by mutableStateOf(false)
+        private set
+
+    var isRecoveryAdLoading by mutableStateOf(false)
+        private set
+
     fun showDiaryContinueDialog() {
         isDiaryContinueDialogVisible = true
     }
@@ -86,6 +95,30 @@ class HomeState(
 
     fun hideNotificationDialog() {
         isNotificationDialogVisible = false
+    }
+
+    fun showRecoveryNotice() {
+        isRecoveryNoticeVisible = true
+    }
+
+    fun hideRecoveryNotice() {
+        isRecoveryNoticeVisible = false
+    }
+
+    fun showRecoveryReminder() {
+        isRecoveryReminderVisible = true
+    }
+
+    fun hideRecoveryReminder() {
+        isRecoveryReminderVisible = false
+    }
+
+    fun showRecoveryAdLoading() {
+        isRecoveryAdLoading = true
+    }
+
+    fun hideRecoveryAdLoading() {
+        isRecoveryAdLoading = false
     }
 }
 

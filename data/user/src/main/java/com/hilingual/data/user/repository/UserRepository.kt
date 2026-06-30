@@ -22,9 +22,11 @@ import com.hilingual.data.user.model.notification.NotificationModel
 import com.hilingual.data.user.model.notification.NotificationSettingsModel
 import com.hilingual.data.user.model.user.BlockListModel
 import com.hilingual.data.user.model.user.NicknameValidationResult
+import com.hilingual.data.user.model.user.RecoveryTicketModel
 import com.hilingual.data.user.model.user.UserInfoModel
 import com.hilingual.data.user.model.user.UserLoginInfoModel
 import com.hilingual.data.user.model.user.UserProfileModel
+import java.time.LocalDate
 
 interface UserRepository {
     suspend fun getNicknameAvailability(
@@ -36,6 +38,8 @@ interface UserRepository {
     ): Result<Long>
 
     suspend fun getUserInfo(): Result<UserInfoModel>
+
+    suspend fun postRecoveryTicket(targetDate: LocalDate): Result<RecoveryTicketModel>
 
     suspend fun getNotifications(tab: String): Result<List<NotificationModel>>
 
