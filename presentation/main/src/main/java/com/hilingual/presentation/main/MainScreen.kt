@@ -144,6 +144,8 @@ internal fun MainScreen(
         if (isOffline) {
             appState.dialogStateHolder.dismissDialog()
             onShowMessage(Toast("인터넷 연결이 불안정해요."))
+        } else {
+            shouldShowNetworkError = false
         }
     }
 
@@ -294,7 +296,15 @@ internal fun MainScreen(
                         isBackVisible = !isBottomBarVisible,
                         onBackClick = appState::navigateUp,
                         onRetryClick = {
-                            shouldShowNetworkError = isOffline
+                            if (isOffline) {
+                                shouldShowNetworkError = true
+                                onShowMessage(Toast("인터넷 연결이 불안정해요."))
+                            } else {
+                                shouldShowNetworkError = false
+                                coroutineScope.launch {
+                                    reconnectEvents.emit(Unit)
+                                }
+                            }
                         },
                         modifier = Modifier
                             .padding(innerPadding)
