@@ -47,16 +47,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.analytics.AnalyticsEvent
 import com.hilingual.core.common.analytics.Page.VOCABULARY
 import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.model.orRetry
 import com.hilingual.core.common.provider.LocalTracker
+import com.hilingual.core.common.trigger.DialogType
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.pulltorefresh.HilingualPullToRefreshBox
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.data.voca.model.GroupingVocaModel
@@ -102,9 +106,31 @@ internal fun VocaRoute(
     viewModel.sideEffect.collectSideEffect {
         when (it) {
             is VocaSideEffect.ShowErrorDialog -> {
-                dialogTrigger.show(onClick = it.onRetry)
+                dialogTrigger.show(
+                    type = it.dialogType,
+                    onClick = {
+                        if (it.dialogType == DialogType.NOT_FOUND) {
+                            tracker.logEvent(
+                                trigger = TriggerType.CLICK,
+                                page = VOCABULARY,
+                                event = AnalyticsEvent.DATA_NOT_FOUND_GO_BACK,
+                            )
+                        }
+                        it.onRetry()
+                    },
+                )
             }
         }
+    }
+
+    val vocaGroupState = uiState.vocaGroupList
+    if (vocaGroupState is UiState.Failure) {
+        HilingualLoadErrorView(
+            handleAction = vocaGroupState.handleAction.orRetry(),
+            onActionClick = viewModel::fetchInitialData,
+            modifier = Modifier.padding(paddingValues),
+        )
+        return
     }
 
     with(uiState) {

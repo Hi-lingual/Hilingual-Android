@@ -50,11 +50,13 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.model.orRetry
 import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.TitleLeftAlignedTopAppBar
 import com.hilingual.presentation.mypage.component.LogoutDialog
@@ -101,6 +103,14 @@ internal fun MyPageRoute(
                 onCustomerCenterClick = { context.launchCustomTabs(UrlConstant.KAKAOTALK_CHANNEL) },
                 onTermsClick = { context.launchCustomTabs(UrlConstant.PRIVACY_POLICY) },
                 onLogoutClick = viewModel::logout,
+            )
+        }
+
+        is UiState.Failure -> {
+            HilingualLoadErrorView(
+                handleAction = state.handleAction.orRetry(),
+                onActionClick = viewModel::getProfileInfo,
+                modifier = Modifier.padding(paddingValues),
             )
         }
 

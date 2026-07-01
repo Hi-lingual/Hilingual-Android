@@ -54,6 +54,7 @@ import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.model.orRetry
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
@@ -61,6 +62,7 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.dialog.diary.DiaryPublishDialog
 import com.hilingual.core.ui.component.dialog.diary.DiaryUnpublishDialog
@@ -206,6 +208,16 @@ internal fun DiaryFeedbackRoute(
         }
 
         is UiState.Loading -> HilingualLoadingIndicator()
+
+        is UiState.Failure -> {
+            HilingualLoadErrorView(
+                handleAction = currentState.handleAction.orRetry(),
+                isBackVisible = true,
+                onBackClick = navigateUp,
+                onActionClick = viewModel::loadInitialData,
+                modifier = Modifier.padding(paddingValues),
+            )
+        }
 
         else -> {}
     }

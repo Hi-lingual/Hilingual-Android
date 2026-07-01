@@ -66,6 +66,7 @@ internal class MyPageViewModel @Inject constructor(
 
     fun getProfileInfo() {
         viewModelScope.launch {
+            _uiState.update { UiState.Loading }
             userRepository.getUserLoginInfo()
                 .onSuccess { userInfo ->
                     _uiState.update {
@@ -80,7 +81,7 @@ internal class MyPageViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    _sideEffect.emit(MyPageSideEffect.ShowErrorDialog(onRetry = ::getProfileInfo))
+                    _uiState.update { UiState.Failure() }
                 }
         }
     }

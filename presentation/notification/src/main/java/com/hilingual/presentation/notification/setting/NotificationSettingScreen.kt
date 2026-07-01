@@ -37,8 +37,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.model.orRetry
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.presentation.notification.setting.component.NotificationSettingBanner
@@ -108,6 +110,16 @@ internal fun NotificationSettingRoute(
                     onBackClick = navigateUp,
                 )
             }
+        }
+
+        is UiState.Failure -> {
+            HilingualLoadErrorView(
+                handleAction = state.handleAction.orRetry(),
+                isBackVisible = true,
+                onBackClick = navigateUp,
+                onActionClick = viewModel::getNotificationSettings,
+                modifier = Modifier.padding(paddingValues),
+            )
         }
 
         else -> {}

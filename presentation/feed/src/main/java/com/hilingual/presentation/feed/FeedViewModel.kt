@@ -55,6 +55,13 @@ internal class FeedViewModel @Inject constructor(
         getFollowingFeeds(isUserRefresh = false)
     }
 
+    fun loadFeedData(tab: FeedTab) {
+        when (tab) {
+            FeedTab.RECOMMEND -> getRecommendFeeds(isUserRefresh = false)
+            FeedTab.FOLLOWING -> getFollowingFeeds(isUserRefresh = false)
+        }
+    }
+
     fun onFeedRefresh(tab: FeedTab) {
         when (tab) {
             FeedTab.RECOMMEND -> getRecommendFeeds(isUserRefresh = true)
@@ -85,6 +92,8 @@ internal class FeedViewModel @Inject constructor(
         viewModelScope.launch {
             if (isUserRefresh) {
                 _uiState.update { it.copy(isRecommendRefreshing = true) }
+            } else {
+                _uiState.update { it.copy(recommendFeedList = UiState.Loading) }
             }
 
             feedRepository.getRecommendFeeds()
@@ -96,7 +105,11 @@ internal class FeedViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    emitErrorDialogSideEffect { getRecommendFeeds(isUserRefresh) }
+                    if (isUserRefresh) {
+                        emitErrorDialogSideEffect { getRecommendFeeds(isUserRefresh) }
+                    } else {
+                        _uiState.update { it.copy(recommendFeedList = UiState.Failure()) }
+                    }
                 }
 
             if (isUserRefresh) {
@@ -109,6 +122,8 @@ internal class FeedViewModel @Inject constructor(
         viewModelScope.launch {
             if (isUserRefresh) {
                 _uiState.update { it.copy(isFollowingRefreshing = true) }
+            } else {
+                _uiState.update { it.copy(followingFeedList = UiState.Loading) }
             }
 
             feedRepository.getFollowingFeeds()
@@ -121,7 +136,11 @@ internal class FeedViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    emitErrorDialogSideEffect { getFollowingFeeds(isUserRefresh) }
+                    if (isUserRefresh) {
+                        emitErrorDialogSideEffect { getFollowingFeeds(isUserRefresh) }
+                    } else {
+                        _uiState.update { it.copy(followingFeedList = UiState.Failure()) }
+                    }
                 }
 
             if (isUserRefresh) {

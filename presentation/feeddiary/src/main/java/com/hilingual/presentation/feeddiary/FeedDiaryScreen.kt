@@ -41,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.analytics.AnalyticsEvent
 import com.hilingual.core.common.analytics.FakeTracker
 import com.hilingual.core.common.analytics.Page
 import com.hilingual.core.common.analytics.Tracker
@@ -50,12 +51,15 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.model.LoadErrorHandleAction
+import com.hilingual.core.common.model.orBack
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.bottomsheet.BlockBottomSheet
 import com.hilingual.core.ui.component.dialog.diary.DiaryUnpublishDialog
@@ -151,6 +155,26 @@ internal fun FeedDiaryRoute(
                 isImageDetailVisible = isImageDetailVisible,
                 onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
                 onToggleBookmark = viewModel::toggleBookmark,
+            )
+        }
+
+        is UiState.Failure -> {
+            val handleAction = state.handleAction.orBack()
+            HilingualLoadErrorView(
+                handleAction = handleAction,
+                isBackVisible = true,
+                onBackClick = navigateUp,
+                onActionClick = {
+                    if (handleAction is LoadErrorHandleAction.NotFound) {
+                        tracker.logEvent(
+                            trigger = TriggerType.CLICK,
+                            page = Page.POSTED_DIARY,
+                            event = AnalyticsEvent.DATA_NOT_FOUND_GO_BACK,
+                        )
+                    }
+                    navigateUp()
+                },
+                modifier = Modifier.padding(paddingValues),
             )
         }
 

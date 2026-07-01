@@ -28,9 +28,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,12 +50,14 @@ import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.pairwise
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.model.orRetry
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedTab
 import com.hilingual.presentation.feed.component.FeedTopAppBar
@@ -78,6 +82,8 @@ internal fun FeedRoute(
     val messageController = LocalMessageController.current
     val dialogTrigger = LocalDialogTrigger.current
     val tracker = LocalTracker.current
+
+    var selectedFeedTab by remember { mutableStateOf(FeedTab.RECOMMEND) }
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -114,6 +120,16 @@ internal fun FeedRoute(
         viewModel.loadInitialFeedData()
     }
 
+    val feedLoadError = uiState.loadErrorState(selectedFeedTab)
+    if (feedLoadError is UiState.Failure) {
+        HilingualLoadErrorView(
+            handleAction = feedLoadError.handleAction.orRetry(),
+            onActionClick = { viewModel.loadFeedData(selectedFeedTab) },
+            modifier = Modifier.padding(paddingValues),
+        )
+        return
+    }
+
     with(uiState) {
         FeedScreen(
             paddingValues = paddingValues,
@@ -122,6 +138,7 @@ internal fun FeedRoute(
             followingFeedList = followingFeedList,
             recommendRefreshing = isRecommendRefreshing,
             followingRefreshing = isFollowingRefreshing,
+            onSelectedTabChanged = { selectedFeedTab = it },
             onFeedRefresh = { tab ->
                 tracker.logEvent(
                     trigger = TriggerType.CLICK,
@@ -184,6 +201,7 @@ private fun FeedScreen(
     onReportClick: () -> Unit,
     readAllFeed: () -> Unit,
     onFeedRefresh: (FeedTab) -> Unit,
+    onSelectedTabChanged: (FeedTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -222,6 +240,13 @@ private fun FeedScreen(
     }
 
     val latestReadAllFeed by rememberUpdatedState(newValue = readAllFeed)
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }
+            .collect { page ->
+                onSelectedTabChanged(FeedTab.entries[page])
+            }
+    }
 
     LaunchedEffect(pagerState.currentPage) {
         snapshotFlow {
@@ -339,6 +364,7 @@ private fun FeedScreenPreview() {
             recommendRefreshing = false,
             followingRefreshing = false,
             onFeedRefresh = {},
+            onSelectedTabChanged = {},
         )
     }
 }

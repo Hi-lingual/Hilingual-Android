@@ -99,7 +99,7 @@ class HomeViewModel @Inject constructor(
             if (userInfoResult.isFailure || calendarResult.isFailure) {
                 userInfoResult.onLogFailure { }
                 calendarResult.onLogFailure { }
-                emitErrorDialogSideEffect { loadInitialData() }
+                _uiState.update { UiState.Failure() }
                 return@launch
             }
 
