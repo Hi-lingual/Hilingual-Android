@@ -67,7 +67,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                     _sideEffect.emit(DiaryFeedbackSideEffect.ShowInterstitialAd)
                 }
             }.onLogFailure {
-                _uiState.update { UiState.Failure }
+                _uiState.update { UiState.Failure() }
                 _sideEffect.emit(
                     DiaryFeedbackSideEffect.ShowErrorDialog,
                 )
@@ -134,7 +134,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                     showToast("일기가 비공개되었어요!")
                 }
             }.onLogFailure {
-                _uiState.update { UiState.Failure }
+                _uiState.update { UiState.Failure() }
                 _sideEffect.emit(
                     DiaryFeedbackSideEffect.ShowErrorDialog,
                 )

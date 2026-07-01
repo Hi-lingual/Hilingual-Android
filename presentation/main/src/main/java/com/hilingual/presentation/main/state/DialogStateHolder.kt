@@ -22,14 +22,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.hilingual.core.common.trigger.DialogState
+import com.hilingual.core.common.trigger.DialogType
 
 @Stable
 internal class DialogStateHolder {
     var dialogState by mutableStateOf(DialogState())
         private set
 
-    fun showDialog(onClick: () -> Unit) {
-        dialogState = DialogState(isVisible = true, onClickAction = onClick)
+    fun showDialog(
+        type: DialogType,
+        onClick: () -> Unit,
+    ) {
+        dialogState = DialogState(isVisible = true, type = type, onClickAction = onClick)
     }
 
     fun dismissDialog() {

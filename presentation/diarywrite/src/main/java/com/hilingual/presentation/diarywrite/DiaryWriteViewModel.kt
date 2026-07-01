@@ -185,7 +185,7 @@ internal class DiaryWriteViewModel @Inject constructor(
                 diaryLocalRepository.clearDiaryTemp(uiState.value.selectedDate)
                 _feedbackUiState.update { UiState.Success(response.diaryId) }
             }.onLogFailure { throwable ->
-                _feedbackUiState.update { UiState.Failure }
+                _feedbackUiState.update { UiState.Failure() }
             }
         }
     }
