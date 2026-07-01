@@ -30,7 +30,7 @@ internal class DialogStateHolder {
         private set
 
     fun showDialog(
-        type: DialogType,
+        type: DialogType = DialogType.ERROR,
         onClick: () -> Unit,
     ) {
         dialogState = DialogState(isVisible = true, type = type, onClickAction = onClick)
