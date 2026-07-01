@@ -35,8 +35,8 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 @Composable
 fun HilingualLoadErrorView(
     onActionClick: () -> Unit,
-    isBackVisible: Boolean = false,
     modifier: Modifier = Modifier,
+    isBackVisible: Boolean = false,
     onBackClick: () -> Unit = {},
     handleAction: LoadErrorHandleAction = LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
 ) {
