@@ -23,7 +23,6 @@ import com.hilingual.presentation.home.model.TodayTopicUiModel
 import com.hilingual.presentation.home.model.UserProfileUiModel
 import com.hilingual.presentation.home.type.DiaryCardState
 import java.time.LocalDate
-import java.time.YearMonth
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -146,7 +145,6 @@ data class HomeDiaryUiState(
         }
 
         val pastState = when {
-            YearMonth.from(selectedDate) != YearMonth.now() -> DiaryCardState.PAST
             recoveryTickets > 0 -> DiaryCardState.RECOVERABLE
             else -> DiaryCardState.RECOVERY_EXHAUSTED
         }
