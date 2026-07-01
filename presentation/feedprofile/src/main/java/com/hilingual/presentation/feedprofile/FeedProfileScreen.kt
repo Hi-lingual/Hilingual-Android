@@ -58,6 +58,7 @@ import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
@@ -109,6 +110,8 @@ internal fun FeedProfileRoute(
         )
         viewModel.loadFeedProfile()
     }
+
+    RetryOnReconnect(onRetry = viewModel::loadFeedProfile)
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {

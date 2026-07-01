@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.subScreenPadding
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.notification.main.component.NotificationTapRow
 import com.hilingual.presentation.notification.main.component.NotificationTopAppBar
@@ -54,6 +55,8 @@ internal fun NotificationRoute(
     viewModel: NotificationViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    RetryOnReconnect(onRetry = viewModel::loadCurrentTab)
 
     NotificationScreen(
         uiState = uiState,

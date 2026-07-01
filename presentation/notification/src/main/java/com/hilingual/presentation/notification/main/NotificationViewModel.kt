@@ -36,12 +36,19 @@ internal class NotificationViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(NotificationUiState())
     val uiState = _uiState.asStateFlow()
 
+    private var currentTab = NotificationTab.FEED
+
     fun onTabSelected(tab: NotificationTab) {
+        currentTab = tab
         loadTab(tab = tab, isUserRefresh = false)
     }
 
     fun onUserRefresh(tab: NotificationTab) {
         loadTab(tab = tab, isUserRefresh = true)
+    }
+
+    fun loadCurrentTab() {
+        loadTab(tab = currentTab, isUserRefresh = false)
     }
 
     private fun loadTab(tab: NotificationTab, isUserRefresh: Boolean) {

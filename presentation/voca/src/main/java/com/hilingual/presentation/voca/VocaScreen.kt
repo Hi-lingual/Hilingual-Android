@@ -54,6 +54,7 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.pulltorefresh.HilingualPullToRefreshBox
@@ -91,6 +92,8 @@ internal fun VocaRoute(
     LaunchedEffect(Unit) {
         tracker.logEvent(trigger = TriggerType.VIEW, page = VOCABULARY, event = "page")
     }
+
+    RetryOnReconnect(onRetry = viewModel::fetchInitialData)
 
     LaunchedEffect(uiState.vocaItemDetail) {
         if (uiState.vocaItemDetail is UiState.Success) {

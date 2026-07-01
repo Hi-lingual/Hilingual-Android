@@ -65,6 +65,7 @@ import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.DialogState
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -184,6 +185,8 @@ internal fun HomeRoute(
         viewModel.loadInitialData()
         tracker.logEvent(trigger = TriggerType.VIEW, page = HOME, event = "page")
     }
+
+    RetryOnReconnect(onRetry = viewModel::loadInitialData)
 
     if (ENABLE_PUSH_NOTIFICATION) {
         CheckNotificationPermission(

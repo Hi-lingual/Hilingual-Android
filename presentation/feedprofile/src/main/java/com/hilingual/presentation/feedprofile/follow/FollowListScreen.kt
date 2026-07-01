@@ -36,6 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -150,6 +151,8 @@ private fun FollowListScreen(
                     listState = followingListState,
                 )
             }
+
+            RetryOnReconnect(onRetry = { onTabRefresh(pageState.tabType) })
 
             when (pageState.followState) {
                 is UiState.Loading -> HilingualLoadingIndicator()

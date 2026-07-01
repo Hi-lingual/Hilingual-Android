@@ -59,7 +59,7 @@ internal class NotificationSettingViewModel @Inject constructor(
         observeFeedToggle()
     }
 
-    private fun getNotificationSettings() {
+    fun getNotificationSettings() {
         viewModelScope.launch {
             _uiState.update { UiState.Loading }
             userRepository.getNotificationSettings()

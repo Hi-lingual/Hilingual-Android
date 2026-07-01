@@ -103,7 +103,7 @@ constructor(
         return false
     }
 
-    private fun fetchInitialData() {
+    fun fetchInitialData() {
         viewModelScope.launch {
             _uiState.update { it.copy(vocaGroupList = UiState.Loading) }
             loadVocaData()

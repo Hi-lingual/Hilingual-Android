@@ -53,6 +53,7 @@ import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -85,6 +86,8 @@ internal fun MyPageRoute(
             else -> {}
         }
     }
+
+    RetryOnReconnect(onRetry = viewModel::getProfileInfo)
 
     when (val state = uiState) {
         is UiState.Success -> {

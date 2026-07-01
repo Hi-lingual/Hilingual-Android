@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
@@ -37,6 +38,8 @@ internal fun NotificationDetailRoute(
     viewModel: NotificationDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    RetryOnReconnect(onRetry = viewModel::getNotificationDetail)
 
     NotificationDetailScreen(
         paddingValues = paddingValues,

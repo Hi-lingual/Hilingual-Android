@@ -65,7 +65,7 @@ internal class FeedDiaryViewModel @Inject constructor(
         loadInitialData()
     }
 
-    private fun loadInitialData() {
+    fun loadInitialData() {
         viewModelScope.launch {
             val profileResult = feedRepository.getFeedDiaryProfile(diaryId)
 

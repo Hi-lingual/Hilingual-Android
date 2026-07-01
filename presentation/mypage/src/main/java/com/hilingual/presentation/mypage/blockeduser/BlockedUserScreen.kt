@@ -47,6 +47,7 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -75,6 +76,8 @@ internal fun BlockedUserRoute(
     LaunchedEffect(Unit) {
         viewModel.getBlockList()
     }
+
+    RetryOnReconnect(onRetry = viewModel::getBlockList)
 
     when (val state = uiState.blockedUserList) {
         is UiState.Success -> {

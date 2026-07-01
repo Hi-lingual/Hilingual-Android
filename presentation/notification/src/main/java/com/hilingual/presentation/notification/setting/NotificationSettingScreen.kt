@@ -37,6 +37,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -83,6 +84,8 @@ internal fun NotificationSettingRoute(
         }
         context.startActivity(intent)
     }
+
+    RetryOnReconnect(onRetry = viewModel::getNotificationSettings)
 
     when (val state = uiState) {
         is UiState.Loading -> {
