@@ -244,6 +244,8 @@ internal fun DiaryWriteRoute(
     }
 }
 
+private const val MIN_DIARY_FEEDBACK_REQUEST_LENGTH = 10
+
 @Composable
 private fun DiaryWriteScreen(
     paddingValues: PaddingValues,
@@ -275,6 +277,8 @@ private fun DiaryWriteScreen(
 
     var dropdownClickCount by remember { mutableIntStateOf(0) }
     var textFieldFocusedTime by remember { mutableLongStateOf(0L) }
+
+    val isFeedbackRequestEnabled = diaryText.length >= MIN_DIARY_FEEDBACK_REQUEST_LENGTH
 
     BackHandler {
         cancelDiaryWrite(
@@ -489,19 +493,20 @@ private fun DiaryWriteScreen(
                         },
                     ),
                 text = "피드백 요청하기",
-                enableProvider = { diaryText.length >= 10 },
+                enableProvider = { isFeedbackRequestEnabled },
                 onClick = onDiaryFeedbackRequestButtonClick,
             )
         }
 
-        LaunchedEffect(Unit) {
+        LaunchedEffect(isFeedbackRequestEnabled, isTextFieldFocused) {
+            if (isFeedbackRequestEnabled || isTextFieldFocused) {
+                balloonState.dismiss()
+                return@LaunchedEffect
+            }
+
             balloonState.showAlignTop()
             delay(5000)
             balloonState.dismiss()
-        }
-
-        LaunchedEffect(isTextFieldFocused) {
-            if (isTextFieldFocused) balloonState.dismiss()
         }
     }
 }
