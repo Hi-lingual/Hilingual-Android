@@ -72,7 +72,7 @@ firebaseCrashlyticsPlugin = "3.0.7"
 mlkitTextRecognition = "16.0.1"
 coroutinesPlayServices = "1.11.0"
 
-uiautomator = "2.3.0"
+uiautomator = "2.4.0"
 benchmarkMacroJunit4 = "1.4.1"
 baselineprofile = "1.5.0-alpha06"
 profileinstaller = "1.4.1"
