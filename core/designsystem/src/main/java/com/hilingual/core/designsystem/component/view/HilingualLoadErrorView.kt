@@ -27,7 +27,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
-import com.hilingual.core.common.model.LoadErrorActionType
 import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppBar
@@ -127,7 +126,7 @@ sealed class LoadErrorViewAction private constructor(
     )
 
     data class Back(
-        override val onBackClick: () -> Unit
+        override val onBackClick: () -> Unit,
     ) : LoadErrorViewAction(
         handleAction = LoadErrorHandleAction.Back,
         onActionButtonClick = onBackClick,
@@ -174,20 +173,18 @@ private data class LoadErrorContent(
 
 private val LoadErrorViewAction.content: LoadErrorContent
     get() {
-        return when (val currentHandleAction = handleAction) {
-            is LoadErrorHandleAction.Common -> when (currentHandleAction.actionType) {
-                LoadErrorActionType.RETRY -> LoadErrorContent(
-                    title = "일시적인 오류가 발생해\n내용을 불러오지 못했어요.",
-                    description = null,
-                    buttonText = "다시 시도",
-                )
+        return when (handleAction) {
+            LoadErrorHandleAction.Retry -> LoadErrorContent(
+                title = "일시적인 오류가 발생해\n내용을 불러오지 못했어요.",
+                description = null,
+                buttonText = "다시 시도",
+            )
 
-                LoadErrorActionType.BACK -> LoadErrorContent(
-                    title = "정보를 불러오지 못했어요.",
-                    description = "이전 화면으로 돌아가 다시 확인 해주세요.",
-                    buttonText = "이전 페이지로 돌아가기",
-                )
-            }
+            LoadErrorHandleAction.Back -> LoadErrorContent(
+                title = "정보를 불러오지 못했어요.",
+                description = "이전 화면으로 돌아가 다시 확인 해주세요.",
+                buttonText = "이전 페이지로 돌아가기",
+            )
 
             LoadErrorHandleAction.NotFound -> LoadErrorContent(
                 title = "요청한 내용을 찾을 수 없어요",
