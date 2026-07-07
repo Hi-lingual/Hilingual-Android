@@ -46,7 +46,6 @@ fun HilingualLoadErrorView(
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             action.onBackClick?.let { onBackClick ->
