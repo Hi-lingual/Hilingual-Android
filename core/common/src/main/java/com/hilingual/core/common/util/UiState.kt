@@ -27,6 +27,6 @@ sealed interface UiState<out T> {
     ) : UiState<T>
 
     data class Failure(
-        val handleAction: LoadErrorHandleAction? = null,
+        val handleAction: LoadErrorHandleAction,
     ) : UiState<Nothing>
 }

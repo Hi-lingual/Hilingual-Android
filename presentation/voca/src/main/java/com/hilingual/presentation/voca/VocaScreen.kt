@@ -53,7 +53,6 @@ import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
-import com.hilingual.core.common.model.orRetry
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.DialogType
 import com.hilingual.core.common.trigger.LocalDialogTrigger
@@ -126,7 +125,7 @@ internal fun VocaRoute(
     val vocaGroupState = uiState.vocaGroupList
     if (vocaGroupState is UiState.Failure) {
         HilingualLoadErrorView(
-            handleAction = vocaGroupState.handleAction.orRetry(),
+            handleAction = vocaGroupState.handleAction,
             onActionClick = viewModel::fetchInitialData,
             modifier = Modifier.padding(paddingValues),
         )

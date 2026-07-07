@@ -61,7 +61,6 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.HilingualMessage
-import com.hilingual.core.common.model.orRetry
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.DialogState
 import com.hilingual.core.common.trigger.LocalDialogTrigger
@@ -284,7 +283,7 @@ internal fun HomeRoute(
 
         is UiState.Failure -> {
             HilingualLoadErrorView(
-                handleAction = state.handleAction.orRetry(),
+                handleAction = state.handleAction,
                 onActionClick = viewModel::loadInitialData,
                 modifier = Modifier.padding(paddingValues),
             )

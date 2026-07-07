@@ -20,7 +20,3 @@ enum class LoadErrorActionType {
     RETRY,
     BACK,
 }
-
-fun LoadErrorHandleAction?.orRetry(): LoadErrorHandleAction = this ?: LoadErrorHandleAction.Retry
-
-fun LoadErrorHandleAction?.orBack(): LoadErrorHandleAction = this ?: LoadErrorHandleAction.Back

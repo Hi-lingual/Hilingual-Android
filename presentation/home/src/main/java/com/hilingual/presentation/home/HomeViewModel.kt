@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.calendar.model.CalendarStatus
 import com.hilingual.data.calendar.repository.CalendarRepository
@@ -99,7 +100,7 @@ class HomeViewModel @Inject constructor(
             if (userInfoResult.isFailure || calendarResult.isFailure) {
                 userInfoResult.onLogFailure { }
                 calendarResult.onLogFailure { }
-                _uiState.update { UiState.Failure() }
+                _uiState.update { UiState.Failure(LoadErrorHandleAction.Retry) }
                 return@launch
             }
 

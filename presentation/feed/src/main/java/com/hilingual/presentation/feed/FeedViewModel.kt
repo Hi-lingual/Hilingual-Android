@@ -18,6 +18,7 @@ package com.hilingual.presentation.feed
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.feed.repository.FeedRepository
@@ -108,7 +109,7 @@ internal class FeedViewModel @Inject constructor(
                     if (isUserRefresh) {
                         emitErrorDialogSideEffect { getRecommendFeeds(isUserRefresh) }
                     } else {
-                        _uiState.update { it.copy(recommendFeedList = UiState.Failure()) }
+                        _uiState.update { it.copy(recommendFeedList = UiState.Failure(LoadErrorHandleAction.Retry)) }
                     }
                 }
 
@@ -139,7 +140,7 @@ internal class FeedViewModel @Inject constructor(
                     if (isUserRefresh) {
                         emitErrorDialogSideEffect { getFollowingFeeds(isUserRefresh) }
                     } else {
-                        _uiState.update { it.copy(followingFeedList = UiState.Failure()) }
+                        _uiState.update { it.copy(followingFeedList = UiState.Failure(LoadErrorHandleAction.Retry)) }
                     }
                 }
 

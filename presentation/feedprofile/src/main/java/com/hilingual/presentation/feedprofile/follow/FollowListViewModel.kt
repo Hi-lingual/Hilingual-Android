@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.user.model.follow.FollowState
 import com.hilingual.data.user.repository.UserRepository
@@ -100,7 +101,7 @@ internal class FollowListViewModel @Inject constructor(
             updateLoadingState(tabType, UiState.Success(items))
         }.onLogFailure {
             if (shouldShowLoadError) {
-                updateLoadingState(tabType, UiState.Failure())
+                updateLoadingState(tabType, UiState.Failure(LoadErrorHandleAction.Retry))
             } else {
                 _sideEffect.emit(FollowListSideEffect.ShowErrorDialog)
             }

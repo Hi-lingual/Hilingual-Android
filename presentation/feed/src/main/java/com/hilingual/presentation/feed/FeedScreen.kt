@@ -50,7 +50,6 @@ import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.pairwise
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.HilingualMessage
-import com.hilingual.core.common.model.orRetry
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
@@ -123,7 +122,7 @@ internal fun FeedRoute(
     val feedLoadError = uiState.loadErrorState(selectedFeedTab)
     if (feedLoadError is UiState.Failure) {
         HilingualLoadErrorView(
-            handleAction = feedLoadError.handleAction.orRetry(),
+            handleAction = feedLoadError.handleAction,
             onActionClick = { viewModel.loadFeedData(selectedFeedTab) },
             modifier = Modifier.padding(paddingValues),
         )

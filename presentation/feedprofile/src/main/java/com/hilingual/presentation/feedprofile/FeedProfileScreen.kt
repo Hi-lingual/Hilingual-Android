@@ -57,7 +57,6 @@ import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.model.LoadErrorHandleAction
-import com.hilingual.core.common.model.orBack
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
@@ -158,7 +157,7 @@ internal fun FeedProfileRoute(
         }
 
         is UiState.Failure -> {
-            val handleAction = state.handleAction.orBack()
+            val handleAction = state.handleAction
             HilingualLoadErrorView(
                 handleAction = handleAction,
                 isBackVisible = true,

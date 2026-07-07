@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.isHttpNotFound
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.trigger.DialogType
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.model.PhraseBookmarkModel
@@ -127,7 +128,7 @@ constructor(
                 if (isRefreshing) {
                     _uiState.update { it.copy(isRefreshing = false) }
                 }
-                _uiState.update { it.copy(vocaGroupList = UiState.Failure()) }
+                _uiState.update { it.copy(vocaGroupList = UiState.Failure(LoadErrorHandleAction.Retry)) }
                 return@coroutineScope
             }
 

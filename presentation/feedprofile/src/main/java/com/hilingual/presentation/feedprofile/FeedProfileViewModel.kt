@@ -23,6 +23,7 @@ import com.hilingual.core.common.extension.isHttpNotFound
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.toLoadErrorHandleAction
 import com.hilingual.core.common.extension.updateSuccess
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.feed.repository.FeedRepository
@@ -94,7 +95,12 @@ internal class FeedProfileViewModel @Inject constructor(
                         .mapNotNull { it.exceptionOrNull() }
                         .firstOrNull()
 
-                _uiState.update { UiState.Failure(failure?.toLoadErrorHandleAction()) }
+                _uiState.update {
+                    UiState.Failure(
+                        failure?.toLoadErrorHandleAction(LoadErrorHandleAction.Back)
+                            ?: LoadErrorHandleAction.Back,
+                    )
+                }
                 return@launch
             }
 
@@ -106,7 +112,9 @@ internal class FeedProfileViewModel @Inject constructor(
                     onSuccess = { it.diaryList },
                     onFailure = { throwable ->
                         Timber.e(throwable)
-                        _uiState.update { UiState.Failure(throwable.toLoadErrorHandleAction()) }
+                        _uiState.update {
+                            UiState.Failure(throwable.toLoadErrorHandleAction(LoadErrorHandleAction.Back))
+                        }
                         return@launch
                     },
                 )

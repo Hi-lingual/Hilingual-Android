@@ -46,7 +46,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.extension.subScreenPadding
-import com.hilingual.core.common.model.orRetry
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
@@ -91,7 +90,7 @@ internal fun BlockedUserRoute(
 
         is UiState.Failure -> {
             HilingualLoadErrorView(
-                handleAction = state.handleAction.orRetry(),
+                handleAction = state.handleAction,
                 isBackVisible = true,
                 onBackClick = navigateUp,
                 onActionClick = viewModel::getBlockList,
