@@ -64,6 +64,7 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.dialog.report.ReportUserDialog
 import com.hilingual.core.ui.component.topappbar.BackAndMoreTopAppBar
@@ -159,18 +160,21 @@ internal fun FeedProfileRoute(
         is UiState.Failure -> {
             val handleAction = state.handleAction
             HilingualLoadErrorView(
-                handleAction = handleAction,
-                isBackVisible = true,
-                onBackClick = navigateUp,
-                onActionClick = {
-                    if (handleAction is LoadErrorHandleAction.NotFound) {
-                        tracker.logEvent(
-                            trigger = TriggerType.CLICK,
-                            page = Page.FEED,
-                            event = AnalyticsEvent.DATA_NOT_FOUND_GO_BACK,
-                        )
-                    }
-                    navigateUp()
+                action = when (handleAction) {
+                    LoadErrorHandleAction.NotFound -> LoadErrorViewAction.NotFound(
+                        onBackClick = {
+                            tracker.logEvent(
+                                trigger = TriggerType.CLICK,
+                                page = Page.FEED,
+                                event = AnalyticsEvent.DATA_NOT_FOUND_GO_BACK,
+                            )
+                            navigateUp()
+                        },
+                    )
+
+                    else -> LoadErrorViewAction.Back(
+                        onBackClick = navigateUp,
+                    )
                 },
                 modifier = Modifier.padding(paddingValues),
             )

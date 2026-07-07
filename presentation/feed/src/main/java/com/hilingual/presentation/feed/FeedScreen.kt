@@ -57,6 +57,7 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.tabrow.HilingualBasicTabRow
 import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.feed.component.FeedTab
 import com.hilingual.presentation.feed.component.FeedTopAppBar
@@ -122,8 +123,9 @@ internal fun FeedRoute(
     val feedLoadError = uiState.loadErrorState(selectedFeedTab)
     if (feedLoadError is UiState.Failure) {
         HilingualLoadErrorView(
-            handleAction = feedLoadError.handleAction,
-            onActionClick = { viewModel.loadFeedData(selectedFeedTab) },
+            action = LoadErrorViewAction.Retry(
+                onRetryClick = { viewModel.loadFeedData(selectedFeedTab) },
+            ),
             modifier = Modifier.padding(paddingValues),
         )
         return

@@ -56,6 +56,7 @@ import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.TitleLeftAlignedTopAppBar
 import com.hilingual.presentation.mypage.component.LogoutDialog
@@ -107,8 +108,9 @@ internal fun MyPageRoute(
 
         is UiState.Failure -> {
             HilingualLoadErrorView(
-                handleAction = state.handleAction,
-                onActionClick = viewModel::getProfileInfo,
+                action = LoadErrorViewAction.Retry(
+                    onRetryClick = viewModel::getProfileInfo,
+                ),
                 modifier = Modifier.padding(paddingValues),
             )
         }

@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,13 +35,10 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
 fun HilingualLoadErrorView(
-    onActionClick: () -> Unit,
+    action: LoadErrorViewAction,
     modifier: Modifier = Modifier,
-    isBackVisible: Boolean = false,
-    onBackClick: () -> Unit = {},
-    handleAction: LoadErrorHandleAction = LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
 ) {
-    val content = handleAction.content
+    val content = action.content
 
     Box(
         modifier = modifier
@@ -52,7 +50,7 @@ fun HilingualLoadErrorView(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            if (isBackVisible) {
+            action.onBackClick?.let { onBackClick ->
                 HilingualBasicTopAppBar(
                     navigationIcon = {
                         Icon(
@@ -104,13 +102,45 @@ fun HilingualLoadErrorView(
 
                 ActionButton(
                     text = content.buttonText,
-                    onClick = onActionClick,
+                    onClick = action.onActionButtonClick,
                 )
             }
 
             Spacer(Modifier.weight(3f))
         }
     }
+}
+
+@Stable
+sealed class LoadErrorViewAction private constructor(
+    internal val handleAction: LoadErrorHandleAction,
+    internal val onActionButtonClick: () -> Unit,
+    internal open val onBackClick: (() -> Unit)?,
+) {
+    data class Retry(
+        val onRetryClick: () -> Unit,
+        override val onBackClick: (() -> Unit)? = null,
+    ) : LoadErrorViewAction(
+        handleAction = LoadErrorHandleAction.Retry,
+        onActionButtonClick = onRetryClick,
+        onBackClick = onBackClick,
+    )
+
+    data class Back(
+        override val onBackClick: () -> Unit
+    ) : LoadErrorViewAction(
+        handleAction = LoadErrorHandleAction.Back,
+        onActionButtonClick = onBackClick,
+        onBackClick = onBackClick,
+    )
+
+    data class NotFound(
+        override val onBackClick: () -> Unit,
+    ) : LoadErrorViewAction(
+        handleAction = LoadErrorHandleAction.NotFound,
+        onActionButtonClick = onBackClick,
+        onBackClick = onBackClick,
+    )
 }
 
 @Composable
@@ -142,27 +172,29 @@ private data class LoadErrorContent(
     val buttonText: String,
 )
 
-private val LoadErrorHandleAction.content: LoadErrorContent
-    get() = when (this) {
-        is LoadErrorHandleAction.Common -> when (actionType) {
-            LoadErrorActionType.RETRY -> LoadErrorContent(
-                title = "일시적인 오류가 발생해\n내용을 불러오지 못했어요.",
-                description = null,
-                buttonText = "다시 시도",
-            )
+private val LoadErrorViewAction.content: LoadErrorContent
+    get() {
+        return when (val currentHandleAction = handleAction) {
+            is LoadErrorHandleAction.Common -> when (currentHandleAction.actionType) {
+                LoadErrorActionType.RETRY -> LoadErrorContent(
+                    title = "일시적인 오류가 발생해\n내용을 불러오지 못했어요.",
+                    description = null,
+                    buttonText = "다시 시도",
+                )
 
-            LoadErrorActionType.BACK -> LoadErrorContent(
-                title = "정보를 불러오지 못했어요.",
-                description = "이전 화면으로 돌아가 다시 확인 해주세요.",
+                LoadErrorActionType.BACK -> LoadErrorContent(
+                    title = "정보를 불러오지 못했어요.",
+                    description = "이전 화면으로 돌아가 다시 확인 해주세요.",
+                    buttonText = "이전 페이지로 돌아가기",
+                )
+            }
+
+            LoadErrorHandleAction.NotFound -> LoadErrorContent(
+                title = "요청한 내용을 찾을 수 없어요",
+                description = "삭제되었거나 더 이상\n제공되지 않는 내용이에요",
                 buttonText = "이전 페이지로 돌아가기",
             )
         }
-
-        LoadErrorHandleAction.NotFound -> LoadErrorContent(
-            title = "요청한 내용을 찾을 수 없어요",
-            description = "삭제되었거나 더 이상\n제공되지 않는 내용이에요",
-            buttonText = "이전 페이지로 돌아가기",
-        )
     }
 
 @Preview(name = "Retry")
@@ -170,10 +202,9 @@ private val LoadErrorHandleAction.content: LoadErrorContent
 private fun HilingualLoadErrorRetryViewPreview() {
     HilingualTheme {
         HilingualLoadErrorView(
-            isBackVisible = false,
-            onBackClick = {},
-            handleAction = LoadErrorHandleAction.Common(LoadErrorActionType.RETRY),
-            onActionClick = {},
+            action = LoadErrorViewAction.Retry(
+                onRetryClick = {},
+            ),
         )
     }
 }
@@ -183,10 +214,9 @@ private fun HilingualLoadErrorRetryViewPreview() {
 private fun HilingualLoadErrorBackViewPreview() {
     HilingualTheme {
         HilingualLoadErrorView(
-            isBackVisible = true,
-            onBackClick = {},
-            handleAction = LoadErrorHandleAction.Common(LoadErrorActionType.BACK),
-            onActionClick = {},
+            action = LoadErrorViewAction.Back(
+                onBackClick = {},
+            ),
         )
     }
 }
@@ -196,10 +226,9 @@ private fun HilingualLoadErrorBackViewPreview() {
 private fun HilingualLoadErrorNotFoundViewPreview() {
     HilingualTheme {
         HilingualLoadErrorView(
-            isBackVisible = true,
-            onBackClick = {},
-            handleAction = LoadErrorHandleAction.NotFound,
-            onActionClick = {},
+            action = LoadErrorViewAction.NotFound(
+                onBackClick = {},
+            ),
         )
     }
 }

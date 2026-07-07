@@ -68,6 +68,7 @@ import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
@@ -283,8 +284,9 @@ internal fun HomeRoute(
 
         is UiState.Failure -> {
             HilingualLoadErrorView(
-                handleAction = state.handleAction,
-                onActionClick = viewModel::loadInitialData,
+                action = LoadErrorViewAction.Retry(
+                    onRetryClick = viewModel::loadInitialData,
+                ),
                 modifier = Modifier.padding(paddingValues),
             )
         }

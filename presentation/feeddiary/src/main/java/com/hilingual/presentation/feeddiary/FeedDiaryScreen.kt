@@ -59,6 +59,7 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.bottomsheet.BlockBottomSheet
 import com.hilingual.core.ui.component.dialog.diary.DiaryUnpublishDialog
@@ -160,18 +161,21 @@ internal fun FeedDiaryRoute(
         is UiState.Failure -> {
             val handleAction = state.handleAction
             HilingualLoadErrorView(
-                handleAction = handleAction,
-                isBackVisible = true,
-                onBackClick = navigateUp,
-                onActionClick = {
-                    if (handleAction is LoadErrorHandleAction.NotFound) {
-                        tracker.logEvent(
-                            trigger = TriggerType.CLICK,
-                            page = Page.POSTED_DIARY,
-                            event = AnalyticsEvent.DATA_NOT_FOUND_GO_BACK,
-                        )
-                    }
-                    navigateUp()
+                action = when (handleAction) {
+                    LoadErrorHandleAction.NotFound -> LoadErrorViewAction.NotFound(
+                        onBackClick = {
+                            tracker.logEvent(
+                                trigger = TriggerType.CLICK,
+                                page = Page.POSTED_DIARY,
+                                event = AnalyticsEvent.DATA_NOT_FOUND_GO_BACK,
+                            )
+                            navigateUp()
+                        },
+                    )
+
+                    else -> LoadErrorViewAction.Back(
+                        onBackClick = navigateUp,
+                    )
                 },
                 modifier = Modifier.padding(paddingValues),
             )
