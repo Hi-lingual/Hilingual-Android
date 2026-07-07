@@ -41,7 +41,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hilingual.core.common.analytics.AnalyticsEvent
 import com.hilingual.core.common.analytics.FakeTracker
 import com.hilingual.core.common.analytics.Page
 import com.hilingual.core.common.analytics.Tracker
@@ -163,14 +162,7 @@ internal fun FeedDiaryRoute(
             HilingualLoadErrorView(
                 action = when (handleAction) {
                     LoadErrorHandleAction.NotFound -> LoadErrorViewAction.NotFound(
-                        onBackClick = {
-                            tracker.logEvent(
-                                trigger = TriggerType.CLICK,
-                                page = Page.POSTED_DIARY,
-                                event = AnalyticsEvent.DATA_NOT_FOUND_GO_BACK,
-                            )
-                            navigateUp()
-                        },
+                        onBackClick = navigateUp,
                     )
 
                     else -> LoadErrorViewAction.Back(

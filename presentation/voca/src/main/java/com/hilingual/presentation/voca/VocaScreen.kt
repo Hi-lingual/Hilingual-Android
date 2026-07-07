@@ -47,14 +47,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hilingual.core.common.analytics.AnalyticsEvent
 import com.hilingual.core.common.analytics.Page.VOCABULARY
 import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.provider.LocalTracker
-import com.hilingual.core.common.trigger.DialogType
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -109,13 +107,6 @@ internal fun VocaRoute(
                 dialogTrigger.show(
                     type = it.dialogType,
                     onClick = {
-                        if (it.dialogType == DialogType.NOT_FOUND) {
-                            tracker.logEvent(
-                                trigger = TriggerType.CLICK,
-                                page = VOCABULARY,
-                                event = AnalyticsEvent.DATA_NOT_FOUND_GO_BACK,
-                            )
-                        }
                         it.onRetry()
                     },
                 )

@@ -48,7 +48,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hilingual.core.common.analytics.AnalyticsEvent
 import com.hilingual.core.common.analytics.Page
 import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.constant.UrlConstant
@@ -162,14 +161,7 @@ internal fun FeedProfileRoute(
             HilingualLoadErrorView(
                 action = when (handleAction) {
                     LoadErrorHandleAction.NotFound -> LoadErrorViewAction.NotFound(
-                        onBackClick = {
-                            tracker.logEvent(
-                                trigger = TriggerType.CLICK,
-                                page = Page.FEED,
-                                event = AnalyticsEvent.DATA_NOT_FOUND_GO_BACK,
-                            )
-                            navigateUp()
-                        },
+                        onBackClick = navigateUp,
                     )
 
                     else -> LoadErrorViewAction.Back(
