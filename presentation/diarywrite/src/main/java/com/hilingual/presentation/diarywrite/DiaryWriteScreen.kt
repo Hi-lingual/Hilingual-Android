@@ -228,6 +228,10 @@ internal fun DiaryWriteRoute(
         }
 
         is UiState.Failure -> {
+            BackHandler {
+                viewModel.resetFeedbackStateToWriting()
+            }
+
             DiaryFailureScreen(
                 paddingValues = paddingValues,
                 onBackClick = viewModel::resetFeedbackStateToWriting,
