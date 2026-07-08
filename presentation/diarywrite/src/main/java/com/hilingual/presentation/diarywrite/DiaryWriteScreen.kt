@@ -129,8 +129,8 @@ internal fun DiaryWriteRoute(
     }
 
     var diaryTextImageUri by remember { mutableStateOf<Uri?>(null) }
-
     var diaryTextImageFile by remember { mutableStateOf<File?>(null) }
+    var isFeedbackRequestClickPending by remember { mutableStateOf(false) }
 
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture(),
@@ -172,6 +172,12 @@ internal fun DiaryWriteRoute(
         tracker.logEvent(trigger = TriggerType.VIEW, page = WRITE_DIARY, event = "page")
     }
 
+    LaunchedEffect(feedbackUiState) {
+        if (feedbackUiState !is UiState.Loading) {
+            isFeedbackRequestClickPending = false
+        }
+    }
+
     when (val feedbackState = feedbackUiState) {
         is UiState.Empty -> {
             DiaryWriteScreen(
@@ -196,6 +202,9 @@ internal fun DiaryWriteRoute(
                     galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 },
                 onDiaryFeedbackRequestButtonClick = {
+                    if (isFeedbackRequestClickPending) return@DiaryWriteScreen
+                    isFeedbackRequestClickPending = true
+
                     tracker.logEvent(
                         trigger = TriggerType.CLICK,
                         page = WRITE_DIARY,
@@ -236,6 +245,9 @@ internal fun DiaryWriteRoute(
                 paddingValues = paddingValues,
                 onBackClick = viewModel::resetFeedbackStateToWriting,
                 onRequestAgainButtonClick = {
+                    if (isFeedbackRequestClickPending) return@DiaryFailureScreen
+                    isFeedbackRequestClickPending = true
+
                     tracker.logEvent(
                         trigger = TriggerType.CLICK,
                         page = AI_FEEDBACK,
