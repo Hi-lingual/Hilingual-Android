@@ -90,6 +90,10 @@ internal class DiaryWriteViewModel @Inject constructor(
         _uiState.update { it.copy(diaryImageUri = newImageUri) }
     }
 
+    fun resetFeedbackStateToWriting() {
+        _feedbackUiState.update { UiState.Empty }
+    }
+
     private fun getTopic(date: String) {
         viewModelScope.launch {
             calendarRepository.getTopic(date.toLocalDateOrNull() ?: return@launch)
@@ -184,7 +188,7 @@ internal class DiaryWriteViewModel @Inject constructor(
             result.onSuccess { response ->
                 diaryLocalRepository.clearDiaryTemp(uiState.value.selectedDate)
                 _feedbackUiState.update { UiState.Success(response.diaryId) }
-            }.onLogFailure { throwable ->
+            }.onLogFailure {
                 _feedbackUiState.update { UiState.Failure }
             }
         }
