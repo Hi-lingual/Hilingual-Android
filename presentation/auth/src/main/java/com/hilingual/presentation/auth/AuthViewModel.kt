@@ -65,7 +65,6 @@ class AuthViewModel @Inject constructor(
                 .onLogFailure {
                     showGoogleLoginErrorDialog(context)
                 }
-                .onLogFailure { }
 
             setIsLoading(false)
         }
