@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.common.util.toLocalDateOrNull
 import com.hilingual.core.navigation.DiaryWriteMode
@@ -188,8 +189,8 @@ internal class DiaryWriteViewModel @Inject constructor(
             result.onSuccess { response ->
                 diaryLocalRepository.clearDiaryTemp(uiState.value.selectedDate)
                 _feedbackUiState.update { UiState.Success(response.diaryId) }
-            }.onLogFailure {
-                _feedbackUiState.update { UiState.Failure }
+            }.onLogFailure { throwable ->
+                _feedbackUiState.update { UiState.Failure(LoadErrorHandleAction.Retry) }
             }
         }
     }

@@ -20,7 +20,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.extension.toLoadErrorHandleAction
 import com.hilingual.core.common.extension.updateSuccess
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.common.util.toKoreanFullDate
@@ -65,12 +67,17 @@ internal class FeedDiaryViewModel @Inject constructor(
         loadInitialData()
     }
 
-    private fun loadInitialData() {
+    fun loadInitialData() {
         viewModelScope.launch {
+            _uiState.update { UiState.Loading }
             val profileResult = feedRepository.getFeedDiaryProfile(diaryId)
 
             if (profileResult.isFailure) {
-                _sideEffect.emit(FeedDiarySideEffect.ShowErrorDialog)
+                profileResult.onLogFailure { throwable ->
+                    _uiState.update {
+                        UiState.Failure(throwable.toLoadErrorHandleAction(LoadErrorHandleAction.Back))
+                    }
+                }
                 return@launch
             }
             val profileInfo = profileResult.getOrThrow()
@@ -106,8 +113,10 @@ internal class FeedDiaryViewModel @Inject constructor(
                 }
             }.onSuccess { combinedState ->
                 _uiState.update { UiState.Success(combinedState) }
-            }.onLogFailure {
-                _sideEffect.emit(FeedDiarySideEffect.ShowErrorDialog)
+            }.onLogFailure { throwable ->
+                _uiState.update {
+                    UiState.Failure(throwable.toLoadErrorHandleAction(LoadErrorHandleAction.Back))
+                }
             }
         }
     }

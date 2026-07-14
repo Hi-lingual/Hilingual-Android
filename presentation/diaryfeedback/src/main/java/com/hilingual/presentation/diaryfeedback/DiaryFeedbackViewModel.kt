@@ -20,7 +20,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.extension.toLoadErrorHandleAction
 import com.hilingual.core.common.extension.updateSuccess
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.common.util.toKoreanFullDate
@@ -59,6 +61,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
 
     fun loadInitialData() {
         viewModelScope.launch {
+            _uiState.update { UiState.Loading }
             suspendRunCatching {
                 requestDiaryFeedbackData()
             }.onSuccess { newUiState ->
@@ -66,11 +69,10 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                 if (!newUiState.isAdWatched) {
                     _sideEffect.emit(DiaryFeedbackSideEffect.ShowInterstitialAd)
                 }
-            }.onLogFailure {
-                _uiState.update { UiState.Failure }
-                _sideEffect.emit(
-                    DiaryFeedbackSideEffect.ShowErrorDialog,
-                )
+            }.onLogFailure { throwable ->
+                _uiState.update {
+                    UiState.Failure(throwable.toLoadErrorHandleAction(LoadErrorHandleAction.Retry))
+                }
             }
         }
     }
@@ -134,7 +136,6 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                     showToast("일기가 비공개되었어요!")
                 }
             }.onLogFailure {
-                _uiState.update { UiState.Failure }
                 _sideEffect.emit(
                     DiaryFeedbackSideEffect.ShowErrorDialog,
                 )

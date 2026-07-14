@@ -18,6 +18,7 @@ package com.hilingual.presentation.mypage.blockeduser
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,6 +45,7 @@ internal class BlockedUserViewModel @Inject constructor(
 
     fun getBlockList() {
         viewModelScope.launch {
+            _uiState.update { it.copy(blockedUserList = UiState.Loading) }
             userRepository.getBlockList()
                 .onSuccess { blockList ->
                     val blockUiModel = blockList.blockList.map { user ->
@@ -57,7 +59,7 @@ internal class BlockedUserViewModel @Inject constructor(
                     _uiState.update { it.copy(blockedUserList = UiState.Success(data = blockUiModel)) }
                 }
                 .onLogFailure {
-                    _sideEffect.emit(BlockedUserSideEffect.ShowErrorDialog)
+                    _uiState.update { it.copy(blockedUserList = UiState.Failure(LoadErrorHandleAction.Retry)) }
                 }
         }
     }

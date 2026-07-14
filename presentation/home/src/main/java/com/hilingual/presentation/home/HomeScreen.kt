@@ -67,6 +67,8 @@ import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
@@ -277,6 +279,15 @@ internal fun HomeRoute(
                 onPublishClick = viewModel::publishDiary,
                 onUnpublishClick = viewModel::unpublishDiary,
                 tracker = tracker,
+            )
+        }
+
+        is UiState.Failure -> {
+            HilingualLoadErrorView(
+                action = LoadErrorViewAction.Retry(
+                    onRetryClick = viewModel::loadInitialData,
+                ),
+                modifier = Modifier.padding(paddingValues),
             )
         }
 
