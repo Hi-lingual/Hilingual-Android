@@ -88,10 +88,20 @@ class AuthViewModel @Inject constructor(
             updateIsSplashOnboardingCompleted()
             putDeviceInfo()
             setUserIdentity(userId)
+            patchFcmToken()
             _navigationEvent.tryEmit(AuthSideEffect.NavigateToHome)
         } else {
             _navigationEvent.tryEmit(AuthSideEffect.NavigateToSignUp)
         }
+    }
+
+    private suspend fun patchFcmToken() {
+        userRepository.getCurrentFcmToken()
+            .onSuccess { token ->
+                userRepository.patchFcmToken(fcmToken = token)
+                    .onLogFailure { }
+            }
+            .onLogFailure { }
     }
 
     private suspend fun putDeviceInfo(): Boolean =
