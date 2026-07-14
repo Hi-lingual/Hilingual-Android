@@ -37,6 +37,20 @@ internal data class FeedUiState(
     val followingFeedList: UiState<ImmutableList<FeedItemUiModel>> = UiState.Loading,
     val hasFollowing: Boolean = true,
 ) {
+    fun loadErrorState(selectedTab: FeedTab): UiState<Unit> {
+        val currentFeedList = when (selectedTab) {
+            FeedTab.RECOMMEND -> recommendFeedList
+            FeedTab.FOLLOWING -> followingFeedList
+        }
+
+        return when (currentFeedList) {
+            UiState.Empty -> UiState.Empty
+            UiState.Loading -> UiState.Loading
+            is UiState.Success -> UiState.Success(Unit)
+            is UiState.Failure -> UiState.Failure(currentFeedList.handleAction)
+        }
+    }
+
     companion object {
         val Fake = FeedUiState(
             recommendFeedList = UiState.Success(

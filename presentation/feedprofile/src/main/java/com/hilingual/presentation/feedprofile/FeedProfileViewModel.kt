@@ -19,8 +19,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.hilingual.core.common.extension.isHttpNotFound
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.extension.toLoadErrorHandleAction
 import com.hilingual.core.common.extension.updateSuccess
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.feed.repository.FeedRepository
@@ -75,6 +78,7 @@ internal class FeedProfileViewModel @Inject constructor(
 
     fun loadFeedProfile() {
         viewModelScope.launch {
+            _uiState.update { UiState.Loading }
             val feedProfileDeferred = async { feedRepository.getFeedProfile(targetUserId) }
             val sharedDiariesDeferred = async { feedRepository.getSharedDiaries(targetUserId) }
 
@@ -82,13 +86,21 @@ internal class FeedProfileViewModel @Inject constructor(
             val sharedDiariesResult = sharedDiariesDeferred.await()
 
             if (feedProfileResult.isFailure || sharedDiariesResult.isFailure) {
-                feedProfileResult.onLogFailure {
-                    _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+                feedProfileResult.onLogFailure { }
+                sharedDiariesResult.onLogFailure { }
+                val failure = listOf(feedProfileResult, sharedDiariesResult)
+                    .mapNotNull { it.exceptionOrNull() }
+                    .firstOrNull { it.isHttpNotFound() }
+                    ?: listOf(feedProfileResult, sharedDiariesResult)
+                        .mapNotNull { it.exceptionOrNull() }
+                        .firstOrNull()
+
+                _uiState.update {
+                    UiState.Failure(
+                        failure?.toLoadErrorHandleAction(LoadErrorHandleAction.Back)
+                            ?: LoadErrorHandleAction.Back,
+                    )
                 }
-                sharedDiariesResult.onLogFailure {
-                    _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
-                }
-                _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
                 return@launch
             }
 
@@ -100,7 +112,9 @@ internal class FeedProfileViewModel @Inject constructor(
                     onSuccess = { it.diaryList },
                     onFailure = { throwable ->
                         Timber.e(throwable)
-                        _sideEffect.emit(FeedProfileSideEffect.ShowErrorDialog)
+                        _uiState.update {
+                            UiState.Failure(throwable.toLoadErrorHandleAction(LoadErrorHandleAction.Back))
+                        }
                         return@launch
                     },
                 )

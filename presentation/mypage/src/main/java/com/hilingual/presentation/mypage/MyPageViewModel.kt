@@ -21,6 +21,7 @@ import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.analytics.UserIdentityTracker
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.ui.model.user.NicknameLocalValidation
 import com.hilingual.core.ui.model.user.NicknameLocalValidationReason
@@ -66,6 +67,7 @@ internal class MyPageViewModel @Inject constructor(
 
     fun getProfileInfo() {
         viewModelScope.launch {
+            _uiState.update { UiState.Loading }
             userRepository.getUserLoginInfo()
                 .onSuccess { userInfo ->
                     _uiState.update {
@@ -80,7 +82,7 @@ internal class MyPageViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    _sideEffect.emit(MyPageSideEffect.ShowErrorDialog(onRetry = ::getProfileInfo))
+                    _uiState.update { UiState.Failure(LoadErrorHandleAction.Retry) }
                 }
         }
     }

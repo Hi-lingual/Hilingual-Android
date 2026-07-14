@@ -20,24 +20,33 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 
+enum class DialogType {
+    ERROR,
+    NOT_FOUND,
+}
+
 @Immutable
 data class DialogState(
     val isVisible: Boolean = false,
+    val type: DialogType = DialogType.ERROR,
     val onClickAction: () -> Unit = {},
 )
 
 @Stable
 class DialogTrigger(
-    private val onShow: (() -> Unit) -> Unit,
+    private val onShow: (DialogType, () -> Unit) -> Unit,
 ) {
-    fun show(onClick: () -> Unit) {
-        onShow(onClick)
+    fun show(
+        type: DialogType = DialogType.ERROR,
+        onClick: () -> Unit,
+    ) {
+        onShow(type, onClick)
     }
 }
 
 @Composable
 fun rememberDialogTrigger(
-    show: (() -> Unit) -> Unit,
+    show: (DialogType, () -> Unit) -> Unit,
 ): DialogTrigger = remember(show) {
     DialogTrigger(show)
 }
