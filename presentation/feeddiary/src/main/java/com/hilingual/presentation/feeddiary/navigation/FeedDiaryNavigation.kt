@@ -20,10 +20,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.angrypodo.wisp.annotations.Wisp
 import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.feeddiary.FeedDiaryRoute
 import kotlinx.serialization.Serializable
 
+@Wisp("diarydetail")
 @Serializable
 data class FeedDiary(
     val diaryId: Long,

@@ -27,6 +27,4 @@ dependencies {
     implementation(projects.core.ads)
     implementation(projects.data.diary)
     implementation(projects.data.calendar)
-    implementation(libs.wisp.runtime)
-    ksp(libs.wisp.processor)
 }

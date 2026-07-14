@@ -15,7 +15,6 @@
  */
 package com.hilingual.presentation.diaryfeedback.navigation
 
-import com.angrypodo.wisp.annotations.Wisp
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,7 +27,6 @@ import com.hilingual.presentation.diaryfeedback.DiaryFeedbackRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
-@Wisp("diarydetail")
 data class DiaryFeedback(
     val diaryId: Long,
 ) : Route
