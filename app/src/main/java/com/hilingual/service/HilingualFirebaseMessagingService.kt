@@ -59,6 +59,10 @@ class HilingualFirebaseMessagingService : FirebaseMessagingService() {
         super.onNewToken(token)
         Timber.d("New FCM Token: $token")
         CoroutineScope(Dispatchers.IO).launch {
+            val isLoggedIn = userRepository.getRegisterStatus()
+            if (!isLoggedIn) {
+                return@launch
+            }
             userRepository.patchFcmToken(fcmToken = token)
         }
     }
