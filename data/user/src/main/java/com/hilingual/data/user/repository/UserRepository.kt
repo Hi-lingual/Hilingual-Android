@@ -94,5 +94,4 @@ interface UserRepository {
     suspend fun patchFcmToken(fcmToken: String): Result<Unit>
 
     suspend fun getCurrentFcmToken(): Result<String>
-
 }

@@ -114,7 +114,7 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.messaging)
 
-    //deeplink
+    // deeplink
     implementation(libs.wisp.runtime)
     ksp(libs.wisp.processor)
 }

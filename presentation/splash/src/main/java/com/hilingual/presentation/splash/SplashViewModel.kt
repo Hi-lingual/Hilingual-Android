@@ -40,7 +40,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @HiltViewModel
 internal class SplashViewModel @Inject constructor(
@@ -138,12 +137,9 @@ internal class SplashViewModel @Inject constructor(
     private suspend fun patchFcmToken() {
         userRepository.getCurrentFcmToken()
             .onSuccess { token ->
-                Timber.tag("FCM_TOKEN").d("현재 FCM Token: $token")
                 userRepository.patchFcmToken(fcmToken = token)
-                    .onSuccess { Timber.tag("FCM_TOKEN").d("서버 등록 성공") }
-                    .onFailure { Timber.tag("FCM_TOKEN").e("서버 등록 실패: ${it.message}") }
             }
-            .onFailure { Timber.tag("FCM_TOKEN").e("토큰 가져오기 실패: ${it.message}") }
+            .onLogFailure { }
     }
 
     fun onUpdateConfirm() {

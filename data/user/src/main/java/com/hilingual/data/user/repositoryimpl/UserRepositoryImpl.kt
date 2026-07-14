@@ -17,7 +17,6 @@ package com.hilingual.data.user.repositoryimpl
 
 import android.net.Uri
 import com.google.firebase.messaging.FirebaseMessaging
-import kotlinx.coroutines.tasks.await
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.common.util.toIsoDate
@@ -42,6 +41,7 @@ import com.hilingual.data.user.model.user.toModel
 import com.hilingual.data.user.repository.UserRepository
 import java.time.LocalDate
 import javax.inject.Inject
+import kotlinx.coroutines.tasks.await
 
 internal class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,

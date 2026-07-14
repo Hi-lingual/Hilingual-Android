@@ -8,5 +8,5 @@ data class PatchFcmTokenRequestDto(
     @SerialName("uuid")
     val uuid: String,
     @SerialName("fcmToken")
-    val fcmToken: String
+    val fcmToken: String,
 )

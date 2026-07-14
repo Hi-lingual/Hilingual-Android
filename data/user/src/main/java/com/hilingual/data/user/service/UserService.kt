@@ -138,6 +138,6 @@ interface UserService {
 
     @PATCH("/api/v1/users/device/fcm-token")
     suspend fun patchFcmToken(
-        @Body patchFcmTokenRequestDto: PatchFcmTokenRequestDto
+        @Body patchFcmTokenRequestDto: PatchFcmTokenRequestDto,
     ): BaseResponse<Unit>
 }

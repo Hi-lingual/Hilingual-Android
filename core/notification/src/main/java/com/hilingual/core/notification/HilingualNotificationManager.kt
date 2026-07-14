@@ -22,7 +22,6 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
-import androidx.core.net.toUri
 import com.hilingual.core.designsystem.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -84,7 +83,6 @@ class HilingualNotificationManager @Inject constructor(
         deepLink: String? = null,
     ) {
         val pendingIntent = if (!deepLink.isNullOrBlank()) {
-
             val intent = context.packageManager
                 .getLaunchIntentForPackage(context.packageName)
                 ?.apply {
