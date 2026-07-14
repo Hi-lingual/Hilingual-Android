@@ -48,6 +48,7 @@ internal fun TodayTopic(
     koTopic: String,
     enTopic: String,
     modifier: Modifier = Modifier,
+    isRecovery: Boolean = false,
 ) {
     var isKo by remember(koTopic) { mutableStateOf(false) }
 
@@ -65,7 +66,7 @@ internal fun TodayTopic(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "오늘의 추천 주제",
+                text = if (isRecovery) "이날의 추천 주제" else "오늘의 추천 주제",
                 style = HilingualTheme.typography.captionR12,
                 color = HilingualTheme.colors.gray500,
             )

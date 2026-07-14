@@ -22,6 +22,7 @@ import com.hilingual.BuildConfig
 import com.hilingual.core.common.analytics.Page
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.analytics.TriggerType
+import com.hilingual.core.common.analytics.UserIdentityTracker
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -30,7 +31,7 @@ import timber.log.Timber
 @Singleton
 class AmplitudeTracker @Inject constructor(
     @ApplicationContext private val context: Context,
-) : Tracker {
+) : Tracker, UserIdentityTracker {
 
     private val amplitude: Amplitude? = run {
         if (BuildConfig.DEBUG) return@run null
@@ -41,6 +42,39 @@ class AmplitudeTracker @Inject constructor(
                 context = context,
             ),
         )
+    }
+
+    override fun setUserId(userId: Long) {
+        if (BuildConfig.DEBUG) {
+            Timber.tag("AmplitudeTracker").d("Set userId: $userId")
+            return
+        }
+
+        amplitude?.setUserId(userId.toString())
+    }
+
+    override fun clearUserId() {
+        if (BuildConfig.DEBUG) {
+            Timber.tag("AmplitudeTracker").d("Clear userId")
+            return
+        }
+
+        amplitude?.setUserId(null)
+    }
+
+    override fun logEvent(
+        trigger: TriggerType,
+        event: String,
+        properties: Map<String, Any>,
+    ) {
+        val eventName = "${trigger.value}_$event"
+
+        if (BuildConfig.DEBUG) {
+            Timber.tag("AmplitudeTracker").d("Tracking event: $eventName, properties: $properties")
+            return
+        }
+
+        amplitude?.track(eventName, properties.toMutableMap())
     }
 
     override fun logEvent(trigger: TriggerType, page: Page, event: String) {

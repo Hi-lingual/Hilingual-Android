@@ -1,4 +1,4 @@
-package com.hilingual.presentation.home.component
+package com.hilingual.presentation.home.component.dialog
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size

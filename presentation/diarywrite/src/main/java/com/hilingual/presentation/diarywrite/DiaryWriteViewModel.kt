@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.common.util.toLocalDateOrNull
 import com.hilingual.core.navigation.DiaryWriteMode
@@ -56,6 +57,7 @@ internal class DiaryWriteViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(
         DiaryWriteUiState(
             selectedDate = route.selectedDate.toLocalDateOrNull()!!,
+            isRecovery = route.mode == DiaryWriteMode.RECOVERY,
         ),
     )
     val uiState: StateFlow<DiaryWriteUiState> = _uiState.asStateFlow()
@@ -75,6 +77,9 @@ internal class DiaryWriteViewModel @Inject constructor(
             DiaryWriteMode.NEW -> {
                 // Do nothing, start new diary to.Dalji
             }
+
+            DiaryWriteMode.RECOVERY -> {
+            }
         }
     }
 
@@ -84,6 +89,10 @@ internal class DiaryWriteViewModel @Inject constructor(
 
     fun updateDiaryImageUri(newImageUri: Uri?) {
         _uiState.update { it.copy(diaryImageUri = newImageUri) }
+    }
+
+    fun resetFeedbackStateToWriting() {
+        _feedbackUiState.update { UiState.Empty }
     }
 
     private fun getTopic(date: String) {
@@ -163,17 +172,25 @@ internal class DiaryWriteViewModel @Inject constructor(
         _feedbackUiState.value = UiState.Loading
 
         viewModelScope.launch {
-            val result = diaryRepository.postDiaryFeedbackCreate(
-                originalText = uiState.value.diaryText,
-                date = uiState.value.selectedDate,
-                imageFileUri = uiState.value.diaryImageUri,
-            )
+            val result = if (route.mode == DiaryWriteMode.RECOVERY) {
+                diaryRepository.postDiaryRecoveryCreate(
+                    originalText = uiState.value.diaryText,
+                    date = uiState.value.selectedDate,
+                    imageFileUri = uiState.value.diaryImageUri,
+                )
+            } else {
+                diaryRepository.postDiaryFeedbackCreate(
+                    originalText = uiState.value.diaryText,
+                    date = uiState.value.selectedDate,
+                    imageFileUri = uiState.value.diaryImageUri,
+                )
+            }
 
             result.onSuccess { response ->
                 diaryLocalRepository.clearDiaryTemp(uiState.value.selectedDate)
                 _feedbackUiState.update { UiState.Success(response.diaryId) }
             }.onLogFailure { throwable ->
-                _feedbackUiState.update { UiState.Failure }
+                _feedbackUiState.update { UiState.Failure(LoadErrorHandleAction.Retry) }
             }
         }
     }

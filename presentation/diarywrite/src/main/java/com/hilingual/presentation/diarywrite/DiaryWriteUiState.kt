@@ -29,4 +29,5 @@ internal data class DiaryWriteUiState(
     val diaryImageUri: Uri? = null,
     val initialDiaryText: String = "",
     val initialDiaryImageUri: Uri? = null,
+    val isRecovery: Boolean = false,
 )

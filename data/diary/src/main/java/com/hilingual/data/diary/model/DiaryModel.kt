@@ -22,7 +22,7 @@ import java.time.LocalDate
 data class DiaryContentModel(
     val writtenDate: LocalDate?,
     val originalText: String,
-    val rewriteText: String,
+    val correctedText: String,
     val diffRanges: List<DiaryContentFeedback>,
     val imageUrl: String?,
     val isPublished: Boolean,
@@ -36,7 +36,7 @@ data class DiaryContentFeedback(
 internal fun DiaryContentResponseDto.toModel() = DiaryContentModel(
     writtenDate = this.date.toLocalDateOrNull(),
     originalText = this.originalText,
-    rewriteText = this.rewriteText,
+    correctedText = this.rewriteText,
     imageUrl = this.imageUrl,
     diffRanges = this.diffRanges.map {
         DiaryContentFeedback(

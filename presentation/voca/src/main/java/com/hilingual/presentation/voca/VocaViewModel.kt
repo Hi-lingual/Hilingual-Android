@@ -17,7 +17,10 @@ package com.hilingual.presentation.voca
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hilingual.core.common.extension.isHttpNotFound
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.model.LoadErrorHandleAction
+import com.hilingual.core.common.trigger.DialogType
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
@@ -103,7 +106,7 @@ constructor(
         return false
     }
 
-    private fun fetchInitialData() {
+    fun fetchInitialData() {
         viewModelScope.launch {
             _uiState.update { it.copy(vocaGroupList = UiState.Loading) }
             loadVocaData()
@@ -119,17 +122,13 @@ constructor(
             val latestResult = latestDeferred.await()
 
             if (aTozResult.isFailure || latestResult.isFailure) {
-                aTozResult.onLogFailure {
-                    _sideEffect.emit(VocaSideEffect.ShowErrorDialog(onRetry = ::fetchInitialData))
-                }
-                latestResult.onLogFailure {
-                    _sideEffect.emit(VocaSideEffect.ShowErrorDialog(onRetry = ::fetchInitialData))
-                }
+                aTozResult.onLogFailure { }
+                latestResult.onLogFailure { }
 
                 if (isRefreshing) {
                     _uiState.update { it.copy(isRefreshing = false) }
                 }
-                _sideEffect.emit(VocaSideEffect.ShowErrorDialog(onRetry = ::fetchInitialData))
+                _uiState.update { it.copy(vocaGroupList = UiState.Failure(LoadErrorHandleAction.Retry)) }
                 return@coroutineScope
             }
 
@@ -188,8 +187,13 @@ constructor(
                         it.copy(vocaItemDetail = UiState.Success(vocaDetail.toState()))
                     }
                 }
-                .onLogFailure {
-                    _sideEffect.emit(VocaSideEffect.ShowErrorDialog(onRetry = ::refreshVocaList))
+                .onLogFailure { throwable ->
+                    _sideEffect.emit(
+                        VocaSideEffect.ShowErrorDialog(
+                            dialogType = if (throwable.isHttpNotFound()) DialogType.NOT_FOUND else DialogType.ERROR,
+                            onRetry = ::refreshVocaList,
+                        ),
+                    )
                 }
         }
     }
@@ -304,5 +308,8 @@ private sealed interface VocaAction {
 }
 
 sealed interface VocaSideEffect {
-    data class ShowErrorDialog(val onRetry: () -> Unit) : VocaSideEffect
+    data class ShowErrorDialog(
+        val dialogType: DialogType = DialogType.ERROR,
+        val onRetry: () -> Unit,
+    ) : VocaSideEffect
 }

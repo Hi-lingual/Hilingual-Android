@@ -20,6 +20,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.tasks.await
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.util.suspendRunCatching
+import com.hilingual.core.common.util.toIsoDate
 import com.hilingual.data.presigned.repository.FileUploaderRepository
 import com.hilingual.data.user.datasource.UserLocalDataSource
 import com.hilingual.data.user.datasource.UserRemoteDataSource
@@ -33,11 +34,13 @@ import com.hilingual.data.user.model.notification.NotificationSettingsModel
 import com.hilingual.data.user.model.notification.toModel
 import com.hilingual.data.user.model.user.BlockListModel
 import com.hilingual.data.user.model.user.NicknameValidationResult
+import com.hilingual.data.user.model.user.RecoveryTicketModel
 import com.hilingual.data.user.model.user.UserInfoModel
 import com.hilingual.data.user.model.user.UserLoginInfoModel
 import com.hilingual.data.user.model.user.UserProfileModel
 import com.hilingual.data.user.model.user.toModel
 import com.hilingual.data.user.repository.UserRepository
+import java.time.LocalDate
 import javax.inject.Inject
 
 internal class UserRepositoryImpl @Inject constructor(
@@ -57,7 +60,7 @@ internal class UserRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun postUserProfile(userProfileModel: UserProfileModel): Result<Unit> =
+    override suspend fun postUserProfile(userProfileModel: UserProfileModel): Result<Long> =
         suspendRunCatching {
             val fileKey = if (userProfileModel.imageUri != null) {
                 fileUploaderRepository.uploadFile(
@@ -72,12 +75,17 @@ internal class UserRepositoryImpl @Inject constructor(
                 nickname = userProfileModel.nickname,
                 adAlarmAgree = userProfileModel.adAlarmAgree,
                 fileKey = fileKey,
-            )
+            ).data!!.userId
         }
 
     override suspend fun getUserInfo(): Result<UserInfoModel> =
         suspendRunCatching {
             userRemoteDataSource.getUserInfo().data!!.toModel()
+        }
+
+    override suspend fun postRecoveryTicket(targetDate: LocalDate): Result<RecoveryTicketModel> =
+        suspendRunCatching {
+            userRemoteDataSource.postRecoveryTicket(targetDate.toIsoDate()).data!!.toModel()
         }
 
     override suspend fun getNotifications(tab: String): Result<List<NotificationModel>> =

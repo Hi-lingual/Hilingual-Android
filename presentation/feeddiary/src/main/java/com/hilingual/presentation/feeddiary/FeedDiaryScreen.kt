@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -49,12 +50,15 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.bottomsheet.BlockBottomSheet
 import com.hilingual.core.ui.component.dialog.diary.DiaryUnpublishDialog
@@ -153,6 +157,22 @@ internal fun FeedDiaryRoute(
             )
         }
 
+        is UiState.Failure -> {
+            val handleAction = state.handleAction
+            HilingualLoadErrorView(
+                action = when (handleAction) {
+                    LoadErrorHandleAction.NotFound -> LoadErrorViewAction.NotFound(
+                        onBackClick = navigateUp,
+                    )
+
+                    else -> LoadErrorViewAction.Back(
+                        onBackClick = navigateUp,
+                    )
+                },
+                modifier = Modifier.padding(paddingValues),
+            )
+        }
+
         else -> {}
     }
 }
@@ -180,8 +200,8 @@ private fun FeedDiaryScreen(
     var isReportBottomSheetVisible by remember { mutableStateOf(false) }
     var isReportConfirmDialogVisible by remember { mutableStateOf(false) }
     var isBlockConfirmBottomSheetVisible by remember { mutableStateOf(false) }
-
-    var isAIWrittenDiary by remember { mutableStateOf(true) }
+    var toggleClickCount by remember { mutableIntStateOf(0) }
+    var isShowCorrectedDiary by remember { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -272,10 +292,23 @@ private fun FeedDiaryScreen(
                             diaryContent = diaryContent,
                             feedbackList = feedbackList,
                             topics = topics,
-                            isAIWrittenDiary = isAIWrittenDiary,
+                            isShowCorrectedDiary = isShowCorrectedDiary,
                             onImageClick = onChangeImageDetailVisible,
-                            onToggleViewMode = { isAIWrittenDiary = it },
                             isAdVisible = true,
+                            onToggleDiaryViewMode = {
+                                isShowCorrectedDiary = it
+                                toggleClickCount++
+                                tracker.logEvent(
+                                    trigger = TriggerType.CLICK,
+                                    event = "feedback_toggle",
+                                    properties = mapOf(
+                                        "entry_id" to diaryId,
+                                        "toggle_state" to it,
+                                        "toggle_click_count" to toggleClickCount,
+                                        "page" to Page.POSTED_DIARY.pageName,
+                                    ),
+                                )
+                            },
                         )
 
                         1 -> RecommendExpressionTab(

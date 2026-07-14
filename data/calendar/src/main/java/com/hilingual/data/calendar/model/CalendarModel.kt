@@ -24,6 +24,7 @@ data class CalendarModel(
 
 data class DateModel(
     val date: String,
+    val status: CalendarStatus,
 )
 
 internal fun CalendarResponseDto.toModel() = CalendarModel(
@@ -32,4 +33,5 @@ internal fun CalendarResponseDto.toModel() = CalendarModel(
 
 internal fun DateDto.toModel() = DateModel(
     date = this.date,
+    status = CalendarStatus.from(this.status),
 )

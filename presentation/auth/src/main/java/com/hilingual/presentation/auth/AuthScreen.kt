@@ -40,6 +40,7 @@ import com.hilingual.core.common.extension.collectLatestSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.auth.component.GoogleSignButton
@@ -54,11 +55,13 @@ internal fun AuthRoute(
 ) {
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val dialogTrigger = LocalDialogTrigger.current
 
     viewModel.navigationEvent.collectLatestSideEffect { event ->
         when (event) {
             is AuthSideEffect.NavigateToHome -> navigateToHome()
             is AuthSideEffect.NavigateToSignUp -> navigateToSignUp()
+            is AuthSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = event.onRetry)
         }
     }
 

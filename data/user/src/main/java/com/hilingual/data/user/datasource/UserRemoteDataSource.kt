@@ -25,6 +25,8 @@ import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
 import com.hilingual.data.user.dto.response.user.BlockListResponseDto
 import com.hilingual.data.user.dto.response.user.NicknameResponseDto
+import com.hilingual.data.user.dto.response.user.RecoveryTicketResponseDto
+import com.hilingual.data.user.dto.response.user.RegisterProfileResponseDto
 import com.hilingual.data.user.dto.response.user.UpdateNicknameResponseDto
 import com.hilingual.data.user.dto.response.user.UserInfoResponseDto
 import com.hilingual.data.user.dto.response.user.UserLoginInfoResponseDto
@@ -36,9 +38,11 @@ interface UserRemoteDataSource {
         nickname: String,
         adAlarmAgree: Boolean,
         fileKey: String?,
-    ): BaseResponse<Unit>
+    ): BaseResponse<RegisterProfileResponseDto>
 
     suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto>
+
+    suspend fun postRecoveryTicket(targetDate: String): BaseResponse<RecoveryTicketResponseDto>
 
     suspend fun getFollowers(
         targetUserId: Long,

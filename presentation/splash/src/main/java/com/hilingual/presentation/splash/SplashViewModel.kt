@@ -17,6 +17,7 @@ package com.hilingual.presentation.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hilingual.core.common.analytics.UserIdentityTracker
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.data.auth.repository.AuthRepository
@@ -48,6 +49,7 @@ internal class SplashViewModel @Inject constructor(
     private val configRepository: ConfigRepository,
     private val deviceInfoProvider: DeviceInfoProvider,
     private val onboardingRepository: OnboardingRepository,
+    private val userIdentityTracker: UserIdentityTracker,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SplashUiState())
@@ -108,6 +110,7 @@ internal class SplashViewModel @Inject constructor(
 
             if (isLoggedIn) {
                 putDeviceInfo()
+                setTrackerUserId()
                 patchFcmToken()
             }
 
@@ -119,6 +122,18 @@ internal class SplashViewModel @Inject constructor(
 
     private suspend fun putDeviceInfo(): Boolean =
         userRepository.putDeviceInfo().onLogFailure { }.isSuccess
+
+    private suspend fun setTrackerUserId() {
+        val userId = authRepository.getUserId() ?: fetchUserId()
+        userId?.let { userIdentityTracker.setUserId(it) }
+    }
+
+    private suspend fun fetchUserId(): Long? =
+        userRepository.getUserLoginInfo()
+            .onSuccess { authRepository.saveUserId(it.userId) }
+            .onLogFailure { }
+            .map { it.userId }
+            .getOrNull()
 
     private suspend fun patchFcmToken() {
         userRepository.getCurrentFcmToken()

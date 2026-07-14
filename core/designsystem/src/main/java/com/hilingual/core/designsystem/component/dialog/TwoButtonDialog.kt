@@ -16,8 +16,10 @@
 package com.hilingual.core.designsystem.component.dialog
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -101,14 +103,18 @@ fun TwoButtonDialog(
 @Composable
 private fun TwoButtonDialogPreview() {
     HilingualTheme {
-        TwoButtonDialog(
-            title = "AI 피드백을 신고하시겠어요?",
-            description = "신고된 AI 피드백은 확인 후\n서비스의 운영원칙에 따라 처리됩니다",
-            cancelText = "취소",
-            confirmText = "확인",
-            onNegative = {},
-            onPositive = {},
-            onDismiss = {},
-        )
+        Column(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            TwoButtonDialog(
+                title = "AI 피드백을 신고하시겠어요?",
+                description = "신고된 AI 피드백은 확인 후\n서비스의 운영원칙에 따라 처리됩니다",
+                cancelText = "취소",
+                confirmText = "확인",
+                onNegative = {},
+                onPositive = {},
+                onDismiss = {},
+            )
+        }
     }
 }

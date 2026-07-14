@@ -39,11 +39,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.presentation.notification.setting.component.NotificationSettingBanner
 import com.hilingual.presentation.notification.setting.component.NotificationSettingDialog
 import com.hilingual.presentation.notification.setting.component.NotificationSwitchItem
+
+// #807 푸시 알림 플로우: 미배포 기능, 당분간 봉인. 재개 시 true로 전환.
+private const val ENABLE_PUSH_NOTIFICATION = false
 
 @Composable
 internal fun NotificationSettingRoute(
@@ -107,6 +112,16 @@ internal fun NotificationSettingRoute(
             }
         }
 
+        is UiState.Failure -> {
+            HilingualLoadErrorView(
+                action = LoadErrorViewAction.Retry(
+                    onRetryClick = viewModel::getNotificationSettings,
+                    onBackClick = navigateUp,
+                ),
+                modifier = Modifier.padding(paddingValues),
+            )
+        }
+
         else -> {}
     }
 }
@@ -138,7 +153,7 @@ private fun NotificationSettingScreen(
         )
 
         NotificationSettingBanner(
-            isVisible = !isNotificationGranted,
+            isVisible = ENABLE_PUSH_NOTIFICATION && !isNotificationGranted,
             onClick = onBannerClick,
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
         )
@@ -157,7 +172,7 @@ private fun NotificationSettingScreen(
     }
 
     NotificationSettingDialog(
-        isVisible = isPermissionDialogVisible,
+        isVisible = ENABLE_PUSH_NOTIFICATION && isPermissionDialogVisible,
         onDismiss = onPermissionDialogDismiss,
         onConfirmClick = onPermissionDialogConfirm,
     )

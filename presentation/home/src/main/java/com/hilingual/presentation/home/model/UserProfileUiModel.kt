@@ -25,6 +25,7 @@ data class UserProfileUiModel(
     val totalDiaries: Int = 0,
     val streak: Int = 0,
     val isNewAlarm: Boolean = false,
+    val recoveryTickets: Int = 0,
 )
 
 internal fun UserInfoModel.toState() = UserProfileUiModel(
@@ -33,4 +34,5 @@ internal fun UserInfoModel.toState() = UserProfileUiModel(
     totalDiaries = this.totalDiaries,
     streak = this.streak,
     isNewAlarm = this.newAlarm,
+    recoveryTickets = this.recoveryTickets,
 )

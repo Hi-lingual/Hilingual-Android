@@ -20,6 +20,7 @@ import com.hilingual.data.user.datasource.UserRemoteDataSource
 import com.hilingual.data.user.dto.request.ImageRequestDto
 import com.hilingual.data.user.dto.request.PatchFcmTokenRequestDto
 import com.hilingual.data.user.dto.request.PutDeviceInfoRequestDto
+import com.hilingual.data.user.dto.request.RecoveryTicketRequestDto
 import com.hilingual.data.user.dto.request.RegisterProfileRequestDto
 import com.hilingual.data.user.dto.request.UpdateNicknameRequestDto
 import com.hilingual.data.user.dto.request.UpdateProfileImageRequestDto
@@ -30,6 +31,8 @@ import com.hilingual.data.user.dto.response.notification.NotificationResponseDto
 import com.hilingual.data.user.dto.response.notification.NotificationSettingsResponseDto
 import com.hilingual.data.user.dto.response.user.BlockListResponseDto
 import com.hilingual.data.user.dto.response.user.NicknameResponseDto
+import com.hilingual.data.user.dto.response.user.RecoveryTicketResponseDto
+import com.hilingual.data.user.dto.response.user.RegisterProfileResponseDto
 import com.hilingual.data.user.dto.response.user.UpdateNicknameResponseDto
 import com.hilingual.data.user.dto.response.user.UserInfoResponseDto
 import com.hilingual.data.user.dto.response.user.UserLoginInfoResponseDto
@@ -46,7 +49,7 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
         nickname: String,
         adAlarmAgree: Boolean,
         fileKey: String?,
-    ): BaseResponse<Unit> {
+    ): BaseResponse<RegisterProfileResponseDto> {
         val imageRequest = if (fileKey != null) {
             ImageRequestDto(
                 fileKey = fileKey,
@@ -66,6 +69,9 @@ internal class UserRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getUserInfo(): BaseResponse<UserInfoResponseDto> =
         userService.getUserInfo()
+
+    override suspend fun postRecoveryTicket(targetDate: String): BaseResponse<RecoveryTicketResponseDto> =
+        userService.postRecoveryTicket(RecoveryTicketRequestDto(targetDate = targetDate))
 
     override suspend fun getFollowers(targetUserId: Long): BaseResponse<FollowerResponseDto> =
         userService.getFollowers(targetUserId = targetUserId)

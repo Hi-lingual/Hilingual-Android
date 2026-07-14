@@ -21,6 +21,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -42,6 +43,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -50,6 +52,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.ads.rewarded.showRewardedAd
 import com.hilingual.core.common.analytics.FakeTracker
 import com.hilingual.core.common.analytics.Page.HOME
 import com.hilingual.core.common.analytics.Tracker
@@ -64,20 +67,27 @@ import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.navigation.DiaryWriteMode
-import com.hilingual.presentation.home.component.DiaryContinueDialog
+import com.hilingual.data.calendar.model.CalendarStatus
 import com.hilingual.presentation.home.component.HomeHeader
-import com.hilingual.presentation.home.component.NotificationDialog
 import com.hilingual.presentation.home.component.calendar.HilingualCalendar
+import com.hilingual.presentation.home.component.dialog.DiaryContinueDialog
+import com.hilingual.presentation.home.component.dialog.NotificationDialog
+import com.hilingual.presentation.home.component.dialog.RecoveryNoticeModal
+import com.hilingual.presentation.home.component.dialog.RecoveryReminderModal
 import com.hilingual.presentation.home.component.footer.DiaryDateInfo
 import com.hilingual.presentation.home.component.footer.DiaryEmptyCard
 import com.hilingual.presentation.home.component.footer.DiaryEmptyCardType
 import com.hilingual.presentation.home.component.footer.DiaryPreviewCard
 import com.hilingual.presentation.home.component.footer.DiaryTimeInfo
 import com.hilingual.presentation.home.component.footer.HomeDropDownMenu
+import com.hilingual.presentation.home.component.footer.RecoveryButton
+import com.hilingual.presentation.home.component.footer.RecoveryGuideCard
 import com.hilingual.presentation.home.component.footer.TodayTopic
 import com.hilingual.presentation.home.component.footer.WriteDiaryButton
 import com.hilingual.presentation.home.component.onboarding.HomeOnboardingBottomSheet
@@ -102,6 +112,7 @@ internal fun HomeRoute(
     val messageController = LocalMessageController.current
     val tracker = LocalTracker.current
     val context = LocalContext.current
+    val activity = LocalActivity.current
     val isSuccess = uiState is UiState.Success
 
     if (homeState.isErrorDialogVisible) {
@@ -136,6 +147,38 @@ internal fun HomeRoute(
             is HomeSideEffect.ShowNotificationDialog -> {
                 homeState.showNotificationDialog()
             }
+
+            is HomeSideEffect.ShowRewardedAd -> {
+                if (activity != null) {
+                    homeState.showRecoveryAdLoading()
+                    showRewardedAd(
+                        activity = activity,
+                        adUnitId = BuildConfig.ADMOB_STREAKREWARD_UNIT_ID,
+                        onRewardEarned = {
+                            homeState.hideRecoveryAdLoading()
+                            viewModel.onRewardEarned(sideEffect.date)
+                        },
+                        onAdDismissed = {
+                            homeState.hideRecoveryAdLoading()
+                            viewModel.onRecoveryAdFinished()
+                        },
+                        onAdFailedToLoad = {
+                            homeState.hideRecoveryAdLoading()
+                            viewModel.onRecoveryAdFinished()
+                            messageController(HilingualMessage.Toast("광고를 불러오지 못했어요.\n잠시 후 다시 시도해주세요."))
+                        },
+                    )
+                } else {
+                    viewModel.onRecoveryAdFinished()
+                }
+            }
+
+            is HomeSideEffect.NavigateToRecoveryWrite ->
+                navigateToDiaryWrite(sideEffect.date, DiaryWriteMode.RECOVERY)
+
+            is HomeSideEffect.ShowRecoveryNotice -> homeState.showRecoveryNotice()
+
+            is HomeSideEffect.ShowRecoveryReminder -> homeState.showRecoveryReminder()
         }
     }
 
@@ -144,11 +187,13 @@ internal fun HomeRoute(
         tracker.logEvent(trigger = TriggerType.VIEW, page = HOME, event = "page")
     }
 
-    CheckNotificationPermission(
-        context = context,
-        isDataLoaded = isSuccess,
-        onCheck = viewModel::handleNotificationPermission,
-    )
+    if (ENABLE_PUSH_NOTIFICATION) {
+        CheckNotificationPermission(
+            context = context,
+            isDataLoaded = isSuccess,
+            onCheck = viewModel::handleNotificationPermission,
+        )
+    }
 
     NotificationDialog(
         state = DialogState(isVisible = homeState.isNotificationDialogVisible),
@@ -163,6 +208,33 @@ internal fun HomeRoute(
                 putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
             }
             context.startActivity(intent)
+        },
+    )
+
+    RecoveryNoticeModal(
+        isVisible = homeState.isRecoveryNoticeVisible,
+        onClick = {
+            homeState.hideRecoveryNotice()
+            viewModel.onRecoveryNoticeConfirmed()
+        },
+        onDismiss = {
+            homeState.hideRecoveryNotice()
+            viewModel.onRecoveryNoticeConfirmed()
+        },
+    )
+
+    RecoveryReminderModal(
+        isVisible = homeState.isRecoveryReminderVisible,
+        onClick = {
+            homeState.hideRecoveryReminder()
+            viewModel.onRecoveryReminderConfirmed()
+        },
+        onLaterClick = {
+            homeState.hideRecoveryReminder()
+            viewModel.onRecoveryReminderLater()
+        },
+        onDismiss = {
+            homeState.hideRecoveryReminder()
         },
     )
 
@@ -181,6 +253,7 @@ internal fun HomeRoute(
                 },
                 onDateSelected = viewModel::onDateSelected,
                 onMonthChanged = viewModel::onMonthChanged,
+                onRecoveryClick = viewModel::onRecoveryClick,
                 onWriteDiaryClick = { date, mode ->
                     tracker.logEvent(
                         trigger = TriggerType.CLICK,
@@ -209,15 +282,26 @@ internal fun HomeRoute(
             )
         }
 
+        is UiState.Failure -> {
+            HilingualLoadErrorView(
+                action = LoadErrorViewAction.Retry(
+                    onRetryClick = viewModel::loadInitialData,
+                ),
+                modifier = Modifier.padding(paddingValues),
+            )
+        }
+
         else -> {}
     }
 
     fun handleOnboardingDismiss() {
         homeState.hideOnboardingBottomSheet()
-        viewModel.onNotificationPermissionAfterOnboarding(
-            isGranted = context.isNotificationPermissionGranted(),
-            requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU,
-        )
+        if (ENABLE_PUSH_NOTIFICATION) {
+            viewModel.onNotificationPermissionAfterOnboarding(
+                isGranted = context.isNotificationPermissionGranted(),
+                requiresPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU,
+            )
+        }
     }
 
     HomeOnboardingBottomSheet(
@@ -226,6 +310,12 @@ internal fun HomeRoute(
     ) {
         HomeOnboardingContent(
             onStartButtonClick = ::handleOnboardingDismiss,
+        )
+    }
+
+    if (homeState.isRecoveryAdLoading) {
+        HilingualLoadingIndicator(
+            backgroundColor = Color.Black.copy(alpha = 0.32f),
         )
     }
 }
@@ -239,6 +329,7 @@ private fun HomeScreen(
     onImageClick: () -> Unit,
     onDateSelected: (LocalDate) -> Unit,
     onMonthChanged: (YearMonth) -> Unit,
+    onRecoveryClick: (LocalDate) -> Unit,
     onWriteDiaryClick: (selectedDate: LocalDate, mode: DiaryWriteMode) -> Unit,
     onDiaryPreviewClick: (diaryId: Long) -> Unit,
     onDeleteClick: (diaryId: Long) -> Unit,
@@ -276,6 +367,7 @@ private fun HomeScreen(
                 totalDiaries = userProfile.totalDiaries,
                 streak = userProfile.streak,
                 isNewAlarm = userProfile.isNewAlarm,
+                count = userProfile.recoveryTickets,
                 onAlarmClick = onAlarmClick,
                 onImageClick = onImageClick,
                 modifier = Modifier
@@ -288,7 +380,10 @@ private fun HomeScreen(
         with(uiState.calendar) {
             HilingualCalendar(
                 selectedDate = selectedDate,
-                writtenDates = dates.map { it.date }.toSet(),
+                writtenDates = dates
+                    .filter { it.status != CalendarStatus.UNLOCKED }
+                    .map { it.date }
+                    .toSet(),
                 onDateClick = onDateSelected,
                 onMonthChanged = onMonthChanged,
                 modifier = Modifier
@@ -410,6 +505,36 @@ private fun HomeScreen(
                         )
                     }
 
+                    DiaryCardState.UNLOCKED -> {
+                        if (todayTopic != null) {
+                            TodayTopic(
+                                koTopic = todayTopic.topicKo,
+                                enTopic = todayTopic.topicEn,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .animateContentSize(),
+                                isRecovery = true,
+                            )
+                        }
+                        Spacer(Modifier.height(12.dp))
+                        WriteDiaryButton(
+                            onClick = { onWriteDiaryClick(date, DiaryWriteMode.RECOVERY) },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+
+                    DiaryCardState.RECOVERABLE -> {
+                        RecoveryGuideCard(modifier = Modifier.fillMaxWidth())
+                        Spacer(Modifier.height(12.dp))
+                        RecoveryButton(
+                            onClick = { onRecoveryClick(date) },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+
+                    DiaryCardState.RECOVERY_EXHAUSTED ->
+                        DiaryEmptyCard(type = DiaryEmptyCardType.RECOVERY_EXHAUSTED)
+
                     DiaryCardState.REWRITE_DISABLED,
                     DiaryCardState.PAST,
                     -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
@@ -418,6 +543,9 @@ private fun HomeScreen(
         }
     }
 }
+
+// #807 푸시 알림 플로우: 미배포 기능, 당분간 봉인. 재개 시 true로 전환.
+private const val ENABLE_PUSH_NOTIFICATION = false
 
 @Composable
 private fun CheckNotificationPermission(
@@ -463,6 +591,7 @@ private fun HomeScreenPreview() {
             onImageClick = {},
             onDateSelected = {},
             onMonthChanged = {},
+            onRecoveryClick = {},
             onWriteDiaryClick = { _, _ -> },
             onDiaryPreviewClick = {},
             onDeleteClick = {},
