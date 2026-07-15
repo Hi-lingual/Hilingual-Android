@@ -291,7 +291,14 @@ internal fun MainScreen(
                         isBackVisible = !isBottomBarVisible,
                         onBackClick = appState::navigateUp,
                         onRetryClick = {
-                            onShowMessage(Toast("인터넷 연결이 불안정해요."))
+                            if (isOffline) {
+                                onShowMessage(Toast("인터넷 연결이 불안정해요."))
+                            } else {
+                                isNetworkErrorOverlayVisible = false
+                                coroutineScope.launch {
+                                    reconnectEvents.emit(Unit)
+                                }
+                            }
                         },
                         modifier = Modifier
                             .padding(innerPadding)
