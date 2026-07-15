@@ -56,6 +56,5 @@ class HilingualFirebaseMessagingService : FirebaseMessagingService() {
         super.onNewToken(token)
         Timber.d("New FCM Token: $token")
         userRepository.scheduleFcmTokenSync(fcmToken = token)
-
     }
 }
