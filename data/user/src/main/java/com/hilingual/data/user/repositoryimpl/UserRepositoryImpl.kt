@@ -15,7 +15,15 @@
  */
 package com.hilingual.data.user.repositoryimpl
 
+import android.content.Context
 import android.net.Uri
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.google.firebase.messaging.FirebaseMessaging
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.util.suspendRunCatching
@@ -39,15 +47,20 @@ import com.hilingual.data.user.model.user.UserLoginInfoModel
 import com.hilingual.data.user.model.user.UserProfileModel
 import com.hilingual.data.user.model.user.toModel
 import com.hilingual.data.user.repository.UserRepository
+import com.hilingual.data.user.worker.FcmTokenSyncWorker
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.LocalDate
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 
 internal class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
     private val fileUploaderRepository: FileUploaderRepository,
     private val userLocalDataSource: UserLocalDataSource,
     private val deviceInfoProvider: DeviceInfoProvider,
+    @ApplicationContext private val context: Context,
 ) : UserRepository {
     override suspend fun getNicknameAvailability(nickname: String): Result<NicknameValidationResult> =
         suspendRunCatching {
@@ -212,6 +225,25 @@ internal class UserRepositoryImpl @Inject constructor(
                 ),
             )
         }
+
+    override fun scheduleFcmTokenSync(fcmToken: String) {
+        val workRequest = OneTimeWorkRequestBuilder<FcmTokenSyncWorker>()
+            .setInputData(workDataOf(FcmTokenSyncWorker.KEY_FCM_TOKEN to fcmToken))
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build(),
+            )
+            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 15, TimeUnit.SECONDS)
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            "fcm_token_sync",
+            ExistingWorkPolicy.REPLACE,
+            workRequest,
+        )
+        Timber.tag("FCM_TOKEN").d("WorkManager 토큰 등록 재시도 예약")
+    }
 
     override suspend fun getCurrentFcmToken(): Result<String> =
         suspendRunCatching {

@@ -93,5 +93,7 @@ interface UserRepository {
 
     suspend fun patchFcmToken(fcmToken: String): Result<Unit>
 
+    fun scheduleFcmTokenSync(fcmToken: String)
+
     suspend fun getCurrentFcmToken(): Result<String>
 }
