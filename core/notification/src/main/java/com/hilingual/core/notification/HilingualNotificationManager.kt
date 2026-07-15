@@ -35,11 +35,7 @@ class HilingualNotificationManager @Inject constructor(
 
     private val notificationManager: NotificationManager? = context.getSystemService()
 
-    init {
-        createNotificationChannels()
-    }
-
-    private fun createNotificationChannels() {
+    fun createNotificationChannels() {
         val dailyChannel = NotificationChannel(
             CHANNEL_ID_DAILY,
             "일간 알림",
@@ -56,7 +52,17 @@ class HilingualNotificationManager @Inject constructor(
             description = "한 주를 정리하는 알림"
         }
 
-        notificationManager?.createNotificationChannels(listOf(dailyChannel, weeklyChannel))
+        val socialChannel = NotificationChannel(
+            CHANNEL_ID_SOCIAL,
+            "소셜 알림",
+            NotificationManager.IMPORTANCE_HIGH,
+        ).apply {
+            description = "팔로우, 좋아요 등 소셜 활동 알림"
+        }
+
+        notificationManager?.createNotificationChannels(
+            listOf(dailyChannel, weeklyChannel, socialChannel),
+        )
     }
 
     fun sendReminderNotification(
@@ -65,9 +71,13 @@ class HilingualNotificationManager @Inject constructor(
         message: String,
         deepLink: String? = null,
     ) {
-        val targetChannelId = channelId ?: CHANNEL_ID_DAILY
+        val targetChannelId = channelId?.takeIf { it in KNOWN_CHANNEL_IDS }
+        if (channelId != null && targetChannelId == null) {
+            Timber.e("Unknown channelId from server: $channelId")
+        }
+
         showReminderNotification(
-            channelId = targetChannelId,
+            channelId = targetChannelId ?: CHANNEL_ID_SOCIAL,
             notificationId = System.currentTimeMillis().toInt(),
             title = title,
             message = message,
@@ -132,5 +142,8 @@ class HilingualNotificationManager @Inject constructor(
     companion object {
         private const val CHANNEL_ID_DAILY = "channel_daily_notification"
         private const val CHANNEL_ID_WEEKLY = "channel_weekly_notification"
+        private const val CHANNEL_ID_SOCIAL = "channel_social_notification"
+
+        private val KNOWN_CHANNEL_IDS = setOf(CHANNEL_ID_DAILY, CHANNEL_ID_WEEKLY, CHANNEL_ID_SOCIAL)
     }
 }
