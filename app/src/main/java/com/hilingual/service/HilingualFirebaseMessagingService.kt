@@ -21,9 +21,6 @@ import com.hilingual.core.notification.HilingualNotificationManager
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -58,12 +55,7 @@ class HilingualFirebaseMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Timber.d("New FCM Token: $token")
-        CoroutineScope(Dispatchers.IO).launch {
-            val isLoggedIn = userRepository.getRegisterStatus()
-            if (!isLoggedIn) {
-                return@launch
-            }
-            userRepository.patchFcmToken(fcmToken = token)
-        }
+        userRepository.scheduleFcmTokenSync(fcmToken = token)
+
     }
 }
