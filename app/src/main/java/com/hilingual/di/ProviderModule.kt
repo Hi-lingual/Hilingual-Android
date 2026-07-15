@@ -16,7 +16,7 @@
 package com.hilingual.di
 
 import com.hilingual.app.DeviceInfoProviderImpl
-import com.hilingual.app.FirebaseFcmTokenProvider
+import com.hilingual.app.FcmTokenProviderImpl
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.app.FcmTokenProvider
 import dagger.Binds
@@ -37,6 +37,6 @@ internal abstract class ProviderModule {
 
     @Binds
     abstract fun bindFcmTokenProvider(
-        impl: FirebaseFcmTokenProvider,
+        impl: FcmTokenProviderImpl,
     ): FcmTokenProvider
 }

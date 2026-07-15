@@ -5,6 +5,6 @@ import com.hilingual.core.common.app.FcmTokenProvider
 import javax.inject.Inject
 import kotlinx.coroutines.tasks.await
 
-internal class FirebaseFcmTokenProvider @Inject constructor() : FcmTokenProvider {
+internal class FcmTokenProviderImpl @Inject constructor() : FcmTokenProvider {
     override suspend fun getToken(): String = FirebaseMessaging.getInstance().token.await()
 }
