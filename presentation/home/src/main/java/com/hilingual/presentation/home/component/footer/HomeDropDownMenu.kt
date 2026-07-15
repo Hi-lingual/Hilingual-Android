@@ -120,7 +120,7 @@ internal fun HomeDropDownMenu(
 
 @Preview(showBackground = true)
 @Composable
-fun HomeDropDownMenuPreview() {
+private fun HomeDropDownMenuPreview() {
     var isExpanded by remember { mutableStateOf(false) }
     var isExpanded1 by remember { mutableStateOf(false) }
     HilingualTheme {

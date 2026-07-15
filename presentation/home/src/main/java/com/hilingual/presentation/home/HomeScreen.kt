@@ -369,7 +369,7 @@ private fun HomeScreen(
                 totalDiaries = userProfile.totalDiaries,
                 streak = userProfile.streak,
                 isNewAlarm = userProfile.isNewAlarm,
-                count = userProfile.recoveryTickets,
+                recoveryTickets = userProfile.recoveryTickets,
                 onAlarmClick = onAlarmClick,
                 onImageClick = onImageClick,
                 modifier = Modifier
