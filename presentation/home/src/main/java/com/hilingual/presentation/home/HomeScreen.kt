@@ -259,18 +259,22 @@ internal fun HomeRoute(
                 onDateSelected = { date ->
                     when {
                         date == state.data.calendar.selectedDate -> Unit
+
                         isOffline -> messageController(
                             HilingualMessage.Toast("인터넷 연결이 불안정해요."),
                         )
+
                         else -> viewModel.onDateSelected(date)
                     }
                 },
                 onMonthChanged = { yearMonth ->
                     when {
                         yearMonth == YearMonth.from(state.data.calendar.selectedDate) -> Unit
+
                         isOffline -> messageController(
                             HilingualMessage.Toast("인터넷 연결이 불안정해요."),
                         )
+
                         else -> viewModel.onMonthChanged(yearMonth)
                     }
                 },
