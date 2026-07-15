@@ -106,11 +106,7 @@ internal fun MainScreen(
     val coroutineScope = rememberCoroutineScope()
 
     val dialogTrigger = rememberDialogTrigger(
-        show = { onClick ->
-            if (!isOffline) {
-                appState.dialogStateHolder.showDialog(onClick)
-            }
-        },
+        show = appState.dialogStateHolder::showDialog,
     )
 
     val snackBarHostState = remember { SnackbarHostState() }
@@ -312,12 +308,10 @@ internal fun MainScreen(
                     )
                 }
 
-                if (!isOffline) {
-                    HilingualErrorDialog(
-                        state = appState.dialogStateHolder.dialogState,
-                        onDismiss = appState.dialogStateHolder::dismissDialog,
-                    )
-                }
+                HilingualErrorDialog(
+                    state = appState.dialogStateHolder.dialogState,
+                    onDismiss = appState.dialogStateHolder::dismissDialog,
+                )
 
                 Box(
                     contentAlignment = Alignment.BottomCenter,

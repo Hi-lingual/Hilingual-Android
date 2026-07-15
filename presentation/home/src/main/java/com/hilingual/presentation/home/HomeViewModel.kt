@@ -445,7 +445,7 @@ class HomeViewModel @Inject constructor(
                 state.copy(diaryContent = newDiaryContent)
             }
 
-            if (newDiaryContent.cardState == DiaryCardState.WRITTEN && newDiaryContent.diaryThumbnail == null) {
+            if (newDiaryContent.hasMissingRequiredData(date, currentState.data.calendar.dates)) {
                 emitErrorDialogSideEffect { updateContentForDate(date) }
             }
         }
@@ -478,6 +478,19 @@ class HomeViewModel @Inject constructor(
             fetchedTopic = topic,
             isTempExist = isTempExist,
         )
+    }
+
+    private fun HomeDiaryUiState.hasMissingRequiredData(
+        date: LocalDate,
+        dates: List<DateUiModel>,
+    ): Boolean {
+        val matchedDate = dates.find { it.date == date }
+        val isUnlocked = matchedDate?.status == CalendarStatus.UNLOCKED
+        val needsTopic = isUnlocked || DateUiModel(date).isWritable
+        val needsThumbnail = matchedDate != null && !isUnlocked
+
+        return (needsTopic && todayTopic == null) ||
+            (needsThumbnail && diaryThumbnail == null)
     }
 
     private fun checkOnboardingCompleted() {
