@@ -291,7 +291,10 @@ class HomeViewModel @Inject constructor(
 
         markReminderShownThisMonth()
 
-        val recentBrokenDate = findRecentBrokenDate(currentState.data.calendar.dates)
+        val recentBrokenDate = RecoveryReminderPolicy.findRecentBrokenDate(
+            dates = currentState.data.calendar.dates,
+            today = LocalDate.now(),
+        )
         if (recentBrokenDate != null) {
             onDateSelected(recentBrokenDate)
         }
@@ -321,52 +324,16 @@ class HomeViewModel @Inject constructor(
             return
         }
 
-        if (shouldShowReminder(recoveryTickets, dates)) {
+        val lastShownMonth = onboardingRepository.getRecoveryReminderLastShownMonth().getOrDefault("")
+        val shouldShowReminder = RecoveryReminderPolicy.shouldShowReminder(
+            recoveryTickets = recoveryTickets,
+            dates = dates,
+            today = LocalDate.now(),
+            lastShownMonth = lastShownMonth,
+        )
+        if (shouldShowReminder) {
             _sideEffect.emit(HomeSideEffect.ShowRecoveryReminder)
         }
-    }
-
-    private suspend fun shouldShowReminder(
-        recoveryTickets: Int,
-        dates: List<DateUiModel>,
-    ): Boolean {
-        if (recoveryTickets <= 0) return false
-
-        val today = LocalDate.now()
-        val isLastWeek = today.dayOfMonth > today.lengthOfMonth() - 7
-        if (!isLastWeek) return false
-
-        val currentMonth = YearMonth.now().toString()
-        val lastShownMonth = onboardingRepository.getRecoveryReminderLastShownMonth().getOrDefault("")
-        if (lastShownMonth == currentMonth) return false
-
-        return hasBrokenDayThisMonth(today, dates)
-    }
-
-    private fun hasBrokenDayThisMonth(
-        today: LocalDate,
-        dates: List<DateUiModel>,
-    ): Boolean {
-        val recordedDates = dates.map { it.date }.toSet()
-        val lastBrokenDate = today.minusDays(1)
-        var date = today.withDayOfMonth(1)
-        while (date.isBefore(lastBrokenDate)) {
-            if (date !in recordedDates) return true
-            date = date.plusDays(1)
-        }
-        return false
-    }
-
-    private fun findRecentBrokenDate(dates: List<DateUiModel>): LocalDate? {
-        val recordedDates = dates.map { it.date }.toSet()
-        val today = LocalDate.now()
-        val firstDay = today.withDayOfMonth(1)
-        var date = today.minusDays(2)
-        while (!date.isBefore(firstDay)) {
-            if (date !in recordedDates) return date
-            date = date.minusDays(1)
-        }
-        return null
     }
 
     fun publishDiary(diaryId: Long) {
