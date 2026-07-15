@@ -35,6 +35,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import java.time.YearMonth
 import javax.inject.Inject
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.BufferOverflow
@@ -76,6 +77,8 @@ class HomeViewModel @Inject constructor(
 
     private val onboardingCheckCompleted = MutableSharedFlow<Unit>(replay = 1)
 
+    private val calendarCache = mutableMapOf<YearMonth, ImmutableList<DateUiModel>>()
+
     init {
         checkOnboardingCompleted()
     }
@@ -108,6 +111,7 @@ class HomeViewModel @Inject constructor(
             val calendarData = calendarResult.getOrThrow()
 
             val initialDates = calendarData.dateList.map { it.toState() }.toImmutableList()
+            calendarCache[YearMonth.from(today)] = initialDates
             val initialDiaryContent = fetchDiaryState(today, initialDates, userInfo.recoveryTickets)
 
             _uiState.update {
@@ -192,32 +196,39 @@ class HomeViewModel @Inject constructor(
 
         if (YearMonth.from(currentState.data.calendar.selectedDate) == yearMonth) return
 
+        val today = LocalDate.now()
+        val newDate = if (yearMonth == YearMonth.from(today)) {
+            today
+        } else {
+            yearMonth.atDay(1)
+        }
+
+        _uiState.updateSuccess { state ->
+            state.copy(
+                calendar = HomeCalendarUiState(
+                    dates = calendarCache[yearMonth] ?: state.calendar.dates,
+                    selectedDate = newDate,
+                ),
+            )
+        }
+
         viewModelScope.launch {
             calendarRepository.getCalendar(yearMonth.year, yearMonth.monthValue)
                 .onSuccess { calendarModel ->
-                    val today = LocalDate.now()
-                    val newDate = if (yearMonth == YearMonth.from(today)) {
-                        today
-                    } else {
-                        yearMonth.atDay(1)
-                    }
-
                     val newDates = calendarModel.dateList.map { data -> data.toState() }.toImmutableList()
-                    val newDiaryContent = fetchDiaryState(
-                        newDate,
-                        newDates,
-                        currentState.data.header.userProfile.recoveryTickets,
-                    )
+                    calendarCache[yearMonth] = newDates
+
+                    val latestState = uiState.value
+                    if (latestState !is UiState.Success ||
+                        YearMonth.from(latestState.data.calendar.selectedDate) != yearMonth
+                    ) {
+                        return@launch
+                    }
 
                     _uiState.updateSuccess { state ->
-                        state.copy(
-                            calendar = HomeCalendarUiState(
-                                dates = newDates,
-                                selectedDate = newDate,
-                            ),
-                            diaryContent = newDiaryContent,
-                        )
+                        state.copy(calendar = state.calendar.copy(dates = newDates))
                     }
+                    updateContentForDate(latestState.data.calendar.selectedDate)
                 }
                 .onLogFailure {
                     emitErrorDialogSideEffect { onMonthChanged(yearMonth) }
@@ -255,6 +266,9 @@ class HomeViewModel @Inject constructor(
                             ),
                             calendar = state.calendar.copy(dates = newDates),
                         )
+                    }
+                    (uiState.value as? UiState.Success)?.data?.calendar?.let { calendar ->
+                        calendarCache[YearMonth.from(date)] = calendar.dates
                     }
                     updateContentForDate(date)
                     _sideEffect.emit(HomeSideEffect.NavigateToRecoveryWrite(date))
