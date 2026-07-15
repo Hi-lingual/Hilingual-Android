@@ -24,7 +24,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
-import com.google.firebase.messaging.FirebaseMessaging
+import com.hilingual.core.common.app.FcmTokenProvider
 import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.common.util.toIsoDate
@@ -52,13 +52,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 internal class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
     private val fileUploaderRepository: FileUploaderRepository,
     private val userLocalDataSource: UserLocalDataSource,
+    private val fcmTokenProvider: FcmTokenProvider,
     private val deviceInfoProvider: DeviceInfoProvider,
     @ApplicationContext private val context: Context,
 ) : UserRepository {
@@ -245,8 +245,14 @@ internal class UserRepositoryImpl @Inject constructor(
         Timber.tag("FCM_TOKEN").d("WorkManager 토큰 등록 재시도 예약")
     }
 
-    override suspend fun getCurrentFcmToken(): Result<String> =
+    override suspend fun syncFcmToken(): Result<Unit> =
         suspendRunCatching {
-            FirebaseMessaging.getInstance().token.await()
+            val token = fcmTokenProvider.getToken()
+            userRemoteDataSource.patchFcmToken(
+                patchFcmTokenRequestDto = PatchFcmTokenRequestDto(
+                    uuid = deviceInfoProvider.getUuid(),
+                    fcmToken = token,
+                ),
+            )
         }
 }
