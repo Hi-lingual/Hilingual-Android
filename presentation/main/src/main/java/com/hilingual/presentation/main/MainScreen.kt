@@ -38,6 +38,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -46,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.angrypodo.wisp.runtime.navigateTo
@@ -78,12 +80,16 @@ import com.hilingual.presentation.mypage.navigation.myPageNavGraph
 import com.hilingual.presentation.notification.navigation.notificationNavGraph
 import com.hilingual.presentation.onboarding.navigation.onboardingNavGraph
 import com.hilingual.presentation.signup.navigation.signUpGraph
+import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.splash.navigation.splashNavGraph
 import com.hilingual.presentation.voca.navigation.vocaNavGraph
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @Composable
 internal fun MainScreen(
@@ -258,8 +264,21 @@ internal fun MainScreen(
             }
 
             LaunchedEffect(appState.navController) {
-                initialDeepLinkUri?.let { appState.navController.navigateTo(it) }
-                deepLinkUri?.collect { appState.navController.navigateTo(it) }
+                val navigateToDeepLink: (Uri) -> Unit = { uri ->
+                    try {
+                        appState.navController.navigateTo(uri)
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        Timber.e(e, "Failed to navigate to deep link: $uri")
+                        onShowMessage(Toast("연결할 수 없는 링크예요."))
+                    }
+                }
+                appState.navController.currentBackStackEntryFlow
+                    .first { entry -> !entry.destination.hasRoute(Splash::class) }
+
+                initialDeepLinkUri?.let(navigateToDeepLink)
+                deepLinkUri?.collect(navigateToDeepLink)
             }
 
             HilingualErrorDialog(
