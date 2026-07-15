@@ -173,16 +173,13 @@ internal class SignUpViewModel @Inject constructor(
         userRepository.saveRegisterStatus(true)
         onboardingRepository.updateIsHomeOnboardingCompleted(false)
         updateIsSplashOnboardingCompleted()
-        patchFcmToken()
+        viewModelScope.launch { syncFcmToken() }
         _sideEffect.emit(SignUpSideEffect.NavigateToHome)
     }
 
-    private suspend fun patchFcmToken() {
+    private suspend fun syncFcmToken() {
         userRepository.getCurrentFcmToken()
-            .onSuccess { token ->
-                userRepository.patchFcmToken(fcmToken = token)
-                    .onLogFailure { }
-            }
+            .onSuccess { token -> userRepository.scheduleFcmTokenSync(fcmToken = token) }
             .onLogFailure { }
     }
 
