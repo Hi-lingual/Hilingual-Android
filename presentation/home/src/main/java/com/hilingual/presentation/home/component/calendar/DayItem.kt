@@ -38,7 +38,6 @@ import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.home.component.calendar.model.CalendarDay
 import com.hilingual.presentation.home.component.calendar.model.DayPosition
-import java.time.LocalDate
 
 @Composable
 internal fun DayItem(
@@ -47,6 +46,7 @@ internal fun DayItem(
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
     isWritten: Boolean = false,
+    isToday: Boolean = false,
 ) {
     val textColor = when {
         isSelected -> HilingualTheme.colors.white
@@ -105,7 +105,7 @@ internal fun DayItem(
             color = textColor,
         )
 
-        if (day.date == LocalDate.now()) {
+        if (isToday) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_dot_4),
                 contentDescription = null,
