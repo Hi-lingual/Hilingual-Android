@@ -110,7 +110,7 @@ internal class SplashViewModel @Inject constructor(
             if (isLoggedIn) {
                 putDeviceInfo()
                 setTrackerUserId()
-                viewModelScope.launch { syncFcmToken() }
+                viewModelScope.launch { userRepository.syncFcmToken() }
             }
 
             delay(1400L)
@@ -133,12 +133,6 @@ internal class SplashViewModel @Inject constructor(
             .onLogFailure { }
             .map { it.userId }
             .getOrNull()
-
-    private suspend fun syncFcmToken() {
-        userRepository.getCurrentFcmToken()
-            .onSuccess { token -> userRepository.scheduleFcmTokenSync(fcmToken = token) }
-            .onLogFailure { }
-    }
 
     fun onUpdateConfirm() {
         _sideEffect.tryEmit(NavigateToStore)

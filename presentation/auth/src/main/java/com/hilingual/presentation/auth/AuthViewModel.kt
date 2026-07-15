@@ -88,17 +88,11 @@ class AuthViewModel @Inject constructor(
             updateIsSplashOnboardingCompleted()
             putDeviceInfo()
             setUserIdentity(userId)
-            viewModelScope.launch { syncFcmToken() }
+            viewModelScope.launch { userRepository.syncFcmToken() }
             _navigationEvent.tryEmit(AuthSideEffect.NavigateToHome)
         } else {
             _navigationEvent.tryEmit(AuthSideEffect.NavigateToSignUp)
         }
-    }
-
-    private suspend fun syncFcmToken() {
-        userRepository.getCurrentFcmToken()
-            .onSuccess { token -> userRepository.scheduleFcmTokenSync(token) }
-            .onLogFailure { }
     }
 
     private suspend fun putDeviceInfo(): Boolean =
