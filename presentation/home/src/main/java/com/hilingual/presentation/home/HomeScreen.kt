@@ -61,6 +61,7 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.provider.LocalNetworkStatus
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.DialogState
 import com.hilingual.core.common.trigger.LocalDialogTrigger
@@ -111,6 +112,7 @@ internal fun HomeRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
     val messageController = LocalMessageController.current
+    val isOffline = LocalNetworkStatus.current
     val tracker = LocalTracker.current
     val context = LocalContext.current
     val activity = LocalActivity.current
@@ -254,8 +256,24 @@ internal fun HomeRoute(
                     tracker.logEvent(trigger = TriggerType.CLICK, page = HOME, event = "profile")
                     navigateToFeedProfile(0L)
                 },
-                onDateSelected = viewModel::onDateSelected,
-                onMonthChanged = viewModel::onMonthChanged,
+                onDateSelected = { date ->
+                    when {
+                        date == state.data.calendar.selectedDate -> Unit
+                        isOffline -> messageController(
+                            HilingualMessage.Toast("인터넷 연결이 불안정해요."),
+                        )
+                        else -> viewModel.onDateSelected(date)
+                    }
+                },
+                onMonthChanged = { yearMonth ->
+                    when {
+                        yearMonth == YearMonth.from(state.data.calendar.selectedDate) -> Unit
+                        isOffline -> messageController(
+                            HilingualMessage.Toast("인터넷 연결이 불안정해요."),
+                        )
+                        else -> viewModel.onMonthChanged(yearMonth)
+                    }
+                },
                 onRecoveryClick = viewModel::onRecoveryClick,
                 onWriteDiaryClick = { date, mode ->
                     tracker.logEvent(
