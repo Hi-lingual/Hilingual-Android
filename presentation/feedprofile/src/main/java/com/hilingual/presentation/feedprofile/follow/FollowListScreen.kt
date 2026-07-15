@@ -39,6 +39,8 @@ import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.presentation.feedprofile.component.card.FeedEmptyCardType
@@ -168,6 +170,14 @@ private fun FollowListScreen(
                         onActionButtonClick = { userId, isFollowing ->
                             onActionButtonClick(userId, isFollowing, pageState.tabType)
                         },
+                    )
+                }
+
+                is UiState.Failure -> {
+                    HilingualLoadErrorView(
+                        action = LoadErrorViewAction.Retry(
+                            onRetryClick = { onTabRefresh(pageState.tabType) },
+                        ),
                     )
                 }
 

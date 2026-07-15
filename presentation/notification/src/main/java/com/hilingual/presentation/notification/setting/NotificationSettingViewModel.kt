@@ -18,6 +18,7 @@ package com.hilingual.presentation.notification.setting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -71,7 +72,9 @@ internal class NotificationSettingViewModel @Inject constructor(
                     _uiState.update { UiState.Success(newUiState) }
                     serverState.update { newUiState }
                 }
-                .onLogFailure { /* TODO: 에러 처리 */ }
+                .onLogFailure {
+                    _uiState.update { UiState.Failure(LoadErrorHandleAction.Retry) }
+                }
         }
     }
 

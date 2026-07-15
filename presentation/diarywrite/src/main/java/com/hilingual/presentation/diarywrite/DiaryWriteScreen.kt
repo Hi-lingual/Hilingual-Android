@@ -50,7 +50,6 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
@@ -59,6 +58,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.hilingual.core.common.analytics.FakeTracker
+import com.hilingual.core.common.analytics.Page.AI_FEEDBACK
 import com.hilingual.core.common.analytics.Page.WRITE_DIARY
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.analytics.TriggerType
@@ -81,17 +81,14 @@ import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.presentation.diarywrite.component.DiaryOverwriteDialog
 import com.hilingual.presentation.diarywrite.component.DiaryWriteCancelBottomSheet
-import com.hilingual.presentation.diarywrite.component.FeedbackCompleteContent
-import com.hilingual.presentation.diarywrite.component.FeedbackFailureContent
-import com.hilingual.presentation.diarywrite.component.FeedbackMedia
-import com.hilingual.presentation.diarywrite.component.FeedbackUIData
 import com.hilingual.presentation.diarywrite.component.ImageSelectBottomSheet
 import com.hilingual.presentation.diarywrite.component.PhotoSelectButton
 import com.hilingual.presentation.diarywrite.component.RecommendedTopicDropdown
 import com.hilingual.presentation.diarywrite.component.TextScanButton
 import com.hilingual.presentation.diarywrite.component.WriteGuideTooltip
+import com.hilingual.presentation.diarywrite.screen.DiaryCompleteScreen
+import com.hilingual.presentation.diarywrite.screen.DiaryFailureScreen
 import com.hilingual.presentation.diarywrite.screen.DiaryFeedbackLoadingScreen
-import com.hilingual.presentation.diarywrite.screen.DiaryFeedbackStatusScreen
 import com.skydoves.balloon.BalloonSizeSpec
 import com.skydoves.balloon.compose.balloon
 import com.skydoves.balloon.compose.rememberBalloonBuilder
@@ -101,7 +98,6 @@ import java.io.File
 import java.time.LocalDate
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
-import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun DiaryWriteRoute(
@@ -133,8 +129,8 @@ internal fun DiaryWriteRoute(
     }
 
     var diaryTextImageUri by remember { mutableStateOf<Uri?>(null) }
-
     var diaryTextImageFile by remember { mutableStateOf<File?>(null) }
+    var isFeedbackRequestClickPending by remember { mutableStateOf(false) }
 
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture(),
@@ -176,6 +172,12 @@ internal fun DiaryWriteRoute(
         tracker.logEvent(trigger = TriggerType.VIEW, page = WRITE_DIARY, event = "page")
     }
 
+    LaunchedEffect(feedbackUiState) {
+        if (feedbackUiState !is UiState.Loading) {
+            isFeedbackRequestClickPending = false
+        }
+    }
+
     when (val feedbackState = feedbackUiState) {
         is UiState.Empty -> {
             DiaryWriteScreen(
@@ -200,6 +202,9 @@ internal fun DiaryWriteRoute(
                     galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 },
                 onDiaryFeedbackRequestButtonClick = {
+                    if (isFeedbackRequestClickPending) return@DiaryWriteScreen
+                    isFeedbackRequestClickPending = true
+
                     tracker.logEvent(
                         trigger = TriggerType.CLICK,
                         page = WRITE_DIARY,
@@ -223,54 +228,39 @@ internal fun DiaryWriteRoute(
         }
 
         is UiState.Success -> {
-            val diaryId = feedbackState.data
-            DiaryFeedbackStatusScreen(
+            DiaryCompleteScreen(
                 paddingValues = paddingValues,
-                uiData = FeedbackUIData(
-                    title = "일기 저장 완료!",
-                    description = {
-                        Text(
-                            text = "틀린 부분을 고치고,\n더 나은 표현으로 수정했어요!",
-                            color = HilingualTheme.colors.gray400,
-                            style = HilingualTheme.typography.headR18,
-                            textAlign = TextAlign.Center,
-                        )
-                    },
-                    media = FeedbackMedia.Lottie(
-                        resId = R.raw.lottie_feedback_complete,
-                        heightDp = 180.dp,
-                    ),
-                ),
-                content = {
-                    FeedbackCompleteContent(
-                        diaryId = diaryId,
-                        onCloseButtonClick = navigateToHome,
-                        onShowFeedbackButtonClick = navigateToDiaryFeedback,
-                    )
-                },
+                diaryId = feedbackState.data,
+                onCloseButtonClick = navigateToHome,
+                onShowFeedbackButtonClick = navigateToDiaryFeedback,
             )
         }
 
         is UiState.Failure -> {
-            DiaryFeedbackStatusScreen(
+            BackHandler {
+                viewModel.resetFeedbackStateToWriting()
+            }
+
+            DiaryFailureScreen(
                 paddingValues = paddingValues,
-                uiData = FeedbackUIData(
-                    title = "앗! 일시적인 오류가 발생했어요.",
-                    media = FeedbackMedia.Image(
-                        resId = DesignSystemR.drawable.img_error,
-                        heightDp = 175.dp,
-                    ),
-                ),
-                content = {
-                    FeedbackFailureContent(
-                        onCloseButtonClick = navigateToHome,
-                        onRequestAgainButtonClick = viewModel::postDiaryFeedbackCreate,
+                onBackClick = viewModel::resetFeedbackStateToWriting,
+                onRequestAgainButtonClick = {
+                    if (isFeedbackRequestClickPending) return@DiaryFailureScreen
+                    isFeedbackRequestClickPending = true
+
+                    tracker.logEvent(
+                        trigger = TriggerType.CLICK,
+                        page = AI_FEEDBACK,
+                        event = "feedback_retry",
                     )
+                    viewModel.postDiaryFeedbackCreate()
                 },
             )
         }
     }
 }
+
+private const val MIN_DIARY_FEEDBACK_REQUEST_LENGTH = 10
 
 @Composable
 private fun DiaryWriteScreen(
@@ -303,6 +293,8 @@ private fun DiaryWriteScreen(
 
     var dropdownClickCount by remember { mutableIntStateOf(0) }
     var textFieldFocusedTime by remember { mutableLongStateOf(0L) }
+
+    val isFeedbackRequestEnabled = diaryText.length >= MIN_DIARY_FEEDBACK_REQUEST_LENGTH
 
     BackHandler {
         cancelDiaryWrite(
@@ -517,19 +509,20 @@ private fun DiaryWriteScreen(
                         },
                     ),
                 text = "피드백 요청하기",
-                enableProvider = { diaryText.length >= 10 },
+                enableProvider = { isFeedbackRequestEnabled },
                 onClick = onDiaryFeedbackRequestButtonClick,
             )
         }
 
-        LaunchedEffect(Unit) {
+        LaunchedEffect(isFeedbackRequestEnabled, isTextFieldFocused) {
+            if (isFeedbackRequestEnabled || isTextFieldFocused) {
+                balloonState.dismiss()
+                return@LaunchedEffect
+            }
+
             balloonState.showAlignTop()
             delay(5000)
             balloonState.dismiss()
-        }
-
-        LaunchedEffect(isTextFieldFocused) {
-            if (isTextFieldFocused) balloonState.dismiss()
         }
     }
 }

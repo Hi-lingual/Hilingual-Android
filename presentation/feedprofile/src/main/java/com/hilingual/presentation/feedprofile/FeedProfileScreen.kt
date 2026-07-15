@@ -55,6 +55,7 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
@@ -62,6 +63,8 @@ import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.dialog.report.ReportUserDialog
 import com.hilingual.core.ui.component.topappbar.BackAndMoreTopAppBar
@@ -153,6 +156,22 @@ internal fun FeedProfileRoute(
                 onReportDiaryClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 onUnpublishClick = viewModel::diaryUnpublish,
                 onTabRefresh = viewModel::refreshTab,
+            )
+        }
+
+        is UiState.Failure -> {
+            val handleAction = state.handleAction
+            HilingualLoadErrorView(
+                action = when (handleAction) {
+                    LoadErrorHandleAction.NotFound -> LoadErrorViewAction.NotFound(
+                        onBackClick = navigateUp,
+                    )
+
+                    else -> LoadErrorViewAction.Back(
+                        onBackClick = navigateUp,
+                    )
+                },
+                modifier = Modifier.padding(paddingValues),
             )
         }
 

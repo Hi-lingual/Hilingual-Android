@@ -50,6 +50,8 @@ import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.item.feed.UserActionItem
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
@@ -87,6 +89,16 @@ internal fun BlockedUserRoute(
                 blockedUserList = state.data,
                 onUserProfileClick = navigateToProfile,
                 onButtonClick = viewModel::onUnblockStatusChanged,
+            )
+        }
+
+        is UiState.Failure -> {
+            HilingualLoadErrorView(
+                action = LoadErrorViewAction.Retry(
+                    onRetryClick = viewModel::getBlockList,
+                    onBackClick = navigateUp,
+                ),
+                modifier = Modifier.padding(paddingValues),
             )
         }
 
