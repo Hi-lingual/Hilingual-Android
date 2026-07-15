@@ -31,6 +31,8 @@ import com.hilingual.presentation.main.state.rememberMainAppState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
+import timber.log.Timber
+import androidx.core.net.toUri
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -51,8 +53,7 @@ class MainActivity : ComponentActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         enableEdgeToEdge()
 
-        val initialDeepLink = intent?.data
-            ?: intent?.getStringExtra("link")?.let { Uri.parse(it) }
+        val initialDeepLink = consumeDeepLinkUri(intent)
 
         setContent {
             HilingualTheme {
@@ -70,8 +71,14 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        val uri = intent.data
-            ?: intent.getStringExtra("link")?.let { Uri.parse(it) }
-        uri?.let { deepLinkUri.tryEmit(it) }
+        setIntent(intent)
+        consumeDeepLinkUri(intent)?.let { deepLinkUri.tryEmit(it) }
+    }
+
+    private fun consumeDeepLinkUri(intent: Intent?): Uri? {
+        val uri = intent?.data ?: intent?.getStringExtra("link")?.let { Uri.parse(it) }
+        intent?.data = null
+        intent?.removeExtra("link")
+        return uri
     }
 }
