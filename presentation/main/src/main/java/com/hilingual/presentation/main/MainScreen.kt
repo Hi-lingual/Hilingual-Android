@@ -38,7 +38,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -86,7 +85,6 @@ import com.hilingual.presentation.voca.navigation.vocaNavGraph
 import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -96,8 +94,8 @@ internal fun MainScreen(
     appState: MainAppState,
     tracker: Tracker,
     appRestarter: AppRestarter,
-    initialDeepLinkUri: Uri? = null,
-    deepLinkUri: MutableSharedFlow<Uri>? = null,
+    deepLinkUri: Uri? = null,
+    onDeepLinkConsumed: () -> Unit,
 ) {
     val isOffline by appState.isOffline.collectAsStateWithLifecycle()
     val isBottomBarVisible by appState.isBottomBarVisible.collectAsStateWithLifecycle()
@@ -263,8 +261,11 @@ internal fun MainScreen(
                 )
             }
 
-            LaunchedEffect(appState.navController) {
-                val navigateToDeepLink: (Uri) -> Unit = { uri ->
+            LaunchedEffect(appState.navController, deepLinkUri) {
+                appState.navController.currentBackStackEntryFlow
+                    .first { entry -> !entry.destination.hasRoute(Splash::class) }
+
+                deepLinkUri?.let { uri ->
                     try {
                         appState.navController.navigateTo(uri)
                     } catch (e: CancellationException) {
@@ -273,12 +274,8 @@ internal fun MainScreen(
                         Timber.e(e, "Failed to navigate to deep link: $uri")
                         onShowMessage(Toast("연결할 수 없는 링크예요."))
                     }
+                    onDeepLinkConsumed()
                 }
-                appState.navController.currentBackStackEntryFlow
-                    .first { entry -> !entry.destination.hasRoute(Splash::class) }
-
-                initialDeepLinkUri?.let(navigateToDeepLink)
-                deepLinkUri?.collect(navigateToDeepLink)
             }
 
             HilingualErrorDialog(

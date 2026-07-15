@@ -23,6 +23,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.core.net.toUri
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.app.AppRestarter
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -30,9 +34,6 @@ import com.hilingual.core.network.monitor.NetworkMonitor
 import com.hilingual.presentation.main.state.rememberMainAppState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlinx.coroutines.flow.MutableSharedFlow
-import timber.log.Timber
-import androidx.core.net.toUri
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -45,7 +46,7 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var appRestarter: AppRestarter
 
-    private val deepLinkUri = MutableSharedFlow<Uri>(extraBufferCapacity = 1)
+    private var pendingDeepLinkUri by mutableStateOf<Uri?>(null)
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +54,11 @@ class MainActivity : ComponentActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         enableEdgeToEdge()
 
-        val initialDeepLink = consumeDeepLinkUri(intent)
+        pendingDeepLinkUri = consumeDeepLinkUri(intent)
+
+        addOnNewIntentListener { newIntent ->
+            consumeDeepLinkUri(newIntent)?.let { pendingDeepLinkUri = it }
+        }
 
         setContent {
             HilingualTheme {
@@ -62,8 +67,8 @@ class MainActivity : ComponentActivity() {
                     appState = appState,
                     tracker = tracker,
                     appRestarter = appRestarter,
-                    initialDeepLinkUri = initialDeepLink,
-                    deepLinkUri = deepLinkUri,
+                    deepLinkUri = pendingDeepLinkUri,
+                    onDeepLinkConsumed = { pendingDeepLinkUri = null },
                 )
             }
         }
@@ -72,11 +77,10 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        consumeDeepLinkUri(intent)?.let { deepLinkUri.tryEmit(it) }
     }
 
     private fun consumeDeepLinkUri(intent: Intent?): Uri? {
-        val uri = intent?.data ?: intent?.getStringExtra("link")?.let { Uri.parse(it) }
+        val uri = intent?.data ?: intent?.getStringExtra("link")?.let { it.toUri() }
         intent?.data = null
         intent?.removeExtra("link")
         return uri
