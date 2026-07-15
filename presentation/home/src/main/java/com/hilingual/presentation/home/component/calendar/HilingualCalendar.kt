@@ -16,11 +16,11 @@
 package com.hilingual.presentation.home.component.calendar
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,7 +40,6 @@ import java.time.YearMonth
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
 @Composable
@@ -54,24 +53,30 @@ internal fun HilingualCalendar(
     val coroutineScope = rememberCoroutineScope()
     val daysOfWeek = remember { daysOfWeek().toImmutableList() }
     val today = remember { LocalDate.now() }
+    val initialMonth = remember { YearMonth.from(today) }
     val state = rememberCalendarState(
-        initialVisibleMonth = remember { YearMonth.from(today) },
+        initialVisibleMonth = initialMonth,
         firstDayOfWeek = daysOfWeek.first(),
     )
     var isBottomSheetVisible by remember { mutableStateOf(false) }
 
-    val targetMonth by remember(state) { derivedStateOf { state.targetMonth } }
+    var displayedMonth by remember { mutableStateOf(initialMonth) }
+    val isDragged by state.pagerState.interactionSource.collectIsDraggedAsState()
     val currentOnMonthChanged by rememberUpdatedState(onMonthChanged)
 
     LaunchedEffect(state) {
-        snapshotFlow { state.targetMonth }
-            .drop(1)
-            .collect { currentOnMonthChanged(it) }
+        snapshotFlow { isDragged to state.targetMonth }
+            .collect { (dragged, month) ->
+                if (!dragged && month != displayedMonth) {
+                    displayedMonth = month
+                    currentOnMonthChanged(month)
+                }
+            }
     }
 
     HilingualYearMonthPickerBottomSheet(
         isVisible = isBottomSheetVisible,
-        initialYearMonth = targetMonth,
+        initialYearMonth = displayedMonth,
         onDismiss = { isBottomSheetVisible = false },
         onDateSelected = { newYearMonth ->
             coroutineScope.launch {
@@ -94,7 +99,7 @@ internal fun HilingualCalendar(
                     state.animateScrollToMonth(state.targetMonth.plusMonths(1))
                 }
             },
-            yearMonth = { targetMonth },
+            yearMonth = { displayedMonth },
             modifier = Modifier.padding(bottom = 12.dp),
         )
 
