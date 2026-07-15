@@ -95,17 +95,19 @@ private fun FollowListScreen(
     onTabRefresh: (FollowTabType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val pagerState = rememberPagerState(pageCount = { 2 })
+    val pagerState = rememberPagerState(pageCount = { FollowTabType.entries.size })
     val coroutineScope = rememberCoroutineScope()
     val followerListState = rememberLazyListState()
     val followingListState = rememberLazyListState()
+    val currentTabType = FollowTabType.entries[pagerState.currentPage]
+
+    RetryOnReconnect(onRetry = { onTabRefresh(currentTabType) })
 
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }
             .distinctUntilChanged()
             .collect { pageIndex ->
-                val tabType = if (pageIndex == 0) FollowTabType.FOLLOWER else FollowTabType.FOLLOWING
-                onTabRefresh(tabType)
+                onTabRefresh(FollowTabType.entries[pageIndex])
             }
     }
 
@@ -123,7 +125,7 @@ private fun FollowListScreen(
             tabIndex = pagerState.currentPage,
             onTabSelected = { index ->
                 coroutineScope.launch {
-                    val tabType = if (index == 0) FollowTabType.FOLLOWER else FollowTabType.FOLLOWING
+                    val tabType = FollowTabType.entries[index]
                     if (index == pagerState.currentPage) {
                         onTabRefresh(tabType)
                     } else {
@@ -153,8 +155,6 @@ private fun FollowListScreen(
                     listState = followingListState,
                 )
             }
-
-            RetryOnReconnect(onRetry = { onTabRefresh(pageState.tabType) })
 
             when (pageState.followState) {
                 is UiState.Loading -> HilingualLoadingIndicator()
