@@ -23,6 +23,7 @@ import coil3.SingletonImageLoader
 import com.angrypodo.wisp.runtime.Wisp
 import com.hilingual.core.ads.initializer.AdsInitializer
 import com.hilingual.core.common.util.HilingualReleaseTree
+import com.hilingual.core.notification.HilingualNotificationManager
 import com.hilingual.core.work.scheduler.HilingualWorkManagerConfigurator
 import dagger.Lazy
 import dagger.hilt.android.HiltAndroidApp
@@ -40,6 +41,9 @@ class App : Application(), SingletonImageLoader.Factory {
     @Inject
     lateinit var adsInitializer: AdsInitializer
 
+    @Inject
+    lateinit var notificationManager: HilingualNotificationManager
+
     override fun onCreate() {
         super.onCreate()
         SingletonImageLoader.setSafe { imageLoader.get() }
@@ -48,6 +52,7 @@ class App : Application(), SingletonImageLoader.Factory {
         initTimber()
         initWorkManager()
         initAds()
+        initNotificationChannels()
         Wisp.initialize()
     }
 
@@ -68,5 +73,9 @@ class App : Application(), SingletonImageLoader.Factory {
 
     private fun initAds() {
         adsInitializer.initialize(this)
+    }
+
+    private fun initNotificationChannels() {
+        notificationManager.createNotificationChannels()
     }
 }
