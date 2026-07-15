@@ -79,7 +79,7 @@ internal fun BlockedUserRoute(
         viewModel.getBlockList()
     }
 
-    RetryOnReconnect(onRetry = viewModel::getBlockList)
+    RetryOnReconnect(onRetry = viewModel::retryLoad)
 
     when (val state = uiState.blockedUserList) {
         is UiState.Success -> {
@@ -95,7 +95,7 @@ internal fun BlockedUserRoute(
         is UiState.Failure -> {
             HilingualLoadErrorView(
                 action = LoadErrorViewAction.Retry(
-                    onRetryClick = viewModel::getBlockList,
+                    onRetryClick = viewModel::retryLoad,
                     onBackClick = navigateUp,
                 ),
                 modifier = Modifier.padding(paddingValues),

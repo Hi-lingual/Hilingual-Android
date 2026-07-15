@@ -39,7 +39,7 @@ internal fun NotificationDetailRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    RetryOnReconnect(onRetry = viewModel::getNotificationDetail)
+    RetryOnReconnect(onRetry = viewModel::retryLoad)
 
     NotificationDetailScreen(
         paddingValues = paddingValues,

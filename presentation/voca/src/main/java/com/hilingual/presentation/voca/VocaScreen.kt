@@ -95,7 +95,7 @@ internal fun VocaRoute(
         tracker.logEvent(trigger = TriggerType.VIEW, page = VOCABULARY, event = "page")
     }
 
-    RetryOnReconnect(onRetry = viewModel::fetchInitialData)
+    RetryOnReconnect(onRetry = viewModel::retryLoad)
 
     LaunchedEffect(uiState.vocaItemDetail) {
         if (uiState.vocaItemDetail is UiState.Success) {
@@ -121,7 +121,7 @@ internal fun VocaRoute(
     if (vocaGroupState is UiState.Failure) {
         HilingualLoadErrorView(
             action = LoadErrorViewAction.Retry(
-                onRetryClick = viewModel::fetchInitialData,
+                onRetryClick = viewModel::retryLoad,
             ),
             modifier = Modifier.padding(paddingValues),
         )

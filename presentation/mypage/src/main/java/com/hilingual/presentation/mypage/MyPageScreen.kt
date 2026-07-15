@@ -89,7 +89,7 @@ internal fun MyPageRoute(
         }
     }
 
-    RetryOnReconnect(onRetry = viewModel::getProfileInfo)
+    RetryOnReconnect(onRetry = viewModel::retryLoad)
 
     when (val state = uiState) {
         is UiState.Success -> {
@@ -112,7 +112,7 @@ internal fun MyPageRoute(
         is UiState.Failure -> {
             HilingualLoadErrorView(
                 action = LoadErrorViewAction.Retry(
-                    onRetryClick = viewModel::getProfileInfo,
+                    onRetryClick = viewModel::retryLoad,
                 ),
                 modifier = Modifier.padding(paddingValues),
             )

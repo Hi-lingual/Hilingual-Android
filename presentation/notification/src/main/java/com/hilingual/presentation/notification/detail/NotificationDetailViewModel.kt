@@ -44,7 +44,7 @@ internal class NotificationDetailViewModel @Inject constructor(
         getNotificationDetail()
     }
 
-    fun getNotificationDetail() {
+    private fun getNotificationDetail() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             userRepository.getNotificationDetail(noticeId)
@@ -61,4 +61,6 @@ internal class NotificationDetailViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = false) }
         }
     }
+
+    fun retryLoad() = getNotificationDetail()
 }

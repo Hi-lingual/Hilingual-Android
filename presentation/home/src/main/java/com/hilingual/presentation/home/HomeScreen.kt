@@ -190,7 +190,7 @@ internal fun HomeRoute(
         tracker.logEvent(trigger = TriggerType.VIEW, page = HOME, event = "page")
     }
 
-    RetryOnReconnect(onRetry = viewModel::loadInitialData)
+    RetryOnReconnect(onRetry = viewModel::retryLoad)
 
     if (ENABLE_PUSH_NOTIFICATION) {
         CheckNotificationPermission(
@@ -310,7 +310,7 @@ internal fun HomeRoute(
         is UiState.Failure -> {
             HilingualLoadErrorView(
                 action = LoadErrorViewAction.Retry(
-                    onRetryClick = viewModel::loadInitialData,
+                    onRetryClick = viewModel::retryLoad,
                 ),
                 modifier = Modifier.padding(paddingValues),
             )

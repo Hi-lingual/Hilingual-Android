@@ -67,7 +67,7 @@ internal class FeedDiaryViewModel @Inject constructor(
         loadInitialData()
     }
 
-    fun loadInitialData() {
+    private fun loadInitialData() {
         viewModelScope.launch {
             _uiState.update { UiState.Loading }
             val profileResult = feedRepository.getFeedDiaryProfile(diaryId)
@@ -120,6 +120,8 @@ internal class FeedDiaryViewModel @Inject constructor(
             }
         }
     }
+
+    fun retryLoad() = loadInitialData()
 
     fun toggleIsLiked(isLiked: Boolean) {
         viewModelScope.launch {

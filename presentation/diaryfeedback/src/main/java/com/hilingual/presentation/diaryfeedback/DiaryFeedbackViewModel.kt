@@ -77,6 +77,8 @@ internal class DiaryFeedbackViewModel @Inject constructor(
         }
     }
 
+    fun retryLoad() = loadInitialData()
+
     private suspend fun requestDiaryFeedbackData(): DiaryFeedbackUiState =
         coroutineScope {
             val contentDeferred = async { diaryRepository.getDiaryContent(diaryId) }

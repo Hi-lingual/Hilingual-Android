@@ -56,6 +56,8 @@ internal class FeedViewModel @Inject constructor(
         getFollowingFeeds(isUserRefresh = false)
     }
 
+    fun retryLoad() = loadInitialFeedData()
+
     fun loadFeedData(tab: FeedTab) {
         when (tab) {
             FeedTab.RECOMMEND -> getRecommendFeeds(isUserRefresh = false)

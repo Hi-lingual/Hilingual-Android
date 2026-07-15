@@ -87,7 +87,7 @@ internal fun NotificationSettingRoute(
         context.startActivity(intent)
     }
 
-    RetryOnReconnect(onRetry = viewModel::getNotificationSettings)
+    RetryOnReconnect(onRetry = viewModel::retryLoad)
 
     when (val state = uiState) {
         is UiState.Loading -> {
@@ -118,7 +118,7 @@ internal fun NotificationSettingRoute(
         is UiState.Failure -> {
             HilingualLoadErrorView(
                 action = LoadErrorViewAction.Retry(
-                    onRetryClick = viewModel::getNotificationSettings,
+                    onRetryClick = viewModel::retryLoad,
                     onBackClick = navigateUp,
                 ),
                 modifier = Modifier.padding(paddingValues),
