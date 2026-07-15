@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -103,7 +104,6 @@ internal fun MainScreen(
     val isBottomBarVisible by appState.isBottomBarVisible.collectAsStateWithLifecycle()
     val currentTab by appState.currentTab.collectAsStateWithLifecycle()
     val currentBackStackEntry by appState.navController.currentBackStackEntryAsState()
-    var shouldShowNetworkError by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
     val dialogTrigger = rememberDialogTrigger(
@@ -111,6 +111,13 @@ internal fun MainScreen(
     )
 
     val snackBarHostState = remember { SnackbarHostState() }
+
+    var isNetworkErrorOverlayVisible by remember(currentBackStackEntry) {
+        mutableStateOf(
+            isOffline &&
+                currentBackStackEntry?.destination?.canShowNetworkErrorOverlay() == true,
+        )
+    }
     val reconnectEvents = remember { MutableSharedFlow<Unit>() }
 
     val onShowMessage: (HilingualMessage) -> Unit =
@@ -142,18 +149,8 @@ internal fun MainScreen(
             appState.dialogStateHolder.dismissDialog()
             onShowMessage(Toast("인터넷 연결이 불안정해요."))
         } else {
-            shouldShowNetworkError = false
+            isNetworkErrorOverlayVisible = false
         }
-    }
-
-    LaunchedEffect(currentBackStackEntry) {
-        val currentDestination = currentBackStackEntry?.destination ?: return@LaunchedEffect
-        shouldShowNetworkError =
-            if (currentDestination.hasRoute(Splash::class) || currentDestination.hasRoute(Auth::class)) {
-                false
-            } else {
-                isOffline
-            }
     }
 
     HandleBackPressToExit(
@@ -289,20 +286,12 @@ internal fun MainScreen(
                     )
                 }
 
-                if (shouldShowNetworkError) {
+                if (isNetworkErrorOverlayVisible) {
                     HilingualNetworkErrorView(
                         isBackVisible = !isBottomBarVisible,
                         onBackClick = appState::navigateUp,
                         onRetryClick = {
-                            if (isOffline) {
-                                shouldShowNetworkError = true
-                                onShowMessage(Toast("인터넷 연결이 불안정해요."))
-                            } else {
-                                shouldShowNetworkError = false
-                                coroutineScope.launch {
-                                    reconnectEvents.emit(Unit)
-                                }
-                            }
+                            onShowMessage(Toast("인터넷 연결이 불안정해요."))
                         },
                         modifier = Modifier
                             .padding(innerPadding)
@@ -346,6 +335,9 @@ internal fun MainScreen(
         }
     }
 }
+
+private fun NavDestination.canShowNetworkErrorOverlay(): Boolean =
+    !hasRoute(Splash::class) && !hasRoute(Auth::class)
 
 @Composable
 private fun HandleBackPressToExit(
