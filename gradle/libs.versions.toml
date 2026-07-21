@@ -62,7 +62,7 @@ pebble = "0.1.0"
 balloonCompose = "1.7.6"
 richeditorCompose = "1.0.0-rc14"
 gmaAds = "1.0.1"
-metaAdsAdapter = "6.21.0.3"
+metaAdsAdapter = "6.21.0.4"
 
 # Firebase
 firebaseBom = "34.16.0"
