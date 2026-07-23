@@ -35,8 +35,6 @@ class HilingualFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
-        Timber.tag("FCM_TOKEN").d("FCM 수신됨: ${remoteMessage.data}")
-
         remoteMessage.notification?.let { notification ->
             val title = notification.title ?: return@let
             val body = notification.body ?: return@let
