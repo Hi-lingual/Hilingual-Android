@@ -71,18 +71,24 @@ class HilingualNotificationManager @Inject constructor(
         message: String,
         deepLink: String? = null,
     ) {
-        val targetChannelId = channelId?.takeIf { it in KNOWN_CHANNEL_IDS }
-        if (channelId != null && targetChannelId == null) {
+        val targetChannelId = channelId?.takeIf { it in KNOWN_CHANNEL_IDS } ?: CHANNEL_ID_SOCIAL
+        if (channelId != null && channelId !in KNOWN_CHANNEL_IDS) {
             Timber.e("Unknown channelId from server: $channelId")
         }
 
         showReminderNotification(
-            channelId = targetChannelId ?: CHANNEL_ID_SOCIAL,
-            notificationId = System.currentTimeMillis().toInt(),
+            channelId = targetChannelId,
+            notificationId = resolveNotificationId(targetChannelId),
             title = title,
             message = message,
             deepLink = deepLink,
         )
+    }
+
+    private fun resolveNotificationId(channelId: String): Int = when (channelId) {
+        CHANNEL_ID_DAILY -> NOTIFICATION_ID_DAILY
+        CHANNEL_ID_WEEKLY -> NOTIFICATION_ID_WEEKLY
+        else -> System.currentTimeMillis().toInt()
     }
 
     private fun showReminderNotification(
@@ -92,14 +98,13 @@ class HilingualNotificationManager @Inject constructor(
         message: String,
         deepLink: String? = null,
     ) {
-        val pendingIntent = if (!deepLink.isNullOrBlank()) {
-            val intent = context.packageManager
-                .getLaunchIntentForPackage(context.packageName)
-                ?.apply {
-                    putExtra("link", deepLink)
-                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                }
-            intent?.let {
+        val pendingIntent = context.packageManager
+            .getLaunchIntentForPackage(context.packageName)
+            ?.apply {
+                addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                deepLink?.takeIf { it.isNotBlank() }?.let { putExtra("link", it) }
+            }
+            ?.let {
                 PendingIntent.getActivity(
                     context,
                     notificationId,
@@ -107,16 +112,8 @@ class HilingualNotificationManager @Inject constructor(
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
                 )
             }
-        } else {
-            context.packageManager.getLaunchIntentForPackage(context.packageName)?.let {
-                PendingIntent.getActivity(
-                    context,
-                    notificationId,
-                    it,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-                )
-            }
-        }
+
+        val isSocial = channelId == CHANNEL_ID_SOCIAL
 
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_notification)
@@ -125,6 +122,11 @@ class HilingualNotificationManager @Inject constructor(
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
+            .apply {
+                if (isSocial) {
+                    setGroup(GROUP_KEY_SOCIAL)
+                }
+            }
 
         if (pendingIntent != null) {
             builder.setContentIntent(pendingIntent)
@@ -132,11 +134,28 @@ class HilingualNotificationManager @Inject constructor(
             Timber.e("PendingIntent is null.")
         }
 
-        try {
-            notificationManager?.notify(notificationId, builder.build())
-        } catch (e: SecurityException) {
-            Timber.e(e, "Failed to send notification due to permission issues.")
+        if (notificationManager?.areNotificationsEnabled() != true) {
+            Timber.e("Notifications are disabled for this app.")
+            return
         }
+
+        notificationManager.notify(notificationId, builder.build())
+
+        if (isSocial) {
+            notifySocialSummary()
+        }
+    }
+
+    private fun notifySocialSummary() {
+        val summary = NotificationCompat.Builder(context, CHANNEL_ID_SOCIAL)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setStyle(NotificationCompat.InboxStyle())
+            .setGroup(GROUP_KEY_SOCIAL)
+            .setGroupSummary(true)
+            .setAutoCancel(true)
+            .build()
+
+        notificationManager?.notify(NOTIFICATION_ID_SOCIAL_SUMMARY, summary)
     }
 
     companion object {
@@ -145,5 +164,11 @@ class HilingualNotificationManager @Inject constructor(
         private const val CHANNEL_ID_SOCIAL = "channel_social_notification"
 
         private val KNOWN_CHANNEL_IDS = setOf(CHANNEL_ID_DAILY, CHANNEL_ID_WEEKLY, CHANNEL_ID_SOCIAL)
+
+        private const val NOTIFICATION_ID_DAILY = 1001
+        private const val NOTIFICATION_ID_WEEKLY = 1002
+        private const val NOTIFICATION_ID_SOCIAL_SUMMARY = 1003
+
+        private const val GROUP_KEY_SOCIAL = "group_social_notification"
     }
 }
