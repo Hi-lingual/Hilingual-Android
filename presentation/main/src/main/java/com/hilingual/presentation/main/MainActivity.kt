@@ -54,7 +54,9 @@ class MainActivity : ComponentActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         enableEdgeToEdge()
 
-        pendingDeepLinkUri = consumeDeepLinkUri(intent)
+        if (savedInstanceState == null) {
+            pendingDeepLinkUri = consumeDeepLinkUri(intent)
+        }
 
         addOnNewIntentListener { newIntent ->
             consumeDeepLinkUri(newIntent)?.let { pendingDeepLinkUri = it }
