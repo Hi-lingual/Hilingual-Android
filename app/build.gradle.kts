@@ -116,7 +116,6 @@ dependencies {
 
     // deeplink
     implementation(libs.wisp.runtime)
-    ksp(libs.wisp.processor)
 }
 
 ktlint {
