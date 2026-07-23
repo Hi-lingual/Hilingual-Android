@@ -65,6 +65,7 @@ import com.hilingual.core.common.trigger.rememberDialogTrigger
 import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
 import com.hilingual.core.designsystem.component.snackbar.HilingualActionSnackbar
 import com.hilingual.core.designsystem.component.toast.TextToast
+import com.hilingual.presentation.auth.navigation.Auth
 import com.hilingual.presentation.auth.navigation.authNavGraph
 import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
@@ -72,6 +73,7 @@ import com.hilingual.presentation.diarywrite.navigation.diaryWriteNavGraph
 import com.hilingual.presentation.feed.navigation.feedNavGraph
 import com.hilingual.presentation.feeddiary.navigation.feedDiaryNavGraph
 import com.hilingual.presentation.feedprofile.navigation.feedProfileNavGraph
+import com.hilingual.presentation.home.navigation.Home
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.main.state.MainAppState
@@ -79,7 +81,6 @@ import com.hilingual.presentation.mypage.navigation.myPageNavGraph
 import com.hilingual.presentation.notification.navigation.notificationNavGraph
 import com.hilingual.presentation.onboarding.navigation.onboardingNavGraph
 import com.hilingual.presentation.signup.navigation.signUpGraph
-import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.splash.navigation.splashNavGraph
 import com.hilingual.presentation.voca.navigation.vocaNavGraph
 import kotlin.coroutines.cancellation.CancellationException
@@ -262,20 +263,27 @@ internal fun MainScreen(
             }
 
             LaunchedEffect(appState.navController, deepLinkUri) {
-                appState.navController.currentBackStackEntryFlow
-                    .first { entry -> !entry.destination.hasRoute(Splash::class) }
+                if (deepLinkUri == null) return@LaunchedEffect
 
-                deepLinkUri?.let { uri ->
-                    try {
-                        appState.navController.navigateTo(uri)
-                    } catch (e: CancellationException) {
-                        throw e
-                    } catch (e: Exception) {
-                        Timber.e(e, "Failed to navigate to deep link: $uri")
-                        onShowMessage(Toast("연결할 수 없는 링크예요."))
+                val destinationEntry = appState.navController.currentBackStackEntryFlow
+                    .first { entry ->
+                        entry.destination.hasRoute(Home::class) || entry.destination.hasRoute(Auth::class)
                     }
+
+                if (destinationEntry.destination.hasRoute(Auth::class)) {
                     onDeepLinkConsumed()
+                    return@LaunchedEffect
                 }
+
+                try {
+                    appState.navController.navigateTo(deepLinkUri)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    Timber.e(e, "Failed to navigate to deep link: $deepLinkUri")
+                    onShowMessage(Toast("연결할 수 없는 링크예요."))
+                }
+                onDeepLinkConsumed()
             }
 
             HilingualErrorDialog(
