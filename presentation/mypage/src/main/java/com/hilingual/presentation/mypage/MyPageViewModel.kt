@@ -103,6 +103,7 @@ internal class MyPageViewModel @Inject constructor(
         viewModelScope.launch {
             authRepository.logout()
                 .onSuccess {
+                    userRepository.saveRegisterStatus(false)
                     userIdentityTracker.clearUserId()
                     _sideEffect.emit(MyPageSideEffect.RestartApp)
                 }
@@ -116,6 +117,7 @@ internal class MyPageViewModel @Inject constructor(
         viewModelScope.launch {
             authRepository.withdraw()
                 .onSuccess {
+                    userRepository.saveRegisterStatus(false)
                     userIdentityTracker.clearUserId()
                     _sideEffect.emit(MyPageSideEffect.RestartApp)
                 }

@@ -85,6 +85,7 @@ class AuthViewModel @Inject constructor(
 
     private suspend fun onLoginSuccess(isRegistered: Boolean, userId: Long) {
         if (isRegistered) {
+            userRepository.saveRegisterStatus(true)
             updateIsSplashOnboardingCompleted()
             putDeviceInfo()
             setUserIdentity(userId)
