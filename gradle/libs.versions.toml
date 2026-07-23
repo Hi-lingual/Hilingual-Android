@@ -82,7 +82,6 @@ runner = "1.7.0"
 # AboutLibraries
 aboutLibraries = "15.0.3"
 amplitude = "1.29.1"
-firebaseMessagingKtx = "25.0.2"
 
 [libraries]
 # Analytics
@@ -207,7 +206,6 @@ androidx-runner = { group = "androidx.test", name = "runner", version.ref = "run
 # wispLibraries
 wisp-runtime = { module = "io.github.angrypodo:wisp-runtime", version.ref = "wisp" }
 wisp-processor = { module = "io.github.angrypodo:wisp-processor", version.ref = "wisp" }
-firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
 
 [plugins]
 # Android
