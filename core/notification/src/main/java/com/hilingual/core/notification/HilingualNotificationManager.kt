@@ -147,12 +147,33 @@ class HilingualNotificationManager @Inject constructor(
     }
 
     private fun notifySocialSummary() {
+        val summaryPendingIntent = context.packageManager
+            .getLaunchIntentForPackage(context.packageName)
+            ?.apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            }
+            ?.let {
+                PendingIntent.getActivity(
+                    context,
+                    NOTIFICATION_ID_SOCIAL_SUMMARY,
+                    it,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                )
+            }
+
         val summary = NotificationCompat.Builder(context, CHANNEL_ID_SOCIAL)
             .setSmallIcon(R.drawable.ic_notification)
             .setStyle(NotificationCompat.InboxStyle())
             .setGroup(GROUP_KEY_SOCIAL)
             .setGroupSummary(true)
             .setAutoCancel(true)
+            .apply {
+                if (summaryPendingIntent != null) {
+                    setContentIntent(summaryPendingIntent)
+                } else {
+                    Timber.e("Summary PendingIntent is null.")
+                }
+            }
             .build()
 
         notificationManager?.notify(NOTIFICATION_ID_SOCIAL_SUMMARY, summary)
