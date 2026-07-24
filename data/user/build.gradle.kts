@@ -25,7 +25,6 @@ android {
 
 dependencies {
     implementation(projects.data.presigned)
-    implementation(projects.data.auth)
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.hilt.work)

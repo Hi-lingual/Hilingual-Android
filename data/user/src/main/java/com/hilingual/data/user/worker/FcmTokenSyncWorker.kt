@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.hilingual.data.auth.repository.AuthRepository
+import com.hilingual.core.network.auth.TokenProvider
 import com.hilingual.data.user.repository.UserRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -16,7 +16,7 @@ import timber.log.Timber
 class FcmTokenSyncWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val authRepository: AuthRepository,
+    private val tokenProvider: TokenProvider,
     private val userRepository: UserRepository,
 ) : CoroutineWorker(context, params) {
 
@@ -25,8 +25,8 @@ class FcmTokenSyncWorker @AssistedInject constructor(
         if (token.isNullOrBlank()) return Result.failure()
 
         val isLoggedIn = runCatching {
-            val accessToken = authRepository.getAccessToken()
-            val refreshToken = authRepository.getRefreshToken()
+            val accessToken = tokenProvider.getAccessToken()
+            val refreshToken = tokenProvider.getRefreshToken()
             !accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty()
         }.onFailure { Timber.e(it, "Failed to read auth tokens") }
             .getOrElse { return Result.retry() }
