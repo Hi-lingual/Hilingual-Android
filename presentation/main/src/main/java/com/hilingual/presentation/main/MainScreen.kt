@@ -73,14 +73,16 @@ import com.hilingual.presentation.diarywrite.navigation.diaryWriteNavGraph
 import com.hilingual.presentation.feed.navigation.feedNavGraph
 import com.hilingual.presentation.feeddiary.navigation.feedDiaryNavGraph
 import com.hilingual.presentation.feedprofile.navigation.feedProfileNavGraph
-import com.hilingual.presentation.home.navigation.Home
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.main.state.MainAppState
 import com.hilingual.presentation.mypage.navigation.myPageNavGraph
 import com.hilingual.presentation.notification.navigation.notificationNavGraph
+import com.hilingual.presentation.onboarding.navigation.Onboarding
 import com.hilingual.presentation.onboarding.navigation.onboardingNavGraph
+import com.hilingual.presentation.signup.navigation.SignUp
 import com.hilingual.presentation.signup.navigation.signUpGraph
+import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.splash.navigation.splashNavGraph
 import com.hilingual.presentation.voca.navigation.vocaNavGraph
 import kotlin.coroutines.cancellation.CancellationException
@@ -265,12 +267,14 @@ internal fun MainScreen(
             LaunchedEffect(appState.navController, deepLinkUri) {
                 if (deepLinkUri == null) return@LaunchedEffect
 
-                val destinationEntry = appState.navController.currentBackStackEntryFlow
-                    .first { entry ->
-                        entry.destination.hasRoute(Home::class) || entry.destination.hasRoute(Auth::class)
-                    }
+                val entry = appState.navController.currentBackStackEntryFlow
+                    .first { !it.destination.hasRoute(Splash::class) }
 
-                if (destinationEntry.destination.hasRoute(Auth::class)) {
+                val isPreLogin = entry.destination.run {
+                    hasRoute(Auth::class) || hasRoute(SignUp::class) || hasRoute(Onboarding::class)
+                }
+
+                if (isPreLogin) {
                     onDeepLinkConsumed()
                     return@LaunchedEffect
                 }
