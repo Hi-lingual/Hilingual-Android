@@ -211,18 +211,19 @@ internal fun HomeRoute(
         },
     )
 
-    if (ENABLE_RECOVERY_NOTICE)
-    RecoveryNoticeModal(
-        isVisible = homeState.isRecoveryNoticeVisible,
-        onClick = {
-            homeState.hideRecoveryNotice()
-            viewModel.onRecoveryNoticeConfirmed()
-        },
-        onDismiss = {
-            homeState.hideRecoveryNotice()
-            viewModel.onRecoveryNoticeConfirmed()
-        },
-    )
+    if (ENABLE_RECOVERY_NOTICE) {
+        RecoveryNoticeModal(
+            isVisible = homeState.isRecoveryNoticeVisible,
+            onClick = {
+                homeState.hideRecoveryNotice()
+                viewModel.onRecoveryNoticeConfirmed()
+            },
+            onDismiss = {
+                homeState.hideRecoveryNotice()
+                viewModel.onRecoveryNoticeConfirmed()
+            },
+        )
+    }
 
     RecoveryReminderModal(
         isVisible = homeState.isRecoveryReminderVisible,
