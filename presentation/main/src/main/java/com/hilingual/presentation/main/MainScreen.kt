@@ -61,7 +61,7 @@ import com.hilingual.core.common.model.HilingualMessage.Snackbar
 import com.hilingual.core.common.model.HilingualMessage.Toast
 import com.hilingual.core.common.model.MessageDuration
 import com.hilingual.core.common.provider.LocalAppRestarter
-import com.hilingual.core.common.provider.LocalNetworkStatus
+import com.hilingual.core.common.provider.LocalIsOffline
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
@@ -167,7 +167,7 @@ internal fun MainScreen(
     )
 
     CompositionLocalProvider(
-        LocalNetworkStatus provides isOffline,
+        LocalIsOffline provides isOffline,
         LocalDialogTrigger provides dialogTrigger,
         LocalMessageController provides onShowMessage,
         LocalReconnectEvents provides reconnectEvents,

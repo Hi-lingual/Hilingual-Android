@@ -61,7 +61,7 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.HilingualMessage
-import com.hilingual.core.common.provider.LocalNetworkStatus
+import com.hilingual.core.common.provider.LocalIsOffline
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.DialogState
 import com.hilingual.core.common.trigger.LocalDialogTrigger
@@ -112,7 +112,7 @@ internal fun HomeRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
     val messageController = LocalMessageController.current
-    val isOffline = LocalNetworkStatus.current
+    val isOffline = LocalIsOffline.current
     val tracker = LocalTracker.current
     val context = LocalContext.current
     val activity = LocalActivity.current
