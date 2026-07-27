@@ -211,17 +211,19 @@ internal fun HomeRoute(
         },
     )
 
-    RecoveryNoticeModal(
-        isVisible = homeState.isRecoveryNoticeVisible,
-        onClick = {
-            homeState.hideRecoveryNotice()
-            viewModel.onRecoveryNoticeConfirmed()
-        },
-        onDismiss = {
-            homeState.hideRecoveryNotice()
-            viewModel.onRecoveryNoticeConfirmed()
-        },
-    )
+    if (ENABLE_RECOVERY_NOTICE) {
+        RecoveryNoticeModal(
+            isVisible = homeState.isRecoveryNoticeVisible,
+            onClick = {
+                homeState.hideRecoveryNotice()
+                viewModel.onRecoveryNoticeConfirmed()
+            },
+            onDismiss = {
+                homeState.hideRecoveryNotice()
+                viewModel.onRecoveryNoticeConfirmed()
+            },
+        )
+    }
 
     RecoveryReminderModal(
         isVisible = homeState.isRecoveryReminderVisible,
@@ -545,7 +547,9 @@ private fun HomeScreen(
 }
 
 // #807 푸시 알림 플로우: 미배포 기능, 당분간 봉인. 재개 시 true로 전환.
-private const val ENABLE_PUSH_NOTIFICATION = false
+private const val ENABLE_PUSH_NOTIFICATION = true
+
+internal const val ENABLE_RECOVERY_NOTICE = false
 
 @Composable
 private fun CheckNotificationPermission(

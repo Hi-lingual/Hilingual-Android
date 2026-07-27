@@ -9,6 +9,7 @@ targetSdk = "36"
 jvmTarget = "17"
 androidGradlePlugin = "9.3.0"
 spotless = "8.8.0"
+wisp = "0.1.0"
 
 # App version
 versionCode = "2050000"
@@ -201,6 +202,10 @@ androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomato
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
+
+# wispLibraries
+wisp-runtime = { module = "io.github.angrypodo:wisp-runtime", version.ref = "wisp" }
+wisp-processor = { module = "io.github.angrypodo:wisp-processor", version.ref = "wisp" }
 
 [plugins]
 # Android

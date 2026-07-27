@@ -15,6 +15,7 @@
  */
 package com.hilingual.presentation.main
 
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
@@ -45,8 +46,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
+import com.angrypodo.wisp.runtime.navigateTo
 import com.hilingual.core.ads.native.HilingualNativeLineAd
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.app.AppRestarter
@@ -62,6 +65,7 @@ import com.hilingual.core.common.trigger.rememberDialogTrigger
 import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
 import com.hilingual.core.designsystem.component.snackbar.HilingualActionSnackbar
 import com.hilingual.core.designsystem.component.toast.TextToast
+import com.hilingual.presentation.auth.navigation.Auth
 import com.hilingual.presentation.auth.navigation.authNavGraph
 import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
@@ -74,19 +78,27 @@ import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.main.state.MainAppState
 import com.hilingual.presentation.mypage.navigation.myPageNavGraph
 import com.hilingual.presentation.notification.navigation.notificationNavGraph
+import com.hilingual.presentation.onboarding.navigation.Onboarding
 import com.hilingual.presentation.onboarding.navigation.onboardingNavGraph
+import com.hilingual.presentation.signup.navigation.SignUp
 import com.hilingual.presentation.signup.navigation.signUpGraph
+import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.splash.navigation.splashNavGraph
 import com.hilingual.presentation.voca.navigation.vocaNavGraph
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @Composable
 internal fun MainScreen(
     appState: MainAppState,
     tracker: Tracker,
     appRestarter: AppRestarter,
+    deepLinkUri: Uri? = null,
+    onDeepLinkConsumed: () -> Unit,
 ) {
     val isOffline by appState.isOffline.collectAsStateWithLifecycle()
     val isBottomBarVisible by appState.isBottomBarVisible.collectAsStateWithLifecycle()
@@ -250,6 +262,32 @@ internal fun MainScreen(
                     paddingValues = innerPadding,
                     navigateToAuth = appState::navigateToAuth,
                 )
+            }
+
+            LaunchedEffect(appState.navController, deepLinkUri) {
+                if (deepLinkUri == null) return@LaunchedEffect
+
+                val entry = appState.navController.currentBackStackEntryFlow
+                    .first { !it.destination.hasRoute(Splash::class) }
+
+                val isPreLogin = entry.destination.run {
+                    hasRoute(Auth::class) || hasRoute(SignUp::class) || hasRoute(Onboarding::class)
+                }
+
+                if (isPreLogin) {
+                    onDeepLinkConsumed()
+                    return@LaunchedEffect
+                }
+
+                try {
+                    appState.navController.navigateTo(deepLinkUri)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    Timber.e(e, "Failed to navigate to deep link: $deepLinkUri")
+                    onShowMessage(Toast("연결할 수 없는 링크예요."))
+                }
+                onDeepLinkConsumed()
             }
 
             HilingualErrorDialog(

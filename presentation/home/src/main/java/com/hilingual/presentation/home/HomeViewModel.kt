@@ -300,7 +300,8 @@ class HomeViewModel @Inject constructor(
         onboardingCheckCompleted.first()
         if (isOnboardingVisible.value) return
 
-        val noticeShown = onboardingRepository.getIsRecoveryNoticeShown().getOrDefault(false)
+        val noticeShown = !ENABLE_RECOVERY_NOTICE ||
+            onboardingRepository.getIsRecoveryNoticeShown().getOrDefault(false)
         if (!noticeShown) {
             _sideEffect.emit(HomeSideEffect.ShowRecoveryNotice)
             return

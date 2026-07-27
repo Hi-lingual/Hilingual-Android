@@ -90,4 +90,10 @@ interface UserRepository {
     ): Result<Unit>
 
     suspend fun putDeviceInfo(): Result<Unit>
+
+    suspend fun patchFcmToken(fcmToken: String): Result<Unit>
+
+    fun scheduleFcmTokenSync(fcmToken: String)
+
+    suspend fun syncFcmToken(): Result<Unit>
 }

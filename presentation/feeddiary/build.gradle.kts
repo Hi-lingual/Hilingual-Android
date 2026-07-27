@@ -28,4 +28,6 @@ dependencies {
     implementation(projects.data.feed)
     implementation(projects.data.user)
     implementation(projects.data.calendar)
+    implementation(libs.wisp.runtime)
+    ksp(libs.wisp.processor)
 }
