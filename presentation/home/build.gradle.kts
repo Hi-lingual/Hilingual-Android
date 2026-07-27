@@ -31,4 +31,7 @@ dependencies {
     implementation(projects.data.calendar)
     implementation(projects.data.onboarding)
     implementation(projects.data.notification)
+
+    implementation(libs.wisp.runtime)
+    ksp(libs.wisp.processor)
 }

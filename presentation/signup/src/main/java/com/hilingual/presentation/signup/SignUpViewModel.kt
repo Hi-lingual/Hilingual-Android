@@ -173,11 +173,18 @@ internal class SignUpViewModel @Inject constructor(
         userRepository.saveRegisterStatus(true)
         onboardingRepository.updateIsHomeOnboardingCompleted(false)
         updateIsSplashOnboardingCompleted()
+        syncFcmToken()
         _sideEffect.emit(SignUpSideEffect.NavigateToHome)
     }
 
     private suspend fun putDeviceInfo(): Boolean =
         userRepository.putDeviceInfo().onLogFailure { }.isSuccess
+
+    private fun syncFcmToken() {
+        viewModelScope.launch {
+            userRepository.syncFcmToken().onLogFailure { }
+        }
+    }
 
     private suspend fun showRegisterRetryDialog(nickname: String, isMarketingAgreed: Boolean, imageUri: Uri?) {
         _uiState.update { it.copy(isLoading = false) }

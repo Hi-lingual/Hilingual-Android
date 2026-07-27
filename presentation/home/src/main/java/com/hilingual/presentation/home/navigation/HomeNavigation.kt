@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.angrypodo.wisp.annotations.Wisp
 import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.core.navigation.MainTabRoute
 import com.hilingual.presentation.home.HomeRoute
@@ -27,6 +28,7 @@ import java.time.LocalDate
 import kotlinx.serialization.Serializable
 
 @Serializable
+@Wisp("home")
 data object Home : MainTabRoute
 
 fun NavController.navigateToHome(
