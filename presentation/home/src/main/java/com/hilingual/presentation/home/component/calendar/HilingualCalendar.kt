@@ -18,6 +18,8 @@ package com.hilingual.presentation.home.component.calendar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,7 +36,9 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.bottomsheet.HilingualYearMonthPickerBottomSheet
 import com.hilingual.presentation.home.component.calendar.state.rememberCalendarState
+import com.hilingual.presentation.home.component.calendar.util.atStartOfMonth
 import com.hilingual.presentation.home.component.calendar.util.daysOfWeek
+import com.hilingual.presentation.home.component.calendar.util.daysUntil
 import java.time.LocalDate
 import java.time.YearMonth
 import kotlinx.collections.immutable.ImmutableSet
@@ -86,6 +90,11 @@ internal fun HilingualCalendar(
         },
     )
 
+    val weekCount = remember(displayedMonth) {
+        val inDays = daysOfWeek.first().daysUntil(displayedMonth.atStartOfMonth().dayOfWeek)
+        (inDays + displayedMonth.lengthOfMonth() + 6) / 7
+    }
+
     Column(modifier = modifier) {
         CalendarHeader(
             onDownArrowClick = { isBottomSheetVisible = true },
@@ -103,12 +112,15 @@ internal fun HilingualCalendar(
             modifier = Modifier.padding(bottom = 12.dp),
         )
 
+        DaysOfWeekTitle(daysOfWeek = daysOfWeek)
+
+        Spacer(Modifier.height(8.dp))
+
         HorizontalCalendar(
             state = state,
-            modifier = Modifier.background(HilingualTheme.colors.white),
-            monthHeader = {
-                DaysOfWeekTitle(daysOfWeek = daysOfWeek)
-            },
+            modifier = Modifier
+                .height(calendarGridHeight(weekCount))
+                .background(HilingualTheme.colors.white),
             dayContent = { day ->
                 DayItem(
                     day = day,

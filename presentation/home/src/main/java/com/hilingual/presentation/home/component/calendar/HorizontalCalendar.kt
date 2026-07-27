@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.presentation.home.component.calendar.model.CalendarDay
 import com.hilingual.presentation.home.component.calendar.model.CalendarMonth
@@ -38,7 +39,6 @@ import com.hilingual.presentation.home.component.calendar.util.generateMonthData
 internal fun HorizontalCalendar(
     state: CalendarState,
     dayContent: @Composable (CalendarDay) -> Unit,
-    monthHeader: @Composable (CalendarMonth) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     HorizontalPager(
@@ -59,42 +59,37 @@ internal fun HorizontalCalendar(
         MonthContent(
             month = month,
             dayContent = dayContent,
-            monthHeader = monthHeader,
         )
     }
 }
+
+internal fun calendarGridHeight(weekCount: Int): Dp = (DAY_CELL_SIZE + WEEK_BOTTOM_SPACING) * weekCount
 
 @Composable
 private fun MonthContent(
     month: CalendarMonth,
     dayContent: @Composable (CalendarDay) -> Unit,
-    monthHeader: @Composable (CalendarMonth) -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
     ) {
-        monthHeader(month)
-
-        Spacer(Modifier.height(8.dp))
-
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            for (week in month.weekDays) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    for (day in week) {
-                        Box(
-                            modifier = Modifier.size(34.dp),
-                        ) {
-                            dayContent(day)
-                        }
+        for (week in month.weekDays) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                for (day in week) {
+                    Box(
+                        modifier = Modifier.size(DAY_CELL_SIZE),
+                    ) {
+                        dayContent(day)
                     }
                 }
-                Spacer(Modifier.height(12.dp))
             }
+            Spacer(Modifier.height(WEEK_BOTTOM_SPACING))
         }
     }
 }
+
+private val DAY_CELL_SIZE = 34.dp
+private val WEEK_BOTTOM_SPACING = 12.dp
