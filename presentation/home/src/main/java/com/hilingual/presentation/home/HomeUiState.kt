@@ -92,6 +92,7 @@ data class HomeDiaryUiState(
 ) {
     fun update(
         selectedDate: LocalDate,
+        today: LocalDate,
         dates: List<DateUiModel>,
         recoveryTickets: Int,
         fetchedThumbnail: DiaryThumbnailUiModel? = null,
@@ -120,7 +121,7 @@ data class HomeDiaryUiState(
             }
         }
 
-        if (selectedDateModel.isFuture) {
+        if (selectedDateModel.isFuture(today)) {
             return copy(
                 cardState = DiaryCardState.FUTURE,
                 diaryThumbnail = null,
@@ -129,7 +130,7 @@ data class HomeDiaryUiState(
             )
         }
 
-        if (selectedDateModel.isWritable) {
+        if (selectedDateModel.isWritable(today)) {
             val topicState = if (fetchedTopic?.remainingTime == -1) {
                 DiaryCardState.REWRITE_DISABLED
             } else {

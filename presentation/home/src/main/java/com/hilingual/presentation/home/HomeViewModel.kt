@@ -438,9 +438,10 @@ class HomeViewModel @Inject constructor(
         dates: List<DateUiModel>,
         recoveryTickets: Int,
     ): HomeDiaryUiState = coroutineScope {
+        val today = LocalDate.now()
         val matchedDate = dates.find { it.date == date }
         val isUnlocked = matchedDate?.status == CalendarStatus.UNLOCKED
-        val needsTopic = isUnlocked || DateUiModel(date).isWritable
+        val needsTopic = isUnlocked || DateUiModel(date).isWritable(today)
         val needsThumbnail = matchedDate != null && !isUnlocked
 
         val tempExistDeferred = async { diaryLocalRepository.isDiaryTempExist(date) }
@@ -454,6 +455,7 @@ class HomeViewModel @Inject constructor(
 
         HomeDiaryUiState().update(
             selectedDate = date,
+            today = today,
             dates = dates,
             recoveryTickets = recoveryTickets,
             fetchedThumbnail = thumbnail,
