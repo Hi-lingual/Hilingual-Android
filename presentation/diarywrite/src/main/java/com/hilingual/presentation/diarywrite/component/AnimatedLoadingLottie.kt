@@ -15,27 +15,16 @@
  */
 package com.hilingual.presentation.diarywrite.component
 
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.LottieComposition
 import com.hilingual.core.designsystem.component.image.HilingualLottieAnimation
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.delay
 
 @Composable
 internal fun AnimatedLoadingLottie(
@@ -43,32 +32,19 @@ internal fun AnimatedLoadingLottie(
     height: Dp,
     modifier: Modifier = Modifier,
 ) {
-    var currentIndex by remember { mutableIntStateOf(0) }
-    val transition = rememberInfiniteTransition(label = "lottie fade transition")
+    if (lottieCompositions.isEmpty()) return
 
-    val alpha by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1500),
-            repeatMode = RepeatMode.Reverse,
-        ),
-        label = "lottie alpha",
-    )
-
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(3000)
-            currentIndex = (currentIndex + 1) % lottieCompositions.size
-        }
-    }
+    val fadeCycleState = rememberFadeCycleState(itemCount = lottieCompositions.size)
 
     HilingualLottieAnimation(
         modifier = modifier
             .width(200.dp)
             .height(height)
-            .alpha(alpha),
-        composition = lottieCompositions[currentIndex],
+            .graphicsLayer {
+                alpha = fadeCycleState.alpha
+                clip = fadeCycleState.alpha != 1f
+            },
+        composition = lottieCompositions[fadeCycleState.currentIndex],
         isInfinite = true,
     )
 }
