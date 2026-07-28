@@ -506,9 +506,9 @@ class HomeViewModel @Inject constructor(
 }
 
 // 기획 요청에 따른 노출 스케줄
-private val REMINDER_PAUSE_START: LocalDate = LocalDate.of(2026, 8, 1)   // 8/1부터 리마인드 중단
+private val REMINDER_PAUSE_START: LocalDate = LocalDate.of(2026, 8, 1) // 8/1부터 리마인드 중단
 private val REMINDER_RESUME_DATE: LocalDate = LocalDate.of(2026, 8, 23) // 8/23부터 리마인드 재개
-private val PUSH_POPUP_START: LocalDate = LocalDate.of(2026, 8, 1)      // 8/1부터 푸시알림 팝업 노출
+private val PUSH_POPUP_START: LocalDate = LocalDate.of(2026, 8, 1) // 8/1부터 푸시알림 팝업 노출
 
 private fun isReminderPeriodActive(today: LocalDate): Boolean =
     today.isBefore(REMINDER_PAUSE_START) || !today.isBefore(REMINDER_RESUME_DATE)
