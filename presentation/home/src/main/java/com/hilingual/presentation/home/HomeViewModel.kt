@@ -265,12 +265,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onRecoveryNoticeConfirmed() {
-        viewModelScope.launch {
-            onboardingRepository.updateIsRecoveryNoticeShown(true)
-        }
-    }
-
     fun onRecoveryReminderConfirmed() {
         val currentState = uiState.value
         if (currentState !is UiState.Success) return
@@ -299,13 +293,6 @@ class HomeViewModel @Inject constructor(
     ) {
         onboardingCheckCompleted.first()
         if (isOnboardingVisible.value) return
-
-        val noticeShown = !ENABLE_RECOVERY_NOTICE ||
-            onboardingRepository.getIsRecoveryNoticeShown().getOrDefault(false)
-        if (!noticeShown) {
-            _sideEffect.emit(HomeSideEffect.ShowRecoveryNotice)
-            return
-        }
 
         if (shouldShowReminder(recoveryTickets, dates)) {
             _sideEffect.emit(HomeSideEffect.ShowRecoveryReminder)
@@ -528,8 +515,6 @@ sealed interface HomeSideEffect {
     data class ShowRewardedAd(val date: LocalDate) : HomeSideEffect
 
     data class NavigateToRecoveryWrite(val date: LocalDate) : HomeSideEffect
-
-    data object ShowRecoveryNotice : HomeSideEffect
 
     data object ShowRecoveryReminder : HomeSideEffect
 }

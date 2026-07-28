@@ -78,7 +78,6 @@ import com.hilingual.presentation.home.component.HomeHeader
 import com.hilingual.presentation.home.component.calendar.HilingualCalendar
 import com.hilingual.presentation.home.component.dialog.DiaryContinueDialog
 import com.hilingual.presentation.home.component.dialog.NotificationDialog
-import com.hilingual.presentation.home.component.dialog.RecoveryNoticeModal
 import com.hilingual.presentation.home.component.dialog.RecoveryReminderModal
 import com.hilingual.presentation.home.component.footer.DiaryDateInfo
 import com.hilingual.presentation.home.component.footer.DiaryEmptyCard
@@ -176,8 +175,6 @@ internal fun HomeRoute(
             is HomeSideEffect.NavigateToRecoveryWrite ->
                 navigateToDiaryWrite(sideEffect.date, DiaryWriteMode.RECOVERY)
 
-            is HomeSideEffect.ShowRecoveryNotice -> homeState.showRecoveryNotice()
-
             is HomeSideEffect.ShowRecoveryReminder -> homeState.showRecoveryReminder()
         }
     }
@@ -210,20 +207,6 @@ internal fun HomeRoute(
             context.startActivity(intent)
         },
     )
-
-    if (ENABLE_RECOVERY_NOTICE) {
-        RecoveryNoticeModal(
-            isVisible = homeState.isRecoveryNoticeVisible,
-            onClick = {
-                homeState.hideRecoveryNotice()
-                viewModel.onRecoveryNoticeConfirmed()
-            },
-            onDismiss = {
-                homeState.hideRecoveryNotice()
-                viewModel.onRecoveryNoticeConfirmed()
-            },
-        )
-    }
 
     RecoveryReminderModal(
         isVisible = homeState.isRecoveryReminderVisible,
@@ -548,8 +531,6 @@ private fun HomeScreen(
 
 // #807 푸시 알림 플로우: 미배포 기능, 당분간 봉인. 재개 시 true로 전환.
 private const val ENABLE_PUSH_NOTIFICATION = true
-
-internal const val ENABLE_RECOVERY_NOTICE = false
 
 @Composable
 private fun CheckNotificationPermission(
