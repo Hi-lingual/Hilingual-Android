@@ -16,11 +16,17 @@
 package com.hilingual.presentation.main
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.core.net.toUri
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.app.AppRestarter
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -40,21 +46,45 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var appRestarter: AppRestarter
 
+    private var pendingDeepLinkUri by mutableStateOf<Uri?>(null)
+
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         enableEdgeToEdge()
+
+        if (savedInstanceState == null) {
+            pendingDeepLinkUri = consumeDeepLinkUri(intent)
+        }
+
+        addOnNewIntentListener { newIntent ->
+            consumeDeepLinkUri(newIntent)?.let { pendingDeepLinkUri = it }
+        }
+
         setContent {
             HilingualTheme {
                 val appState = rememberMainAppState(networkMonitor = networkMonitor)
-
                 MainScreen(
                     appState = appState,
                     tracker = tracker,
                     appRestarter = appRestarter,
+                    deepLinkUri = pendingDeepLinkUri,
+                    onDeepLinkConsumed = { pendingDeepLinkUri = null },
                 )
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+    }
+
+    private fun consumeDeepLinkUri(intent: Intent?): Uri? {
+        val uri = intent?.data ?: intent?.getStringExtra("link")?.let { it.toUri() }
+        intent?.data = null
+        intent?.removeExtra("link")
+        return uri
     }
 }
