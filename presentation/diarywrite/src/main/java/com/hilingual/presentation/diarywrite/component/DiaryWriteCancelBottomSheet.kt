@@ -15,6 +15,7 @@
  */
 package com.hilingual.presentation.diarywrite.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,7 +41,7 @@ import com.hilingual.presentation.diarywrite.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DiaryWriteCancelBottomSheet(
+internal fun DiaryWriteCancelBottomSheet(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     onCancelClick: () -> Unit,
@@ -91,7 +92,7 @@ fun DiaryWriteCancelBottomSheet(
 
 @Composable
 private fun DiaryWriteActionRow(
-    iconRes: Int,
+    @DrawableRes iconRes: Int,
     text: String,
     textColor: Color,
     onClick: () -> Unit,
