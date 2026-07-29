@@ -162,9 +162,10 @@ class HomeViewModel @Inject constructor(
 
         val today = LocalDate.now()
         if (today.isBefore(PUSH_POPUP_START)) return
-        if (isReminderPeriodActive(today) && isLastWeekOfMonth(today)) return
 
         viewModelScope.launch {
+            if (willShowReminder()) return@launch
+
             val isAlreadyShown = notificationRepository
                 .getIsNotificationDialogShown()
                 .getOrDefault(false)
@@ -172,6 +173,16 @@ class HomeViewModel @Inject constructor(
                 emitNotificationDialogSideEffect()
             }
         }
+    }
+
+    private suspend fun willShowReminder(): Boolean {
+        val state = uiState.first { it !is UiState.Loading }
+        if (state !is UiState.Success) return false
+
+        return shouldShowReminder(
+            recoveryTickets = state.data.header.userProfile.recoveryTickets,
+            dates = state.data.calendar.dates,
+        )
     }
 
     fun onNotificationDialogDismissed() {
@@ -310,7 +321,6 @@ class HomeViewModel @Inject constructor(
         if (recoveryTickets <= 0) return false
 
         val today = LocalDate.now()
-        if (!isReminderPeriodActive(today)) return false
         if (!isLastWeekOfMonth(today)) return false
 
         val currentMonth = YearMonth.now().toString()
@@ -506,12 +516,7 @@ class HomeViewModel @Inject constructor(
 }
 
 // 기획 요청에 따른 노출 스케줄
-private val REMINDER_PAUSE_START: LocalDate = LocalDate.of(2026, 8, 1) // 8/1부터 리마인드 중단
-private val REMINDER_RESUME_DATE: LocalDate = LocalDate.of(2026, 8, 23) // 8/23부터 리마인드 재개
 private val PUSH_POPUP_START: LocalDate = LocalDate.of(2026, 8, 1) // 8/1부터 푸시알림 팝업 노출
-
-private fun isReminderPeriodActive(today: LocalDate): Boolean =
-    today.isBefore(REMINDER_PAUSE_START) || !today.isBefore(REMINDER_RESUME_DATE)
 
 private fun isLastWeekOfMonth(today: LocalDate): Boolean =
     today.dayOfMonth > today.lengthOfMonth() - 7
