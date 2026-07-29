@@ -19,8 +19,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,10 +59,33 @@ internal fun NotificationRoute(
     viewModel: NotificationViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val pagerState = rememberPagerState(pageCount = { NotificationTab.entries.size })
+    val currentTab = NotificationTab.entries[pagerState.currentPage]
+
+    LaunchedEffect(currentTab) {
+        viewModel.loadTab(currentTab)
+    }
+
+    RetryOnReconnect(
+        isLoading = currentTab in uiState.loadingTabs,
+        shouldRetry = currentTab in uiState.failedTabs,
+        onRetry = { viewModel.refreshTab(currentTab) },
+    )
+
+    if (currentTab in uiState.failedTabs) {
+        HilingualLoadErrorView(
+            action = LoadErrorViewAction.Retry(
+                onRetryClick = { viewModel.refreshTab(currentTab) },
+            ),
+            modifier = Modifier.padding(paddingValues),
+        )
+        return
+    }
 
     NotificationScreen(
         uiState = uiState,
         paddingValues = paddingValues,
+        pagerState = pagerState,
         onBackClick = navigateUp,
         onSettingClick = navigateToSetting,
         onFeedNotificationClick = { notification ->
@@ -71,7 +96,6 @@ internal fun NotificationRoute(
             }
         },
         onNoticeNotificationClick = { notification -> navigateToNoticeDetail(notification.id) },
-        onTabLoad = viewModel::loadTab,
         onTabRefresh = viewModel::refreshTab,
     )
 }
@@ -80,32 +104,23 @@ internal fun NotificationRoute(
 private fun NotificationScreen(
     uiState: NotificationUiState,
     paddingValues: PaddingValues,
+    pagerState: PagerState,
     onBackClick: () -> Unit,
     onSettingClick: () -> Unit,
     onFeedNotificationClick: (FeedNotificationItemUiModel) -> Unit,
     onNoticeNotificationClick: (NoticeNotificationItemUiModel) -> Unit,
-    onTabLoad: (NotificationTab) -> Unit,
     onTabRefresh: (NotificationTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val feedListState = rememberLazyListState()
     val noticeListState = rememberLazyListState()
-    val pagerState = rememberPagerState(pageCount = { NotificationTab.entries.size })
     val coroutineScope = rememberCoroutineScope()
-    val currentTab = NotificationTab.entries[pagerState.currentPage]
-
-    RetryOnReconnect(
-        isLoading = currentTab in uiState.loadingTabs,
-        shouldRetry = currentTab in uiState.failedTabs,
-        onRetry = { onTabRefresh(currentTab) },
-    )
 
     LaunchedEffect(pagerState, feedListState, noticeListState) {
         snapshotFlow { pagerState.currentPage }
             .withIndex()
             .collect { (index, page) ->
                 val tab = NotificationTab.entries[page]
-                onTabLoad(tab)
                 if (index > 0) {
                     delay(100)
                     when (tab) {
@@ -143,31 +158,22 @@ private fun NotificationScreen(
             state = pagerState,
             modifier = Modifier.fillMaxSize(),
         ) { page ->
-            val tab = NotificationTab.entries[page]
-            if (tab in uiState.failedTabs) {
-                HilingualLoadErrorView(
-                    action = LoadErrorViewAction.Retry(
-                        onRetryClick = { onTabRefresh(tab) },
-                    ),
+            when (val tab = NotificationTab.entries[page]) {
+                NotificationTab.FEED -> FeedScreen(
+                    notifications = uiState.feedNotifications,
+                    onNotificationClick = onFeedNotificationClick,
+                    isRefreshing = uiState.isFeedRefreshing,
+                    listState = feedListState,
+                    onRefresh = { onTabRefresh(tab) },
                 )
-            } else {
-                when (tab) {
-                    NotificationTab.FEED -> FeedScreen(
-                        notifications = uiState.feedNotifications,
-                        onNotificationClick = onFeedNotificationClick,
-                        isRefreshing = uiState.isFeedRefreshing,
-                        listState = feedListState,
-                        onRefresh = { onTabRefresh(tab) },
-                    )
 
-                    NotificationTab.NOTIFICATION -> NoticeScreen(
-                        notifications = uiState.noticeNotifications,
-                        onNotificationClick = onNoticeNotificationClick,
-                        isRefreshing = uiState.isNoticeRefreshing,
-                        listState = noticeListState,
-                        onRefresh = { onTabRefresh(tab) },
-                    )
-                }
+                NotificationTab.NOTIFICATION -> NoticeScreen(
+                    notifications = uiState.noticeNotifications,
+                    onNotificationClick = onNoticeNotificationClick,
+                    isRefreshing = uiState.isNoticeRefreshing,
+                    listState = noticeListState,
+                    onRefresh = { onTabRefresh(tab) },
+                )
             }
         }
     }
