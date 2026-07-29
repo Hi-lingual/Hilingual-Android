@@ -80,12 +80,9 @@ internal fun HilingualCalendar(
             }
     }
 
-    LaunchedEffect(isInteractionEnabled, selectedDate) {
-        if (!isInteractionEnabled && selectedDate != null) {
-            val selectedMonth = YearMonth.from(selectedDate)
-            settledMonth = selectedMonth
+    LaunchedEffect(isInteractionEnabled) {
+        if (!isInteractionEnabled) {
             isBottomSheetVisible = false
-            state.scrollToMonth(selectedMonth)
         }
     }
 
