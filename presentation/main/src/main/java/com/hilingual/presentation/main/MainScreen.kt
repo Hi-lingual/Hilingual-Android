@@ -117,12 +117,10 @@ internal fun MainScreen(
     val coroutineScope = rememberCoroutineScope()
 
     val snackBarHostState = remember { SnackbarHostState() }
+    val canShowNetworkError = currentBackStackEntry?.destination?.canShowNetworkError() == true
 
     var isNetworkErrorOverlayVisible by remember(currentBackStackEntry) {
-        mutableStateOf(
-            isOffline &&
-                currentBackStackEntry?.destination?.canShowNetworkErrorOverlay() == true,
-        )
+        mutableStateOf(isOffline && canShowNetworkError)
     }
     val dialogTrigger = rememberDialogTrigger(
         show = { type, onClick ->
@@ -161,8 +159,8 @@ internal fun MainScreen(
             }
     }
 
-    LaunchedEffect(isOffline) {
-        if (isOffline) {
+    LaunchedEffect(isOffline, canShowNetworkError) {
+        if (isOffline && canShowNetworkError) {
             onShowMessage(Toast("인터넷 연결이 불안정해요."))
         }
     }
@@ -390,7 +388,7 @@ internal fun MainScreen(
     }
 }
 
-private fun NavDestination.canShowNetworkErrorOverlay(): Boolean =
+private fun NavDestination.canShowNetworkError(): Boolean =
     !hasRoute(Splash::class) && !hasRoute(Auth::class) && !hasRoute(Onboarding::class) && !hasRoute(SignUp::class)
 
 @Composable
