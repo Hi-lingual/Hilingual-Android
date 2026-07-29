@@ -48,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
@@ -65,6 +66,7 @@ import com.hilingual.core.common.model.MessageDuration
 import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.provider.LocalIsOffline
 import com.hilingual.core.common.provider.LocalTracker
+import com.hilingual.core.common.trigger.DialogType
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.trigger.LocalReconnectEvents
@@ -123,9 +125,16 @@ internal fun MainScreen(
     var isNetworkErrorOverlayVisible by remember(currentBackStackEntry) {
         mutableStateOf(isOffline && canShowNetworkError)
     }
+    var pendingDialogRequest by remember { mutableStateOf<PendingDialogRequest?>(null) }
     val dialogTrigger = rememberDialogTrigger(
         show = { type, onClick ->
-            if (!isNetworkErrorOverlayVisible) {
+            if (isNetworkErrorOverlayVisible) {
+                pendingDialogRequest = PendingDialogRequest(
+                    backStackEntry = currentBackStackEntry,
+                    type = type,
+                    onClick = onClick,
+                )
+            } else {
                 appState.dialogStateHolder.showDialog(type, onClick)
             }
         },
@@ -166,9 +175,25 @@ internal fun MainScreen(
         }
     }
 
-    LaunchedEffect(isNetworkErrorOverlayVisible) {
+    LaunchedEffect(isNetworkErrorOverlayVisible, currentBackStackEntry) {
+        pendingDialogRequest = pendingDialogRequest
+            ?.takeIf { it.backStackEntry == currentBackStackEntry }
+
         if (isNetworkErrorOverlayVisible) {
+            val dialogState = appState.dialogStateHolder.dialogState
+            if (dialogState.isVisible) {
+                pendingDialogRequest = PendingDialogRequest(
+                    backStackEntry = currentBackStackEntry,
+                    type = dialogState.type,
+                    onClick = dialogState.onClickAction,
+                )
+            }
             appState.dialogStateHolder.dismissDialog()
+        } else {
+            pendingDialogRequest?.let { request ->
+                pendingDialogRequest = null
+                appState.dialogStateHolder.showDialog(request.type, request.onClick)
+            }
         }
     }
 
@@ -389,6 +414,12 @@ internal fun MainScreen(
         }
     }
 }
+
+private data class PendingDialogRequest(
+    val backStackEntry: NavBackStackEntry?,
+    val type: DialogType,
+    val onClick: () -> Unit,
+)
 
 private fun NavDestination.canShowNetworkError(): Boolean =
     !hasRoute(Splash::class) && !hasRoute(Auth::class) && !hasRoute(Onboarding::class) && !hasRoute(SignUp::class)
