@@ -18,6 +18,8 @@ package com.hilingual.presentation.notification.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.model.LoadErrorHandleAction
+import com.hilingual.core.common.util.UiState
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.notification.main.model.toFeedStateOrNull
 import com.hilingual.presentation.notification.main.model.toNoticeStateOrNull
@@ -36,46 +38,66 @@ internal class NotificationViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(NotificationUiState())
     val uiState = _uiState.asStateFlow()
 
-    private fun loadTab(tab: NotificationTab, isRefreshing: Boolean) {
+    private fun requestTab(tab: NotificationTab, isRefreshing: Boolean) {
         viewModelScope.launch {
-            setLoading(tab, isLoading = true)
-            setLoadFailed(tab, isFailed = false)
-            if (isRefreshing) {
-                setRefreshing(tab, isRefreshing = true)
+            _uiState.update {
+                it.updateTabState(tab) { tabState ->
+                    tabState.copy(
+                        loadState = UiState.Loading,
+                        isRefreshing = isRefreshing,
+                    )
+                }
             }
+
             userRepository.getNotifications(tab.name)
                 .onSuccess { notifications ->
-                    _uiState.update {
-                        when (tab) {
-                            NotificationTab.FEED -> it.copy(
+                    _uiState.update { currentState ->
+                        val successState = when (tab) {
+                            NotificationTab.FEED -> currentState.copy(
                                 feedNotifications = notifications.mapNotNull { item -> item.toFeedStateOrNull() }
                                     .toImmutableList(),
                             )
 
-                            NotificationTab.NOTIFICATION -> it.copy(
+                            NotificationTab.NOTIFICATION -> currentState.copy(
                                 noticeNotifications = notifications.mapNotNull { item -> item.toNoticeStateOrNull() }
                                     .toImmutableList(),
+                            )
+                        }
+                        successState.updateTabState(tab) {
+                            it.copy(
+                                loadState = UiState.Success(Unit),
+                                isRefreshing = false,
                             )
                         }
                     }
                 }
                 .onLogFailure {
-                    setLoadFailed(tab, isFailed = true)
+                    _uiState.update {
+                        it.updateTabState(tab) { tabState ->
+                            tabState.copy(
+                                loadState = UiState.Failure(LoadErrorHandleAction.Retry),
+                                isRefreshing = false,
+                            )
+                        }
+                    }
                 }
-
-            if (isRefreshing) {
-                setRefreshing(tab, isRefreshing = false)
-            }
-            setLoading(tab, isLoading = false)
         }
     }
 
     fun loadTab(tab: NotificationTab) {
-        loadTab(tab, isRefreshing = false)
+        when (_uiState.value.tabState(tab).loadState) {
+            UiState.Empty,
+            is UiState.Failure,
+            -> requestTab(tab, isRefreshing = false)
+
+            UiState.Loading,
+            is UiState.Success,
+            -> return
+        }
     }
 
     fun refreshTab(tab: NotificationTab) {
-        loadTab(tab, isRefreshing = true)
+        requestTab(tab, isRefreshing = true)
     }
 
     fun readNotification(noticeId: Long) {
@@ -88,39 +110,6 @@ internal class NotificationViewModel @Inject constructor(
                     _uiState.update { it.copy(feedNotifications = updatedFeeds) }
                 }
                 .onLogFailure { /* TODO: 에러 처리 */ }
-        }
-    }
-
-    private fun setRefreshing(tab: NotificationTab, isRefreshing: Boolean) {
-        _uiState.update {
-            when (tab) {
-                NotificationTab.FEED -> it.copy(isFeedRefreshing = isRefreshing)
-                NotificationTab.NOTIFICATION -> it.copy(isNoticeRefreshing = isRefreshing)
-            }
-        }
-    }
-
-    private fun setLoadFailed(tab: NotificationTab, isFailed: Boolean) {
-        _uiState.update {
-            it.copy(
-                failedTabs = if (isFailed) {
-                    it.failedTabs.adding(tab)
-                } else {
-                    it.failedTabs.removing(tab)
-                },
-            )
-        }
-    }
-
-    private fun setLoading(tab: NotificationTab, isLoading: Boolean) {
-        _uiState.update {
-            it.copy(
-                loadingTabs = if (isLoading) {
-                    it.loadingTabs.adding(tab)
-                } else {
-                    it.loadingTabs.removing(tab)
-                },
-            )
         }
     }
 }

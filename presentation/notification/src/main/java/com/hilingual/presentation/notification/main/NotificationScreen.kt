@@ -34,6 +34,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.util.RetryOnReconnect
+import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -61,18 +62,19 @@ internal fun NotificationRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val pagerState = rememberPagerState(pageCount = { NotificationTab.entries.size })
     val currentTab = NotificationTab.entries[pagerState.currentPage]
+    val currentTabState = uiState.tabState(currentTab)
 
     LaunchedEffect(currentTab) {
         viewModel.loadTab(currentTab)
     }
 
     RetryOnReconnect(
-        isLoading = currentTab in uiState.loadingTabs,
-        shouldRetry = currentTab in uiState.failedTabs,
+        isLoading = currentTabState.loadState is UiState.Loading,
+        shouldRetry = currentTabState.loadState is UiState.Failure,
         onRetry = { viewModel.refreshTab(currentTab) },
     )
 
-    if (currentTab in uiState.failedTabs) {
+    if (currentTabState.loadState is UiState.Failure) {
         HilingualLoadErrorView(
             action = LoadErrorViewAction.Retry(
                 onRetryClick = { viewModel.refreshTab(currentTab) },
@@ -162,7 +164,7 @@ private fun NotificationScreen(
                 NotificationTab.FEED -> FeedScreen(
                     notifications = uiState.feedNotifications,
                     onNotificationClick = onFeedNotificationClick,
-                    isRefreshing = uiState.isFeedRefreshing,
+                    isRefreshing = uiState.tabState(tab).isRefreshing,
                     listState = feedListState,
                     onRefresh = { onTabRefresh(tab) },
                 )
@@ -170,7 +172,7 @@ private fun NotificationScreen(
                 NotificationTab.NOTIFICATION -> NoticeScreen(
                     notifications = uiState.noticeNotifications,
                     onNotificationClick = onNoticeNotificationClick,
-                    isRefreshing = uiState.isNoticeRefreshing,
+                    isRefreshing = uiState.tabState(tab).isRefreshing,
                     listState = noticeListState,
                     onRefresh = { onTabRefresh(tab) },
                 )
