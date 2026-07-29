@@ -17,6 +17,7 @@ package com.hilingual.presentation.home.component.calendar
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.FlingBehavior
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -33,7 +34,9 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.hilingual.presentation.home.component.calendar.model.CalendarDay
 import com.hilingual.presentation.home.component.calendar.model.CalendarMonth
@@ -62,15 +65,29 @@ private fun rememberSnappingFlingBehavior(lazyListState: LazyListState): FlingBe
 internal fun HorizontalCalendar(
     modifier: Modifier = Modifier,
     state: CalendarState = rememberCalendarState(),
+    userScrollEnabled: Boolean = true,
+    onDisabledScroll: () -> Unit = {},
     dayContent: @Composable (CalendarDay) -> Unit,
     monthHeader: @Composable (CalendarMonth) -> Unit,
 ) {
     val flingBehavior = rememberSnappingFlingBehavior(lazyListState = state.listState)
+    val currentOnDisabledScroll = rememberUpdatedState(onDisabledScroll)
+    val scrollModifier = if (userScrollEnabled) {
+        modifier
+    } else {
+        modifier.pointerInput(Unit) {
+            detectHorizontalDragGestures(
+                onDragStart = { currentOnDisabledScroll.value() },
+                onHorizontalDrag = { change, _ -> change.consume() },
+            )
+        }
+    }
 
     LazyRow(
-        modifier = modifier,
+        modifier = scrollModifier,
         state = state.listState,
         flingBehavior = flingBehavior,
+        userScrollEnabled = userScrollEnabled,
     ) {
         calendarMonths(
             monthCount = state.monthIndicesCount,

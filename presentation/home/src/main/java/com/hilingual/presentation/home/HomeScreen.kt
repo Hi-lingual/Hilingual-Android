@@ -258,28 +258,14 @@ internal fun HomeRoute(
                     tracker.logEvent(trigger = TriggerType.CLICK, page = HOME, event = "profile")
                     navigateToFeedProfile(0L)
                 },
-                onDateSelected = { date ->
-                    when {
-                        date == state.data.calendar.selectedDate -> Unit
-
-                        isOffline -> messageController(
-                            HilingualMessage.Toast("인터넷 연결이 불안정해요."),
-                        )
-
-                        else -> viewModel.onDateSelected(date)
-                    }
+                isCalendarInteractionEnabled = !isOffline,
+                onDisabledCalendarInteraction = {
+                    messageController(
+                        HilingualMessage.Toast("인터넷 연결이 불안정해요."),
+                    )
                 },
-                onMonthChanged = { yearMonth ->
-                    when {
-                        yearMonth == YearMonth.from(state.data.calendar.selectedDate) -> Unit
-
-                        isOffline -> messageController(
-                            HilingualMessage.Toast("인터넷 연결이 불안정해요."),
-                        )
-
-                        else -> viewModel.onMonthChanged(yearMonth)
-                    }
-                },
+                onDateSelected = viewModel::onDateSelected,
+                onMonthChanged = viewModel::onMonthChanged,
                 onRecoveryClick = viewModel::onRecoveryClick,
                 onWriteDiaryClick = { date, mode ->
                     tracker.logEvent(
@@ -354,6 +340,8 @@ private fun HomeScreen(
     homeState: HomeState,
     onAlarmClick: () -> Unit,
     onImageClick: () -> Unit,
+    isCalendarInteractionEnabled: Boolean,
+    onDisabledCalendarInteraction: () -> Unit,
     onDateSelected: (LocalDate) -> Unit,
     onMonthChanged: (YearMonth) -> Unit,
     onRecoveryClick: (LocalDate) -> Unit,
@@ -411,6 +399,8 @@ private fun HomeScreen(
                     .filter { it.status != CalendarStatus.UNLOCKED }
                     .map { it.date }
                     .toSet(),
+                isInteractionEnabled = isCalendarInteractionEnabled,
+                onDisabledInteraction = onDisabledCalendarInteraction,
                 onDateClick = onDateSelected,
                 onMonthChanged = onMonthChanged,
                 modifier = Modifier
@@ -618,6 +608,8 @@ private fun HomeScreenPreview() {
             homeState = rememberHomeState(),
             onAlarmClick = {},
             onImageClick = {},
+            isCalendarInteractionEnabled = true,
+            onDisabledCalendarInteraction = {},
             onDateSelected = {},
             onMonthChanged = {},
             onRecoveryClick = {},

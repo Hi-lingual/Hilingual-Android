@@ -44,6 +44,8 @@ import kotlinx.coroutines.launch
 internal fun HilingualCalendar(
     selectedDate: LocalDate?,
     writtenDates: Set<LocalDate>,
+    isInteractionEnabled: Boolean,
+    onDisabledInteraction: () -> Unit,
     onDateClick: (date: LocalDate) -> Unit,
     onMonthChanged: (yearMonth: YearMonth) -> Unit,
     modifier: Modifier = Modifier,
@@ -58,16 +60,33 @@ internal fun HilingualCalendar(
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var settledMonth by remember { mutableStateOf(initialMonth) }
 
-    LaunchedEffect(state.listState) {
+    fun handleInteraction(action: () -> Unit) {
+        if (isInteractionEnabled) {
+            action()
+        } else {
+            onDisabledInteraction()
+        }
+    }
+
+    LaunchedEffect(state.listState, isInteractionEnabled) {
         snapshotFlow { state.listState.isScrollInProgress }
             .filter { !it }
             .collect {
                 val newMonth = state.firstVisibleMonth.yearMonth
-                if (newMonth != settledMonth) {
+                if (isInteractionEnabled && newMonth != settledMonth) {
                     settledMonth = newMonth
                     onMonthChanged(newMonth)
                 }
             }
+    }
+
+    LaunchedEffect(isInteractionEnabled, selectedDate) {
+        if (!isInteractionEnabled && selectedDate != null) {
+            val selectedMonth = YearMonth.from(selectedDate)
+            settledMonth = selectedMonth
+            isBottomSheetVisible = false
+            state.scrollToMonth(selectedMonth)
+        }
     }
 
     HilingualYearMonthPickerBottomSheet(
@@ -75,28 +94,41 @@ internal fun HilingualCalendar(
         initialYearMonth = settledMonth,
         onDismiss = { isBottomSheetVisible = false },
         onDateSelected = { newYearMonth ->
-            if (newYearMonth != settledMonth) {
-                settledMonth = newYearMonth
-                onMonthChanged(newYearMonth)
-            }
-            coroutineScope.launch {
-                state.scrollToMonth(newYearMonth)
+            if (!isInteractionEnabled) {
                 isBottomSheetVisible = false
+            }
+            handleInteraction {
+                if (newYearMonth != settledMonth) {
+                    settledMonth = newYearMonth
+                    onMonthChanged(newYearMonth)
+                }
+                coroutineScope.launch {
+                    state.scrollToMonth(newYearMonth)
+                    isBottomSheetVisible = false
+                }
             }
         },
     )
 
     Column(modifier = modifier) {
         CalendarHeader(
-            onDownArrowClick = { isBottomSheetVisible = true },
+            onDownArrowClick = {
+                handleInteraction {
+                    isBottomSheetVisible = true
+                }
+            },
             onLeftArrowClick = {
-                coroutineScope.launch {
-                    state.animateScrollToMonth(settledMonth.minusMonths(1))
+                handleInteraction {
+                    coroutineScope.launch {
+                        state.animateScrollToMonth(settledMonth.minusMonths(1))
+                    }
                 }
             },
             onRightArrowClick = {
-                coroutineScope.launch {
-                    state.animateScrollToMonth(settledMonth.plusMonths(1))
+                handleInteraction {
+                    coroutineScope.launch {
+                        state.animateScrollToMonth(settledMonth.plusMonths(1))
+                    }
                 }
             },
             yearMonth = { settledMonth },
@@ -106,6 +138,8 @@ internal fun HilingualCalendar(
         key(settledMonth) {
             HorizontalCalendar(
                 state = state,
+                userScrollEnabled = isInteractionEnabled,
+                onDisabledScroll = onDisabledInteraction,
                 modifier = Modifier.background(HilingualTheme.colors.white),
                 monthHeader = {
                     DaysOfWeekTitle(daysOfWeek = daysOfWeek)
@@ -113,7 +147,13 @@ internal fun HilingualCalendar(
                 dayContent = { day ->
                     DayItem(
                         day = day,
-                        onClick = { onDateClick(day.date) },
+                        onClick = {
+                            if (day.date != selectedDate) {
+                                handleInteraction {
+                                    onDateClick(day.date)
+                                }
+                            }
+                        },
                         isSelected = selectedDate == day.date,
                         isWritten = day.date in writtenDates,
                     )
@@ -134,6 +174,8 @@ private fun HilingualCalendarPreview() {
         HilingualCalendar(
             selectedDate = selectedDate,
             writtenDates = writtenDates,
+            isInteractionEnabled = true,
+            onDisabledInteraction = {},
             onDateClick = { selectedDate = it },
             onMonthChanged = { },
         )
