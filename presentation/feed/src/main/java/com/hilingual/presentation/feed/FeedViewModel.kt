@@ -67,7 +67,14 @@ internal class FeedViewModel @Inject constructor(
         }
     }
 
+    private fun isTabLoaded(tab: FeedTab): Boolean = when (tab) {
+        FeedTab.RECOMMEND -> _uiState.value.recommendFeedList is UiState.Success
+        FeedTab.FOLLOWING -> _uiState.value.followingFeedList is UiState.Success
+    }
+
     fun loadTab(tab: FeedTab) {
+        if (isTabLoaded(tab)) return
+
         loadFeedData(tab, isRefreshing = false)
     }
 
