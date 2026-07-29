@@ -57,6 +57,7 @@ import com.angrypodo.wisp.runtime.navigateTo
 import com.hilingual.core.ads.native.HilingualNativeLineAd
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.app.AppRestarter
+import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.model.HilingualMessage.Snackbar
 import com.hilingual.core.common.model.HilingualMessage.Toast
@@ -187,6 +188,7 @@ internal fun MainScreen(
             bottomBar = {
                 BottomSection(
                     isVisible = isBottomBarVisible,
+                    isInteractionEnabled = !isNetworkErrorOverlayVisible,
                     currentTab = currentTab,
                     onTabSelected = appState::navigate,
                 )
@@ -412,6 +414,7 @@ private fun HandleBackPressToExit(
 @Composable
 private fun BottomSection(
     isVisible: Boolean,
+    isInteractionEnabled: Boolean,
     currentTab: MainTab?,
     onTabSelected: (MainTab) -> Unit,
     modifier: Modifier = Modifier,
@@ -434,7 +437,16 @@ private fun BottomSection(
             enter = EnterTransition.None,
             exit = ExitTransition.None,
         ) {
-            HilingualNativeLineAd(adUnitId = BuildConfig.ADMOB_NATIVE_UNIT_ID)
+            Box {
+                HilingualNativeLineAd(adUnitId = BuildConfig.ADMOB_NATIVE_UNIT_ID)
+                if (!isInteractionEnabled) {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .noRippleClickable {},
+                    )
+                }
+            }
         }
     }
 }
