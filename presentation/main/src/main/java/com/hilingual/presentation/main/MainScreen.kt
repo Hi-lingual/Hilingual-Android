@@ -295,36 +295,37 @@ internal fun MainScreen(
                     )
                 }
 
-            LaunchedEffect(appState.navController, deepLinkUri) {
-                if (deepLinkUri == null) return@LaunchedEffect
+                LaunchedEffect(appState.navController, deepLinkUri) {
+                    if (deepLinkUri == null) return@LaunchedEffect
 
-                val entry = appState.navController.currentBackStackEntryFlow
-                    .first { !it.destination.hasRoute(Splash::class) }
+                    val entry = appState.navController.currentBackStackEntryFlow
+                        .first { !it.destination.hasRoute(Splash::class) }
 
-                val isPreLogin = entry.destination.run {
-                    hasRoute(Auth::class) || hasRoute(SignUp::class) || hasRoute(Onboarding::class)
-                }
+                    val isPreLogin = entry.destination.run {
+                        hasRoute(Auth::class) || hasRoute(SignUp::class) || hasRoute(Onboarding::class)
+                    }
 
-                if (isPreLogin) {
+                    if (isPreLogin) {
+                        onDeepLinkConsumed()
+                        return@LaunchedEffect
+                    }
+
+                    try {
+                        appState.navController.navigateTo(deepLinkUri)
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        Timber.e(e, "Failed to navigate to deep link: $deepLinkUri")
+                        onShowMessage(Toast("연결할 수 없는 링크예요."))
+                    }
                     onDeepLinkConsumed()
-                    return@LaunchedEffect
                 }
 
-                try {
-                    appState.navController.navigateTo(deepLinkUri)
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (e: Exception) {
-                    Timber.e(e, "Failed to navigate to deep link: $deepLinkUri")
-                    onShowMessage(Toast("연결할 수 없는 링크예요."))
-                }
-                onDeepLinkConsumed()
-            }
+                HilingualErrorDialog(
+                    state = appState.dialogStateHolder.dialogState,
+                    onDismiss = appState.dialogStateHolder::dismissDialog,
+                )
 
-            HilingualErrorDialog(
-                state = appState.dialogStateHolder.dialogState,
-                onDismiss = appState.dialogStateHolder::dismissDialog,
-            )
                 if (isNetworkErrorOverlayVisible) {
                     HilingualNetworkErrorView(
                         isBackVisible = !isBottomBarVisible,
