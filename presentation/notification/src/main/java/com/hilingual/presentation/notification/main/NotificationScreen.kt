@@ -56,8 +56,6 @@ internal fun NotificationRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    RetryOnReconnect(onRetry = viewModel::loadCurrentTab)
-
     NotificationScreen(
         uiState = uiState,
         paddingValues = paddingValues,
@@ -71,8 +69,8 @@ internal fun NotificationRoute(
             }
         },
         onNoticeNotificationClick = { notification -> navigateToNoticeDetail(notification.id) },
-        onTabSelected = viewModel::onTabSelected,
-        onUserRefresh = viewModel::onUserRefresh,
+        onTabLoad = viewModel::loadTab,
+        onTabRefresh = viewModel::refreshTab,
     )
 }
 
@@ -84,21 +82,24 @@ private fun NotificationScreen(
     onSettingClick: () -> Unit,
     onFeedNotificationClick: (FeedNotificationItemUiModel) -> Unit,
     onNoticeNotificationClick: (NoticeNotificationItemUiModel) -> Unit,
-    onTabSelected: (NotificationTab) -> Unit,
-    onUserRefresh: (NotificationTab) -> Unit,
+    onTabLoad: (NotificationTab) -> Unit,
+    onTabRefresh: (NotificationTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val feedListState = rememberLazyListState()
     val noticeListState = rememberLazyListState()
-    val pagerState = rememberPagerState(pageCount = { 2 })
+    val pagerState = rememberPagerState(pageCount = { NotificationTab.entries.size })
     val coroutineScope = rememberCoroutineScope()
+    val currentTab = NotificationTab.entries[pagerState.currentPage]
+
+    RetryOnReconnect(onRetry = { onTabRefresh(currentTab) })
 
     LaunchedEffect(pagerState, feedListState, noticeListState) {
         snapshotFlow { pagerState.currentPage }
             .withIndex()
             .collect { (index, page) ->
                 val tab = NotificationTab.entries[page]
-                onTabSelected(tab)
+                onTabLoad(tab)
                 if (index > 0) {
                     delay(100)
                     when (tab) {
@@ -142,7 +143,7 @@ private fun NotificationScreen(
                     onNotificationClick = onFeedNotificationClick,
                     isRefreshing = uiState.isFeedRefreshing,
                     listState = feedListState,
-                    onRefresh = { onUserRefresh(tab) },
+                    onRefresh = { onTabRefresh(tab) },
                 )
 
                 NotificationTab.NOTIFICATION -> NoticeScreen(
@@ -150,7 +151,7 @@ private fun NotificationScreen(
                     onNotificationClick = onNoticeNotificationClick,
                     isRefreshing = uiState.isNoticeRefreshing,
                     listState = noticeListState,
-                    onRefresh = { onUserRefresh(tab) },
+                    onRefresh = { onTabRefresh(tab) },
                 )
             }
         }

@@ -36,24 +36,9 @@ internal class NotificationViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(NotificationUiState())
     val uiState = _uiState.asStateFlow()
 
-    private var currentTab = NotificationTab.FEED
-
-    fun onTabSelected(tab: NotificationTab) {
-        currentTab = tab
-        loadTab(tab = tab, isUserRefresh = false)
-    }
-
-    fun onUserRefresh(tab: NotificationTab) {
-        loadTab(tab = tab, isUserRefresh = true)
-    }
-
-    fun loadCurrentTab() {
-        loadTab(tab = currentTab, isUserRefresh = false)
-    }
-
-    private fun loadTab(tab: NotificationTab, isUserRefresh: Boolean) {
+    private fun loadTab(tab: NotificationTab, isRefreshing: Boolean) {
         viewModelScope.launch {
-            if (isUserRefresh) {
+            if (isRefreshing) {
                 setRefreshing(tab, isRefreshing = true)
             }
             userRepository.getNotifications(tab.name)
@@ -74,10 +59,18 @@ internal class NotificationViewModel @Inject constructor(
                 }
                 .onLogFailure { /* TODO: 에러 처리 */ }
 
-            if (isUserRefresh) {
+            if (isRefreshing) {
                 setRefreshing(tab, isRefreshing = false)
             }
         }
+    }
+
+    fun loadTab(tab: NotificationTab) {
+        loadTab(tab, isRefreshing = false)
+    }
+
+    fun refreshTab(tab: NotificationTab) {
+        loadTab(tab, isRefreshing = true)
     }
 
     fun readNotification(noticeId: Long) {
