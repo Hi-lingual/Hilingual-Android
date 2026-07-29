@@ -78,6 +78,7 @@ internal fun FollowListRoute(
         onBackClick = navigateUp,
         onProfileClick = navigateToFeedProfile,
         onActionButtonClick = viewModel::toggleFollow,
+        onTabLoad = viewModel::loadTab,
         onTabRefresh = viewModel::refreshTab,
     )
 }
@@ -92,6 +93,7 @@ private fun FollowListScreen(
     onBackClick: () -> Unit,
     onProfileClick: (Long) -> Unit,
     onActionButtonClick: (Long, Boolean, FollowTabType) -> Unit,
+    onTabLoad: (FollowTabType) -> Unit,
     onTabRefresh: (FollowTabType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -107,7 +109,7 @@ private fun FollowListScreen(
         snapshotFlow { pagerState.currentPage }
             .distinctUntilChanged()
             .collect { pageIndex ->
-                onTabRefresh(FollowTabType.entries[pageIndex])
+                onTabLoad(FollowTabType.entries[pageIndex])
             }
     }
 
@@ -125,12 +127,7 @@ private fun FollowListScreen(
             tabIndex = pagerState.currentPage,
             onTabSelected = { index ->
                 coroutineScope.launch {
-                    val tabType = FollowTabType.entries[index]
-                    if (index == pagerState.currentPage) {
-                        onTabRefresh(tabType)
-                    } else {
-                        pagerState.animateScrollToPage(index)
-                    }
+                    pagerState.animateScrollToPage(index)
                 }
             },
         )
@@ -208,6 +205,7 @@ private fun FollowListScreenPreview() {
             onBackClick = {},
             onProfileClick = {},
             onActionButtonClick = { _, _, _ -> },
+            onTabLoad = {},
             onTabRefresh = {},
         )
     }

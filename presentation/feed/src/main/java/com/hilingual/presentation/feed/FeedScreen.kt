@@ -23,16 +23,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -84,7 +83,8 @@ internal fun FeedRoute(
     val dialogTrigger = LocalDialogTrigger.current
     val tracker = LocalTracker.current
 
-    var selectedFeedTab by remember { mutableStateOf(FeedTab.RECOMMEND) }
+    val pagerState = rememberPagerState(pageCount = { FeedTab.entries.size })
+    val selectedFeedTab = FeedTab.entries[pagerState.currentPage]
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -118,16 +118,19 @@ internal fun FeedRoute(
                 "page" to FEED.pageName,
             ),
         )
-        viewModel.loadInitialFeedData()
     }
 
-    RetryOnReconnect(onRetry = viewModel::retryLoad)
+    LaunchedEffect(selectedFeedTab) {
+        viewModel.loadTab(selectedFeedTab)
+    }
+
+    RetryOnReconnect(onRetry = { viewModel.refreshTab(selectedFeedTab) })
 
     val feedLoadError = uiState.loadErrorState(selectedFeedTab)
     if (feedLoadError is UiState.Failure) {
         HilingualLoadErrorView(
             action = LoadErrorViewAction.Retry(
-                onRetryClick = { viewModel.loadFeedData(selectedFeedTab) },
+                onRetryClick = { viewModel.refreshTab(selectedFeedTab) },
             ),
             modifier = Modifier.padding(paddingValues),
         )
@@ -142,8 +145,8 @@ internal fun FeedRoute(
             followingFeedList = followingFeedList,
             recommendRefreshing = isRecommendRefreshing,
             followingRefreshing = isFollowingRefreshing,
-            onSelectedTabChanged = { selectedFeedTab = it },
-            onFeedRefresh = { tab ->
+            pagerState = pagerState,
+            onTabRefresh = { tab ->
                 tracker.logEvent(
                     trigger = TriggerType.CLICK,
                     page = FEED,
@@ -153,7 +156,7 @@ internal fun FeedRoute(
                         "page" to FEED.pageName,
                     ),
                 )
-                viewModel.onFeedRefresh(tab)
+                viewModel.refreshTab(tab)
             },
             hasFollowing = hasFollowing,
             onSearchClick = navigateToFeedSearch,
@@ -195,6 +198,7 @@ private fun FeedScreen(
     followingFeedList: UiState<ImmutableList<FeedItemUiModel>>,
     recommendRefreshing: Boolean,
     followingRefreshing: Boolean,
+    pagerState: PagerState,
     hasFollowing: Boolean,
     onMyProfileClick: () -> Unit,
     onSearchClick: () -> Unit,
@@ -204,12 +208,10 @@ private fun FeedScreen(
     onUnpublishClick: (Long) -> Unit,
     onReportClick: () -> Unit,
     readAllFeed: () -> Unit,
-    onFeedRefresh: (FeedTab) -> Unit,
-    onSelectedTabChanged: (FeedTab) -> Unit,
+    onTabRefresh: (FeedTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val pagerState = rememberPagerState(pageCount = { 2 })
 
     val recommendListState = rememberLazyListState()
     val followingsListState = rememberLazyListState()
@@ -244,13 +246,6 @@ private fun FeedScreen(
     }
 
     val latestReadAllFeed by rememberUpdatedState(newValue = readAllFeed)
-
-    LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }
-            .collect { page ->
-                onSelectedTabChanged(FeedTab.entries[page])
-            }
-    }
 
     LaunchedEffect(pagerState.currentPage) {
         snapshotFlow {
@@ -308,7 +303,7 @@ private fun FeedScreen(
                         listState = recommendListState,
                         feedListState = recommendFeedList,
                         isRefreshing = recommendRefreshing,
-                        onRefresh = { onFeedRefresh(tab) },
+                        onRefresh = { onTabRefresh(tab) },
                         onProfileClick = onFeedProfileClick,
                         onContentDetailClick = onContentDetailClick,
                         onLikeClick = onLikeClick,
@@ -321,7 +316,7 @@ private fun FeedScreen(
                         listState = followingsListState,
                         feedListState = followingFeedList,
                         isRefreshing = followingRefreshing,
-                        onRefresh = { onFeedRefresh(tab) },
+                        onRefresh = { onTabRefresh(tab) },
                         onProfileClick = onFeedProfileClick,
                         onContentDetailClick = onContentDetailClick,
                         onLikeClick = onLikeClick,
@@ -367,8 +362,8 @@ private fun FeedScreenPreview() {
             hasFollowing = false,
             recommendRefreshing = false,
             followingRefreshing = false,
-            onFeedRefresh = {},
-            onSelectedTabChanged = {},
+            pagerState = rememberPagerState(pageCount = { FeedTab.entries.size }),
+            onTabRefresh = {},
         )
     }
 }

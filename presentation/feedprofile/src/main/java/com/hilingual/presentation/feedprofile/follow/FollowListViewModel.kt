@@ -55,13 +55,29 @@ internal class FollowListViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<FollowListSideEffect>()
     val sideEffect: SharedFlow<FollowListSideEffect> = _sideEffect.asSharedFlow()
 
-    fun refreshTab(tabType: FollowTabType) {
+    private fun loadTab(tabType: FollowTabType, isRefreshing: Boolean) {
         viewModelScope.launch {
             val shouldShowLoadError = getFollowListState(tabType) !is UiState.Success
-            setRefreshing(tabType, true)
+            if (isRefreshing) {
+                setRefreshing(tabType, true)
+            } else if (shouldShowLoadError) {
+                updateLoadingState(tabType, UiState.Loading)
+            }
+
             loadFollowList(tabType, shouldShowLoadError)
-            setRefreshing(tabType, false)
+
+            if (isRefreshing) {
+                setRefreshing(tabType, false)
+            }
         }
+    }
+
+    fun loadTab(tabType: FollowTabType) {
+        loadTab(tabType, isRefreshing = false)
+    }
+
+    fun refreshTab(tabType: FollowTabType) {
+        loadTab(tabType, isRefreshing = true)
     }
 
     fun toggleFollow(userId: Long, isFollowing: Boolean, tabType: FollowTabType) {
@@ -89,8 +105,6 @@ internal class FollowListViewModel @Inject constructor(
     }
 
     private suspend fun loadFollowList(tabType: FollowTabType, shouldShowLoadError: Boolean) {
-        updateLoadingState(tabType, UiState.Loading)
-
         val result = when (tabType) {
             FollowTabType.FOLLOWER -> userRepository.getFollowers(targetUserId)
             FollowTabType.FOLLOWING -> userRepository.getFollowings(targetUserId)
