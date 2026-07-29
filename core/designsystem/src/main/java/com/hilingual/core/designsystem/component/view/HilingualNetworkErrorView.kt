@@ -40,7 +40,8 @@ fun HilingualNetworkErrorView(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(HilingualTheme.colors.white),
+            .background(HilingualTheme.colors.white)
+            .noRippleClickable { },
     ) {
         if (isBackVisible) {
             HilingualBasicTopAppBar(
