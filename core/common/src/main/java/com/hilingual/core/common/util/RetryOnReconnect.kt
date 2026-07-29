@@ -7,11 +7,19 @@ import androidx.compose.runtime.rememberUpdatedState
 import com.hilingual.core.common.trigger.LocalReconnectEvents
 
 @Composable
-fun RetryOnReconnect(onRetry: () -> Unit) {
+fun RetryOnReconnect(
+    shouldRetry: Boolean,
+    onRetry: () -> Unit,
+) {
     val reconnectEvents = LocalReconnectEvents.current
+    val currentShouldRetry by rememberUpdatedState(shouldRetry)
     val currentOnRetry by rememberUpdatedState(onRetry)
 
-    LaunchedEffect(Unit) {
-        reconnectEvents.collect { currentOnRetry() }
+    LaunchedEffect(reconnectEvents) {
+        reconnectEvents.collect {
+            if (currentShouldRetry) {
+                currentOnRetry()
+            }
+        }
     }
 }

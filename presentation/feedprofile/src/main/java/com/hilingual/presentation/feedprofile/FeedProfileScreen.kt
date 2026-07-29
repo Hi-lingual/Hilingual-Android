@@ -114,7 +114,10 @@ internal fun FeedProfileRoute(
         viewModel.loadFeedProfile()
     }
 
-    RetryOnReconnect(onRetry = viewModel::retryLoad)
+    RetryOnReconnect(
+        shouldRetry = uiState is UiState.Failure,
+        onRetry = viewModel::retryLoad,
+    )
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {

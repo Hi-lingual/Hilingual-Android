@@ -100,7 +100,10 @@ internal fun DiaryFeedbackRoute(
         viewModel.loadInitialData()
     }
 
-    RetryOnReconnect(onRetry = viewModel::retryLoad)
+    RetryOnReconnect(
+        shouldRetry = state is UiState.Failure,
+        onRetry = viewModel::retryLoad,
+    )
 
     BackHandler {
         if (isImageDetailVisible) {

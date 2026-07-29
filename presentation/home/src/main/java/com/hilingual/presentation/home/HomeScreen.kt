@@ -190,7 +190,10 @@ internal fun HomeRoute(
         tracker.logEvent(trigger = TriggerType.VIEW, page = HOME, event = "page")
     }
 
-    RetryOnReconnect(onRetry = viewModel::retryLoad)
+    RetryOnReconnect(
+        shouldRetry = uiState is UiState.Failure,
+        onRetry = viewModel::retryLoad,
+    )
 
     if (ENABLE_PUSH_NOTIFICATION) {
         CheckNotificationPermission(

@@ -102,8 +102,15 @@ private fun FollowListScreen(
     val followerListState = rememberLazyListState()
     val followingListState = rememberLazyListState()
     val currentTabType = FollowTabType.entries[pagerState.currentPage]
+    val currentTabState = when (currentTabType) {
+        FollowTabType.FOLLOWER -> followers
+        FollowTabType.FOLLOWING -> followings
+    }
 
-    RetryOnReconnect(onRetry = { onTabRefresh(currentTabType) })
+    RetryOnReconnect(
+        shouldRetry = currentTabState is UiState.Failure,
+        onRetry = { onTabRefresh(currentTabType) },
+    )
 
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }

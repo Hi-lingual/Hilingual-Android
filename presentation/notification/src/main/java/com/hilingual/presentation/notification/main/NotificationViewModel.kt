@@ -38,6 +38,7 @@ internal class NotificationViewModel @Inject constructor(
 
     private fun loadTab(tab: NotificationTab, isRefreshing: Boolean) {
         viewModelScope.launch {
+            setLoadFailed(tab, isFailed = false)
             if (isRefreshing) {
                 setRefreshing(tab, isRefreshing = true)
             }
@@ -57,7 +58,9 @@ internal class NotificationViewModel @Inject constructor(
                         }
                     }
                 }
-                .onLogFailure { /* TODO: 에러 처리 */ }
+                .onLogFailure {
+                    setLoadFailed(tab, isFailed = true)
+                }
 
             if (isRefreshing) {
                 setRefreshing(tab, isRefreshing = false)
@@ -92,6 +95,18 @@ internal class NotificationViewModel @Inject constructor(
                 NotificationTab.FEED -> it.copy(isFeedRefreshing = isRefreshing)
                 NotificationTab.NOTIFICATION -> it.copy(isNoticeRefreshing = isRefreshing)
             }
+        }
+    }
+
+    private fun setLoadFailed(tab: NotificationTab, isFailed: Boolean) {
+        _uiState.update {
+            it.copy(
+                failedTabs = if (isFailed) {
+                    it.failedTabs.adding(tab)
+                } else {
+                    it.failedTabs.removing(tab)
+                },
+            )
         }
     }
 }

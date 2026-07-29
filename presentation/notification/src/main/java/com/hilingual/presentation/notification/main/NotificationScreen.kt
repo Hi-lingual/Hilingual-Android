@@ -92,7 +92,10 @@ private fun NotificationScreen(
     val coroutineScope = rememberCoroutineScope()
     val currentTab = NotificationTab.entries[pagerState.currentPage]
 
-    RetryOnReconnect(onRetry = { onTabRefresh(currentTab) })
+    RetryOnReconnect(
+        shouldRetry = currentTab in uiState.failedTabs,
+        onRetry = { onTabRefresh(currentTab) },
+    )
 
     LaunchedEffect(pagerState, feedListState, noticeListState) {
         snapshotFlow { pagerState.currentPage }

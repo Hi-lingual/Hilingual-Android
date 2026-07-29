@@ -100,7 +100,10 @@ internal fun FeedDiaryRoute(
         }
     }
 
-    RetryOnReconnect(onRetry = viewModel::retryLoad)
+    RetryOnReconnect(
+        shouldRetry = uiState is UiState.Failure,
+        onRetry = viewModel::retryLoad,
+    )
 
     viewModel.sideEffect.collectSideEffect {
         when (it) {

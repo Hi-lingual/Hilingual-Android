@@ -46,7 +46,12 @@ internal class NotificationDetailViewModel @Inject constructor(
 
     private fun getNotificationDetail() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update {
+                it.copy(
+                    isLoading = true,
+                    isLoadFailed = false,
+                )
+            }
             userRepository.getNotificationDetail(noticeId)
                 .onSuccess { detail ->
                     _uiState.update {
@@ -57,7 +62,9 @@ internal class NotificationDetailViewModel @Inject constructor(
                         )
                     }
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _uiState.update { it.copy(isLoadFailed = true) }
+                }
             _uiState.update { it.copy(isLoading = false) }
         }
     }

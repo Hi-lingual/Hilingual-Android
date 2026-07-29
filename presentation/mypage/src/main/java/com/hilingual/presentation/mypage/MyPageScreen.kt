@@ -89,7 +89,10 @@ internal fun MyPageRoute(
         }
     }
 
-    RetryOnReconnect(onRetry = viewModel::retryLoad)
+    RetryOnReconnect(
+        shouldRetry = uiState is UiState.Failure,
+        onRetry = viewModel::retryLoad,
+    )
 
     when (val state = uiState) {
         is UiState.Success -> {

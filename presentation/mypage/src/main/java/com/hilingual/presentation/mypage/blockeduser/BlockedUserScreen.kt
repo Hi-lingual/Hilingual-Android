@@ -79,7 +79,10 @@ internal fun BlockedUserRoute(
         viewModel.getBlockList()
     }
 
-    RetryOnReconnect(onRetry = viewModel::retryLoad)
+    RetryOnReconnect(
+        shouldRetry = uiState.blockedUserList is UiState.Failure,
+        onRetry = viewModel::retryLoad,
+    )
 
     when (val state = uiState.blockedUserList) {
         is UiState.Success -> {

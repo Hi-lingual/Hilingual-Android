@@ -21,7 +21,9 @@ import com.hilingual.presentation.notification.main.model.FeedNotificationType
 import com.hilingual.presentation.notification.main.model.NoticeCategoryType
 import com.hilingual.presentation.notification.main.model.NoticeNotificationItemUiModel
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
 
 enum class NotificationTab {
     FEED,
@@ -34,6 +36,7 @@ data class NotificationUiState(
     val isNoticeRefreshing: Boolean = false,
     val feedNotifications: ImmutableList<FeedNotificationItemUiModel> = persistentListOf(),
     val noticeNotifications: ImmutableList<NoticeNotificationItemUiModel> = persistentListOf(),
+    val failedTabs: PersistentSet<NotificationTab> = persistentSetOf(),
 ) {
     companion object {
         val Fake = NotificationUiState(

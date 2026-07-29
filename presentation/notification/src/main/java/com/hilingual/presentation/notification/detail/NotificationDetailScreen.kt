@@ -27,6 +27,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.presentation.notification.detail.component.NotificationDetailContent
@@ -39,11 +41,15 @@ internal fun NotificationDetailRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    RetryOnReconnect(onRetry = viewModel::retryLoad)
+    RetryOnReconnect(
+        shouldRetry = uiState.isLoadFailed,
+        onRetry = viewModel::retryLoad,
+    )
 
     NotificationDetailScreen(
         paddingValues = paddingValues,
         onBackClick = navigateUp,
+        onRetryClick = viewModel::retryLoad,
         uiState = uiState,
     )
 }
@@ -52,6 +58,7 @@ internal fun NotificationDetailRoute(
 private fun NotificationDetailScreen(
     paddingValues: PaddingValues,
     onBackClick: () -> Unit,
+    onRetryClick: () -> Unit,
     uiState: NotificationDetailUiState,
     modifier: Modifier = Modifier,
 ) {
@@ -65,14 +72,20 @@ private fun NotificationDetailScreen(
             title = "알림",
             onBackClicked = onBackClick,
         )
-        if (uiState.isLoading) {
-            HilingualLoadingIndicator()
-        } else {
-            NotificationDetailContent(
-                title = uiState.title,
-                date = uiState.date,
-                content = uiState.content,
+        when {
+            uiState.isLoading -> HilingualLoadingIndicator()
+
+            uiState.isLoadFailed -> HilingualLoadErrorView(
+                action = LoadErrorViewAction.Retry(onRetryClick = onRetryClick),
             )
+
+            else -> {
+                NotificationDetailContent(
+                    title = uiState.title,
+                    date = uiState.date,
+                    content = uiState.content,
+                )
+            }
         }
     }
 }

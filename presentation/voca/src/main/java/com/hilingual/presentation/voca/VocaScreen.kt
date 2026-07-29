@@ -95,7 +95,10 @@ internal fun VocaRoute(
         tracker.logEvent(trigger = TriggerType.VIEW, page = VOCABULARY, event = "page")
     }
 
-    RetryOnReconnect(onRetry = viewModel::retryLoad)
+    RetryOnReconnect(
+        shouldRetry = uiState.vocaGroupList is UiState.Failure,
+        onRetry = viewModel::retryLoad,
+    )
 
     LaunchedEffect(uiState.vocaItemDetail) {
         if (uiState.vocaItemDetail is UiState.Success) {

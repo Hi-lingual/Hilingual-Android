@@ -87,7 +87,10 @@ internal fun NotificationSettingRoute(
         context.startActivity(intent)
     }
 
-    RetryOnReconnect(onRetry = viewModel::retryLoad)
+    RetryOnReconnect(
+        shouldRetry = uiState is UiState.Failure,
+        onRetry = viewModel::retryLoad,
+    )
 
     when (val state = uiState) {
         is UiState.Loading -> {
