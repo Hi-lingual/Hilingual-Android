@@ -42,6 +42,7 @@ internal fun NotificationDetailRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     RetryOnReconnect(
+        isLoading = uiState.isLoading,
         shouldRetry = uiState.isLoadFailed,
         onRetry = viewModel::retryLoad,
     )

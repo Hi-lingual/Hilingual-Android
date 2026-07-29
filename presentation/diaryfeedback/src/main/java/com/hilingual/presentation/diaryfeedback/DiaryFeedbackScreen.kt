@@ -101,6 +101,7 @@ internal fun DiaryFeedbackRoute(
     }
 
     RetryOnReconnect(
+        isLoading = state is UiState.Loading,
         shouldRetry = state is UiState.Failure,
         onRetry = viewModel::retryLoad,
     )

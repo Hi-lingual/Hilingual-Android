@@ -96,6 +96,7 @@ internal fun VocaRoute(
     }
 
     RetryOnReconnect(
+        isLoading = uiState.vocaGroupList is UiState.Loading,
         shouldRetry = uiState.vocaGroupList is UiState.Failure,
         onRetry = viewModel::retryLoad,
     )

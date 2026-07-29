@@ -36,6 +36,7 @@ data class NotificationUiState(
     val isNoticeRefreshing: Boolean = false,
     val feedNotifications: ImmutableList<FeedNotificationItemUiModel> = persistentListOf(),
     val noticeNotifications: ImmutableList<NoticeNotificationItemUiModel> = persistentListOf(),
+    val loadingTabs: PersistentSet<NotificationTab> = persistentSetOf(),
     val failedTabs: PersistentSet<NotificationTab> = persistentSetOf(),
 ) {
     companion object {

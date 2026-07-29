@@ -93,6 +93,7 @@ private fun NotificationScreen(
     val currentTab = NotificationTab.entries[pagerState.currentPage]
 
     RetryOnReconnect(
+        isLoading = currentTab in uiState.loadingTabs,
         shouldRetry = currentTab in uiState.failedTabs,
         onRetry = { onTabRefresh(currentTab) },
     )

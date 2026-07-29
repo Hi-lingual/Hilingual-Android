@@ -101,10 +101,10 @@ internal class FeedViewModel @Inject constructor(
     private fun getRecommendFeeds(isRefreshing: Boolean) {
         viewModelScope.launch {
             val shouldShowLoadError = _uiState.value.recommendFeedList !is UiState.Success
-            if (isRefreshing) {
-                _uiState.update { it.copy(isRecommendRefreshing = true) }
-            } else if (shouldShowLoadError) {
+            if (shouldShowLoadError) {
                 _uiState.update { it.copy(recommendFeedList = UiState.Loading) }
+            } else if (isRefreshing) {
+                _uiState.update { it.copy(isRecommendRefreshing = true) }
             }
 
             feedRepository.getRecommendFeeds()
@@ -123,7 +123,7 @@ internal class FeedViewModel @Inject constructor(
                     }
                 }
 
-            if (isRefreshing) {
+            if (isRefreshing && !shouldShowLoadError) {
                 _uiState.update { it.copy(isRecommendRefreshing = false) }
             }
         }
@@ -132,10 +132,10 @@ internal class FeedViewModel @Inject constructor(
     private fun getFollowingFeeds(isRefreshing: Boolean) {
         viewModelScope.launch {
             val shouldShowLoadError = _uiState.value.followingFeedList !is UiState.Success
-            if (isRefreshing) {
-                _uiState.update { it.copy(isFollowingRefreshing = true) }
-            } else if (shouldShowLoadError) {
+            if (shouldShowLoadError) {
                 _uiState.update { it.copy(followingFeedList = UiState.Loading) }
+            } else if (isRefreshing) {
+                _uiState.update { it.copy(isFollowingRefreshing = true) }
             }
 
             feedRepository.getFollowingFeeds()
@@ -155,7 +155,7 @@ internal class FeedViewModel @Inject constructor(
                     }
                 }
 
-            if (isRefreshing) {
+            if (isRefreshing && !shouldShowLoadError) {
                 _uiState.update { it.copy(isFollowingRefreshing = false) }
             }
         }

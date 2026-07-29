@@ -108,6 +108,7 @@ private fun FollowListScreen(
     }
 
     RetryOnReconnect(
+        isLoading = currentTabState is UiState.Loading,
         shouldRetry = currentTabState is UiState.Failure,
         onRetry = { onTabRefresh(currentTabType) },
     )

@@ -115,6 +115,7 @@ internal fun FeedProfileRoute(
     }
 
     RetryOnReconnect(
+        isLoading = uiState is UiState.Loading,
         shouldRetry = uiState is UiState.Failure,
         onRetry = viewModel::retryLoad,
     )

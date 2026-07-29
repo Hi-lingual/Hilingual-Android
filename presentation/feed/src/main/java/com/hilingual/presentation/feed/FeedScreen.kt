@@ -126,6 +126,7 @@ internal fun FeedRoute(
 
     val feedLoadError = uiState.loadErrorState(selectedFeedTab)
     RetryOnReconnect(
+        isLoading = feedLoadError is UiState.Loading,
         shouldRetry = feedLoadError is UiState.Failure,
         onRetry = { viewModel.refreshTab(selectedFeedTab) },
     )

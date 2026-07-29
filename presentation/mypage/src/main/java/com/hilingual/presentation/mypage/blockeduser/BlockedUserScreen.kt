@@ -80,6 +80,7 @@ internal fun BlockedUserRoute(
     }
 
     RetryOnReconnect(
+        isLoading = uiState.blockedUserList is UiState.Loading,
         shouldRetry = uiState.blockedUserList is UiState.Failure,
         onRetry = viewModel::retryLoad,
     )

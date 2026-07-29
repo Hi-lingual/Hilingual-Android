@@ -42,6 +42,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
@@ -153,14 +154,16 @@ internal fun MainScreen(
         appState.isOffline
             .drop(1)
             .filter { offline -> !offline }
-            .collect { reconnectEvents.emit(Unit) }
+            .collect {
+                reconnectEvents.emit(Unit)
+                withFrameNanos { }
+                isNetworkErrorOverlayVisible = false
+            }
     }
 
     LaunchedEffect(isOffline) {
         if (isOffline) {
             onShowMessage(Toast("인터넷 연결이 불안정해요."))
-        } else {
-            isNetworkErrorOverlayVisible = false
         }
     }
 
@@ -342,9 +345,10 @@ internal fun MainScreen(
                             if (isOffline) {
                                 onShowMessage(Toast("인터넷 연결이 불안정해요."))
                             } else {
-                                isNetworkErrorOverlayVisible = false
                                 coroutineScope.launch {
                                     reconnectEvents.emit(Unit)
+                                    withFrameNanos { }
+                                    isNetworkErrorOverlayVisible = false
                                 }
                             }
                         },

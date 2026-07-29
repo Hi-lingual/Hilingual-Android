@@ -58,15 +58,15 @@ internal class FollowListViewModel @Inject constructor(
     private fun loadTab(tabType: FollowTabType, isRefreshing: Boolean) {
         viewModelScope.launch {
             val shouldShowLoadError = getFollowListState(tabType) !is UiState.Success
-            if (isRefreshing) {
-                setRefreshing(tabType, true)
-            } else if (shouldShowLoadError) {
+            if (shouldShowLoadError) {
                 updateLoadingState(tabType, UiState.Loading)
+            } else if (isRefreshing) {
+                setRefreshing(tabType, true)
             }
 
             loadFollowList(tabType, shouldShowLoadError)
 
-            if (isRefreshing) {
+            if (isRefreshing && !shouldShowLoadError) {
                 setRefreshing(tabType, false)
             }
         }
