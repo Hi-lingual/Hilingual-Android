@@ -115,10 +115,6 @@ internal fun MainScreen(
     val currentBackStackEntry by appState.navController.currentBackStackEntryAsState()
     val coroutineScope = rememberCoroutineScope()
 
-    val dialogTrigger = rememberDialogTrigger(
-        show = appState.dialogStateHolder::showDialog,
-    )
-
     val snackBarHostState = remember { SnackbarHostState() }
 
     var isNetworkErrorOverlayVisible by remember(currentBackStackEntry) {
@@ -127,6 +123,13 @@ internal fun MainScreen(
                 currentBackStackEntry?.destination?.canShowNetworkErrorOverlay() == true,
         )
     }
+    val dialogTrigger = rememberDialogTrigger(
+        show = { type, onClick ->
+            if (!isNetworkErrorOverlayVisible) {
+                appState.dialogStateHolder.showDialog(type, onClick)
+            }
+        },
+    )
     val reconnectEvents = remember { MutableSharedFlow<Unit>() }
 
     val onShowMessage: (HilingualMessage) -> Unit =
@@ -155,10 +158,15 @@ internal fun MainScreen(
 
     LaunchedEffect(isOffline) {
         if (isOffline) {
-            appState.dialogStateHolder.dismissDialog()
             onShowMessage(Toast("인터넷 연결이 불안정해요."))
         } else {
             isNetworkErrorOverlayVisible = false
+        }
+    }
+
+    LaunchedEffect(isNetworkErrorOverlayVisible) {
+        if (isNetworkErrorOverlayVisible) {
+            appState.dialogStateHolder.dismissDialog()
         }
     }
 
@@ -345,11 +353,6 @@ internal fun MainScreen(
                             .fillMaxSize(),
                     )
                 }
-
-                HilingualErrorDialog(
-                    state = appState.dialogStateHolder.dialogState,
-                    onDismiss = appState.dialogStateHolder::dismissDialog,
-                )
 
                 Box(
                     contentAlignment = Alignment.BottomCenter,
