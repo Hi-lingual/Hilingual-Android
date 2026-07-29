@@ -383,7 +383,7 @@ internal fun MainScreen(
 }
 
 private fun NavDestination.canShowNetworkErrorOverlay(): Boolean =
-    !hasRoute(Splash::class) && !hasRoute(Auth::class)
+    !hasRoute(Splash::class) && !hasRoute(Auth::class) && !hasRoute(Onboarding::class) && !hasRoute(SignUp::class)
 
 @Composable
 private fun HandleBackPressToExit(
