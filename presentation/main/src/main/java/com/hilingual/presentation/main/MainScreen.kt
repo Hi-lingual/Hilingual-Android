@@ -123,7 +123,6 @@ internal fun MainScreen(
     val canShowNetworkError = currentBackStackEntry?.destination?.canShowNetworkError() == true
 
     var isNetworkErrorOverlayVisible by remember { mutableStateOf(false) }
-    var shownDialogRequest by remember { mutableStateOf<PendingDialogRequest?>(null) }
     var pendingDialogRequest by remember { mutableStateOf<PendingDialogRequest?>(null) }
     val dialogTrigger = rememberDialogTrigger(
         show = { type, onClick ->
@@ -135,7 +134,6 @@ internal fun MainScreen(
             if (isNetworkErrorOverlayVisible) {
                 pendingDialogRequest = request
             } else {
-                shownDialogRequest = request
                 appState.dialogStateHolder.showDialog(type, onClick)
             }
         },
@@ -192,16 +190,12 @@ internal fun MainScreen(
             ?.takeIf { it.backStackEntry == currentBackStackEntry }
 
         if (isNetworkErrorOverlayVisible) {
-            pendingDialogRequest = shownDialogRequest
-                ?.takeIf { it.backStackEntry == currentBackStackEntry }
-            shownDialogRequest = null
             appState.dialogStateHolder.dismissDialog()
         } else {
             pendingDialogRequest?.let { request ->
                 pendingDialogRequest = null
                 // Retryable errors are replaced by the reconnect request; terminal errors still need user action.
                 if (request.type == DialogType.NOT_FOUND) {
-                    shownDialogRequest = request
                     appState.dialogStateHolder.showDialog(request.type, request.onClick)
                 }
             }
@@ -370,10 +364,7 @@ internal fun MainScreen(
 
                 HilingualErrorDialog(
                     state = appState.dialogStateHolder.dialogState,
-                    onDismiss = {
-                        shownDialogRequest = null
-                        appState.dialogStateHolder.dismissDialog()
-                    },
+                    onDismiss = appState.dialogStateHolder::dismissDialog,
                 )
 
                 if (isNetworkErrorOverlayVisible) {
