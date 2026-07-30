@@ -330,6 +330,9 @@ class HomeViewModel @Inject constructor(
         return hasBrokenDayThisMonth(today, dates)
     }
 
+    private fun isLastWeekOfMonth(today: LocalDate): Boolean =
+        today.dayOfMonth > today.lengthOfMonth() - 7
+
     private fun hasBrokenDayThisMonth(
         today: LocalDate,
         dates: List<DateUiModel>,
@@ -514,9 +517,6 @@ class HomeViewModel @Inject constructor(
     private suspend fun emitNotificationDialogSideEffect() =
         _sideEffect.emit(HomeSideEffect.ShowNotificationDialog)
 }
-
-private fun isLastWeekOfMonth(today: LocalDate): Boolean =
-    today.dayOfMonth > today.lengthOfMonth() - 7
 
 sealed interface HomeSideEffect {
     data class ShowErrorDialog(val onRetry: () -> Unit) : HomeSideEffect
