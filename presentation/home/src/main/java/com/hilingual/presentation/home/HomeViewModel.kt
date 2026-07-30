@@ -76,6 +76,8 @@ class HomeViewModel @Inject constructor(
 
     private val onboardingCheckCompleted = MutableSharedFlow<Unit>(replay = 1)
 
+    private val recoveryReminderResult = MutableStateFlow<Boolean?>(null)
+
     init {
         checkOnboardingCompleted()
     }
@@ -83,6 +85,7 @@ class HomeViewModel @Inject constructor(
     fun loadInitialData() {
         viewModelScope.launch {
             _uiState.update { UiState.Loading }
+            recoveryReminderResult.update { null }
             val today = LocalDate.now()
 
             val userInfoDeferred = async {
@@ -101,6 +104,7 @@ class HomeViewModel @Inject constructor(
                 userInfoResult.onLogFailure { }
                 calendarResult.onLogFailure { }
                 _uiState.update { UiState.Failure(LoadErrorHandleAction.Retry) }
+                recoveryReminderResult.update { false }
                 return@launch
             }
 
@@ -172,18 +176,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private suspend fun willShowReminder(): Boolean {
-        val state = uiState.first { it !is UiState.Loading }
-        if (state !is UiState.Success) return false
-
-        onboardingCheckCompleted.first()
-        if (isOnboardingVisible.value) return false
-
-        return shouldShowReminder(
-            recoveryTickets = state.data.header.userProfile.recoveryTickets,
-            dates = state.data.calendar.dates,
-        )
-    }
+    private suspend fun willShowReminder(): Boolean = recoveryReminderResult.first { it != null } == true
 
     fun onNotificationDialogDismissed() {
         viewModelScope.launch {
@@ -307,11 +300,13 @@ class HomeViewModel @Inject constructor(
         dates: List<DateUiModel>,
     ) {
         onboardingCheckCompleted.first()
-        if (isOnboardingVisible.value) return
+        isOnboardingVisible.first { !it }
 
-        if (shouldShowReminder(recoveryTickets, dates)) {
+        val shouldShow = shouldShowReminder(recoveryTickets, dates)
+        if (shouldShow) {
             _sideEffect.emit(HomeSideEffect.ShowRecoveryReminder)
         }
+        recoveryReminderResult.update { shouldShow }
     }
 
     private suspend fun shouldShowReminder(
