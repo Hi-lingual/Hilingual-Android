@@ -40,10 +40,11 @@ internal class NotificationViewModel @Inject constructor(
 
     private fun requestTab(tab: NotificationTab, isRefreshing: Boolean) {
         viewModelScope.launch {
+            val shouldShowLoadError = _uiState.value.tabState(tab).loadState !is UiState.Success
             _uiState.update {
                 it.updateTabState(tab) { tabState ->
                     tabState.copy(
-                        loadState = UiState.Loading,
+                        loadState = if (shouldShowLoadError) UiState.Loading else tabState.loadState,
                         isRefreshing = isRefreshing,
                     )
                 }
@@ -75,7 +76,11 @@ internal class NotificationViewModel @Inject constructor(
                     _uiState.update {
                         it.updateTabState(tab) { tabState ->
                             tabState.copy(
-                                loadState = UiState.Failure(LoadErrorHandleAction.Retry),
+                                loadState = if (shouldShowLoadError) {
+                                    UiState.Failure(LoadErrorHandleAction.Retry)
+                                } else {
+                                    tabState.loadState
+                                },
                                 isRefreshing = false,
                             )
                         }
