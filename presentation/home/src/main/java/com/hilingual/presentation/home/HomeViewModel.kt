@@ -179,6 +179,9 @@ class HomeViewModel @Inject constructor(
         val state = uiState.first { it !is UiState.Loading }
         if (state !is UiState.Success) return false
 
+        onboardingCheckCompleted.first()
+        if (isOnboardingVisible.value) return false
+
         return shouldShowReminder(
             recoveryTickets = state.data.header.userProfile.recoveryTickets,
             dates = state.data.calendar.dates,
