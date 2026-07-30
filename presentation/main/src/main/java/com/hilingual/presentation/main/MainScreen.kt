@@ -190,8 +190,11 @@ internal fun MainScreen(
         } else {
             pendingDialogRequest?.let { request ->
                 pendingDialogRequest = null
-                shownDialogRequest = request
-                appState.dialogStateHolder.showDialog(request.type, request.onClick)
+                // Retryable errors are replaced by the reconnect request; terminal errors still need user action.
+                if (request.type == DialogType.NOT_FOUND) {
+                    shownDialogRequest = request
+                    appState.dialogStateHolder.showDialog(request.type, request.onClick)
+                }
             }
         }
     }
