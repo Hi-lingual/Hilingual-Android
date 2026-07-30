@@ -42,13 +42,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.common.model.MessageDuration
 import com.hilingual.presentation.home.component.calendar.model.CalendarDay
 import com.hilingual.presentation.home.component.calendar.model.CalendarMonth
 import com.hilingual.presentation.home.component.calendar.state.CalendarState
 import com.hilingual.presentation.home.component.calendar.state.rememberCalendarState
 import com.hilingual.presentation.home.component.calendar.util.generateMonthData
 
-private const val DISABLED_SCROLL_MESSAGE_COOLDOWN_MILLIS = 1_000L
+private val DISABLED_SCROLL_MESSAGE_COOLDOWN_MILLIS = MessageDuration.DEFAULT.millis
 
 @OptIn(ExperimentalFoundationApi::class)
 private fun createSnapLayoutInfoProvider(
