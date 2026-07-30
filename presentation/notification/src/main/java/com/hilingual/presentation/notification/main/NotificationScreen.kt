@@ -32,7 +32,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.subScreenPadding
+import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
@@ -63,6 +65,15 @@ internal fun NotificationRoute(
     val pagerState = rememberPagerState(pageCount = { NotificationTab.entries.size })
     val currentTab = NotificationTab.entries[pagerState.currentPage]
     val currentTabState = uiState.tabState(currentTab)
+    val dialogTrigger = LocalDialogTrigger.current
+
+    viewModel.sideEffect.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is NotificationSideEffect.ShowErrorDialog -> {
+                dialogTrigger.show(onClick = { viewModel.refreshTab(sideEffect.tab) })
+            }
+        }
+    }
 
     LaunchedEffect(currentTab) {
         viewModel.loadTab(currentTab)

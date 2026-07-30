@@ -26,7 +26,9 @@ import com.hilingual.presentation.notification.main.model.toNoticeStateOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -37,6 +39,9 @@ internal class NotificationViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(NotificationUiState())
     val uiState = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<NotificationSideEffect>()
+    val sideEffect = _sideEffect.asSharedFlow()
 
     private fun requestTab(tab: NotificationTab, isRefreshing: Boolean) {
         viewModelScope.launch {
@@ -85,6 +90,9 @@ internal class NotificationViewModel @Inject constructor(
                             )
                         }
                     }
+                    if (!shouldShowLoadError) {
+                        _sideEffect.emit(NotificationSideEffect.ShowErrorDialog(tab))
+                    }
                 }
         }
     }
@@ -117,4 +125,8 @@ internal class NotificationViewModel @Inject constructor(
                 .onLogFailure { /* TODO: 에러 처리 */ }
         }
     }
+}
+
+sealed interface NotificationSideEffect {
+    data class ShowErrorDialog(val tab: NotificationTab) : NotificationSideEffect
 }
