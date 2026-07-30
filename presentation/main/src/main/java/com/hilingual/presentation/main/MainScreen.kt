@@ -42,7 +42,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
@@ -103,6 +102,7 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import timber.log.Timber
 
 @Composable
@@ -144,6 +144,15 @@ internal fun MainScreen(
     )
     val reconnectEvents = remember { MutableSharedFlow<Unit>() }
 
+    suspend fun retryAndDismissNetworkError() {
+        reconnectEvents.emit(Unit)
+        // Give retry callbacks a chance to publish Loading without depending on the UI frame clock.
+        yield()
+        if (!appState.isOffline.value) {
+            isNetworkErrorOverlayVisible = false
+        }
+    }
+
     val onShowMessage: (HilingualMessage) -> Unit =
         remember(
             key1 = coroutineScope,
@@ -166,9 +175,7 @@ internal fun MainScreen(
             .drop(1)
             .filter { offline -> !offline }
             .collect {
-                reconnectEvents.emit(Unit)
-                withFrameNanos { }
-                isNetworkErrorOverlayVisible = false
+                retryAndDismissNetworkError()
             }
     }
 
@@ -376,9 +383,7 @@ internal fun MainScreen(
                                 onShowMessage(Toast("인터넷 연결이 불안정해요."))
                             } else {
                                 coroutineScope.launch {
-                                    reconnectEvents.emit(Unit)
-                                    withFrameNanos { }
-                                    isNetworkErrorOverlayVisible = false
+                                    retryAndDismissNetworkError()
                                 }
                             }
                         },
