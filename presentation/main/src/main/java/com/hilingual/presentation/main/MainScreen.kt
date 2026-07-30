@@ -122,9 +122,7 @@ internal fun MainScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     val canShowNetworkError = currentBackStackEntry?.destination?.canShowNetworkError() == true
 
-    var isNetworkErrorOverlayVisible by remember(currentBackStackEntry) {
-        mutableStateOf(isOffline && canShowNetworkError)
-    }
+    var isNetworkErrorOverlayVisible by remember { mutableStateOf(false) }
     var shownDialogRequest by remember { mutableStateOf<PendingDialogRequest?>(null) }
     var pendingDialogRequest by remember { mutableStateOf<PendingDialogRequest?>(null) }
     val dialogTrigger = rememberDialogTrigger(
@@ -169,6 +167,10 @@ internal fun MainScreen(
                 }
             }
         }
+
+    LaunchedEffect(currentBackStackEntry) {
+        isNetworkErrorOverlayVisible = isOffline && canShowNetworkError
+    }
 
     LaunchedEffect(Unit) {
         appState.isOffline
