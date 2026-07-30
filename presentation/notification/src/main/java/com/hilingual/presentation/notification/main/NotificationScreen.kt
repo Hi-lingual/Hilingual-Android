@@ -77,7 +77,7 @@ internal fun NotificationRoute(
     if (currentTabState.loadState is UiState.Failure) {
         HilingualLoadErrorView(
             action = LoadErrorViewAction.Back(
-                onBackClick = navigateUp
+                onBackClick = navigateUp,
             ),
             modifier = Modifier.padding(paddingValues),
         )
