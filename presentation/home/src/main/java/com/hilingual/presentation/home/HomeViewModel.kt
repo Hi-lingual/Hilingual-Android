@@ -160,9 +160,6 @@ class HomeViewModel @Inject constructor(
         val isPermissionGranted = !requiresPermission || isGranted
         if (isPermissionGranted) return
 
-        val today = LocalDate.now()
-        if (today.isBefore(PUSH_POPUP_START)) return
-
         viewModelScope.launch {
             if (willShowReminder()) return@launch
 
@@ -517,9 +514,6 @@ class HomeViewModel @Inject constructor(
     private suspend fun emitNotificationDialogSideEffect() =
         _sideEffect.emit(HomeSideEffect.ShowNotificationDialog)
 }
-
-// 기획 요청에 따른 노출 스케줄
-private val PUSH_POPUP_START: LocalDate = LocalDate.of(2026, 8, 1) // 8/1부터 푸시알림 팝업 노출
 
 private fun isLastWeekOfMonth(today: LocalDate): Boolean =
     today.dayOfMonth > today.lengthOfMonth() - 7
