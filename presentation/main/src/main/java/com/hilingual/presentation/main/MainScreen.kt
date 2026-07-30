@@ -125,16 +125,19 @@ internal fun MainScreen(
     var isNetworkErrorOverlayVisible by remember(currentBackStackEntry) {
         mutableStateOf(isOffline && canShowNetworkError)
     }
+    var shownDialogRequest by remember { mutableStateOf<PendingDialogRequest?>(null) }
     var pendingDialogRequest by remember { mutableStateOf<PendingDialogRequest?>(null) }
     val dialogTrigger = rememberDialogTrigger(
         show = { type, onClick ->
+            val request = PendingDialogRequest(
+                backStackEntry = currentBackStackEntry,
+                type = type,
+                onClick = onClick,
+            )
             if (isNetworkErrorOverlayVisible) {
-                pendingDialogRequest = PendingDialogRequest(
-                    backStackEntry = currentBackStackEntry,
-                    type = type,
-                    onClick = onClick,
-                )
+                pendingDialogRequest = request
             } else {
+                shownDialogRequest = request
                 appState.dialogStateHolder.showDialog(type, onClick)
             }
         },
@@ -180,18 +183,14 @@ internal fun MainScreen(
             ?.takeIf { it.backStackEntry == currentBackStackEntry }
 
         if (isNetworkErrorOverlayVisible) {
-            val dialogState = appState.dialogStateHolder.dialogState
-            if (dialogState.isVisible) {
-                pendingDialogRequest = PendingDialogRequest(
-                    backStackEntry = currentBackStackEntry,
-                    type = dialogState.type,
-                    onClick = dialogState.onClickAction,
-                )
-            }
+            pendingDialogRequest = shownDialogRequest
+                ?.takeIf { it.backStackEntry == currentBackStackEntry }
+            shownDialogRequest = null
             appState.dialogStateHolder.dismissDialog()
         } else {
             pendingDialogRequest?.let { request ->
                 pendingDialogRequest = null
+                shownDialogRequest = request
                 appState.dialogStateHolder.showDialog(request.type, request.onClick)
             }
         }
@@ -359,7 +358,10 @@ internal fun MainScreen(
 
                 HilingualErrorDialog(
                     state = appState.dialogStateHolder.dialogState,
-                    onDismiss = appState.dialogStateHolder::dismissDialog,
+                    onDismiss = {
+                        shownDialogRequest = null
+                        appState.dialogStateHolder.dismissDialog()
+                    },
                 )
 
                 if (isNetworkErrorOverlayVisible) {
