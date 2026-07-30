@@ -76,7 +76,8 @@ internal fun NotificationRoute(
 
     if (currentTabState.loadState is UiState.Failure) {
         HilingualLoadErrorView(
-            action = LoadErrorViewAction.Back(
+            action = LoadErrorViewAction.Retry(
+                onRetryClick = { viewModel.refreshTab(currentTab) },
                 onBackClick = navigateUp,
             ),
             modifier = Modifier.padding(paddingValues),
