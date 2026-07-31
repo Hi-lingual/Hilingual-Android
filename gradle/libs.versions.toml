@@ -81,7 +81,7 @@ runner = "1.7.0"
 
 # AboutLibraries
 aboutLibraries = "15.0.4"
-amplitude = "1.30.0"
+amplitude = "1.30.1"
 
 [libraries]
 # Analytics
