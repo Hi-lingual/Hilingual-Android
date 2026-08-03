@@ -220,6 +220,7 @@ internal fun HomeRoute(
         },
         onDismiss = {
             homeState.hideRecoveryReminder()
+            viewModel.onRecoveryReminderClosed()
         },
     )
 

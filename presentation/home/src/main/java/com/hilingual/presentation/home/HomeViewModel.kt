@@ -273,11 +273,16 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun onRecoveryReminderClosed() {
+        recoveryReminderResult.update { false }
+    }
+
     fun onRecoveryReminderConfirmed() {
         val currentState = uiState.value
         if (currentState !is UiState.Success) return
 
         markReminderShownThisMonth()
+        onRecoveryReminderClosed()
 
         val recentBrokenDate = findRecentBrokenDate(currentState.data.calendar.dates)
         if (recentBrokenDate != null) {
@@ -287,6 +292,7 @@ class HomeViewModel @Inject constructor(
 
     fun onRecoveryReminderLater() {
         markReminderShownThisMonth()
+        onRecoveryReminderClosed()
     }
 
     private fun markReminderShownThisMonth() {
