@@ -50,7 +50,7 @@ internal class NotificationViewModel @Inject constructor(
                 it.updateTabState(tab) { tabState ->
                     tabState.copy(
                         loadState = if (shouldShowLoadError) UiState.Loading else tabState.loadState,
-                        isRefreshing = isRefreshing,
+                        isRefreshing = isRefreshing && !shouldShowLoadError,
                     )
                 }
             }
