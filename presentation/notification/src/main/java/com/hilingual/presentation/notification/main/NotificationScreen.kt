@@ -19,8 +19,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,7 +32,13 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.subScreenPadding
+import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.util.RetryOnReconnect
+import com.hilingual.core.common.util.UiState
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.notification.main.component.NotificationTapRow
 import com.hilingual.presentation.notification.main.component.NotificationTopAppBar
@@ -54,10 +62,44 @@ internal fun NotificationRoute(
     viewModel: NotificationViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val pagerState = rememberPagerState(pageCount = { NotificationTab.entries.size })
+    val currentTab = NotificationTab.entries[pagerState.currentPage]
+    val currentTabState = uiState.tabState(currentTab)
+    val dialogTrigger = LocalDialogTrigger.current
+
+    viewModel.sideEffect.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is NotificationSideEffect.ShowErrorDialog -> {
+                dialogTrigger.show(onClick = { viewModel.refreshTab(sideEffect.tab) })
+            }
+        }
+    }
+
+    LaunchedEffect(currentTab) {
+        viewModel.loadTab(currentTab)
+    }
+
+    RetryOnReconnect(
+        isLoading = currentTabState.loadState is UiState.Loading,
+        shouldRetry = currentTabState.loadState is UiState.Failure,
+        onRetry = { viewModel.refreshTab(currentTab) },
+    )
+
+    if (currentTabState.loadState is UiState.Failure) {
+        HilingualLoadErrorView(
+            action = LoadErrorViewAction.Retry(
+                onRetryClick = { viewModel.refreshTab(currentTab) },
+                onBackClick = navigateUp,
+            ),
+            modifier = Modifier.padding(paddingValues),
+        )
+        return
+    }
 
     NotificationScreen(
         uiState = uiState,
         paddingValues = paddingValues,
+        pagerState = pagerState,
         onBackClick = navigateUp,
         onSettingClick = navigateToSetting,
         onFeedNotificationClick = { notification ->
@@ -68,8 +110,7 @@ internal fun NotificationRoute(
             }
         },
         onNoticeNotificationClick = { notification -> navigateToNoticeDetail(notification.id) },
-        onTabSelected = viewModel::onTabSelected,
-        onUserRefresh = viewModel::onUserRefresh,
+        onTabRefresh = viewModel::refreshTab,
     )
 }
 
@@ -77,17 +118,16 @@ internal fun NotificationRoute(
 private fun NotificationScreen(
     uiState: NotificationUiState,
     paddingValues: PaddingValues,
+    pagerState: PagerState,
     onBackClick: () -> Unit,
     onSettingClick: () -> Unit,
     onFeedNotificationClick: (FeedNotificationItemUiModel) -> Unit,
     onNoticeNotificationClick: (NoticeNotificationItemUiModel) -> Unit,
-    onTabSelected: (NotificationTab) -> Unit,
-    onUserRefresh: (NotificationTab) -> Unit,
+    onTabRefresh: (NotificationTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val feedListState = rememberLazyListState()
     val noticeListState = rememberLazyListState()
-    val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(pagerState, feedListState, noticeListState) {
@@ -95,7 +135,6 @@ private fun NotificationScreen(
             .withIndex()
             .collect { (index, page) ->
                 val tab = NotificationTab.entries[page]
-                onTabSelected(tab)
                 if (index > 0) {
                     delay(100)
                     when (tab) {
@@ -137,17 +176,17 @@ private fun NotificationScreen(
                 NotificationTab.FEED -> FeedScreen(
                     notifications = uiState.feedNotifications,
                     onNotificationClick = onFeedNotificationClick,
-                    isRefreshing = uiState.isFeedRefreshing,
+                    isRefreshing = uiState.tabState(tab).isRefreshing,
                     listState = feedListState,
-                    onRefresh = { onUserRefresh(tab) },
+                    onRefresh = { onTabRefresh(tab) },
                 )
 
                 NotificationTab.NOTIFICATION -> NoticeScreen(
                     notifications = uiState.noticeNotifications,
                     onNotificationClick = onNoticeNotificationClick,
-                    isRefreshing = uiState.isNoticeRefreshing,
+                    isRefreshing = uiState.tabState(tab).isRefreshing,
                     listState = noticeListState,
-                    onRefresh = { onUserRefresh(tab) },
+                    onRefresh = { onTabRefresh(tab) },
                 )
             }
         }

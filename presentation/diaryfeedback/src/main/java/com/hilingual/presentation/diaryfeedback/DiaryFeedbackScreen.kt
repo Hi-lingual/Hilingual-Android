@@ -58,6 +58,7 @@ import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
@@ -98,6 +99,12 @@ internal fun DiaryFeedbackRoute(
     LaunchedEffect(Unit) {
         viewModel.loadInitialData()
     }
+
+    RetryOnReconnect(
+        isLoading = state is UiState.Loading,
+        shouldRetry = state is UiState.Failure,
+        onRetry = viewModel::retryLoad,
+    )
 
     BackHandler {
         if (isImageDetailVisible) {
@@ -218,7 +225,7 @@ internal fun DiaryFeedbackRoute(
                     )
 
                     else -> LoadErrorViewAction.Retry(
-                        onRetryClick = viewModel::loadInitialData,
+                        onRetryClick = viewModel::retryLoad,
                         onBackClick = navigateUp,
                     )
                 },

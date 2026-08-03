@@ -61,10 +61,12 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.provider.LocalIsOffline
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.DialogState
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
@@ -110,6 +112,7 @@ internal fun HomeRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
     val messageController = LocalMessageController.current
+    val isOffline = LocalIsOffline.current
     val tracker = LocalTracker.current
     val context = LocalContext.current
     val activity = LocalActivity.current
@@ -187,6 +190,12 @@ internal fun HomeRoute(
         tracker.logEvent(trigger = TriggerType.VIEW, page = HOME, event = "page")
     }
 
+    RetryOnReconnect(
+        isLoading = uiState is UiState.Loading,
+        shouldRetry = uiState is UiState.Failure,
+        onRetry = viewModel::retryLoad,
+    )
+
     if (ENABLE_PUSH_NOTIFICATION) {
         CheckNotificationPermission(
             context = context,
@@ -253,6 +262,12 @@ internal fun HomeRoute(
                     tracker.logEvent(trigger = TriggerType.CLICK, page = HOME, event = "profile")
                     navigateToFeedProfile(0L)
                 },
+                isCalendarInteractionEnabled = !isOffline,
+                onDisabledCalendarInteraction = {
+                    messageController(
+                        HilingualMessage.Toast("인터넷 연결이 불안정해요."),
+                    )
+                },
                 onDateSelected = viewModel::onDateSelected,
                 onMonthChanged = viewModel::onMonthChanged,
                 onRecoveryClick = viewModel::onRecoveryClick,
@@ -287,7 +302,7 @@ internal fun HomeRoute(
         is UiState.Failure -> {
             HilingualLoadErrorView(
                 action = LoadErrorViewAction.Retry(
-                    onRetryClick = viewModel::loadInitialData,
+                    onRetryClick = viewModel::retryLoad,
                 ),
                 modifier = Modifier.padding(paddingValues),
             )
@@ -329,6 +344,8 @@ private fun HomeScreen(
     homeState: HomeState,
     onAlarmClick: () -> Unit,
     onImageClick: () -> Unit,
+    isCalendarInteractionEnabled: Boolean,
+    onDisabledCalendarInteraction: () -> Unit,
     onDateSelected: (LocalDate) -> Unit,
     onMonthChanged: (YearMonth) -> Unit,
     onRecoveryClick: (LocalDate) -> Unit,
@@ -386,6 +403,8 @@ private fun HomeScreen(
                     .filter { it.status != CalendarStatus.UNLOCKED }
                     .map { it.date }
                     .toSet(),
+                isInteractionEnabled = isCalendarInteractionEnabled,
+                onDisabledInteraction = onDisabledCalendarInteraction,
                 onDateClick = onDateSelected,
                 onMonthChanged = onMonthChanged,
                 modifier = Modifier
@@ -593,6 +612,8 @@ private fun HomeScreenPreview() {
             homeState = rememberHomeState(),
             onAlarmClick = {},
             onImageClick = {},
+            isCalendarInteractionEnabled = true,
+            onDisabledCalendarInteraction = {},
             onDateSelected = {},
             onMonthChanged = {},
             onRecoveryClick = {},

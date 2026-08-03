@@ -64,6 +64,8 @@ internal class BlockedUserViewModel @Inject constructor(
         }
     }
 
+    fun retryLoad() = getBlockList()
+
     fun onUnblockStatusChanged(userId: Long) {
         viewModelScope.launch {
             val blockedUserListState = _uiState.value.blockedUserList
