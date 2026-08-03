@@ -54,6 +54,7 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.pulltorefresh.HilingualPullToRefreshBox
@@ -94,6 +95,12 @@ internal fun VocaRoute(
         tracker.logEvent(trigger = TriggerType.VIEW, page = VOCABULARY, event = "page")
     }
 
+    RetryOnReconnect(
+        isLoading = uiState.vocaGroupList is UiState.Loading,
+        shouldRetry = uiState.vocaGroupList is UiState.Failure,
+        onRetry = viewModel::retryLoad,
+    )
+
     LaunchedEffect(uiState.vocaItemDetail) {
         if (uiState.vocaItemDetail is UiState.Success) {
             focusManager.clearFocus()
@@ -118,7 +125,7 @@ internal fun VocaRoute(
     if (vocaGroupState is UiState.Failure) {
         HilingualLoadErrorView(
             action = LoadErrorViewAction.Retry(
-                onRetryClick = viewModel::fetchInitialData,
+                onRetryClick = viewModel::retryLoad,
             ),
             modifier = Modifier.padding(paddingValues),
         )

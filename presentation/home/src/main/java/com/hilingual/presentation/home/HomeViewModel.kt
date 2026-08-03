@@ -129,6 +129,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun retryLoad() = loadInitialData()
+
     fun handleNotificationPermission(
         isGranted: Boolean,
         requiresPermission: Boolean,

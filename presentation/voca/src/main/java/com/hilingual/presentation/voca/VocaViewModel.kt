@@ -106,12 +106,14 @@ constructor(
         return false
     }
 
-    fun fetchInitialData() {
+    private fun fetchInitialData() {
         viewModelScope.launch {
             _uiState.update { it.copy(vocaGroupList = UiState.Loading) }
             loadVocaData()
         }
     }
+
+    fun retryLoad() = fetchInitialData()
 
     private suspend fun loadVocaData(isRefreshing: Boolean = false) {
         coroutineScope {
