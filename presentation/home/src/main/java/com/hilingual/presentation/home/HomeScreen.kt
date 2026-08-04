@@ -187,7 +187,7 @@ internal fun HomeRoute(
 
     LaunchedEffect(Unit) {
         viewModel.loadInitialData()
-        tracker.logEvent(trigger = TriggerType.VIEW, page = HOME, event = "page")
+        tracker.logGlobalAction(trigger = TriggerType.VIEW, action = "page", currentPage = HOME)
     }
 
     RetryOnReconnect(
@@ -259,7 +259,7 @@ internal fun HomeRoute(
                 homeState = homeState,
                 onAlarmClick = navigateToNotification,
                 onImageClick = {
-                    tracker.logEvent(trigger = TriggerType.CLICK, page = HOME, event = "profile")
+                    tracker.logPageAction(trigger = TriggerType.CLICK, page = HOME, action = "profile")
                     navigateToFeedProfile(0L)
                 },
                 isCalendarInteractionEnabled = !isOffline,
@@ -272,22 +272,23 @@ internal fun HomeRoute(
                 onMonthChanged = viewModel::onMonthChanged,
                 onRecoveryClick = viewModel::onRecoveryClick,
                 onWriteDiaryClick = { date, mode ->
-                    tracker.logEvent(
+                    tracker.logPageAction(
                         trigger = TriggerType.CLICK,
                         page = HOME,
-                        event = "diary_write",
+                        action = "diary_write",
                         properties = mapOf("open_time" to System.currentTimeMillis()),
                     )
                     navigateToDiaryWrite(date, mode)
                 },
                 onDiaryPreviewClick = { diaryId ->
-                    tracker.logEvent(
-                        trigger = TriggerType.VIEW,
+                    tracker.logPageAction(
+                        trigger = TriggerType.CLICK,
                         page = HOME,
-                        event = "opend_diary_view",
+                        action = "diary_view",
                         properties = mapOf(
                             "open_time" to System.currentTimeMillis(),
                             "entry_id" to diaryId,
+                            "entry_source" to "calendar",
                         ),
                     )
                     navigateToDiaryFeedback(diaryId)
