@@ -137,15 +137,15 @@ internal fun DiaryFeedbackRoute(
                         message = it.message,
                         actionLabelText = it.actionLabel,
                         onAction = {
-                            tracker.logEvent(
+                            tracker.logGlobalAction(
                                 trigger = TriggerType.CLICK,
-                                event = "toast_action",
+                                action = "toast_action",
                                 properties = mapOf(
                                     "toast_id" to "diary_post_success",
                                     "toast_action" to "cta_click",
                                     "entry_id" to viewModel.diaryId,
-                                    "page" to FEEDBACK.pageName,
                                 ),
+                                currentPage = FEEDBACK,
                             )
                             navigateToFeed()
                         },
@@ -170,7 +170,7 @@ internal fun DiaryFeedbackRoute(
     }
 
     LaunchedEffect(Unit) {
-        tracker.logEvent(trigger = TriggerType.VIEW, page = FEEDBACK, event = "page")
+        tracker.logGlobalAction(trigger = TriggerType.VIEW, action = "page", currentPage = FEEDBACK)
     }
 
     when (val currentState = state) {
@@ -199,10 +199,10 @@ internal fun DiaryFeedbackRoute(
                     onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
                     onToggleIsPublished = { isPublished ->
                         if (isPublished) {
-                            tracker.logEvent(
+                            tracker.logPageAction(
                                 trigger = TriggerType.CLICK,
                                 page = FEEDBACK,
-                                event = "submitted_post_diary",
+                                action = "post_diary",
                                 properties = mapOf("entry_id" to viewModel.diaryId),
                             )
                         }
