@@ -226,14 +226,14 @@ private fun FeedDiaryScreen(
     }
 
     LaunchedEffect(Unit) {
-        tracker.logEvent(
+        tracker.logGlobalAction(
             trigger = TriggerType.VIEW,
-            page = Page.POSTED_DIARY,
-            event = "page",
+            action = "page",
             properties = mapOf(
                 "entry_id" to diaryId,
                 "tab_name" to if (pagerState.currentPage == 0) "grammar_spelling" else "recommend_expression",
             ),
+            currentPage = Page.POSTED_DIARY,
         )
     }
 
@@ -306,14 +306,14 @@ private fun FeedDiaryScreen(
                             onToggleDiaryViewMode = {
                                 isShowCorrectedDiary = it
                                 toggleClickCount++
-                                tracker.logEvent(
+                                tracker.logPageAction(
                                     trigger = TriggerType.CLICK,
-                                    event = "feedback_toggle",
+                                    page = Page.POSTED_DIARY,
+                                    action = "toggle",
                                     properties = mapOf(
                                         "entry_id" to diaryId,
                                         "toggle_state" to it,
                                         "toggle_click_count" to toggleClickCount,
-                                        "page" to Page.POSTED_DIARY.pageName,
                                     ),
                                 )
                             },

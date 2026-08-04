@@ -174,15 +174,14 @@ internal fun FeedRoute(
                 navigateToFeedProfile(userId)
             },
             onLikeClick = { diaryId, isLiked ->
-                tracker.logEvent(
+                tracker.logGlobalAction(
                     trigger = TriggerType.CLICK,
-                    page = FEED,
-                    event = "empathy_action",
+                    action = "empathy_action",
                     properties = mapOf(
                         "entry_id" to diaryId,
                         "empathy_action" to if (isLiked) "add" else "remove",
-                        "page" to FEED.pageName,
                     ),
+                    currentPage = FEED,
                 )
                 viewModel.toggleIsLiked(diaryId, isLiked)
             },

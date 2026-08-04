@@ -183,14 +183,14 @@ internal fun DiaryFeedbackRoute(
                     uiState = currentState,
                     diaryId = viewModel.diaryId,
                     onBackClick = {
-                        tracker.logEvent(
+                        tracker.logGlobalAction(
                             trigger = TriggerType.CLICK,
-                            page = FEEDBACK,
-                            event = "back_feedback",
+                            action = "back",
                             properties = mapOf(
                                 "entry_id" to viewModel.diaryId,
                                 "back_source" to "ui_button",
                             ),
+                            currentPage = FEEDBACK,
                         )
                         navigateUp()
                     },
@@ -336,15 +336,14 @@ private fun DiaryFeedbackScreen(
                                 onToggleDiaryViewMode = {
                                     isShowCorrectedDiary = it
                                     toggleClickCount++
-                                    tracker.logEvent(
+                                    tracker.logPageAction(
                                         trigger = TriggerType.CLICK,
                                         page = FEEDBACK,
-                                        event = "toggle",
+                                        action = "toggle",
                                         properties = mapOf(
                                             "entry_id" to diaryId,
                                             "toggle_state" to it,
                                             "toggle_click_count" to toggleClickCount,
-                                            "page" to FEEDBACK.pageName,
                                         ),
                                     )
                                 },
@@ -355,15 +354,15 @@ private fun DiaryFeedbackScreen(
                                 writtenDate = data.writtenDate,
                                 recommendExpressionList = data.recommendExpressionList,
                                 onBookmarkClick = { phraseId, isMarked ->
-                                    tracker.logEvent(
+                                    tracker.logGlobalAction(
                                         trigger = TriggerType.CLICK,
-                                        event = "bookmark_action",
+                                        action = "bookmark_action",
                                         properties = mapOf(
                                             "entry_id" to diaryId,
                                             "bookmark_action" to if (isMarked) "add" else "remove",
-                                            "page" to FEEDBACK.pageName,
                                             "tab_name" to "recommend_expression",
                                         ),
+                                        currentPage = FEEDBACK,
                                     )
                                     onToggleBookmark(phraseId, isMarked)
                                 },

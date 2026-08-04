@@ -365,11 +365,11 @@ private fun DiaryWriteScreen(
             BackTopAppBar(
                 title = "일기 작성하기",
                 onBackClicked = {
-                    tracker.logEvent(
+                    tracker.logGlobalAction(
                         trigger = TriggerType.CLICK,
-                        page = WRITE_DIARY,
-                        event = "back_diary",
+                        action = "back",
                         properties = mapOf("back_source" to "ui_button"),
+                        currentPage = WRITE_DIARY,
                     )
                     cancelDiaryWrite(
                         initialText = initialDiaryText,
