@@ -109,15 +109,7 @@ internal fun FeedRoute(
     }
 
     LaunchedEffect(Unit) {
-        tracker.logEvent(
-            trigger = TriggerType.VIEW,
-            page = FEED,
-            event = "refresh",
-            properties = mapOf(
-                "refresh_method" to "auto",
-                "page" to FEED.pageName,
-            ),
-        )
+        tracker.logGlobalAction(trigger = TriggerType.VIEW, action = "page", currentPage = FEED)
     }
 
     LaunchedEffect(selectedFeedTab) {
@@ -151,13 +143,13 @@ internal fun FeedRoute(
             followingRefreshing = isFollowingRefreshing,
             pagerState = pagerState,
             onTabRefresh = { tab ->
-                tracker.logEvent(
+                tracker.logPageAction(
                     trigger = TriggerType.CLICK,
                     page = FEED,
-                    event = "refresh",
+                    action = "refresh",
                     properties = mapOf(
+                        "entry_id" to 0L,
                         "refresh_method" to "pull_to_refresh",
-                        "page" to FEED.pageName,
                     ),
                 )
                 viewModel.refreshTab(tab)
@@ -165,11 +157,7 @@ internal fun FeedRoute(
             hasFollowing = hasFollowing,
             onSearchClick = navigateToFeedSearch,
             onMyProfileClick = {
-                tracker.logEvent(
-                    trigger = TriggerType.VIEW,
-                    page = MY_FEED,
-                    event = "page",
-                )
+                tracker.logGlobalAction(trigger = TriggerType.VIEW, action = "page", currentPage = MY_FEED)
                 navigateToMyFeedProfile(false)
             },
             onFeedProfileClick = navigateToFeedProfile,
