@@ -450,10 +450,10 @@ private fun HomeScreen(
                                 onExpandedChange = { isExpanded ->
                                     if (isExpanded) {
                                         homeState.showMoreMenu()
-                                        tracker.logEvent(
+                                        tracker.logPageAction(
                                             trigger = TriggerType.CLICK,
                                             page = HOME,
-                                            event = "more_menu",
+                                            action = "more_menu",
                                             properties = mapOf("menu_name" to "more_menu"),
                                         )
                                     } else {
@@ -502,13 +502,10 @@ private fun HomeScreen(
                                     .fillMaxWidth()
                                     .animateContentSize()
                                     .noRippleClickable {
-                                        tracker.logEvent(
+                                        tracker.logPageAction(
                                             trigger = TriggerType.CLICK,
                                             page = HOME,
-                                            event = "switch_language",
-                                            properties = mapOf(
-                                                "recommen_topic" to "${todayTopic.topicKo}/${todayTopic.topicEn}",
-                                            ),
+                                            action = "switch_language",
                                         )
                                     },
                             )
