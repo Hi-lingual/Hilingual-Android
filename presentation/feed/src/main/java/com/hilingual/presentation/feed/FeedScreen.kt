@@ -160,7 +160,18 @@ internal fun FeedRoute(
                 tracker.logGlobalAction(trigger = TriggerType.VIEW, action = "page", currentPage = MY_FEED)
                 navigateToMyFeedProfile(false)
             },
-            onFeedProfileClick = navigateToFeedProfile,
+            onFeedProfileClick = { userId ->
+                tracker.logPageAction(
+                    trigger = TriggerType.CLICK,
+                    page = FEED,
+                    action = "profile_view",
+                    properties = mapOf(
+                        "profile_user_id" to userId,
+                        "entry_source" to "feed",
+                    ),
+                )
+                navigateToFeedProfile(userId)
+            },
             onLikeClick = { diaryId, isLiked ->
                 tracker.logEvent(
                     trigger = TriggerType.CLICK,
