@@ -102,14 +102,11 @@ internal fun FeedProfileRoute(
     val tracker = LocalTracker.current
 
     LaunchedEffect(Unit) {
-        tracker.logEvent(
+        tracker.logGlobalAction(
             trigger = TriggerType.VIEW,
-            page = Page.FEED,
-            event = "view_profile_user",
-            properties = mapOf(
-                "profile_user_id" to viewModel.targetUserId,
-                "page" to Page.FEED.pageName,
-            ),
+            action = "page",
+            properties = mapOf("profile_user_id" to viewModel.targetUserId),
+            currentPage = Page.FEED_PROFILE,
         )
         viewModel.loadFeedProfile()
     }
