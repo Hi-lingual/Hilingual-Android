@@ -92,7 +92,7 @@ internal fun VocaRoute(
     val ttsState = rememberVocaTts()
 
     LaunchedEffect(Unit) {
-        tracker.logEvent(trigger = TriggerType.VIEW, page = VOCABULARY, event = "page")
+        tracker.logGlobalAction(trigger = TriggerType.VIEW, action = "page", currentPage = VOCABULARY)
     }
 
     RetryOnReconnect(
@@ -143,10 +143,10 @@ internal fun VocaRoute(
             searchText = searchKeyword,
             isRefreshing = isRefreshing,
             onSortTypeChanged = { newSortType ->
-                tracker.logEvent(
+                tracker.logPageAction(
                     trigger = TriggerType.CLICK,
                     page = VOCABULARY,
-                    event = "voca_sort_changed",
+                    action = "sort_changed",
                     properties = mapOf(
                         "previous_sort_type" to uiState.sortType.name,
                         "sort_type" to newSortType.name,
@@ -155,11 +155,11 @@ internal fun VocaRoute(
                 viewModel.updateSort(newSortType)
             },
             onCardClick = { phraseId ->
-                tracker.logEvent(
+                tracker.logPageAction(
                     trigger = TriggerType.CLICK,
                     page = VOCABULARY,
-                    event = "voca_lookup",
-                    properties = mapOf("page" to VOCABULARY.pageName),
+                    action = "voca_lookup",
+                    properties = mapOf("bookmark_action" to "view"),
                 )
                 viewModel.fetchVocaDetail(phraseId)
             },
