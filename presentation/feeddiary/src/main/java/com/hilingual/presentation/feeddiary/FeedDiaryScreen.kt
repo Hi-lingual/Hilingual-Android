@@ -177,6 +177,7 @@ internal fun FeedDiaryRoute(
                     )
                 },
                 modifier = Modifier.padding(paddingValues),
+                page = Page.POSTED_DIARY,
             )
         }
 

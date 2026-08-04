@@ -305,6 +305,7 @@ internal fun HomeRoute(
                     onRetryClick = viewModel::retryLoad,
                 ),
                 modifier = Modifier.padding(paddingValues),
+                page = HOME,
             )
         }
 

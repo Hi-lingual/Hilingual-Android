@@ -129,6 +129,7 @@ internal fun FeedRoute(
                 onRetryClick = { viewModel.refreshTab(selectedFeedTab) },
             ),
             modifier = Modifier.padding(paddingValues),
+            page = FEED,
         )
         return
     }

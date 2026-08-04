@@ -128,6 +128,7 @@ internal fun VocaRoute(
                 onRetryClick = viewModel::retryLoad,
             ),
             modifier = Modifier.padding(paddingValues),
+            page = VOCABULARY,
         )
         return
     }

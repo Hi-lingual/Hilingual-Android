@@ -25,18 +25,26 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.common.analytics.Page
+import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.model.LoadErrorHandleAction
+import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
+/**
+ * @param page 이벤트 수집 대상 화면. null이면 이벤트를 수집하지 않는다.
+ */
 @Composable
 fun HilingualLoadErrorView(
     action: LoadErrorViewAction,
     modifier: Modifier = Modifier,
+    page: Page? = null,
 ) {
     val content = action.content
+    val tracker = LocalTracker.current
 
     Box(
         modifier = modifier
@@ -53,7 +61,16 @@ fun HilingualLoadErrorView(
                         Icon(
                             modifier = Modifier
                                 .size(24.dp)
-                                .noRippleClickable(onClick = onBackClick),
+                                .noRippleClickable {
+                                    page?.let {
+                                        tracker.logPageAction(
+                                            trigger = TriggerType.CLICK,
+                                            page = it,
+                                            action = "server_error_go_back",
+                                        )
+                                    }
+                                    onBackClick()
+                                },
                             imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_24_back),
                             contentDescription = null,
                             tint = HilingualTheme.colors.black,
@@ -99,7 +116,16 @@ fun HilingualLoadErrorView(
 
                 ActionButton(
                     text = content.buttonText,
-                    onClick = action.onActionButtonClick,
+                    onClick = {
+                        page?.let {
+                            tracker.logPageAction(
+                                trigger = TriggerType.CLICK,
+                                page = it,
+                                action = action.handleAction.eventName,
+                            )
+                        }
+                        action.onActionButtonClick()
+                    },
                 )
             }
 
@@ -168,6 +194,13 @@ private data class LoadErrorContent(
     val description: String?,
     val buttonText: String,
 )
+
+private val LoadErrorHandleAction.eventName: String
+    get() = when (this) {
+        LoadErrorHandleAction.Retry -> "server_error_retry"
+        LoadErrorHandleAction.Back -> "server_error_confirm"
+        LoadErrorHandleAction.NotFound -> "empty_data_confirm"
+    }
 
 private val LoadErrorViewAction.content: LoadErrorContent
     get() {

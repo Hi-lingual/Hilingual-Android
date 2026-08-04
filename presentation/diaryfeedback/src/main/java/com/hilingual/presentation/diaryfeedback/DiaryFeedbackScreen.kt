@@ -230,6 +230,7 @@ internal fun DiaryFeedbackRoute(
                     )
                 },
                 modifier = Modifier.padding(paddingValues),
+                page = FEEDBACK,
             )
         }
 

@@ -176,6 +176,7 @@ internal fun FeedProfileRoute(
                     )
                 },
                 modifier = Modifier.padding(paddingValues),
+                page = page,
             )
         }
 
