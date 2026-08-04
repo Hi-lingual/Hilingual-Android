@@ -154,18 +154,34 @@ internal fun HomeRoute(
             is HomeSideEffect.ShowRewardedAd -> {
                 if (activity != null) {
                     homeState.showRecoveryAdLoading()
+
+                    // 보상 획득 후에도 닫힘 콜백이 호출되므로 결과를 한 번만 수집한다.
+                    var isRewardEarned = false
+                    val logAdAction = { result: String ->
+                        tracker.logGlobalAction(
+                            trigger = TriggerType.VIEW,
+                            action = "ad_action",
+                            properties = mapOf("ad_result" to result),
+                            currentPage = HOME,
+                        )
+                    }
+
                     showRewardedAd(
                         activity = activity,
                         adUnitId = BuildConfig.ADMOB_STREAKREWARD_UNIT_ID,
                         onRewardEarned = {
+                            isRewardEarned = true
+                            logAdAction("completed")
                             homeState.hideRecoveryAdLoading()
                             viewModel.onRewardEarned(sideEffect.date)
                         },
                         onAdDismissed = {
+                            if (!isRewardEarned) logAdAction("dismissed")
                             homeState.hideRecoveryAdLoading()
                             viewModel.onRecoveryAdFinished()
                         },
                         onAdFailedToLoad = {
+                            logAdAction("failed")
                             homeState.hideRecoveryAdLoading()
                             viewModel.onRecoveryAdFinished()
                             messageController(HilingualMessage.Toast("광고를 불러오지 못했어요.\n잠시 후 다시 시도해주세요."))
