@@ -48,14 +48,19 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navOptions
+import androidx.navigation.toRoute
 import com.angrypodo.wisp.runtime.navigateTo
 import com.hilingual.core.ads.native.HilingualNativeLineAd
+import com.hilingual.core.common.analytics.Page
 import com.hilingual.core.common.analytics.Tracker
+import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.app.AppRestarter
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.model.HilingualMessage
@@ -76,15 +81,21 @@ import com.hilingual.core.designsystem.component.toast.TextToast
 import com.hilingual.core.designsystem.component.view.HilingualNetworkErrorView
 import com.hilingual.presentation.auth.navigation.Auth
 import com.hilingual.presentation.auth.navigation.authNavGraph
+import com.hilingual.presentation.diaryfeedback.navigation.DiaryFeedback
 import com.hilingual.presentation.diaryfeedback.navigation.diaryFeedbackNavGraph
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import com.hilingual.presentation.diarywrite.navigation.diaryWriteNavGraph
+import com.hilingual.presentation.feed.navigation.Feed
 import com.hilingual.presentation.feed.navigation.feedNavGraph
+import com.hilingual.presentation.feeddiary.navigation.FeedDiary
 import com.hilingual.presentation.feeddiary.navigation.feedDiaryNavGraph
+import com.hilingual.presentation.feedprofile.navigation.FeedProfileGraph
 import com.hilingual.presentation.feedprofile.navigation.feedProfileNavGraph
+import com.hilingual.presentation.home.navigation.Home
 import com.hilingual.presentation.home.navigation.homeNavGraph
 import com.hilingual.presentation.main.component.MainBottomBar
 import com.hilingual.presentation.main.state.MainAppState
+import com.hilingual.presentation.mypage.navigation.MyPage
 import com.hilingual.presentation.mypage.navigation.myPageNavGraph
 import com.hilingual.presentation.notification.navigation.notificationNavGraph
 import com.hilingual.presentation.onboarding.navigation.Onboarding
@@ -93,6 +104,7 @@ import com.hilingual.presentation.signup.navigation.SignUp
 import com.hilingual.presentation.signup.navigation.signUpGraph
 import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.splash.navigation.splashNavGraph
+import com.hilingual.presentation.voca.navigation.Voca
 import com.hilingual.presentation.voca.navigation.vocaNavGraph
 import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.collections.immutable.toPersistentList
@@ -368,10 +380,28 @@ internal fun MainScreen(
                 )
 
                 if (isNetworkErrorOverlayVisible) {
+                    val networkErrorPage = currentBackStackEntry?.let { appState.navController.currentPage(it) }
+
                     HilingualNetworkErrorView(
                         isBackVisible = !isBottomBarVisible,
-                        onBackClick = appState::navigateUp,
+                        onBackClick = {
+                            networkErrorPage?.let {
+                                tracker.logPageAction(
+                                    trigger = TriggerType.CLICK,
+                                    page = it,
+                                    action = "network_error_go_back",
+                                )
+                            }
+                            appState.navigateUp()
+                        },
                         onRetryClick = {
+                            networkErrorPage?.let {
+                                tracker.logPageAction(
+                                    trigger = TriggerType.CLICK,
+                                    page = it,
+                                    action = "network_error_retry",
+                                )
+                            }
                             if (isOffline) {
                                 onShowMessage(Toast("인터넷 연결이 불안정해요."))
                             } else {
@@ -426,6 +456,39 @@ private data class PendingDialogRequest(
 
 private fun NavDestination.canShowNetworkError(): Boolean =
     !hasRoute(Splash::class) && !hasRoute(Auth::class) && !hasRoute(Onboarding::class) && !hasRoute(SignUp::class)
+
+/**
+ * 현재 백스택 위치를 이벤트 수집용 [Page]로 변환한다.
+ * 대응하는 화면이 없으면 null을 반환하며, 이때는 이벤트를 수집하지 않는다.
+ */
+private fun NavController.currentPage(backStackEntry: NavBackStackEntry): Page? {
+    val destination = backStackEntry.destination
+
+    return when {
+        destination.hasRoute(Home::class) -> Page.HOME
+        destination.hasRoute(Voca::class) -> Page.VOCABULARY
+        destination.hasRoute(Feed::class) -> Page.FEED
+        destination.hasRoute(MyPage::class) -> Page.MYPAGE
+        destination.hasRoute(DiaryWrite::class) -> Page.WRITE_DIARY
+        destination.hasRoute(DiaryFeedback::class) -> Page.FEEDBACK
+        destination.hasRoute(FeedDiary::class) -> Page.POSTED_DIARY
+
+        // 피드 프로필은 그래프 진입 인자의 userId로 나/타인을 구분한다.
+        destination.hierarchy.any { it.hasRoute(FeedProfileGraph::class) } -> {
+            val userId = runCatching {
+                getBackStackEntry(FeedProfileGraph::class).toRoute<FeedProfileGraph>().userId
+            }.getOrNull()
+
+            when (userId) {
+                null -> null
+                0L -> Page.MY_FEED
+                else -> Page.USER_PROFILE
+            }
+        }
+
+        else -> null
+    }
+}
 
 @Composable
 private fun HandleBackPressToExit(
