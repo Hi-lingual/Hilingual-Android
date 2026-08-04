@@ -545,7 +545,14 @@ private fun HomeScreen(
                         RecoveryGuideCard(modifier = Modifier.fillMaxWidth())
                         Spacer(Modifier.height(12.dp))
                         RecoveryButton(
-                            onClick = { onRecoveryClick(date) },
+                            onClick = {
+                                tracker.logPageAction(
+                                    trigger = TriggerType.CLICK,
+                                    page = HOME,
+                                    action = "streak_revive",
+                                )
+                                onRecoveryClick(date)
+                            },
                             modifier = Modifier.fillMaxWidth(),
                         )
                     }
