@@ -101,12 +101,15 @@ internal fun FeedProfileRoute(
     val dialogTrigger = LocalDialogTrigger.current
     val tracker = LocalTracker.current
 
+    // userId 0은 나의 피드 프로필, 그 외는 타인의 프로필
+    val page = if (viewModel.targetUserId == 0L) Page.MY_FEED else Page.USER_PROFILE
+
     LaunchedEffect(Unit) {
         tracker.logGlobalAction(
             trigger = TriggerType.VIEW,
             action = "page",
             properties = mapOf("profile_user_id" to viewModel.targetUserId),
-            currentPage = Page.FEED_PROFILE,
+            currentPage = page,
         )
         viewModel.loadFeedProfile()
     }
