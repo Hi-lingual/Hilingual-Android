@@ -32,7 +32,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.common.analytics.Page
+import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.image.ErrorImageSize
 import com.hilingual.core.designsystem.component.image.NetworkImage
@@ -52,11 +55,13 @@ internal fun DiaryCard(
     modifier: Modifier = Modifier,
     diffRanges: ImmutableList<Pair<Int, Int>> = persistentListOf(),
     imageUrl: String? = null,
+    page: Page? = null,
 ) {
     val maxContentLength = if (isShowCorrectedDiary) MAX_CORRECTED else MAX_ORIGINAL
     val content = diaryContent.take(maxContentLength)
 
     val ttsController = rememberTtsController()
+    val tracker = LocalTracker.current
     val textLayoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
 
     LaunchedEffect(isShowCorrectedDiary) {
@@ -126,7 +131,17 @@ internal fun DiaryCard(
             if (isShowCorrectedDiary) {
                 TtsPlayButton(
                     isPlaying = ttsController.isPlaying,
-                    onClick = { ttsController.toggle(content) },
+                    onClick = {
+                        // 재생 시작 시점만 수집한다.
+                        if (!ttsController.isPlaying && page != null) {
+                            tracker.logGlobalAction(
+                                trigger = TriggerType.CLICK,
+                                action = "diary_pronunciation_btn_play",
+                                currentPage = page,
+                            )
+                        }
+                        ttsController.toggle(content)
+                    },
                 )
             }
             Text(

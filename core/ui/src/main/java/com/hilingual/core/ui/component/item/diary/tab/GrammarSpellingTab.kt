@@ -39,6 +39,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.ads.banner.BannerAdType.INLINE_BANNER
+import com.hilingual.core.common.analytics.Page
 import com.hilingual.core.ads.banner.HilingualBannerAd
 import com.hilingual.core.ads.banner.rememberBannerAdView
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -65,6 +66,7 @@ fun GrammarSpellingTab(
     onToggleDiaryViewMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     isAdVisible: Boolean = false,
+    page: Page? = null,
 ) {
     val adHolder = if (isAdVisible) rememberBannerAdView(INLINE_BANNER) else null
 
@@ -113,6 +115,7 @@ fun GrammarSpellingTab(
                     imageUrl = imageUrl,
                     onImageClick = onImageClick,
                     modifier = Modifier.padding(horizontal = 16.dp),
+                    page = page,
                 )
             }
             Spacer(Modifier.height(24.dp))

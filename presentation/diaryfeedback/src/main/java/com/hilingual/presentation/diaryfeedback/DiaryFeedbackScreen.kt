@@ -347,6 +347,7 @@ private fun DiaryFeedbackScreen(
                                         ),
                                     )
                                 },
+                                page = FEEDBACK,
                             )
 
                             1 -> RecommendExpressionTab(

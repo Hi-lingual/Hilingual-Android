@@ -317,6 +317,7 @@ private fun FeedDiaryScreen(
                                     ),
                                 )
                             },
+                            page = Page.POSTED_DIARY,
                         )
 
                         1 -> RecommendExpressionTab(
