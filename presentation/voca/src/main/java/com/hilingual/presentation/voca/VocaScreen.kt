@@ -166,6 +166,15 @@ internal fun VocaRoute(
             },
 
             onBookmarkClick = { phraseId, isMarked ->
+                tracker.logGlobalAction(
+                    trigger = TriggerType.CLICK,
+                    action = "bookmark_action",
+                    properties = mapOf(
+                        "phrase_id" to phraseId,
+                        "bookmark_action" to if (isMarked) "add" else "remove",
+                    ),
+                    currentPage = VOCABULARY,
+                )
                 viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
             },
             onSearchTextChanged = viewModel::updateSearchKeyword,
@@ -187,10 +196,28 @@ internal fun VocaRoute(
                 writtenDate = vocaDetail.writtenDate,
                 isBookmarked = vocaDetail.isBookmarked,
                 onBookmarkClick = { phraseId, isMarked ->
+                    tracker.logGlobalAction(
+                        trigger = TriggerType.CLICK,
+                        action = "bookmark_action",
+                        properties = mapOf(
+                            "phrase_id" to phraseId,
+                            "bookmark_action" to if (isMarked) "add" else "remove",
+                        ),
+                        currentPage = VOCABULARY,
+                    )
                     viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
                 },
                 isTtsPlaying = ttsState.isPlaying,
-                onTtsClick = { ttsState.toggle(vocaDetail.phrase) },
+                onTtsClick = {
+                    if (!ttsState.isPlaying) {
+                        tracker.logGlobalAction(
+                            trigger = TriggerType.CLICK,
+                            action = "vocab_pronunciation_btn_play",
+                            currentPage = VOCABULARY,
+                        )
+                    }
+                    ttsState.toggle(vocaDetail.phrase)
+                },
             )
         }
 
