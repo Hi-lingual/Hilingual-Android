@@ -26,7 +26,7 @@ enum class Page(val pageName: String) {
     FEEDBACK("feedback"),
 
     // AI 피드백
-    AI_FEEDBACK("ai_feedback"),
+    FEEDBACK_LOADING("feedback_loading"),
 
     // 단어장
     VOCABULARY("vocabulary"),
@@ -35,4 +35,11 @@ enum class Page(val pageName: String) {
     FEED("feed"),
     POSTED_DIARY("posted_diary"),
     MY_FEED("my_feed"),
+    FEED_PROFILE("feed_profile"),
+
+    // 사용자 프로필
+    USER_PROFILE("user_profile"),
+
+    // 온보딩
+    ONBOARDING("onborading"),
 }
