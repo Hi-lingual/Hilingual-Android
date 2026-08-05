@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.user.model.follow.FollowState
 import com.hilingual.data.user.repository.UserRepository
@@ -54,12 +55,29 @@ internal class FollowListViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<FollowListSideEffect>()
     val sideEffect: SharedFlow<FollowListSideEffect> = _sideEffect.asSharedFlow()
 
-    fun refreshTab(tabType: FollowTabType) {
+    private fun loadTab(tabType: FollowTabType, isRefreshing: Boolean) {
         viewModelScope.launch {
-            setRefreshing(tabType, true)
-            loadFollowList(tabType)
-            setRefreshing(tabType, false)
+            val shouldShowLoadError = getFollowListState(tabType) !is UiState.Success
+            if (shouldShowLoadError) {
+                updateLoadingState(tabType, UiState.Loading)
+            } else if (isRefreshing) {
+                setRefreshing(tabType, true)
+            }
+
+            loadFollowList(tabType, shouldShowLoadError)
+
+            if (isRefreshing && !shouldShowLoadError) {
+                setRefreshing(tabType, false)
+            }
         }
+    }
+
+    fun loadTab(tabType: FollowTabType) {
+        loadTab(tabType, isRefreshing = false)
+    }
+
+    fun refreshTab(tabType: FollowTabType) {
+        loadTab(tabType, isRefreshing = true)
     }
 
     fun toggleFollow(userId: Long, isFollowing: Boolean, tabType: FollowTabType) {
@@ -86,9 +104,7 @@ internal class FollowListViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadFollowList(tabType: FollowTabType) {
-        updateLoadingState(tabType, UiState.Loading)
-
+    private suspend fun loadFollowList(tabType: FollowTabType, shouldShowLoadError: Boolean) {
         val result = when (tabType) {
             FollowTabType.FOLLOWER -> userRepository.getFollowers(targetUserId)
             FollowTabType.FOLLOWING -> userRepository.getFollowings(targetUserId)
@@ -97,7 +113,21 @@ internal class FollowListViewModel @Inject constructor(
         result.onSuccess { followUserList ->
             val items = followUserList.map { it.toState() }.toImmutableList()
             updateLoadingState(tabType, UiState.Success(items))
-        }.onLogFailure { _sideEffect.emit(FollowListSideEffect.ShowErrorDialog) }
+        }.onLogFailure {
+            if (shouldShowLoadError) {
+                updateLoadingState(tabType, UiState.Failure(LoadErrorHandleAction.Retry))
+            } else {
+                _sideEffect.emit(FollowListSideEffect.ShowErrorDialog)
+            }
+        }
+    }
+
+    private fun getFollowListState(tabType: FollowTabType): UiState<ImmutableList<FollowItemModel>> {
+        val currentState = _uiState.value
+        return when (tabType) {
+            FollowTabType.FOLLOWER -> currentState.followerList
+            FollowTabType.FOLLOWING -> currentState.followingList
+        }
     }
 
     private fun updateLoadingState(

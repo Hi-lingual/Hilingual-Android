@@ -60,19 +60,27 @@ class AuthViewModel @Inject constructor(
             authRepository.signInWithGoogle(context)
                 .onSuccess { idToken ->
                     Timber.d("Google ID Token: $idToken")
-                    authRepository.login(idToken)
-                        .onSuccess { authResult ->
-                            onLoginSuccess(
-                                isRegistered = authResult.registerStatus,
-                                userId = authResult.userId,
-                            )
-                        }
-                        .onLogFailure { }
+                    loginWithProviderToken(idToken)
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    showGoogleLoginErrorDialog(context)
+                }
 
             setIsLoading(false)
         }
+    }
+
+    private suspend fun loginWithProviderToken(providerToken: String) {
+        authRepository.login(providerToken)
+            .onSuccess { authResult ->
+                onLoginSuccess(
+                    isRegistered = authResult.registerStatus,
+                    userId = authResult.userId,
+                )
+            }
+            .onLogFailure {
+                showServerLoginErrorDialog(providerToken)
+            }
     }
 
     private suspend fun onLoginSuccess(isRegistered: Boolean, userId: Long) {
@@ -80,6 +88,7 @@ class AuthViewModel @Inject constructor(
             updateIsSplashOnboardingCompleted()
             putDeviceInfo()
             setUserIdentity(userId)
+            syncFcmToken()
             _navigationEvent.tryEmit(AuthSideEffect.NavigateToHome)
         } else {
             _navigationEvent.tryEmit(AuthSideEffect.NavigateToSignUp)
@@ -88,6 +97,12 @@ class AuthViewModel @Inject constructor(
 
     private suspend fun putDeviceInfo(): Boolean =
         userRepository.putDeviceInfo().onLogFailure { }.isSuccess
+
+    private fun syncFcmToken() {
+        viewModelScope.launch {
+            userRepository.syncFcmToken().onLogFailure { }
+        }
+    }
 
     private suspend fun updateIsSplashOnboardingCompleted() {
         onboardingRepository.completeSplashOnboarding()
@@ -98,6 +113,24 @@ class AuthViewModel @Inject constructor(
         _isLoading.update { isLoading }
     }
 
+    private fun retryLoginWithProviderToken(providerToken: String) {
+        if (_isLoading.value) return
+
+        viewModelScope.launch {
+            setIsLoading(true)
+            loginWithProviderToken(providerToken)
+            setIsLoading(false)
+        }
+    }
+
+    private suspend fun showGoogleLoginErrorDialog(context: Context) {
+        _navigationEvent.emit(AuthSideEffect.ShowErrorDialog { onGoogleSignClick(context) })
+    }
+
+    private suspend fun showServerLoginErrorDialog(providerToken: String) {
+        _navigationEvent.emit(AuthSideEffect.ShowErrorDialog { retryLoginWithProviderToken(providerToken) })
+    }
+
     private fun setUserIdentity(userId: Long) {
         userIdentityTracker.setUserId(userId)
     }
@@ -106,4 +139,5 @@ class AuthViewModel @Inject constructor(
 sealed interface AuthSideEffect {
     data object NavigateToHome : AuthSideEffect
     data object NavigateToSignUp : AuthSideEffect
+    data class ShowErrorDialog(val onRetry: () -> Unit) : AuthSideEffect
 }

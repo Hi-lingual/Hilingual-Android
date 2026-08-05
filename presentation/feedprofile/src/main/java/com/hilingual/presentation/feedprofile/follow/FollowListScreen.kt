@@ -36,8 +36,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.presentation.feedprofile.component.card.FeedEmptyCardType
@@ -75,6 +78,7 @@ internal fun FollowListRoute(
         onBackClick = navigateUp,
         onProfileClick = navigateToFeedProfile,
         onActionButtonClick = viewModel::toggleFollow,
+        onTabLoad = viewModel::loadTab,
         onTabRefresh = viewModel::refreshTab,
     )
 }
@@ -89,20 +93,31 @@ private fun FollowListScreen(
     onBackClick: () -> Unit,
     onProfileClick: (Long) -> Unit,
     onActionButtonClick: (Long, Boolean, FollowTabType) -> Unit,
+    onTabLoad: (FollowTabType) -> Unit,
     onTabRefresh: (FollowTabType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val pagerState = rememberPagerState(pageCount = { 2 })
+    val pagerState = rememberPagerState(pageCount = { FollowTabType.entries.size })
     val coroutineScope = rememberCoroutineScope()
     val followerListState = rememberLazyListState()
     val followingListState = rememberLazyListState()
+    val currentTabType = FollowTabType.entries[pagerState.currentPage]
+    val currentTabState = when (currentTabType) {
+        FollowTabType.FOLLOWER -> followers
+        FollowTabType.FOLLOWING -> followings
+    }
+
+    RetryOnReconnect(
+        isLoading = currentTabState is UiState.Loading,
+        shouldRetry = currentTabState is UiState.Failure,
+        onRetry = { onTabRefresh(currentTabType) },
+    )
 
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }
             .distinctUntilChanged()
             .collect { pageIndex ->
-                val tabType = if (pageIndex == 0) FollowTabType.FOLLOWER else FollowTabType.FOLLOWING
-                onTabRefresh(tabType)
+                onTabLoad(FollowTabType.entries[pageIndex])
             }
     }
 
@@ -120,12 +135,7 @@ private fun FollowListScreen(
             tabIndex = pagerState.currentPage,
             onTabSelected = { index ->
                 coroutineScope.launch {
-                    val tabType = if (index == 0) FollowTabType.FOLLOWER else FollowTabType.FOLLOWING
-                    if (index == pagerState.currentPage) {
-                        onTabRefresh(tabType)
-                    } else {
-                        pagerState.animateScrollToPage(index)
-                    }
+                    pagerState.animateScrollToPage(index)
                 }
             },
         )
@@ -168,6 +178,14 @@ private fun FollowListScreen(
                     )
                 }
 
+                is UiState.Failure -> {
+                    HilingualLoadErrorView(
+                        action = LoadErrorViewAction.Retry(
+                            onRetryClick = { onTabRefresh(pageState.tabType) },
+                        ),
+                    )
+                }
+
                 else -> {}
             }
         }
@@ -195,6 +213,7 @@ private fun FollowListScreenPreview() {
             onBackClick = {},
             onProfileClick = {},
             onActionButtonClick = { _, _, _ -> },
+            onTabLoad = {},
             onTabRefresh = {},
         )
     }

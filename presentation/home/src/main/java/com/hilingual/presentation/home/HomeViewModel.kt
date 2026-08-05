@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.calendar.model.CalendarStatus
 import com.hilingual.data.calendar.repository.CalendarRepository
@@ -75,6 +76,8 @@ class HomeViewModel @Inject constructor(
 
     private val onboardingCheckCompleted = MutableSharedFlow<Unit>(replay = 1)
 
+    private val recoveryReminderResult = MutableStateFlow<Boolean?>(null)
+
     init {
         checkOnboardingCompleted()
     }
@@ -82,6 +85,7 @@ class HomeViewModel @Inject constructor(
     fun loadInitialData() {
         viewModelScope.launch {
             _uiState.update { UiState.Loading }
+            recoveryReminderResult.update { null }
             val today = LocalDate.now()
 
             val userInfoDeferred = async {
@@ -99,7 +103,8 @@ class HomeViewModel @Inject constructor(
             if (userInfoResult.isFailure || calendarResult.isFailure) {
                 userInfoResult.onLogFailure { }
                 calendarResult.onLogFailure { }
-                emitErrorDialogSideEffect { loadInitialData() }
+                _uiState.update { UiState.Failure(LoadErrorHandleAction.Retry) }
+                recoveryReminderResult.update { false }
                 return@launch
             }
 
@@ -127,6 +132,8 @@ class HomeViewModel @Inject constructor(
             checkRecoveryModals(userInfo.recoveryTickets, initialDates)
         }
     }
+
+    fun retryLoad() = loadInitialData()
 
     fun handleNotificationPermission(
         isGranted: Boolean,
@@ -157,17 +164,21 @@ class HomeViewModel @Inject constructor(
         requiresPermission: Boolean,
     ) {
         val isPermissionGranted = !requiresPermission || isGranted
-        if (!isPermissionGranted) {
-            viewModelScope.launch {
-                val isAlreadyShown = notificationRepository
-                    .getIsNotificationDialogShown()
-                    .getOrDefault(false)
-                if (!isAlreadyShown) {
-                    emitNotificationDialogSideEffect()
-                }
+        if (isPermissionGranted) return
+
+        viewModelScope.launch {
+            if (willShowReminder()) return@launch
+
+            val isAlreadyShown = notificationRepository
+                .getIsNotificationDialogShown()
+                .getOrDefault(false)
+            if (!isAlreadyShown) {
+                emitNotificationDialogSideEffect()
             }
         }
     }
+
+    private suspend fun willShowReminder(): Boolean = recoveryReminderResult.first { it != null } == true
 
     fun onNotificationDialogDismissed() {
         viewModelScope.launch {
@@ -264,10 +275,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onRecoveryNoticeConfirmed() {
-        viewModelScope.launch {
-            onboardingRepository.updateIsRecoveryNoticeShown(true)
-        }
+    fun onRecoveryReminderClosed() {
+        recoveryReminderResult.update { false }
     }
 
     fun onRecoveryReminderConfirmed() {
@@ -275,6 +284,7 @@ class HomeViewModel @Inject constructor(
         if (currentState !is UiState.Success) return
 
         markReminderShownThisMonth()
+        onRecoveryReminderClosed()
 
         val recentBrokenDate = findRecentBrokenDate(currentState.data.calendar.dates)
         if (recentBrokenDate != null) {
@@ -284,6 +294,7 @@ class HomeViewModel @Inject constructor(
 
     fun onRecoveryReminderLater() {
         markReminderShownThisMonth()
+        onRecoveryReminderClosed()
     }
 
     private fun markReminderShownThisMonth() {
@@ -297,17 +308,13 @@ class HomeViewModel @Inject constructor(
         dates: List<DateUiModel>,
     ) {
         onboardingCheckCompleted.first()
-        if (isOnboardingVisible.value) return
+        isOnboardingVisible.first { !it }
 
-        val noticeShown = onboardingRepository.getIsRecoveryNoticeShown().getOrDefault(false)
-        if (!noticeShown) {
-            _sideEffect.emit(HomeSideEffect.ShowRecoveryNotice)
-            return
-        }
-
-        if (shouldShowReminder(recoveryTickets, dates)) {
+        val shouldShow = shouldShowReminder(recoveryTickets, dates)
+        if (shouldShow) {
             _sideEffect.emit(HomeSideEffect.ShowRecoveryReminder)
         }
+        recoveryReminderResult.update { shouldShow }
     }
 
     private suspend fun shouldShowReminder(
@@ -317,8 +324,7 @@ class HomeViewModel @Inject constructor(
         if (recoveryTickets <= 0) return false
 
         val today = LocalDate.now()
-        val isLastWeek = today.dayOfMonth > today.lengthOfMonth() - 7
-        if (!isLastWeek) return false
+        if (!isLastWeekOfMonth(today)) return false
 
         val currentMonth = YearMonth.now().toString()
         val lastShownMonth = onboardingRepository.getRecoveryReminderLastShownMonth().getOrDefault("")
@@ -327,6 +333,9 @@ class HomeViewModel @Inject constructor(
         return hasBrokenDayThisMonth(today, dates)
     }
 
+    private fun isLastWeekOfMonth(today: LocalDate): Boolean =
+        today.dayOfMonth > today.lengthOfMonth() - 7
+
     private fun hasBrokenDayThisMonth(
         today: LocalDate,
         dates: List<DateUiModel>,
@@ -334,7 +343,7 @@ class HomeViewModel @Inject constructor(
         val recordedDates = dates.map { it.date }.toSet()
         val lastBrokenDate = today.minusDays(1)
         var date = today.withDayOfMonth(1)
-        while (date.isBefore(lastBrokenDate)) {
+        while (!date.isAfter(lastBrokenDate)) {
             if (date !in recordedDates) return true
             date = date.plusDays(1)
         }
@@ -526,8 +535,6 @@ sealed interface HomeSideEffect {
     data class ShowRewardedAd(val date: LocalDate) : HomeSideEffect
 
     data class NavigateToRecoveryWrite(val date: LocalDate) : HomeSideEffect
-
-    data object ShowRecoveryNotice : HomeSideEffect
 
     data object ShowRecoveryReminder : HomeSideEffect
 }

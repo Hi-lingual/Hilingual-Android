@@ -61,12 +61,16 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.provider.LocalIsOffline
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.DialogState
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
@@ -76,7 +80,6 @@ import com.hilingual.presentation.home.component.HomeHeader
 import com.hilingual.presentation.home.component.calendar.HilingualCalendar
 import com.hilingual.presentation.home.component.dialog.DiaryContinueDialog
 import com.hilingual.presentation.home.component.dialog.NotificationDialog
-import com.hilingual.presentation.home.component.dialog.RecoveryNoticeModal
 import com.hilingual.presentation.home.component.dialog.RecoveryReminderModal
 import com.hilingual.presentation.home.component.footer.DiaryDateInfo
 import com.hilingual.presentation.home.component.footer.DiaryEmptyCard
@@ -108,6 +111,7 @@ internal fun HomeRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
     val messageController = LocalMessageController.current
+    val isOffline = LocalIsOffline.current
     val tracker = LocalTracker.current
     val context = LocalContext.current
     val activity = LocalActivity.current
@@ -174,8 +178,6 @@ internal fun HomeRoute(
             is HomeSideEffect.NavigateToRecoveryWrite ->
                 navigateToDiaryWrite(sideEffect.date, DiaryWriteMode.RECOVERY)
 
-            is HomeSideEffect.ShowRecoveryNotice -> homeState.showRecoveryNotice()
-
             is HomeSideEffect.ShowRecoveryReminder -> homeState.showRecoveryReminder()
         }
     }
@@ -184,6 +186,12 @@ internal fun HomeRoute(
         viewModel.loadInitialData()
         tracker.logEvent(trigger = TriggerType.VIEW, page = HOME, event = "page")
     }
+
+    RetryOnReconnect(
+        isLoading = uiState is UiState.Loading,
+        shouldRetry = uiState is UiState.Failure,
+        onRetry = viewModel::retryLoad,
+    )
 
     if (ENABLE_PUSH_NOTIFICATION) {
         CheckNotificationPermission(
@@ -209,18 +217,6 @@ internal fun HomeRoute(
         },
     )
 
-    RecoveryNoticeModal(
-        isVisible = homeState.isRecoveryNoticeVisible,
-        onClick = {
-            homeState.hideRecoveryNotice()
-            viewModel.onRecoveryNoticeConfirmed()
-        },
-        onDismiss = {
-            homeState.hideRecoveryNotice()
-            viewModel.onRecoveryNoticeConfirmed()
-        },
-    )
-
     RecoveryReminderModal(
         isVisible = homeState.isRecoveryReminderVisible,
         onClick = {
@@ -233,6 +229,7 @@ internal fun HomeRoute(
         },
         onDismiss = {
             homeState.hideRecoveryReminder()
+            viewModel.onRecoveryReminderClosed()
         },
     )
 
@@ -248,6 +245,12 @@ internal fun HomeRoute(
                 onImageClick = {
                     tracker.logEvent(trigger = TriggerType.CLICK, page = HOME, event = "profile")
                     navigateToFeedProfile(0L)
+                },
+                isCalendarInteractionEnabled = !isOffline,
+                onDisabledCalendarInteraction = {
+                    messageController(
+                        HilingualMessage.Toast("인터넷 연결이 불안정해요."),
+                    )
                 },
                 onDateSelected = viewModel::onDateSelected,
                 onMonthChanged = viewModel::onMonthChanged,
@@ -277,6 +280,15 @@ internal fun HomeRoute(
                 onPublishClick = viewModel::publishDiary,
                 onUnpublishClick = viewModel::unpublishDiary,
                 tracker = tracker,
+            )
+        }
+
+        is UiState.Failure -> {
+            HilingualLoadErrorView(
+                action = LoadErrorViewAction.Retry(
+                    onRetryClick = viewModel::retryLoad,
+                ),
+                modifier = Modifier.padding(paddingValues),
             )
         }
 
@@ -316,6 +328,8 @@ private fun HomeScreen(
     homeState: HomeState,
     onAlarmClick: () -> Unit,
     onImageClick: () -> Unit,
+    isCalendarInteractionEnabled: Boolean,
+    onDisabledCalendarInteraction: () -> Unit,
     onDateSelected: (LocalDate) -> Unit,
     onMonthChanged: (YearMonth) -> Unit,
     onRecoveryClick: (LocalDate) -> Unit,
@@ -373,6 +387,8 @@ private fun HomeScreen(
                     .filter { it.status != CalendarStatus.UNLOCKED }
                     .map { it.date }
                     .toSet(),
+                isInteractionEnabled = isCalendarInteractionEnabled,
+                onDisabledInteraction = onDisabledCalendarInteraction,
                 onDateClick = onDateSelected,
                 onMonthChanged = onMonthChanged,
                 modifier = Modifier
@@ -534,7 +550,7 @@ private fun HomeScreen(
 }
 
 // #807 푸시 알림 플로우: 미배포 기능, 당분간 봉인. 재개 시 true로 전환.
-private const val ENABLE_PUSH_NOTIFICATION = false
+private const val ENABLE_PUSH_NOTIFICATION = true
 
 @Composable
 private fun CheckNotificationPermission(
@@ -578,6 +594,8 @@ private fun HomeScreenPreview() {
             homeState = rememberHomeState(),
             onAlarmClick = {},
             onImageClick = {},
+            isCalendarInteractionEnabled = true,
+            onDisabledCalendarInteraction = {},
             onDateSelected = {},
             onMonthChanged = {},
             onRecoveryClick = {},

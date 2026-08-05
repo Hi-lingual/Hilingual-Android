@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.hilingual.core.common.trigger.DialogState
+import com.hilingual.core.common.trigger.DialogType
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
@@ -62,7 +63,7 @@ fun HilingualErrorDialog(
                 )
 
                 Text(
-                    text = "앗! 일시적인 오류가 발생했어요.",
+                    text = state.type.message,
                     style = HilingualTheme.typography.headSB16,
                     color = HilingualTheme.colors.gray850,
                 )
@@ -70,6 +71,12 @@ fun HilingualErrorDialog(
         }
     }
 }
+
+private val DialogType.message: String
+    get() = when (this) {
+        DialogType.ERROR -> "앗! 일시적인 오류가 발생했어요."
+        DialogType.NOT_FOUND -> "앗! 요청한 내용을 찾을 수 없어요"
+    }
 
 @Preview
 @Composable

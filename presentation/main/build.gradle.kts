@@ -46,4 +46,6 @@ dependencies {
     implementation(projects.presentation.feedprofile)
     implementation(projects.presentation.notification)
     implementation(projects.presentation.onboarding)
+
+    implementation(libs.wisp.runtime)
 }

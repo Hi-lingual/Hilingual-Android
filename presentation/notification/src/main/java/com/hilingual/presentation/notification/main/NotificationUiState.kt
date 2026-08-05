@@ -16,12 +16,15 @@
 package com.hilingual.presentation.notification.main
 
 import androidx.compose.runtime.Immutable
+import com.hilingual.core.common.util.UiState
 import com.hilingual.presentation.notification.main.model.FeedNotificationItemUiModel
 import com.hilingual.presentation.notification.main.model.FeedNotificationType
 import com.hilingual.presentation.notification.main.model.NoticeCategoryType
 import com.hilingual.presentation.notification.main.model.NoticeNotificationItemUiModel
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 
 enum class NotificationTab {
     FEED,
@@ -29,12 +32,27 @@ enum class NotificationTab {
 }
 
 @Immutable
+data class NotificationTabState(
+    val loadState: UiState<Unit> = UiState.Empty,
+    val isRefreshing: Boolean = false,
+)
+
+@Immutable
 data class NotificationUiState(
-    val isFeedRefreshing: Boolean = false,
-    val isNoticeRefreshing: Boolean = false,
     val feedNotifications: ImmutableList<FeedNotificationItemUiModel> = persistentListOf(),
     val noticeNotifications: ImmutableList<NoticeNotificationItemUiModel> = persistentListOf(),
+    val tabStates: PersistentMap<NotificationTab, NotificationTabState> = persistentMapOf(),
 ) {
+    fun tabState(tab: NotificationTab): NotificationTabState =
+        tabStates[tab] ?: NotificationTabState()
+
+    fun updateTabState(
+        tab: NotificationTab,
+        transform: (NotificationTabState) -> NotificationTabState,
+    ): NotificationUiState = copy(
+        tabStates = tabStates.putting(tab, transform(tabState(tab))),
+    )
+
     companion object {
         val Fake = NotificationUiState(
             feedNotifications = persistentListOf(

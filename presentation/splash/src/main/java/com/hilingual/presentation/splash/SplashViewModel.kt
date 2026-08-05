@@ -110,6 +110,7 @@ internal class SplashViewModel @Inject constructor(
             if (isLoggedIn) {
                 putDeviceInfo()
                 setTrackerUserId()
+                syncFcmToken()
             }
 
             delay(1400L)
@@ -120,6 +121,12 @@ internal class SplashViewModel @Inject constructor(
 
     private suspend fun putDeviceInfo(): Boolean =
         userRepository.putDeviceInfo().onLogFailure { }.isSuccess
+
+    private fun syncFcmToken() {
+        viewModelScope.launch {
+            userRepository.syncFcmToken().onLogFailure { }
+        }
+    }
 
     private suspend fun setTrackerUserId() {
         val userId = authRepository.getUserId() ?: fetchUserId()

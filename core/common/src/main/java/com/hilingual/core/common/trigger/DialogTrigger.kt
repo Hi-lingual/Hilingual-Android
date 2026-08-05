@@ -19,25 +19,41 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+
+enum class DialogType {
+    ERROR,
+    NOT_FOUND,
+}
 
 @Immutable
 data class DialogState(
     val isVisible: Boolean = false,
+    val type: DialogType = DialogType.ERROR,
     val onClickAction: () -> Unit = {},
 )
 
 @Stable
 class DialogTrigger(
-    private val onShow: (() -> Unit) -> Unit,
+    private val onShow: (DialogType, () -> Unit) -> Unit,
 ) {
-    fun show(onClick: () -> Unit) {
-        onShow(onClick)
+    fun show(
+        type: DialogType = DialogType.ERROR,
+        onClick: () -> Unit,
+    ) {
+        onShow(type, onClick)
     }
 }
 
 @Composable
 fun rememberDialogTrigger(
-    show: (() -> Unit) -> Unit,
-): DialogTrigger = remember(show) {
-    DialogTrigger(show)
+    show: (DialogType, () -> Unit) -> Unit,
+): DialogTrigger {
+    val currentShow = rememberUpdatedState(show)
+
+    return remember {
+        DialogTrigger { type, onClick ->
+            currentShow.value(type, onClick)
+        }
+    }
 }

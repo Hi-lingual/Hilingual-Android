@@ -47,8 +47,11 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.item.feed.UserActionItem
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
@@ -76,6 +79,12 @@ internal fun BlockedUserRoute(
         viewModel.getBlockList()
     }
 
+    RetryOnReconnect(
+        isLoading = uiState.blockedUserList is UiState.Loading,
+        shouldRetry = uiState.blockedUserList is UiState.Failure,
+        onRetry = viewModel::retryLoad,
+    )
+
     when (val state = uiState.blockedUserList) {
         is UiState.Success -> {
             BlockedUserScreen(
@@ -84,6 +93,16 @@ internal fun BlockedUserRoute(
                 blockedUserList = state.data,
                 onUserProfileClick = navigateToProfile,
                 onButtonClick = viewModel::onUnblockStatusChanged,
+            )
+        }
+
+        is UiState.Failure -> {
+            HilingualLoadErrorView(
+                action = LoadErrorViewAction.Retry(
+                    onRetryClick = viewModel::retryLoad,
+                    onBackClick = navigateUp,
+                ),
+                modifier = Modifier.padding(paddingValues),
             )
         }
 

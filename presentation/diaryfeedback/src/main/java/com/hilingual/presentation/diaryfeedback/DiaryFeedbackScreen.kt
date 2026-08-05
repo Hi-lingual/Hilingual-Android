@@ -54,13 +54,17 @@ import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.extension.subScreenPadding
 import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.dialog.diary.DiaryPublishDialog
 import com.hilingual.core.ui.component.dialog.diary.DiaryUnpublishDialog
@@ -95,6 +99,12 @@ internal fun DiaryFeedbackRoute(
     LaunchedEffect(Unit) {
         viewModel.loadInitialData()
     }
+
+    RetryOnReconnect(
+        isLoading = state is UiState.Loading,
+        shouldRetry = state is UiState.Failure,
+        onRetry = viewModel::retryLoad,
+    )
 
     BackHandler {
         if (isImageDetailVisible) {
@@ -206,6 +216,22 @@ internal fun DiaryFeedbackRoute(
         }
 
         is UiState.Loading -> HilingualLoadingIndicator()
+
+        is UiState.Failure -> {
+            HilingualLoadErrorView(
+                action = when (currentState.handleAction) {
+                    LoadErrorHandleAction.NotFound -> LoadErrorViewAction.NotFound(
+                        onBackClick = navigateUp,
+                    )
+
+                    else -> LoadErrorViewAction.Retry(
+                        onRetryClick = viewModel::retryLoad,
+                        onBackClick = navigateUp,
+                    )
+                },
+                modifier = Modifier.padding(paddingValues),
+            )
+        }
 
         else -> {}
     }

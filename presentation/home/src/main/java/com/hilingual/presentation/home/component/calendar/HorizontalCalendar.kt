@@ -15,8 +15,10 @@
  */
 package com.hilingual.presentation.home.component.calendar
 
+import android.os.SystemClock
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.FlingBehavior
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -32,14 +34,22 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.common.model.MessageDuration
 import com.hilingual.presentation.home.component.calendar.model.CalendarDay
 import com.hilingual.presentation.home.component.calendar.model.CalendarMonth
 import com.hilingual.presentation.home.component.calendar.state.CalendarState
 import com.hilingual.presentation.home.component.calendar.state.rememberCalendarState
 import com.hilingual.presentation.home.component.calendar.util.generateMonthData
+
+private val DISABLED_SCROLL_MESSAGE_COOLDOWN_MILLIS = MessageDuration.DEFAULT.millis
 
 @OptIn(ExperimentalFoundationApi::class)
 private fun createSnapLayoutInfoProvider(
@@ -62,15 +72,36 @@ private fun rememberSnappingFlingBehavior(lazyListState: LazyListState): FlingBe
 internal fun HorizontalCalendar(
     modifier: Modifier = Modifier,
     state: CalendarState = rememberCalendarState(),
+    userScrollEnabled: Boolean = true,
+    onDisabledScroll: () -> Unit = {},
     dayContent: @Composable (CalendarDay) -> Unit,
     monthHeader: @Composable (CalendarMonth) -> Unit,
 ) {
     val flingBehavior = rememberSnappingFlingBehavior(lazyListState = state.listState)
+    val currentOnDisabledScroll = rememberUpdatedState(onDisabledScroll)
+    var lastDisabledScrollMessageAt by remember { mutableLongStateOf(0L) }
+    val scrollModifier = if (userScrollEnabled) {
+        modifier
+    } else {
+        modifier.pointerInput(Unit) {
+            detectHorizontalDragGestures(
+                onDragStart = {
+                    val now = SystemClock.elapsedRealtime()
+                    if (now - lastDisabledScrollMessageAt >= DISABLED_SCROLL_MESSAGE_COOLDOWN_MILLIS) {
+                        lastDisabledScrollMessageAt = now
+                        currentOnDisabledScroll.value()
+                    }
+                },
+                onHorizontalDrag = { change, _ -> change.consume() },
+            )
+        }
+    }
 
     LazyRow(
-        modifier = modifier,
+        modifier = scrollModifier,
         state = state.listState,
         flingBehavior = flingBehavior,
+        userScrollEnabled = userScrollEnabled,
     ) {
         calendarMonths(
             monthCount = state.monthIndicesCount,

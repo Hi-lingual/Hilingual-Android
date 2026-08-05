@@ -53,8 +53,11 @@ import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.TitleLeftAlignedTopAppBar
 import com.hilingual.presentation.mypage.component.LogoutDialog
@@ -86,6 +89,12 @@ internal fun MyPageRoute(
         }
     }
 
+    RetryOnReconnect(
+        isLoading = uiState is UiState.Loading,
+        shouldRetry = uiState is UiState.Failure,
+        onRetry = viewModel::retryLoad,
+    )
+
     when (val state = uiState) {
         is UiState.Success -> {
             MyPageScreen(
@@ -101,6 +110,15 @@ internal fun MyPageRoute(
                 onCustomerCenterClick = { context.launchCustomTabs(UrlConstant.KAKAOTALK_CHANNEL) },
                 onTermsClick = { context.launchCustomTabs(UrlConstant.PRIVACY_POLICY) },
                 onLogoutClick = viewModel::logout,
+            )
+        }
+
+        is UiState.Failure -> {
+            HilingualLoadErrorView(
+                action = LoadErrorViewAction.Retry(
+                    onRetryClick = viewModel::retryLoad,
+                ),
+                modifier = Modifier.padding(paddingValues),
             )
         }
 

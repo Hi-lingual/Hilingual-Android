@@ -54,9 +54,12 @@ import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.pulltorefresh.HilingualPullToRefreshBox
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.data.voca.model.GroupingVocaModel
@@ -92,6 +95,12 @@ internal fun VocaRoute(
         tracker.logEvent(trigger = TriggerType.VIEW, page = VOCABULARY, event = "page")
     }
 
+    RetryOnReconnect(
+        isLoading = uiState.vocaGroupList is UiState.Loading,
+        shouldRetry = uiState.vocaGroupList is UiState.Failure,
+        onRetry = viewModel::retryLoad,
+    )
+
     LaunchedEffect(uiState.vocaItemDetail) {
         if (uiState.vocaItemDetail is UiState.Success) {
             focusManager.clearFocus()
@@ -102,9 +111,25 @@ internal fun VocaRoute(
     viewModel.sideEffect.collectSideEffect {
         when (it) {
             is VocaSideEffect.ShowErrorDialog -> {
-                dialogTrigger.show(onClick = it.onRetry)
+                dialogTrigger.show(
+                    type = it.dialogType,
+                    onClick = {
+                        it.onRetry()
+                    },
+                )
             }
         }
+    }
+
+    val vocaGroupState = uiState.vocaGroupList
+    if (vocaGroupState is UiState.Failure) {
+        HilingualLoadErrorView(
+            action = LoadErrorViewAction.Retry(
+                onRetryClick = viewModel::retryLoad,
+            ),
+            modifier = Modifier.padding(paddingValues),
+        )
+        return
     }
 
     with(uiState) {
