@@ -20,8 +20,6 @@ interface OnboardingLocalDataSource {
     suspend fun updateIsHomeOnboardingCompleted(isCompleted: Boolean)
     suspend fun getIsSplashOnboardingCompleted(): Boolean
     suspend fun updateIsSplashOnboardingCompleted(isCompleted: Boolean)
-    suspend fun getIsRecoveryNoticeShown(): Boolean
-    suspend fun updateIsRecoveryNoticeShown(isShown: Boolean)
     suspend fun getRecoveryReminderLastShownMonth(): String
     suspend fun updateRecoveryReminderLastShownMonth(month: String)
 }
