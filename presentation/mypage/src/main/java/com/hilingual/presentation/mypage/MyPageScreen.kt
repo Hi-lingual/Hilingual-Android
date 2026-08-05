@@ -53,6 +53,7 @@ import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
@@ -88,6 +89,12 @@ internal fun MyPageRoute(
         }
     }
 
+    RetryOnReconnect(
+        isLoading = uiState is UiState.Loading,
+        shouldRetry = uiState is UiState.Failure,
+        onRetry = viewModel::retryLoad,
+    )
+
     when (val state = uiState) {
         is UiState.Success -> {
             MyPageScreen(
@@ -109,7 +116,7 @@ internal fun MyPageRoute(
         is UiState.Failure -> {
             HilingualLoadErrorView(
                 action = LoadErrorViewAction.Retry(
-                    onRetryClick = viewModel::getProfileInfo,
+                    onRetryClick = viewModel::retryLoad,
                 ),
                 modifier = Modifier.padding(paddingValues),
             )

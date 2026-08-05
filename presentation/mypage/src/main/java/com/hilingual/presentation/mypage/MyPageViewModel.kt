@@ -65,7 +65,7 @@ internal class MyPageViewModel @Inject constructor(
         getProfileInfo()
     }
 
-    fun getProfileInfo() {
+    private fun getProfileInfo() {
         viewModelScope.launch {
             _uiState.update { UiState.Loading }
             userRepository.getUserLoginInfo()
@@ -86,6 +86,8 @@ internal class MyPageViewModel @Inject constructor(
                 }
         }
     }
+
+    fun retryLoad() = getProfileInfo()
 
     fun patchProfileImage(newImageUri: Uri?) {
         viewModelScope.launch {

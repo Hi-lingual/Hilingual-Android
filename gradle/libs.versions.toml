@@ -9,7 +9,7 @@ targetSdk = "36"
 jvmTarget = "17"
 androidGradlePlugin = "9.3.1"
 spotless = "8.9.0"
-wisp = "0.1.0"
+wisp = "0.2.0"
 
 # App version
 versionCode = "2050100"
@@ -66,7 +66,7 @@ gmaAds = "1.0.1"
 metaAdsAdapter = "6.21.0.3"
 
 # Firebase
-firebaseBom = "34.16.0"
+firebaseBom = "34.17.0"
 firebaseCrashlyticsPlugin = "3.0.7"
 
 # ML Kit
@@ -75,13 +75,13 @@ coroutinesPlayServices = "1.11.0"
 
 uiautomator = "2.4.0"
 benchmarkMacroJunit4 = "1.4.1"
-baselineprofile = "1.5.0-alpha07"
+baselineprofile = "1.5.0-beta01"
 profileinstaller = "1.4.1"
 runner = "1.7.0"
 
 # AboutLibraries
 aboutLibraries = "15.0.4"
-amplitude = "1.30.0"
+amplitude = "1.30.1"
 
 [libraries]
 # Analytics

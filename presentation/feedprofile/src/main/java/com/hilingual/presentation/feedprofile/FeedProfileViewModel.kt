@@ -145,6 +145,8 @@ internal class FeedProfileViewModel @Inject constructor(
         }
     }
 
+    fun retryLoad() = loadFeedProfile()
+
     private fun loadSharedDiaries(feedProfileInfoModel: FeedProfileInfoModel) {
         viewModelScope.launch {
             feedRepository.getSharedDiaries(targetUserId)

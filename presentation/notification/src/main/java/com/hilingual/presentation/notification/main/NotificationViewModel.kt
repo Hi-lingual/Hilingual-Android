@@ -18,13 +18,17 @@ package com.hilingual.presentation.notification.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.model.LoadErrorHandleAction
+import com.hilingual.core.common.util.UiState
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.notification.main.model.toFeedStateOrNull
 import com.hilingual.presentation.notification.main.model.toNoticeStateOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -36,41 +40,77 @@ internal class NotificationViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(NotificationUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun onTabSelected(tab: NotificationTab) {
-        loadTab(tab = tab, isUserRefresh = false)
-    }
+    private val _sideEffect = MutableSharedFlow<NotificationSideEffect>()
+    val sideEffect = _sideEffect.asSharedFlow()
 
-    fun onUserRefresh(tab: NotificationTab) {
-        loadTab(tab = tab, isUserRefresh = true)
-    }
-
-    private fun loadTab(tab: NotificationTab, isUserRefresh: Boolean) {
+    private fun requestTab(tab: NotificationTab, isRefreshing: Boolean) {
         viewModelScope.launch {
-            if (isUserRefresh) {
-                setRefreshing(tab, isRefreshing = true)
+            val shouldShowLoadError = _uiState.value.tabState(tab).loadState !is UiState.Success
+            _uiState.update {
+                it.updateTabState(tab) { tabState ->
+                    tabState.copy(
+                        loadState = if (shouldShowLoadError) UiState.Loading else tabState.loadState,
+                        isRefreshing = isRefreshing && !shouldShowLoadError,
+                    )
+                }
             }
+
             userRepository.getNotifications(tab.name)
                 .onSuccess { notifications ->
-                    _uiState.update {
-                        when (tab) {
-                            NotificationTab.FEED -> it.copy(
+                    _uiState.update { currentState ->
+                        val successState = when (tab) {
+                            NotificationTab.FEED -> currentState.copy(
                                 feedNotifications = notifications.mapNotNull { item -> item.toFeedStateOrNull() }
                                     .toImmutableList(),
                             )
 
-                            NotificationTab.NOTIFICATION -> it.copy(
+                            NotificationTab.NOTIFICATION -> currentState.copy(
                                 noticeNotifications = notifications.mapNotNull { item -> item.toNoticeStateOrNull() }
                                     .toImmutableList(),
                             )
                         }
+                        successState.updateTabState(tab) {
+                            it.copy(
+                                loadState = UiState.Success(Unit),
+                                isRefreshing = false,
+                            )
+                        }
                     }
                 }
-                .onLogFailure { /* TODO: 에러 처리 */ }
-
-            if (isUserRefresh) {
-                setRefreshing(tab, isRefreshing = false)
-            }
+                .onLogFailure {
+                    _uiState.update {
+                        it.updateTabState(tab) { tabState ->
+                            tabState.copy(
+                                loadState = if (shouldShowLoadError) {
+                                    UiState.Failure(LoadErrorHandleAction.Retry)
+                                } else {
+                                    tabState.loadState
+                                },
+                                isRefreshing = false,
+                            )
+                        }
+                    }
+                    if (!shouldShowLoadError) {
+                        _sideEffect.emit(NotificationSideEffect.ShowErrorDialog(tab))
+                    }
+                }
         }
+    }
+
+    fun loadTab(tab: NotificationTab) {
+        when (_uiState.value.tabState(tab).loadState) {
+            UiState.Empty,
+            is UiState.Failure,
+            -> requestTab(tab, isRefreshing = false)
+
+            UiState.Loading,
+            is UiState.Success,
+            -> return
+        }
+    }
+
+    fun refreshTab(tab: NotificationTab) {
+        requestTab(tab, isRefreshing = true)
     }
 
     fun readNotification(noticeId: Long) {
@@ -85,13 +125,8 @@ internal class NotificationViewModel @Inject constructor(
                 .onLogFailure { /* TODO: 에러 처리 */ }
         }
     }
+}
 
-    private fun setRefreshing(tab: NotificationTab, isRefreshing: Boolean) {
-        _uiState.update {
-            when (tab) {
-                NotificationTab.FEED -> it.copy(isFeedRefreshing = isRefreshing)
-                NotificationTab.NOTIFICATION -> it.copy(isNoticeRefreshing = isRefreshing)
-            }
-        }
-    }
+sealed interface NotificationSideEffect {
+    data class ShowErrorDialog(val tab: NotificationTab) : NotificationSideEffect
 }

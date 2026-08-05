@@ -50,24 +50,39 @@ internal class FeedViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<FeedSideEffect>()
     val sideEffect: SharedFlow<FeedSideEffect> = _sideEffect.asSharedFlow()
 
-    fun loadInitialFeedData() {
+    private var isProfileLoaded = false
+
+    init {
+        loadInitialFeedData()
+    }
+
+    private fun loadInitialFeedData() {
         getMyProfile()
-        getRecommendFeeds(isUserRefresh = false)
-        getFollowingFeeds(isUserRefresh = false)
     }
 
-    fun loadFeedData(tab: FeedTab) {
+    private fun loadFeedData(tab: FeedTab, isRefreshing: Boolean) {
         when (tab) {
-            FeedTab.RECOMMEND -> getRecommendFeeds(isUserRefresh = false)
-            FeedTab.FOLLOWING -> getFollowingFeeds(isUserRefresh = false)
+            FeedTab.RECOMMEND -> getRecommendFeeds(isRefreshing)
+            FeedTab.FOLLOWING -> getFollowingFeeds(isRefreshing)
         }
     }
 
-    fun onFeedRefresh(tab: FeedTab) {
-        when (tab) {
-            FeedTab.RECOMMEND -> getRecommendFeeds(isUserRefresh = true)
-            FeedTab.FOLLOWING -> getFollowingFeeds(isUserRefresh = true)
+    private fun isTabLoaded(tab: FeedTab): Boolean = when (tab) {
+        FeedTab.RECOMMEND -> _uiState.value.recommendFeedList is UiState.Success
+        FeedTab.FOLLOWING -> _uiState.value.followingFeedList is UiState.Success
+    }
+
+    fun loadTab(tab: FeedTab) {
+        if (isTabLoaded(tab)) return
+
+        loadFeedData(tab, isRefreshing = false)
+    }
+
+    fun refreshTab(tab: FeedTab) {
+        if (!isProfileLoaded) {
+            loadInitialFeedData()
         }
+        loadFeedData(tab, isRefreshing = true)
     }
 
     fun readAllFeed() {
@@ -80,6 +95,7 @@ internal class FeedViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.getUserLoginInfo()
                 .onSuccess { myInfo ->
+                    isProfileLoaded = true
                     _uiState.update {
                         it.copy(
                             myProfileUrl = myInfo.profileImg,
@@ -89,12 +105,13 @@ internal class FeedViewModel @Inject constructor(
         }
     }
 
-    private fun getRecommendFeeds(isUserRefresh: Boolean) {
+    private fun getRecommendFeeds(isRefreshing: Boolean) {
         viewModelScope.launch {
-            if (isUserRefresh) {
-                _uiState.update { it.copy(isRecommendRefreshing = true) }
-            } else {
+            val shouldShowLoadError = _uiState.value.recommendFeedList !is UiState.Success
+            if (shouldShowLoadError) {
                 _uiState.update { it.copy(recommendFeedList = UiState.Loading) }
+            } else if (isRefreshing) {
+                _uiState.update { it.copy(isRecommendRefreshing = true) }
             }
 
             feedRepository.getRecommendFeeds()
@@ -106,25 +123,26 @@ internal class FeedViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    if (isUserRefresh) {
-                        emitErrorDialogSideEffect { getRecommendFeeds(isUserRefresh) }
-                    } else {
+                    if (shouldShowLoadError) {
                         _uiState.update { it.copy(recommendFeedList = UiState.Failure(LoadErrorHandleAction.Retry)) }
+                    } else {
+                        emitErrorDialogSideEffect { refreshTab(FeedTab.RECOMMEND) }
                     }
                 }
 
-            if (isUserRefresh) {
+            if (isRefreshing && !shouldShowLoadError) {
                 _uiState.update { it.copy(isRecommendRefreshing = false) }
             }
         }
     }
 
-    private fun getFollowingFeeds(isUserRefresh: Boolean) {
+    private fun getFollowingFeeds(isRefreshing: Boolean) {
         viewModelScope.launch {
-            if (isUserRefresh) {
-                _uiState.update { it.copy(isFollowingRefreshing = true) }
-            } else {
+            val shouldShowLoadError = _uiState.value.followingFeedList !is UiState.Success
+            if (shouldShowLoadError) {
                 _uiState.update { it.copy(followingFeedList = UiState.Loading) }
+            } else if (isRefreshing) {
+                _uiState.update { it.copy(isFollowingRefreshing = true) }
             }
 
             feedRepository.getFollowingFeeds()
@@ -137,14 +155,14 @@ internal class FeedViewModel @Inject constructor(
                     }
                 }
                 .onLogFailure {
-                    if (isUserRefresh) {
-                        emitErrorDialogSideEffect { getFollowingFeeds(isUserRefresh) }
-                    } else {
+                    if (shouldShowLoadError) {
                         _uiState.update { it.copy(followingFeedList = UiState.Failure(LoadErrorHandleAction.Retry)) }
+                    } else {
+                        emitErrorDialogSideEffect { refreshTab(FeedTab.FOLLOWING) }
                     }
                 }
 
-            if (isUserRefresh) {
+            if (isRefreshing && !shouldShowLoadError) {
                 _uiState.update { it.copy(isFollowingRefreshing = false) }
             }
         }
