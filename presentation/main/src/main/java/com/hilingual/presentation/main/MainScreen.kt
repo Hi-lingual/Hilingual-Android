@@ -389,6 +389,7 @@ internal fun MainScreen(
                 HilingualErrorDialog(
                     state = appState.dialogStateHolder.dialogState,
                     onDismiss = appState.dialogStateHolder::dismissDialog,
+                    page = currentBackStackEntry?.let { appState.navController.currentPage(it) },
                 )
 
                 if (isNetworkErrorOverlayVisible) {
