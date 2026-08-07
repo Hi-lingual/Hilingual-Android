@@ -151,7 +151,19 @@ internal fun FeedProfileRoute(
                 initialTab = if (viewModel.showLikedDiaries) 1 else 0,
                 onBackClick = navigateUp,
                 onFollowClick = { viewModel.onFollowClick() },
-                onActionButtonClick = viewModel::onActionButtonClick,
+                onActionButtonClick = {
+                    // 액션 버튼은 차단 해제/팔로우/언팔로우를 겸하므로 팔로우 액션만 수집한다.
+                    val profile = state.data.feedProfileInfo
+                    if (profile.isBlock != true && profile.isFollowing == false) {
+                        tracker.logPageAction(
+                            trigger = TriggerType.CLICK,
+                            page = Page.USER_PROFILE,
+                            action = "follow",
+                            properties = mapOf("entry_id" to viewModel.targetUserId),
+                        )
+                    }
+                    viewModel.onActionButtonClick()
+                },
                 onProfileClick = navigateToFeedProfile,
                 onContentDetailClick = navigateToFeedDiary,
                 onReportUserClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
