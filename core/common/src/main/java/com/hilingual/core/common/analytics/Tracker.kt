@@ -16,10 +16,6 @@
 package com.hilingual.core.common.analytics
 
 interface Tracker {
-    fun logEvent(trigger: TriggerType, event: String, properties: Map<String, Any>)
-    fun logEvent(trigger: TriggerType, page: Page, event: String)
-    fun logEvent(trigger: TriggerType, page: Page, event: String, properties: Map<String, Any>)
-
     // 페이지 비종속 액션 (공통 컴포넌트)
     // 포맷: {트리거유형}_{이벤트명}
     // 예: click_dropdown, bookmark_action
