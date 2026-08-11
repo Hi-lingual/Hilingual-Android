@@ -367,7 +367,6 @@ internal fun MainScreen(
                     try {
                         appState.navController.navigateTo(deepLinkUri)
 
-                        // 푸시 알림으로 진입한 경우에만 도착 화면과 함께 수집한다.
                         if (notificationType != null) {
                             val landedEntry = appState.navController.currentBackStackEntryFlow.first()
                             tracker.logGlobalAction(

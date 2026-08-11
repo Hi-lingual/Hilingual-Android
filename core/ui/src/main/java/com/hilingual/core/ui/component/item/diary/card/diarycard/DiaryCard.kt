@@ -132,7 +132,6 @@ internal fun DiaryCard(
                 TtsPlayButton(
                     isPlaying = ttsController.isPlaying,
                     onClick = {
-                        // 재생 시작 시점만 수집한다.
                         if (!ttsController.isPlaying && page != null) {
                             tracker.logGlobalAction(
                                 trigger = TriggerType.CLICK,

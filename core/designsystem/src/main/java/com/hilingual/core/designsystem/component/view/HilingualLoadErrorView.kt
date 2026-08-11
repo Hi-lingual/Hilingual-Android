@@ -198,7 +198,6 @@ private data class LoadErrorContent(
 private val LoadErrorHandleAction.eventName: String
     get() = when (this) {
         LoadErrorHandleAction.Retry -> "server_error_retry"
-        // Back 타입의 버튼은 "이전 페이지로 돌아가기"이므로 탑바 뒤로가기와 같은 이벤트로 수집한다.
         LoadErrorHandleAction.Back -> "server_error_go_back"
         LoadErrorHandleAction.NotFound -> "empty_data_confirm"
     }

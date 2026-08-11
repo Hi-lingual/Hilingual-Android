@@ -101,7 +101,6 @@ internal fun FeedProfileRoute(
     val dialogTrigger = LocalDialogTrigger.current
     val tracker = LocalTracker.current
 
-    // userId 0은 나의 피드 프로필, 그 외는 타인의 프로필
     val page = if (viewModel.targetUserId == 0L) Page.MY_FEED else Page.USER_PROFILE
 
     LaunchedEffect(Unit) {
@@ -152,7 +151,6 @@ internal fun FeedProfileRoute(
                 onBackClick = navigateUp,
                 onFollowClick = { viewModel.onFollowClick() },
                 onActionButtonClick = {
-                    // 액션 버튼은 차단 해제/팔로우/언팔로우를 겸하므로 팔로우 액션만 수집한다.
                     val profile = state.data.feedProfileInfo
                     if (profile.isBlock != true && profile.isFollowing == false) {
                         tracker.logPageAction(
