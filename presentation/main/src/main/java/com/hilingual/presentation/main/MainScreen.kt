@@ -478,11 +478,17 @@ private fun NavController.currentPage(backStackEntry: NavBackStackEntry): Page? 
 
     return when {
         destination.hasRoute(Home::class) -> Page.HOME
+
         destination.hasRoute(Voca::class) -> Page.VOCABULARY
+
         destination.hasRoute(Feed::class) -> Page.FEED
+
         destination.hasRoute(MyPage::class) -> Page.MYPAGE
+
         destination.hasRoute(DiaryWrite::class) -> Page.WRITE_DIARY
+
         destination.hasRoute(DiaryFeedback::class) -> Page.FEEDBACK
+
         destination.hasRoute(FeedDiary::class) -> Page.POSTED_DIARY
 
         // 피드 프로필은 그래프 진입 인자의 userId로 나/타인을 구분한다.

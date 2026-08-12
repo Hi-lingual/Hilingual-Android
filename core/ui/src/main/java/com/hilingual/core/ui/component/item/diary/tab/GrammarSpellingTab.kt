@@ -39,9 +39,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.ads.banner.BannerAdType.INLINE_BANNER
-import com.hilingual.core.common.analytics.Page
 import com.hilingual.core.ads.banner.HilingualBannerAd
 import com.hilingual.core.ads.banner.rememberBannerAdView
+import com.hilingual.core.common.analytics.Page
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.dropdown.TopicDropdown
 import com.hilingual.core.ui.component.dropdown.Topics
