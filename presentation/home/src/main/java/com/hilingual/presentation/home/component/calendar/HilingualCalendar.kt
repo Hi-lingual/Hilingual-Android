@@ -16,15 +16,18 @@
 package com.hilingual.presentation.home.component.calendar
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
@@ -33,17 +36,20 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.bottomsheet.HilingualYearMonthPickerBottomSheet
 import com.hilingual.presentation.home.component.calendar.state.rememberCalendarState
+import com.hilingual.presentation.home.component.calendar.util.atStartOfMonth
 import com.hilingual.presentation.home.component.calendar.util.daysOfWeek
+import com.hilingual.presentation.home.component.calendar.util.daysUntil
 import java.time.LocalDate
 import java.time.YearMonth
+import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun HilingualCalendar(
     selectedDate: LocalDate?,
-    writtenDates: Set<LocalDate>,
+    writtenDates: ImmutableSet<LocalDate>,
     isInteractionEnabled: Boolean,
     onDisabledInteraction: () -> Unit,
     onDateClick: (date: LocalDate) -> Unit,
@@ -52,13 +58,17 @@ internal fun HilingualCalendar(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val daysOfWeek = remember { daysOfWeek().toImmutableList() }
-    val initialMonth = remember { YearMonth.now() }
+    val today = remember { LocalDate.now() }
+    val initialMonth = remember { YearMonth.from(today) }
     val state = rememberCalendarState(
         initialVisibleMonth = initialMonth,
         firstDayOfWeek = daysOfWeek.first(),
     )
     var isBottomSheetVisible by remember { mutableStateOf(false) }
-    var settledMonth by remember { mutableStateOf(initialMonth) }
+
+    var displayedMonth by remember { mutableStateOf(initialMonth) }
+    val isDragged by state.pagerState.interactionSource.collectIsDraggedAsState()
+    val currentOnMonthChanged by rememberUpdatedState(onMonthChanged)
 
     fun handleInteraction(action: () -> Unit) {
         if (isInteractionEnabled) {
@@ -68,14 +78,12 @@ internal fun HilingualCalendar(
         }
     }
 
-    LaunchedEffect(state.listState, isInteractionEnabled) {
-        snapshotFlow { state.listState.isScrollInProgress }
-            .filter { !it }
-            .collect {
-                val newMonth = state.firstVisibleMonth.yearMonth
-                if (isInteractionEnabled && newMonth != settledMonth) {
-                    settledMonth = newMonth
-                    onMonthChanged(newMonth)
+    LaunchedEffect(state, isInteractionEnabled) {
+        snapshotFlow { isDragged to state.targetMonth }
+            .collect { (dragged, month) ->
+                if (!dragged && isInteractionEnabled && month != displayedMonth) {
+                    displayedMonth = month
+                    currentOnMonthChanged(month)
                 }
             }
     }
@@ -88,17 +96,13 @@ internal fun HilingualCalendar(
 
     HilingualYearMonthPickerBottomSheet(
         isVisible = isBottomSheetVisible,
-        initialYearMonth = settledMonth,
+        initialYearMonth = displayedMonth,
         onDismiss = { isBottomSheetVisible = false },
         onDateSelected = { newYearMonth ->
             if (!isInteractionEnabled) {
                 isBottomSheetVisible = false
             }
             handleInteraction {
-                if (newYearMonth != settledMonth) {
-                    settledMonth = newYearMonth
-                    onMonthChanged(newYearMonth)
-                }
                 coroutineScope.launch {
                     state.scrollToMonth(newYearMonth)
                     isBottomSheetVisible = false
@@ -106,6 +110,11 @@ internal fun HilingualCalendar(
             }
         },
     )
+
+    val weekCount = remember(displayedMonth) {
+        val inDays = daysOfWeek.first().daysUntil(displayedMonth.atStartOfMonth().dayOfWeek)
+        (inDays + displayedMonth.lengthOfMonth() + 6) / 7
+    }
 
     Column(modifier = modifier) {
         CalendarHeader(
@@ -117,46 +126,48 @@ internal fun HilingualCalendar(
             onLeftArrowClick = {
                 handleInteraction {
                     coroutineScope.launch {
-                        state.animateScrollToMonth(settledMonth.minusMonths(1))
+                        state.animateScrollToMonth(state.targetMonth.minusMonths(1))
                     }
                 }
             },
             onRightArrowClick = {
                 handleInteraction {
                     coroutineScope.launch {
-                        state.animateScrollToMonth(settledMonth.plusMonths(1))
+                        state.animateScrollToMonth(state.targetMonth.plusMonths(1))
                     }
                 }
             },
-            yearMonth = { settledMonth },
+            yearMonth = { displayedMonth },
             modifier = Modifier.padding(bottom = 12.dp),
         )
 
-        key(settledMonth) {
-            HorizontalCalendar(
-                state = state,
-                userScrollEnabled = isInteractionEnabled,
-                onDisabledScroll = onDisabledInteraction,
-                modifier = Modifier.background(HilingualTheme.colors.white),
-                monthHeader = {
-                    DaysOfWeekTitle(daysOfWeek = daysOfWeek)
-                },
-                dayContent = { day ->
-                    DayItem(
-                        day = day,
-                        onClick = {
-                            if (day.date != selectedDate) {
-                                handleInteraction {
-                                    onDateClick(day.date)
-                                }
+        DaysOfWeekTitle(daysOfWeek = daysOfWeek)
+
+        Spacer(Modifier.height(8.dp))
+
+        HorizontalCalendar(
+            state = state,
+            userScrollEnabled = isInteractionEnabled,
+            onDisabledScroll = onDisabledInteraction,
+            modifier = Modifier
+                .height(calendarGridHeight(weekCount))
+                .background(HilingualTheme.colors.white),
+            dayContent = { day ->
+                DayItem(
+                    day = day,
+                    onClick = {
+                        if (day.date != selectedDate) {
+                            handleInteraction {
+                                onDateClick(day.date)
                             }
-                        },
-                        isSelected = selectedDate == day.date,
-                        isWritten = day.date in writtenDates,
-                    )
-                },
-            )
-        }
+                        }
+                    },
+                    isSelected = selectedDate == day.date,
+                    isWritten = day.date in writtenDates,
+                    isToday = day.date == today,
+                )
+            },
+        )
     }
 }
 
@@ -166,7 +177,7 @@ private fun HilingualCalendarPreview() {
     HilingualTheme {
         var selectedDate by remember { mutableStateOf<LocalDate?>(LocalDate.now()) }
         val writtenDates = remember {
-            setOf(LocalDate.now().minusDays(2), LocalDate.now().plusDays(3))
+            persistentSetOf(LocalDate.now().minusDays(2), LocalDate.now().plusDays(3))
         }
         HilingualCalendar(
             selectedDate = selectedDate,

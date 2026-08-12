@@ -25,14 +25,10 @@ data class DateUiModel(
     val date: LocalDate,
     val status: CalendarStatus = CalendarStatus.WRITTEN,
 ) {
-    val isFuture: Boolean
-        get() = date.isAfter(LocalDate.now())
+    fun isFuture(today: LocalDate): Boolean = date.isAfter(today)
 
-    val isWritable: Boolean
-        get() {
-            val today = LocalDate.now()
-            return !date.isAfter(today) && date.isAfter(today.minusDays(2))
-        }
+    fun isWritable(today: LocalDate): Boolean =
+        !date.isAfter(today) && date.isAfter(today.minusDays(2))
 }
 
 internal fun DateModel.toState() = DateUiModel(

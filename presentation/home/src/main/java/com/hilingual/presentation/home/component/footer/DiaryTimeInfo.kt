@@ -94,7 +94,6 @@ private class DiaryTimeInfoPreviewProvider :
         DiaryTimeInfoPreviewState(remainingTime = 60), // 1h 0m -> 60분
         DiaryTimeInfoPreviewState(remainingTime = 59), // 59m -> 59분
         DiaryTimeInfoPreviewState(remainingTime = 1), // 1m -> 1분
-        DiaryTimeInfoPreviewState(remainingTime = 0), // 0m -> 1분
 
     )
 }

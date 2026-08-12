@@ -24,7 +24,7 @@ import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-fun RecoveryButton(
+internal fun RecoveryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -33,8 +33,8 @@ fun RecoveryButton(
             .clip(RoundedCornerShape(8.dp))
             .fillMaxWidth()
             .background(HilingualTheme.colors.hilingualBlack)
-            .padding(vertical = 18.dp)
-            .noRippleClickable(onClick = onClick),
+            .noRippleClickable(onClick = onClick)
+            .padding(vertical = 18.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
