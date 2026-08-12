@@ -272,14 +272,7 @@ internal fun HomeRoute(
                 },
                 onDateSelected = viewModel::onDateSelected,
                 onMonthChanged = viewModel::onMonthChanged,
-                onRecoveryClick = { date ->
-                    tracker.logPageAction(
-                        trigger = TriggerType.CLICK,
-                        page = HOME,
-                        action = "streak_revive",
-                    )
-                    viewModel.onRecoveryClick(date)
-                },
+                onRecoveryClick = viewModel::onRecoveryClick,
                 onWriteDiaryClick = { date, mode ->
                     tracker.logPageAction(
                         trigger = TriggerType.CLICK,
@@ -478,90 +471,87 @@ private fun HomeDiaryFooter(
                 modifier = Modifier.heightIn(min = 20.dp),
             )
 
-            when (contentState.cardState) {
-                DiaryCardState.WRITTEN -> {
-                    contentState.diaryThumbnail?.let { diary ->
-                        HomeDropDownMenu(
-                            isExpanded = homeState.isMoreMenuExpanded,
-                            isPublished = diary.isPublished,
-                            onExpandedChange = { isExpanded ->
-                                if (isExpanded) {
-                                    homeState.showMoreMenu()
-                                    tracker.logPageAction(
-                                        trigger = TriggerType.CLICK,
-                                        page = HOME,
-                                        action = "more_menu",
-                                        properties = mapOf("menu_name" to "more_menu"),
-                                    )
+                when (contentState.cardState) {
+                    DiaryCardState.WRITTEN -> {
+                        contentState.diaryThumbnail?.let { diary ->
+                            HomeDropDownMenu(
+                                isExpanded = homeState.isMoreMenuExpanded,
+                                isPublished = diary.isPublished,
+                                onExpandedChange = { isExpanded ->
+                                    if (isExpanded) {
+                                        homeState.showMoreMenu()
+                                        tracker.logPageAction(
+                                            trigger = TriggerType.CLICK,
+                                            page = HOME,
+                                            action = "more_menu",
+                                            properties = mapOf("menu_name" to "more_menu"),
+                                        )
+                                    } else {
+                                        homeState.hideMoreMenu()
+                                    }
+                                },
+                                onDeleteClick = { /* onDeleteClick(diary.diaryId) 수정기능 도입까지 삭제 기능 지원중단 */ },
+                                onPublishClick = { onPublishClick(diary.diaryId) },
+                                onUnpublishClick = { onUnpublishClick(diary.diaryId) },
+                            )
+                        }
+                    }
+
+                    DiaryCardState.WRITABLE -> {
+                        DiaryTimeInfo(remainingTime = contentState.todayTopic?.remainingTime)
+                    }
+
+                    else -> {}
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            with(contentState) {
+                when (cardState) {
+                    DiaryCardState.WRITTEN -> {
+                        if (diaryThumbnail != null) {
+                            DiaryPreviewCard(
+                                diaryText = diaryThumbnail.originalText,
+                                diaryId = diaryThumbnail.diaryId,
+                                onClick = onDiaryPreviewClick,
+                                imageUrl = diaryThumbnail.imageUrl,
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        }
+                    }
+
+                    DiaryCardState.FUTURE -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
+
+                    DiaryCardState.WRITABLE -> {
+                        if (todayTopic != null) {
+                            TodayTopic(
+                                koTopic = todayTopic.topicKo,
+                                enTopic = todayTopic.topicEn,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .animateContentSize()
+                                    .noRippleClickable {
+                                        tracker.logPageAction(
+                                            trigger = TriggerType.CLICK,
+                                            page = HOME,
+                                            action = "switch_language",
+                                        )
+                                    },
+                            )
+                        }
+                        Spacer(Modifier.height(12.dp))
+                        WriteDiaryButton(
+                            onClick = {
+                                if (contentState.isDiaryTempExist) {
+                                    homeState.showDiaryContinueDialog()
                                 } else {
-                                    homeState.hideMoreMenu()
+                                    onWriteDiaryClick(date, DiaryWriteMode.DEFAULT)
                                 }
                             },
-                            onDeleteClick = { /* onDeleteClick(diary.diaryId) 수정기능 도입까지 삭제 기능 지원중단 */ },
-                            onPublishClick = { onPublishClick(diary.diaryId) },
-                            onUnpublishClick = { onUnpublishClick(diary.diaryId) },
-                        )
-                    }
-                }
-
-                DiaryCardState.WRITABLE -> {
-                    DiaryTimeInfo(remainingTime = contentState.todayTopic?.remainingTime)
-                }
-
-                else -> {}
-            }
-        }
-
-        Spacer(Modifier.height(16.dp))
-
-        with(contentState) {
-            when (cardState) {
-                DiaryCardState.WRITTEN -> {
-                    if (diaryThumbnail != null) {
-                        DiaryPreviewCard(
-                            diaryText = diaryThumbnail.originalText,
-                            diaryId = diaryThumbnail.diaryId,
-                            onClick = onDiaryPreviewClick,
-                            imageUrl = diaryThumbnail.imageUrl,
                             modifier = Modifier.fillMaxWidth(),
                         )
                     }
-                }
-
-                DiaryCardState.FUTURE -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
-
-                DiaryCardState.WRITABLE -> {
-                    if (todayTopic != null) {
-                        TodayTopic(
-                            koTopic = todayTopic.topicKo,
-                            enTopic = todayTopic.topicEn,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .animateContentSize()
-                                .noRippleClickable {
-                                    tracker.logPageAction(
-                                        trigger = TriggerType.CLICK,
-                                        page = HOME,
-                                        action = "switch_language",
-                                        properties = mapOf(
-                                            "recommend_topic" to "${todayTopic.topicKo}/${todayTopic.topicEn}",
-                                        ),
-                                    )
-                                },
-                        )
-                    }
-                    Spacer(Modifier.height(12.dp))
-                    WriteDiaryButton(
-                        onClick = {
-                            if (contentState.isDiaryTempExist) {
-                                homeState.showDiaryContinueDialog()
-                            } else {
-                                onWriteDiaryClick(date, DiaryWriteMode.DEFAULT)
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
 
                 DiaryCardState.UNLOCKED -> {
                     if (todayTopic != null) {
@@ -581,14 +571,21 @@ private fun HomeDiaryFooter(
                     )
                 }
 
-                DiaryCardState.RECOVERABLE -> {
-                    RecoveryGuideCard(modifier = Modifier.fillMaxWidth())
-                    Spacer(Modifier.height(12.dp))
-                    RecoveryButton(
-                        onClick = { onRecoveryClick(date) },
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
+                    DiaryCardState.RECOVERABLE -> {
+                        RecoveryGuideCard(modifier = Modifier.fillMaxWidth())
+                        Spacer(Modifier.height(12.dp))
+                        RecoveryButton(
+                            onClick = {
+                                tracker.logPageAction(
+                                    trigger = TriggerType.CLICK,
+                                    page = HOME,
+                                    action = "streak_revive",
+                                )
+                                onRecoveryClick(date)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
 
                 DiaryCardState.RECOVERY_EXHAUSTED ->
                     DiaryEmptyCard(type = DiaryEmptyCardType.RECOVERY_EXHAUSTED)
