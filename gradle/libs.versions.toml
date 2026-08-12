@@ -18,7 +18,7 @@ versionName = "2.5.1"
 # Kotlin
 kotlin = "2.4.10"
 kotlinxImmutable = "0.5.1"
-ksp = "2.3.10"
+ksp = "2.3.11"
 
 # AndroidX
 coreKtx = "1.19.0"
