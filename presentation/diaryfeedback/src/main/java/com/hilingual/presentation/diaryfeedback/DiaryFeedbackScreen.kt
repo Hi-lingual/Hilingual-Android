@@ -43,9 +43,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.ads.BuildConfig
+import com.hilingual.core.ads.interstitial.InterstitialAdResult
 import com.hilingual.core.ads.interstitial.showInterstitialAd
 import com.hilingual.core.common.analytics.FakeTracker
 import com.hilingual.core.common.analytics.Page.FEEDBACK
+import com.hilingual.core.common.analytics.Page.FEEDBACK_LOADING
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.constant.UrlConstant
@@ -121,7 +123,20 @@ internal fun DiaryFeedbackRoute(
                     showInterstitialAd(
                         activity = activity,
                         adUnitId = BuildConfig.ADMOB_INTERSTITIAL_UNIT_ID,
-                        onAdDismissed = viewModel::fetchAdWatched,
+                        onAdFinished = { result ->
+                            tracker.logGlobalAction(
+                                trigger = TriggerType.VIEW,
+                                action = "ad_action",
+                                properties = mapOf(
+                                    "ad_result" to when (result) {
+                                        InterstitialAdResult.DISMISSED -> "completed"
+                                        InterstitialAdResult.FAILED -> "failed"
+                                    },
+                                ),
+                                currentPage = FEEDBACK_LOADING,
+                            )
+                            viewModel.fetchAdWatched()
+                        },
                     )
                 } else {
                     viewModel.fetchAdWatched()

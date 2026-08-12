@@ -23,16 +23,24 @@ import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAd
 import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAdEventCallback
 import timber.log.Timber
 
+enum class InterstitialAdResult {
+    /** 광고가 노출되고 사용자가 닫음 */
+    DISMISSED,
+
+    /** 로드 실패, 표시 실패, 또는 Activity 종료로 노출되지 못함 */
+    FAILED,
+}
+
 suspend fun showInterstitialAd(
     activity: Activity,
     adUnitId: String,
-    onAdDismissed: () -> Unit,
+    onAdFinished: (InterstitialAdResult) -> Unit,
 ) {
     val adRequest = AdRequest.Builder(adUnitId).build()
     Timber.tag("GMA").d("GMA Next Gen 전면 광고 로드 시작...")
 
-    val runOnMain: (() -> Unit) -> Unit = { callback ->
-        activity.runOnUiThread { callback() }
+    val finishOnMain: (InterstitialAdResult) -> Unit = { result ->
+        activity.runOnUiThread { onAdFinished(result) }
     }
 
     when (val result = InterstitialAd.load(adRequest)) {
@@ -42,24 +50,24 @@ suspend fun showInterstitialAd(
                 ad.adEventCallback = object : InterstitialAdEventCallback {
                     override fun onAdDismissedFullScreenContent() {
                         Timber.tag("GMA").d("전면 광고 닫힘 → 피드백 화면으로 이동")
-                        runOnMain(onAdDismissed)
+                        finishOnMain(InterstitialAdResult.DISMISSED)
                     }
 
                     override fun onAdFailedToShowFullScreenContent(fullScreenContentError: FullScreenContentError) {
                         Timber.tag("GMA").e("전면 광고 표시 실패: %s", fullScreenContentError)
-                        runOnMain(onAdDismissed)
+                        finishOnMain(InterstitialAdResult.FAILED)
                     }
                 }
                 ad.show(activity)
             } else {
                 Timber.tag("GMA").w("Activity가 이미 종료 상태라 전면 광고를 표시하지 않습니다.")
-                runOnMain(onAdDismissed)
+                finishOnMain(InterstitialAdResult.FAILED)
             }
         }
 
         is AdLoadResult.Failure -> {
             Timber.tag("GMA").e("전면 광고 로드 실패: %s", result.error)
-            runOnMain(onAdDismissed)
+            finishOnMain(InterstitialAdResult.FAILED)
         }
     }
 }
