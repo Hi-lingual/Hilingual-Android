@@ -46,8 +46,9 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun PhotoSelectButton(
-    selectedImgUri: Uri? = null,
-    onImgSelected: (Uri?) -> Unit,
+    selectedImageUri: Uri?,
+    onImageSelected: (Uri?) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var isGalleryLaunching by remember { mutableStateOf(false) }
 
@@ -57,16 +58,16 @@ internal fun PhotoSelectButton(
         isGalleryLaunching = false
 
         if (uri != null) {
-            onImgSelected(uri)
+            onImageSelected(uri)
         }
     }
 
     Box(
-        modifier = Modifier.size(width = 88.dp, height = 89.dp),
+        modifier = modifier.size(width = 88.dp, height = 89.dp),
     ) {
-        if (selectedImgUri != null) {
+        if (selectedImageUri != null) {
             NetworkImage(
-                imageUrl = selectedImgUri,
+                imageUrl = selectedImageUri,
                 shape = RectangleShape,
                 modifier = Modifier
                     .size(80.dp)
@@ -78,7 +79,7 @@ internal fun PhotoSelectButton(
                     .size(22.dp)
                     .align(Alignment.TopEnd)
                     .noRippleClickable {
-                        onImgSelected(null)
+                        onImageSelected(null)
                     },
                 imageVector = ImageVector.vectorResource(R.drawable.ic_delete_circle_22),
                 contentDescription = null,
@@ -117,14 +118,12 @@ internal fun PhotoSelectButton(
 @Preview
 @Composable
 private fun PhotoSelectButtonPreview() {
-    val imgUriState = remember { mutableStateOf<Uri?>(null) }
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
 
     HilingualTheme {
         PhotoSelectButton(
-            selectedImgUri = imgUriState.value,
-            onImgSelected = { newUri ->
-                imgUriState.value = newUri
-            },
+            selectedImageUri = selectedImageUri,
+            onImageSelected = { selectedImageUri = it },
         )
     }
 }

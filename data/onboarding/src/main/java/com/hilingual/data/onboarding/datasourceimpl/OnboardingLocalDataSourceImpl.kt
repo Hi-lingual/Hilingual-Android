@@ -31,7 +31,6 @@ class OnboardingLocalDataSourceImpl @Inject constructor(
     private object PreferencesKeys {
         val IS_HOME_ONBOARDING_COMPLETED = booleanPreferencesKey("is_home_onboarding_completed")
         val IS_SPLASH_ONBOARDING_COMPLETED = booleanPreferencesKey("is_splash_onboarding_completed")
-        val IS_RECOVERY_NOTICE_SHOWN = booleanPreferencesKey("is_recovery_notice_shown")
         val RECOVERY_REMINDER_LAST_SHOWN_MONTH = stringPreferencesKey("recovery_reminder_last_shown_month")
     }
 
@@ -50,15 +49,6 @@ class OnboardingLocalDataSourceImpl @Inject constructor(
     override suspend fun updateIsSplashOnboardingCompleted(isCompleted: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.IS_SPLASH_ONBOARDING_COMPLETED] = isCompleted
-        }
-    }
-
-    override suspend fun getIsRecoveryNoticeShown(): Boolean =
-        dataStore.data.first()[PreferencesKeys.IS_RECOVERY_NOTICE_SHOWN] ?: false
-
-    override suspend fun updateIsRecoveryNoticeShown(isShown: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.IS_RECOVERY_NOTICE_SHOWN] = isShown
         }
     }
 

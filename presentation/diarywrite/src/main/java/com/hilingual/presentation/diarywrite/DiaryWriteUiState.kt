@@ -19,15 +19,21 @@ import android.net.Uri
 import androidx.compose.runtime.Immutable
 import java.time.LocalDate
 
+internal const val MAX_DIARY_TEXT_LENGTH = 1000
+internal const val MIN_FEEDBACK_REQUEST_LENGTH = 10
+
 @Immutable
 internal data class DiaryWriteUiState(
     val isDiaryTempExist: Boolean = false,
+    val isRecovery: Boolean = false,
     val selectedDate: LocalDate = LocalDate.now(),
     val topicKo: String = "",
     val topicEn: String = "",
     val diaryText: String = "",
-    val diaryImageUri: Uri? = null,
     val initialDiaryText: String = "",
+    val diaryImageUri: Uri? = null,
     val initialDiaryImageUri: Uri? = null,
-    val isRecovery: Boolean = false,
-)
+) {
+    val hasUnsavedChanges: Boolean
+        get() = diaryText != initialDiaryText || diaryImageUri != initialDiaryImageUri
+}

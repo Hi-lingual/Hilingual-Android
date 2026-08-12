@@ -43,7 +43,7 @@ internal object RecoveryReminderPolicy {
         val recordedDates = dates.map { it.date }.toSet()
         val lastBrokenDate = today.minusDays(1)
         var date = today.withDayOfMonth(1)
-        while (date.isBefore(lastBrokenDate)) {
+        while (!date.isAfter(lastBrokenDate)) {
             if (date !in recordedDates) return true
             date = date.plusDays(1)
         }

@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 
 enum class DialogType {
     ERROR,
@@ -47,6 +48,12 @@ class DialogTrigger(
 @Composable
 fun rememberDialogTrigger(
     show: (DialogType, () -> Unit) -> Unit,
-): DialogTrigger = remember(show) {
-    DialogTrigger(show)
+): DialogTrigger {
+    val currentShow = rememberUpdatedState(show)
+
+    return remember {
+        DialogTrigger { type, onClick ->
+            currentShow.value(type, onClick)
+        }
+    }
 }

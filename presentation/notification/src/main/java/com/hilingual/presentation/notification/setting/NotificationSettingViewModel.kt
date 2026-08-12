@@ -60,7 +60,7 @@ internal class NotificationSettingViewModel @Inject constructor(
         observeFeedToggle()
     }
 
-    fun getNotificationSettings() {
+    private fun getNotificationSettings() {
         viewModelScope.launch {
             _uiState.update { UiState.Loading }
             userRepository.getNotificationSettings()
@@ -77,6 +77,8 @@ internal class NotificationSettingViewModel @Inject constructor(
                 }
         }
     }
+
+    fun retryLoad() = getNotificationSettings()
 
     fun checkNotificationPermission(isGranted: Boolean) {
         _isNotificationGranted.update { isGranted }

@@ -56,30 +56,25 @@ internal class DiaryWriteViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(
         DiaryWriteUiState(
-            selectedDate = route.selectedDate.toLocalDateOrNull()!!,
+            selectedDate = requireNotNull(route.selectedDate.toLocalDateOrNull()) {
+                "Invalid selectedDate: ${route.selectedDate}"
+            },
             isRecovery = route.mode == DiaryWriteMode.RECOVERY,
         ),
     )
     val uiState: StateFlow<DiaryWriteUiState> = _uiState.asStateFlow()
 
+    private val _feedbackUiState = MutableStateFlow<UiState<Long>>(UiState.Empty)
+    val feedbackUiState: StateFlow<UiState<Long>> = _feedbackUiState.asStateFlow()
+
     private val _sideEffect = MutableSharedFlow<DiaryWriteSideEffect>()
     val sideEffect: SharedFlow<DiaryWriteSideEffect> = _sideEffect.asSharedFlow()
 
-    private var _feedbackUiState = MutableStateFlow<UiState<Long>>(UiState.Empty)
-    val feedbackUiState: StateFlow<UiState<Long>> = _feedbackUiState.asStateFlow()
-
     init {
-        getTopic(route.selectedDate)
+        fetchTopic()
 
-        when (route.mode) {
-            DiaryWriteMode.DEFAULT -> loadDiaryTemp()
-
-            DiaryWriteMode.NEW -> {
-                // Do nothing, start new diary to.Dalji
-            }
-
-            DiaryWriteMode.RECOVERY -> {
-            }
+        if (route.mode == DiaryWriteMode.DEFAULT) {
+            loadDiaryTemp()
         }
     }
 
@@ -91,13 +86,84 @@ internal class DiaryWriteViewModel @Inject constructor(
         _uiState.update { it.copy(diaryImageUri = newImageUri) }
     }
 
-    fun resetFeedbackStateToWriting() {
+    fun saveDiaryTemp() {
+        viewModelScope.launch {
+            val state = uiState.value
+
+            diaryLocalRepository.saveDiary(
+                selectedDate = state.selectedDate,
+                text = state.diaryText,
+                imageUri = state.diaryImageUri,
+            )
+                .onSuccess {
+                    _sideEffect.emit(DiaryWriteSideEffect.ShowToast("임시저장이 완료되었어요."))
+                    _sideEffect.emit(DiaryWriteSideEffect.NavigateToHome)
+                }
+                .onLogFailure { }
+        }
+    }
+
+    fun requestDiaryFeedback(): Boolean {
+        if (_feedbackUiState.value is UiState.Loading) return false
+        _feedbackUiState.value = UiState.Loading
+
+        viewModelScope.launch {
+            val state = uiState.value
+
+            val result = if (route.mode == DiaryWriteMode.RECOVERY) {
+                diaryRepository.postDiaryRecoveryCreate(
+                    originalText = state.diaryText,
+                    date = state.selectedDate,
+                    imageFileUri = state.diaryImageUri,
+                )
+            } else {
+                diaryRepository.postDiaryFeedbackCreate(
+                    originalText = state.diaryText,
+                    date = state.selectedDate,
+                    imageFileUri = state.diaryImageUri,
+                )
+            }
+
+            result
+                .onSuccess { response ->
+                    diaryLocalRepository.clearDiaryTemp(state.selectedDate)
+                    _feedbackUiState.update { UiState.Success(response.diaryId) }
+                }
+                .onLogFailure {
+                    _feedbackUiState.update { UiState.Failure(LoadErrorHandleAction.Retry) }
+                }
+        }
+
+        return true
+    }
+
+    fun returnToWriting() {
         _feedbackUiState.update { UiState.Empty }
     }
 
-    private fun getTopic(date: String) {
+    fun extractTextFromImage(imageUri: Uri, tempImageFile: File? = null) {
         viewModelScope.launch {
-            calendarRepository.getTopic(date.toLocalDateOrNull() ?: return@launch)
+            try {
+                textRecognitionRepository.extractTextFromImage(imageUri)
+                    .onSuccess { extractedText ->
+                        _uiState.update {
+                            it.copy(diaryText = extractedText.take(MAX_DIARY_TEXT_LENGTH))
+                        }
+                    }
+                    .onLogFailure { }
+            } finally {
+                withContext(Dispatchers.IO) {
+                    if (tempImageFile?.exists() == true) {
+                        tempImageFile.delete()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun fetchTopic() {
+        viewModelScope.launch {
+            calendarRepository.getTopic(uiState.value.selectedDate)
                 .onSuccess { topic ->
                     _uiState.update { it.copy(topicKo = topic.topicKor, topicEn = topic.topicEn) }
                 }
@@ -107,126 +173,44 @@ internal class DiaryWriteViewModel @Inject constructor(
         }
     }
 
-    fun handleDiaryTempSavingFlow() {
-        viewModelScope.launch {
-            diaryLocalRepository.saveDiary(
-                selectedDate = uiState.value.selectedDate,
-                text = uiState.value.diaryText,
-                imageUri = uiState.value.diaryImageUri,
-            )
-                .onSuccess {
-                    _uiState.update { it.copy(isDiaryTempExist = true) }
-                    handleDiaryTempSaved()
-                }
-                .onLogFailure { }
-        }
-    }
-
-    private suspend fun handleDiaryTempSaved() {
-        showToast("임시저장이 완료되었어요.")
-        _sideEffect.emit(DiaryWriteSideEffect.NavigateToHome)
-    }
-
-    fun loadDiaryTemp() {
+    private fun loadDiaryTemp() {
         viewModelScope.launch {
             val selectedDate = uiState.value.selectedDate
 
-            diaryLocalRepository.isDiaryTempExist(selectedDate)
-                .onSuccess { isDiaryTempExist ->
-                    if (!isDiaryTempExist) {
-                        _uiState.update { it.copy(isDiaryTempExist = false) }
-                        return@launch
+            val isDiaryTempExist = diaryLocalRepository.isDiaryTempExist(selectedDate)
+                .onLogFailure { }
+                .getOrDefault(false)
+
+            _uiState.update { it.copy(isDiaryTempExist = isDiaryTempExist) }
+            if (!isDiaryTempExist) return@launch
+
+            diaryLocalRepository.getDiaryText(selectedDate)
+                .onSuccess { text ->
+                    _uiState.update {
+                        it.copy(
+                            diaryText = text.orEmpty(),
+                            initialDiaryText = text.orEmpty(),
+                        )
                     }
+                }
+                .onLogFailure { }
 
-                    _uiState.update { it.copy(isDiaryTempExist = true) }
-
-                    diaryLocalRepository.getDiaryText(selectedDate)
-                        .onSuccess { text ->
-                            _uiState.update {
-                                it.copy(
-                                    diaryText = text ?: "",
-                                    initialDiaryText = text ?: "",
-                                )
-                            }
-                        }
-                        .onLogFailure { }
-
-                    diaryLocalRepository.getDiaryImageUri(selectedDate)
-                        .onSuccess { imageUri ->
-                            val uri = imageUri?.let(Uri::parse)
-                            _uiState.update {
-                                it.copy(
-                                    diaryImageUri = uri,
-                                    initialDiaryImageUri = uri,
-                                )
-                            }
-                        }
+            diaryLocalRepository.getDiaryImageUri(selectedDate)
+                .onSuccess { imageUri ->
+                    val uri = imageUri?.let(Uri::parse)
+                    _uiState.update {
+                        it.copy(
+                            diaryImageUri = uri,
+                            initialDiaryImageUri = uri,
+                        )
+                    }
                 }
                 .onLogFailure { }
         }
     }
-
-    fun postDiaryFeedbackCreate() {
-        if (_feedbackUiState.value is UiState.Loading) return
-
-        _feedbackUiState.value = UiState.Loading
-
-        viewModelScope.launch {
-            val result = if (route.mode == DiaryWriteMode.RECOVERY) {
-                diaryRepository.postDiaryRecoveryCreate(
-                    originalText = uiState.value.diaryText,
-                    date = uiState.value.selectedDate,
-                    imageFileUri = uiState.value.diaryImageUri,
-                )
-            } else {
-                diaryRepository.postDiaryFeedbackCreate(
-                    originalText = uiState.value.diaryText,
-                    date = uiState.value.selectedDate,
-                    imageFileUri = uiState.value.diaryImageUri,
-                )
-            }
-
-            result.onSuccess { response ->
-                diaryLocalRepository.clearDiaryTemp(uiState.value.selectedDate)
-                _feedbackUiState.update { UiState.Success(response.diaryId) }
-            }.onLogFailure { throwable ->
-                _feedbackUiState.update { UiState.Failure(LoadErrorHandleAction.Retry) }
-            }
-        }
-    }
-
-    fun extractTextFromImage(uri: Uri, tempFileToDelete: File? = null) {
-        viewModelScope.launch {
-            try {
-                textRecognitionRepository.extractTextFromImage(uri)
-                    .onSuccess { extractedText ->
-                        _uiState.update {
-                            it.copy(
-                                diaryText = extractedText.take(MAX_DIARY_TEXT_LENGTH),
-                            )
-                        }
-                    }
-                    .onLogFailure { }
-            } finally {
-                withContext(Dispatchers.IO) {
-                    if (tempFileToDelete?.exists() == true) {
-                        tempFileToDelete.delete()
-                    }
-                }
-            }
-        }
-    }
-
-    companion object {
-        private const val MAX_DIARY_TEXT_LENGTH = 1000
-    }
-
-    private suspend fun showToast(message: String) {
-        _sideEffect.emit(DiaryWriteSideEffect.ShowToast(message = message))
-    }
 }
 
-sealed interface DiaryWriteSideEffect {
+internal sealed interface DiaryWriteSideEffect {
     data object NavigateToHome : DiaryWriteSideEffect
     data object ShowErrorDialog : DiaryWriteSideEffect
     data class ShowToast(val message: String) : DiaryWriteSideEffect

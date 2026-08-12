@@ -15,6 +15,8 @@
  */
 package com.hilingual.presentation.home.component.calendar
 
+import android.os.SystemClock
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,28 +27,58 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.common.model.MessageDuration
 import com.hilingual.presentation.home.component.calendar.model.CalendarDay
 import com.hilingual.presentation.home.component.calendar.model.CalendarMonth
 import com.hilingual.presentation.home.component.calendar.state.CalendarState
 import com.hilingual.presentation.home.component.calendar.util.generateMonthData
+
+private val DISABLED_SCROLL_MESSAGE_COOLDOWN_MILLIS = MessageDuration.DEFAULT.millis
 
 @Composable
 internal fun HorizontalCalendar(
     state: CalendarState,
     dayContent: @Composable (CalendarDay) -> Unit,
     modifier: Modifier = Modifier,
+    userScrollEnabled: Boolean = true,
+    onDisabledScroll: () -> Unit = {},
 ) {
+    val currentOnDisabledScroll = rememberUpdatedState(onDisabledScroll)
+    var lastDisabledScrollMessageAt by remember { mutableLongStateOf(0L) }
+    val scrollModifier = if (userScrollEnabled) {
+        modifier
+    } else {
+        modifier.pointerInput(Unit) {
+            detectHorizontalDragGestures(
+                onDragStart = {
+                    val now = SystemClock.elapsedRealtime()
+                    if (now - lastDisabledScrollMessageAt >= DISABLED_SCROLL_MESSAGE_COOLDOWN_MILLIS) {
+                        lastDisabledScrollMessageAt = now
+                        currentOnDisabledScroll.value()
+                    }
+                },
+                onHorizontalDrag = { change, _ -> change.consume() },
+            )
+        }
+    }
+
     HorizontalPager(
         state = state.pagerState,
         key = { it },
         beyondViewportPageCount = 1,
         verticalAlignment = Alignment.Top,
-        modifier = modifier,
+        userScrollEnabled = userScrollEnabled,
+        modifier = scrollModifier,
     ) { page ->
         val month = remember(page) {
             generateMonthData(

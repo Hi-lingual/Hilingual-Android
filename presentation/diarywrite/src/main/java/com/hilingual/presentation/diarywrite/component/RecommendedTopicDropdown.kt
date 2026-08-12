@@ -34,7 +34,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
@@ -47,13 +46,14 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun RecommendedTopicDropdown(
-    enTopic: String,
-    koTopic: String,
-    focusManager: FocusManager,
+    topicKo: String,
+    topicEn: String,
     modifier: Modifier = Modifier,
     isRecovery: Boolean = false,
 ) {
-    var isKo by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+
+    var isKoreanTopicShown by remember { mutableStateOf(false) }
     var isExpanded by remember { mutableStateOf(false) }
 
     Column(
@@ -105,7 +105,7 @@ internal fun RecommendedTopicDropdown(
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = if (isKo) koTopic else enTopic,
+                    text = if (isKoreanTopicShown) topicKo else topicEn,
                     style = HilingualTheme.typography.bodyM15,
                     color = HilingualTheme.colors.gray700,
                     maxLines = 2,
@@ -113,7 +113,7 @@ internal fun RecommendedTopicDropdown(
                 Icon(
                     modifier = Modifier
                         .size(24.dp)
-                        .noRippleClickable { isKo = !isKo },
+                        .noRippleClickable { isKoreanTopicShown = !isKoreanTopicShown },
                     imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_change_20),
                     contentDescription = null,
                     tint = HilingualTheme.colors.gray300,
@@ -128,9 +128,8 @@ internal fun RecommendedTopicDropdown(
 private fun RecommendedTopicDropdownPreview() {
     HilingualTheme {
         RecommendedTopicDropdown(
-            enTopic = "What surprised you today?",
-            koTopic = "오늘 무엇이 당신을 놀라게 했나요?",
-            focusManager = LocalFocusManager.current,
+            topicKo = "오늘 무엇이 당신을 놀라게 했나요?",
+            topicEn = "What surprised you today?",
         )
     }
 }

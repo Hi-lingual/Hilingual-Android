@@ -79,6 +79,8 @@ class HomeViewModel @Inject constructor(
 
     private val calendarCache = mutableMapOf<YearMonth, ImmutableList<DateUiModel>>()
 
+    private val recoveryReminderResult = MutableStateFlow<Boolean?>(null)
+
     init {
         checkOnboardingCompleted()
     }
@@ -86,6 +88,7 @@ class HomeViewModel @Inject constructor(
     fun loadInitialData() {
         viewModelScope.launch {
             _uiState.update { UiState.Loading }
+            recoveryReminderResult.update { null }
             val today = LocalDate.now()
 
             val userInfoDeferred = async {
@@ -104,6 +107,7 @@ class HomeViewModel @Inject constructor(
                 userInfoResult.onLogFailure { }
                 calendarResult.onLogFailure { }
                 _uiState.update { UiState.Failure(LoadErrorHandleAction.Retry) }
+                recoveryReminderResult.update { false }
                 return@launch
             }
 
@@ -132,6 +136,8 @@ class HomeViewModel @Inject constructor(
             checkRecoveryModals(userInfo.recoveryTickets, initialDates)
         }
     }
+
+    fun retryLoad() = loadInitialData()
 
     fun handleNotificationPermission(
         isGranted: Boolean,
@@ -162,17 +168,21 @@ class HomeViewModel @Inject constructor(
         requiresPermission: Boolean,
     ) {
         val isPermissionGranted = !requiresPermission || isGranted
-        if (!isPermissionGranted) {
-            viewModelScope.launch {
-                val isAlreadyShown = notificationRepository
-                    .getIsNotificationDialogShown()
-                    .getOrDefault(false)
-                if (!isAlreadyShown) {
-                    emitNotificationDialogSideEffect()
-                }
+        if (isPermissionGranted) return
+
+        viewModelScope.launch {
+            if (willShowReminder()) return@launch
+
+            val isAlreadyShown = notificationRepository
+                .getIsNotificationDialogShown()
+                .getOrDefault(false)
+            if (!isAlreadyShown) {
+                emitNotificationDialogSideEffect()
             }
         }
     }
+
+    private suspend fun willShowReminder(): Boolean = recoveryReminderResult.first { it != null } == true
 
     fun onNotificationDialogDismissed() {
         viewModelScope.launch {
@@ -279,10 +289,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onRecoveryNoticeConfirmed() {
-        viewModelScope.launch {
-            onboardingRepository.updateIsRecoveryNoticeShown(true)
-        }
+    fun onRecoveryReminderClosed() {
+        recoveryReminderResult.update { false }
     }
 
     fun onRecoveryReminderConfirmed() {
@@ -290,6 +298,7 @@ class HomeViewModel @Inject constructor(
         if (currentState !is UiState.Success) return
 
         markReminderShownThisMonth()
+        onRecoveryReminderClosed()
 
         val recentBrokenDate = RecoveryReminderPolicy.findRecentBrokenDate(
             dates = currentState.data.calendar.dates,
@@ -302,6 +311,7 @@ class HomeViewModel @Inject constructor(
 
     fun onRecoveryReminderLater() {
         markReminderShownThisMonth()
+        onRecoveryReminderClosed()
     }
 
     private fun markReminderShownThisMonth() {
@@ -315,25 +325,19 @@ class HomeViewModel @Inject constructor(
         dates: List<DateUiModel>,
     ) {
         onboardingCheckCompleted.first()
-        if (isOnboardingVisible.value) return
-
-        val noticeShown = !ENABLE_RECOVERY_NOTICE ||
-            onboardingRepository.getIsRecoveryNoticeShown().getOrDefault(false)
-        if (!noticeShown) {
-            _sideEffect.emit(HomeSideEffect.ShowRecoveryNotice)
-            return
-        }
+        isOnboardingVisible.first { !it }
 
         val lastShownMonth = onboardingRepository.getRecoveryReminderLastShownMonth().getOrDefault("")
-        val shouldShowReminder = RecoveryReminderPolicy.shouldShowReminder(
+        val shouldShow = RecoveryReminderPolicy.shouldShowReminder(
             recoveryTickets = recoveryTickets,
             dates = dates,
             today = LocalDate.now(),
             lastShownMonth = lastShownMonth,
         )
-        if (shouldShowReminder) {
+        if (shouldShow) {
             _sideEffect.emit(HomeSideEffect.ShowRecoveryReminder)
         }
+        recoveryReminderResult.update { shouldShow }
     }
 
     fun publishDiary(diaryId: Long) {
@@ -511,8 +515,6 @@ sealed interface HomeSideEffect {
     data class ShowRewardedAd(val date: LocalDate) : HomeSideEffect
 
     data class NavigateToRecoveryWrite(val date: LocalDate) : HomeSideEffect
-
-    data object ShowRecoveryNotice : HomeSideEffect
 
     data object ShowRecoveryReminder : HomeSideEffect
 }
