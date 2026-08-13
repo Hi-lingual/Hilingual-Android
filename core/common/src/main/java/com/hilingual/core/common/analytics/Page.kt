@@ -43,5 +43,5 @@ enum class Page(val pageName: String) {
     MYPAGE("mypage"),
 
     // 온보딩
-    ONBOARDING("onborading"),
+    ONBOARDING("onboarding"),
 }
