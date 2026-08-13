@@ -48,8 +48,8 @@ internal fun WriteDiaryButton(
             .clip(RoundedCornerShape(8.dp))
             .fillMaxWidth()
             .background(HilingualTheme.colors.hilingualBlack)
-            .padding(vertical = 18.dp)
-            .noRippleClickable(onClick = onClick),
+            .noRippleClickable(onClick = onClick)
+            .padding(vertical = 18.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {

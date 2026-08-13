@@ -40,6 +40,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -80,7 +81,6 @@ import com.hilingual.presentation.home.component.HomeHeader
 import com.hilingual.presentation.home.component.calendar.HilingualCalendar
 import com.hilingual.presentation.home.component.dialog.DiaryContinueDialog
 import com.hilingual.presentation.home.component.dialog.NotificationDialog
-import com.hilingual.presentation.home.component.dialog.RecoveryNoticeModal
 import com.hilingual.presentation.home.component.dialog.RecoveryReminderModal
 import com.hilingual.presentation.home.component.footer.DiaryDateInfo
 import com.hilingual.presentation.home.component.footer.DiaryEmptyCard
@@ -97,6 +97,7 @@ import com.hilingual.presentation.home.component.onboarding.HomeOnboardingConten
 import com.hilingual.presentation.home.type.DiaryCardState
 import java.time.LocalDate
 import java.time.YearMonth
+import kotlinx.collections.immutable.toImmutableSet
 
 @Composable
 internal fun HomeRoute(
@@ -195,8 +196,6 @@ internal fun HomeRoute(
             is HomeSideEffect.NavigateToRecoveryWrite ->
                 navigateToDiaryWrite(sideEffect.date, DiaryWriteMode.RECOVERY)
 
-            is HomeSideEffect.ShowRecoveryNotice -> homeState.showRecoveryNotice()
-
             is HomeSideEffect.ShowRecoveryReminder -> homeState.showRecoveryReminder()
         }
     }
@@ -236,20 +235,6 @@ internal fun HomeRoute(
         },
     )
 
-    if (ENABLE_RECOVERY_NOTICE) {
-        RecoveryNoticeModal(
-            isVisible = homeState.isRecoveryNoticeVisible,
-            onClick = {
-                homeState.hideRecoveryNotice()
-                viewModel.onRecoveryNoticeConfirmed()
-            },
-            onDismiss = {
-                homeState.hideRecoveryNotice()
-                viewModel.onRecoveryNoticeConfirmed()
-            },
-        )
-    }
-
     RecoveryReminderModal(
         isVisible = homeState.isRecoveryReminderVisible,
         onClick = {
@@ -262,6 +247,7 @@ internal fun HomeRoute(
         },
         onDismiss = {
             homeState.hideRecoveryReminder()
+            viewModel.onRecoveryReminderClosed()
         },
     )
 
@@ -309,7 +295,6 @@ internal fun HomeRoute(
                     )
                     navigateToDiaryFeedback(diaryId)
                 },
-                onDeleteClick = { /* viewModel::deleteDiary 수정기능 도입까지 삭제 기능 지원중단 */ },
                 onPublishClick = viewModel::publishDiary,
                 onUnpublishClick = viewModel::unpublishDiary,
                 tracker = tracker,
@@ -369,7 +354,6 @@ private fun HomeScreen(
     onRecoveryClick: (LocalDate) -> Unit,
     onWriteDiaryClick: (selectedDate: LocalDate, mode: DiaryWriteMode) -> Unit,
     onDiaryPreviewClick: (diaryId: Long) -> Unit,
-    onDeleteClick: (diaryId: Long) -> Unit,
     onPublishClick: (diaryId: Long) -> Unit,
     onUnpublishClick: (diaryId: Long) -> Unit,
     tracker: Tracker,
@@ -404,7 +388,7 @@ private fun HomeScreen(
                 totalDiaries = userProfile.totalDiaries,
                 streak = userProfile.streak,
                 isNewAlarm = userProfile.isNewAlarm,
-                count = userProfile.recoveryTickets,
+                recoveryTickets = userProfile.recoveryTickets,
                 onAlarmClick = onAlarmClick,
                 onImageClick = onImageClick,
                 modifier = Modifier
@@ -415,12 +399,15 @@ private fun HomeScreen(
         }
 
         with(uiState.calendar) {
-            HilingualCalendar(
-                selectedDate = selectedDate,
-                writtenDates = dates
+            val writtenDates = remember(dates) {
+                dates
                     .filter { it.status != CalendarStatus.UNLOCKED }
                     .map { it.date }
-                    .toSet(),
+                    .toImmutableSet()
+            }
+            HilingualCalendar(
+                selectedDate = selectedDate,
+                writtenDates = writtenDates,
                 isInteractionEnabled = isCalendarInteractionEnabled,
                 onDisabledInteraction = onDisabledCalendarInteraction,
                 onDateClick = onDateSelected,
@@ -439,149 +426,169 @@ private fun HomeScreen(
             color = HilingualTheme.colors.gray100,
         )
 
-        Column(
-            modifier = Modifier
-                .background(HilingualTheme.colors.white)
-                .fillMaxSize()
-                .padding(16.dp),
+        HomeDiaryFooter(
+            date = date,
+            contentState = uiState.diaryContent,
+            homeState = homeState,
+            tracker = tracker,
+            onRecoveryClick = onRecoveryClick,
+            onWriteDiaryClick = onWriteDiaryClick,
+            onDiaryPreviewClick = onDiaryPreviewClick,
+            onPublishClick = onPublishClick,
+            onUnpublishClick = onUnpublishClick,
+        )
+    }
+}
+
+@Composable
+private fun HomeDiaryFooter(
+    date: LocalDate,
+    contentState: HomeDiaryUiState,
+    homeState: HomeState,
+    tracker: Tracker,
+    onRecoveryClick: (LocalDate) -> Unit,
+    onWriteDiaryClick: (selectedDate: LocalDate, mode: DiaryWriteMode) -> Unit,
+    onDiaryPreviewClick: (diaryId: Long) -> Unit,
+    onPublishClick: (diaryId: Long) -> Unit,
+    onUnpublishClick: (diaryId: Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .background(HilingualTheme.colors.white)
+            .fillMaxSize()
+            .padding(16.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            val contentState = uiState.diaryContent
+            DiaryDateInfo(
+                selectedDate = date,
+                isPublished = contentState.diaryThumbnail?.isPublished ?: false,
+                isWritten = contentState.cardState == DiaryCardState.WRITTEN,
+                modifier = Modifier.heightIn(min = 20.dp),
+            )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                DiaryDateInfo(
-                    selectedDate = date,
-                    isPublished = contentState.diaryThumbnail?.isPublished ?: false,
-                    isWritten = contentState.cardState == DiaryCardState.WRITTEN,
-                    modifier = Modifier.heightIn(min = 20.dp),
-                )
-
-                when (contentState.cardState) {
-                    DiaryCardState.WRITTEN -> {
-                        contentState.diaryThumbnail?.let { diary ->
-                            HomeDropDownMenu(
-                                isExpanded = homeState.isMoreMenuExpanded,
-                                isPublished = diary.isPublished,
-                                onExpandedChange = { isExpanded ->
-                                    if (isExpanded) {
-                                        homeState.showMoreMenu()
-                                        tracker.logPageAction(
-                                            trigger = TriggerType.CLICK,
-                                            page = HOME,
-                                            action = "more_menu",
-                                            properties = mapOf("menu_name" to "more_menu"),
-                                        )
-                                    } else {
-                                        homeState.hideMoreMenu()
-                                    }
-                                },
-                                onDeleteClick = { /* onDeleteClick(diary.diaryId) 수정기능 도입까지 삭제 기능 지원중단 */ },
-                                onPublishClick = { onPublishClick(diary.diaryId) },
-                                onUnpublishClick = { onUnpublishClick(diary.diaryId) },
-                            )
-                        }
-                    }
-
-                    DiaryCardState.WRITABLE -> {
-                        DiaryTimeInfo(remainingTime = contentState.todayTopic?.remainingTime)
-                    }
-
-                    else -> {}
-                }
-            }
-
-            Spacer(Modifier.height(16.dp))
-
-            with(contentState) {
-                when (cardState) {
-                    DiaryCardState.WRITTEN -> {
-                        if (diaryThumbnail != null) {
-                            DiaryPreviewCard(
-                                diaryText = diaryThumbnail.originalText,
-                                diaryId = diaryThumbnail.diaryId,
-                                onClick = onDiaryPreviewClick,
-                                imageUrl = diaryThumbnail.imageUrl,
-                                modifier = Modifier.fillMaxWidth(),
-                            )
-                        }
-                    }
-
-                    DiaryCardState.FUTURE -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
-
-                    DiaryCardState.WRITABLE -> {
-                        if (todayTopic != null) {
-                            TodayTopic(
-                                koTopic = todayTopic.topicKo,
-                                enTopic = todayTopic.topicEn,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .animateContentSize()
-                                    .noRippleClickable {
-                                        tracker.logPageAction(
-                                            trigger = TriggerType.CLICK,
-                                            page = HOME,
-                                            action = "switch_language",
-                                        )
-                                    },
-                            )
-                        }
-                        Spacer(Modifier.height(12.dp))
-                        WriteDiaryButton(
-                            onClick = {
-                                if (contentState.isDiaryTempExist) {
-                                    homeState.showDiaryContinueDialog()
+            when (contentState.cardState) {
+                DiaryCardState.WRITTEN -> {
+                    contentState.diaryThumbnail?.let { diary ->
+                        HomeDropDownMenu(
+                            isExpanded = homeState.isMoreMenuExpanded,
+                            isPublished = diary.isPublished,
+                            onExpandedChange = { isExpanded ->
+                                if (isExpanded) {
+                                    homeState.showMoreMenu()
+                                    tracker.logPageAction(
+                                        trigger = TriggerType.CLICK,
+                                        page = HOME,
+                                        action = "more_menu",
+                                        properties = mapOf("menu_name" to "more_menu"),
+                                    )
                                 } else {
-                                    onWriteDiaryClick(date, DiaryWriteMode.DEFAULT)
+                                    homeState.hideMoreMenu()
                                 }
                             },
-                            modifier = Modifier.fillMaxWidth(),
+                            onDeleteClick = { /* onDeleteClick(diary.diaryId) 수정기능 도입까지 삭제 기능 지원중단 */ },
+                            onPublishClick = { onPublishClick(diary.diaryId) },
+                            onUnpublishClick = { onUnpublishClick(diary.diaryId) },
                         )
                     }
-
-                    DiaryCardState.UNLOCKED -> {
-                        if (todayTopic != null) {
-                            TodayTopic(
-                                koTopic = todayTopic.topicKo,
-                                enTopic = todayTopic.topicEn,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .animateContentSize(),
-                                isRecovery = true,
-                            )
-                        }
-                        Spacer(Modifier.height(12.dp))
-                        WriteDiaryButton(
-                            onClick = { onWriteDiaryClick(date, DiaryWriteMode.RECOVERY) },
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
-
-                    DiaryCardState.RECOVERABLE -> {
-                        RecoveryGuideCard(modifier = Modifier.fillMaxWidth())
-                        Spacer(Modifier.height(12.dp))
-                        RecoveryButton(
-                            onClick = {
-                                tracker.logPageAction(
-                                    trigger = TriggerType.CLICK,
-                                    page = HOME,
-                                    action = "streak_revive",
-                                )
-                                onRecoveryClick(date)
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
-
-                    DiaryCardState.RECOVERY_EXHAUSTED ->
-                        DiaryEmptyCard(type = DiaryEmptyCardType.RECOVERY_EXHAUSTED)
-
-                    DiaryCardState.REWRITE_DISABLED,
-                    DiaryCardState.PAST,
-                    -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
                 }
+
+                DiaryCardState.WRITABLE -> {
+                    DiaryTimeInfo(remainingTime = contentState.todayTopic?.remainingTime)
+                }
+
+                else -> {}
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        with(contentState) {
+            when (cardState) {
+                DiaryCardState.WRITTEN -> {
+                    if (diaryThumbnail != null) {
+                        DiaryPreviewCard(
+                            diaryText = diaryThumbnail.originalText,
+                            diaryId = diaryThumbnail.diaryId,
+                            onClick = onDiaryPreviewClick,
+                            imageUrl = diaryThumbnail.imageUrl,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                }
+
+                DiaryCardState.FUTURE -> DiaryEmptyCard(type = DiaryEmptyCardType.FUTURE)
+
+                DiaryCardState.WRITABLE -> {
+                    if (todayTopic != null) {
+                        TodayTopic(
+                            koTopic = todayTopic.topicKo,
+                            enTopic = todayTopic.topicEn,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .animateContentSize()
+                                .noRippleClickable {
+                                    tracker.logEvent(
+                                        trigger = TriggerType.CLICK,
+                                        page = HOME,
+                                        event = "switch_language",
+                                        properties = mapOf(
+                                            "recommen_topic" to "${todayTopic.topicKo}/${todayTopic.topicEn}",
+                                        ),
+                                    )
+                                },
+                        )
+                    }
+                    Spacer(Modifier.height(12.dp))
+                    WriteDiaryButton(
+                        onClick = {
+                            if (contentState.isDiaryTempExist) {
+                                homeState.showDiaryContinueDialog()
+                            } else {
+                                onWriteDiaryClick(date, DiaryWriteMode.DEFAULT)
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+
+                DiaryCardState.UNLOCKED -> {
+                    if (todayTopic != null) {
+                        TodayTopic(
+                            koTopic = todayTopic.topicKo,
+                            enTopic = todayTopic.topicEn,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .animateContentSize(),
+                            isRecovery = true,
+                        )
+                    }
+                    Spacer(Modifier.height(12.dp))
+                    WriteDiaryButton(
+                        onClick = { onWriteDiaryClick(date, DiaryWriteMode.RECOVERY) },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+
+                DiaryCardState.RECOVERABLE -> {
+                    RecoveryGuideCard(modifier = Modifier.fillMaxWidth())
+                    Spacer(Modifier.height(12.dp))
+                    RecoveryButton(
+                        onClick = { onRecoveryClick(date) },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+
+                DiaryCardState.RECOVERY_EXHAUSTED ->
+                    DiaryEmptyCard(type = DiaryEmptyCardType.RECOVERY_EXHAUSTED)
+
+                DiaryCardState.REWRITE_DISABLED,
+                DiaryCardState.PAST,
+                -> DiaryEmptyCard(type = DiaryEmptyCardType.PAST)
             }
         }
     }
@@ -589,8 +596,6 @@ private fun HomeScreen(
 
 // #807 푸시 알림 플로우: 미배포 기능, 당분간 봉인. 재개 시 true로 전환.
 private const val ENABLE_PUSH_NOTIFICATION = true
-
-internal const val ENABLE_RECOVERY_NOTICE = false
 
 @Composable
 private fun CheckNotificationPermission(
@@ -641,7 +646,6 @@ private fun HomeScreenPreview() {
             onRecoveryClick = {},
             onWriteDiaryClick = { _, _ -> },
             onDiaryPreviewClick = {},
-            onDeleteClick = {},
             onPublishClick = {},
             onUnpublishClick = {},
             tracker = FakeTracker(),

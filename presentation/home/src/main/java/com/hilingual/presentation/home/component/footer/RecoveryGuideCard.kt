@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @Composable
-fun RecoveryGuideCard(
+internal fun RecoveryGuideCard(
     modifier: Modifier = Modifier,
 ) {
     Row(
