@@ -272,7 +272,14 @@ internal fun HomeRoute(
                 },
                 onDateSelected = viewModel::onDateSelected,
                 onMonthChanged = viewModel::onMonthChanged,
-                onRecoveryClick = viewModel::onRecoveryClick,
+                onRecoveryClick = { date ->
+                    tracker.logPageAction(
+                        trigger = TriggerType.CLICK,
+                        page = HOME,
+                        action = "streak_revive",
+                    )
+                    viewModel.onRecoveryClick(date)
+                },
                 onWriteDiaryClick = { date, mode ->
                     tracker.logPageAction(
                         trigger = TriggerType.CLICK,
