@@ -56,6 +56,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navOptions
 import androidx.navigation.toRoute
+import com.angrypodo.wisp.runtime.WispResult
 import com.angrypodo.wisp.runtime.navigateTo
 import com.hilingual.core.ads.native.HilingualNativeLineAd
 import com.hilingual.core.common.analytics.Page
@@ -106,7 +107,6 @@ import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.splash.navigation.splashNavGraph
 import com.hilingual.presentation.voca.navigation.Voca
 import com.hilingual.presentation.voca.navigation.vocaNavGraph
-import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -349,8 +349,8 @@ internal fun MainScreen(
                     )
                 }
 
-                LaunchedEffect(appState.navController, deepLinkUri) {
-                    if (deepLinkUri == null) return@LaunchedEffect
+                LaunchedEffect(appState.navController, deepLinkUri, notificationType) {
+                    if (deepLinkUri == null && notificationType == null) return@LaunchedEffect
 
                     val entry = appState.navController.currentBackStackEntryFlow
                         .first { !it.destination.hasRoute(Splash::class) }
@@ -359,29 +359,24 @@ internal fun MainScreen(
                         hasRoute(Auth::class) || hasRoute(SignUp::class) || hasRoute(Onboarding::class)
                     }
 
-                    if (isPreLogin) {
-                        onDeepLinkConsumed()
-                        return@LaunchedEffect
-                    }
-
-                    try {
-                        appState.navController.navigateTo(deepLinkUri)
-
-                        if (notificationType != null) {
-                            val landedEntry = appState.navController.currentBackStackEntryFlow.first()
-                            tracker.logGlobalAction(
-                                trigger = TriggerType.CLICK,
-                                action = "push_notification",
-                                properties = mapOf("notification_type" to notificationType),
-                                currentPage = appState.navController.currentPage(landedEntry),
-                            )
+                    if (deepLinkUri != null && !isPreLogin) {
+                        val result = appState.navController.navigateTo(deepLinkUri)
+                        if (result is WispResult.Failure) {
+                            Timber.e(result.error, "Failed to navigate to deep link: $deepLinkUri")
+                            onShowMessage(Toast("연결할 수 없는 링크예요."))
                         }
-                    } catch (e: CancellationException) {
-                        throw e
-                    } catch (e: Exception) {
-                        Timber.e(e, "Failed to navigate to deep link: $deepLinkUri")
-                        onShowMessage(Toast("연결할 수 없는 링크예요."))
                     }
+
+                    if (notificationType != null) {
+                        val landedEntry = appState.navController.currentBackStackEntryFlow.first()
+                        tracker.logGlobalAction(
+                            trigger = TriggerType.CLICK,
+                            action = "push_notification",
+                            properties = mapOf("notification_type" to notificationType),
+                            currentPage = appState.navController.currentPage(landedEntry),
+                        )
+                    }
+
                     onDeepLinkConsumed()
                 }
 
