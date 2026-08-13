@@ -134,13 +134,15 @@ internal fun DiaryWriteRoute(
                 onGalleryClick = textScanState.launchGallery,
                 onFeedbackRequestClick = {
                     if (viewModel.requestDiaryFeedback()) {
-                        tracker.logEvent(
+                        tracker.logPageAction(
                             trigger = TriggerType.CLICK,
                             page = WRITE_DIARY,
-                            event = "submit_cta",
+                            action = "submit_entry",
                             properties = mapOf(
                                 "has_photo" to (uiState.diaryImageUri != null),
                                 "char_count" to uiState.diaryText.length,
+                                "entry_id" to uiState.selectedDate,
+                                "ai_request_start_time" to System.currentTimeMillis(),
                             ),
                         )
                     }
@@ -172,11 +174,13 @@ internal fun DiaryWriteRoute(
                 paddingValues = paddingValues,
                 onBackClick = viewModel::returnToWriting,
                 onRequestAgainButtonClick = {
-                    tracker.logPageAction(
-                        trigger = TriggerType.CLICK,
-                        page = FEEDBACK_LOADING,
-                        action = "server_error_retry",
-                    )
+                    if (viewModel.requestDiaryFeedback()) {
+                        tracker.logPageAction(
+                            trigger = TriggerType.CLICK,
+                            page = FEEDBACK_LOADING,
+                            action = "server_error_retry",
+                        )
+                    }
                 },
             )
         }
@@ -324,7 +328,7 @@ private fun DiaryWriteScreen(
                             trigger = TriggerType.CLICK,
                             action = "dropdown",
                             properties = mapOf(
-                                "recommend_topic" to "$topicKo/$topicEn",
+                                "recommend_topic" to "${uiState.topicKo}/${uiState.topicEn}",
                                 "dropdown_click_count" to dropdownClickCount,
                             ),
                             currentPage = WRITE_DIARY,
@@ -460,8 +464,8 @@ private fun DiaryWriteScreenPreview() {
     HilingualTheme {
         DiaryWriteScreen(
             paddingValues = PaddingValues(0.dp),
-            isDiaryTempExist = false,
-            onBackClicked = {},
+            uiState = uiState,
+            onBackClick = {},
             onTempSaveClick = {},
             onDiaryTextChange = { uiState = uiState.copy(diaryText = it) },
             onDiaryImageUriChange = { uiState = uiState.copy(diaryImageUri = it) },
