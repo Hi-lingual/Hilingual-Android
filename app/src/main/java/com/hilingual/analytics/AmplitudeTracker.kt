@@ -40,8 +40,6 @@ class AmplitudeTracker @Inject constructor(
             Configuration(
                 apiKey = BuildConfig.AMPLITUDE_API_KEY,
                 context = context,
-                // 미설정 시 서버가 id 최소 길이 5자를 적용해, 자릿수가 짧은 userId를 가진
-                // 이벤트가 400으로 폐기되고 익명 사용자만 남는다.
                 minIdLength = 1,
             ),
         )
