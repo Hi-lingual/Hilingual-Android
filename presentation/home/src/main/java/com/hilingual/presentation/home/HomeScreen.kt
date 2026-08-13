@@ -532,12 +532,12 @@ private fun HomeDiaryFooter(
                                 .fillMaxWidth()
                                 .animateContentSize()
                                 .noRippleClickable {
-                                    tracker.logEvent(
+                                    tracker.logPageAction(
                                         trigger = TriggerType.CLICK,
                                         page = HOME,
-                                        event = "switch_language",
+                                        action = "switch_language",
                                         properties = mapOf(
-                                            "recommen_topic" to "${todayTopic.topicKo}/${todayTopic.topicEn}",
+                                            "recommend_topic" to "${todayTopic.topicKo}/${todayTopic.topicEn}",
                                         ),
                                     )
                                 },

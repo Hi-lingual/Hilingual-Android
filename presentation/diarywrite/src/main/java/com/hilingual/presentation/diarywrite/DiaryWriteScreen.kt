@@ -134,13 +134,15 @@ internal fun DiaryWriteRoute(
                 onGalleryClick = textScanState.launchGallery,
                 onFeedbackRequestClick = {
                     if (viewModel.requestDiaryFeedback()) {
-                        tracker.logEvent(
+                        tracker.logPageAction(
                             trigger = TriggerType.CLICK,
                             page = WRITE_DIARY,
-                            event = "submit_cta",
+                            action = "submit_entry",
                             properties = mapOf(
                                 "has_photo" to (uiState.diaryImageUri != null),
                                 "char_count" to uiState.diaryText.length,
+                                "entry_id" to uiState.selectedDate,
+                                "ai_request_start_time" to System.currentTimeMillis(),
                             ),
                         )
                     }
@@ -178,7 +180,6 @@ internal fun DiaryWriteRoute(
                             page = FEEDBACK_LOADING,
                             action = "server_error_retry",
                         )
-                        viewModel.postDiaryFeedbackCreate()
                     }
                 },
             )
