@@ -156,16 +156,20 @@ internal fun VocaRoute(
                 viewModel.updateSort(newSortType)
             },
             onCardClick = { phraseId ->
-                tracker.logPageAction(
-                    trigger = TriggerType.CLICK,
-                    page = VOCABULARY,
-                    action = "voca_lookup",
-                    properties = mapOf("bookmark_action" to "view"),
-                )
                 viewModel.fetchVocaDetail(phraseId)
             },
 
             onBookmarkClick = { phraseId, isMarked ->
+                tracker.logGlobalAction(
+                    trigger = TriggerType.CLICK,
+                    currentPage = VOCABULARY,
+                    action = "bookmark_action",
+                    properties = mapOf(
+                        "entry_id" to phraseId,
+                        "bookmark_action" to if (isMarked) "add" else "remove",
+                        "entry_source" to "voca",
+                    ),
+                )
                 viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
             },
             onSearchTextChanged = viewModel::updateSearchKeyword,
@@ -187,6 +191,16 @@ internal fun VocaRoute(
                 writtenDate = vocaDetail.writtenDate,
                 isBookmarked = vocaDetail.isBookmarked,
                 onBookmarkClick = { phraseId, isMarked ->
+                    tracker.logGlobalAction(
+                        trigger = TriggerType.CLICK,
+                        currentPage = VOCABULARY,
+                        action = "bookmark_action",
+                        properties = mapOf(
+                            "entry_id" to phraseId,
+                            "bookmark_action" to if (isMarked) "add" else "remove",
+                            "entry_source" to "modal",
+                        ),
+                    )
                     viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
                 },
                 isTtsPlaying = ttsState.isPlaying,
@@ -200,6 +214,13 @@ internal fun VocaRoute(
                     }
                     ttsState.toggle(vocaDetail.phrase)
                 },
+            )
+
+            tracker.logPageAction(
+                trigger = TriggerType.CLICK,
+                page = VOCABULARY,
+                action = "voca_lookup",
+                properties = mapOf("bookmark_action" to if (vocaDetail.isBookmarked) "add" else "remove"),
             )
         }
 
