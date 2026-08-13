@@ -23,7 +23,7 @@ ksp = "2.3.11"
 # AndroidX
 coreKtx = "1.19.0"
 coreSplachscreen = "1.2.0"
-androidxAppCompat = "1.7.1"
+androidxAppCompat = "1.8.0"
 lifecycleRuntimeKtx = "2.11.0"
 lifecycleRuntimeComposeAndroid = "2.11.0"
 activityCompose = "1.13.0"
