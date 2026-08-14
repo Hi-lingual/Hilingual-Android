@@ -134,7 +134,7 @@ constructor(
                 return@coroutineScope
             }
 
-            val (count, aTozList) = aTozResult.getOrThrow()
+            val (_, aTozList) = aTozResult.getOrThrow()
             val (_, latestList) = latestResult.getOrThrow()
 
             val aTozGroupList = aTozList.toImmutableList()
@@ -150,13 +150,16 @@ constructor(
                     vocaGroupList = UiState.Success(currentList),
                     aTozList = aTozGroupList,
                     latestList = latestGroupList,
-                    vocaCount = count,
                     isRefreshing = false,
                 )
             }
 
             actions.emit(VocaAction.DataRefreshed)
         }
+    }
+
+    fun toggleUnmemorizedFilter() {
+        _uiState.update { it.copy(isUnmemorizedFilterOn = !it.isUnmemorizedFilterOn) }
     }
 
     fun updateSort(sort: WordSortType) {

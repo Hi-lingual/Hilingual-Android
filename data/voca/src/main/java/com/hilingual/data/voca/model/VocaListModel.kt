@@ -33,6 +33,8 @@ data class VocaItemModel(
     val phraseId: Long,
     val phrase: String,
     val phraseType: List<String>,
+    val explanation: String,
+    val isMemorized: Boolean,
     val isBookmarked: Boolean,
 )
 
@@ -53,5 +55,7 @@ internal fun VocaItemResponseDto.toModel(): VocaItemModel =
         phraseId = this.phraseId,
         phrase = this.phrase,
         phraseType = this.phraseType,
+        explanation = this.explanation,
+        isMemorized = this.isMemorized,
         isBookmarked = this.isBookmarked,
     )

@@ -34,11 +34,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,7 +54,6 @@ import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
-import com.hilingual.core.designsystem.component.button.HilingualFloatingButton
 import com.hilingual.core.designsystem.component.pulltorefresh.HilingualPullToRefreshBox
 import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
@@ -65,6 +62,7 @@ import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.data.voca.model.GroupingVocaModel
 import com.hilingual.data.voca.model.VocaItemModel
 import com.hilingual.presentation.voca.component.AddVocaButton
+import com.hilingual.presentation.voca.component.ReviewFloatingButton
 import com.hilingual.presentation.voca.component.VocaCard
 import com.hilingual.presentation.voca.component.VocaDialog
 import com.hilingual.presentation.voca.component.VocaEmptyCard
@@ -76,16 +74,28 @@ import com.hilingual.presentation.voca.component.WordSortType
 import com.hilingual.presentation.voca.component.rememberVocaTts
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 internal fun VocaRoute(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
+    navigateToVocaReview: (Boolean, Int) -> Unit,
+    isReviewSavedFlow: StateFlow<Boolean>,
+    onReviewSavedConsumed: () -> Unit,
     viewModel: VocaViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isReviewSaved by isReviewSavedFlow.collectAsStateWithLifecycle()
+
+    LaunchedEffect(isReviewSaved) {
+        if (isReviewSaved) {
+            viewModel.refreshVocaList()
+            onReviewSavedConsumed()
+        }
+    }
     val focusManager = LocalFocusManager.current
     val dialogTrigger = LocalDialogTrigger.current
     val tracker = LocalTracker.current
@@ -137,7 +147,7 @@ internal fun VocaRoute(
             paddingValues = paddingValues,
             viewType = viewType,
             sortType = sortType,
-            vocaCount = vocaCount,
+            isUnmemorizedFilterOn = isUnmemorizedFilterOn,
             vocaGroupList = vocaGroupList,
             searchResultList = searchResultList,
             searchText = searchKeyword,
@@ -171,6 +181,10 @@ internal fun VocaRoute(
             onWriteDiaryClick = navigateToHome,
             onCloseButtonClick = viewModel::clearSearchKeyword,
             onRefresh = viewModel::refreshVocaList,
+            onFilterClick = viewModel::toggleUnmemorizedFilter,
+            onReviewClick = {
+                navigateToVocaReview(uiState.isUnmemorizedFilterOn, uiState.sortType.sortParam)
+            },
         )
     }
 
@@ -202,7 +216,7 @@ private fun VocaScreen(
     paddingValues: PaddingValues,
     viewType: ScreenType,
     sortType: WordSortType,
-    vocaCount: Int,
+    isUnmemorizedFilterOn: Boolean,
     vocaGroupList: UiState<ImmutableList<GroupingVocaModel>>,
     searchResultList: ImmutableList<VocaItemModel>,
     searchText: String,
@@ -214,16 +228,26 @@ private fun VocaScreen(
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     onCloseButtonClick: () -> Unit,
+    onFilterClick: () -> Unit,
+    onReviewClick: () -> Unit,
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
-    val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
-    val isFabVisible by remember {
-        derivedStateOf {
-            listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 5
+
+    val displayGroupList = remember(vocaGroupList, isUnmemorizedFilterOn) {
+        val groupList = (vocaGroupList as? UiState.Success)?.data ?: persistentListOf()
+        if (isUnmemorizedFilterOn) {
+            groupList
+                .map { group -> group.copy(words = group.words.filter { !it.isMemorized }) }
+                .filter { it.words.isNotEmpty() }
+                .toImmutableList()
+        } else {
+            groupList
         }
     }
+    val isReviewFabVisible = viewType == ScreenType.DEFAULT &&
+        displayGroupList.any { it.words.isNotEmpty() }
 
     LaunchedEffect(viewType) {
         if (viewType == ScreenType.DEFAULT) {
@@ -273,9 +297,11 @@ private fun VocaScreen(
                         ScreenType.DEFAULT -> {
                             VocaListWithInfoSection(
                                 listState = listState,
-                                vocaGroupList = vocaGroupList.data,
+                                vocaGroupList = displayGroupList,
+                                isSourceEmpty = vocaGroupList.data.all { it.words.isEmpty() },
                                 sortType = sortType,
-                                wordCount = vocaCount,
+                                isUnmemorizedFilterOn = isUnmemorizedFilterOn,
+                                onFilterClick = onFilterClick,
                                 onSortClick = { showBottomSheet = true },
                                 onCardClick = onCardClick,
                                 onBookmarkClick = onBookmarkClick,
@@ -301,17 +327,14 @@ private fun VocaScreen(
             }
         }
 
-        HilingualFloatingButton(
-            onClick = {
-                coroutineScope.launch {
-                    listState.animateScrollToItem(0)
-                }
-            },
-            isVisible = isFabVisible,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(bottom = 24.dp, end = 16.dp),
-        )
+        if (isReviewFabVisible) {
+            ReviewFloatingButton(
+                onClick = onReviewClick,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = 24.dp, end = 16.dp),
+            )
+        }
     }
 
     WordSortBottomSheet(
@@ -327,18 +350,18 @@ private fun VocaScreen(
 private fun VocaListWithInfoSection(
     listState: LazyListState,
     vocaGroupList: ImmutableList<GroupingVocaModel>,
+    isSourceEmpty: Boolean,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     sortType: WordSortType,
-    wordCount: Int,
+    isUnmemorizedFilterOn: Boolean,
+    onFilterClick: () -> Unit,
     onWriteDiaryClick: () -> Unit,
     onSortClick: () -> Unit,
     onCardClick: (Long) -> Unit,
     onBookmarkClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isEmpty = vocaGroupList.all { it.words.isEmpty() }
-
     HilingualPullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = onRefresh,
@@ -350,7 +373,7 @@ private fun VocaListWithInfoSection(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp),
         ) {
-            if (isEmpty) {
+            if (isSourceEmpty) {
                 item {
                     Column(
                         modifier = Modifier
@@ -367,7 +390,8 @@ private fun VocaListWithInfoSection(
                 item {
                     Spacer(modifier = Modifier.height(16.dp))
                     VocaInfo(
-                        wordCount = wordCount,
+                        isUnmemorizedFilterOn = isUnmemorizedFilterOn,
+                        onFilterClick = onFilterClick,
                         sortType = sortType,
                         onSortClick = onSortClick,
                         modifier = Modifier.fillMaxWidth(),
@@ -405,6 +429,7 @@ private fun VocaListWithInfoSection(
                             VocaCard(
                                 phrase = voca.phrase,
                                 phraseType = voca.phraseType.toPersistentList(),
+                                isMemorized = voca.isMemorized,
                                 onCardClick = { onCardClick(voca.phraseId) },
                                 isBookmarked = voca.isBookmarked,
                                 onBookmarkClick = {
@@ -457,6 +482,7 @@ private fun SearchResultSection(
                 VocaCard(
                     phrase = voca.phrase,
                     phraseType = voca.phraseType.toPersistentList(),
+                    isMemorized = voca.isMemorized,
                     onCardClick = { onCardClick(voca.phraseId) },
                     isBookmarked = voca.isBookmarked,
                     onBookmarkClick = { onBookmarkClick(voca.phraseId, !voca.isBookmarked) },
@@ -478,7 +504,7 @@ private fun VocaScreenLoadingPreview() {
             paddingValues = PaddingValues(0.dp),
             viewType = ScreenType.DEFAULT,
             sortType = WordSortType.Latest,
-            vocaCount = 0,
+            isUnmemorizedFilterOn = false,
             vocaGroupList = UiState.Loading,
             searchResultList = persistentListOf(),
             searchText = "",
@@ -490,6 +516,8 @@ private fun VocaScreenLoadingPreview() {
             onCloseButtonClick = {},
             isRefreshing = false,
             onRefresh = {},
+            onFilterClick = {},
+            onReviewClick = {},
         )
     }
 }

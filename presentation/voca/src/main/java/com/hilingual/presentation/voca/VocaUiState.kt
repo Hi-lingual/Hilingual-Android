@@ -40,7 +40,7 @@ data class VocaDetailUiModel(
 data class VocaUiState(
     val viewType: ScreenType = ScreenType.DEFAULT,
     val sortType: WordSortType = WordSortType.Latest,
-    val vocaCount: Int = 0,
+    val isUnmemorizedFilterOn: Boolean = false,
     val vocaGroupList: UiState<ImmutableList<GroupingVocaModel>> = UiState.Loading,
     val aTozList: ImmutableList<GroupingVocaModel> = persistentListOf(),
     val latestList: ImmutableList<GroupingVocaModel> = persistentListOf(),

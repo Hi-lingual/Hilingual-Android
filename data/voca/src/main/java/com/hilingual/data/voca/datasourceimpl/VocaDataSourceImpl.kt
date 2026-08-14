@@ -17,6 +17,7 @@ package com.hilingual.data.voca.datasourceimpl
 
 import com.hilingual.core.network.model.BaseResponse
 import com.hilingual.data.voca.datasource.VocaDataSource
+import com.hilingual.data.voca.dto.request.VocaMemorizationRequestDto
 import com.hilingual.data.voca.dto.response.VocaDetailResponseDto
 import com.hilingual.data.voca.dto.response.VocaListResponseDto
 import com.hilingual.data.voca.service.VocaService
@@ -25,9 +26,14 @@ import javax.inject.Inject
 internal class VocaDataSourceImpl @Inject constructor(
     private val vocaService: VocaService,
 ) : VocaDataSource {
-    override suspend fun getVocaList(sort: Int): BaseResponse<VocaListResponseDto> =
-        vocaService.getVocaList(sort = sort)
+    override suspend fun getVocaList(sort: Int, unmemorizedOnly: Boolean): BaseResponse<VocaListResponseDto> =
+        vocaService.getVocaList(sort = sort, unmemorizedOnly = unmemorizedOnly)
 
     override suspend fun getVocaDetail(phraseId: Long): BaseResponse<VocaDetailResponseDto> =
         vocaService.getVocaDetail(phraseId = phraseId)
+
+    override suspend fun patchVocaMemorization(
+        vocaMemorizationRequestDto: VocaMemorizationRequestDto,
+    ): BaseResponse<Unit> =
+        vocaService.patchVocaMemorization(vocaMemorizationRequestDto = vocaMemorizationRequestDto)
 }

@@ -44,7 +44,8 @@ enum class WordSortType(
 
 @Composable
 internal fun VocaInfo(
-    wordCount: Int,
+    isUnmemorizedFilterOn: Boolean,
+    onFilterClick: () -> Unit,
     sortType: WordSortType,
     onSortClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -54,11 +55,28 @@ internal fun VocaInfo(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Text(
-            text = "총 ${wordCount}개",
-            style = HilingualTheme.typography.bodyR14,
-            color = HilingualTheme.colors.gray500,
-        )
+        Row(
+            modifier = Modifier.noRippleClickable(onClick = onFilterClick),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(
+                    id = if (isUnmemorizedFilterOn) {
+                        DesignSystemR.drawable.ic_checkbox_24_checked
+                    } else {
+                        DesignSystemR.drawable.ic_checkbox_24_unchecked
+                    },
+                ),
+                contentDescription = null,
+                tint = Color.Unspecified,
+            )
+            Text(
+                text = "모르는 단어만 보기",
+                style = HilingualTheme.typography.bodyR14,
+                color = HilingualTheme.colors.gray500,
+            )
+        }
         Row(
             modifier = Modifier.noRippleClickable(onClick = onSortClick),
             verticalAlignment = Alignment.CenterVertically,
@@ -82,6 +100,11 @@ internal fun VocaInfo(
 @Composable
 private fun VocaInfoPreview() {
     HilingualTheme {
-        VocaInfo(wordCount = 98, sortType = WordSortType.Latest, onSortClick = {})
+        VocaInfo(
+            isUnmemorizedFilterOn = false,
+            onFilterClick = {},
+            sortType = WordSortType.Latest,
+            onSortClick = {},
+        )
     }
 }

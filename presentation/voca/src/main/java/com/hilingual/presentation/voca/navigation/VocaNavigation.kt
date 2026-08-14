@@ -21,11 +21,21 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.hilingual.core.navigation.MainTabRoute
+import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.voca.VocaRoute
+import com.hilingual.presentation.voca.review.VocaReviewRoute
 import kotlinx.serialization.Serializable
+
+private const val VOCA_REVIEW_SAVED_KEY = "voca_review_saved"
 
 @Serializable
 data object Voca : MainTabRoute
+
+@Serializable
+data class VocaReview(
+    val unmemorizedOnly: Boolean,
+    val sort: Int,
+) : Route
 
 fun NavController.navigateToVoca(
     navOptions: NavOptions? = null,
@@ -36,14 +46,42 @@ fun NavController.navigateToVoca(
     )
 }
 
+fun NavController.navigateToVocaReview(
+    unmemorizedOnly: Boolean,
+    sort: Int,
+    navOptions: NavOptions? = null,
+) {
+    navigate(
+        route = VocaReview(unmemorizedOnly = unmemorizedOnly, sort = sort),
+        navOptions = navOptions,
+    )
+}
+
 fun NavGraphBuilder.vocaNavGraph(
     paddingValues: PaddingValues,
+    navController: NavController,
     navigateToHome: () -> Unit,
 ) {
-    composable<Voca> {
+    composable<Voca> { entry ->
         VocaRoute(
             paddingValues = paddingValues,
             navigateToHome = navigateToHome,
+            navigateToVocaReview = { unmemorizedOnly, sort ->
+                navController.navigateToVocaReview(unmemorizedOnly = unmemorizedOnly, sort = sort)
+            },
+            isReviewSavedFlow = entry.savedStateHandle.getStateFlow(VOCA_REVIEW_SAVED_KEY, false),
+            onReviewSavedConsumed = { entry.savedStateHandle[VOCA_REVIEW_SAVED_KEY] = false },
+        )
+    }
+
+    composable<VocaReview> {
+        VocaReviewRoute(
+            paddingValues = paddingValues,
+            navigateUp = navController::navigateUp,
+            navigateUpWithSaved = {
+                navController.previousBackStackEntry?.savedStateHandle?.set(VOCA_REVIEW_SAVED_KEY, true)
+                navController.navigateUp()
+            },
         )
     }
 }

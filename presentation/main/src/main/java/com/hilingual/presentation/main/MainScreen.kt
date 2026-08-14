@@ -285,6 +285,7 @@ internal fun MainScreen(
 
                     vocaNavGraph(
                         paddingValues = innerPadding,
+                        navController = appState.navController,
                         navigateToHome = appState::navigateToHome,
                     )
 
