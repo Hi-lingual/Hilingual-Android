@@ -29,6 +29,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,8 +39,11 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.common.analytics.Page
+import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
+import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.indicator.HilingualPagerIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -76,6 +80,16 @@ internal fun OnboardingRoute(
     paddingValues: PaddingValues,
     navigateToAuth: () -> Unit,
 ) {
+    val tracker = LocalTracker.current
+
+    LaunchedEffect(Unit) {
+        tracker.logGlobalAction(
+            trigger = TriggerType.VIEW,
+            action = "page",
+            currentPage = Page.ONBOARDING,
+        )
+    }
+
     OnboardingScreen(
         paddingValues = paddingValues,
         onOnboardingCompleted = navigateToAuth,
@@ -89,6 +103,7 @@ private fun OnboardingScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState { onboardingPages.size }
+    val tracker = LocalTracker.current
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -105,7 +120,15 @@ private fun OnboardingScreen(
             color = HilingualTheme.colors.gray400,
             textAlign = TextAlign.Center,
             modifier = Modifier
-                .noRippleClickable(onClick = onOnboardingCompleted)
+                .noRippleClickable {
+                    tracker.logPageAction(
+                        trigger = TriggerType.CLICK,
+                        page = Page.ONBOARDING,
+                        action = "skip",
+                        properties = mapOf("onboarding_step" to pagerState.currentPage + 1),
+                    )
+                    onOnboardingCompleted()
+                }
                 .padding(horizontal = 24.dp, vertical = 12.dp)
                 .align(Alignment.End),
         )

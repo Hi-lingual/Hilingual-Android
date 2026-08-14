@@ -52,7 +52,7 @@ internal fun HomeHeader(
     onAlarmClick: () -> Unit,
     onImageClick: () -> Unit,
     modifier: Modifier = Modifier,
-    count: Int = 0,
+    recoveryTickets: Int = 0,
 ) {
     Row(
         modifier = modifier,
@@ -68,7 +68,7 @@ internal fun HomeHeader(
 
         Column(modifier = Modifier.weight(1f)) {
             ProfileName(nickname)
-            UserStatsRow(totalDiaries, streak, count)
+            UserStatsRow(totalDiaries, streak, recoveryTickets)
         }
 
         Box {
@@ -126,7 +126,7 @@ private fun ProfileName(name: String) {
 private fun UserStatsRow(
     totalDiaries: Int,
     streak: Int,
-    count: Int,
+    recoveryTickets: Int,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -140,7 +140,7 @@ private fun UserStatsRow(
 
         StatSeparator()
 
-        RecoveryTicketStat(count)
+        RecoveryTicketStat(recoveryTickets)
     }
 }
 

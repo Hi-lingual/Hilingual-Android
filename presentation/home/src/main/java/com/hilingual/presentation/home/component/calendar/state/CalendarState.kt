@@ -15,16 +15,12 @@
  */
 package com.hilingual.presentation.home.component.calendar.state
 
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import com.hilingual.presentation.home.component.calendar.model.CalendarMonth
 import com.hilingual.presentation.home.component.calendar.util.firstDayOfWeekFromLocale
-import com.hilingual.presentation.home.component.calendar.util.generateMonthData
 import com.hilingual.presentation.home.component.calendar.util.getMonthIndex
 import com.hilingual.presentation.home.component.calendar.util.getMonthIndicesCount
 import java.time.DayOfWeek
@@ -38,36 +34,34 @@ internal fun rememberCalendarState(
     initialVisibleMonth: YearMonth = YearMonth.now(),
     firstDayOfWeek: DayOfWeek = firstDayOfWeekFromLocale(),
 ): CalendarState {
-    val listState = rememberLazyListState(
-        initialFirstVisibleItemIndex = getMonthIndex(CALENDAR_START_MONTH, initialVisibleMonth),
-    )
-    return remember { CalendarState(listState, firstDayOfWeek) }
+    val pagerState = rememberPagerState(
+        initialPage = getMonthIndex(CALENDAR_START_MONTH, initialVisibleMonth),
+    ) {
+        getMonthIndicesCount(CALENDAR_START_MONTH, CALENDAR_END_MONTH)
+    }
+    return remember { CalendarState(pagerState, firstDayOfWeek) }
 }
 
 @Stable
 internal class CalendarState(
-    val listState: LazyListState,
+    val pagerState: PagerState,
     internal val firstDayOfWeek: DayOfWeek,
 ) {
     internal val startMonth: YearMonth = CALENDAR_START_MONTH
 
-    val firstVisibleMonth: CalendarMonth by derivedStateOf {
-        generateMonthData(
-            startMonth = startMonth,
-            offset = listState.firstVisibleItemIndex,
-            firstDayOfWeek = firstDayOfWeek,
-        ).calendarMonth
-    }
+    val targetMonth: YearMonth
+        get() = monthForPage(pagerState.targetPage)
 
-    val monthIndicesCount: Int = getMonthIndicesCount(startMonth, CALENDAR_END_MONTH)
+    fun monthForPage(page: Int): YearMonth = startMonth.plusMonths(page.toLong())
+
+    private fun pageForMonth(month: YearMonth): Int =
+        getMonthIndex(startMonth, month).coerceIn(0, pagerState.pageCount - 1)
 
     suspend fun scrollToMonth(month: YearMonth) {
-        val index = getMonthIndex(startMonth, month)
-        listState.scrollToItem(index.coerceIn(0, monthIndicesCount - 1))
+        pagerState.scrollToPage(pageForMonth(month))
     }
 
     suspend fun animateScrollToMonth(month: YearMonth) {
-        val index = getMonthIndex(startMonth, month)
-        listState.animateScrollToItem(index.coerceIn(0, monthIndicesCount - 1))
+        pagerState.animateScrollToPage(pageForMonth(month))
     }
 }

@@ -83,9 +83,7 @@ internal fun TodayTopic(
         }
 
         Text(
-            text = (if (isKo) koTopic else enTopic).let {
-                if (it.length > 70) it.take(70) else it
-            },
+            text = (if (isKo) koTopic else enTopic).take(70),
             style = HilingualTheme.typography.bodyM15,
             color = HilingualTheme.colors.gray700,
             maxLines = 2,

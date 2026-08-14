@@ -101,15 +101,14 @@ internal fun FeedProfileRoute(
     val dialogTrigger = LocalDialogTrigger.current
     val tracker = LocalTracker.current
 
+    val page = if (viewModel.targetUserId == 0L) Page.MY_FEED else Page.USER_PROFILE
+
     LaunchedEffect(Unit) {
-        tracker.logEvent(
+        tracker.logGlobalAction(
             trigger = TriggerType.VIEW,
-            page = Page.FEED,
-            event = "view_profile_user",
-            properties = mapOf(
-                "profile_user_id" to viewModel.targetUserId,
-                "page" to Page.FEED.pageName,
-            ),
+            action = "page",
+            properties = mapOf("profile_user_id" to viewModel.targetUserId),
+            currentPage = page,
         )
         viewModel.loadFeedProfile()
     }
@@ -151,11 +150,33 @@ internal fun FeedProfileRoute(
                 initialTab = if (viewModel.showLikedDiaries) 1 else 0,
                 onBackClick = navigateUp,
                 onFollowClick = { viewModel.onFollowClick() },
-                onActionButtonClick = viewModel::onActionButtonClick,
+                onActionButtonClick = {
+                    val profile = state.data.feedProfileInfo
+                    if (profile.isBlock != true && profile.isFollowing == false) {
+                        tracker.logPageAction(
+                            trigger = TriggerType.CLICK,
+                            page = Page.USER_PROFILE,
+                            action = "follow",
+                            properties = mapOf("entry_id" to viewModel.targetUserId),
+                        )
+                    }
+                    viewModel.onActionButtonClick()
+                },
                 onProfileClick = navigateToFeedProfile,
                 onContentDetailClick = navigateToFeedDiary,
                 onReportUserClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
-                onLikeClick = viewModel::toggleIsLiked,
+                onLikeClick = { diaryId, isLiked, type ->
+                    tracker.logGlobalAction(
+                        trigger = TriggerType.CLICK,
+                        action = "empathy_action",
+                        properties = mapOf(
+                            "entry_id" to diaryId,
+                            "empathy_action" to if (isLiked) "add" else "remove",
+                        ),
+                        currentPage = page,
+                    )
+                    viewModel.toggleIsLiked(diaryId, isLiked, type)
+                },
                 onBlockClick = { viewModel.updateBlockState(state.data.feedProfileInfo.isBlock ?: false) },
                 onReportDiaryClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
                 onUnpublishClick = viewModel::diaryUnpublish,
@@ -176,6 +197,7 @@ internal fun FeedProfileRoute(
                     )
                 },
                 modifier = Modifier.padding(paddingValues),
+                page = page,
             )
         }
 

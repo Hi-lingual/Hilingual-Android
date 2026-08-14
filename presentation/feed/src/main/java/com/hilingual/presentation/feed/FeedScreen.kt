@@ -109,15 +109,7 @@ internal fun FeedRoute(
     }
 
     LaunchedEffect(Unit) {
-        tracker.logEvent(
-            trigger = TriggerType.VIEW,
-            page = FEED,
-            event = "refresh",
-            properties = mapOf(
-                "refresh_method" to "auto",
-                "page" to FEED.pageName,
-            ),
-        )
+        tracker.logGlobalAction(trigger = TriggerType.VIEW, action = "page", currentPage = FEED)
     }
 
     LaunchedEffect(selectedFeedTab) {
@@ -137,6 +129,7 @@ internal fun FeedRoute(
                 onRetryClick = { viewModel.refreshTab(selectedFeedTab) },
             ),
             modifier = Modifier.padding(paddingValues),
+            page = FEED,
         )
         return
     }
@@ -151,13 +144,13 @@ internal fun FeedRoute(
             followingRefreshing = isFollowingRefreshing,
             pagerState = pagerState,
             onTabRefresh = { tab ->
-                tracker.logEvent(
+                tracker.logPageAction(
                     trigger = TriggerType.CLICK,
                     page = FEED,
-                    event = "refresh",
+                    action = "refresh",
                     properties = mapOf(
+                        "entry_id" to 0L,
                         "refresh_method" to "pull_to_refresh",
-                        "page" to FEED.pageName,
                     ),
                 )
                 viewModel.refreshTab(tab)
@@ -165,24 +158,30 @@ internal fun FeedRoute(
             hasFollowing = hasFollowing,
             onSearchClick = navigateToFeedSearch,
             onMyProfileClick = {
-                tracker.logEvent(
-                    trigger = TriggerType.VIEW,
-                    page = MY_FEED,
-                    event = "page",
-                )
+                tracker.logGlobalAction(trigger = TriggerType.VIEW, action = "page", currentPage = MY_FEED)
                 navigateToMyFeedProfile(false)
             },
-            onFeedProfileClick = navigateToFeedProfile,
-            onLikeClick = { diaryId, isLiked ->
-                tracker.logEvent(
+            onFeedProfileClick = { userId, isMine ->
+                tracker.logPageAction(
                     trigger = TriggerType.CLICK,
                     page = FEED,
-                    event = "empathy_action",
+                    action = "profile_view",
+                    properties = mapOf(
+                        "profile_user_id" to userId,
+                        "entry_source" to "feed",
+                    ),
+                )
+                if (isMine) navigateToMyFeedProfile(false) else navigateToFeedProfile(userId)
+            },
+            onLikeClick = { diaryId, isLiked ->
+                tracker.logGlobalAction(
+                    trigger = TriggerType.CLICK,
+                    action = "empathy_action",
                     properties = mapOf(
                         "entry_id" to diaryId,
                         "empathy_action" to if (isLiked) "add" else "remove",
-                        "page" to FEED.pageName,
                     ),
+                    currentPage = FEED,
                 )
                 viewModel.toggleIsLiked(diaryId, isLiked)
             },
@@ -206,7 +205,7 @@ private fun FeedScreen(
     hasFollowing: Boolean,
     onMyProfileClick: () -> Unit,
     onSearchClick: () -> Unit,
-    onFeedProfileClick: (Long) -> Unit,
+    onFeedProfileClick: (Long, Boolean) -> Unit,
     onLikeClick: (Long, Boolean) -> Unit,
     onContentDetailClick: (Long) -> Unit,
     onUnpublishClick: (Long) -> Unit,
@@ -354,7 +353,7 @@ private fun FeedScreenPreview() {
             paddingValues = PaddingValues(),
             onMyProfileClick = {},
             onSearchClick = {},
-            onFeedProfileClick = {},
+            onFeedProfileClick = { _, _ -> },
             onContentDetailClick = {},
             onLikeClick = { _, _ -> },
             readAllFeed = {},

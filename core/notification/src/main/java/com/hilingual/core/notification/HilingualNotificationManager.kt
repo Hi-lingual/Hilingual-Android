@@ -103,6 +103,7 @@ class HilingualNotificationManager @Inject constructor(
             ?.apply {
                 addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 deepLink?.takeIf { it.isNotBlank() }?.let { putExtra("link", it) }
+                putExtra(EXTRA_NOTIFICATION_TYPE, channelId.toNotificationType())
             }
             ?.let {
                 PendingIntent.getActivity(
@@ -179,6 +180,12 @@ class HilingualNotificationManager @Inject constructor(
         notificationManager?.notify(NOTIFICATION_ID_SOCIAL_SUMMARY, summary)
     }
 
+    private fun String.toNotificationType(): String = when (this) {
+        CHANNEL_ID_DAILY -> "daily"
+        CHANNEL_ID_WEEKLY -> "weekly"
+        else -> "social"
+    }
+
     companion object {
         private const val CHANNEL_ID_DAILY = "channel_daily_notification"
         private const val CHANNEL_ID_WEEKLY = "channel_weekly_notification"
@@ -191,5 +198,8 @@ class HilingualNotificationManager @Inject constructor(
         private const val NOTIFICATION_ID_SOCIAL_SUMMARY = 1003
 
         private const val GROUP_KEY_SOCIAL = "group_social_notification"
+
+        /** 푸시 알림 클릭 이벤트의 notification_type 프로퍼티로 전달된다. */
+        const val EXTRA_NOTIFICATION_TYPE = "notification_type"
     }
 }

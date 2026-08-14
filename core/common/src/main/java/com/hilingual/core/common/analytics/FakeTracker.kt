@@ -16,7 +16,16 @@
 package com.hilingual.core.common.analytics
 
 class FakeTracker : Tracker {
-    override fun logEvent(trigger: TriggerType, event: String, properties: Map<String, Any>) {}
-    override fun logEvent(trigger: TriggerType, page: Page, event: String) {}
-    override fun logEvent(trigger: TriggerType, page: Page, event: String, properties: Map<String, Any>) {}
+    override fun logGlobalAction(
+        trigger: TriggerType,
+        action: String,
+        properties: Map<String, Any>,
+        currentPage: Page?,
+    ) {}
+    override fun logPageAction(
+        trigger: TriggerType,
+        page: Page,
+        action: String,
+        properties: Map<String, Any>,
+    ) {}
 }

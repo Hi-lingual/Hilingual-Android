@@ -154,7 +154,18 @@ internal fun FeedDiaryRoute(
                 onBackClick = navigateUp,
                 onMyProfileClick = navigateToMyFeedProfile,
                 onProfileClick = navigateToFeedProfile,
-                onLikeClick = viewModel::toggleIsLiked,
+                onLikeClick = { isLiked ->
+                    tracker.logGlobalAction(
+                        trigger = TriggerType.CLICK,
+                        action = "empathy_action",
+                        properties = mapOf(
+                            "entry_id" to viewModel.diaryId,
+                            "empathy_action" to if (isLiked) "add" else "remove",
+                        ),
+                        currentPage = Page.POSTED_DIARY,
+                    )
+                    viewModel.toggleIsLiked(isLiked)
+                },
                 onPrivateClick = viewModel::diaryUnpublish,
                 onBlockClick = viewModel::blockUser,
                 onReportClick = { context.launchCustomTabs(UrlConstant.FEEDBACK_REPORT) },
@@ -177,6 +188,7 @@ internal fun FeedDiaryRoute(
                     )
                 },
                 modifier = Modifier.padding(paddingValues),
+                page = Page.POSTED_DIARY,
             )
         }
 
@@ -225,14 +237,14 @@ private fun FeedDiaryScreen(
     }
 
     LaunchedEffect(Unit) {
-        tracker.logEvent(
+        tracker.logGlobalAction(
             trigger = TriggerType.VIEW,
-            page = Page.POSTED_DIARY,
-            event = "page",
+            action = "page",
             properties = mapOf(
                 "entry_id" to diaryId,
                 "tab_name" to if (pagerState.currentPage == 0) "grammar_spelling" else "recommend_expression",
             ),
+            currentPage = Page.POSTED_DIARY,
         )
     }
 
@@ -305,24 +317,37 @@ private fun FeedDiaryScreen(
                             onToggleDiaryViewMode = {
                                 isShowCorrectedDiary = it
                                 toggleClickCount++
-                                tracker.logEvent(
+                                tracker.logPageAction(
                                     trigger = TriggerType.CLICK,
-                                    event = "feedback_toggle",
+                                    page = Page.POSTED_DIARY,
+                                    action = "toggle",
                                     properties = mapOf(
                                         "entry_id" to diaryId,
                                         "toggle_state" to it,
                                         "toggle_click_count" to toggleClickCount,
-                                        "page" to Page.POSTED_DIARY.pageName,
                                     ),
                                 )
                             },
+                            page = Page.POSTED_DIARY,
                         )
 
                         1 -> RecommendExpressionTab(
                             listState = recommendListState,
                             writtenDate = writtenDate,
                             recommendExpressionList = recommendExpressionList,
-                            onBookmarkClick = onToggleBookmark,
+                            onBookmarkClick = { phraseId, isMarked ->
+                                tracker.logGlobalAction(
+                                    trigger = TriggerType.CLICK,
+                                    action = "bookmark_action",
+                                    properties = mapOf(
+                                        "entry_id" to diaryId,
+                                        "bookmark_action" to if (isMarked) "add" else "remove",
+                                        "tab_name" to "recommend_expression",
+                                    ),
+                                    currentPage = Page.POSTED_DIARY,
+                                )
+                                onToggleBookmark(phraseId, isMarked)
+                            },
                             isAdVisible = true,
                         )
                     }

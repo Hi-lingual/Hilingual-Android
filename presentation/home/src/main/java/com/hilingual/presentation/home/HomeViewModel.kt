@@ -35,6 +35,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import java.time.YearMonth
 import javax.inject.Inject
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.BufferOverflow
@@ -76,6 +77,8 @@ class HomeViewModel @Inject constructor(
 
     private val onboardingCheckCompleted = MutableSharedFlow<Unit>(replay = 1)
 
+    private val calendarCache = mutableMapOf<YearMonth, ImmutableList<DateUiModel>>()
+
     private val recoveryReminderResult = MutableStateFlow<Boolean?>(null)
 
     init {
@@ -112,6 +115,7 @@ class HomeViewModel @Inject constructor(
             val calendarData = calendarResult.getOrThrow()
 
             val initialDates = calendarData.dateList.map { it.toState() }.toImmutableList()
+            calendarCache[YearMonth.from(today)] = initialDates
             val initialDiaryContent = fetchDiaryState(today, initialDates, userInfo.recoveryTickets)
 
             _uiState.update {
@@ -202,32 +206,39 @@ class HomeViewModel @Inject constructor(
 
         if (YearMonth.from(currentState.data.calendar.selectedDate) == yearMonth) return
 
+        val today = LocalDate.now()
+        val newDate = if (yearMonth == YearMonth.from(today)) {
+            today
+        } else {
+            yearMonth.atDay(1)
+        }
+
+        _uiState.updateSuccess { state ->
+            state.copy(
+                calendar = HomeCalendarUiState(
+                    dates = calendarCache[yearMonth] ?: state.calendar.dates,
+                    selectedDate = newDate,
+                ),
+            )
+        }
+
         viewModelScope.launch {
             calendarRepository.getCalendar(yearMonth.year, yearMonth.monthValue)
                 .onSuccess { calendarModel ->
-                    val today = LocalDate.now()
-                    val newDate = if (yearMonth == YearMonth.from(today)) {
-                        today
-                    } else {
-                        yearMonth.atDay(1)
-                    }
-
                     val newDates = calendarModel.dateList.map { data -> data.toState() }.toImmutableList()
-                    val newDiaryContent = fetchDiaryState(
-                        newDate,
-                        newDates,
-                        currentState.data.header.userProfile.recoveryTickets,
-                    )
+                    calendarCache[yearMonth] = newDates
+
+                    val latestState = uiState.value
+                    if (latestState !is UiState.Success ||
+                        YearMonth.from(latestState.data.calendar.selectedDate) != yearMonth
+                    ) {
+                        return@launch
+                    }
 
                     _uiState.updateSuccess { state ->
-                        state.copy(
-                            calendar = HomeCalendarUiState(
-                                dates = newDates,
-                                selectedDate = newDate,
-                            ),
-                            diaryContent = newDiaryContent,
-                        )
+                        state.copy(calendar = state.calendar.copy(dates = newDates))
                     }
+                    updateContentForDate(latestState.data.calendar.selectedDate)
                 }
                 .onLogFailure {
                     emitErrorDialogSideEffect { onMonthChanged(yearMonth) }
@@ -266,6 +277,9 @@ class HomeViewModel @Inject constructor(
                             calendar = state.calendar.copy(dates = newDates),
                         )
                     }
+                    (uiState.value as? UiState.Success)?.data?.calendar?.let { calendar ->
+                        calendarCache[YearMonth.from(date)] = calendar.dates
+                    }
                     updateContentForDate(date)
                     _sideEffect.emit(HomeSideEffect.NavigateToRecoveryWrite(date))
                 }
@@ -286,7 +300,10 @@ class HomeViewModel @Inject constructor(
         markReminderShownThisMonth()
         onRecoveryReminderClosed()
 
-        val recentBrokenDate = findRecentBrokenDate(currentState.data.calendar.dates)
+        val recentBrokenDate = RecoveryReminderPolicy.findRecentBrokenDate(
+            dates = currentState.data.calendar.dates,
+            today = LocalDate.now(),
+        )
         if (recentBrokenDate != null) {
             onDateSelected(recentBrokenDate)
         }
@@ -310,56 +327,17 @@ class HomeViewModel @Inject constructor(
         onboardingCheckCompleted.first()
         isOnboardingVisible.first { !it }
 
-        val shouldShow = shouldShowReminder(recoveryTickets, dates)
+        val lastShownMonth = onboardingRepository.getRecoveryReminderLastShownMonth().getOrDefault("")
+        val shouldShow = RecoveryReminderPolicy.shouldShowReminder(
+            recoveryTickets = recoveryTickets,
+            dates = dates,
+            today = LocalDate.now(),
+            lastShownMonth = lastShownMonth,
+        )
         if (shouldShow) {
             _sideEffect.emit(HomeSideEffect.ShowRecoveryReminder)
         }
         recoveryReminderResult.update { shouldShow }
-    }
-
-    private suspend fun shouldShowReminder(
-        recoveryTickets: Int,
-        dates: List<DateUiModel>,
-    ): Boolean {
-        if (recoveryTickets <= 0) return false
-
-        val today = LocalDate.now()
-        if (!isLastWeekOfMonth(today)) return false
-
-        val currentMonth = YearMonth.now().toString()
-        val lastShownMonth = onboardingRepository.getRecoveryReminderLastShownMonth().getOrDefault("")
-        if (lastShownMonth == currentMonth) return false
-
-        return hasBrokenDayThisMonth(today, dates)
-    }
-
-    private fun isLastWeekOfMonth(today: LocalDate): Boolean =
-        today.dayOfMonth > today.lengthOfMonth() - 7
-
-    private fun hasBrokenDayThisMonth(
-        today: LocalDate,
-        dates: List<DateUiModel>,
-    ): Boolean {
-        val recordedDates = dates.map { it.date }.toSet()
-        val lastBrokenDate = today.minusDays(1)
-        var date = today.withDayOfMonth(1)
-        while (!date.isAfter(lastBrokenDate)) {
-            if (date !in recordedDates) return true
-            date = date.plusDays(1)
-        }
-        return false
-    }
-
-    private fun findRecentBrokenDate(dates: List<DateUiModel>): LocalDate? {
-        val recordedDates = dates.map { it.date }.toSet()
-        val today = LocalDate.now()
-        val firstDay = today.withDayOfMonth(1)
-        var date = today.minusDays(2)
-        while (!date.isBefore(firstDay)) {
-            if (date !in recordedDates) return date
-            date = date.minusDays(1)
-        }
-        return null
     }
 
     fun publishDiary(diaryId: Long) {
@@ -464,9 +442,10 @@ class HomeViewModel @Inject constructor(
         dates: List<DateUiModel>,
         recoveryTickets: Int,
     ): HomeDiaryUiState = coroutineScope {
+        val today = LocalDate.now()
         val matchedDate = dates.find { it.date == date }
         val isUnlocked = matchedDate?.status == CalendarStatus.UNLOCKED
-        val needsTopic = isUnlocked || DateUiModel(date).isWritable
+        val needsTopic = isUnlocked || DateUiModel(date).isWritable(today)
         val needsThumbnail = matchedDate != null && !isUnlocked
 
         val tempExistDeferred = async { diaryLocalRepository.isDiaryTempExist(date) }
@@ -480,6 +459,7 @@ class HomeViewModel @Inject constructor(
 
         HomeDiaryUiState().update(
             selectedDate = date,
+            today = today,
             dates = dates,
             recoveryTickets = recoveryTickets,
             fetchedThumbnail = thumbnail,
