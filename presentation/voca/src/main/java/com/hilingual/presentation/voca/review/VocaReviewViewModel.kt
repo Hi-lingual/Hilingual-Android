@@ -115,6 +115,7 @@ class VocaReviewViewModel @Inject constructor(
                 },
             )
                 .onSuccess {
+                    _uiState.update { it.copy(isSaving = false) }
                     _sideEffect.emit(VocaReviewSideEffect.NavigateUpWithSaved)
                 }
                 .onLogFailure {

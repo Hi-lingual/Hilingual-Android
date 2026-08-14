@@ -16,6 +16,7 @@
 package com.hilingual.presentation.voca.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.remember
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -26,7 +27,7 @@ import com.hilingual.presentation.voca.VocaRoute
 import com.hilingual.presentation.voca.review.VocaReviewRoute
 import kotlinx.serialization.Serializable
 
-private const val VOCA_REVIEW_SAVED_KEY = "voca_review_saved"
+const val VOCA_REVIEW_SAVED_KEY = "voca_review_saved"
 
 @Serializable
 data object Voca : MainTabRoute
@@ -59,17 +60,21 @@ fun NavController.navigateToVocaReview(
 
 fun NavGraphBuilder.vocaNavGraph(
     paddingValues: PaddingValues,
-    navController: NavController,
     navigateToHome: () -> Unit,
+    navigateToVocaReview: (Boolean, Int) -> Unit,
+    navigateUp: () -> Unit,
+    navigateUpWithReviewSaved: () -> Unit,
 ) {
     composable<Voca> { entry ->
+        val isReviewSavedFlow = remember(entry) {
+            entry.savedStateHandle.getStateFlow(VOCA_REVIEW_SAVED_KEY, false)
+        }
+
         VocaRoute(
             paddingValues = paddingValues,
             navigateToHome = navigateToHome,
-            navigateToVocaReview = { unmemorizedOnly, sort ->
-                navController.navigateToVocaReview(unmemorizedOnly = unmemorizedOnly, sort = sort)
-            },
-            isReviewSavedFlow = entry.savedStateHandle.getStateFlow(VOCA_REVIEW_SAVED_KEY, false),
+            navigateToVocaReview = navigateToVocaReview,
+            isReviewSavedFlow = isReviewSavedFlow,
             onReviewSavedConsumed = { entry.savedStateHandle[VOCA_REVIEW_SAVED_KEY] = false },
         )
     }
@@ -77,11 +82,8 @@ fun NavGraphBuilder.vocaNavGraph(
     composable<VocaReview> {
         VocaReviewRoute(
             paddingValues = paddingValues,
-            navigateUp = navController::navigateUp,
-            navigateUpWithSaved = {
-                navController.previousBackStackEntry?.savedStateHandle?.set(VOCA_REVIEW_SAVED_KEY, true)
-                navController.navigateUp()
-            },
+            navigateUp = navigateUp,
+            navigateUpWithSaved = navigateUpWithReviewSaved,
         )
     }
 }

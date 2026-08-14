@@ -2,17 +2,14 @@ package com.hilingual.presentation.voca.review
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -25,8 +22,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -45,9 +40,8 @@ import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.voca.component.rememberVocaTts
-import com.hilingual.presentation.voca.review.component.ReviewCardStack
+import com.hilingual.presentation.voca.review.component.ReviewCardSection
 import com.hilingual.presentation.voca.review.component.ReviewResultContent
-import com.hilingual.presentation.voca.review.component.rememberReviewCardController
 import kotlin.math.min
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -161,7 +155,6 @@ private fun ReviewContent(
     modifier: Modifier = Modifier,
 ) {
     var isHintVisible by remember { mutableStateOf(true) }
-    val controller = rememberReviewCardController()
 
     Column(
         modifier = modifier
@@ -197,62 +190,13 @@ private fun ReviewContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        ReviewCardStack(
+        ReviewCardSection(
             card = cards[currentIndex],
             behindCardCount = min(cards.lastIndex - currentIndex, 2),
-            controller = controller,
             onFlip = { isHintVisible = false },
             onResult = onResult,
             onTtsClick = onTtsClick,
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 16.dp),
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            ReviewAnswerButton(
-                text = "몰라요",
-                backgroundColor = HilingualTheme.colors.white,
-                textColor = HilingualTheme.colors.black,
-                onClick = { controller.commit(false) },
-                modifier = Modifier.weight(1f),
-            )
-            ReviewAnswerButton(
-                text = "알아요",
-                backgroundColor = HilingualTheme.colors.hilingualBlack,
-                textColor = HilingualTheme.colors.white,
-                onClick = { controller.commit(true) },
-                modifier = Modifier.weight(1f),
-            )
-        }
-    }
-}
-
-@Composable
-private fun ReviewAnswerButton(
-    text: String,
-    backgroundColor: Color,
-    textColor: Color,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(backgroundColor)
-            .noRippleClickable(onClick = onClick)
-            .padding(vertical = 18.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = text,
-            style = HilingualTheme.typography.bodyM16,
-            color = textColor,
+            modifier = Modifier.weight(1f),
         )
     }
 }

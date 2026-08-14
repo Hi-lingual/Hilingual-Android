@@ -14,7 +14,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,13 +40,12 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 
 private const val TINT_MAX_ALPHA = 0.3f
 
-private val KnowTint = Color(0xFF487AFF)
 private val DontKnowTint = Color(0xFFF27A3C)
 
 @Composable
 internal fun FlashCard(
     card: ReviewCardUiModel,
-    flipRotation: Float,
+    flipRotation: () -> Float,
     isRightSwipe: Boolean,
     contentAlpha: () -> Float,
     tintProgress: () -> Float,
@@ -52,7 +54,8 @@ internal fun FlashCard(
     modifier: Modifier = Modifier,
 ) {
     val cardShape = RoundedCornerShape(20.dp)
-    val tintColor = if (isRightSwipe) KnowTint else DontKnowTint
+    val tintColor = if (isRightSwipe) HilingualTheme.colors.hilingualBlue else DontKnowTint
+    val isFrontVisible by remember { derivedStateOf { flipRotation() <= 90f } }
 
     Box(
         modifier = modifier
@@ -72,12 +75,12 @@ internal fun FlashCard(
             modifier = Modifier
                 .matchParentSize()
                 .graphicsLayer {
-                    rotationY = flipRotation
+                    rotationY = flipRotation()
                     cameraDistance = 8 * density
                     alpha = contentAlpha()
                 },
         ) {
-            if (flipRotation <= 90f) {
+            if (isFrontVisible) {
                 FlashCardFace(
                     text = card.phrase,
                     phraseType = card.phraseType,
@@ -216,7 +219,7 @@ private fun FlashCardPreview() {
                 phraseType = persistentListOf("형용사", "숙어"),
                 explanation = "생각할 거리",
             ),
-            flipRotation = 0f,
+            flipRotation = { 0f },
             isRightSwipe = true,
             contentAlpha = { 1f },
             tintProgress = { 0f },

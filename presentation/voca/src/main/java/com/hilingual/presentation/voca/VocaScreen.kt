@@ -67,8 +67,8 @@ import com.hilingual.presentation.voca.component.VocaCard
 import com.hilingual.presentation.voca.component.VocaDialog
 import com.hilingual.presentation.voca.component.VocaEmptyCard
 import com.hilingual.presentation.voca.component.VocaEmptyCardType
+import com.hilingual.presentation.voca.component.VocaFilterBar
 import com.hilingual.presentation.voca.component.VocaHeader
-import com.hilingual.presentation.voca.component.VocaInfo
 import com.hilingual.presentation.voca.component.WordSortBottomSheet
 import com.hilingual.presentation.voca.component.WordSortType
 import com.hilingual.presentation.voca.component.rememberVocaTts
@@ -237,14 +237,7 @@ private fun VocaScreen(
 
     val displayGroupList = remember(vocaGroupList, isUnmemorizedFilterOn) {
         val groupList = (vocaGroupList as? UiState.Success)?.data ?: persistentListOf()
-        if (isUnmemorizedFilterOn) {
-            groupList
-                .map { group -> group.copy(words = group.words.filter { !it.isMemorized }) }
-                .filter { it.words.isNotEmpty() }
-                .toImmutableList()
-        } else {
-            groupList
-        }
+        if (isUnmemorizedFilterOn) groupList.filterUnmemorizedWords() else groupList
     }
     val isReviewFabVisible = viewType == ScreenType.DEFAULT &&
         displayGroupList.any { it.words.isNotEmpty() }
@@ -345,6 +338,11 @@ private fun VocaScreen(
     )
 }
 
+private fun ImmutableList<GroupingVocaModel>.filterUnmemorizedWords(): ImmutableList<GroupingVocaModel> =
+    map { group -> group.copy(words = group.words.filter { !it.isMemorized }) }
+        .filter { it.words.isNotEmpty() }
+        .toImmutableList()
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun VocaListWithInfoSection(
@@ -389,7 +387,7 @@ private fun VocaListWithInfoSection(
             } else {
                 item {
                     Spacer(modifier = Modifier.height(16.dp))
-                    VocaInfo(
+                    VocaFilterBar(
                         isUnmemorizedFilterOn = isUnmemorizedFilterOn,
                         onFilterClick = onFilterClick,
                         sortType = sortType,
