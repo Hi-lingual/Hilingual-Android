@@ -43,9 +43,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.ads.BuildConfig
+import com.hilingual.core.ads.interstitial.InterstitialAdResult
 import com.hilingual.core.ads.interstitial.showInterstitialAd
 import com.hilingual.core.common.analytics.FakeTracker
 import com.hilingual.core.common.analytics.Page.FEEDBACK
+import com.hilingual.core.common.analytics.Page.FEEDBACK_LOADING
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.constant.UrlConstant
@@ -121,7 +123,20 @@ internal fun DiaryFeedbackRoute(
                     showInterstitialAd(
                         activity = activity,
                         adUnitId = BuildConfig.ADMOB_INTERSTITIAL_UNIT_ID,
-                        onAdDismissed = viewModel::fetchAdWatched,
+                        onAdFinished = { result ->
+                            tracker.logGlobalAction(
+                                trigger = TriggerType.VIEW,
+                                action = "ad_action",
+                                properties = mapOf(
+                                    "ad_result" to when (result) {
+                                        InterstitialAdResult.DISMISSED -> "completed"
+                                        InterstitialAdResult.FAILED -> "failed"
+                                    },
+                                ),
+                                currentPage = FEEDBACK_LOADING,
+                            )
+                            viewModel.fetchAdWatched()
+                        },
                     )
                 } else {
                     viewModel.fetchAdWatched()
@@ -137,15 +152,15 @@ internal fun DiaryFeedbackRoute(
                         message = it.message,
                         actionLabelText = it.actionLabel,
                         onAction = {
-                            tracker.logEvent(
+                            tracker.logGlobalAction(
                                 trigger = TriggerType.CLICK,
-                                event = "toast_action",
+                                action = "toast_action",
                                 properties = mapOf(
                                     "toast_id" to "diary_post_success",
                                     "toast_action" to "cta_click",
                                     "entry_id" to viewModel.diaryId,
-                                    "page" to FEEDBACK.pageName,
                                 ),
+                                currentPage = FEEDBACK,
                             )
                             navigateToFeed()
                         },
@@ -170,7 +185,7 @@ internal fun DiaryFeedbackRoute(
     }
 
     LaunchedEffect(Unit) {
-        tracker.logEvent(trigger = TriggerType.VIEW, page = FEEDBACK, event = "page")
+        tracker.logGlobalAction(trigger = TriggerType.VIEW, action = "page", currentPage = FEEDBACK)
     }
 
     when (val currentState = state) {
@@ -183,14 +198,14 @@ internal fun DiaryFeedbackRoute(
                     uiState = currentState,
                     diaryId = viewModel.diaryId,
                     onBackClick = {
-                        tracker.logEvent(
+                        tracker.logGlobalAction(
                             trigger = TriggerType.CLICK,
-                            page = FEEDBACK,
-                            event = "back_feedback",
+                            action = "back",
                             properties = mapOf(
                                 "entry_id" to viewModel.diaryId,
                                 "back_source" to "ui_button",
                             ),
+                            currentPage = FEEDBACK,
                         )
                         navigateUp()
                     },
@@ -199,10 +214,10 @@ internal fun DiaryFeedbackRoute(
                     onChangeImageDetailVisible = { isImageDetailVisible = !isImageDetailVisible },
                     onToggleIsPublished = { isPublished ->
                         if (isPublished) {
-                            tracker.logEvent(
+                            tracker.logPageAction(
                                 trigger = TriggerType.CLICK,
                                 page = FEEDBACK,
-                                event = "submitted_post_diary",
+                                action = "post_diary",
                                 properties = mapOf("entry_id" to viewModel.diaryId),
                             )
                         }
@@ -230,6 +245,7 @@ internal fun DiaryFeedbackRoute(
                     )
                 },
                 modifier = Modifier.padding(paddingValues),
+                page = FEEDBACK,
             )
         }
 
@@ -335,18 +351,18 @@ private fun DiaryFeedbackScreen(
                                 onToggleDiaryViewMode = {
                                     isShowCorrectedDiary = it
                                     toggleClickCount++
-                                    tracker.logEvent(
+                                    tracker.logPageAction(
                                         trigger = TriggerType.CLICK,
                                         page = FEEDBACK,
-                                        event = "toggle",
+                                        action = "toggle",
                                         properties = mapOf(
                                             "entry_id" to diaryId,
                                             "toggle_state" to it,
                                             "toggle_click_count" to toggleClickCount,
-                                            "page" to FEEDBACK.pageName,
                                         ),
                                     )
                                 },
+                                page = FEEDBACK,
                             )
 
                             1 -> RecommendExpressionTab(
@@ -354,15 +370,15 @@ private fun DiaryFeedbackScreen(
                                 writtenDate = data.writtenDate,
                                 recommendExpressionList = data.recommendExpressionList,
                                 onBookmarkClick = { phraseId, isMarked ->
-                                    tracker.logEvent(
+                                    tracker.logGlobalAction(
                                         trigger = TriggerType.CLICK,
-                                        event = "bookmark_action",
+                                        action = "bookmark_action",
                                         properties = mapOf(
                                             "entry_id" to diaryId,
                                             "bookmark_action" to if (isMarked) "add" else "remove",
-                                            "page" to FEEDBACK.pageName,
                                             "tab_name" to "recommend_expression",
                                         ),
+                                        currentPage = FEEDBACK,
                                     )
                                     onToggleBookmark(phraseId, isMarked)
                                 },

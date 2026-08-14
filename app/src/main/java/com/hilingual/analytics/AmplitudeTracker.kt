@@ -40,6 +40,7 @@ class AmplitudeTracker @Inject constructor(
             Configuration(
                 apiKey = BuildConfig.AMPLITUDE_API_KEY,
                 context = context,
+                minIdLength = 1,
             ),
         )
     }
@@ -62,42 +63,37 @@ class AmplitudeTracker @Inject constructor(
         amplitude?.setUserId(null)
     }
 
-    override fun logEvent(
+    override fun logGlobalAction(
         trigger: TriggerType,
-        event: String,
+        action: String,
         properties: Map<String, Any>,
+        currentPage: Page?,
     ) {
-        val eventName = "${trigger.value}_$event"
+        val eventName = "${trigger.value}_$action"
+        val allProperties = properties.toMutableMap()
+
+        if (currentPage != null) {
+            allProperties["page"] = currentPage.pageName
+        }
 
         if (BuildConfig.DEBUG) {
-            Timber.tag("AmplitudeTracker").d("Tracking event: $eventName, properties: $properties")
+            Timber.tag("AmplitudeTracker").d("Tracking global action: $eventName, properties: $allProperties")
             return
         }
 
-        amplitude?.track(eventName, properties.toMutableMap())
+        amplitude?.track(eventName, allProperties)
     }
 
-    override fun logEvent(trigger: TriggerType, page: Page, event: String) {
-        val eventName = "${trigger.value}_${page.pageName}.$event"
-
-        if (BuildConfig.DEBUG) {
-            Timber.tag("AmplitudeTracker").d("Tracking event: $eventName, properties: None")
-            return
-        }
-
-        amplitude?.track(eventName)
-    }
-
-    override fun logEvent(
+    override fun logPageAction(
         trigger: TriggerType,
         page: Page,
-        event: String,
+        action: String,
         properties: Map<String, Any>,
     ) {
-        val eventName = "${trigger.value}_${page.pageName}.$event"
+        val eventName = "${trigger.value}_${page.pageName}.$action"
 
         if (BuildConfig.DEBUG) {
-            Timber.tag("AmplitudeTracker").d("Tracking event: $eventName, properties: $properties")
+            Timber.tag("AmplitudeTracker").d("Tracking page action: $eventName, properties: $properties")
             return
         }
 

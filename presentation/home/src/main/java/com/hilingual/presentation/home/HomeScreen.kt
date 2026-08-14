@@ -155,18 +155,34 @@ internal fun HomeRoute(
             is HomeSideEffect.ShowRewardedAd -> {
                 if (activity != null) {
                     homeState.showRecoveryAdLoading()
+
+                    // 보상 획득 후에도 닫힘 콜백이 호출되므로 결과를 한 번만 수집한다.
+                    var isRewardEarned = false
+                    val logAdAction = { result: String ->
+                        tracker.logGlobalAction(
+                            trigger = TriggerType.VIEW,
+                            action = "ad_action",
+                            properties = mapOf("ad_result" to result),
+                            currentPage = HOME,
+                        )
+                    }
+
                     showRewardedAd(
                         activity = activity,
                         adUnitId = BuildConfig.ADMOB_STREAKREWARD_UNIT_ID,
                         onRewardEarned = {
+                            isRewardEarned = true
+                            logAdAction("completed")
                             homeState.hideRecoveryAdLoading()
                             viewModel.onRewardEarned(sideEffect.date)
                         },
                         onAdDismissed = {
+                            if (!isRewardEarned) logAdAction("dismissed")
                             homeState.hideRecoveryAdLoading()
                             viewModel.onRecoveryAdFinished()
                         },
                         onAdFailedToLoad = {
+                            logAdAction("failed")
                             homeState.hideRecoveryAdLoading()
                             viewModel.onRecoveryAdFinished()
                             messageController(HilingualMessage.Toast("광고를 불러오지 못했어요.\n잠시 후 다시 시도해주세요."))
@@ -186,7 +202,7 @@ internal fun HomeRoute(
 
     LaunchedEffect(Unit) {
         viewModel.loadInitialData()
-        tracker.logEvent(trigger = TriggerType.VIEW, page = HOME, event = "page")
+        tracker.logGlobalAction(trigger = TriggerType.VIEW, action = "page", currentPage = HOME)
     }
 
     RetryOnReconnect(
@@ -245,7 +261,7 @@ internal fun HomeRoute(
                 homeState = homeState,
                 onAlarmClick = navigateToNotification,
                 onImageClick = {
-                    tracker.logEvent(trigger = TriggerType.CLICK, page = HOME, event = "profile")
+                    tracker.logPageAction(trigger = TriggerType.CLICK, page = HOME, action = "profile")
                     navigateToFeedProfile(0L)
                 },
                 isCalendarInteractionEnabled = !isOffline,
@@ -258,22 +274,23 @@ internal fun HomeRoute(
                 onMonthChanged = viewModel::onMonthChanged,
                 onRecoveryClick = viewModel::onRecoveryClick,
                 onWriteDiaryClick = { date, mode ->
-                    tracker.logEvent(
+                    tracker.logPageAction(
                         trigger = TriggerType.CLICK,
                         page = HOME,
-                        event = "diary_write",
+                        action = "diary_write",
                         properties = mapOf("open_time" to System.currentTimeMillis()),
                     )
                     navigateToDiaryWrite(date, mode)
                 },
                 onDiaryPreviewClick = { diaryId ->
-                    tracker.logEvent(
-                        trigger = TriggerType.VIEW,
+                    tracker.logPageAction(
+                        trigger = TriggerType.CLICK,
                         page = HOME,
-                        event = "opend_diary_view",
+                        action = "diary_view",
                         properties = mapOf(
                             "open_time" to System.currentTimeMillis(),
                             "entry_id" to diaryId,
+                            "entry_source" to "calendar",
                         ),
                     )
                     navigateToDiaryFeedback(diaryId)
@@ -290,6 +307,7 @@ internal fun HomeRoute(
                     onRetryClick = viewModel::retryLoad,
                 ),
                 modifier = Modifier.padding(paddingValues),
+                page = HOME,
             )
         }
 
@@ -462,10 +480,10 @@ private fun HomeDiaryFooter(
                             onExpandedChange = { isExpanded ->
                                 if (isExpanded) {
                                     homeState.showMoreMenu()
-                                    tracker.logEvent(
+                                    tracker.logPageAction(
                                         trigger = TriggerType.CLICK,
                                         page = HOME,
-                                        event = "more_menu",
+                                        action = "more_menu",
                                         properties = mapOf("menu_name" to "more_menu"),
                                     )
                                 } else {
@@ -514,13 +532,10 @@ private fun HomeDiaryFooter(
                                 .fillMaxWidth()
                                 .animateContentSize()
                                 .noRippleClickable {
-                                    tracker.logEvent(
+                                    tracker.logPageAction(
                                         trigger = TriggerType.CLICK,
                                         page = HOME,
-                                        event = "switch_language",
-                                        properties = mapOf(
-                                            "recommen_topic" to "${todayTopic.topicKo}/${todayTopic.topicEn}",
-                                        ),
+                                        action = "switch_language",
                                     )
                                 },
                         )
@@ -560,7 +575,14 @@ private fun HomeDiaryFooter(
                     RecoveryGuideCard(modifier = Modifier.fillMaxWidth())
                     Spacer(Modifier.height(12.dp))
                     RecoveryButton(
-                        onClick = { onRecoveryClick(date) },
+                        onClick = {
+                            tracker.logPageAction(
+                                trigger = TriggerType.CLICK,
+                                page = HOME,
+                                action = "streak_revive",
+                            )
+                            onRecoveryClick(date)
+                        },
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
