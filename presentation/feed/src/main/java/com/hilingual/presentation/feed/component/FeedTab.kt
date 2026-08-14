@@ -49,7 +49,7 @@ internal fun FeedTab(
     feedListState: UiState<ImmutableList<FeedItemUiModel>>,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
-    onProfileClick: (Long) -> Unit,
+    onProfileClick: (Long, Boolean) -> Unit,
     onContentDetailClick: (Long) -> Unit,
     onLikeClick: (Long, Boolean) -> Unit,
     onUnpublishClick: (diaryId: Long) -> Unit,
@@ -100,7 +100,7 @@ internal fun FeedTab(
                             with(feed) {
                                 FeedCard(
                                     profileUrl = profileUrl,
-                                    onProfileClick = { onProfileClick(userId) },
+                                    onProfileClick = { onProfileClick(userId, isMine) },
                                     nickname = nickname,
                                     streak = streak,
                                     sharedDateInMinutes = sharedDateInMinutes,
@@ -174,7 +174,7 @@ private fun FeedTabScreenPreview() {
             feedListState = UiState.Success(sampleFeedList),
             isRefreshing = false,
             onRefresh = { },
-            onProfileClick = { },
+            onProfileClick = { _, _ -> },
             onContentDetailClick = { },
             onLikeClick = { _, _ -> },
             onUnpublishClick = { },

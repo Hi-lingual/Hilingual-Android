@@ -161,7 +161,7 @@ internal fun FeedRoute(
                 tracker.logGlobalAction(trigger = TriggerType.VIEW, action = "page", currentPage = MY_FEED)
                 navigateToMyFeedProfile(false)
             },
-            onFeedProfileClick = { userId ->
+            onFeedProfileClick = { userId, isMine ->
                 tracker.logPageAction(
                     trigger = TriggerType.CLICK,
                     page = FEED,
@@ -171,7 +171,7 @@ internal fun FeedRoute(
                         "entry_source" to "feed",
                     ),
                 )
-                navigateToFeedProfile(userId)
+                if (isMine) navigateToMyFeedProfile(false) else navigateToFeedProfile(userId)
             },
             onLikeClick = { diaryId, isLiked ->
                 tracker.logGlobalAction(
@@ -205,7 +205,7 @@ private fun FeedScreen(
     hasFollowing: Boolean,
     onMyProfileClick: () -> Unit,
     onSearchClick: () -> Unit,
-    onFeedProfileClick: (Long) -> Unit,
+    onFeedProfileClick: (Long, Boolean) -> Unit,
     onLikeClick: (Long, Boolean) -> Unit,
     onContentDetailClick: (Long) -> Unit,
     onUnpublishClick: (Long) -> Unit,
@@ -353,7 +353,7 @@ private fun FeedScreenPreview() {
             paddingValues = PaddingValues(),
             onMyProfileClick = {},
             onSearchClick = {},
-            onFeedProfileClick = {},
+            onFeedProfileClick = { _, _ -> },
             onContentDetailClick = {},
             onLikeClick = { _, _ -> },
             readAllFeed = {},
