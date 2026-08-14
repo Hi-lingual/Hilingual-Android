@@ -182,6 +182,16 @@ internal fun VocaRoute(
     when (val state = uiState.vocaItemDetail) {
         is UiState.Success -> {
             val vocaDetail = state.data
+
+            LaunchedEffect(vocaDetail.phraseId) {
+                tracker.logPageAction(
+                    trigger = TriggerType.CLICK,
+                    page = VOCABULARY,
+                    action = "voca_lookup",
+                    properties = mapOf("bookmark_action" to if (vocaDetail.isBookmarked) "add" else "remove"),
+                )
+            }
+
             VocaDialog(
                 onDismiss = viewModel::clearSelectedVocaDetail,
                 phraseId = vocaDetail.phraseId,
@@ -214,13 +224,6 @@ internal fun VocaRoute(
                     }
                     ttsState.toggle(vocaDetail.phrase)
                 },
-            )
-
-            tracker.logPageAction(
-                trigger = TriggerType.CLICK,
-                page = VOCABULARY,
-                action = "voca_lookup",
-                properties = mapOf("bookmark_action" to if (vocaDetail.isBookmarked) "add" else "remove"),
             )
         }
 
