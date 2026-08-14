@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class VocaReviewViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     private val vocaRepository: VocaRepository,
 ) : ViewModel() {
     private val route = savedStateHandle.toRoute<VocaReview>()
@@ -40,6 +40,7 @@ class VocaReviewViewModel @Inject constructor(
     private val results = linkedMapOf<Long, Boolean>()
 
     init {
+        restoreResults()
         fetchCards()
     }
 
@@ -63,10 +64,27 @@ class VocaReviewViewModel @Inject constructor(
                         .toImmutableList()
 
                     if (cards.isEmpty()) {
-                        _sideEffect.emit(VocaReviewSideEffect.NavigateUp)
+                        _uiState.update { it.copy(exitReason = ReviewExitReason.EMPTY_DECK) }
                         return@launch
                     }
-                    _uiState.update { it.copy(cards = UiState.Success(cards)) }
+
+                    val firstUnjudgedIndex = cards.indexOfFirst { it.phraseId !in results }
+                    if (firstUnjudgedIndex == -1) {
+                        _uiState.update {
+                            it.copy(
+                                cards = UiState.Success(cards),
+                                currentIndex = cards.lastIndex,
+                                phase = ReviewPhase.COMPLETED,
+                            )
+                        }
+                    } else {
+                        _uiState.update {
+                            it.copy(
+                                cards = UiState.Success(cards),
+                                currentIndex = firstUnjudgedIndex,
+                            )
+                        }
+                    }
                 }
                 .onLogFailure {
                     _uiState.update { it.copy(cards = UiState.Failure(LoadErrorHandleAction.Retry)) }
@@ -74,12 +92,18 @@ class VocaReviewViewModel @Inject constructor(
         }
     }
 
-    fun selectResult(isMemorized: Boolean) {
+    fun judgeCurrentCard(isMemorized: Boolean) {
         val state = _uiState.value
         val cards = (state.cards as? UiState.Success)?.data ?: return
         val currentCard = cards.getOrNull(state.currentIndex) ?: return
 
         results[currentCard.phraseId] = isMemorized
+        persistResults()
+    }
+
+    fun moveToNextCard() {
+        val state = _uiState.value
+        val cards = (state.cards as? UiState.Success)?.data ?: return
 
         if (state.currentIndex == cards.lastIndex) {
             _uiState.update { it.copy(phase = ReviewPhase.COMPLETED) }
@@ -92,7 +116,7 @@ class VocaReviewViewModel @Inject constructor(
         when (_uiState.value.phase) {
             ReviewPhase.REVIEWING -> {
                 if (results.isEmpty()) {
-                    viewModelScope.launch { _sideEffect.emit(VocaReviewSideEffect.NavigateUp) }
+                    _uiState.update { it.copy(exitReason = ReviewExitReason.CANCELLED) }
                 } else {
                     _uiState.update { it.copy(phase = ReviewPhase.EXIT_CONFIRM) }
                 }
@@ -102,6 +126,10 @@ class VocaReviewViewModel @Inject constructor(
 
             ReviewPhase.COMPLETED -> saveResults()
         }
+    }
+
+    fun exitWithoutSaving() {
+        _uiState.update { it.copy(exitReason = ReviewExitReason.CANCELLED) }
     }
 
     fun saveResults() {
@@ -115,13 +143,33 @@ class VocaReviewViewModel @Inject constructor(
                 },
             )
                 .onSuccess {
-                    _sideEffect.emit(VocaReviewSideEffect.NavigateUpWithSaved)
+                    _uiState.update { it.copy(isSaving = false, exitReason = ReviewExitReason.SAVED) }
                 }
                 .onLogFailure {
                     _uiState.update { it.copy(isSaving = false) }
                     _sideEffect.emit(VocaReviewSideEffect.ShowErrorDialog)
                 }
         }
+    }
+
+    private fun restoreResults() {
+        val judgedIds = savedStateHandle.get<LongArray>(KEY_JUDGED_IDS) ?: return
+        val judgedValues = savedStateHandle.get<BooleanArray>(KEY_JUDGED_VALUES) ?: return
+        if (judgedIds.size != judgedValues.size) return
+
+        judgedIds.forEachIndexed { index, phraseId ->
+            results[phraseId] = judgedValues[index]
+        }
+    }
+
+    private fun persistResults() {
+        savedStateHandle[KEY_JUDGED_IDS] = results.keys.toLongArray()
+        savedStateHandle[KEY_JUDGED_VALUES] = results.values.toBooleanArray()
+    }
+
+    companion object {
+        private const val KEY_JUDGED_IDS = "review_judged_ids"
+        private const val KEY_JUDGED_VALUES = "review_judged_values"
     }
 }
 
@@ -131,6 +179,7 @@ data class VocaReviewUiState(
     val currentIndex: Int = 0,
     val phase: ReviewPhase = ReviewPhase.REVIEWING,
     val isSaving: Boolean = false,
+    val exitReason: ReviewExitReason? = null,
 )
 
 @Immutable
@@ -147,8 +196,12 @@ enum class ReviewPhase {
     COMPLETED,
 }
 
+enum class ReviewExitReason {
+    EMPTY_DECK,
+    CANCELLED,
+    SAVED,
+}
+
 sealed interface VocaReviewSideEffect {
-    data object NavigateUp : VocaReviewSideEffect
-    data object NavigateUpWithSaved : VocaReviewSideEffect
     data object ShowErrorDialog : VocaReviewSideEffect
 }

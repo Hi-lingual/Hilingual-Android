@@ -43,7 +43,7 @@ enum class WordSortType(
 }
 
 @Composable
-internal fun VocaInfo(
+internal fun VocaFilterBar(
     isUnmemorizedFilterOn: Boolean,
     onFilterClick: () -> Unit,
     sortType: WordSortType,
@@ -98,9 +98,9 @@ internal fun VocaInfo(
 
 @Preview(showBackground = true)
 @Composable
-private fun VocaInfoPreview() {
+private fun VocaFilterBarPreview() {
     HilingualTheme {
-        VocaInfo(
+        VocaFilterBar(
             isUnmemorizedFilterOn = false,
             onFilterClick = {},
             sortType = WordSortType.Latest,

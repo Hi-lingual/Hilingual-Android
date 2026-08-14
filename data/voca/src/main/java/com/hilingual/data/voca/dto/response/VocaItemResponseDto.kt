@@ -27,9 +27,9 @@ data class VocaItemResponseDto(
     @SerialName("phraseType")
     val phraseType: List<String>,
     @SerialName("explanation")
-    val explanation: String,
+    val explanation: String = "",
     @SerialName("isMemorized")
-    val isMemorized: Boolean,
+    val isMemorized: Boolean = false,
     @SerialName("isBookmarked")
     val isBookmarked: Boolean,
 )

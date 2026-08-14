@@ -62,7 +62,7 @@ private val onboardingPages = persistentListOf(
     ),
     HomeOnboarding(
         "일상 속 영어 습관을\n만들 준비가 됐나요?",
-        DesignSystemR.drawable.img_onboarding_bottomsheet_4,
+        DesignSystemR.drawable.img_brain_pencil,
     ),
 )
 

@@ -304,6 +304,12 @@ constructor(
             loadVocaData(isRefreshing = true)
         }
     }
+
+    fun syncVocaList() {
+        viewModelScope.launch {
+            loadVocaData()
+        }
+    }
 }
 
 private sealed interface VocaAction {
