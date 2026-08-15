@@ -35,6 +35,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.common.extension.dropShadow
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.voca.review.ReviewCardUiModel
 import kotlin.math.abs
@@ -91,10 +92,10 @@ internal fun ReviewCardSection(
             contentAlignment = Alignment.TopCenter,
         ) {
             if (behindCardCount >= 2) {
-                BehindCard(verticalOffset = 16.dp, horizontalInset = 16.dp)
+                BehindCard(verticalOffset = 26.dp)
             }
             if (behindCardCount >= 1) {
-                BehindCard(verticalOffset = 8.dp, horizontalInset = 8.dp)
+                BehindCard(verticalOffset = 12.dp)
             }
 
             FlashCard(
@@ -224,7 +225,6 @@ private fun Modifier.swipeCardGestures(
 @Composable
 private fun BehindCard(
     verticalOffset: Dp,
-    horizontalInset: Dp,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -232,7 +232,15 @@ private fun BehindCard(
             .fillMaxWidth()
             .aspectRatio(CARD_ASPECT_RATIO)
             .offset(y = verticalOffset)
-            .padding(horizontal = horizontalInset)
+            .dropShadow(
+                shape = RoundedCornerShape(20.dp),
+                color = HilingualTheme.colors.black,
+                alpha = 0.08f,
+                offsetX = 0.dp,
+                offsetY = 2.dp,
+                blur = 8.dp,
+                spread = 0.dp,
+            )
             .background(
                 color = HilingualTheme.colors.white,
                 shape = RoundedCornerShape(20.dp),

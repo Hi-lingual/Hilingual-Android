@@ -21,6 +21,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import com.hilingual.core.navigation.MainTabRoute
 import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.voca.VocaRoute
@@ -30,10 +31,13 @@ import kotlinx.serialization.Serializable
 const val VOCA_REVIEW_SAVED_KEY = "voca_review_saved"
 
 @Serializable
+data object VocaGraph : Route
+
+@Serializable
 data object Voca : MainTabRoute
 
 @Serializable
-data class VocaReview(
+internal data class VocaReview(
     val unmemorizedOnly: Boolean,
     val sort: Int,
 ) : Route
@@ -42,7 +46,7 @@ fun NavController.navigateToVoca(
     navOptions: NavOptions? = null,
 ) {
     navigate(
-        route = Voca,
+        route = VocaGraph,
         navOptions = navOptions,
     )
 }
@@ -65,25 +69,29 @@ fun NavGraphBuilder.vocaNavGraph(
     navigateUp: () -> Unit,
     navigateUpWithReviewSaved: () -> Unit,
 ) {
-    composable<Voca> { entry ->
-        val isReviewSavedFlow = remember(entry) {
-            entry.savedStateHandle.getStateFlow(VOCA_REVIEW_SAVED_KEY, false)
+    navigation<VocaGraph>(
+        startDestination = Voca::class,
+    ) {
+        composable<Voca> { entry ->
+            val isReviewSavedFlow = remember(entry) {
+                entry.savedStateHandle.getStateFlow(VOCA_REVIEW_SAVED_KEY, false)
+            }
+
+            VocaRoute(
+                paddingValues = paddingValues,
+                navigateToHome = navigateToHome,
+                navigateToVocaReview = navigateToVocaReview,
+                isReviewSavedFlow = isReviewSavedFlow,
+                onReviewSavedConsumed = { entry.savedStateHandle[VOCA_REVIEW_SAVED_KEY] = false },
+            )
         }
 
-        VocaRoute(
-            paddingValues = paddingValues,
-            navigateToHome = navigateToHome,
-            navigateToVocaReview = navigateToVocaReview,
-            isReviewSavedFlow = isReviewSavedFlow,
-            onReviewSavedConsumed = { entry.savedStateHandle[VOCA_REVIEW_SAVED_KEY] = false },
-        )
-    }
-
-    composable<VocaReview> {
-        VocaReviewRoute(
-            paddingValues = paddingValues,
-            navigateUp = navigateUp,
-            navigateUpWithSaved = navigateUpWithReviewSaved,
-        )
+        composable<VocaReview> {
+            VocaReviewRoute(
+                paddingValues = paddingValues,
+                navigateUp = navigateUp,
+                navigateUpWithSaved = navigateUpWithReviewSaved,
+            )
+        }
     }
 }

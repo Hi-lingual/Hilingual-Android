@@ -62,6 +62,7 @@ internal fun VocaDialog(
     phraseType: ImmutableList<String>,
     explanation: String,
     writtenDate: String,
+    isMemorized: Boolean,
     isBookmarked: Boolean,
     onBookmarkClick: (Long, Boolean) -> Unit,
     isTtsPlaying: Boolean,
@@ -86,6 +87,7 @@ internal fun VocaDialog(
             phraseType = phraseType,
             explanation = explanation,
             writtenDate = writtenDate,
+            isMemorized = isMemorized,
             isMarked = isMarked,
             onBookmarkClick = {
                 isMarked = !isMarked
@@ -105,6 +107,7 @@ private fun VocaDialogContent(
     phraseType: ImmutableList<String>,
     explanation: String,
     writtenDate: String,
+    isMemorized: Boolean,
     isMarked: Boolean,
     onBookmarkClick: () -> Unit,
     onDismiss: () -> Unit,
@@ -158,6 +161,25 @@ private fun VocaDialogContent(
                     style = HilingualTheme.typography.bodyR14,
                     color = HilingualTheme.colors.black,
                 )
+
+                if (isMemorized) {
+                    Row(
+                        modifier = Modifier.padding(top = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(2.dp),
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_check_circle_16),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                        )
+                        Text(
+                            text = "아는 단어",
+                            style = HilingualTheme.typography.captionR12,
+                            color = HilingualTheme.colors.gray500,
+                        )
+                    }
+                }
             }
 
             Icon(
@@ -205,6 +227,7 @@ private fun VocaDialogPreview() {
             phraseType = persistentListOf("동사", "숙어"),
             explanation = "다음 기회로 미루다, 나중에 하자고 하다",
             writtenDate = "2024.03.15",
+            isMemorized = true,
             isMarked = true,
             onBookmarkClick = { },
             onDismiss = { },
