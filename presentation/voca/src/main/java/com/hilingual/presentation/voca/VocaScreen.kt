@@ -240,8 +240,8 @@ private fun VocaScreen(
         val groupList = (vocaGroupList as? UiState.Success)?.data ?: persistentListOf()
         if (isUnmemorizedFilterOn) groupList.filterUnmemorizedWords() else groupList
     }
-    val isReviewFabVisible = viewType == ScreenType.DEFAULT &&
-        displayGroupList.any { it.words.isNotEmpty() }
+    val isSourceEmpty = (vocaGroupList as? UiState.Success)?.data?.all { it.words.isEmpty() } ?: true
+    val isReviewFabVisible = viewType == ScreenType.DEFAULT && !isSourceEmpty
 
     LaunchedEffect(viewType) {
         if (viewType == ScreenType.DEFAULT) {
@@ -292,7 +292,7 @@ private fun VocaScreen(
                             VocaListWithInfoSection(
                                 listState = listState,
                                 vocaGroupList = displayGroupList,
-                                isSourceEmpty = vocaGroupList.data.all { it.words.isEmpty() },
+                                isSourceEmpty = isSourceEmpty,
                                 sortType = sortType,
                                 isUnmemorizedFilterOn = isUnmemorizedFilterOn,
                                 onFilterClick = onFilterClick,
@@ -396,6 +396,19 @@ private fun VocaListWithInfoSection(
                         modifier = Modifier.fillMaxWidth(),
                     )
                     Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                if (vocaGroupList.isEmpty()) {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillParentMaxSize()
+                                .padding(top = 80.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            VocaEmptyCard(type = VocaEmptyCardType.ALL_MEMORIZED)
+                        }
+                    }
                 }
 
                 vocaGroupList.forEach { group ->

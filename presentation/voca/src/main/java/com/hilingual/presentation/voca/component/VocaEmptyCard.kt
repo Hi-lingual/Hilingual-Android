@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.R as DesignSystemR
@@ -37,6 +38,7 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 internal enum class VocaEmptyCardType(
     val text: String,
     @DrawableRes val imageRes: Int,
+    val imageHeight: Dp = 140.dp,
 ) {
     NOT_ADD(
         text = "아직 단어가 추가되지 않았어요.",
@@ -45,6 +47,11 @@ internal enum class VocaEmptyCardType(
     NOT_SEARCH(
         text = "검색 결과가 없습니다.",
         imageRes = DesignSystemR.drawable.img_search,
+    ),
+    ALL_MEMORIZED(
+        text = "모두 아는 단어에요!",
+        imageRes = DesignSystemR.drawable.img_review_finish_gray,
+        imageHeight = 180.dp,
     ),
 }
 
@@ -61,7 +68,7 @@ internal fun VocaEmptyCard(
     ) {
         Image(
             modifier = Modifier
-                .size(width = 200.dp, height = 140.dp),
+                .size(width = 200.dp, height = type.imageHeight),
             painter = painterResource(id = type.imageRes),
             contentDescription = null,
         )

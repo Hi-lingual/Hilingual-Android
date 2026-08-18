@@ -125,7 +125,7 @@ internal fun VocaReviewRoute(
                                 buttonText = "저장하기",
                                 onButtonClick = viewModel::saveResults,
                                 isSaving = uiState.isSaving,
-                                onExitWithoutSavingClick = viewModel::exitWithoutSaving,
+                                onCloseClick = viewModel::exitWithoutSaving,
                                 modifier = Modifier.noRippleClickable {},
                             )
                         }
@@ -141,7 +141,6 @@ internal fun VocaReviewRoute(
                         buttonText = "완료",
                         onButtonClick = viewModel::saveResults,
                         isSaving = uiState.isSaving,
-                        onExitWithoutSavingClick = viewModel::exitWithoutSaving,
                     )
                 }
             }

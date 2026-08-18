@@ -11,17 +11,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.designsystem.component.button.HilingualButton
+import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.R as DesignSystemR
 
@@ -34,8 +38,8 @@ internal fun ReviewResultContent(
     buttonText: String,
     onButtonClick: () -> Unit,
     isSaving: Boolean,
-    onExitWithoutSavingClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onCloseClick: (() -> Unit)? = null,
 ) {
     Column(
         modifier = modifier
@@ -44,6 +48,19 @@ internal fun ReviewResultContent(
             .background(HilingualTheme.colors.white)
             .padding(paddingValues),
     ) {
+        if (onCloseClick != null) {
+            HilingualBasicTopAppBar(
+                navigationIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_close_24),
+                        contentDescription = null,
+                        tint = HilingualTheme.colors.black,
+                        modifier = Modifier.noRippleClickable(onClick = onCloseClick),
+                    )
+                },
+            )
+        }
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -72,18 +89,7 @@ internal fun ReviewResultContent(
             text = buttonText,
             onClick = onButtonClick,
             enableProvider = { !isSaving },
-            modifier = Modifier.padding(horizontal = 16.dp),
-        )
-
-        Text(
-            text = "저장하지 않고 나가기",
-            style = HilingualTheme.typography.bodyM14,
-            color = HilingualTheme.colors.gray400,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .noRippleClickable(onClick = onExitWithoutSavingClick)
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
         )
     }
 }
@@ -100,7 +106,6 @@ private fun ReviewResultContentPreview() {
             buttonText = "완료",
             onButtonClick = {},
             isSaving = false,
-            onExitWithoutSavingClick = {},
         )
     }
 }
