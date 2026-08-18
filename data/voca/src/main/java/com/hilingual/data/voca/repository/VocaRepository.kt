@@ -22,7 +22,7 @@ import com.hilingual.data.voca.model.VocaMemorizationModel
 interface VocaRepository {
     suspend fun getVocaList(
         sort: Int,
-        unmemorizedOnly: Boolean = false,
+        isUnmemorizedOnly: Boolean = false,
     ): Result<VocaListResultModel>
 
     suspend fun getVocaDetail(

@@ -23,7 +23,7 @@ import com.hilingual.data.voca.dto.response.VocaListResponseDto
 interface VocaDataSource {
     suspend fun getVocaList(
         sort: Int,
-        unmemorizedOnly: Boolean,
+        isUnmemorizedOnly: Boolean,
     ): BaseResponse<VocaListResponseDto>
 
     suspend fun getVocaDetail(

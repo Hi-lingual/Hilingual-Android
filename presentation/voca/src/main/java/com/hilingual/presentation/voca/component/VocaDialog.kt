@@ -163,22 +163,7 @@ private fun VocaDialogContent(
                 )
 
                 if (isMemorized) {
-                    Row(
-                        modifier = Modifier.padding(top = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(2.dp),
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_check_circle_16),
-                            contentDescription = null,
-                            tint = Color.Unspecified,
-                        )
-                        Text(
-                            text = "아는 단어",
-                            style = HilingualTheme.typography.captionR12,
-                            color = HilingualTheme.colors.gray500,
-                        )
-                    }
+                    MemorizedBadge(modifier = Modifier.padding(top = 16.dp))
                 }
             }
 

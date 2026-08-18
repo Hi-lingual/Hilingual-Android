@@ -38,7 +38,7 @@ data object Voca : MainTabRoute
 
 @Serializable
 internal data class VocaReview(
-    val unmemorizedOnly: Boolean,
+    val isUnmemorizedOnly: Boolean,
     val sort: Int,
 ) : Route
 
@@ -52,12 +52,12 @@ fun NavController.navigateToVoca(
 }
 
 fun NavController.navigateToVocaReview(
-    unmemorizedOnly: Boolean,
+    isUnmemorizedOnly: Boolean,
     sort: Int,
     navOptions: NavOptions? = null,
 ) {
     navigate(
-        route = VocaReview(unmemorizedOnly = unmemorizedOnly, sort = sort),
+        route = VocaReview(isUnmemorizedOnly = isUnmemorizedOnly, sort = sort),
         navOptions = navOptions,
     )
 }

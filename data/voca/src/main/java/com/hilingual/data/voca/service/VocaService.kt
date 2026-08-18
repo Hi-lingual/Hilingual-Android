@@ -29,7 +29,7 @@ interface VocaService {
     @GET("api/v1/voca")
     suspend fun getVocaList(
         @Query("sort") sort: Int,
-        @Query("unmemorizedOnly") unmemorizedOnly: Boolean,
+        @Query("unmemorizedOnly") isUnmemorizedOnly: Boolean,
     ): BaseResponse<VocaListResponseDto>
 
     @GET("api/v1/voca/{phraseId}")

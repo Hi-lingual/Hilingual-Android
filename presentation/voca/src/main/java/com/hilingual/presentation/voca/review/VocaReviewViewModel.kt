@@ -8,6 +8,7 @@ import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
+import com.hilingual.data.voca.model.VocaListResultModel
 import com.hilingual.data.voca.model.VocaMemorizationModel
 import com.hilingual.data.voca.repository.VocaRepository
 import com.hilingual.presentation.voca.navigation.VocaReview
@@ -49,46 +50,36 @@ class VocaReviewViewModel @Inject constructor(
     private fun fetchCards() {
         viewModelScope.launch {
             _uiState.update { it.copy(cards = UiState.Loading) }
-            vocaRepository.getVocaList(sort = route.sort, unmemorizedOnly = route.unmemorizedOnly)
-                .onSuccess { result ->
-                    val cards = result.list
-                        .flatMap { it.words }
-                        .map { word ->
-                            ReviewCardUiModel(
-                                phraseId = word.phraseId,
-                                phrase = word.phrase,
-                                phraseType = word.phraseType.toImmutableList(),
-                                explanation = word.explanation,
-                            )
-                        }
-                        .toImmutableList()
-
-                    if (cards.isEmpty()) {
-                        _uiState.update { it.copy(exitReason = ReviewExitReason.EMPTY_DECK) }
-                        return@launch
-                    }
-
-                    val firstUnjudgedIndex = cards.indexOfFirst { it.phraseId !in results }
-                    if (firstUnjudgedIndex == -1) {
-                        _uiState.update {
-                            it.copy(
-                                cards = UiState.Success(cards),
-                                currentIndex = cards.lastIndex,
-                                phase = ReviewPhase.COMPLETED,
-                            )
-                        }
-                    } else {
-                        _uiState.update {
-                            it.copy(
-                                cards = UiState.Success(cards),
-                                currentIndex = firstUnjudgedIndex,
-                            )
-                        }
-                    }
-                }
+            vocaRepository.getVocaList(sort = route.sort, isUnmemorizedOnly = route.isUnmemorizedOnly)
+                .onSuccess { result -> applyFetchedCards(result.toReviewCards()) }
                 .onLogFailure {
                     _uiState.update { it.copy(cards = UiState.Failure(LoadErrorHandleAction.Retry)) }
                 }
+        }
+    }
+
+    private fun applyFetchedCards(cards: ImmutableList<ReviewCardUiModel>) {
+        if (cards.isEmpty()) {
+            _uiState.update { it.copy(exitReason = ReviewExitReason.EMPTY_DECK) }
+            return
+        }
+
+        val firstUnjudgedIndex = cards.indexOfFirst { it.phraseId !in results }
+        if (firstUnjudgedIndex == -1) {
+            _uiState.update {
+                it.copy(
+                    cards = UiState.Success(cards),
+                    currentIndex = cards.lastIndex,
+                    phase = ReviewPhase.COMPLETED,
+                )
+            }
+        } else {
+            _uiState.update {
+                it.copy(
+                    cards = UiState.Success(cards),
+                    currentIndex = firstUnjudgedIndex,
+                )
+            }
         }
     }
 
@@ -172,6 +163,18 @@ class VocaReviewViewModel @Inject constructor(
         private const val KEY_JUDGED_VALUES = "review_judged_values"
     }
 }
+
+private fun VocaListResultModel.toReviewCards(): ImmutableList<ReviewCardUiModel> =
+    list.flatMap { it.words }
+        .map { word ->
+            ReviewCardUiModel(
+                phraseId = word.phraseId,
+                phrase = word.phrase,
+                phraseType = word.phraseType.toImmutableList(),
+                explanation = word.explanation,
+            )
+        }
+        .toImmutableList()
 
 @Immutable
 data class VocaReviewUiState(

@@ -43,7 +43,6 @@ import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.signup.navigation.navigateToSignUp
 import com.hilingual.presentation.splash.navigation.Splash
 import com.hilingual.presentation.voca.navigation.VOCA_REVIEW_SAVED_KEY
-import com.hilingual.presentation.voca.navigation.Voca
 import com.hilingual.presentation.voca.navigation.navigateToVoca
 import com.hilingual.presentation.voca.navigation.navigateToVocaReview
 import java.time.LocalDate
@@ -209,13 +208,20 @@ internal class MainAppState(
         navController.navigateToOnboarding(navOptions)
     }
 
-    fun navigateToVocaReview(unmemorizedOnly: Boolean, sort: Int) {
-        navController.navigateToVocaReview(unmemorizedOnly = unmemorizedOnly, sort = sort)
+    fun navigateToVocaReview(
+        isUnmemorizedOnly: Boolean,
+        sort: Int,
+        navOptions: NavOptions? = null,
+    ) {
+        navController.navigateToVocaReview(
+            isUnmemorizedOnly = isUnmemorizedOnly,
+            sort = sort,
+            navOptions = navOptions,
+        )
     }
 
     fun navigateUpWithVocaReviewSaved() {
-        runCatching { navController.getBackStackEntry(Voca) }
-            .getOrNull()
+        navController.previousBackStackEntry
             ?.savedStateHandle
             ?.set(VOCA_REVIEW_SAVED_KEY, true)
         navController.navigateUp()

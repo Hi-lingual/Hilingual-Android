@@ -28,9 +28,9 @@ import javax.inject.Inject
 internal class VocaRepositoryImpl @Inject constructor(
     private val vocaDataSource: VocaDataSource,
 ) : VocaRepository {
-    override suspend fun getVocaList(sort: Int, unmemorizedOnly: Boolean): Result<VocaListResultModel> =
+    override suspend fun getVocaList(sort: Int, isUnmemorizedOnly: Boolean): Result<VocaListResultModel> =
         suspendRunCatching {
-            vocaDataSource.getVocaList(sort = sort, unmemorizedOnly = unmemorizedOnly).data!!.toModel()
+            vocaDataSource.getVocaList(sort = sort, isUnmemorizedOnly = isUnmemorizedOnly).data!!.toModel()
         }
 
     override suspend fun getVocaDetail(phraseId: Long): Result<VocaDetailModel> =

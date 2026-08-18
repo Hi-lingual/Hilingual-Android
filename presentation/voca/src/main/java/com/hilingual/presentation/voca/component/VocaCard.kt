@@ -30,7 +30,6 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -86,21 +85,7 @@ internal fun VocaCard(
                 color = HilingualTheme.colors.black,
             )
             if (isMemorized) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(2.dp),
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_check_circle_16),
-                        contentDescription = null,
-                        tint = Color.Unspecified,
-                    )
-                    Text(
-                        text = "아는 단어",
-                        style = HilingualTheme.typography.captionR12,
-                        color = HilingualTheme.colors.gray500,
-                    )
-                }
+                MemorizedBadge(modifier = Modifier.padding(top = 10.dp))
             }
         }
         Icon(

@@ -26,8 +26,8 @@ import javax.inject.Inject
 internal class VocaDataSourceImpl @Inject constructor(
     private val vocaService: VocaService,
 ) : VocaDataSource {
-    override suspend fun getVocaList(sort: Int, unmemorizedOnly: Boolean): BaseResponse<VocaListResponseDto> =
-        vocaService.getVocaList(sort = sort, unmemorizedOnly = unmemorizedOnly)
+    override suspend fun getVocaList(sort: Int, isUnmemorizedOnly: Boolean): BaseResponse<VocaListResponseDto> =
+        vocaService.getVocaList(sort = sort, isUnmemorizedOnly = isUnmemorizedOnly)
 
     override suspend fun getVocaDetail(phraseId: Long): BaseResponse<VocaDetailResponseDto> =
         vocaService.getVocaDetail(phraseId = phraseId)

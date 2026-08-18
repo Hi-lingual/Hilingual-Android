@@ -188,13 +188,8 @@ constructor(
         viewModelScope.launch {
             vocaRepository.getVocaDetail(phraseId = phraseId)
                 .onSuccess { vocaDetail ->
-                    val isMemorized = _uiState.value.aTozList
-                        .flatMap { it.words }
-                        .firstOrNull { it.phraseId == phraseId }
-                        ?.isMemorized ?: false
-
                     _uiState.update {
-                        it.copy(vocaItemDetail = UiState.Success(vocaDetail.toState(isMemorized)))
+                        it.copy(vocaItemDetail = UiState.Success(vocaDetail.toState(isMemorizedOf(phraseId))))
                     }
                 }
                 .onLogFailure { throwable ->
@@ -315,6 +310,12 @@ constructor(
             loadVocaData()
         }
     }
+
+    private fun isMemorizedOf(phraseId: Long): Boolean =
+        _uiState.value.aTozList
+            .flatMap { it.words }
+            .firstOrNull { it.phraseId == phraseId }
+            ?.isMemorized ?: false
 }
 
 private sealed interface VocaAction {
