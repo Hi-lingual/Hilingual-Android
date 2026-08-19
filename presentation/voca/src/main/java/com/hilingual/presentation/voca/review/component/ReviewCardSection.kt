@@ -2,8 +2,8 @@ package com.hilingual.presentation.voca.review.component
 
 import android.view.HapticFeedbackConstants
 import android.view.View
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -61,12 +61,15 @@ internal fun ReviewCardSection(
     val view = LocalView.current
     val swipeCardState = rememberSwipeCardState()
     var isFlipped by remember { mutableStateOf(false) }
-    val flipRotation by animateFloatAsState(
-        targetValue = if (isFlipped) 180f else 0f,
-        animationSpec = tween(durationMillis = FLIP_DURATION_MILLIS, easing = FastOutSlowInEasing),
-        label = "flipRotation",
-    )
-    val isFrontVisible by remember { derivedStateOf { flipRotation <= 90f } }
+    val flipRotation = remember { Animatable(0f) }
+    val isFrontVisible by remember { derivedStateOf { flipRotation.value <= 90f } }
+
+    LaunchedEffect(isFlipped) {
+        flipRotation.animateTo(
+            targetValue = if (isFlipped) 180f else 0f,
+            animationSpec = tween(durationMillis = FLIP_DURATION_MILLIS, easing = FastOutSlowInEasing),
+        )
+    }
 
     val updatedOnFlip by rememberUpdatedState(onFlip)
     val updatedOnJudge by rememberUpdatedState(onJudge)
@@ -79,6 +82,7 @@ internal fun ReviewCardSection(
 
     LaunchedEffect(card.phraseId) {
         isFlipped = false
+        flipRotation.snapTo(0f)
         swipeCardState.prepareNextCard()
     }
 
@@ -100,7 +104,7 @@ internal fun ReviewCardSection(
 
             FlashCard(
                 card = card,
-                flipRotation = { flipRotation },
+                flipRotation = { flipRotation.value },
                 isFrontVisible = isFrontVisible,
                 isRightSwipe = swipeCardState.isRightSwipe,
                 contentAlpha = { swipeCardState.contentAlpha.value },
