@@ -63,6 +63,7 @@ include(":presentation:notification")
 include(":presentation:feeddiary")
 include(":presentation:signup")
 include(":presentation:onboarding")
+include(":presentation:widget")
 
 // Benchmarks
 include(":baselineprofile")

@@ -89,6 +89,7 @@ dependencies {
 
     // presentation
     implementation(projects.presentation.main)
+    implementation(projects.presentation.widget)
 
     // data
     implementation(projects.data.auth)
@@ -102,9 +103,6 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.credentials.play.services.auth)
-    implementation(libs.androidx.glance.appwidget)
-    implementation(libs.androidx.glance.material)
-
     implementation(platform(libs.coil.bom))
     implementation(libs.bundles.coil)
 
