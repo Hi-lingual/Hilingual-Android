@@ -8,10 +8,12 @@
 ## 릴리즈 체크리스트 ✅
 - [ ] `./gradlew spotlessApply` 실행 및 커밋
 - [ ] `./gradlew ktlintCheck` 통과
-- [ ] 베이스라인 프로파일 재생성 및 커밋 (`baseline-prof.txt`, `startup-prof.txt`)
-- [ ] 패치노트 작성 (`fastlane/metadata/android/ko-KR/changelogs/default.txt`) — 비어 있으면 배포가 중단된다
+- [ ] 베이스라인 프로파일 재생성 및 커밋 (`app/src/release/generated/baselineProfiles/`)
 - [ ] Firebase QA 빌드 배포 및 QA 통과
-- [ ] PR CI(lint / build) 통과
+- [ ] 패치노트 작성 (`fastlane/metadata/android/ko-KR/changelogs/default.txt`) — 비어 있으면 배포가 중단된다
+- [ ] PR CI(lint / build / release build) 통과
+
+순서는 권장일 뿐 강제되지 않는다. 패치노트는 머지 시점까지만 채워져 있으면 되므로, 릴리즈 노트를 QA 이후에 받는다면 나중에 커밋해도 된다.
 
 ## 이번 릴리즈 내용 ✏️
 - 내용

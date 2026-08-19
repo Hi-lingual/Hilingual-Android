@@ -53,9 +53,20 @@ Actions 탭에서 **Prepare Release**를 실행하고 버전을 입력합니다.
 - [ ] `./gradlew spotlessApply` 실행
 - [ ] `./gradlew ktlintCheck` 통과
 - [ ] 베이스라인 프로파일 재생성 (`app/src/release/generated/baselineProfiles/`)
+- [ ] Firebase QA 빌드 배포 및 QA 통과
 - [ ] 패치노트 작성 (`fastlane/metadata/android/ko-KR/changelogs/default.txt`)
 
-push할 때마다 Firebase App Distribution에 QA 빌드가 자동으로 배포되고, PR에서는 ktlint와 빌드 검증이 돕니다.
+push할 때마다 Firebase App Distribution에 QA 빌드가 자동으로 배포되고, PR에서는 ktlint와 빌드 검증이 돕니다. 릴리즈 PR에서는 `bundleRelease`까지 돌려 R8이 적용된 실제 배포 빌드가 통과하는지도 검증합니다.
+
+> [!NOTE]
+> 위 순서는 권장 순서일 뿐 강제되지 않습니다. **패치노트는 PR을 머지하는 시점까지만 채워져 있으면 됩니다.**
+> 릴리즈 노트를 QA 이후에 받는다면 QA를 먼저 돌리고 나중에 커밋하셔도 됩니다.
+
+### 사일로 기능 QA는 release 브랜치가 필요 없습니다
+
+`release/x.y.z`는 스토어 배포용입니다. 개별 기능 QA는 작업 브랜치에서 바로 QA 빌드를 뽑으면 됩니다.
+
+Actions 탭 → **Deploy QA Build to Firebase** → Run workflow → 브랜치 선택 후 실행합니다. 유닛 테스트를 돌리고 debug APK를 빌드해 Firebase App Distribution의 `qa-team` 그룹으로 배포합니다. QA 빌드의 릴리즈 노트에는 마지막 커밋 메시지가 자동으로 들어가므로, 여러 기능이 동시에 올라갈 때는 그것으로 구분합니다.
 
 ## 3. 머지
 
@@ -130,8 +141,8 @@ main은 움직이지 않았고 태그도 생성되지 않았으므로 재시도�
 
 | 워크플로 | 트리거 | 하는 일 |
 | --- | --- | --- |
-| `pr_checker.yml` | `develop`/`main` 대상 PR, `develop` push | ktlint, assembleDebug |
-| `deploy-qa.yml` | `release/**` push | 유닛 테스트, Firebase App Distribution 배포 |
+| `pr_checker.yml` | `develop`/`main` 대상 PR, `develop` push | ktlint, assembleDebug (릴리즈 PR은 bundleRelease 추가) |
+| `deploy-qa.yml` | `release/**` push, 수동 실행 | 유닛 테스트, Firebase App Distribution 배포 |
 | `release-prepare.yml` | 수동 실행 | release 브랜치 생성, 버전 코드 커밋, draft PR 생성 |
 | `release-publish.yml` | `develop` 대상 PR 머지 | 사전 검증 → 배포 호출 → main 승격, 태그, Release |
 | `deploy-release.yml` | `release-publish`가 호출, 수동 실행 | AAB 빌드, Play Store 업로드 |
