@@ -26,6 +26,9 @@ enum class Page(val pageName: String) {
     FEEDBACK("feedback"),
     FEEDBACK_LOADING("feedback_loading"),
 
+    // AI 피드백
+    AI_FEEDBACK("ai_feedback"),
+
     // 단어장
     VOCABULARY("vocabulary"),
 
