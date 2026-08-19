@@ -1,9 +1,7 @@
 package com.hilingual.presentation.widget.streak
 
 import android.content.Context
-import android.content.res.Configuration
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.DpSize
@@ -34,6 +32,8 @@ import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
+import androidx.glance.preview.ExperimentalGlancePreviewApi
+import androidx.glance.preview.Preview
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -320,13 +320,8 @@ private fun previewDays(writtenDays: Set<String> = emptySet()) =
         StreakDay(label = day, isWritten = day in writtenDays)
     }
 
-@Preview(name = "Streak 2x2 Light", widthDp = 155, heightDp = 155)
-@Preview(
-    name = "Streak 2x2 Dark",
-    widthDp = 155,
-    heightDp = 155,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-)
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 155, heightDp = 155)
 @Composable
 private fun StreakCompactPreview(
     @PreviewParameter(StreakPreviewParameterProvider::class)
@@ -335,13 +330,8 @@ private fun StreakCompactPreview(
     StreakWidgetContent(state = state, isWide = false)
 }
 
-@Preview(name = "Streak 4x2 Light", widthDp = 329, heightDp = 155)
-@Preview(
-    name = "Streak 4x2 Dark",
-    widthDp = 329,
-    heightDp = 155,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-)
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 329, heightDp = 155)
 @Composable
 private fun StreakWidePreview(
     @PreviewParameter(StreakPreviewParameterProvider::class)

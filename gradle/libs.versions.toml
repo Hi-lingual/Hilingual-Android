@@ -131,6 +131,8 @@ androidx-navigation = { module = "androidx.navigation:navigation-compose", versi
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser"}
 androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
 androidx-glance-material = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
+androidx-glance-preview = { group = "androidx.glance", name = "glance-preview", version.ref = "glance" }
+androidx-glance-appwidget-preview = { group = "androidx.glance", name = "glance-appwidget-preview", version.ref = "glance" }
 
 # Coroutines
 coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutine" }

@@ -1,9 +1,7 @@
 package com.hilingual.presentation.widget.topic
 
 import android.content.Context
-import android.content.res.Configuration
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.DpSize
@@ -31,6 +29,8 @@ import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
+import androidx.glance.preview.ExperimentalGlancePreviewApi
+import androidx.glance.preview.Preview
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -259,13 +259,8 @@ private class RecommendedTopicPreviewParameterProvider :
     )
 }
 
-@Preview(name = "Topic 2x2 Light", widthDp = 155, heightDp = 155)
-@Preview(
-    name = "Topic 2x2 Dark",
-    widthDp = 155,
-    heightDp = 155,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-)
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 155, heightDp = 155)
 @Composable
 private fun RecommendedTopicCompactPreview(
     @PreviewParameter(RecommendedTopicPreviewParameterProvider::class)
@@ -274,13 +269,8 @@ private fun RecommendedTopicCompactPreview(
     RecommendedTopicWidgetContent(state = state, isWide = false)
 }
 
-@Preview(name = "Topic 4x2 Light", widthDp = 329, heightDp = 155)
-@Preview(
-    name = "Topic 4x2 Dark",
-    widthDp = 329,
-    heightDp = 155,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-)
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 329, heightDp = 155)
 @Composable
 private fun RecommendedTopicWidePreview(
     @PreviewParameter(RecommendedTopicPreviewParameterProvider::class)
