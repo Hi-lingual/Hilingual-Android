@@ -1,0 +1,110 @@
+name: Post Release
+
+# Play Store 업로드가 성공한 뒤에 실행된다.
+# 1) main 의 버전으로 태그와 GitHub Release 를 만들고
+# 2) main 을 develop 에 되돌려 반영한다.
+on:
+  workflow_run:
+    workflows: ["Deploy to Play Store"]
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  post_release:
+    name: Tag, Release & Sync to Develop
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Read release version
+        id: version
+        run: |
+          set -euo pipefail
+          VERSION=$(grep -E '^versionName = ' gradle/libs.versions.toml | sed -E 's/.*"(.*)".*/\1/')
+          if [ -z "$VERSION" ]; then
+            echo "::error::libs.versions.toml 에서 versionName 을 읽지 못했습니다."
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Create tag and GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "::notice::$TAG 태그가 이미 존재합니다. 태그 생성을 건너뜁니다."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "$VERSION"
+          git push origin "$TAG"
+
+          NOTES_FILE="$RUNNER_TEMP/release-notes.md"
+          CHANGELOG="fastlane/metadata/android/ko-KR/changelogs/default.txt"
+          if [ -s "$CHANGELOG" ]; then
+            cat "$CHANGELOG" > "$NOTES_FILE"
+          else
+            echo "패치노트가 등록되지 않았습니다." > "$NOTES_FILE"
+          fi
+          gh release create "$TAG" --title "$VERSION 🚀" --notes-file "$NOTES_FILE" --target main
+
+      - name: Sync main into develop
+        id: sync
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main develop
+
+          # 배포 중 develop 이 움직이지 않았다면 develop 은 main 의 조상이다 -> fast-forward
+          if git merge-base --is-ancestor origin/develop origin/main; then
+            git push origin "origin/main:refs/heads/develop"
+            echo "::notice::develop 을 main 으로 fast-forward 했습니다."
+            echo "result=fast-forward" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # develop 이 앞서 있으면 머지 커밋을 만들어 그대로 밀어넣는다.
+          git switch -c sync-work origin/develop
+          if git merge origin/main --no-ff -m "[CHORE] Sync main to develop [skip ci]"; then
+            git push origin "HEAD:refs/heads/develop"
+            echo "::notice::main 을 develop 에 머지했습니다."
+            echo "result=merged" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # 충돌이면 사람이 풀어야 한다. main 이 아니라 별도 브랜치로 PR 을 연다.
+          git merge --abort
+          SYNC_BRANCH="sync/main-to-develop-${GITHUB_RUN_NUMBER}"
+          git push origin "origin/main:refs/heads/$SYNC_BRANCH"
+          PR_BODY="$RUNNER_TEMP/sync-pr-body.md"
+          {
+            echo "배포 후 자동 동기화가 충돌로 실패했습니다. 이 PR 에서 충돌을 해결한 뒤 머지해 주세요."
+            echo
+            echo "head 브랜치가 \`main\` 이 아니라 \`$SYNC_BRANCH\` 이므로, 머지해도 main 은 삭제되지 않습니다."
+          } > "$PR_BODY"
+          gh pr create \
+            --base develop \
+            --head "$SYNC_BRANCH" \
+            --title "[CHORE] main -> develop 동기화 (충돌 해결 필요)" \
+            --body-file "$PR_BODY"
+          echo "result=conflict-pr" >> "$GITHUB_OUTPUT"
+          echo "::warning::자동 동기화가 충돌했습니다. $SYNC_BRANCH PR 에서 수동으로 해결해 주세요."
