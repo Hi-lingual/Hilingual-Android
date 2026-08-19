@@ -2,8 +2,6 @@ package com.hilingual.presentation.widget.streak
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -295,26 +293,6 @@ private object StreakColors {
     val onActiveDay = ColorProvider(day = white, night = black)
 }
 
-private class StreakPreviewParameterProvider : PreviewParameterProvider<StreakUiState> {
-    override val values = sequenceOf(
-        StreakUiState(
-            isLoggedIn = false,
-            streakDays = 0,
-            recentDays = previewDays(),
-        ),
-        StreakUiState(
-            isLoggedIn = true,
-            streakDays = 0,
-            recentDays = previewDays(),
-        ),
-        StreakUiState(
-            isLoggedIn = true,
-            streakDays = 4,
-            recentDays = previewDays(setOf("월", "화", "수", "목")),
-        ),
-    )
-}
-
 private fun previewDays(writtenDays: Set<String> = emptySet()) =
     listOf("일", "월", "화", "수", "목").map { day ->
         StreakDay(label = day, isWritten = day in writtenDays)
@@ -323,19 +301,27 @@ private fun previewDays(writtenDays: Set<String> = emptySet()) =
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 155, heightDp = 155)
 @Composable
-private fun StreakCompactPreview(
-    @PreviewParameter(StreakPreviewParameterProvider::class)
-    state: StreakUiState,
-) {
-    StreakWidgetContent(state = state, isWide = false)
+private fun StreakCompactPreview() {
+    StreakWidgetContent(
+        state = StreakUiState(
+            isLoggedIn = true,
+            streakDays = 4,
+            recentDays = previewDays(setOf("월", "화", "수", "목")),
+        ),
+        isWide = false,
+    )
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 329, heightDp = 155)
 @Composable
-private fun StreakWidePreview(
-    @PreviewParameter(StreakPreviewParameterProvider::class)
-    state: StreakUiState,
-) {
-    StreakWidgetContent(state = state, isWide = true)
+private fun StreakWidePreview() {
+    StreakWidgetContent(
+        state = StreakUiState(
+            isLoggedIn = true,
+            streakDays = 4,
+            recentDays = previewDays(setOf("월", "화", "수", "목")),
+        ),
+        isWide = true,
+    )
 }

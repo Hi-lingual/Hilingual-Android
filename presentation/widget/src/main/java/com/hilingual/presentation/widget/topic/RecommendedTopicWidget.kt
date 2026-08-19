@@ -2,7 +2,6 @@ package com.hilingual.presentation.widget.topic
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -235,46 +234,70 @@ private object WidgetColors {
     val accent = ColorProvider(day = hilingualOrange, night = hilingualOrange)
 }
 
+private val recommendedTopicPreviewStates = listOf(
+    RecommendedTopicUiState(
+        dateLabel = "12월 17일 월",
+        topic = "What surprised you today?",
+        writingStatus = WritingStatus.UNWRITTEN,
+        remainingHours = 25,
+    ),
+    RecommendedTopicUiState(
+        dateLabel = "12월 17일 월",
+        topic = "What surprised you today?",
+        writingStatus = WritingStatus.WRITTEN,
+        remainingHours = null,
+    ),
+    RecommendedTopicUiState(
+        dateLabel = "12월 17일 월",
+        topic = null,
+        writingStatus = WritingStatus.UNWRITTEN,
+        remainingHours = 25,
+    ),
+)
+
 private class RecommendedTopicPreviewParameterProvider :
     PreviewParameterProvider<RecommendedTopicUiState> {
-    override val values = sequenceOf(
-        RecommendedTopicUiState(
-            dateLabel = "12월 17일 월",
-            topic = "What surprised you today?",
-            writingStatus = WritingStatus.UNWRITTEN,
-            remainingHours = 25,
-        ),
-        RecommendedTopicUiState(
-            dateLabel = "12월 17일 월",
-            topic = "What surprised you today?",
-            writingStatus = WritingStatus.WRITTEN,
-            remainingHours = null,
-        ),
-        RecommendedTopicUiState(
-            dateLabel = "12월 17일 월",
-            topic = null,
-            writingStatus = WritingStatus.UNWRITTEN,
-            remainingHours = 25,
-        ),
-    )
+    override val values = recommendedTopicPreviewStates.asSequence()
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 155, heightDp = 155)
 @Composable
-private fun RecommendedTopicCompactPreview(
-    @PreviewParameter(RecommendedTopicPreviewParameterProvider::class)
-    state: RecommendedTopicUiState,
-) {
-    RecommendedTopicWidgetContent(state = state, isWide = false)
+private fun RecommendedTopicCompactUnwrittenPreview() {
+    RecommendedTopicWidgetContent(state = recommendedTopicPreviewStates[0], isWide = false)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 155, heightDp = 155)
+@Composable
+private fun RecommendedTopicCompactWrittenPreview() {
+    RecommendedTopicWidgetContent(state = recommendedTopicPreviewStates[1], isWide = false)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 155, heightDp = 155)
+@Composable
+private fun RecommendedTopicCompactErrorPreview() {
+    RecommendedTopicWidgetContent(state = recommendedTopicPreviewStates[2], isWide = false)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 329, heightDp = 155)
 @Composable
-private fun RecommendedTopicWidePreview(
-    @PreviewParameter(RecommendedTopicPreviewParameterProvider::class)
-    state: RecommendedTopicUiState,
-) {
-    RecommendedTopicWidgetContent(state = state, isWide = true)
+private fun RecommendedTopicWideUnwrittenPreview() {
+    RecommendedTopicWidgetContent(state = recommendedTopicPreviewStates[0], isWide = true)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 329, heightDp = 155)
+@Composable
+private fun RecommendedTopicWideWrittenPreview() {
+    RecommendedTopicWidgetContent(state = recommendedTopicPreviewStates[1], isWide = true)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 329, heightDp = 155)
+@Composable
+private fun RecommendedTopicWideErrorPreview() {
+    RecommendedTopicWidgetContent(state = recommendedTopicPreviewStates[2], isWide = true)
 }
