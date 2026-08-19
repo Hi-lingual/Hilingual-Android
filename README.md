@@ -37,6 +37,10 @@
 | **Modularization** | Android App Modularization |
 | **Build Configuration** | Gradle Version Catalog, Custom Convention Plugins |
 
+## Documentation
+
+- [릴리즈 가이드](docs/RELEASE.md) — Play Store 배포 과정과 자동화 워크플로
+
 ## Module Dependency Graph
 
 ### High-Level Architecture
