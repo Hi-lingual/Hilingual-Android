@@ -90,9 +90,10 @@ internal data class StreakDay(
 )
 
 @Composable
-internal fun StreakWidgetContent(state: StreakUiState) {
-    val isWide = LocalSize.current.width >= WideStreakSize.width
-
+internal fun StreakWidgetContent(
+    state: StreakUiState,
+    isWide: Boolean = LocalSize.current.width >= WideStreakSize.width,
+) {
     Box(
         modifier = GlanceModifier
             .fillMaxSize()

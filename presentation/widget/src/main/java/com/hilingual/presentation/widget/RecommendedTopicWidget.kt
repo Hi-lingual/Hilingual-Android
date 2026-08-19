@@ -83,9 +83,10 @@ internal enum class WritingStatus {
 }
 
 @Composable
-internal fun RecommendedTopicWidgetContent(state: RecommendedTopicUiState) {
-    val isWide = LocalSize.current.width >= WideTopicSize.width
-
+internal fun RecommendedTopicWidgetContent(
+    state: RecommendedTopicUiState,
+    isWide: Boolean = LocalSize.current.width >= WideTopicSize.width,
+) {
     Column(
         modifier = GlanceModifier
             .fillMaxSize()
