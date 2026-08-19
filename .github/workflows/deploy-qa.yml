@@ -1,10 +1,10 @@
 # .github/workflows/deploy-qa.yml
 name: Deploy QA Build to Firebase
 
+# QA 빌드는 항상 명시적으로 실행한다.
+# 기능 QA 는 작업 브랜치에서 끝나고, release 브랜치는 스토어 배포용이라
+# 그곳에서 push 마다 QA 빌드를 뿌릴 이유가 없다.
 on:
-  push:
-    branches:
-      - 'release/**'
   workflow_dispatch:
 
 jobs:

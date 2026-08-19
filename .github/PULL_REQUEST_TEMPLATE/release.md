@@ -9,7 +9,7 @@
 - [ ] `./gradlew spotlessApply` 실행 및 커밋
 - [ ] `./gradlew ktlintCheck` 통과
 - [ ] 베이스라인 프로파일 재생성 및 커밋 (`app/src/release/generated/baselineProfiles/`)
-- [ ] Firebase QA 빌드 배포 및 QA 통과
+- [ ] 포함된 기능들의 QA 완료 확인
 - [ ] 패치노트 작성 (`fastlane/metadata/android/ko-KR/changelogs/default.txt`) — 비어 있으면 배포가 중단된다
 - [ ] PR CI(lint / build / release build) 통과
 
