@@ -4,6 +4,8 @@
     android:initialLayout="@layout/glance_default_loading_layout"
     android:minWidth="110dp"
     android:minHeight="110dp"
+    android:previewImage="@drawable/preview_recommended_topic_widget_s"
+    android:previewLayout="@layout/preview_recommended_topic_widget"
     android:resizeMode="horizontal|vertical"
     android:targetCellWidth="2"
     android:targetCellHeight="2"
