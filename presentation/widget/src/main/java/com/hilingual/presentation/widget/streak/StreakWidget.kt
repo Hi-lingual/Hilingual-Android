@@ -1,7 +1,11 @@
-package com.hilingual.presentation.widget
+package com.hilingual.presentation.widget.streak
 
 import android.content.Context
+import android.content.res.Configuration
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -12,7 +16,6 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalSize
 import androidx.glance.appwidget.GlanceAppWidget
-import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
@@ -47,10 +50,6 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 private val CompactStreakSize = DpSize(110.dp, 110.dp)
 private val WideStreakSize = DpSize(250.dp, 110.dp)
 
-class StreakWidgetReceiver : GlanceAppWidgetReceiver() {
-    override val glanceAppWidget: GlanceAppWidget = StreakWidget()
-}
-
 class StreakWidget : GlanceAppWidget() {
     override val sizeMode: SizeMode = SizeMode.Responsive(
         setOf(CompactStreakSize, WideStreakSize),
@@ -77,17 +76,6 @@ class StreakWidget : GlanceAppWidget() {
         }
     }
 }
-
-internal data class StreakUiState(
-    val isLoggedIn: Boolean,
-    val streakDays: Int,
-    val recentDays: List<StreakDay>,
-)
-
-internal data class StreakDay(
-    val label: String,
-    val isWritten: Boolean,
-)
 
 @Composable
 internal fun StreakWidgetContent(
@@ -305,4 +293,59 @@ private object StreakColors {
     val inactiveDay = ColorProvider(day = gray200, night = gray500)
     val inactiveFire = ColorProvider(day = gray400, night = gray400)
     val onActiveDay = ColorProvider(day = white, night = black)
+}
+
+private class StreakPreviewParameterProvider : PreviewParameterProvider<StreakUiState> {
+    override val values = sequenceOf(
+        StreakUiState(
+            isLoggedIn = false,
+            streakDays = 0,
+            recentDays = previewDays(),
+        ),
+        StreakUiState(
+            isLoggedIn = true,
+            streakDays = 0,
+            recentDays = previewDays(),
+        ),
+        StreakUiState(
+            isLoggedIn = true,
+            streakDays = 4,
+            recentDays = previewDays(setOf("월", "화", "수", "목")),
+        ),
+    )
+}
+
+private fun previewDays(writtenDays: Set<String> = emptySet()) =
+    listOf("일", "월", "화", "수", "목").map { day ->
+        StreakDay(label = day, isWritten = day in writtenDays)
+    }
+
+@Preview(name = "Streak 2x2 Light", widthDp = 155, heightDp = 155)
+@Preview(
+    name = "Streak 2x2 Dark",
+    widthDp = 155,
+    heightDp = 155,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun StreakCompactPreview(
+    @PreviewParameter(StreakPreviewParameterProvider::class)
+    state: StreakUiState,
+) {
+    StreakWidgetContent(state = state, isWide = false)
+}
+
+@Preview(name = "Streak 4x2 Light", widthDp = 329, heightDp = 155)
+@Preview(
+    name = "Streak 4x2 Dark",
+    widthDp = 329,
+    heightDp = 155,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun StreakWidePreview(
+    @PreviewParameter(StreakPreviewParameterProvider::class)
+    state: StreakUiState,
+) {
+    StreakWidgetContent(state = state, isWide = true)
 }

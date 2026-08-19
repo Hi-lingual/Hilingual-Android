@@ -3,7 +3,7 @@
 
     <application>
         <receiver
-            android:name="com.hilingual.presentation.widget.RecommendedTopicWidgetReceiver"
+            android:name="com.hilingual.presentation.widget.topic.RecommendedTopicWidgetReceiver"
             android:exported="true"
             android:label="@string/recommended_topic_widget_name">
             <intent-filter>
@@ -16,7 +16,7 @@
         </receiver>
 
         <receiver
-            android:name="com.hilingual.presentation.widget.StreakWidgetReceiver"
+            android:name="com.hilingual.presentation.widget.streak.StreakWidgetReceiver"
             android:exported="true"
             android:label="@string/streak_widget_name">
             <intent-filter>

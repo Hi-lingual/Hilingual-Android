@@ -1,7 +1,11 @@
-package com.hilingual.presentation.widget
+package com.hilingual.presentation.widget.topic
 
 import android.content.Context
+import android.content.res.Configuration
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -11,7 +15,6 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalSize
 import androidx.glance.appwidget.GlanceAppWidget
-import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
@@ -44,10 +47,6 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 private val CompactTopicSize = DpSize(110.dp, 110.dp)
 private val WideTopicSize = DpSize(250.dp, 110.dp)
 
-class RecommendedTopicWidgetReceiver : GlanceAppWidgetReceiver() {
-    override val glanceAppWidget: GlanceAppWidget = RecommendedTopicWidget()
-}
-
 class RecommendedTopicWidget : GlanceAppWidget() {
     override val sizeMode: SizeMode = SizeMode.Responsive(
         setOf(CompactTopicSize, WideTopicSize),
@@ -68,18 +67,6 @@ class RecommendedTopicWidget : GlanceAppWidget() {
             )
         }
     }
-}
-
-internal data class RecommendedTopicUiState(
-    val dateLabel: String,
-    val topic: String?,
-    val writingStatus: WritingStatus,
-    val remainingHours: Int?,
-)
-
-internal enum class WritingStatus {
-    UNWRITTEN,
-    WRITTEN,
 }
 
 @Composable
@@ -246,4 +233,58 @@ private object WidgetColors {
     val primaryText = ColorProvider(day = black, night = white)
     val secondaryText = ColorProvider(day = gray500, night = gray400)
     val accent = ColorProvider(day = hilingualOrange, night = hilingualOrange)
+}
+
+private class RecommendedTopicPreviewParameterProvider :
+    PreviewParameterProvider<RecommendedTopicUiState> {
+    override val values = sequenceOf(
+        RecommendedTopicUiState(
+            dateLabel = "12월 17일 월",
+            topic = "What surprised you today?",
+            writingStatus = WritingStatus.UNWRITTEN,
+            remainingHours = 25,
+        ),
+        RecommendedTopicUiState(
+            dateLabel = "12월 17일 월",
+            topic = "What surprised you today?",
+            writingStatus = WritingStatus.WRITTEN,
+            remainingHours = null,
+        ),
+        RecommendedTopicUiState(
+            dateLabel = "12월 17일 월",
+            topic = null,
+            writingStatus = WritingStatus.UNWRITTEN,
+            remainingHours = 25,
+        ),
+    )
+}
+
+@Preview(name = "Topic 2x2 Light", widthDp = 155, heightDp = 155)
+@Preview(
+    name = "Topic 2x2 Dark",
+    widthDp = 155,
+    heightDp = 155,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun RecommendedTopicCompactPreview(
+    @PreviewParameter(RecommendedTopicPreviewParameterProvider::class)
+    state: RecommendedTopicUiState,
+) {
+    RecommendedTopicWidgetContent(state = state, isWide = false)
+}
+
+@Preview(name = "Topic 4x2 Light", widthDp = 329, heightDp = 155)
+@Preview(
+    name = "Topic 4x2 Dark",
+    widthDp = 329,
+    heightDp = 155,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun RecommendedTopicWidePreview(
+    @PreviewParameter(RecommendedTopicPreviewParameterProvider::class)
+    state: RecommendedTopicUiState,
+) {
+    RecommendedTopicWidgetContent(state = state, isWide = true)
 }
