@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
@@ -39,8 +40,7 @@ import com.hilingual.core.designsystem.theme.gray200
 import com.hilingual.core.designsystem.theme.gray300
 import com.hilingual.core.designsystem.theme.gray400
 import com.hilingual.core.designsystem.theme.gray500
-import com.hilingual.core.designsystem.theme.gray850
-import com.hilingual.core.designsystem.theme.hilingualOrange
+import com.hilingual.core.designsystem.theme.gray700
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.designsystem.R as DesignSystemR
 
@@ -97,8 +97,7 @@ internal fun StreakWidgetContent(state: StreakUiState) {
         modifier = GlanceModifier
             .fillMaxSize()
             .background(StreakColors.surface)
-            .cornerRadius(20.dp)
-            .padding(if (isWide) 16.dp else 12.dp),
+            .cornerRadius(28.dp),
     ) {
         if (isWide) {
             WideStreakContent(state)
@@ -110,44 +109,60 @@ internal fun StreakWidgetContent(state: StreakUiState) {
 
 @Composable
 private fun CompactStreakContent(state: StreakUiState) {
-    Column(modifier = GlanceModifier.fillMaxSize()) {
-        Text(
-            text = "연속 작성",
-            style = TextStyle(color = StreakColors.secondaryText, fontSize = 11.sp),
-        )
-        if (state.isLoggedIn) {
-            StreakValue(state.streakDays, compact = true)
-        } else {
-            Spacer(modifier = GlanceModifier.height(4.dp))
-            Text(
-                text = "로그인 후 확인 가능",
-                style = TextStyle(
-                    color = StreakColors.primaryText,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
-            )
+    Box(modifier = GlanceModifier.fillMaxSize()) {
+        Column(modifier = GlanceModifier.fillMaxSize()) {
+            Spacer(modifier = GlanceModifier.defaultWeight())
+            Box(
+                modifier = GlanceModifier
+                    .fillMaxWidth()
+                    .height(35.dp)
+                    .background(StreakColors.ground),
+            ) {}
         }
-        Spacer(modifier = GlanceModifier.defaultWeight())
-        Image(
-            provider = ImageProvider(
-                if (state.isLoggedIn && state.streakDays == 0) {
-                    DesignSystemR.drawable.img_diary_empty
-                } else {
-                    DesignSystemR.drawable.img_diary_lock
-                },
-            ),
-            contentDescription = null,
-            modifier = GlanceModifier.fillMaxWidth().height(58.dp),
-            contentScale = ContentScale.Fit,
-        )
+        Column(
+            modifier = GlanceModifier
+                .fillMaxSize()
+                .padding(start = 16.dp, top = 16.dp),
+        ) {
+            Text(
+                text = "연속 작성",
+                style = TextStyle(color = StreakColors.secondaryText, fontSize = 12.sp),
+            )
+            Spacer(modifier = GlanceModifier.height(2.dp))
+            if (state.isLoggedIn) {
+                StreakValue(state.streakDays, compact = true)
+            } else {
+                Text(
+                    text = "로그인 후 확인 가능",
+                    style = TextStyle(
+                        color = StreakColors.primaryText,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                )
+            }
+        }
+        Column(modifier = GlanceModifier.fillMaxSize()) {
+            Spacer(modifier = GlanceModifier.defaultWeight())
+            Row(
+                modifier = GlanceModifier
+                    .fillMaxWidth()
+                    .padding(end = 16.dp, bottom = 8.dp),
+                horizontalAlignment = Alignment.End,
+            ) {
+                StreakCharacter(
+                    streakDays = state.streakDays,
+                    modifier = GlanceModifier.width(107.dp).height(84.dp),
+                )
+            }
+        }
     }
 }
 
 @Composable
 private fun WideStreakContent(state: StreakUiState) {
     Row(
-        modifier = GlanceModifier.fillMaxSize(),
+        modifier = GlanceModifier.fillMaxSize().padding(20.dp),
         verticalAlignment = Alignment.Bottom,
     ) {
         Column(
@@ -157,7 +172,7 @@ private fun WideStreakContent(state: StreakUiState) {
         ) {
             Text(
                 text = "연속 작성",
-                style = TextStyle(color = StreakColors.secondaryText, fontSize = 12.sp),
+                style = TextStyle(color = StreakColors.secondaryText, fontSize = 14.sp),
             )
             if (state.isLoggedIn) {
                 StreakValue(state.streakDays, compact = false)
@@ -175,7 +190,7 @@ private fun WideStreakContent(state: StreakUiState) {
                     text = "로그인 후 확인 가능",
                     style = TextStyle(
                         color = StreakColors.primaryText,
-                        fontSize = 10.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                     ),
                 )
@@ -187,17 +202,9 @@ private fun WideStreakContent(state: StreakUiState) {
             )
         }
         Spacer(modifier = GlanceModifier.defaultWeight())
-        Image(
-            provider = ImageProvider(
-                if (state.isLoggedIn && state.streakDays == 0) {
-                    DesignSystemR.drawable.img_diary_empty
-                } else {
-                    DesignSystemR.drawable.img_diary_lock
-                },
-            ),
-            contentDescription = null,
-            modifier = GlanceModifier.width(98.dp).height(84.dp),
-            contentScale = ContentScale.Fit,
+        StreakCharacter(
+            streakDays = state.streakDays,
+            modifier = GlanceModifier.width(130.dp).height(115.dp),
         )
     }
 }
@@ -209,15 +216,22 @@ private fun StreakValue(
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Image(
-            provider = ImageProvider(DesignSystemR.drawable.ic_fire_16),
+            provider = ImageProvider(
+                if (compact) {
+                    DesignSystemR.drawable.ic_fire_28
+                } else {
+                    DesignSystemR.drawable.ic_fire_40
+                },
+            ),
             contentDescription = null,
-            modifier = GlanceModifier.size(if (compact) 22.dp else 30.dp),
+            modifier = GlanceModifier.size(if (compact) 28.dp else 40.dp),
+            colorFilter = if (days == 0) ColorFilter.tint(StreakColors.inactiveFire) else null,
         )
         Text(
             text = days.toString(),
             style = TextStyle(
                 color = StreakColors.primaryText,
-                fontSize = if (compact) 26.sp else 32.sp,
+                fontSize = if (compact) 26.sp else 36.sp,
                 fontWeight = FontWeight.Bold,
             ),
         )
@@ -229,42 +243,65 @@ private fun RecentDays(
     days: List<StreakDay>,
     enabled: Boolean,
 ) {
-    Row(modifier = GlanceModifier.fillMaxWidth()) {
+    Row {
         days.take(5).forEachIndexed { index, day ->
             Box(
                 modifier = GlanceModifier
-                    .size(19.dp)
-                    .background(
-                        if (enabled && day.isWritten) {
-                            StreakColors.activeDay
-                        } else {
-                            StreakColors.inactiveDay
-                        },
-                    ).cornerRadius(10.dp),
+                    .size(26.dp),
                 contentAlignment = Alignment.Center,
             ) {
+                Image(
+                    provider = ImageProvider(DesignSystemR.drawable.chip_widgetdate),
+                    contentDescription = null,
+                    modifier = GlanceModifier.size(26.dp),
+                    colorFilter = if (enabled && day.isWritten) {
+                        null
+                    } else {
+                        ColorFilter.tint(StreakColors.inactiveDay)
+                    },
+                )
                 Text(
                     text = if (enabled) day.label else "",
                     style = TextStyle(
                         color = if (day.isWritten) StreakColors.onActiveDay else StreakColors.secondaryText,
-                        fontSize = 9.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
                     ),
                 )
             }
             if (index < minOf(days.lastIndex, 4)) {
-                Spacer(modifier = GlanceModifier.width(3.dp))
+                Spacer(modifier = GlanceModifier.width(6.dp))
             }
         }
     }
 }
 
+@Composable
+private fun StreakCharacter(
+    streakDays: Int,
+    modifier: GlanceModifier,
+) {
+    Image(
+        provider = ImageProvider(
+            if (streakDays == 0) {
+                DesignSystemR.drawable.img_widget_4x2_0
+            } else {
+                DesignSystemR.drawable.img_widget_4x2_n
+            },
+        ),
+        contentDescription = null,
+        modifier = modifier,
+        contentScale = ContentScale.Fit,
+    )
+}
+
 private object StreakColors {
-    val surface = ColorProvider(day = gray100, night = gray850)
+    val surface = ColorProvider(day = gray100, night = gray700)
+    val ground = ColorProvider(day = gray200, night = gray500)
     val primaryText = ColorProvider(day = black, night = white)
     val secondaryText = ColorProvider(day = gray500, night = gray400)
     val lockedBar = ColorProvider(day = gray300, night = gray500)
-    val activeDay = ColorProvider(day = hilingualOrange, night = hilingualOrange)
     val inactiveDay = ColorProvider(day = gray200, night = gray500)
+    val inactiveFire = ColorProvider(day = gray400, night = gray400)
     val onActiveDay = ColorProvider(day = white, night = black)
 }
