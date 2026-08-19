@@ -3,6 +3,9 @@ name: Hilingual PR CI
 on:
     pull_request:
         branches: [ develop, main ]
+        # 봇이 연 draft PR 은 opened 이벤트로 CI 가 돌지 않는다.
+        # 사람이 Ready for review 로 바꾸는 시점에 반드시 한 번은 검증되도록 한다.
+        types: [ opened, synchronize, reopened, ready_for_review ]
     push:
         branches: [ develop ]
 
