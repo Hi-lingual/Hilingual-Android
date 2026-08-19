@@ -43,7 +43,7 @@ private const val ANIMATION_DURATION = 300
 
 @Serializable
 @Wisp("feedprofile")
-internal data class FeedProfileGraph(val userId: Long, val showLikedDiaries: Boolean = false)
+data class FeedProfileGraph(val userId: Long, val showLikedDiaries: Boolean = false)
 
 @Serializable
 internal data object FeedProfile : Route

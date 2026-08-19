@@ -26,21 +26,37 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import com.hilingual.core.common.analytics.Page
+import com.hilingual.core.common.analytics.TriggerType
+import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.DialogState
 import com.hilingual.core.common.trigger.DialogType
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 
+/**
+ * @param page 이벤트 수집 대상 화면. null이면 이벤트를 수집하지 않는다.
+ */
 @Composable
 fun HilingualErrorDialog(
     state: DialogState,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    page: Page? = null,
 ) {
+    val tracker = LocalTracker.current
+
     if (state.isVisible) {
         OneButtonDialog(
             confirmText = "확인",
             onConfirm = {
+                page?.let {
+                    tracker.logPageAction(
+                        trigger = TriggerType.CLICK,
+                        page = it,
+                        action = state.type.eventName,
+                    )
+                }
                 state.onClickAction()
                 onDismiss()
             },
@@ -76,6 +92,12 @@ private val DialogType.message: String
     get() = when (this) {
         DialogType.ERROR -> "앗! 일시적인 오류가 발생했어요."
         DialogType.NOT_FOUND -> "앗! 요청한 내용을 찾을 수 없어요"
+    }
+
+private val DialogType.eventName: String
+    get() = when (this) {
+        DialogType.ERROR -> "server_error_confirm"
+        DialogType.NOT_FOUND -> "empty_data_confirm"
     }
 
 @Preview

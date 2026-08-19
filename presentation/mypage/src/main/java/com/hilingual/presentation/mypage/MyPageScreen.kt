@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.ads.banner.BannerAdType.BOTTOM_BANNER
 import com.hilingual.core.ads.banner.HilingualBannerAd
+import com.hilingual.core.common.analytics.Page
 import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.launchCustomTabs
@@ -119,6 +120,7 @@ internal fun MyPageRoute(
                     onRetryClick = viewModel::retryLoad,
                 ),
                 modifier = Modifier.padding(paddingValues),
+                page = Page.MYPAGE,
             )
         }
 

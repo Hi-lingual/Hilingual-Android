@@ -1,0 +1,84 @@
+name: Prepare Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '릴리즈 버전 (x.y.z, 예: 2.8.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  prepare:
+    name: Create release branch & draft PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout develop
+        uses: actions/checkout@v7
+        with:
+          ref: develop
+          fetch-depth: 0
+
+      - name: Resolve version
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          if ! printf '%s' "$INPUT_VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::버전 형식이 잘못되었습니다: $INPUT_VERSION (x.y.z 형식이어야 합니다)"
+            exit 1
+          fi
+          if git ls-remote --exit-code --heads origin "release/$INPUT_VERSION" >/dev/null 2>&1; then
+            echo "::error::release/$INPUT_VERSION 브랜치가 이미 존재합니다."
+            exit 1
+          fi
+
+          IFS=. read -r MAJOR MINOR PATCH <<< "$INPUT_VERSION"
+          # versionCode 규칙: major * 1000000 + minor * 10000 + patch * 100
+          CODE=$((10#$MAJOR * 1000000 + 10#$MINOR * 10000 + 10#$PATCH * 100))
+          CURRENT_CODE=$(grep -E '^versionCode = ' gradle/libs.versions.toml | sed -E 's/.*"(.*)".*/\1/')
+          if [ "$CODE" -le "$CURRENT_CODE" ]; then
+            echo "::error::새 versionCode($CODE)가 현재 값($CURRENT_CODE)보다 크지 않습니다."
+            exit 1
+          fi
+
+          echo "version=$INPUT_VERSION" >> "$GITHUB_OUTPUT"
+          echo "code=$CODE" >> "$GITHUB_OUTPUT"
+
+      - name: Bump version and push release branch
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          CODE: ${{ steps.version.outputs.code }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git switch -c "release/$VERSION"
+
+          sed -i -E "s/^versionCode = \".*\"/versionCode = \"$CODE\"/" gradle/libs.versions.toml
+          sed -i -E "s/^versionName = \".*\"/versionName = \"$VERSION\"/" gradle/libs.versions.toml
+          git add gradle/libs.versions.toml
+          git commit -m "[CHORE] $VERSION 버전 코드 업데이트"
+          git push origin "release/$VERSION"
+
+      - name: Open draft release PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+          CODE: ${{ steps.version.outputs.code }}
+        run: |
+          set -euo pipefail
+          BODY_FILE="$RUNNER_TEMP/release-pr-body.md"
+          sed -e "s/{{VERSION}}/$VERSION/g" -e "s/{{CODE}}/$CODE/g" \
+            .github/PULL_REQUEST_TEMPLATE/release.md > "$BODY_FILE"
+          gh pr create \
+            --base develop \
+            --head "release/$VERSION" \
+            --title "[RELEASE] $VERSION 🚀" \
+            --body-file "$BODY_FILE" \
+            --draft

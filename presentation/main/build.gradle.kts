@@ -31,6 +31,7 @@ dependencies {
     // core
     implementation(projects.core.network)
     implementation(projects.core.ads)
+    implementation(projects.core.notification)
 
     // feature
     implementation(projects.presentation.home)

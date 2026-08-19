@@ -31,6 +31,7 @@ import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.app.AppRestarter
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.network.monitor.NetworkMonitor
+import com.hilingual.core.notification.HilingualNotificationManager
 import com.hilingual.presentation.main.state.rememberMainAppState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -48,6 +49,9 @@ class MainActivity : ComponentActivity() {
 
     private var pendingDeepLinkUri by mutableStateOf<Uri?>(null)
 
+    /** 푸시 알림으로 진입한 경우에만 채워진다. */
+    private var pendingNotificationType by mutableStateOf<String?>(null)
+
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,10 +59,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         if (savedInstanceState == null) {
+            pendingNotificationType = consumeNotificationType(intent)
             pendingDeepLinkUri = consumeDeepLinkUri(intent)
         }
 
         addOnNewIntentListener { newIntent ->
+            consumeNotificationType(newIntent)?.let { pendingNotificationType = it }
             consumeDeepLinkUri(newIntent)?.let { pendingDeepLinkUri = it }
         }
 
@@ -70,7 +76,11 @@ class MainActivity : ComponentActivity() {
                     tracker = tracker,
                     appRestarter = appRestarter,
                     deepLinkUri = pendingDeepLinkUri,
-                    onDeepLinkConsumed = { pendingDeepLinkUri = null },
+                    notificationType = pendingNotificationType,
+                    onDeepLinkConsumed = {
+                        pendingDeepLinkUri = null
+                        pendingNotificationType = null
+                    },
                 )
             }
         }
@@ -86,5 +96,11 @@ class MainActivity : ComponentActivity() {
         intent?.data = null
         intent?.removeExtra("link")
         return uri
+    }
+
+    private fun consumeNotificationType(intent: Intent?): String? {
+        val type = intent?.getStringExtra(HilingualNotificationManager.EXTRA_NOTIFICATION_TYPE)
+        intent?.removeExtra(HilingualNotificationManager.EXTRA_NOTIFICATION_TYPE)
+        return type
     }
 }

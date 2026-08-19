@@ -102,7 +102,7 @@ internal fun VocaRoute(
     val ttsState = rememberVocaTts()
 
     LaunchedEffect(Unit) {
-        tracker.logEvent(trigger = TriggerType.VIEW, page = VOCABULARY, event = "page")
+        tracker.logGlobalAction(trigger = TriggerType.VIEW, action = "page", currentPage = VOCABULARY)
     }
 
     RetryOnReconnect(
@@ -138,6 +138,7 @@ internal fun VocaRoute(
                 onRetryClick = viewModel::retryLoad,
             ),
             modifier = Modifier.padding(paddingValues),
+            page = VOCABULARY,
         )
         return
     }
@@ -153,10 +154,10 @@ internal fun VocaRoute(
             searchText = searchKeyword,
             isRefreshing = isRefreshing,
             onSortTypeChanged = { newSortType ->
-                tracker.logEvent(
+                tracker.logPageAction(
                     trigger = TriggerType.CLICK,
                     page = VOCABULARY,
-                    event = "voca_sort_changed",
+                    action = "sort_changed",
                     properties = mapOf(
                         "previous_sort_type" to uiState.sortType.name,
                         "sort_type" to newSortType.name,
@@ -165,16 +166,20 @@ internal fun VocaRoute(
                 viewModel.updateSort(newSortType)
             },
             onCardClick = { phraseId ->
-                tracker.logEvent(
-                    trigger = TriggerType.CLICK,
-                    page = VOCABULARY,
-                    event = "voca_lookup",
-                    properties = mapOf("page" to VOCABULARY.pageName),
-                )
                 viewModel.fetchVocaDetail(phraseId)
             },
 
             onBookmarkClick = { phraseId, isMarked ->
+                tracker.logGlobalAction(
+                    trigger = TriggerType.CLICK,
+                    currentPage = VOCABULARY,
+                    action = "bookmark_action",
+                    properties = mapOf(
+                        "entry_id" to phraseId,
+                        "bookmark_action" to if (isMarked) "add" else "remove",
+                        "entry_source" to "voca",
+                    ),
+                )
                 viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
             },
             onSearchTextChanged = viewModel::updateSearchKeyword,
@@ -191,6 +196,16 @@ internal fun VocaRoute(
     when (val state = uiState.vocaItemDetail) {
         is UiState.Success -> {
             val vocaDetail = state.data
+
+            LaunchedEffect(vocaDetail.phraseId) {
+                tracker.logPageAction(
+                    trigger = TriggerType.CLICK,
+                    page = VOCABULARY,
+                    action = "voca_lookup",
+                    properties = mapOf("bookmark_action" to if (vocaDetail.isBookmarked) "add" else "remove"),
+                )
+            }
+
             VocaDialog(
                 onDismiss = viewModel::clearSelectedVocaDetail,
                 phraseId = vocaDetail.phraseId,
@@ -201,10 +216,29 @@ internal fun VocaRoute(
                 isMemorized = vocaDetail.isMemorized,
                 isBookmarked = vocaDetail.isBookmarked,
                 onBookmarkClick = { phraseId, isMarked ->
+                    tracker.logGlobalAction(
+                        trigger = TriggerType.CLICK,
+                        currentPage = VOCABULARY,
+                        action = "bookmark_action",
+                        properties = mapOf(
+                            "entry_id" to phraseId,
+                            "bookmark_action" to if (isMarked) "add" else "remove",
+                            "entry_source" to "modal",
+                        ),
+                    )
                     viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
                 },
                 isTtsPlaying = ttsState.isPlaying,
-                onTtsClick = { ttsState.toggle(vocaDetail.phrase) },
+                onTtsClick = {
+                    if (!ttsState.isPlaying) {
+                        tracker.logGlobalAction(
+                            trigger = TriggerType.CLICK,
+                            action = "vocab_pronunciation_btn_play",
+                            currentPage = VOCABULARY,
+                        )
+                    }
+                    ttsState.toggle(vocaDetail.phrase)
+                },
             )
         }
 

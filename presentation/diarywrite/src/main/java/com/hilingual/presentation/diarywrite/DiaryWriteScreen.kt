@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.analytics.FakeTracker
-import com.hilingual.core.common.analytics.Page.AI_FEEDBACK
+import com.hilingual.core.common.analytics.Page.FEEDBACK_LOADING
 import com.hilingual.core.common.analytics.Page.WRITE_DIARY
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.analytics.TriggerType
@@ -118,7 +118,7 @@ internal fun DiaryWriteRoute(
     }
 
     LaunchedEffect(Unit) {
-        tracker.logEvent(trigger = TriggerType.VIEW, page = WRITE_DIARY, event = "page")
+        tracker.logGlobalAction(trigger = TriggerType.VIEW, action = "page", currentPage = WRITE_DIARY)
     }
 
     when (val feedbackState = feedbackUiState) {
@@ -134,13 +134,15 @@ internal fun DiaryWriteRoute(
                 onGalleryClick = textScanState.launchGallery,
                 onFeedbackRequestClick = {
                     if (viewModel.requestDiaryFeedback()) {
-                        tracker.logEvent(
+                        tracker.logPageAction(
                             trigger = TriggerType.CLICK,
                             page = WRITE_DIARY,
-                            event = "submit_cta",
+                            action = "submit_entry",
                             properties = mapOf(
                                 "has_photo" to (uiState.diaryImageUri != null),
                                 "char_count" to uiState.diaryText.length,
+                                "entry_id" to uiState.selectedDate,
+                                "ai_request_start_time" to System.currentTimeMillis(),
                             ),
                         )
                     }
@@ -173,10 +175,10 @@ internal fun DiaryWriteRoute(
                 onBackClick = viewModel::returnToWriting,
                 onRequestAgainButtonClick = {
                     if (viewModel.requestDiaryFeedback()) {
-                        tracker.logEvent(
+                        tracker.logPageAction(
                             trigger = TriggerType.CLICK,
-                            page = AI_FEEDBACK,
-                            event = "feedback_retry",
+                            page = FEEDBACK_LOADING,
+                            action = "server_error_retry",
                         )
                     }
                 },
@@ -225,10 +227,10 @@ private fun DiaryWriteScreen(
         isVisible = isCancelBottomSheetVisible,
         onDismiss = { isCancelBottomSheetVisible = false },
         onCancelClick = {
-            tracker.logEvent(
+            tracker.logPageAction(
                 trigger = TriggerType.CLICK,
                 page = WRITE_DIARY,
-                event = "modal",
+                action = "back_modal",
                 properties = mapOf("modal_action" to "confirm_exit"),
             )
             onBackClick()
@@ -277,11 +279,11 @@ private fun DiaryWriteScreen(
             BackTopAppBar(
                 title = "일기 작성하기",
                 onBackClicked = {
-                    tracker.logEvent(
+                    tracker.logGlobalAction(
                         trigger = TriggerType.CLICK,
-                        page = WRITE_DIARY,
-                        event = "back_diary",
+                        action = "back",
                         properties = mapOf("back_source" to "ui_button"),
+                        currentPage = WRITE_DIARY,
                     )
                     requestExit()
                 },
@@ -306,10 +308,10 @@ private fun DiaryWriteScreen(
 
                     TextScanButton(
                         onClick = {
-                            tracker.logEvent(
+                            tracker.logPageAction(
                                 trigger = TriggerType.CLICK,
                                 page = WRITE_DIARY,
-                                event = "scan_text",
+                                action = "scan_text",
                             )
                             isImageBottomSheetVisible = true
                         },
@@ -322,14 +324,14 @@ private fun DiaryWriteScreen(
                     isRecovery = uiState.isRecovery,
                     modifier = Modifier.noRippleClickable {
                         dropdownClickCount++
-                        tracker.logEvent(
+                        tracker.logGlobalAction(
                             trigger = TriggerType.CLICK,
-                            event = "dropdown",
+                            action = "dropdown",
                             properties = mapOf(
-                                "recommen_topic" to "${uiState.topicKo}/${uiState.topicEn}",
+                                "recommend_topic" to "${uiState.topicKo}/${uiState.topicEn}",
                                 "dropdown_click_count" to dropdownClickCount,
-                                "page" to WRITE_DIARY.pageName,
                             ),
+                            currentPage = WRITE_DIARY,
                         )
                     },
                 )
@@ -344,11 +346,12 @@ private fun DiaryWriteScreen(
                                 textFieldFocusedTime = System.currentTimeMillis()
                             } else {
                                 if (textFieldFocusedTime != 0L && uiState.diaryText.isNotBlank()) {
-                                    tracker.logEvent(
+                                    tracker.logPageAction(
                                         trigger = TriggerType.CLICK,
                                         page = WRITE_DIARY,
-                                        event = "textfield",
+                                        action = "textfield",
                                         properties = mapOf(
+                                            "entry_id" to 0L,
                                             "text_input_type" to "typed",
                                             "time_to_first_input" to
                                                 (System.currentTimeMillis() - textFieldFocusedTime),
