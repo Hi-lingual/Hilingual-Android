@@ -39,6 +39,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.presentation.home.R
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
+import com.hilingual.core.designsystem.R as DesignSystemR
 
 private data class HomeOnboarding(
     val text: String,
@@ -61,7 +62,7 @@ private val onboardingPages = persistentListOf(
     ),
     HomeOnboarding(
         "일상 속 영어 습관을\n만들 준비가 됐나요?",
-        R.drawable.img_onboarding_bottomsheet_4,
+        DesignSystemR.drawable.img_brain_pencil,
     ),
 )
 

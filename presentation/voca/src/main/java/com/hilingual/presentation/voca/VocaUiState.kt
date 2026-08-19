@@ -33,6 +33,7 @@ data class VocaDetailUiModel(
     val phraseType: List<String>,
     val explanation: String,
     val writtenDate: String,
+    val isMemorized: Boolean,
     val isBookmarked: Boolean,
 )
 
@@ -40,7 +41,7 @@ data class VocaDetailUiModel(
 data class VocaUiState(
     val viewType: ScreenType = ScreenType.DEFAULT,
     val sortType: WordSortType = WordSortType.Latest,
-    val vocaCount: Int = 0,
+    val isUnmemorizedFilterOn: Boolean = false,
     val vocaGroupList: UiState<ImmutableList<GroupingVocaModel>> = UiState.Loading,
     val aTozList: ImmutableList<GroupingVocaModel> = persistentListOf(),
     val latestList: ImmutableList<GroupingVocaModel> = persistentListOf(),
@@ -55,7 +56,7 @@ enum class ScreenType {
     SEARCH,
 }
 
-internal fun VocaDetailModel.toState(): VocaDetailUiModel {
+internal fun VocaDetailModel.toState(isMemorized: Boolean): VocaDetailUiModel {
     val displayWrittenDate = when (savedRoot) {
         SavedRootType.DIARY -> (writtenDate?.toShortYearDotDate() ?: "") + " 일기에서 저장됨"
         else -> "피드에서 저장됨"
@@ -67,6 +68,7 @@ internal fun VocaDetailModel.toState(): VocaDetailUiModel {
         phraseType = phraseType,
         explanation = explanation,
         writtenDate = displayWrittenDate,
+        isMemorized = isMemorized,
         isBookmarked = isBookmarked,
     )
 }

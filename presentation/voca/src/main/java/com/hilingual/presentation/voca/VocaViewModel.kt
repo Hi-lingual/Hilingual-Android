@@ -134,7 +134,7 @@ constructor(
                 return@coroutineScope
             }
 
-            val (count, aTozList) = aTozResult.getOrThrow()
+            val (_, aTozList) = aTozResult.getOrThrow()
             val (_, latestList) = latestResult.getOrThrow()
 
             val aTozGroupList = aTozList.toImmutableList()
@@ -150,13 +150,16 @@ constructor(
                     vocaGroupList = UiState.Success(currentList),
                     aTozList = aTozGroupList,
                     latestList = latestGroupList,
-                    vocaCount = count,
                     isRefreshing = false,
                 )
             }
 
             actions.emit(VocaAction.DataRefreshed)
         }
+    }
+
+    fun toggleUnmemorizedFilter() {
+        _uiState.update { it.copy(isUnmemorizedFilterOn = !it.isUnmemorizedFilterOn) }
     }
 
     fun updateSort(sort: WordSortType) {
@@ -186,7 +189,7 @@ constructor(
             vocaRepository.getVocaDetail(phraseId = phraseId)
                 .onSuccess { vocaDetail ->
                     _uiState.update {
-                        it.copy(vocaItemDetail = UiState.Success(vocaDetail.toState()))
+                        it.copy(vocaItemDetail = UiState.Success(vocaDetail.toState(isMemorizedOf(phraseId))))
                     }
                 }
                 .onLogFailure { throwable ->
@@ -301,6 +304,18 @@ constructor(
             loadVocaData(isRefreshing = true)
         }
     }
+
+    fun syncVocaList() {
+        viewModelScope.launch {
+            loadVocaData()
+        }
+    }
+
+    private fun isMemorizedOf(phraseId: Long): Boolean =
+        _uiState.value.aTozList
+            .flatMap { it.words }
+            .firstOrNull { it.phraseId == phraseId }
+            ?.isMemorized ?: false
 }
 
 private sealed interface VocaAction {

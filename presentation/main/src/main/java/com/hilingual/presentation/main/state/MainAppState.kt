@@ -42,7 +42,9 @@ import com.hilingual.presentation.notification.navigation.navigateToNotification
 import com.hilingual.presentation.onboarding.navigation.navigateToOnboarding
 import com.hilingual.presentation.signup.navigation.navigateToSignUp
 import com.hilingual.presentation.splash.navigation.Splash
+import com.hilingual.presentation.voca.navigation.VOCA_REVIEW_SAVED_KEY
 import com.hilingual.presentation.voca.navigation.navigateToVoca
+import com.hilingual.presentation.voca.navigation.navigateToVocaReview
 import java.time.LocalDate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
@@ -204,6 +206,25 @@ internal class MainAppState(
 
     fun navigateToOnboarding(navOptions: NavOptions? = clearStackNavOptions) {
         navController.navigateToOnboarding(navOptions)
+    }
+
+    fun navigateToVocaReview(
+        isUnmemorizedOnly: Boolean,
+        sort: Int,
+        navOptions: NavOptions? = null,
+    ) {
+        navController.navigateToVocaReview(
+            isUnmemorizedOnly = isUnmemorizedOnly,
+            sort = sort,
+            navOptions = navOptions,
+        )
+    }
+
+    fun navigateUpWithVocaReviewSaved() {
+        navController.previousBackStackEntry
+            ?.savedStateHandle
+            ?.set(VOCA_REVIEW_SAVED_KEY, true)
+        navController.navigateUp()
     }
 
     fun navigateUp() {

@@ -16,15 +16,21 @@
 package com.hilingual.data.voca.datasource
 
 import com.hilingual.core.network.model.BaseResponse
+import com.hilingual.data.voca.dto.request.VocaMemorizationRequestDto
 import com.hilingual.data.voca.dto.response.VocaDetailResponseDto
 import com.hilingual.data.voca.dto.response.VocaListResponseDto
 
 interface VocaDataSource {
     suspend fun getVocaList(
         sort: Int,
+        isUnmemorizedOnly: Boolean,
     ): BaseResponse<VocaListResponseDto>
 
     suspend fun getVocaDetail(
         phraseId: Long,
     ): BaseResponse<VocaDetailResponseDto>
+
+    suspend fun patchVocaMemorization(
+        vocaMemorizationRequestDto: VocaMemorizationRequestDto,
+    ): BaseResponse<Unit>
 }

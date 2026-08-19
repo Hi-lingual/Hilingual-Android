@@ -299,6 +299,9 @@ internal fun MainScreen(
                     vocaNavGraph(
                         paddingValues = innerPadding,
                         navigateToHome = appState::navigateToHome,
+                        navigateToVocaReview = appState::navigateToVocaReview,
+                        navigateUp = appState::navigateUp,
+                        navigateUpWithReviewSaved = appState::navigateUpWithVocaReviewSaved,
                     )
 
                     diaryFeedbackNavGraph(

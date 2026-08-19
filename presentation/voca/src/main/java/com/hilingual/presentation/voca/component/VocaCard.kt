@@ -48,6 +48,7 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 internal fun VocaCard(
     phrase: String,
     phraseType: ImmutableList<String>,
+    isMemorized: Boolean,
     onCardClick: () -> Unit,
     isBookmarked: Boolean,
     onBookmarkClick: () -> Unit,
@@ -83,6 +84,9 @@ internal fun VocaCard(
                 style = HilingualTheme.typography.bodyR17,
                 color = HilingualTheme.colors.black,
             )
+            if (isMemorized) {
+                MemorizedBadge(modifier = Modifier.padding(top = 10.dp))
+            }
         }
         Icon(
             imageVector = ImageVector.vectorResource(
@@ -107,6 +111,7 @@ private fun VocaCardPreview() {
         VocaCard(
             phrase = "run late",
             phraseType = persistentListOf("동사", "숙어"),
+            isMemorized = true,
             onCardClick = {},
             isBookmarked = isBookmarked,
             onBookmarkClick = { isBookmarked = !isBookmarked },

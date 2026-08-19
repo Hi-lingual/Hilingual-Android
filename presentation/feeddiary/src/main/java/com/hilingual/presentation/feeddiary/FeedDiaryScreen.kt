@@ -122,6 +122,16 @@ internal fun FeedDiaryRoute(
                 )
             }
 
+            is FeedDiarySideEffect.ShowVocaSavedSnackbar -> {
+                messageController(
+                    HilingualMessage.Snackbar(
+                        message = it.message,
+                        actionLabelText = it.actionLabel,
+                        onAction = navigateToVoca,
+                    ),
+                )
+            }
+
             is FeedDiarySideEffect.ShowDiaryLikeSnackbar -> {
                 messageController(
                     HilingualMessage.Snackbar(

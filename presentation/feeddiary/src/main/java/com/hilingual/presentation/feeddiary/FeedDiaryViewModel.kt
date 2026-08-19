@@ -179,6 +179,14 @@ internal class FeedDiaryViewModel @Inject constructor(
                                     recommendExpressionList = updatedList,
                                 )
                             }
+                            if (isMarked) {
+                                _sideEffect.emit(
+                                    FeedDiarySideEffect.ShowVocaSavedSnackbar(
+                                        message = "단어장에 추가되었어요.",
+                                        actionLabel = "보러가기",
+                                    ),
+                                )
+                            }
                         }
 
                         BookmarkResult.OVERCAPACITY -> {
@@ -224,6 +232,7 @@ sealed interface FeedDiarySideEffect {
     data class ShowDiaryLikeSnackbar(val message: String, val actionLabel: String) : FeedDiarySideEffect
 
     data class ShowVocaOverflowSnackbar(val message: String, val actionLabel: String) : FeedDiarySideEffect
+    data class ShowVocaSavedSnackbar(val message: String, val actionLabel: String) : FeedDiarySideEffect
 
     data class ShowToast(val message: String) : FeedDiarySideEffect
 

@@ -16,22 +16,48 @@
 package com.hilingual.presentation.voca.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.remember
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import com.hilingual.core.navigation.MainTabRoute
+import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.voca.VocaRoute
+import com.hilingual.presentation.voca.review.VocaReviewRoute
 import kotlinx.serialization.Serializable
+
+const val VOCA_REVIEW_SAVED_KEY = "voca_review_saved"
+
+@Serializable
+data object VocaGraph : Route
 
 @Serializable
 data object Voca : MainTabRoute
+
+@Serializable
+internal data class VocaReview(
+    val isUnmemorizedOnly: Boolean,
+    val sort: Int,
+) : Route
 
 fun NavController.navigateToVoca(
     navOptions: NavOptions? = null,
 ) {
     navigate(
-        route = Voca,
+        route = VocaGraph,
+        navOptions = navOptions,
+    )
+}
+
+fun NavController.navigateToVocaReview(
+    isUnmemorizedOnly: Boolean,
+    sort: Int,
+    navOptions: NavOptions? = null,
+) {
+    navigate(
+        route = VocaReview(isUnmemorizedOnly = isUnmemorizedOnly, sort = sort),
         navOptions = navOptions,
     )
 }
@@ -39,11 +65,33 @@ fun NavController.navigateToVoca(
 fun NavGraphBuilder.vocaNavGraph(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
+    navigateToVocaReview: (Boolean, Int) -> Unit,
+    navigateUp: () -> Unit,
+    navigateUpWithReviewSaved: () -> Unit,
 ) {
-    composable<Voca> {
-        VocaRoute(
-            paddingValues = paddingValues,
-            navigateToHome = navigateToHome,
-        )
+    navigation<VocaGraph>(
+        startDestination = Voca::class,
+    ) {
+        composable<Voca> { entry ->
+            val isReviewSavedFlow = remember(entry) {
+                entry.savedStateHandle.getStateFlow(VOCA_REVIEW_SAVED_KEY, false)
+            }
+
+            VocaRoute(
+                paddingValues = paddingValues,
+                navigateToHome = navigateToHome,
+                navigateToVocaReview = navigateToVocaReview,
+                isReviewSavedFlow = isReviewSavedFlow,
+                onReviewSavedConsumed = { entry.savedStateHandle[VOCA_REVIEW_SAVED_KEY] = false },
+            )
+        }
+
+        composable<VocaReview> {
+            VocaReviewRoute(
+                paddingValues = paddingValues,
+                navigateUp = navigateUp,
+                navigateUpWithSaved = navigateUpWithReviewSaved,
+            )
+        }
     }
 }

@@ -17,13 +17,19 @@ package com.hilingual.data.voca.repository
 
 import com.hilingual.data.voca.model.VocaDetailModel
 import com.hilingual.data.voca.model.VocaListResultModel
+import com.hilingual.data.voca.model.VocaMemorizationModel
 
 interface VocaRepository {
     suspend fun getVocaList(
         sort: Int,
+        isUnmemorizedOnly: Boolean = false,
     ): Result<VocaListResultModel>
 
     suspend fun getVocaDetail(
         phraseId: Long,
     ): Result<VocaDetailModel>
+
+    suspend fun patchVocaMemorization(
+        items: List<VocaMemorizationModel>,
+    ): Result<Unit>
 }

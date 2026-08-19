@@ -178,6 +178,16 @@ internal fun DiaryFeedbackRoute(
                 )
             }
 
+            is DiaryFeedbackSideEffect.ShowVocaSavedSnackbar -> {
+                messageController(
+                    HilingualMessage.Snackbar(
+                        message = it.message,
+                        actionLabelText = it.actionLabel,
+                        onAction = navigateToVoca,
+                    ),
+                )
+            }
+
             is DiaryFeedbackSideEffect.ShowToast -> messageController(HilingualMessage.Toast(it.message))
 
             is DiaryFeedbackSideEffect.NavigateToHome -> navigateToHome()
