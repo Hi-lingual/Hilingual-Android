@@ -2,7 +2,6 @@ package com.hilingual.presentation.widget.topic
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -16,7 +15,6 @@ import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
-import androidx.glance.color.ColorProvider
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
@@ -41,6 +39,8 @@ import com.hilingual.core.designsystem.theme.gray500
 import com.hilingual.core.designsystem.theme.gray850
 import com.hilingual.core.designsystem.theme.hilingualOrange
 import com.hilingual.core.designsystem.theme.white
+import com.hilingual.presentation.widget.common.WidgetPreviewTheme
+import com.hilingual.presentation.widget.common.widgetColorProvider
 import com.hilingual.core.designsystem.R as DesignSystemR
 
 private val CompactTopicSize = DpSize(110.dp, 110.dp)
@@ -72,37 +72,43 @@ class RecommendedTopicWidget : GlanceAppWidget() {
 internal fun RecommendedTopicWidgetContent(
     state: RecommendedTopicUiState,
     isWide: Boolean = LocalSize.current.width >= WideTopicSize.width,
+    previewTheme: WidgetPreviewTheme? = null,
 ) {
+    val colors = RecommendedTopicWidgetColors(previewTheme)
+
     Column(
         modifier = GlanceModifier
             .fillMaxSize()
-            .background(WidgetColors.surface)
+            .background(colors.surface)
             .cornerRadius(20.dp),
     ) {
         if (isWide) {
-            WideTopicHeader(state)
-            WideTopicBody(state)
+            WideTopicHeader(state, colors)
+            WideTopicBody(state, colors)
         } else {
-            CompactTopicHeader(state.dateLabel)
-            CompactTopicBody(state)
+            CompactTopicHeader(state.dateLabel, colors)
+            CompactTopicBody(state, colors)
         }
     }
 }
 
 @Composable
-private fun CompactTopicHeader(dateLabel: String) {
+private fun CompactTopicHeader(
+    dateLabel: String,
+    colors: RecommendedTopicWidgetColors,
+) {
     Box(
         modifier = GlanceModifier
             .fillMaxWidth()
             .height(40.dp)
-            .background(WidgetColors.header)
+            .background(colors.header)
             .padding(horizontal = 12.dp),
         contentAlignment = Alignment.CenterStart,
     ) {
         Text(
             text = dateLabel,
             style = TextStyle(
-                color = WidgetColors.onHeader,
+                color = colors.onHeader,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium,
             ),
@@ -111,7 +117,10 @@ private fun CompactTopicHeader(dateLabel: String) {
 }
 
 @Composable
-private fun CompactTopicBody(state: RecommendedTopicUiState) {
+private fun CompactTopicBody(
+    state: RecommendedTopicUiState,
+    colors: RecommendedTopicWidgetColors,
+) {
     Column(
         modifier = GlanceModifier
             .fillMaxSize()
@@ -121,32 +130,35 @@ private fun CompactTopicBody(state: RecommendedTopicUiState) {
             text = state.topic ?: "지금은 주제를\n불러올 수 없어요",
             modifier = GlanceModifier.defaultWeight(),
             style = TextStyle(
-                color = WidgetColors.primaryText,
+                color = colors.primaryText,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium,
             ),
             maxLines = 3,
         )
         if (state.writingStatus == WritingStatus.UNWRITTEN && state.remainingHours != null) {
-            RemainingTime(state.remainingHours, compact = true)
+            RemainingTime(state.remainingHours, compact = true, colors = colors)
         }
     }
 }
 
 @Composable
-private fun WideTopicHeader(state: RecommendedTopicUiState) {
+private fun WideTopicHeader(
+    state: RecommendedTopicUiState,
+    colors: RecommendedTopicWidgetColors,
+) {
     Row(
         modifier = GlanceModifier
             .fillMaxWidth()
             .height(48.dp)
-            .background(WidgetColors.header)
+            .background(colors.header)
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = state.dateLabel,
             style = TextStyle(
-                color = WidgetColors.onHeader,
+                color = colors.onHeader,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
             ),
@@ -154,16 +166,16 @@ private fun WideTopicHeader(state: RecommendedTopicUiState) {
         Spacer(modifier = GlanceModifier.width(5.dp))
         Text(
             text = "·",
-            style = TextStyle(color = WidgetColors.onHeaderMuted, fontSize = 13.sp),
+            style = TextStyle(color = colors.onHeaderMuted, fontSize = 13.sp),
         )
         Spacer(modifier = GlanceModifier.width(5.dp))
         Text(
             text = if (state.writingStatus == WritingStatus.WRITTEN) "작성완료" else "미작성",
             style = TextStyle(
                 color = if (state.writingStatus == WritingStatus.WRITTEN) {
-                    WidgetColors.accent
+                    colors.accent
                 } else {
-                    WidgetColors.onHeaderMuted
+                    colors.onHeaderMuted
                 },
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium,
@@ -171,13 +183,16 @@ private fun WideTopicHeader(state: RecommendedTopicUiState) {
         )
         Spacer(modifier = GlanceModifier.defaultWeight())
         if (state.writingStatus == WritingStatus.UNWRITTEN && state.remainingHours != null) {
-            RemainingTime(state.remainingHours, compact = false)
+            RemainingTime(state.remainingHours, compact = false, colors = colors)
         }
     }
 }
 
 @Composable
-private fun WideTopicBody(state: RecommendedTopicUiState) {
+private fun WideTopicBody(
+    state: RecommendedTopicUiState,
+    colors: RecommendedTopicWidgetColors,
+) {
     Column(
         modifier = GlanceModifier
             .fillMaxSize()
@@ -186,13 +201,13 @@ private fun WideTopicBody(state: RecommendedTopicUiState) {
     ) {
         Text(
             text = "오늘의 추천 주제",
-            style = TextStyle(color = WidgetColors.secondaryText, fontSize = 11.sp),
+            style = TextStyle(color = colors.secondaryText, fontSize = 11.sp),
         )
         Spacer(modifier = GlanceModifier.height(5.dp))
         Text(
             text = state.topic ?: "지금은 주제를 불러올 수 없어요",
             style = TextStyle(
-                color = WidgetColors.primaryText,
+                color = colors.primaryText,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
             ),
@@ -205,6 +220,7 @@ private fun WideTopicBody(state: RecommendedTopicUiState) {
 private fun RemainingTime(
     hours: Int,
     compact: Boolean,
+    colors: RecommendedTopicWidgetColors,
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Image(
@@ -216,88 +232,138 @@ private fun RemainingTime(
         Text(
             text = "${hours}시간 남음",
             style = TextStyle(
-                color = if (compact) WidgetColors.secondaryText else WidgetColors.onHeaderSecondary,
+                color = if (compact) colors.secondaryText else colors.onHeaderSecondary,
                 fontSize = if (compact) 10.sp else 11.sp,
             ),
         )
     }
 }
 
-private object WidgetColors {
-    val surface = ColorProvider(day = gray100, night = gray850)
-    val header = ColorProvider(day = gray850, night = black)
-    val onHeader = ColorProvider(day = white, night = white)
-    val onHeaderMuted = ColorProvider(day = gray400, night = gray400)
-    val onHeaderSecondary = ColorProvider(day = gray200, night = gray200)
-    val primaryText = ColorProvider(day = black, night = white)
-    val secondaryText = ColorProvider(day = gray500, night = gray400)
-    val accent = ColorProvider(day = hilingualOrange, night = hilingualOrange)
+private class RecommendedTopicWidgetColors(previewTheme: WidgetPreviewTheme?) {
+    val surface = widgetColorProvider(gray100, gray850, previewTheme)
+    val header = widgetColorProvider(gray850, black, previewTheme)
+    val onHeader = widgetColorProvider(white, white, previewTheme)
+    val onHeaderMuted = widgetColorProvider(gray400, gray400, previewTheme)
+    val onHeaderSecondary = widgetColorProvider(gray200, gray200, previewTheme)
+    val primaryText = widgetColorProvider(black, white, previewTheme)
+    val secondaryText = widgetColorProvider(gray500, gray400, previewTheme)
+    val accent = widgetColorProvider(hilingualOrange, hilingualOrange, previewTheme)
 }
 
-private val recommendedTopicPreviewStates = listOf(
-    RecommendedTopicUiState(
+private object RecommendedTopicPreviewStates {
+    val unwritten = RecommendedTopicUiState(
         dateLabel = "12월 17일 월",
         topic = "What surprised you today?",
         writingStatus = WritingStatus.UNWRITTEN,
         remainingHours = 25,
-    ),
-    RecommendedTopicUiState(
+    )
+    val written = RecommendedTopicUiState(
         dateLabel = "12월 17일 월",
         topic = "What surprised you today?",
         writingStatus = WritingStatus.WRITTEN,
         remainingHours = null,
-    ),
-    RecommendedTopicUiState(
+    )
+    val error = RecommendedTopicUiState(
         dateLabel = "12월 17일 월",
         topic = null,
         writingStatus = WritingStatus.UNWRITTEN,
         remainingHours = 25,
-    ),
-)
+    )
+}
 
-private class RecommendedTopicPreviewParameterProvider :
-    PreviewParameterProvider<RecommendedTopicUiState> {
-    override val values = recommendedTopicPreviewStates.asSequence()
+@Composable
+private fun RecommendedTopicPreview(
+    state: RecommendedTopicUiState,
+    isWide: Boolean,
+    theme: WidgetPreviewTheme,
+) {
+    RecommendedTopicWidgetContent(
+        state = state,
+        isWide = isWide,
+        previewTheme = theme,
+    )
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 155, heightDp = 155)
 @Composable
-private fun RecommendedTopicCompactUnwrittenPreview() {
-    RecommendedTopicWidgetContent(state = recommendedTopicPreviewStates[0], isWide = false)
+private fun RecommendedTopicCompactUnwrittenLightPreview() {
+    RecommendedTopicPreview(RecommendedTopicPreviewStates.unwritten, false, WidgetPreviewTheme.LIGHT)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 155, heightDp = 155)
 @Composable
-private fun RecommendedTopicCompactWrittenPreview() {
-    RecommendedTopicWidgetContent(state = recommendedTopicPreviewStates[1], isWide = false)
+private fun RecommendedTopicCompactWrittenLightPreview() {
+    RecommendedTopicPreview(RecommendedTopicPreviewStates.written, false, WidgetPreviewTheme.LIGHT)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 155, heightDp = 155)
 @Composable
-private fun RecommendedTopicCompactErrorPreview() {
-    RecommendedTopicWidgetContent(state = recommendedTopicPreviewStates[2], isWide = false)
+private fun RecommendedTopicCompactErrorLightPreview() {
+    RecommendedTopicPreview(RecommendedTopicPreviewStates.error, false, WidgetPreviewTheme.LIGHT)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 329, heightDp = 155)
 @Composable
-private fun RecommendedTopicWideUnwrittenPreview() {
-    RecommendedTopicWidgetContent(state = recommendedTopicPreviewStates[0], isWide = true)
+private fun RecommendedTopicWideUnwrittenLightPreview() {
+    RecommendedTopicPreview(RecommendedTopicPreviewStates.unwritten, true, WidgetPreviewTheme.LIGHT)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 329, heightDp = 155)
 @Composable
-private fun RecommendedTopicWideWrittenPreview() {
-    RecommendedTopicWidgetContent(state = recommendedTopicPreviewStates[1], isWide = true)
+private fun RecommendedTopicWideWrittenLightPreview() {
+    RecommendedTopicPreview(RecommendedTopicPreviewStates.written, true, WidgetPreviewTheme.LIGHT)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 329, heightDp = 155)
 @Composable
-private fun RecommendedTopicWideErrorPreview() {
-    RecommendedTopicWidgetContent(state = recommendedTopicPreviewStates[2], isWide = true)
+private fun RecommendedTopicWideErrorLightPreview() {
+    RecommendedTopicPreview(RecommendedTopicPreviewStates.error, true, WidgetPreviewTheme.LIGHT)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 155, heightDp = 155)
+@Composable
+private fun RecommendedTopicCompactUnwrittenDarkPreview() {
+    RecommendedTopicPreview(RecommendedTopicPreviewStates.unwritten, false, WidgetPreviewTheme.DARK)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 155, heightDp = 155)
+@Composable
+private fun RecommendedTopicCompactWrittenDarkPreview() {
+    RecommendedTopicPreview(RecommendedTopicPreviewStates.written, false, WidgetPreviewTheme.DARK)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 155, heightDp = 155)
+@Composable
+private fun RecommendedTopicCompactErrorDarkPreview() {
+    RecommendedTopicPreview(RecommendedTopicPreviewStates.error, false, WidgetPreviewTheme.DARK)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 329, heightDp = 155)
+@Composable
+private fun RecommendedTopicWideUnwrittenDarkPreview() {
+    RecommendedTopicPreview(RecommendedTopicPreviewStates.unwritten, true, WidgetPreviewTheme.DARK)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 329, heightDp = 155)
+@Composable
+private fun RecommendedTopicWideWrittenDarkPreview() {
+    RecommendedTopicPreview(RecommendedTopicPreviewStates.written, true, WidgetPreviewTheme.DARK)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 329, heightDp = 155)
+@Composable
+private fun RecommendedTopicWideErrorDarkPreview() {
+    RecommendedTopicPreview(RecommendedTopicPreviewStates.error, true, WidgetPreviewTheme.DARK)
 }

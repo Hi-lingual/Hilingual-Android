@@ -16,7 +16,6 @@ import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
-import androidx.glance.color.ColorProvider
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
@@ -43,6 +42,8 @@ import com.hilingual.core.designsystem.theme.gray400
 import com.hilingual.core.designsystem.theme.gray500
 import com.hilingual.core.designsystem.theme.gray700
 import com.hilingual.core.designsystem.theme.white
+import com.hilingual.presentation.widget.common.WidgetPreviewTheme
+import com.hilingual.presentation.widget.common.widgetColorProvider
 import com.hilingual.core.designsystem.R as DesignSystemR
 
 private val CompactStreakSize = DpSize(110.dp, 110.dp)
@@ -79,23 +80,29 @@ class StreakWidget : GlanceAppWidget() {
 internal fun StreakWidgetContent(
     state: StreakUiState,
     isWide: Boolean = LocalSize.current.width >= WideStreakSize.width,
+    previewTheme: WidgetPreviewTheme? = null,
 ) {
+    val colors = StreakWidgetColors(previewTheme)
+
     Box(
         modifier = GlanceModifier
             .fillMaxSize()
-            .background(StreakColors.surface)
+            .background(colors.surface)
             .cornerRadius(28.dp),
     ) {
         if (isWide) {
-            WideStreakContent(state)
+            WideStreakContent(state, colors)
         } else {
-            CompactStreakContent(state)
+            CompactStreakContent(state, colors)
         }
     }
 }
 
 @Composable
-private fun CompactStreakContent(state: StreakUiState) {
+private fun CompactStreakContent(
+    state: StreakUiState,
+    colors: StreakWidgetColors,
+) {
     Box(modifier = GlanceModifier.fillMaxSize()) {
         Column(modifier = GlanceModifier.fillMaxSize()) {
             Spacer(modifier = GlanceModifier.defaultWeight())
@@ -103,7 +110,7 @@ private fun CompactStreakContent(state: StreakUiState) {
                 modifier = GlanceModifier
                     .fillMaxWidth()
                     .height(35.dp)
-                    .background(StreakColors.ground),
+                    .background(colors.ground),
             ) {}
         }
         Column(
@@ -113,16 +120,16 @@ private fun CompactStreakContent(state: StreakUiState) {
         ) {
             Text(
                 text = "연속 작성",
-                style = TextStyle(color = StreakColors.secondaryText, fontSize = 12.sp),
+                style = TextStyle(color = colors.secondaryText, fontSize = 12.sp),
             )
             Spacer(modifier = GlanceModifier.height(2.dp))
             if (state.isLoggedIn) {
-                StreakValue(state.streakDays, compact = true)
+                StreakValue(state.streakDays, compact = true, colors = colors)
             } else {
                 Text(
                     text = "로그인 후 확인 가능",
                     style = TextStyle(
-                        color = StreakColors.primaryText,
+                        color = colors.primaryText,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
                     ),
@@ -147,7 +154,10 @@ private fun CompactStreakContent(state: StreakUiState) {
 }
 
 @Composable
-private fun WideStreakContent(state: StreakUiState) {
+private fun WideStreakContent(
+    state: StreakUiState,
+    colors: StreakWidgetColors,
+) {
     Row(
         modifier = GlanceModifier.fillMaxSize().padding(20.dp),
         verticalAlignment = Alignment.Bottom,
@@ -159,24 +169,24 @@ private fun WideStreakContent(state: StreakUiState) {
         ) {
             Text(
                 text = "연속 작성",
-                style = TextStyle(color = StreakColors.secondaryText, fontSize = 14.sp),
+                style = TextStyle(color = colors.secondaryText, fontSize = 14.sp),
             )
             if (state.isLoggedIn) {
-                StreakValue(state.streakDays, compact = false)
+                StreakValue(state.streakDays, compact = false, colors = colors)
             } else {
                 Spacer(modifier = GlanceModifier.height(5.dp))
                 Box(
                     modifier = GlanceModifier
                         .width(72.dp)
                         .height(18.dp)
-                        .background(StreakColors.lockedBar)
+                        .background(colors.lockedBar)
                         .cornerRadius(3.dp),
                 ) {}
                 Spacer(modifier = GlanceModifier.height(4.dp))
                 Text(
                     text = "로그인 후 확인 가능",
                     style = TextStyle(
-                        color = StreakColors.primaryText,
+                        color = colors.primaryText,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                     ),
@@ -186,6 +196,7 @@ private fun WideStreakContent(state: StreakUiState) {
             RecentDays(
                 days = state.recentDays,
                 enabled = state.isLoggedIn,
+                colors = colors,
             )
         }
         Spacer(modifier = GlanceModifier.defaultWeight())
@@ -200,6 +211,7 @@ private fun WideStreakContent(state: StreakUiState) {
 private fun StreakValue(
     days: Int,
     compact: Boolean,
+    colors: StreakWidgetColors,
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Image(
@@ -212,12 +224,12 @@ private fun StreakValue(
             ),
             contentDescription = null,
             modifier = GlanceModifier.size(if (compact) 28.dp else 40.dp),
-            colorFilter = if (days == 0) ColorFilter.tint(StreakColors.inactiveFire) else null,
+            colorFilter = if (days == 0) ColorFilter.tint(colors.inactiveFire) else null,
         )
         Text(
             text = days.toString(),
             style = TextStyle(
-                color = StreakColors.primaryText,
+                color = colors.primaryText,
                 fontSize = if (compact) 26.sp else 36.sp,
                 fontWeight = FontWeight.Bold,
             ),
@@ -229,6 +241,7 @@ private fun StreakValue(
 private fun RecentDays(
     days: List<StreakDay>,
     enabled: Boolean,
+    colors: StreakWidgetColors,
 ) {
     Row {
         days.take(5).forEachIndexed { index, day ->
@@ -244,13 +257,13 @@ private fun RecentDays(
                     colorFilter = if (enabled && day.isWritten) {
                         null
                     } else {
-                        ColorFilter.tint(StreakColors.inactiveDay)
+                        ColorFilter.tint(colors.inactiveDay)
                     },
                 )
                 Text(
                     text = if (enabled) day.label else "",
                     style = TextStyle(
-                        color = if (day.isWritten) StreakColors.onActiveDay else StreakColors.secondaryText,
+                        color = if (day.isWritten) colors.onActiveDay else colors.secondaryText,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
                     ),
@@ -282,15 +295,15 @@ private fun StreakCharacter(
     )
 }
 
-private object StreakColors {
-    val surface = ColorProvider(day = gray100, night = gray700)
-    val ground = ColorProvider(day = gray200, night = gray500)
-    val primaryText = ColorProvider(day = black, night = white)
-    val secondaryText = ColorProvider(day = gray500, night = gray400)
-    val lockedBar = ColorProvider(day = gray300, night = gray500)
-    val inactiveDay = ColorProvider(day = gray200, night = gray500)
-    val inactiveFire = ColorProvider(day = gray400, night = gray400)
-    val onActiveDay = ColorProvider(day = white, night = black)
+private class StreakWidgetColors(previewTheme: WidgetPreviewTheme?) {
+    val surface = widgetColorProvider(gray100, gray700, previewTheme)
+    val ground = widgetColorProvider(gray200, gray500, previewTheme)
+    val primaryText = widgetColorProvider(black, white, previewTheme)
+    val secondaryText = widgetColorProvider(gray500, gray400, previewTheme)
+    val lockedBar = widgetColorProvider(gray300, gray500, previewTheme)
+    val inactiveDay = widgetColorProvider(gray200, gray500, previewTheme)
+    val inactiveFire = widgetColorProvider(gray400, gray400, previewTheme)
+    val onActiveDay = widgetColorProvider(white, black, previewTheme)
 }
 
 private fun previewDays(writtenDays: Set<String> = emptySet()) =
@@ -298,30 +311,117 @@ private fun previewDays(writtenDays: Set<String> = emptySet()) =
         StreakDay(label = day, isWritten = day in writtenDays)
     }
 
+private object StreakPreviewStates {
+    val loggedOut = StreakUiState(
+        isLoggedIn = false,
+        streakDays = 0,
+        recentDays = previewDays(),
+    )
+    val empty = StreakUiState(
+        isLoggedIn = true,
+        streakDays = 0,
+        recentDays = previewDays(),
+    )
+    val written = StreakUiState(
+        isLoggedIn = true,
+        streakDays = 4,
+        recentDays = previewDays(setOf("월", "화", "수", "목")),
+    )
+}
+
+@Composable
+private fun StreakPreview(
+    state: StreakUiState,
+    isWide: Boolean,
+    theme: WidgetPreviewTheme,
+) {
+    StreakWidgetContent(
+        state = state,
+        isWide = isWide,
+        previewTheme = theme,
+    )
+}
+
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 155, heightDp = 155)
 @Composable
-private fun StreakCompactPreview() {
-    StreakWidgetContent(
-        state = StreakUiState(
-            isLoggedIn = true,
-            streakDays = 4,
-            recentDays = previewDays(setOf("월", "화", "수", "목")),
-        ),
-        isWide = false,
-    )
+private fun StreakCompactLoggedOutLightPreview() {
+    StreakPreview(StreakPreviewStates.loggedOut, false, WidgetPreviewTheme.LIGHT)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 155, heightDp = 155)
+@Composable
+private fun StreakCompactEmptyLightPreview() {
+    StreakPreview(StreakPreviewStates.empty, false, WidgetPreviewTheme.LIGHT)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 155, heightDp = 155)
+@Composable
+private fun StreakCompactWrittenLightPreview() {
+    StreakPreview(StreakPreviewStates.written, false, WidgetPreviewTheme.LIGHT)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 329, heightDp = 155)
 @Composable
-private fun StreakWidePreview() {
-    StreakWidgetContent(
-        state = StreakUiState(
-            isLoggedIn = true,
-            streakDays = 4,
-            recentDays = previewDays(setOf("월", "화", "수", "목")),
-        ),
-        isWide = true,
-    )
+private fun StreakWideLoggedOutLightPreview() {
+    StreakPreview(StreakPreviewStates.loggedOut, true, WidgetPreviewTheme.LIGHT)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 329, heightDp = 155)
+@Composable
+private fun StreakWideEmptyLightPreview() {
+    StreakPreview(StreakPreviewStates.empty, true, WidgetPreviewTheme.LIGHT)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 329, heightDp = 155)
+@Composable
+private fun StreakWideWrittenLightPreview() {
+    StreakPreview(StreakPreviewStates.written, true, WidgetPreviewTheme.LIGHT)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 155, heightDp = 155)
+@Composable
+private fun StreakCompactLoggedOutDarkPreview() {
+    StreakPreview(StreakPreviewStates.loggedOut, false, WidgetPreviewTheme.DARK)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 155, heightDp = 155)
+@Composable
+private fun StreakCompactEmptyDarkPreview() {
+    StreakPreview(StreakPreviewStates.empty, false, WidgetPreviewTheme.DARK)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 155, heightDp = 155)
+@Composable
+private fun StreakCompactWrittenDarkPreview() {
+    StreakPreview(StreakPreviewStates.written, false, WidgetPreviewTheme.DARK)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 329, heightDp = 155)
+@Composable
+private fun StreakWideLoggedOutDarkPreview() {
+    StreakPreview(StreakPreviewStates.loggedOut, true, WidgetPreviewTheme.DARK)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 329, heightDp = 155)
+@Composable
+private fun StreakWideEmptyDarkPreview() {
+    StreakPreview(StreakPreviewStates.empty, true, WidgetPreviewTheme.DARK)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 329, heightDp = 155)
+@Composable
+private fun StreakWideWrittenDarkPreview() {
+    StreakPreview(StreakPreviewStates.written, true, WidgetPreviewTheme.DARK)
 }
