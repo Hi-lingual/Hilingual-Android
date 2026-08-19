@@ -1,10 +1,22 @@
 name: Deploy to Play Store
 
+# Release Publish 워크플로에서 호출되거나, 수동으로 재시도할 때만 실행된다.
+# main push 트리거를 두지 않는 이유: main 은 배포가 성공한 뒤에 옮기는 브랜치이므로
+# main 이 움직였다는 것은 이미 배포가 끝났다는 뜻이다.
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
+    inputs:
+      ref:
+        description: '빌드할 커밋 SHA 또는 브랜치'
+        required: true
+        type: string
   workflow_dispatch:
+    inputs:
+      ref:
+        description: '빌드할 커밋 SHA 또는 브랜치 (기본: main)'
+        required: false
+        default: 'main'
+        type: string
 
 jobs:
   deploy_release:
@@ -14,6 +26,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
+          ref: ${{ inputs.ref }}
           fetch-depth: 0
 
       - name: Setup Java

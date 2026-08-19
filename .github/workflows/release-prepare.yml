@@ -77,7 +77,7 @@ jobs:
           sed -e "s/{{VERSION}}/$VERSION/g" -e "s/{{CODE}}/$CODE/g" \
             .github/PULL_REQUEST_TEMPLATE/release.md > "$BODY_FILE"
           gh pr create \
-            --base main \
+            --base develop \
             --head "release/$VERSION" \
             --title "[RELEASE] $VERSION 🚀" \
             --body-file "$BODY_FILE" \

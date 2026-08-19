@@ -1,0 +1,127 @@
+name: Release Publish
+
+# release/x.y.z PR 이 develop 에 머지되면 배포 전체를 이어서 처리한다.
+#   guard   : 사전 검증 (main 조상 관계, 버전, 태그 중복, 패치노트)
+#   deploy  : 머지 커밋으로 AAB 를 빌드해 Play Store 에 업로드
+#   publish : 배포가 성공한 뒤에만 main 을 fast-forward 하고 태그/Release 를 만든다
+#
+# main 을 마지막에 옮기는 이유: main 이 항상 "Play Store 에 실제로 올라간 커밋" 을 가리키게 하기 위함이다.
+# main 은 언제나 develop 의 조상이므로 main -> develop 되돌림 동기화가 필요 없다.
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - develop
+
+permissions:
+  contents: write
+
+jobs:
+  guard:
+    name: Preflight
+    if: ${{ github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/') }}
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.check.outputs.sha }}
+      version: ${{ steps.check.outputs.version }}
+      tag: ${{ steps.check.outputs.tag }}
+    steps:
+      - name: Checkout merge commit
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+          fetch-depth: 0
+
+      - name: Verify release state
+        id: check
+        env:
+          SHA: ${{ github.event.pull_request.merge_commit_sha }}
+        run: |
+          set -euo pipefail
+          # SHA 로 체크아웃하면 fetch refspec 이 좁아져 origin/main 이 없을 수 있으므로 명시적으로 가져온다.
+          git fetch origin "+refs/heads/main:refs/remotes/origin/main"
+
+          # main 은 반드시 이 커밋의 조상이어야 한다. 아니면 fast-forward 승격이 불가능하다.
+          if ! git merge-base --is-ancestor origin/main "$SHA"; then
+            echo "::error::main 이 develop 의 조상이 아닙니다. 아래를 한 번 실행해 히스토리를 정합화한 뒤 다시 배포해 주세요."
+            echo "::error::  git switch develop && git merge origin/main --no-ff && git push origin develop"
+            exit 1
+          fi
+
+          VERSION=$(grep -E '^versionName = ' gradle/libs.versions.toml | sed -E 's/.*"(.*)".*/\1/')
+          if [ -z "$VERSION" ]; then
+            echo "::error::libs.versions.toml 에서 versionName 을 읽지 못했습니다."
+            exit 1
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/v$VERSION" >/dev/null 2>&1; then
+            echo "::error::v$VERSION 태그가 이미 존재합니다. 버전을 올리지 않고 배포하려 했는지 확인해 주세요."
+            exit 1
+          fi
+
+          CHANGELOG="fastlane/metadata/android/ko-KR/changelogs/default.txt"
+          if [ ! -s "$CHANGELOG" ]; then
+            echo "::error::패치노트가 비어 있습니다: $CHANGELOG"
+            exit 1
+          fi
+
+          {
+            echo "sha=$SHA"
+            echo "version=$VERSION"
+            echo "tag=v$VERSION"
+          } >> "$GITHUB_OUTPUT"
+          echo "::notice::$VERSION 배포를 시작합니다. (commit $SHA)"
+
+  deploy:
+    name: Deploy
+    needs: guard
+    uses: ./.github/workflows/deploy-release.yml
+    with:
+      ref: ${{ needs.guard.outputs.sha }}
+    secrets: inherit
+
+  publish:
+    name: Promote main & publish release
+    needs:
+      - guard
+      - deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout released commit
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.guard.outputs.sha }}
+          fetch-depth: 0
+
+      - name: Fast-forward main
+        env:
+          SHA: ${{ needs.guard.outputs.sha }}
+        run: |
+          set -euo pipefail
+          # SHA 로 체크아웃하면 fetch refspec 이 좁아져 origin/main 이 없을 수 있으므로 명시적으로 가져온다.
+          git fetch origin "+refs/heads/main:refs/remotes/origin/main"
+          if ! git merge-base --is-ancestor origin/main "$SHA"; then
+            echo "::error::배포 도중 main 이 움직여 fast-forward 할 수 없습니다. 수동 확인이 필요합니다."
+            exit 1
+          fi
+          git push origin "$SHA:refs/heads/main"
+
+      - name: Create tag and GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ needs.guard.outputs.sha }}
+          TAG: ${{ needs.guard.outputs.tag }}
+          VERSION: ${{ needs.guard.outputs.version }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" "$SHA" -m "$VERSION"
+          git push origin "$TAG"
+
+          gh release create "$TAG" \
+            --title "$VERSION 🚀" \
+            --notes-file "fastlane/metadata/android/ko-KR/changelogs/default.txt" \
+            --target "$SHA"
+
+          echo "::notice::$VERSION 배포 완료. Play Console 에서 draft 를 출시해 주세요."
