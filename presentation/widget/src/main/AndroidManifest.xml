@@ -3,7 +3,7 @@
 
     <application>
         <receiver
-            android:name="com.hilingual.presentation.widget.topic.RecommendedTopicWidgetReceiver"
+            android:name="com.hilingual.presentation.widget.topic.RecommendedTopicSmallWidgetReceiver"
             android:exported="true"
             android:label="@string/recommended_topic_widget_name">
             <intent-filter>
@@ -12,11 +12,24 @@
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/recommended_topic_widget_info" />
+                android:resource="@xml/recommended_topic_widget_info_s" />
         </receiver>
 
         <receiver
-            android:name="com.hilingual.presentation.widget.streak.StreakWidgetReceiver"
+            android:name="com.hilingual.presentation.widget.topic.RecommendedTopicLargeWidgetReceiver"
+            android:exported="true"
+            android:label="@string/recommended_topic_widget_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/recommended_topic_widget_info_l" />
+        </receiver>
+
+        <receiver
+            android:name="com.hilingual.presentation.widget.streak.StreakSmallWidgetReceiver"
             android:exported="true"
             android:label="@string/streak_widget_name">
             <intent-filter>
@@ -25,7 +38,20 @@
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/streak_widget_info" />
+                android:resource="@xml/streak_widget_info_s" />
+        </receiver>
+
+        <receiver
+            android:name="com.hilingual.presentation.widget.streak.StreakLargeWidgetReceiver"
+            android:exported="true"
+            android:label="@string/streak_widget_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/streak_widget_info_l" />
         </receiver>
     </application>
 
