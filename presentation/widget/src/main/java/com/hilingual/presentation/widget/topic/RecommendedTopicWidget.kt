@@ -250,27 +250,6 @@ private class RecommendedTopicWidgetColors(previewTheme: WidgetPreviewTheme?) {
     val accent = widgetColorProvider(hilingualOrange, hilingualOrange, previewTheme)
 }
 
-private object RecommendedTopicPreviewStates {
-    val unwritten = RecommendedTopicUiState(
-        dateLabel = "12월 17일 월",
-        topic = "What surprised you today?",
-        writingStatus = WritingStatus.UNWRITTEN,
-        remainingHours = 25,
-    )
-    val written = RecommendedTopicUiState(
-        dateLabel = "12월 17일 월",
-        topic = "What surprised you today?",
-        writingStatus = WritingStatus.WRITTEN,
-        remainingHours = null,
-    )
-    val error = RecommendedTopicUiState(
-        dateLabel = "12월 17일 월",
-        topic = null,
-        writingStatus = WritingStatus.UNWRITTEN,
-        remainingHours = 25,
-    )
-}
-
 @Composable
 private fun RecommendedTopicPreview(
     state: RecommendedTopicUiState,
@@ -285,85 +264,57 @@ private fun RecommendedTopicPreview(
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 155, heightDp = 155)
+@Preview(widthDp = 329, heightDp = 155)
 @Composable
-private fun RecommendedTopicCompactUnwrittenLightPreview() {
-    RecommendedTopicPreview(RecommendedTopicPreviewStates.unwritten, false, WidgetPreviewTheme.LIGHT)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 155, heightDp = 155)
-@Composable
-private fun RecommendedTopicCompactWrittenLightPreview() {
-    RecommendedTopicPreview(RecommendedTopicPreviewStates.written, false, WidgetPreviewTheme.LIGHT)
+private fun RecommendedTopicUnwrittenLargeLightPreview() {
+    RecommendedTopicPreview(RecommendedTopicUiState.Fake, true, WidgetPreviewTheme.LIGHT)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 155, heightDp = 155)
 @Composable
-private fun RecommendedTopicCompactErrorLightPreview() {
-    RecommendedTopicPreview(RecommendedTopicPreviewStates.error, false, WidgetPreviewTheme.LIGHT)
+private fun RecommendedTopicUnwrittenSmallLightPreview() {
+    RecommendedTopicPreview(RecommendedTopicUiState.Fake, false, WidgetPreviewTheme.LIGHT)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 329, heightDp = 155)
 @Composable
-private fun RecommendedTopicWideUnwrittenLightPreview() {
-    RecommendedTopicPreview(RecommendedTopicPreviewStates.unwritten, true, WidgetPreviewTheme.LIGHT)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 329, heightDp = 155)
-@Composable
-private fun RecommendedTopicWideWrittenLightPreview() {
-    RecommendedTopicPreview(RecommendedTopicPreviewStates.written, true, WidgetPreviewTheme.LIGHT)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 329, heightDp = 155)
-@Composable
-private fun RecommendedTopicWideErrorLightPreview() {
-    RecommendedTopicPreview(RecommendedTopicPreviewStates.error, true, WidgetPreviewTheme.LIGHT)
+private fun RecommendedTopicUnwrittenLargeDarkPreview() {
+    RecommendedTopicPreview(RecommendedTopicUiState.Fake, true, WidgetPreviewTheme.DARK)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 155, heightDp = 155)
 @Composable
-private fun RecommendedTopicCompactUnwrittenDarkPreview() {
-    RecommendedTopicPreview(RecommendedTopicPreviewStates.unwritten, false, WidgetPreviewTheme.DARK)
+private fun RecommendedTopicUnwrittenSmallDarkPreview() {
+    RecommendedTopicPreview(RecommendedTopicUiState.Fake, false, WidgetPreviewTheme.DARK)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 329, heightDp = 155)
+@Composable
+private fun RecommendedTopicWrittenLargeLightPreview() {
+    RecommendedTopicPreview(RecommendedTopicUiState.WrittenFake, true, WidgetPreviewTheme.LIGHT)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 155, heightDp = 155)
 @Composable
-private fun RecommendedTopicCompactWrittenDarkPreview() {
-    RecommendedTopicPreview(RecommendedTopicPreviewStates.written, false, WidgetPreviewTheme.DARK)
+private fun RecommendedTopicWrittenSmallLightPreview() {
+    RecommendedTopicPreview(RecommendedTopicUiState.WrittenFake, false, WidgetPreviewTheme.LIGHT)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 329, heightDp = 155)
+@Composable
+private fun RecommendedTopicWrittenLargeDarkPreview() {
+    RecommendedTopicPreview(RecommendedTopicUiState.WrittenFake, true, WidgetPreviewTheme.DARK)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 155, heightDp = 155)
 @Composable
-private fun RecommendedTopicCompactErrorDarkPreview() {
-    RecommendedTopicPreview(RecommendedTopicPreviewStates.error, false, WidgetPreviewTheme.DARK)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 329, heightDp = 155)
-@Composable
-private fun RecommendedTopicWideUnwrittenDarkPreview() {
-    RecommendedTopicPreview(RecommendedTopicPreviewStates.unwritten, true, WidgetPreviewTheme.DARK)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 329, heightDp = 155)
-@Composable
-private fun RecommendedTopicWideWrittenDarkPreview() {
-    RecommendedTopicPreview(RecommendedTopicPreviewStates.written, true, WidgetPreviewTheme.DARK)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 329, heightDp = 155)
-@Composable
-private fun RecommendedTopicWideErrorDarkPreview() {
-    RecommendedTopicPreview(RecommendedTopicPreviewStates.error, true, WidgetPreviewTheme.DARK)
+private fun RecommendedTopicWrittenSmallDarkPreview() {
+    RecommendedTopicPreview(RecommendedTopicUiState.WrittenFake, false, WidgetPreviewTheme.DARK)
 }
