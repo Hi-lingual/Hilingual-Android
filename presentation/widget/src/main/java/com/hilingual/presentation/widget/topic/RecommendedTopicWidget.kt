@@ -2,7 +2,6 @@ package com.hilingual.presentation.widget.topic
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
@@ -43,13 +42,10 @@ import com.hilingual.presentation.widget.common.WidgetPreviewTheme
 import com.hilingual.presentation.widget.common.widgetColorProvider
 import com.hilingual.core.designsystem.R as DesignSystemR
 
-private val CompactTopicSize = DpSize(110.dp, 110.dp)
-private val WideTopicSize = DpSize(250.dp, 110.dp)
+private val WideTopicWidth = 250.dp
 
 class RecommendedTopicWidget : GlanceAppWidget() {
-    override val sizeMode: SizeMode = SizeMode.Responsive(
-        setOf(CompactTopicSize, WideTopicSize),
-    )
+    override val sizeMode: SizeMode = SizeMode.Exact
 
     override suspend fun provideGlance(
         context: Context,
@@ -71,7 +67,7 @@ class RecommendedTopicWidget : GlanceAppWidget() {
 @Composable
 internal fun RecommendedTopicWidgetContent(
     state: RecommendedTopicUiState,
-    isWide: Boolean = LocalSize.current.width >= WideTopicSize.width,
+    isWide: Boolean = LocalSize.current.width >= WideTopicWidth,
     previewTheme: WidgetPreviewTheme? = null,
 ) {
     val colors = RecommendedTopicWidgetColors(previewTheme)

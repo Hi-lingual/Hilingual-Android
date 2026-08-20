@@ -2,7 +2,6 @@ package com.hilingual.presentation.widget.streak
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.ColorFilter
@@ -51,13 +50,10 @@ import java.util.Locale
 import kotlinx.collections.immutable.ImmutableList
 import com.hilingual.core.designsystem.R as DesignSystemR
 
-private val CompactStreakSize = DpSize(110.dp, 110.dp)
-private val WideStreakSize = DpSize(250.dp, 110.dp)
+private val WideStreakWidth = 250.dp
 
 class StreakWidget : GlanceAppWidget() {
-    override val sizeMode: SizeMode = SizeMode.Responsive(
-        setOf(CompactStreakSize, WideStreakSize),
-    )
+    override val sizeMode: SizeMode = SizeMode.Exact
 
     override suspend fun provideGlance(
         context: Context,
@@ -78,7 +74,7 @@ class StreakWidget : GlanceAppWidget() {
 @Composable
 internal fun StreakWidgetContent(
     state: StreakUiState,
-    isWide: Boolean = LocalSize.current.width >= WideStreakSize.width,
+    isWide: Boolean = LocalSize.current.width >= WideStreakWidth,
     previewTheme: WidgetPreviewTheme? = null,
 ) {
     val colors = StreakWidgetColors(previewTheme)
