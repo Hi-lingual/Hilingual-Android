@@ -105,7 +105,8 @@ private fun StreakSmallWidgetContent(
     Box(modifier = GlanceModifier.fillMaxSize()) {
         Column(
             verticalAlignment = Alignment.Bottom,
-            modifier = GlanceModifier.fillMaxSize()) {
+            modifier = GlanceModifier.fillMaxSize(),
+        ) {
             Box(
                 modifier = GlanceModifier
                     .fillMaxWidth()
@@ -252,7 +253,7 @@ private fun RecentDays(
     modifier: GlanceModifier = GlanceModifier,
 ) {
     Row(
-        modifier = modifier
+        modifier = modifier,
     ) {
         days.take(5).forEachIndexed { index, day ->
             if (isLoggedIn) {
@@ -344,85 +345,85 @@ private fun StreakPreview(
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 155, heightDp = 155)
-@Composable
-private fun StreakCompactLoggedOutLightPreview() {
-    StreakPreview(StreakUiState.LoggedOutFake, false, WidgetPreviewTheme.LIGHT)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 155, heightDp = 155)
-@Composable
-private fun StreakCompactEmptyLightPreview() {
-    StreakPreview(StreakUiState.EmptyFake, false, WidgetPreviewTheme.LIGHT)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 155, heightDp = 155)
-@Composable
-private fun StreakCompactWrittenLightPreview() {
-    StreakPreview(StreakUiState.Fake, false, WidgetPreviewTheme.LIGHT)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 329, heightDp = 155)
 @Composable
-private fun StreakWideLoggedOutLightPreview() {
+private fun StreakLoggedOutLargeLightPreview() {
     StreakPreview(StreakUiState.LoggedOutFake, true, WidgetPreviewTheme.LIGHT)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 329, heightDp = 155)
+@Preview(widthDp = 155, heightDp = 155)
 @Composable
-private fun StreakWideEmptyLightPreview() {
-    StreakPreview(StreakUiState.EmptyFake, true, WidgetPreviewTheme.LIGHT)
+private fun StreakLoggedOutSmallLightPreview() {
+    StreakPreview(StreakUiState.LoggedOutFake, false, WidgetPreviewTheme.LIGHT)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 329, heightDp = 155)
 @Composable
-private fun StreakWideWrittenLightPreview() {
+private fun StreakLoggedOutLargeDarkPreview() {
+    StreakPreview(StreakUiState.LoggedOutFake, true, WidgetPreviewTheme.DARK)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 155, heightDp = 155)
+@Composable
+private fun StreakLoggedOutSmallDarkPreview() {
+    StreakPreview(StreakUiState.LoggedOutFake, false, WidgetPreviewTheme.DARK)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 329, heightDp = 155)
+@Composable
+private fun StreakEmptyLargeLightPreview() {
+    StreakPreview(StreakUiState.EmptyFake, true, WidgetPreviewTheme.LIGHT)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 155, heightDp = 155)
+@Composable
+private fun StreakEmptySmallLightPreview() {
+    StreakPreview(StreakUiState.EmptyFake, false, WidgetPreviewTheme.LIGHT)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 329, heightDp = 155)
+@Composable
+private fun StreakEmptyLargeDarkPreview() {
+    StreakPreview(StreakUiState.EmptyFake, true, WidgetPreviewTheme.DARK)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 155, heightDp = 155)
+@Composable
+private fun StreakEmptySmallDarkPreview() {
+    StreakPreview(StreakUiState.EmptyFake, false, WidgetPreviewTheme.DARK)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 329, heightDp = 155)
+@Composable
+private fun StreakWrittenLargeLightPreview() {
     StreakPreview(StreakUiState.Fake, true, WidgetPreviewTheme.LIGHT)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 155, heightDp = 155)
 @Composable
-private fun StreakCompactLoggedOutDarkPreview() {
-    StreakPreview(StreakUiState.LoggedOutFake, false, WidgetPreviewTheme.DARK)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 155, heightDp = 155)
-@Composable
-private fun StreakCompactEmptyDarkPreview() {
-    StreakPreview(StreakUiState.EmptyFake, false, WidgetPreviewTheme.DARK)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 155, heightDp = 155)
-@Composable
-private fun StreakCompactWrittenDarkPreview() {
-    StreakPreview(StreakUiState.Fake, false, WidgetPreviewTheme.DARK)
+private fun StreakWrittenSmallLightPreview() {
+    StreakPreview(StreakUiState.Fake, false, WidgetPreviewTheme.LIGHT)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 329, heightDp = 155)
 @Composable
-private fun StreakWideLoggedOutDarkPreview() {
-    StreakPreview(StreakUiState.LoggedOutFake, true, WidgetPreviewTheme.DARK)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 329, heightDp = 155)
-@Composable
-private fun StreakWideEmptyDarkPreview() {
-    StreakPreview(StreakUiState.EmptyFake, true, WidgetPreviewTheme.DARK)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 329, heightDp = 155)
-@Composable
-private fun StreakWideWrittenDarkPreview() {
+private fun StreakWrittenLargeDarkPreview() {
     StreakPreview(StreakUiState.Fake, true, WidgetPreviewTheme.DARK)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 155, heightDp = 155)
+@Composable
+private fun StreakWrittenSmallDarkPreview() {
+    StreakPreview(StreakUiState.Fake, false, WidgetPreviewTheme.DARK)
 }
