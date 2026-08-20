@@ -242,7 +242,7 @@ private fun RemainingTime(
 private class RecommendedTopicWidgetColors(previewTheme: WidgetPreviewTheme?) {
     val surface = widgetColorProvider(gray100, gray850, previewTheme)
     val header = widgetColorProvider(gray850, black, previewTheme)
-    val onHeader = widgetColorProvider(white, white, previewTheme)
+    val onHeader = widgetColorProvider(white, gray200, previewTheme)
     val onHeaderMuted = widgetColorProvider(gray400, gray400, previewTheme)
     val onHeaderSecondary = widgetColorProvider(gray200, gray200, previewTheme)
     val primaryText = widgetColorProvider(black, white, previewTheme)
