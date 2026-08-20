@@ -67,7 +67,7 @@ metaAdsAdapter = "6.21.0.3"
 
 # Firebase
 firebaseBom = "34.17.0"
-firebaseCrashlyticsPlugin = "3.0.7"
+firebaseCrashlyticsPlugin = "3.0.8"
 
 # ML Kit
 mlkitTextRecognition = "16.0.1"
