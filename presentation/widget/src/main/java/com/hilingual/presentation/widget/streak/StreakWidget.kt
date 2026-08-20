@@ -82,17 +82,27 @@ internal fun StreakWidgetContent(
     previewTheme: WidgetPreviewTheme? = null,
 ) {
     val colors = StreakWidgetColors(previewTheme)
+    val size = LocalSize.current
+    val contentModifier = if (isWide) {
+        GlanceModifier.fillMaxSize()
+    } else {
+        GlanceModifier.size(minOf(size.width, size.height))
+    }
 
     Box(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .background(colors.surface)
-            .cornerRadius(28.dp),
+        modifier = GlanceModifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
     ) {
-        if (isWide) {
-            StreakLargeWidgetContent(state, colors)
-        } else {
-            StreakSmallWidgetContent(state, colors)
+        Box(
+            modifier = contentModifier
+                .background(colors.surface)
+                .cornerRadius(28.dp),
+        ) {
+            if (isWide) {
+                StreakLargeWidgetContent(state, colors)
+            } else {
+                StreakSmallWidgetContent(state, colors)
+            }
         }
     }
 }

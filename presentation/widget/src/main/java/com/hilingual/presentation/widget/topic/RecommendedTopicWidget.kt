@@ -75,19 +75,29 @@ internal fun RecommendedTopicWidgetContent(
     previewTheme: WidgetPreviewTheme? = null,
 ) {
     val colors = RecommendedTopicWidgetColors(previewTheme)
+    val size = LocalSize.current
+    val contentModifier = if (isWide) {
+        GlanceModifier.fillMaxSize()
+    } else {
+        GlanceModifier.size(minOf(size.width, size.height))
+    }
 
-    Column(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .background(colors.surface)
-            .cornerRadius(20.dp),
+    Box(
+        modifier = GlanceModifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
     ) {
-        if (isWide) {
-            WideTopicHeader(state, colors)
-            WideTopicBody(state, colors)
-        } else {
-            CompactTopicHeader(state.dateLabel, colors)
-            CompactTopicBody(state, colors)
+        Column(
+            modifier = contentModifier
+                .background(colors.surface)
+                .cornerRadius(20.dp),
+        ) {
+            if (isWide) {
+                WideTopicHeader(state, colors)
+                WideTopicBody(state, colors)
+            } else {
+                CompactTopicHeader(state.dateLabel, colors)
+                CompactTopicBody(state, colors)
+            }
         }
     }
 }
