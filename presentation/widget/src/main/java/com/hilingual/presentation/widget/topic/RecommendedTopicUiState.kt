@@ -1,24 +1,41 @@
 package com.hilingual.presentation.widget.topic
 
+import com.hilingual.core.common.util.toLocalDateOrNull
+import com.hilingual.data.widget.model.WidgetTopicModel
+import java.time.LocalDate
+
 internal data class RecommendedTopicUiState(
-    val dateLabel: String,
+    val date: LocalDate = LocalDate.now(),
     val topic: String?,
     val writingStatus: WritingStatus,
-    val remainingHours: Int?,
 ) {
     companion object {
+        fun from(model: WidgetTopicModel): RecommendedTopicUiState = RecommendedTopicUiState(
+            date = model.date.toLocalDateOrNull() ?: LocalDate.now(),
+            topic = model.topicEn,
+            writingStatus = if (model.isWrittenToday == true) {
+                WritingStatus.WRITTEN
+            } else if (model.isWrittenToday == false) {
+                WritingStatus.UNWRITTEN
+            } else {
+                WritingStatus.UNKNOWN
+            },
+        )
+
+        fun unavailable(date: LocalDate = LocalDate.now()): RecommendedTopicUiState = RecommendedTopicUiState(
+            date = date,
+            topic = null,
+            writingStatus = WritingStatus.UNKNOWN,
+        )
+
         val Fake = RecommendedTopicUiState(
-            dateLabel = "12월 17일 월",
             topic = "What surprised you today?",
             writingStatus = WritingStatus.UNWRITTEN,
-            remainingHours = 25,
         )
 
         val WrittenFake = RecommendedTopicUiState(
-            dateLabel = "12월 17일 월",
             topic = "What surprised you today?",
             writingStatus = WritingStatus.WRITTEN,
-            remainingHours = null,
         )
     }
 }
@@ -26,4 +43,5 @@ internal data class RecommendedTopicUiState(
 internal enum class WritingStatus {
     UNWRITTEN,
     WRITTEN,
+    UNKNOWN,
 }

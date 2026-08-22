@@ -30,6 +30,7 @@ import androidx.glance.preview.Preview
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import com.hilingual.core.common.util.toKoreanShortWeekdayDate
 import com.hilingual.core.designsystem.theme.black
 import com.hilingual.core.designsystem.theme.gray100
 import com.hilingual.core.designsystem.theme.gray200
@@ -38,8 +39,16 @@ import com.hilingual.core.designsystem.theme.gray500
 import com.hilingual.core.designsystem.theme.gray850
 import com.hilingual.core.designsystem.theme.hilingualOrange
 import com.hilingual.core.designsystem.theme.white
+import com.hilingual.data.widget.repository.WidgetRepository
 import com.hilingual.presentation.widget.common.WidgetPreviewTheme
 import com.hilingual.presentation.widget.common.widgetColorProvider
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
+import java.time.Duration
+import java.time.LocalDate
+import java.time.ZonedDateTime
 import com.hilingual.core.designsystem.R as DesignSystemR
 
 private val WideTopicWidth = 250.dp
@@ -51,17 +60,24 @@ class RecommendedTopicWidget : GlanceAppWidget() {
         context: Context,
         id: GlanceId,
     ) {
+        val repository = EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            RecommendedTopicWidgetEntryPoint::class.java,
+        ).widgetRepository()
+        val state = repository.getTopic(LocalDate.now())
+            .map(RecommendedTopicUiState::from)
+            .getOrElse { RecommendedTopicUiState.unavailable() }
+
         provideContent {
-            RecommendedTopicWidgetContent(
-                state = RecommendedTopicUiState(
-                    dateLabel = "12월 17일 월",
-                    topic = "What surprised you today?",
-                    writingStatus = WritingStatus.UNWRITTEN,
-                    remainingHours = 25,
-                ),
-            )
+            RecommendedTopicWidgetContent(state = state)
         }
     }
+}
+
+@EntryPoint
+@InstallIn(SingletonComponent::class)
+internal interface RecommendedTopicWidgetEntryPoint {
+    fun widgetRepository(): WidgetRepository
 }
 
 @Composable
@@ -88,19 +104,19 @@ internal fun RecommendedTopicWidgetContent(
                 .cornerRadius(20.dp),
         ) {
             if (isWide) {
-                WideTopicHeader(state, colors)
-                WideTopicBody(state, colors)
+                LargeTopicHeader(state.date, state.writingStatus, colors)
+                LargeTopicBody(state.topic, colors)
             } else {
-                CompactTopicHeader(state.dateLabel, colors)
-                CompactTopicBody(state, colors)
+                SmallTopicHeader(state.date, colors)
+                SmallTopicBody(state.topic, state.writingStatus, colors)
             }
         }
     }
 }
 
 @Composable
-private fun CompactTopicHeader(
-    dateLabel: String,
+private fun SmallTopicHeader(
+    date: LocalDate,
     colors: RecommendedTopicWidgetColors,
 ) {
     Box(
@@ -112,7 +128,7 @@ private fun CompactTopicHeader(
         contentAlignment = Alignment.CenterStart,
     ) {
         Text(
-            text = dateLabel,
+            text = date.toKoreanShortWeekdayDate(),
             style = TextStyle(
                 color = colors.onHeader,
                 fontSize = 12.sp,
@@ -123,8 +139,9 @@ private fun CompactTopicHeader(
 }
 
 @Composable
-private fun CompactTopicBody(
-    state: RecommendedTopicUiState,
+private fun SmallTopicBody(
+    topicEn: String?,
+    writingStatus: WritingStatus,
     colors: RecommendedTopicWidgetColors,
 ) {
     Column(
@@ -133,7 +150,7 @@ private fun CompactTopicBody(
             .padding(horizontal = 12.dp, vertical = 10.dp),
     ) {
         Text(
-            text = state.topic ?: "지금은 주제를\n불러올 수 없어요",
+            text = topicEn ?: "지금은 주제를\n불러올 수 없어요",
             modifier = GlanceModifier.defaultWeight(),
             style = TextStyle(
                 color = colors.primaryText,
@@ -142,15 +159,16 @@ private fun CompactTopicBody(
             ),
             maxLines = 3,
         )
-        if (state.writingStatus == WritingStatus.UNWRITTEN && state.remainingHours != null) {
-            RemainingTime(state.remainingHours, compact = true, colors = colors)
+        if (writingStatus == WritingStatus.UNWRITTEN) {
+            RemainingTime(isWide = false, colors = colors)
         }
     }
 }
 
 @Composable
-private fun WideTopicHeader(
-    state: RecommendedTopicUiState,
+private fun LargeTopicHeader(
+    date: LocalDate,
+    writingStatus: WritingStatus,
     colors: RecommendedTopicWidgetColors,
 ) {
     Row(
@@ -162,41 +180,43 @@ private fun WideTopicHeader(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = state.dateLabel,
+            text = date.toKoreanShortWeekdayDate(),
             style = TextStyle(
                 color = colors.onHeader,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
             ),
         )
-        Spacer(modifier = GlanceModifier.width(5.dp))
-        Text(
-            text = "·",
-            style = TextStyle(color = colors.onHeaderMuted, fontSize = 13.sp),
-        )
-        Spacer(modifier = GlanceModifier.width(5.dp))
-        Text(
-            text = if (state.writingStatus == WritingStatus.WRITTEN) "작성완료" else "미작성",
-            style = TextStyle(
-                color = if (state.writingStatus == WritingStatus.WRITTEN) {
-                    colors.accent
-                } else {
-                    colors.onHeaderMuted
-                },
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
-            ),
-        )
+        if (writingStatus != WritingStatus.UNKNOWN) {
+            Spacer(modifier = GlanceModifier.width(5.dp))
+            Text(
+                text = "·",
+                style = TextStyle(color = colors.onHeaderMuted, fontSize = 13.sp),
+            )
+            Spacer(modifier = GlanceModifier.width(5.dp))
+            Text(
+                text = if (writingStatus == WritingStatus.WRITTEN) "작성완료" else "미작성",
+                style = TextStyle(
+                    color = if (writingStatus == WritingStatus.WRITTEN) {
+                        colors.accent
+                    } else {
+                        colors.onHeaderMuted
+                    },
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+            )
+        }
         Spacer(modifier = GlanceModifier.defaultWeight())
-        if (state.writingStatus == WritingStatus.UNWRITTEN && state.remainingHours != null) {
-            RemainingTime(state.remainingHours, compact = false, colors = colors)
+        if (writingStatus == WritingStatus.UNWRITTEN) {
+            RemainingTime(isWide = true, colors = colors)
         }
     }
 }
 
 @Composable
-private fun WideTopicBody(
-    state: RecommendedTopicUiState,
+private fun LargeTopicBody(
+    topicEn: String?,
     colors: RecommendedTopicWidgetColors,
 ) {
     Column(
@@ -211,7 +231,7 @@ private fun WideTopicBody(
         )
         Spacer(modifier = GlanceModifier.height(5.dp))
         Text(
-            text = state.topic ?: "지금은 주제를 불러올 수 없어요",
+            text = topicEn ?: "지금은 주제를 불러올 수 없어요",
             style = TextStyle(
                 color = colors.primaryText,
                 fontSize = 15.sp,
@@ -224,25 +244,30 @@ private fun WideTopicBody(
 
 @Composable
 private fun RemainingTime(
-    hours: Int,
-    compact: Boolean,
+    isWide: Boolean,
     colors: RecommendedTopicWidgetColors,
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Image(
             provider = ImageProvider(DesignSystemR.drawable.ic_time_16),
             contentDescription = null,
-            modifier = GlanceModifier.size(if (compact) 14.dp else 16.dp),
+            modifier = GlanceModifier.size(16.dp),
         )
         Spacer(modifier = GlanceModifier.width(2.dp))
         Text(
-            text = "${hours}시간 남음",
+            text = "${calculateRemainingHours(LocalDate.now())}시간 남음",
             style = TextStyle(
-                color = if (compact) colors.secondaryText else colors.onHeaderSecondary,
-                fontSize = if (compact) 10.sp else 11.sp,
+                color = if (isWide) colors.secondaryText else colors.onHeaderSecondary,
+                fontSize = 12.sp,
             ),
         )
     }
+}
+
+private fun calculateRemainingHours(date: LocalDate): Int {
+    val now = ZonedDateTime.now()
+    val deadline = date.plusDays(2).atStartOfDay(now.zone)
+    return Duration.between(now, deadline).toHours().toInt()
 }
 
 private class RecommendedTopicWidgetColors(previewTheme: WidgetPreviewTheme?) {

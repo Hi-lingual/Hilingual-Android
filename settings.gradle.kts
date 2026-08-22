@@ -47,6 +47,7 @@ include(":data:presigned")
 include(":data:config")
 include(":data:onboarding")
 include(":data:notification")
+include(":data:widget")
 
 //presentation
 include(":presentation:auth")

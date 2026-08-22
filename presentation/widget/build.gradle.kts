@@ -9,8 +9,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.data.diary)
-    implementation(projects.data.voca)
+    implementation(projects.data.widget)
 
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material)
