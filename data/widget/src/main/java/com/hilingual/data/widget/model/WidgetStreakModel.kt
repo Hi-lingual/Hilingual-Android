@@ -18,9 +18,10 @@ data class WidgetRecentDayModel(
 internal fun WidgetStreakResponseDto.toModel(): WidgetStreakModel = WidgetStreakModel(
     streak = streak,
     recentDays = recentDays.map { day ->
+        val date = LocalDate.parse(day.date)
         WidgetRecentDayModel(
-            date = LocalDate.parse(day.date),
-            dayOfWeek = DayOfWeek.valueOf(day.dayOfWeek),
+            date = date,
+            dayOfWeek = date.dayOfWeek,
             isWritten = day.isWritten,
         )
     },

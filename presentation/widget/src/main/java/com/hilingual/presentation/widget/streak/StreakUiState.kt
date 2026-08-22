@@ -5,13 +5,14 @@ import com.hilingual.data.widget.model.WidgetStreakModel
 import java.time.DayOfWeek
 import java.time.LocalDate
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
 @Stable
 internal data class StreakUiState(
-    val isLoggedIn: Boolean,
-    val streakDays: Int,
-    val recentDays: ImmutableList<StreakDay>,
+    val isLoggedIn: Boolean = false,
+    val streakDays: Int = 0,
+    val recentDays: ImmutableList<StreakDay> = persistentListOf(),
 ) {
     companion object {
         fun from(model: WidgetStreakModel): StreakUiState = StreakUiState(
@@ -32,13 +33,7 @@ internal data class StreakUiState(
             recentDays = fakeRecentDays(writtenDayOffsets = setOf(0L, 1L, 2L, 3L)),
         )
 
-        val LoggedOutFake = StreakUiState(
-            isLoggedIn = false,
-            streakDays = 0,
-            recentDays = fakeRecentDays(),
-        )
-
-        val EmptyFake = StreakUiState(
+        val Empty = StreakUiState(
             isLoggedIn = true,
             streakDays = 0,
             recentDays = fakeRecentDays(),

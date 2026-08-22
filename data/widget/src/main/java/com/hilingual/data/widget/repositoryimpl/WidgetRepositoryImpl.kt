@@ -15,6 +15,9 @@ internal class WidgetRepositoryImpl @Inject constructor(
     private val widgetRemoteDataSource: WidgetRemoteDataSource,
     private val tokenProvider: TokenProvider,
 ) : WidgetRepository {
+    override suspend fun isLoggedIn(): Boolean =
+        !tokenProvider.getAccessToken().isNullOrBlank()
+
     override suspend fun getTopic(date: LocalDate): Result<WidgetTopicModel> =
         suspendRunCatching {
             widgetRemoteDataSource.getTopic(date = date.toIsoDate()).data!!.toModel()
@@ -22,7 +25,7 @@ internal class WidgetRepositoryImpl @Inject constructor(
 
     override suspend fun getStreak(date: LocalDate): Result<WidgetStreakModel> =
         suspendRunCatching {
-            check(!tokenProvider.getAccessToken().isNullOrBlank())
+            check(isLoggedIn())
             widgetRemoteDataSource.getStreak(date = date.toIsoDate()).data!!.toModel()
         }
 }

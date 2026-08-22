@@ -72,9 +72,13 @@ class StreakWidget : GlanceAppWidget() {
             context.applicationContext,
             StreakWidgetEntryPoint::class.java,
         ).widgetRepository()
-        val state = repository.getStreak(LocalDate.now())
-            .map(StreakUiState::from)
-            .getOrElse { StreakUiState.LoggedOutFake }
+        val state = if (repository.isLoggedIn()) {
+            repository.getStreak(LocalDate.now())
+                .map(StreakUiState::from)
+                .getOrElse { StreakUiState.Empty }
+        } else {
+            StreakUiState()
+        }
 
         provideContent {
             StreakWidgetContent(
@@ -375,56 +379,56 @@ private fun StreakPreview(
 @Preview(widthDp = 329, heightDp = 155)
 @Composable
 private fun StreakLoggedOutLargeLightPreview() {
-    StreakPreview(StreakUiState.LoggedOutFake, true, WidgetPreviewTheme.LIGHT)
+    StreakPreview(StreakUiState(), true, WidgetPreviewTheme.LIGHT)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 155, heightDp = 155)
 @Composable
 private fun StreakLoggedOutSmallLightPreview() {
-    StreakPreview(StreakUiState.LoggedOutFake, false, WidgetPreviewTheme.LIGHT)
+    StreakPreview(StreakUiState(), false, WidgetPreviewTheme.LIGHT)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 329, heightDp = 155)
 @Composable
 private fun StreakLoggedOutLargeDarkPreview() {
-    StreakPreview(StreakUiState.LoggedOutFake, true, WidgetPreviewTheme.DARK)
+    StreakPreview(StreakUiState(), true, WidgetPreviewTheme.DARK)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 155, heightDp = 155)
 @Composable
 private fun StreakLoggedOutSmallDarkPreview() {
-    StreakPreview(StreakUiState.LoggedOutFake, false, WidgetPreviewTheme.DARK)
+    StreakPreview(StreakUiState(), false, WidgetPreviewTheme.DARK)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 329, heightDp = 155)
 @Composable
 private fun StreakEmptyLargeLightPreview() {
-    StreakPreview(StreakUiState.EmptyFake, true, WidgetPreviewTheme.LIGHT)
+    StreakPreview(StreakUiState.Empty, true, WidgetPreviewTheme.LIGHT)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 155, heightDp = 155)
 @Composable
 private fun StreakEmptySmallLightPreview() {
-    StreakPreview(StreakUiState.EmptyFake, false, WidgetPreviewTheme.LIGHT)
+    StreakPreview(StreakUiState.Empty, false, WidgetPreviewTheme.LIGHT)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 329, heightDp = 155)
 @Composable
 private fun StreakEmptyLargeDarkPreview() {
-    StreakPreview(StreakUiState.EmptyFake, true, WidgetPreviewTheme.DARK)
+    StreakPreview(StreakUiState.Empty, true, WidgetPreviewTheme.DARK)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 155, heightDp = 155)
 @Composable
 private fun StreakEmptySmallDarkPreview() {
-    StreakPreview(StreakUiState.EmptyFake, false, WidgetPreviewTheme.DARK)
+    StreakPreview(StreakUiState.Empty, false, WidgetPreviewTheme.DARK)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
