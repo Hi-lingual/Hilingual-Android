@@ -23,7 +23,9 @@ import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.common.util.toLocalDateOrNull
+import com.hilingual.core.common.widget.WidgetUpdater
 import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.repository.DiaryLocalRepository
@@ -51,6 +53,7 @@ internal class DiaryWriteViewModel @Inject constructor(
     private val diaryRepository: DiaryRepository,
     private val diaryLocalRepository: DiaryLocalRepository,
     private val textRecognitionRepository: TextRecognitionRepository,
+    private val widgetUpdater: WidgetUpdater,
 ) : ViewModel() {
     private val route: DiaryWrite = savedStateHandle.toRoute<DiaryWrite>()
 
@@ -128,6 +131,8 @@ internal class DiaryWriteViewModel @Inject constructor(
                 .onSuccess { response ->
                     diaryLocalRepository.clearDiaryTemp(state.selectedDate)
                     _feedbackUiState.update { UiState.Success(response.diaryId) }
+                    suspendRunCatching { widgetUpdater.updateAll() }
+                        .onLogFailure { }
                 }
                 .onLogFailure {
                     _feedbackUiState.update { UiState.Failure(LoadErrorHandleAction.Retry) }
