@@ -2,7 +2,6 @@ package com.hilingual.presentation.widget.streak
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.ColorFilter
@@ -55,12 +54,17 @@ import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.format.TextStyle as JavaTextStyle
 import java.util.Locale
 import kotlinx.collections.immutable.ImmutableList
 import com.hilingual.core.designsystem.R as DesignSystemR
+import java.time.format.TextStyle as JavaTextStyle
 
 private val WideStreakWidth = 250.dp
+private val LargeWidgetHorizontalPadding = 20.dp
+private val LargeWidgetCharacterWidth = 130.dp
+private val RecentDaySize = 26.dp
+private val RecentDaySpacing = 6.dp
+private const val MaxRecentDayCount = 5
 
 class StreakWidget : GlanceAppWidget() {
     override val sizeMode: SizeMode = SizeMode.Exact
@@ -199,12 +203,16 @@ private fun StreakLargeWidgetContent(
     state: StreakUiState,
     colors: StreakWidgetColors,
 ) {
-    val isCompactWide = LocalSize.current.width < 300.dp
+    val availableDaysWidth = LocalSize.current.width -
+        (LargeWidgetHorizontalPadding * 2) -
+        LargeWidgetCharacterWidth
+    val visibleDayCount = (
+        (availableDaysWidth.value + RecentDaySpacing.value) /
+            (RecentDaySize.value + RecentDaySpacing.value)
+        ).toInt().coerceIn(1, MaxRecentDayCount)
 
     Row(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .padding(horizontal = if (isCompactWide) 12.dp else 20.dp, vertical = 20.dp),
+        modifier = GlanceModifier.fillMaxSize().padding(LargeWidgetHorizontalPadding),
         verticalAlignment = Alignment.Bottom,
     ) {
         Column(
@@ -243,16 +251,12 @@ private fun StreakLargeWidgetContent(
                 days = state.recentDays,
                 enabled = state.isLoggedIn,
                 colors = colors,
-                spacing = if (isCompactWide) 2.dp else 6.dp,
+                maxVisibleDays = visibleDayCount,
             )
         }
         StreakCharacter(
             streakDays = if (state.isLoggedIn) state.streakDays else null,
-            modifier = if (isCompactWide) {
-                GlanceModifier.width(80.dp).height(71.dp)
-            } else {
-                GlanceModifier.width(130.dp).height(115.dp)
-            },
+            modifier = GlanceModifier.width(LargeWidgetCharacterWidth).height(115.dp),
         )
     }
 }
@@ -294,12 +298,14 @@ private fun RecentDays(
     enabled: Boolean,
     colors: StreakWidgetColors,
     modifier: GlanceModifier = GlanceModifier,
-    spacing: Dp = 6.dp,
+    maxVisibleDays: Int = MaxRecentDayCount,
 ) {
+    val visibleDays = days.takeLast(maxVisibleDays)
+
     Row(
         modifier = modifier,
     ) {
-        days.take(5).forEachIndexed { index, day ->
+        visibleDays.forEachIndexed { index, day ->
             if (isLoggedIn) {
                 Box(
                     modifier = GlanceModifier
@@ -333,8 +339,8 @@ private fun RecentDays(
                     colorFilter = ColorFilter.tint(colors.inactiveDay),
                 )
             }
-            if (index < minOf(days.lastIndex, 4)) {
-                Spacer(modifier = GlanceModifier.width(spacing))
+            if (index < visibleDays.lastIndex) {
+                Spacer(modifier = GlanceModifier.width(RecentDaySpacing))
             }
         }
     }
@@ -471,7 +477,7 @@ private fun StreakWrittenSmallDarkPreview() {
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 245, heightDp = 115)
+@Preview(widthDp = 245, heightDp = 155)
 @Composable
 private fun StreakWrittenMediumLightPreview() {
     StreakPreview(StreakUiState.Fake, true, WidgetPreviewTheme.LIGHT)
