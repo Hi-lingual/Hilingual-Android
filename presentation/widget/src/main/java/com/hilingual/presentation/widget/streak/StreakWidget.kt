@@ -10,6 +10,8 @@ import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalSize
+import androidx.glance.action.Action
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.cornerRadius
@@ -43,6 +45,7 @@ import com.hilingual.core.designsystem.theme.gray700
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.widget.R
 import com.hilingual.presentation.widget.common.WidgetPreviewTheme
+import com.hilingual.presentation.widget.common.homeLaunchAction
 import com.hilingual.presentation.widget.common.widgetColorProvider
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -66,6 +69,7 @@ class StreakWidget : GlanceAppWidget() {
                     streakDays = 3,
                     recentDays = StreakUiState.Fake.recentDays,
                 ),
+                launchAction = homeLaunchAction(context),
             )
         }
     }
@@ -76,6 +80,7 @@ internal fun StreakWidgetContent(
     state: StreakUiState,
     isWide: Boolean = LocalSize.current.width >= WideStreakWidth,
     previewTheme: WidgetPreviewTheme? = null,
+    launchAction: Action? = null,
 ) {
     val colors = StreakWidgetColors(previewTheme)
     val size = LocalSize.current
@@ -86,7 +91,9 @@ internal fun StreakWidgetContent(
     }
 
     Box(
-        modifier = GlanceModifier.fillMaxSize(),
+        modifier = GlanceModifier
+            .fillMaxSize()
+            .then(if (launchAction != null) GlanceModifier.clickable(launchAction) else GlanceModifier),
         contentAlignment = Alignment.Center,
     ) {
         Box(

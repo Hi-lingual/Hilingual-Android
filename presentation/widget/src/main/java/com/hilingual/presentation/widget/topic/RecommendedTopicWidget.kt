@@ -9,6 +9,8 @@ import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalSize
+import androidx.glance.action.Action
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.cornerRadius
@@ -41,6 +43,7 @@ import com.hilingual.core.designsystem.theme.hilingualOrange
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.data.widget.repository.WidgetRepository
 import com.hilingual.presentation.widget.common.WidgetPreviewTheme
+import com.hilingual.presentation.widget.common.homeLaunchAction
 import com.hilingual.presentation.widget.common.widgetColorProvider
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -69,7 +72,10 @@ class RecommendedTopicWidget : GlanceAppWidget() {
             .getOrElse { RecommendedTopicUiState.unavailable() }
 
         provideContent {
-            RecommendedTopicWidgetContent(state = state)
+            RecommendedTopicWidgetContent(
+                state = state,
+                launchAction = homeLaunchAction(context),
+            )
         }
     }
 }
@@ -85,6 +91,7 @@ internal fun RecommendedTopicWidgetContent(
     state: RecommendedTopicUiState,
     isWide: Boolean = LocalSize.current.width >= WideTopicWidth,
     previewTheme: WidgetPreviewTheme? = null,
+    launchAction: Action? = null,
 ) {
     val colors = RecommendedTopicWidgetColors(previewTheme)
     val size = LocalSize.current
@@ -95,7 +102,9 @@ internal fun RecommendedTopicWidgetContent(
     }
 
     Box(
-        modifier = GlanceModifier.fillMaxSize(),
+        modifier = GlanceModifier
+            .fillMaxSize()
+            .then(if (launchAction != null) GlanceModifier.clickable(launchAction) else GlanceModifier),
         contentAlignment = Alignment.Center,
     ) {
         Column(
