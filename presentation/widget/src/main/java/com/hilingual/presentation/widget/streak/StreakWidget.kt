@@ -2,6 +2,7 @@ package com.hilingual.presentation.widget.streak
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.ColorFilter
@@ -198,8 +199,12 @@ private fun StreakLargeWidgetContent(
     state: StreakUiState,
     colors: StreakWidgetColors,
 ) {
+    val isCompactWide = LocalSize.current.width < 300.dp
+
     Row(
-        modifier = GlanceModifier.fillMaxSize().padding(20.dp),
+        modifier = GlanceModifier
+            .fillMaxSize()
+            .padding(horizontal = if (isCompactWide) 12.dp else 20.dp, vertical = 20.dp),
         verticalAlignment = Alignment.Bottom,
     ) {
         Column(
@@ -238,11 +243,16 @@ private fun StreakLargeWidgetContent(
                 days = state.recentDays,
                 enabled = state.isLoggedIn,
                 colors = colors,
+                spacing = if (isCompactWide) 2.dp else 6.dp,
             )
         }
         StreakCharacter(
             streakDays = if (state.isLoggedIn) state.streakDays else null,
-            modifier = GlanceModifier.width(130.dp).height(115.dp),
+            modifier = if (isCompactWide) {
+                GlanceModifier.width(80.dp).height(71.dp)
+            } else {
+                GlanceModifier.width(130.dp).height(115.dp)
+            },
         )
     }
 }
@@ -284,6 +294,7 @@ private fun RecentDays(
     enabled: Boolean,
     colors: StreakWidgetColors,
     modifier: GlanceModifier = GlanceModifier,
+    spacing: Dp = 6.dp,
 ) {
     Row(
         modifier = modifier,
@@ -323,7 +334,7 @@ private fun RecentDays(
                 )
             }
             if (index < minOf(days.lastIndex, 4)) {
-                Spacer(modifier = GlanceModifier.width(6.dp))
+                Spacer(modifier = GlanceModifier.width(spacing))
             }
         }
     }
@@ -457,4 +468,11 @@ private fun StreakWrittenLargeDarkPreview() {
 @Composable
 private fun StreakWrittenSmallDarkPreview() {
     StreakPreview(StreakUiState.Fake, false, WidgetPreviewTheme.DARK)
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 245, heightDp = 115)
+@Composable
+private fun StreakWrittenMediumLightPreview() {
+    StreakPreview(StreakUiState.Fake, true, WidgetPreviewTheme.LIGHT)
 }
