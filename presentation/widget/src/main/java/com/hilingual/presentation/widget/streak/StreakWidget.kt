@@ -43,12 +43,18 @@ import com.hilingual.core.designsystem.theme.gray400
 import com.hilingual.core.designsystem.theme.gray500
 import com.hilingual.core.designsystem.theme.gray700
 import com.hilingual.core.designsystem.theme.white
+import com.hilingual.data.widget.repository.WidgetRepository
 import com.hilingual.presentation.widget.R
 import com.hilingual.presentation.widget.common.WidgetPreviewTheme
 import com.hilingual.presentation.widget.common.homeLaunchAction
 import com.hilingual.presentation.widget.common.widgetColorProvider
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
+import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle as JavaTextStyle
 import java.util.Locale
 import kotlinx.collections.immutable.ImmutableList
 import com.hilingual.core.designsystem.R as DesignSystemR
@@ -62,17 +68,27 @@ class StreakWidget : GlanceAppWidget() {
         context: Context,
         id: GlanceId,
     ) {
+        val repository = EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            StreakWidgetEntryPoint::class.java,
+        ).widgetRepository()
+        val state = repository.getStreak(LocalDate.now())
+            .map(StreakUiState::from)
+            .getOrElse { StreakUiState.LoggedOutFake }
+
         provideContent {
             StreakWidgetContent(
-                state = StreakUiState(
-                    isLoggedIn = true,
-                    streakDays = 3,
-                    recentDays = StreakUiState.Fake.recentDays,
-                ),
+                state = state,
                 launchAction = homeLaunchAction(context),
             )
         }
     }
+}
+
+@EntryPoint
+@InstallIn(SingletonComponent::class)
+internal interface StreakWidgetEntryPoint {
+    fun widgetRepository(): WidgetRepository
 }
 
 @Composable
@@ -286,7 +302,7 @@ private fun RecentDays(
                         },
                     )
                     Text(
-                        text = if (enabled) convertDateToDayOfWeek(day.date) else "",
+                        text = if (enabled) day.dayOfWeek.toKoreanShortName() else "",
                         style = TextStyle(
                             color = if (day.isWritten) colors.onActiveDay else colors.secondaryText,
                             fontSize = 12.sp,
@@ -328,9 +344,7 @@ private fun StreakCharacter(
     )
 }
 
-private fun convertDateToDayOfWeek(date: LocalDate): String = date.format(
-    DateTimeFormatter.ofPattern("E", Locale.KOREAN),
-)
+private fun DayOfWeek.toKoreanShortName(): String = getDisplayName(JavaTextStyle.SHORT, Locale.KOREAN)
 
 private class StreakWidgetColors(previewTheme: WidgetPreviewTheme?) {
     val surface = widgetColorProvider(gray100, gray700, previewTheme)
