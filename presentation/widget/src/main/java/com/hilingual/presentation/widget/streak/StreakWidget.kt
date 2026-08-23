@@ -1,6 +1,7 @@
 package com.hilingual.presentation.widget.streak
 
 import android.content.Context
+import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -10,6 +11,7 @@ import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.LocalContext
 import androidx.glance.LocalSize
 import androidx.glance.action.Action
 import androidx.glance.action.clickable
@@ -130,6 +132,18 @@ internal fun StreakWidgetContent(
     launchAction: Action? = null,
 ) {
     val colors = StreakWidgetColors(previewTheme)
+    val isDarkTheme = when (previewTheme) {
+        WidgetPreviewTheme.LIGHT -> false
+
+        WidgetPreviewTheme.DARK -> true
+
+        null ->
+            LocalContext.current.resources.configuration.uiMode and
+                Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+    }
+    val groundImageProvider = ImageProvider(
+        if (isDarkTheme) R.drawable.bg_streak_ground_dark else R.drawable.bg_streak_ground_light,
+    )
     val size = LocalSize.current
     val contentModifier = if (isWide) {
         GlanceModifier.fillMaxSize()
@@ -151,7 +165,7 @@ internal fun StreakWidgetContent(
             if (isWide) {
                 StreakLargeWidgetContent(state, colors)
             } else {
-                StreakSmallWidgetContent(state, colors)
+                StreakSmallWidgetContent(state, colors, groundImageProvider)
             }
         }
     }
@@ -161,28 +175,21 @@ internal fun StreakWidgetContent(
 private fun StreakSmallWidgetContent(
     state: StreakUiState,
     colors: StreakWidgetColors,
+    groundImageProvider: ImageProvider,
 ) {
     Box(modifier = GlanceModifier.fillMaxSize()) {
         Column(
             verticalAlignment = Alignment.Bottom,
             modifier = GlanceModifier.fillMaxSize(),
         ) {
-            Box(
+            Image(
+                provider = groundImageProvider,
+                contentDescription = null,
                 modifier = GlanceModifier
                     .fillMaxWidth()
-                    .height(35.dp)
-                    .background(colors.ground),
-            ) {
-                Box(
-                    modifier = GlanceModifier
-                        .fillMaxWidth()
-                        .height(4.dp)
-                        .background(
-                            imageProvider = ImageProvider(R.drawable.bg_widget_ground_line),
-                            contentScale = ContentScale.FillBounds,
-                        ),
-                ) {}
-            }
+                    .height(35.dp),
+                contentScale = ContentScale.FillBounds,
+            )
         }
         Column(
             modifier = GlanceModifier
@@ -395,7 +402,6 @@ private fun DayOfWeek.toKoreanShortName(): String = getDisplayName(JavaTextStyle
 
 private class StreakWidgetColors(previewTheme: WidgetPreviewTheme?) {
     val surface = widgetColorProvider(gray100, gray700, previewTheme)
-    val ground = widgetColorProvider(gray200, gray500, previewTheme)
     val primaryText = widgetColorProvider(black, white, previewTheme)
     val secondaryText = widgetColorProvider(gray500, gray200, previewTheme)
     val lockedBar = widgetColorProvider(gray300, gray500, previewTheme)
