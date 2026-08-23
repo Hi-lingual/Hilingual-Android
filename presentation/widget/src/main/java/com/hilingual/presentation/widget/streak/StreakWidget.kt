@@ -2,6 +2,7 @@ package com.hilingual.presentation.widget.streak
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.ColorFilter
@@ -59,37 +60,58 @@ import kotlinx.collections.immutable.ImmutableList
 import com.hilingual.core.designsystem.R as DesignSystemR
 import java.time.format.TextStyle as JavaTextStyle
 
+private val SmallStreakPreviewSize = DpSize(155.dp, 155.dp)
+private val LargeStreakPreviewSize = DpSize(329.dp, 155.dp)
 private val WideStreakWidth = 250.dp
 private val LargeWidgetHorizontalPadding = 20.dp
 private val LargeWidgetCharacterWidth = 130.dp
 private val RecentDaySize = 26.dp
 private val RecentDaySpacing = 6.dp
-private const val MaxRecentDayCount = 5
+private const val MAX_RECENT_DAY_COUNT = 5
 
 class StreakWidget : GlanceAppWidget() {
     override val sizeMode: SizeMode = SizeMode.Exact
+    override val previewSizeMode = SizeMode.Responsive(
+        setOf(SmallStreakPreviewSize, LargeStreakPreviewSize),
+    )
 
     override suspend fun provideGlance(
         context: Context,
         id: GlanceId,
     ) {
-        val repository = EntryPointAccessors.fromApplication(
-            context.applicationContext,
-            StreakWidgetEntryPoint::class.java,
-        ).widgetRepository()
-        val state = if (repository.isLoggedIn()) {
-            repository.getStreak(LocalDate.now())
-                .map(StreakUiState::from)
-                .getOrElse { StreakUiState.Empty }
-        } else {
-            StreakUiState()
-        }
+        val state = loadState(context)
 
         provideContent {
             StreakWidgetContent(
                 state = state,
                 launchAction = homeLaunchAction(context),
             )
+        }
+    }
+
+    override suspend fun providePreview(
+        context: Context,
+        widgetCategory: Int,
+    ) {
+        val state = loadState(context)
+
+        provideContent {
+            StreakWidgetContent(state = state)
+        }
+    }
+
+    private suspend fun loadState(context: Context): StreakUiState {
+        val repository = EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            StreakWidgetEntryPoint::class.java,
+        ).widgetRepository()
+
+        return if (repository.isLoggedIn()) {
+            repository.getStreak(LocalDate.now())
+                .map(StreakUiState::from)
+                .getOrElse { StreakUiState.Empty }
+        } else {
+            StreakUiState()
         }
     }
 }
@@ -209,7 +231,7 @@ private fun StreakLargeWidgetContent(
     val visibleDayCount = (
         (availableDaysWidth.value + RecentDaySpacing.value) /
             (RecentDaySize.value + RecentDaySpacing.value)
-        ).toInt().coerceIn(1, MaxRecentDayCount)
+        ).toInt().coerceIn(1, MAX_RECENT_DAY_COUNT)
 
     Row(
         modifier = GlanceModifier.fillMaxSize().padding(LargeWidgetHorizontalPadding),
@@ -298,7 +320,7 @@ private fun RecentDays(
     enabled: Boolean,
     colors: StreakWidgetColors,
     modifier: GlanceModifier = GlanceModifier,
-    maxVisibleDays: Int = MaxRecentDayCount,
+    maxVisibleDays: Int = MAX_RECENT_DAY_COUNT,
 ) {
     val visibleDays = days.takeLast(maxVisibleDays)
 
