@@ -23,7 +23,6 @@ import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
-import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.common.widget.WidgetUpdater
 import com.hilingual.core.ui.model.user.NicknameLocalValidation
 import com.hilingual.core.ui.model.user.NicknameLocalValidationReason
