@@ -2,6 +2,7 @@ package com.hilingual.presentation.widget.topic
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
@@ -54,22 +55,21 @@ import java.time.LocalDate
 import java.time.ZonedDateTime
 import com.hilingual.core.designsystem.R as DesignSystemR
 
+private val SmallTopicPreviewSize = DpSize(155.dp, 155.dp)
+private val LargeTopicPreviewSize = DpSize(329.dp, 155.dp)
 private val WideTopicWidth = 250.dp
 
 class RecommendedTopicWidget : GlanceAppWidget() {
     override val sizeMode: SizeMode = SizeMode.Exact
+    override val previewSizeMode = SizeMode.Responsive(
+        setOf(SmallTopicPreviewSize, LargeTopicPreviewSize),
+    )
 
     override suspend fun provideGlance(
         context: Context,
         id: GlanceId,
     ) {
-        val repository = EntryPointAccessors.fromApplication(
-            context.applicationContext,
-            RecommendedTopicWidgetEntryPoint::class.java,
-        ).widgetRepository()
-        val state = repository.getTopic(LocalDate.now())
-            .map(RecommendedTopicUiState::from)
-            .getOrElse { RecommendedTopicUiState.unavailable() }
+        val state = loadState(context)
 
         provideContent {
             RecommendedTopicWidgetContent(
@@ -77,6 +77,28 @@ class RecommendedTopicWidget : GlanceAppWidget() {
                 launchAction = homeLaunchAction(context),
             )
         }
+    }
+
+    override suspend fun providePreview(
+        context: Context,
+        widgetCategory: Int,
+    ) {
+        val state = loadState(context)
+
+        provideContent {
+            RecommendedTopicWidgetContent(state = state)
+        }
+    }
+
+    private suspend fun loadState(context: Context): RecommendedTopicUiState {
+        val repository = EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            RecommendedTopicWidgetEntryPoint::class.java,
+        ).widgetRepository()
+
+        return repository.getTopic(LocalDate.now())
+            .map(RecommendedTopicUiState::from)
+            .getOrElse { RecommendedTopicUiState.unavailable() }
     }
 }
 

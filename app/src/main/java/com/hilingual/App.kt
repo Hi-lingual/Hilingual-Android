@@ -23,15 +23,22 @@ import coil3.SingletonImageLoader
 import com.angrypodo.wisp.runtime.Wisp
 import com.hilingual.core.ads.initializer.AdsInitializer
 import com.hilingual.core.common.util.HilingualReleaseTree
+import com.hilingual.core.common.widget.WidgetUpdater
 import com.hilingual.core.notification.HilingualNotificationManager
 import com.hilingual.core.work.scheduler.HilingualWorkManagerConfigurator
 import dagger.Lazy
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @HiltAndroidApp
 class App : Application(), SingletonImageLoader.Factory {
+    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     @Inject
     lateinit var imageLoader: Lazy<ImageLoader>
 
@@ -44,6 +51,9 @@ class App : Application(), SingletonImageLoader.Factory {
     @Inject
     lateinit var notificationManager: HilingualNotificationManager
 
+    @Inject
+    lateinit var widgetUpdater: WidgetUpdater
+
     override fun onCreate() {
         super.onCreate()
         SingletonImageLoader.setSafe { imageLoader.get() }
@@ -53,6 +63,7 @@ class App : Application(), SingletonImageLoader.Factory {
         initWorkManager()
         initAds()
         initNotificationChannels()
+        updateWidgetPreviews()
         Wisp.initialize()
     }
 
@@ -77,5 +88,12 @@ class App : Application(), SingletonImageLoader.Factory {
 
     private fun initNotificationChannels() {
         notificationManager.createNotificationChannels()
+    }
+
+    private fun updateWidgetPreviews() {
+        applicationScope.launch {
+            runCatching { widgetUpdater.updatePreviews() }
+                .onFailure(Timber::e)
+        }
     }
 }
