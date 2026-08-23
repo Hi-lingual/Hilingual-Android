@@ -3,6 +3,7 @@ package com.hilingual.presentation.widget.streak
 import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,6 +69,7 @@ private val WideStreakWidth = 250.dp
 private val LargeWidgetHorizontalPadding = 20.dp
 private val LargeWidgetCharacterWidth = 130.dp
 private val RecentDaySize = 26.dp
+private val MinimumRecentDaySize = 24.dp
 private val RecentDaySpacing = 6.dp
 private const val MAX_RECENT_DAY_COUNT = 5
 
@@ -238,11 +240,15 @@ private fun StreakLargeWidgetContent(
 ) {
     val availableDaysWidth = LocalSize.current.width -
         (LargeWidgetHorizontalPadding * 2) -
-        LargeWidgetCharacterWidth
+        (LargeWidgetCharacterWidth + 5.dp)
     val visibleDayCount = (
         (availableDaysWidth.value + RecentDaySpacing.value) /
-            (RecentDaySize.value + RecentDaySpacing.value)
+            (MinimumRecentDaySize.value + RecentDaySpacing.value)
         ).toInt().coerceIn(1, MAX_RECENT_DAY_COUNT)
+    val recentDaySize = (
+        (availableDaysWidth.value - RecentDaySpacing.value * (visibleDayCount - 1)) /
+            visibleDayCount
+        ).dp
 
     Row(
         modifier = GlanceModifier.fillMaxSize().padding(LargeWidgetHorizontalPadding),
@@ -285,8 +291,10 @@ private fun StreakLargeWidgetContent(
                 enabled = state.isLoggedIn,
                 colors = colors,
                 maxVisibleDays = visibleDayCount,
+                daySize = recentDaySize,
             )
         }
+        Spacer(modifier = GlanceModifier.width(5.dp))
         StreakCharacter(
             streakDays = if (state.isLoggedIn) state.streakDays else null,
             modifier = GlanceModifier.width(LargeWidgetCharacterWidth).height(115.dp),
@@ -332,23 +340,25 @@ private fun RecentDays(
     colors: StreakWidgetColors,
     modifier: GlanceModifier = GlanceModifier,
     maxVisibleDays: Int = MAX_RECENT_DAY_COUNT,
+    daySize: Dp = RecentDaySize,
 ) {
     val visibleDays = days.takeLast(maxVisibleDays)
+    val dayFontSize = (12f * daySize.value / RecentDaySize.value).sp
 
     Row(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
     ) {
         visibleDays.forEachIndexed { index, day ->
             if (isLoggedIn) {
                 Box(
                     modifier = GlanceModifier
-                        .size(26.dp),
+                        .size(daySize),
                     contentAlignment = Alignment.Center,
                 ) {
                     Image(
                         provider = ImageProvider(DesignSystemR.drawable.chip_widgetdate),
                         contentDescription = null,
-                        modifier = GlanceModifier.size(26.dp),
+                        modifier = GlanceModifier.size(daySize),
                         colorFilter = if (enabled && day.isWritten) {
                             null
                         } else {
@@ -359,7 +369,7 @@ private fun RecentDays(
                         text = if (enabled) day.dayOfWeek.toKoreanShortName() else "",
                         style = TextStyle(
                             color = if (day.isWritten) colors.onActiveDay else colors.secondaryText,
-                            fontSize = 12.sp,
+                            fontSize = dayFontSize,
                             fontWeight = FontWeight.Medium,
                         ),
                     )
@@ -368,7 +378,7 @@ private fun RecentDays(
                 Image(
                     provider = ImageProvider(DesignSystemR.drawable.chip_widgetdate_skeleton),
                     contentDescription = null,
-                    modifier = GlanceModifier.size(26.dp),
+                    modifier = GlanceModifier.size(daySize),
                     colorFilter = ColorFilter.tint(colors.inactiveDay),
                 )
             }
