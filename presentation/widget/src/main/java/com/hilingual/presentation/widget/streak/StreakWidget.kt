@@ -506,10 +506,3 @@ private fun StreakWrittenLargeDarkPreview() {
 private fun StreakWrittenSmallDarkPreview() {
     StreakPreview(StreakUiState.Fake, false, WidgetPreviewTheme.DARK)
 }
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 245, heightDp = 155)
-@Composable
-private fun StreakWrittenMediumLightPreview() {
-    StreakPreview(StreakUiState.Fake, true, WidgetPreviewTheme.LIGHT)
-}
