@@ -173,11 +173,15 @@ private fun StreakSmallWidgetContent(
                     .height(35.dp)
                     .background(colors.ground),
             ) {
-                Image(
-                    provider = ImageProvider(R.drawable.bg_widget_ground_line),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(colors.groundLine),
-                )
+                Box(
+                    modifier = GlanceModifier
+                        .fillMaxWidth()
+                        .height(4.dp)
+                        .background(
+                            imageProvider = ImageProvider(R.drawable.bg_widget_ground_line),
+                            contentScale = ContentScale.FillBounds,
+                        ),
+                ) {}
             }
         }
         Column(
@@ -392,7 +396,6 @@ private fun DayOfWeek.toKoreanShortName(): String = getDisplayName(JavaTextStyle
 private class StreakWidgetColors(previewTheme: WidgetPreviewTheme?) {
     val surface = widgetColorProvider(gray100, gray700, previewTheme)
     val ground = widgetColorProvider(gray200, gray500, previewTheme)
-    val groundLine = widgetColorProvider(gray500, black, previewTheme)
     val primaryText = widgetColorProvider(black, white, previewTheme)
     val secondaryText = widgetColorProvider(gray500, gray200, previewTheme)
     val lockedBar = widgetColorProvider(gray300, gray500, previewTheme)
