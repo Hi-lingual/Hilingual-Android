@@ -1,6 +1,8 @@
 package com.hilingual.data.widget.di
 
+import com.hilingual.data.widget.datasource.WidgetLocalDataSource
 import com.hilingual.data.widget.datasource.WidgetRemoteDataSource
+import com.hilingual.data.widget.datasourceimpl.WidgetLocalDataSourceImpl
 import com.hilingual.data.widget.datasourceimpl.WidgetRemoteDataSourceImpl
 import dagger.Binds
 import dagger.Module
@@ -11,6 +13,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class DataSourceModule {
+    @Binds
+    @Singleton
+    abstract fun bindsWidgetLocalDataSource(
+        widgetLocalDataSourceImpl: WidgetLocalDataSourceImpl,
+    ): WidgetLocalDataSource
+
     @Binds
     @Singleton
     abstract fun bindsWidgetRemoteDataSource(
