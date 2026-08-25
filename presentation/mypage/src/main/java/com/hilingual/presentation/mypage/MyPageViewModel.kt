@@ -109,7 +109,6 @@ internal class MyPageViewModel @Inject constructor(
                 .onSuccess {
                     userIdentityTracker.clearUserId()
                     widgetUpdater.clearCache()
-                    widgetUpdater.updateAll()
                     _sideEffect.emit(MyPageSideEffect.RestartApp)
                 }
                 .onLogFailure {
@@ -124,7 +123,6 @@ internal class MyPageViewModel @Inject constructor(
                 .onSuccess {
                     userIdentityTracker.clearUserId()
                     widgetUpdater.clearCache()
-                    widgetUpdater.updateAll()
                     _sideEffect.emit(MyPageSideEffect.RestartApp)
                 }
                 .onLogFailure {

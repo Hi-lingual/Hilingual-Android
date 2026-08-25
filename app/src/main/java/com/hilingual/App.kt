@@ -63,7 +63,7 @@ class App : Application(), SingletonImageLoader.Factory {
         initWorkManager()
         initAds()
         initNotificationChannels()
-        updateWidgetPreviews()
+        updateWidgets()
         Wisp.initialize()
     }
 
@@ -90,9 +90,9 @@ class App : Application(), SingletonImageLoader.Factory {
         notificationManager.createNotificationChannels()
     }
 
-    private fun updateWidgetPreviews() {
+    private fun updateWidgets() {
         applicationScope.launch {
-            runCatching { widgetUpdater.updatePreviews() }
+            runCatching { widgetUpdater.updateAll() }
                 .onFailure(Timber::e)
         }
     }
