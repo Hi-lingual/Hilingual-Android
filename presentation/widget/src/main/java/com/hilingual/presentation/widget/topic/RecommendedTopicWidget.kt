@@ -288,7 +288,7 @@ private fun RemainingTime(
         Text(
             text = "${calculateRemainingHours(LocalDate.now())}시간 남음",
             style = TextStyle(
-                color = if (isWide) colors.secondaryText else colors.onHeaderSecondary,
+                color = if (isWide) colors.leftHourLargeText else colors.leftHourSmallText,
                 fontSize = 12.sp,
             ),
         )
@@ -306,10 +306,11 @@ private class RecommendedTopicWidgetColors(previewTheme: WidgetPreviewTheme?) {
     val header = widgetColorProvider(gray850, black, previewTheme)
     val onHeader = widgetColorProvider(white, gray200, previewTheme)
     val onHeaderMuted = widgetColorProvider(gray400, gray400, previewTheme)
-    val onHeaderSecondary = widgetColorProvider(gray200, gray200, previewTheme)
     val primaryText = widgetColorProvider(black, white, previewTheme)
     val secondaryText = widgetColorProvider(gray500, gray400, previewTheme)
     val accent = widgetColorProvider(hilingualOrange, hilingualOrange, previewTheme)
+    val leftHourLargeText = widgetColorProvider(gray200, gray200, previewTheme)
+    val leftHourSmallText = widgetColorProvider(gray500, gray200, previewTheme)
 }
 
 @Composable
