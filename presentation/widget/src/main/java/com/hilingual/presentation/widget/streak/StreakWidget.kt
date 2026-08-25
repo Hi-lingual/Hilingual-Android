@@ -114,7 +114,7 @@ class StreakWidget : GlanceAppWidget() {
         return if (repository.isLoggedIn()) {
             repository.getStreak(LocalDate.now())
                 .map(StreakUiState::from)
-                .getOrElse { StreakUiState.Empty }
+                .getOrElse { StreakUiState.Unavailable }
         } else {
             StreakUiState()
         }
@@ -205,8 +205,17 @@ private fun StreakSmallWidgetContent(
                 style = TextStyle(color = colors.secondaryText, fontSize = 12.sp),
             )
             Spacer(modifier = GlanceModifier.height(2.dp))
-            if (state.isLoggedIn) {
+            if (state.isAvailable) {
                 StreakValue(state.streakDays, compact = true, colors = colors)
+            } else if (state.isLoggedIn) {
+                Text(
+                    text = "지금은 정보를\n불러올 수 없어요",
+                    style = TextStyle(
+                        color = colors.primaryText,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                )
             } else {
                 Text(
                     text = "로그인 후 확인 가능",
@@ -227,7 +236,7 @@ private fun StreakSmallWidgetContent(
                 horizontalAlignment = Alignment.End,
             ) {
                 StreakCharacter(
-                    streakDays = if (state.isLoggedIn) state.streakDays else null,
+                    streakDays = if (state.isAvailable) state.streakDays else null,
                     modifier = GlanceModifier.width(107.dp).height(84.dp),
                 )
             }
@@ -265,7 +274,7 @@ private fun StreakLargeWidgetContent(
                 text = "연속 작성",
                 style = TextStyle(color = colors.secondaryText, fontSize = 14.sp),
             )
-            if (state.isLoggedIn) {
+            if (state.isAvailable) {
                 StreakValue(state.streakDays, compact = false, colors = colors)
             } else {
                 Spacer(modifier = GlanceModifier.height(5.dp))
@@ -278,7 +287,11 @@ private fun StreakLargeWidgetContent(
                 ) {}
                 Spacer(modifier = GlanceModifier.height(4.dp))
                 Text(
-                    text = "로그인 후 확인 가능",
+                    text = if (state.isLoggedIn) {
+                        "지금은 정보를 불러올 수 없어요"
+                    } else {
+                        "로그인 후 확인 가능"
+                    },
                     style = TextStyle(
                         color = colors.primaryText,
                         fontSize = 14.sp,
@@ -288,9 +301,8 @@ private fun StreakLargeWidgetContent(
             }
             Spacer(modifier = GlanceModifier.defaultWeight())
             RecentDays(
-                isLoggedIn = state.isLoggedIn,
+                isAvailable = state.isAvailable,
                 days = state.recentDays,
-                enabled = state.isLoggedIn,
                 colors = colors,
                 maxVisibleDays = visibleDayCount,
                 daySize = recentDaySize,
@@ -298,7 +310,7 @@ private fun StreakLargeWidgetContent(
         }
         Spacer(modifier = GlanceModifier.width(5.dp))
         StreakCharacter(
-            streakDays = if (state.isLoggedIn) state.streakDays else null,
+            streakDays = if (state.isAvailable) state.streakDays else null,
             modifier = GlanceModifier.width(LargeWidgetCharacterWidth).height(115.dp),
         )
     }
@@ -336,9 +348,8 @@ private fun StreakValue(
 
 @Composable
 private fun RecentDays(
-    isLoggedIn: Boolean,
+    isAvailable: Boolean,
     days: ImmutableList<StreakDay>,
-    enabled: Boolean,
     colors: StreakWidgetColors,
     modifier: GlanceModifier = GlanceModifier,
     maxVisibleDays: Int = MAX_RECENT_DAY_COUNT,
@@ -351,7 +362,7 @@ private fun RecentDays(
         modifier = modifier.fillMaxWidth(),
     ) {
         visibleDays.forEachIndexed { index, day ->
-            if (isLoggedIn) {
+            if (isAvailable) {
                 Box(
                     modifier = GlanceModifier
                         .size(daySize),
@@ -361,14 +372,14 @@ private fun RecentDays(
                         provider = ImageProvider(DesignSystemR.drawable.chip_widgetdate),
                         contentDescription = null,
                         modifier = GlanceModifier.size(daySize),
-                        colorFilter = if (enabled && day.isWritten) {
+                        colorFilter = if (day.isWritten) {
                             null
                         } else {
                             ColorFilter.tint(colors.inactiveDay)
                         },
                     )
                     Text(
-                        text = if (enabled) day.dayOfWeek.toKoreanShortName() else "",
+                        text = day.dayOfWeek.toKoreanShortName(),
                         style = TextStyle(
                             color = if (day.isWritten) colors.onActiveDay else colors.secondaryText,
                             fontSize = dayFontSize,

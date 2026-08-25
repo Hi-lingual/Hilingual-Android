@@ -11,12 +11,14 @@ import kotlinx.collections.immutable.toImmutableList
 @Stable
 internal data class StreakUiState(
     val isLoggedIn: Boolean = false,
+    val isAvailable: Boolean = false,
     val streakDays: Int = 0,
     val recentDays: ImmutableList<StreakDay> = persistentListOf(),
 ) {
     companion object {
         fun from(model: WidgetStreakModel): StreakUiState = StreakUiState(
             isLoggedIn = true,
+            isAvailable = true,
             streakDays = model.streak,
             recentDays = model.recentDays.map { day ->
                 StreakDay(
@@ -29,13 +31,20 @@ internal data class StreakUiState(
 
         val Fake = StreakUiState(
             isLoggedIn = true,
+            isAvailable = true,
             streakDays = 4,
             recentDays = fakeRecentDays(writtenDayOffsets = setOf(0L, 1L, 2L, 3L)),
         )
 
         val Empty = StreakUiState(
             isLoggedIn = true,
+            isAvailable = true,
             streakDays = 0,
+            recentDays = fakeRecentDays(),
+        )
+
+        val Unavailable = StreakUiState(
+            isLoggedIn = true,
             recentDays = fakeRecentDays(),
         )
 
