@@ -23,6 +23,7 @@ import com.hilingual.core.common.app.DeviceInfoProvider
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.common.widget.WidgetUpdater
 import com.hilingual.core.ui.model.user.NicknameLocalValidation
 import com.hilingual.core.ui.model.user.NicknameLocalValidationReason
@@ -108,7 +109,7 @@ internal class MyPageViewModel @Inject constructor(
             authRepository.logout()
                 .onSuccess {
                     userIdentityTracker.clearUserId()
-                    widgetUpdater.clearCache()
+                    clearWidgetCache()
                     _sideEffect.emit(MyPageSideEffect.RestartApp)
                 }
                 .onLogFailure {
@@ -122,7 +123,7 @@ internal class MyPageViewModel @Inject constructor(
             authRepository.withdraw()
                 .onSuccess {
                     userIdentityTracker.clearUserId()
-                    widgetUpdater.clearCache()
+                    clearWidgetCache()
                     _sideEffect.emit(MyPageSideEffect.RestartApp)
                 }
                 .onLogFailure {
@@ -186,6 +187,11 @@ internal class MyPageViewModel @Inject constructor(
     private fun cancelNicknameValidation() {
         nicknameValidationDebounceJob?.cancel()
         nicknameValidationJob?.cancel()
+    }
+
+    private suspend fun clearWidgetCache() {
+        suspendRunCatching { widgetUpdater.clearCache() }
+            .onLogFailure { }
     }
 
     private suspend fun validateNickname(nickname: String) {
