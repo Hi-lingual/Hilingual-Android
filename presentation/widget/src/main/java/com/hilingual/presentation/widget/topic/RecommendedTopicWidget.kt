@@ -300,7 +300,7 @@ private fun RemainingTime(
 private fun calculateRemainingHours(date: LocalDate): Int {
     val now = ZonedDateTime.now()
     val deadline = date.plusDays(2).atStartOfDay(now.zone)
-    return Duration.between(now, deadline).toHours().toInt()
+    return Duration.between(now, deadline).toHours().toInt().coerceAtLeast(0)
 }
 
 private class RecommendedTopicWidgetColors(previewTheme: WidgetPreviewTheme?) {
