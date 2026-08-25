@@ -30,7 +30,7 @@ internal class WidgetRepositoryImpl @Inject constructor(
             return remoteResult
         }
 
-        val cachedTopic = suspendRunCatching { widgetLocalDataSource.getTopic() }.getOrNull()
+        val cachedTopic = suspendRunCatching { widgetLocalDataSource.getTopic(date) }.getOrNull()
         return cachedTopic?.let(Result.Companion::success) ?: remoteResult
     }
 
@@ -45,7 +45,11 @@ internal class WidgetRepositoryImpl @Inject constructor(
             return remoteResult
         }
 
-        val cachedStreak = suspendRunCatching { widgetLocalDataSource.getStreak() }.getOrNull()
+        val cachedStreak = suspendRunCatching { widgetLocalDataSource.getStreak(date) }.getOrNull()
         return cachedStreak?.let(Result.Companion::success) ?: remoteResult
+    }
+
+    override suspend fun clearCache() {
+        widgetLocalDataSource.clear()
     }
 }

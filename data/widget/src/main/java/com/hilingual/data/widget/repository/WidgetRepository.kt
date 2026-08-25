@@ -10,4 +10,6 @@ interface WidgetRepository {
     suspend fun getTopic(date: LocalDate): Result<WidgetTopicModel>
 
     suspend fun getStreak(date: LocalDate): Result<WidgetStreakModel>
+
+    suspend fun clearCache()
 }

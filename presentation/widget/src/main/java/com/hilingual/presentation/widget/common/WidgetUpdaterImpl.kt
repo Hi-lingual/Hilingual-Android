@@ -8,6 +8,7 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.setWidgetPreviews
 import androidx.glance.appwidget.updateAll
 import com.hilingual.core.common.widget.WidgetUpdater
+import com.hilingual.data.widget.repository.WidgetRepository
 import com.hilingual.presentation.widget.streak.StreakLargeWidgetReceiver
 import com.hilingual.presentation.widget.streak.StreakSmallWidgetReceiver
 import com.hilingual.presentation.widget.streak.StreakWidget
@@ -19,7 +20,12 @@ import javax.inject.Inject
 
 internal class WidgetUpdaterImpl @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val widgetRepository: WidgetRepository,
 ) : WidgetUpdater {
+    override suspend fun clearCache() {
+        widgetRepository.clearCache()
+    }
+
     override suspend fun updateAll() {
         RecommendedTopicWidget().updateAll(context)
         StreakWidget().updateAll(context)

@@ -91,6 +91,7 @@ class AuthViewModel @Inject constructor(
             putDeviceInfo()
             setUserIdentity(userId)
             syncFcmToken()
+            widgetUpdater.clearCache()
             widgetUpdater.updateAll()
             _navigationEvent.tryEmit(AuthSideEffect.NavigateToHome)
         } else {

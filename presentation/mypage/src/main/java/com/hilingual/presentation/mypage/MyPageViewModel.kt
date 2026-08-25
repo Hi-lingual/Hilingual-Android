@@ -108,6 +108,7 @@ internal class MyPageViewModel @Inject constructor(
             authRepository.logout()
                 .onSuccess {
                     userIdentityTracker.clearUserId()
+                    widgetUpdater.clearCache()
                     widgetUpdater.updateAll()
                     _sideEffect.emit(MyPageSideEffect.RestartApp)
                 }
@@ -122,6 +123,7 @@ internal class MyPageViewModel @Inject constructor(
             authRepository.withdraw()
                 .onSuccess {
                     userIdentityTracker.clearUserId()
+                    widgetUpdater.clearCache()
                     widgetUpdater.updateAll()
                     _sideEffect.emit(MyPageSideEffect.RestartApp)
                 }
