@@ -4,6 +4,8 @@
     android:initialLayout="@layout/glance_default_loading_layout"
     android:minWidth="250dp"
     android:minHeight="110dp"
+    android:minResizeWidth="110dp"
+    android:minResizeHeight="110dp"
     android:previewImage="@drawable/preview_streak_widget_l"
     android:previewLayout="@layout/preview_streak_widget_l"
     android:resizeMode="horizontal|vertical"
