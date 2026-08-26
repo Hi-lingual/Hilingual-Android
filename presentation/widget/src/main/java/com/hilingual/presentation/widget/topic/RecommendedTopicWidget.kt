@@ -2,8 +2,6 @@ package com.hilingual.presentation.widget.topic
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
@@ -30,8 +28,6 @@ import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
-import androidx.glance.preview.ExperimentalGlancePreviewApi
-import androidx.glance.preview.Preview
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -39,6 +35,7 @@ import com.hilingual.core.common.util.toKoreanShortWeekdayDate
 import com.hilingual.core.common.widget.WidgetType
 import com.hilingual.presentation.widget.common.WidgetEntryPoint
 import com.hilingual.presentation.widget.common.WidgetPreviewTheme
+import com.hilingual.presentation.widget.common.WidgetPreviews
 import com.hilingual.presentation.widget.common.homeLaunchAction
 import dagger.hilt.android.EntryPointAccessors
 import java.time.Duration
@@ -283,31 +280,31 @@ private fun calculateRemainingHours(date: LocalDate): Int {
     return Duration.between(now, deadline).toHours().toInt().coerceAtLeast(0)
 }
 
-private data class RecommendedTopicPreviewData(
-    val state: RecommendedTopicUiState,
-    val theme: WidgetPreviewTheme,
-)
-
-private class RecommendedTopicPreviewParameterProvider :
-    PreviewParameterProvider<RecommendedTopicPreviewData> {
-    override val values = sequenceOf(
-        RecommendedTopicPreviewData(RecommendedTopicUiState.Fake, WidgetPreviewTheme.LIGHT),
-        RecommendedTopicPreviewData(RecommendedTopicUiState.Fake, WidgetPreviewTheme.DARK),
-        RecommendedTopicPreviewData(RecommendedTopicUiState.WrittenFake, WidgetPreviewTheme.LIGHT),
-        RecommendedTopicPreviewData(RecommendedTopicUiState.WrittenFake, WidgetPreviewTheme.DARK),
-    )
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 329, heightDp = 155)
-@Preview(widthDp = 155, heightDp = 155)
 @Composable
 private fun RecommendedTopicPreview(
-    @PreviewParameter(RecommendedTopicPreviewParameterProvider::class)
-    previewData: RecommendedTopicPreviewData,
-) {
-    RecommendedTopicWidgetContent(
-        state = previewData.state,
-        previewTheme = previewData.theme,
-    )
-}
+    state: RecommendedTopicUiState,
+    theme: WidgetPreviewTheme,
+) = RecommendedTopicWidgetContent(
+    state = state,
+    previewTheme = theme,
+)
+
+@WidgetPreviews
+@Composable
+private fun RecommendedTopicUnwrittenLightPreview() =
+    RecommendedTopicPreview(RecommendedTopicUiState.Fake, WidgetPreviewTheme.LIGHT)
+
+@WidgetPreviews
+@Composable
+private fun RecommendedTopicUnwrittenDarkPreview() =
+    RecommendedTopicPreview(RecommendedTopicUiState.Fake, WidgetPreviewTheme.DARK)
+
+@WidgetPreviews
+@Composable
+private fun RecommendedTopicWrittenLightPreview() =
+    RecommendedTopicPreview(RecommendedTopicUiState.WrittenFake, WidgetPreviewTheme.LIGHT)
+
+@WidgetPreviews
+@Composable
+private fun RecommendedTopicWrittenDarkPreview() =
+    RecommendedTopicPreview(RecommendedTopicUiState.WrittenFake, WidgetPreviewTheme.DARK)

@@ -3,8 +3,6 @@ package com.hilingual.presentation.widget.streak
 import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,8 +34,6 @@ import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
-import androidx.glance.preview.ExperimentalGlancePreviewApi
-import androidx.glance.preview.Preview
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -45,6 +41,7 @@ import com.hilingual.core.common.widget.WidgetType
 import com.hilingual.presentation.widget.R
 import com.hilingual.presentation.widget.common.WidgetEntryPoint
 import com.hilingual.presentation.widget.common.WidgetPreviewTheme
+import com.hilingual.presentation.widget.common.WidgetPreviews
 import com.hilingual.presentation.widget.common.homeLaunchAction
 import dagger.hilt.android.EntryPointAccessors
 import java.time.DayOfWeek
@@ -403,32 +400,41 @@ private fun StreakCharacter(
 
 private fun DayOfWeek.toKoreanShortName(): String = getDisplayName(JavaTextStyle.SHORT, Locale.KOREAN)
 
-private data class StreakPreviewData(
-    val state: StreakUiState,
-    val theme: WidgetPreviewTheme,
-)
-
-private class StreakPreviewParameterProvider : PreviewParameterProvider<StreakPreviewData> {
-    override val values = sequenceOf(
-        StreakPreviewData(StreakUiState(), WidgetPreviewTheme.LIGHT),
-        StreakPreviewData(StreakUiState(), WidgetPreviewTheme.DARK),
-        StreakPreviewData(StreakUiState.Empty, WidgetPreviewTheme.LIGHT),
-        StreakPreviewData(StreakUiState.Empty, WidgetPreviewTheme.DARK),
-        StreakPreviewData(StreakUiState.Fake, WidgetPreviewTheme.LIGHT),
-        StreakPreviewData(StreakUiState.Fake, WidgetPreviewTheme.DARK),
-    )
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 329, heightDp = 155)
-@Preview(widthDp = 155, heightDp = 155)
 @Composable
 private fun StreakPreview(
-    @PreviewParameter(StreakPreviewParameterProvider::class)
-    previewData: StreakPreviewData,
-) {
-    StreakWidgetContent(
-        state = previewData.state,
-        previewTheme = previewData.theme,
-    )
-}
+    state: StreakUiState,
+    theme: WidgetPreviewTheme,
+) = StreakWidgetContent(
+    state = state,
+    previewTheme = theme,
+)
+
+@WidgetPreviews
+@Composable
+private fun StreakLoggedOutLightPreview() =
+    StreakPreview(StreakUiState(), WidgetPreviewTheme.LIGHT)
+
+@WidgetPreviews
+@Composable
+private fun StreakLoggedOutDarkPreview() =
+    StreakPreview(StreakUiState(), WidgetPreviewTheme.DARK)
+
+@WidgetPreviews
+@Composable
+private fun StreakEmptyLightPreview() =
+    StreakPreview(StreakUiState.Empty, WidgetPreviewTheme.LIGHT)
+
+@WidgetPreviews
+@Composable
+private fun StreakEmptyDarkPreview() =
+    StreakPreview(StreakUiState.Empty, WidgetPreviewTheme.DARK)
+
+@WidgetPreviews
+@Composable
+private fun StreakWrittenLightPreview() =
+    StreakPreview(StreakUiState.Fake, WidgetPreviewTheme.LIGHT)
+
+@WidgetPreviews
+@Composable
+private fun StreakWrittenDarkPreview() =
+    StreakPreview(StreakUiState.Fake, WidgetPreviewTheme.DARK)
