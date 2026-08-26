@@ -43,14 +43,11 @@ import com.hilingual.core.designsystem.theme.gray500
 import com.hilingual.core.designsystem.theme.gray850
 import com.hilingual.core.designsystem.theme.hilingualOrange
 import com.hilingual.core.designsystem.theme.white
-import com.hilingual.data.widget.repository.WidgetRepository
+import com.hilingual.presentation.widget.common.WidgetEntryPoint
 import com.hilingual.presentation.widget.common.WidgetPreviewTheme
 import com.hilingual.presentation.widget.common.homeLaunchAction
 import com.hilingual.presentation.widget.common.widgetColorProvider
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.components.SingletonComponent
 import java.time.Duration
 import java.time.LocalDate
 import java.time.ZonedDateTime
@@ -90,19 +87,13 @@ class RecommendedTopicWidget : GlanceAppWidget() {
     private suspend fun loadState(context: Context): RecommendedTopicUiState {
         val repository = EntryPointAccessors.fromApplication(
             context.applicationContext,
-            RecommendedTopicWidgetEntryPoint::class.java,
+            WidgetEntryPoint::class.java,
         ).widgetRepository()
 
         return repository.getTopic(LocalDate.now())
             .map(RecommendedTopicUiState::from)
             .getOrElse { RecommendedTopicUiState.unavailable() }
     }
-}
-
-@EntryPoint
-@InstallIn(SingletonComponent::class)
-internal interface RecommendedTopicWidgetEntryPoint {
-    fun widgetRepository(): WidgetRepository
 }
 
 @Composable

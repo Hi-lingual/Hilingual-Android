@@ -48,15 +48,12 @@ import com.hilingual.core.designsystem.theme.gray400
 import com.hilingual.core.designsystem.theme.gray500
 import com.hilingual.core.designsystem.theme.gray700
 import com.hilingual.core.designsystem.theme.white
-import com.hilingual.data.widget.repository.WidgetRepository
 import com.hilingual.presentation.widget.R
+import com.hilingual.presentation.widget.common.WidgetEntryPoint
 import com.hilingual.presentation.widget.common.WidgetPreviewTheme
 import com.hilingual.presentation.widget.common.homeLaunchAction
 import com.hilingual.presentation.widget.common.widgetColorProvider
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.components.SingletonComponent
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.util.Locale
@@ -104,7 +101,7 @@ class StreakWidget : GlanceAppWidget() {
     private suspend fun loadState(context: Context): StreakUiState {
         val repository = EntryPointAccessors.fromApplication(
             context.applicationContext,
-            StreakWidgetEntryPoint::class.java,
+            WidgetEntryPoint::class.java,
         ).widgetRepository()
 
         return if (repository.isLoggedIn()) {
@@ -115,12 +112,6 @@ class StreakWidget : GlanceAppWidget() {
             StreakUiState()
         }
     }
-}
-
-@EntryPoint
-@InstallIn(SingletonComponent::class)
-internal interface StreakWidgetEntryPoint {
-    fun widgetRepository(): WidgetRepository
 }
 
 @Composable
