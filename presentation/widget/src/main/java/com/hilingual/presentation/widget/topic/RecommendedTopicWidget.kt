@@ -2,6 +2,8 @@ package com.hilingual.presentation.widget.topic
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
@@ -281,71 +283,31 @@ private fun calculateRemainingHours(date: LocalDate): Int {
     return Duration.between(now, deadline).toHours().toInt().coerceAtLeast(0)
 }
 
-@Composable
-private fun RecommendedTopicPreview(
-    state: RecommendedTopicUiState,
-    isWide: Boolean,
-    theme: WidgetPreviewTheme,
-) {
-    RecommendedTopicWidgetContent(
-        state = state,
-        isWide = isWide,
-        previewTheme = theme,
+private data class RecommendedTopicPreviewData(
+    val state: RecommendedTopicUiState,
+    val theme: WidgetPreviewTheme,
+)
+
+private class RecommendedTopicPreviewParameterProvider :
+    PreviewParameterProvider<RecommendedTopicPreviewData> {
+    override val values = sequenceOf(
+        RecommendedTopicPreviewData(RecommendedTopicUiState.Fake, WidgetPreviewTheme.LIGHT),
+        RecommendedTopicPreviewData(RecommendedTopicUiState.Fake, WidgetPreviewTheme.DARK),
+        RecommendedTopicPreviewData(RecommendedTopicUiState.WrittenFake, WidgetPreviewTheme.LIGHT),
+        RecommendedTopicPreviewData(RecommendedTopicUiState.WrittenFake, WidgetPreviewTheme.DARK),
     )
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 329, heightDp = 155)
-@Composable
-private fun RecommendedTopicUnwrittenLargeLightPreview() {
-    RecommendedTopicPreview(RecommendedTopicUiState.Fake, true, WidgetPreviewTheme.LIGHT)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 155, heightDp = 155)
 @Composable
-private fun RecommendedTopicUnwrittenSmallLightPreview() {
-    RecommendedTopicPreview(RecommendedTopicUiState.Fake, false, WidgetPreviewTheme.LIGHT)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 329, heightDp = 155)
-@Composable
-private fun RecommendedTopicUnwrittenLargeDarkPreview() {
-    RecommendedTopicPreview(RecommendedTopicUiState.Fake, true, WidgetPreviewTheme.DARK)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 155, heightDp = 155)
-@Composable
-private fun RecommendedTopicUnwrittenSmallDarkPreview() {
-    RecommendedTopicPreview(RecommendedTopicUiState.Fake, false, WidgetPreviewTheme.DARK)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 329, heightDp = 155)
-@Composable
-private fun RecommendedTopicWrittenLargeLightPreview() {
-    RecommendedTopicPreview(RecommendedTopicUiState.WrittenFake, true, WidgetPreviewTheme.LIGHT)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 155, heightDp = 155)
-@Composable
-private fun RecommendedTopicWrittenSmallLightPreview() {
-    RecommendedTopicPreview(RecommendedTopicUiState.WrittenFake, false, WidgetPreviewTheme.LIGHT)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 329, heightDp = 155)
-@Composable
-private fun RecommendedTopicWrittenLargeDarkPreview() {
-    RecommendedTopicPreview(RecommendedTopicUiState.WrittenFake, true, WidgetPreviewTheme.DARK)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 155, heightDp = 155)
-@Composable
-private fun RecommendedTopicWrittenSmallDarkPreview() {
-    RecommendedTopicPreview(RecommendedTopicUiState.WrittenFake, false, WidgetPreviewTheme.DARK)
+private fun RecommendedTopicPreview(
+    @PreviewParameter(RecommendedTopicPreviewParameterProvider::class)
+    previewData: RecommendedTopicPreviewData,
+) {
+    RecommendedTopicWidgetContent(
+        state = previewData.state,
+        previewTheme = previewData.theme,
+    )
 }

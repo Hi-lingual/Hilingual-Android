@@ -3,6 +3,8 @@ package com.hilingual.presentation.widget.streak
 import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -401,99 +403,32 @@ private fun StreakCharacter(
 
 private fun DayOfWeek.toKoreanShortName(): String = getDisplayName(JavaTextStyle.SHORT, Locale.KOREAN)
 
-@Composable
-private fun StreakPreview(
-    state: StreakUiState,
-    isWide: Boolean,
-    theme: WidgetPreviewTheme,
-) {
-    StreakWidgetContent(
-        state = state,
-        isWide = isWide,
-        previewTheme = theme,
+private data class StreakPreviewData(
+    val state: StreakUiState,
+    val theme: WidgetPreviewTheme,
+)
+
+private class StreakPreviewParameterProvider : PreviewParameterProvider<StreakPreviewData> {
+    override val values = sequenceOf(
+        StreakPreviewData(StreakUiState(), WidgetPreviewTheme.LIGHT),
+        StreakPreviewData(StreakUiState(), WidgetPreviewTheme.DARK),
+        StreakPreviewData(StreakUiState.Empty, WidgetPreviewTheme.LIGHT),
+        StreakPreviewData(StreakUiState.Empty, WidgetPreviewTheme.DARK),
+        StreakPreviewData(StreakUiState.Fake, WidgetPreviewTheme.LIGHT),
+        StreakPreviewData(StreakUiState.Fake, WidgetPreviewTheme.DARK),
     )
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 329, heightDp = 155)
-@Composable
-private fun StreakLoggedOutLargeLightPreview() {
-    StreakPreview(StreakUiState(), true, WidgetPreviewTheme.LIGHT)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 155, heightDp = 155)
 @Composable
-private fun StreakLoggedOutSmallLightPreview() {
-    StreakPreview(StreakUiState(), false, WidgetPreviewTheme.LIGHT)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 329, heightDp = 155)
-@Composable
-private fun StreakLoggedOutLargeDarkPreview() {
-    StreakPreview(StreakUiState(), true, WidgetPreviewTheme.DARK)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 155, heightDp = 155)
-@Composable
-private fun StreakLoggedOutSmallDarkPreview() {
-    StreakPreview(StreakUiState(), false, WidgetPreviewTheme.DARK)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 329, heightDp = 155)
-@Composable
-private fun StreakEmptyLargeLightPreview() {
-    StreakPreview(StreakUiState.Empty, true, WidgetPreviewTheme.LIGHT)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 155, heightDp = 155)
-@Composable
-private fun StreakEmptySmallLightPreview() {
-    StreakPreview(StreakUiState.Empty, false, WidgetPreviewTheme.LIGHT)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 329, heightDp = 155)
-@Composable
-private fun StreakEmptyLargeDarkPreview() {
-    StreakPreview(StreakUiState.Empty, true, WidgetPreviewTheme.DARK)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 155, heightDp = 155)
-@Composable
-private fun StreakEmptySmallDarkPreview() {
-    StreakPreview(StreakUiState.Empty, false, WidgetPreviewTheme.DARK)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 329, heightDp = 155)
-@Composable
-private fun StreakWrittenLargeLightPreview() {
-    StreakPreview(StreakUiState.Fake, true, WidgetPreviewTheme.LIGHT)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 155, heightDp = 155)
-@Composable
-private fun StreakWrittenSmallLightPreview() {
-    StreakPreview(StreakUiState.Fake, false, WidgetPreviewTheme.LIGHT)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 329, heightDp = 155)
-@Composable
-private fun StreakWrittenLargeDarkPreview() {
-    StreakPreview(StreakUiState.Fake, true, WidgetPreviewTheme.DARK)
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 155, heightDp = 155)
-@Composable
-private fun StreakWrittenSmallDarkPreview() {
-    StreakPreview(StreakUiState.Fake, false, WidgetPreviewTheme.DARK)
+private fun StreakPreview(
+    @PreviewParameter(StreakPreviewParameterProvider::class)
+    previewData: StreakPreviewData,
+) {
+    StreakWidgetContent(
+        state = previewData.state,
+        previewTheme = previewData.theme,
+    )
 }
