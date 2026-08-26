@@ -6,4 +6,6 @@ interface WidgetUpdater {
     suspend fun updateAll()
 
     suspend fun updatePreviews()
+
+    fun getInstalledWidgetCount(): InstalledWidgetCount
 }

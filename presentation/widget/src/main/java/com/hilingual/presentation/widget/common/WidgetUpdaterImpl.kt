@@ -1,12 +1,15 @@
 package com.hilingual.presentation.widget.common
 
+import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN
+import android.content.ComponentName
 import android.content.Context
 import android.os.Build
 import androidx.collection.intSetOf
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.setWidgetPreviews
 import androidx.glance.appwidget.updateAll
+import com.hilingual.core.common.widget.InstalledWidgetCount
 import com.hilingual.core.common.widget.WidgetUpdater
 import com.hilingual.data.widget.repository.WidgetRepository
 import com.hilingual.presentation.widget.streak.StreakLargeWidgetReceiver
@@ -41,5 +44,24 @@ internal class WidgetUpdaterImpl @Inject constructor(
         manager.setWidgetPreviews<RecommendedTopicLargeWidgetReceiver>(categories)
         manager.setWidgetPreviews<StreakSmallWidgetReceiver>(categories)
         manager.setWidgetPreviews<StreakLargeWidgetReceiver>(categories)
+    }
+
+    override fun getInstalledWidgetCount(): InstalledWidgetCount {
+        val manager = AppWidgetManager.getInstance(context)
+        val diaryTopicCount = manager.getAppWidgetIds(
+            ComponentName(context, RecommendedTopicSmallWidgetReceiver::class.java),
+        ).size + manager.getAppWidgetIds(
+            ComponentName(context, RecommendedTopicLargeWidgetReceiver::class.java),
+        ).size
+        val streakCount = manager.getAppWidgetIds(
+            ComponentName(context, StreakSmallWidgetReceiver::class.java),
+        ).size + manager.getAppWidgetIds(
+            ComponentName(context, StreakLargeWidgetReceiver::class.java),
+        ).size
+
+        return InstalledWidgetCount(
+            diaryTopic = diaryTopicCount,
+            streak = streakCount,
+        )
     }
 }

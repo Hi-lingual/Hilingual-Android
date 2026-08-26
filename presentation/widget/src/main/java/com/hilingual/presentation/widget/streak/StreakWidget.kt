@@ -40,6 +40,7 @@ import androidx.glance.preview.Preview
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import com.hilingual.core.common.widget.WidgetType
 import com.hilingual.core.designsystem.theme.black
 import com.hilingual.core.designsystem.theme.gray100
 import com.hilingual.core.designsystem.theme.gray200
@@ -89,7 +90,7 @@ class StreakWidget : GlanceAppWidget() {
         provideContent {
             StreakWidgetContent(
                 state = state,
-                launchAction = homeLaunchAction(context),
+                launchAction = homeLaunchAction(context, WidgetType.STREAK),
             )
         }
     }

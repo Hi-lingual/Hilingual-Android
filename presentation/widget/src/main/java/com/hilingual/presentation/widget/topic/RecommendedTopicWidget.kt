@@ -35,6 +35,7 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.hilingual.core.common.util.toKoreanShortWeekdayDate
+import com.hilingual.core.common.widget.WidgetType
 import com.hilingual.core.designsystem.theme.black
 import com.hilingual.core.designsystem.theme.gray100
 import com.hilingual.core.designsystem.theme.gray200
@@ -75,7 +76,7 @@ class RecommendedTopicWidget : GlanceAppWidget() {
         provideContent {
             RecommendedTopicWidgetContent(
                 state = state,
-                launchAction = homeLaunchAction(context),
+                launchAction = homeLaunchAction(context, WidgetType.DIARY_TOPIC),
             )
         }
     }

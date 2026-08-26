@@ -22,6 +22,7 @@ import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import com.angrypodo.wisp.runtime.Wisp
 import com.hilingual.core.ads.initializer.AdsInitializer
+import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.util.HilingualReleaseTree
 import com.hilingual.core.common.widget.WidgetUpdater
 import com.hilingual.core.notification.HilingualNotificationManager
@@ -54,6 +55,9 @@ class App : Application(), SingletonImageLoader.Factory {
     @Inject
     lateinit var widgetUpdater: WidgetUpdater
 
+    @Inject
+    lateinit var tracker: Tracker
+
     override fun onCreate() {
         super.onCreate()
         SingletonImageLoader.setSafe { imageLoader.get() }
@@ -63,6 +67,7 @@ class App : Application(), SingletonImageLoader.Factory {
         initWorkManager()
         initAds()
         initNotificationChannels()
+        syncWidgetCount()
         updateWidgets()
         Wisp.initialize()
     }
@@ -95,5 +100,17 @@ class App : Application(), SingletonImageLoader.Factory {
             runCatching { widgetUpdater.updateAll() }
                 .onFailure(Timber::e)
         }
+    }
+
+    private fun syncWidgetCount() {
+        val count = widgetUpdater.getInstalledWidgetCount()
+        tracker.logEvent(
+            eventName = "widget_count",
+            properties = mapOf(
+                "widget_count_diary_topic" to count.diaryTopic,
+                "widget_count_streak" to count.streak,
+                "widget_count_total" to count.total,
+            ),
+        )
     }
 }
