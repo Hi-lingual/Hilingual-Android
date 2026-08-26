@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.ColorFilter
@@ -65,8 +64,6 @@ import kotlinx.collections.immutable.ImmutableList
 import com.hilingual.core.designsystem.R as DesignSystemR
 import java.time.format.TextStyle as JavaTextStyle
 
-private val SmallStreakPreviewSize = DpSize(155.dp, 155.dp)
-private val LargeStreakPreviewSize = DpSize(329.dp, 155.dp)
 private val WideStreakWidth = 250.dp
 private val LargeWidgetHorizontalPadding = 20.dp
 private val LargeWidgetCharacterWidth = 130.dp
@@ -77,9 +74,7 @@ private const val MAX_RECENT_DAY_COUNT = 5
 
 class StreakWidget : GlanceAppWidget() {
     override val sizeMode: SizeMode = SizeMode.Exact
-    override val previewSizeMode = SizeMode.Responsive(
-        setOf(SmallStreakPreviewSize, LargeStreakPreviewSize),
-    )
+    override val previewSizeMode = SizeMode.Single
 
     override suspend fun provideGlance(
         context: Context,

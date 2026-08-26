@@ -2,7 +2,6 @@ package com.hilingual.presentation.widget.topic
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
@@ -57,15 +56,11 @@ import java.time.LocalDate
 import java.time.ZonedDateTime
 import com.hilingual.core.designsystem.R as DesignSystemR
 
-private val SmallTopicPreviewSize = DpSize(155.dp, 155.dp)
-private val LargeTopicPreviewSize = DpSize(329.dp, 155.dp)
 private val WideTopicWidth = 250.dp
 
 class RecommendedTopicWidget : GlanceAppWidget() {
     override val sizeMode: SizeMode = SizeMode.Exact
-    override val previewSizeMode = SizeMode.Responsive(
-        setOf(SmallTopicPreviewSize, LargeTopicPreviewSize),
-    )
+    override val previewSizeMode = SizeMode.Single
 
     override suspend fun provideGlance(
         context: Context,
