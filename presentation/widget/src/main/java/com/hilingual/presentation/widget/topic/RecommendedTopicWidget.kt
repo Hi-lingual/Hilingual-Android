@@ -35,18 +35,9 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.hilingual.core.common.util.toKoreanShortWeekdayDate
 import com.hilingual.core.common.widget.WidgetType
-import com.hilingual.core.designsystem.theme.black
-import com.hilingual.core.designsystem.theme.gray100
-import com.hilingual.core.designsystem.theme.gray200
-import com.hilingual.core.designsystem.theme.gray400
-import com.hilingual.core.designsystem.theme.gray500
-import com.hilingual.core.designsystem.theme.gray850
-import com.hilingual.core.designsystem.theme.hilingualOrange
-import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.widget.common.WidgetEntryPoint
 import com.hilingual.presentation.widget.common.WidgetPreviewTheme
 import com.hilingual.presentation.widget.common.homeLaunchAction
-import com.hilingual.presentation.widget.common.widgetColorProvider
 import dagger.hilt.android.EntryPointAccessors
 import java.time.Duration
 import java.time.LocalDate
@@ -288,18 +279,6 @@ private fun calculateRemainingHours(date: LocalDate): Int {
     val now = ZonedDateTime.now()
     val deadline = date.plusDays(2).atStartOfDay(now.zone)
     return Duration.between(now, deadline).toHours().toInt().coerceAtLeast(0)
-}
-
-private class RecommendedTopicWidgetColors(previewTheme: WidgetPreviewTheme?) {
-    val surface = widgetColorProvider(gray100, gray850, previewTheme)
-    val header = widgetColorProvider(gray850, black, previewTheme)
-    val onHeader = widgetColorProvider(white, gray200, previewTheme)
-    val onHeaderMuted = widgetColorProvider(gray400, gray400, previewTheme)
-    val primaryText = widgetColorProvider(black, white, previewTheme)
-    val secondaryText = widgetColorProvider(gray500, gray400, previewTheme)
-    val accent = widgetColorProvider(hilingualOrange, hilingualOrange, previewTheme)
-    val leftHourLargeText = widgetColorProvider(gray200, gray200, previewTheme)
-    val leftHourSmallText = widgetColorProvider(gray500, gray200, previewTheme)
 }
 
 @Composable

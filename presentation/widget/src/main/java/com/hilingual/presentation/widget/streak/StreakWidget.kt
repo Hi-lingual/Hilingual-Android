@@ -40,19 +40,10 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.hilingual.core.common.widget.WidgetType
-import com.hilingual.core.designsystem.theme.black
-import com.hilingual.core.designsystem.theme.gray100
-import com.hilingual.core.designsystem.theme.gray200
-import com.hilingual.core.designsystem.theme.gray300
-import com.hilingual.core.designsystem.theme.gray400
-import com.hilingual.core.designsystem.theme.gray500
-import com.hilingual.core.designsystem.theme.gray700
-import com.hilingual.core.designsystem.theme.white
 import com.hilingual.presentation.widget.R
 import com.hilingual.presentation.widget.common.WidgetEntryPoint
 import com.hilingual.presentation.widget.common.WidgetPreviewTheme
 import com.hilingual.presentation.widget.common.homeLaunchAction
-import com.hilingual.presentation.widget.common.widgetColorProvider
 import dagger.hilt.android.EntryPointAccessors
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -409,16 +400,6 @@ private fun StreakCharacter(
 }
 
 private fun DayOfWeek.toKoreanShortName(): String = getDisplayName(JavaTextStyle.SHORT, Locale.KOREAN)
-
-private class StreakWidgetColors(previewTheme: WidgetPreviewTheme?) {
-    val surface = widgetColorProvider(gray100, gray700, previewTheme)
-    val primaryText = widgetColorProvider(black, white, previewTheme)
-    val secondaryText = widgetColorProvider(gray500, gray200, previewTheme)
-    val lockedBar = widgetColorProvider(gray300, gray500, previewTheme)
-    val inactiveDay = widgetColorProvider(gray200, gray500, previewTheme)
-    val inactiveFire = widgetColorProvider(gray400, gray300, previewTheme)
-    val onActiveDay = widgetColorProvider(white, white, previewTheme)
-}
 
 @Composable
 private fun StreakPreview(
