@@ -19,6 +19,7 @@ class FakeTracker : Tracker {
     override fun logEvent(
         eventName: String,
         properties: Map<String, Any>,
+        currentPage: Page?,
     ) {}
 
     override fun logGlobalAction(

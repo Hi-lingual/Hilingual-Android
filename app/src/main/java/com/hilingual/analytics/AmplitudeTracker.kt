@@ -48,13 +48,20 @@ class AmplitudeTracker @Inject constructor(
     override fun logEvent(
         eventName: String,
         properties: Map<String, Any>,
+        currentPage: Page?,
     ) {
+        val allProperties = properties.toMutableMap()
+
+        if (currentPage != null) {
+            allProperties["page"] = currentPage.pageName
+        }
+
         if (BuildConfig.DEBUG) {
-            Timber.tag("AmplitudeTracker").d("Tracking event: $eventName, properties: $properties")
+            Timber.tag("AmplitudeTracker").d("Tracking event: $eventName, properties: $allProperties")
             return
         }
 
-        amplitude?.track(eventName, properties.toMutableMap())
+        amplitude?.track(eventName, allProperties)
     }
 
     override fun logGlobalAction(
