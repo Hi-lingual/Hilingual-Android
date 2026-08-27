@@ -170,15 +170,14 @@ internal fun VocaRoute(
             },
 
             onBookmarkClick = { phraseId, isMarked ->
-                tracker.logGlobalAction(
-                    trigger = TriggerType.CLICK,
-                    currentPage = VOCABULARY,
-                    action = "bookmark_action",
+                tracker.logEvent(
+                    eventName = "bookmark_action",
                     properties = mapOf(
                         "entry_id" to phraseId,
                         "bookmark_action" to if (isMarked) "add" else "remove",
                         "entry_source" to "voca",
                     ),
+                    currentPage = VOCABULARY,
                 )
                 viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
             },
@@ -228,15 +227,14 @@ internal fun VocaRoute(
                 isMemorized = vocaDetail.isMemorized,
                 isBookmarked = vocaDetail.isBookmarked,
                 onBookmarkClick = { phraseId, isMarked ->
-                    tracker.logGlobalAction(
-                        trigger = TriggerType.CLICK,
-                        currentPage = VOCABULARY,
-                        action = "bookmark_action",
+                    tracker.logEvent(
+                        eventName = "bookmark_action",
                         properties = mapOf(
                             "entry_id" to phraseId,
                             "bookmark_action" to if (isMarked) "add" else "remove",
                             "entry_source" to "modal",
                         ),
+                        currentPage = VOCABULARY,
                     )
                     viewModel.toggleBookmark(phraseId = phraseId, isMarked = isMarked)
                 },

@@ -139,7 +139,16 @@ internal fun HomeRoute(
                     HilingualMessage.Snackbar(
                         message = sideEffect.message,
                         actionLabelText = sideEffect.actionLabel,
-                        onAction = navigateToFeed,
+                        onAction = {
+                            tracker.logEvent(
+                                eventName = "toast_action",
+                                properties = mapOf(
+                                    "toast_action" to "goto_feed",
+                                ),
+                                currentPage = HOME,
+                            )
+                            navigateToFeed()
+                        },
                     ),
                 )
             }
