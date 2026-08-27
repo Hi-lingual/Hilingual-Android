@@ -27,6 +27,7 @@ class FakeTracker : Tracker {
         properties: Map<String, Any>,
         currentPage: Page?,
     ) {}
+
     override fun logPageAction(
         trigger: TriggerType,
         page: Page,
