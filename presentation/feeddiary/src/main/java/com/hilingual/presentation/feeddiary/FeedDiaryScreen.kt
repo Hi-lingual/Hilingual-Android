@@ -43,7 +43,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.analytics.FakeTracker
 import com.hilingual.core.common.analytics.Page
-import com.hilingual.core.common.analytics.Page.VOCABULARY
+import com.hilingual.core.common.analytics.Page.FEED
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.constant.UrlConstant
@@ -129,11 +129,13 @@ internal fun FeedDiaryRoute(
                         message = it.message,
                         actionLabelText = it.actionLabel,
                         onAction = {
-                            tracker.logGlobalAction(
-                                trigger = TriggerType.CLICK,
-                                action = "toast_action",
-                                properties = mapOf("toast_action" to "goto_voca"),
-                                currentPage = VOCABULARY,
+                            tracker.logEvent(
+                                eventName = "toast_action",
+                                properties = mapOf(
+                                    "toast_action" to "goto_voca",
+                                    "entry_id" to viewModel.diaryId,
+                                    "page" to FEED.pageName,
+                                ),
                             )
                             navigateToVoca()
                         },

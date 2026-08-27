@@ -153,15 +153,13 @@ internal fun DiaryFeedbackRoute(
                         message = it.message,
                         actionLabelText = it.actionLabel,
                         onAction = {
-                            tracker.logGlobalAction(
-                                trigger = TriggerType.CLICK,
-                                action = "toast_action",
+                            tracker.logEvent(
+                                eventName = "toast_action",
                                 properties = mapOf(
-                                    "toast_id" to "diary_post_success",
-                                    "toast_action" to "cta_click",
+                                    "toast_action" to "goto_voca",
                                     "entry_id" to viewModel.diaryId,
+                                    "page" to FEEDBACK.pageName,
                                 ),
-                                currentPage = FEEDBACK,
                             )
                             navigateToFeed()
                         },
