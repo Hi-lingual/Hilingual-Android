@@ -48,6 +48,7 @@ import com.hilingual.core.ads.interstitial.showInterstitialAd
 import com.hilingual.core.common.analytics.FakeTracker
 import com.hilingual.core.common.analytics.Page.FEEDBACK
 import com.hilingual.core.common.analytics.Page.FEEDBACK_LOADING
+import com.hilingual.core.common.analytics.Page.VOCABULARY
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.constant.UrlConstant
@@ -183,7 +184,15 @@ internal fun DiaryFeedbackRoute(
                     HilingualMessage.Snackbar(
                         message = it.message,
                         actionLabelText = it.actionLabel,
-                        onAction = navigateToVoca,
+                        onAction = {
+                            tracker.logGlobalAction(
+                                trigger = TriggerType.CLICK,
+                                action = "toast_action",
+                                properties = mapOf("toast_action" to "goto_voca"),
+                                currentPage = VOCABULARY,
+                            )
+                            navigateToVoca()
+                        },
                     ),
                 )
             }
