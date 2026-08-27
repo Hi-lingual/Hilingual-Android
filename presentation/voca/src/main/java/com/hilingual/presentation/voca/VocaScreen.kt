@@ -186,8 +186,20 @@ internal fun VocaRoute(
             onWriteDiaryClick = navigateToHome,
             onCloseButtonClick = viewModel::clearSearchKeyword,
             onRefresh = viewModel::refreshVocaList,
-            onFilterClick = viewModel::toggleUnmemorizedFilter,
+            onFilterClick = {
+                tracker.logPageAction(
+                    trigger = TriggerType.CLICK,
+                    page = VOCABULARY,
+                    action = "unknown_filter",
+                )
+                viewModel.toggleUnmemorizedFilter()
+            },
             onReviewClick = {
+                tracker.logPageAction(
+                    trigger = TriggerType.CLICK,
+                    page = VOCABULARY,
+                    action = "review_btn",
+                )
                 navigateToVocaReview(uiState.isUnmemorizedFilterOn, uiState.sortType.sortParam)
             },
         )
