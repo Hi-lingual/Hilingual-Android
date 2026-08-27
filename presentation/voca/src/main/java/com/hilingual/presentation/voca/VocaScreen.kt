@@ -170,8 +170,9 @@ internal fun VocaRoute(
             },
 
             onBookmarkClick = { phraseId, isMarked ->
-                tracker.logEvent(
-                    eventName = "bookmark_action",
+                tracker.logGlobalAction(
+                    trigger = TriggerType.NONE,
+                    action = "bookmark_action",
                     properties = mapOf(
                         "entry_id" to phraseId,
                         "bookmark_action" to if (isMarked) "add" else "remove",
@@ -227,8 +228,9 @@ internal fun VocaRoute(
                 isMemorized = vocaDetail.isMemorized,
                 isBookmarked = vocaDetail.isBookmarked,
                 onBookmarkClick = { phraseId, isMarked ->
-                    tracker.logEvent(
-                        eventName = "bookmark_action",
+                    tracker.logGlobalAction(
+                        trigger = TriggerType.NONE,
+                        action = "bookmark_action",
                         properties = mapOf(
                             "entry_id" to phraseId,
                             "bookmark_action" to if (isMarked) "add" else "remove",

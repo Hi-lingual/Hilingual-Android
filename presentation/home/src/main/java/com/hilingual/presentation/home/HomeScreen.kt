@@ -140,8 +140,9 @@ internal fun HomeRoute(
                         message = sideEffect.message,
                         actionLabelText = sideEffect.actionLabel,
                         onAction = {
-                            tracker.logEvent(
-                                eventName = "toast_action",
+                            tracker.logGlobalAction(
+                                trigger = TriggerType.NONE,
+                                action = "toast_action",
                                 properties = mapOf(
                                     "toast_action" to "goto_feed",
                                 ),

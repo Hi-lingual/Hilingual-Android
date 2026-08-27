@@ -128,8 +128,9 @@ internal fun FeedDiaryRoute(
                         message = it.message,
                         actionLabelText = it.actionLabel,
                         onAction = {
-                            tracker.logEvent(
-                                eventName = "toast_action",
+                            tracker.logGlobalAction(
+                                trigger = TriggerType.NONE,
+                                action = "toast_action",
                                 properties = mapOf(
                                     "toast_action" to "goto_voca",
                                     "entry_id" to viewModel.diaryId,
@@ -356,8 +357,9 @@ private fun FeedDiaryScreen(
                             writtenDate = writtenDate,
                             recommendExpressionList = recommendExpressionList,
                             onBookmarkClick = { phraseId, isMarked ->
-                                tracker.logEvent(
-                                    eventName = "bookmark_action",
+                                tracker.logGlobalAction(
+                                    trigger = TriggerType.NONE,
+                                    action = "bookmark_action",
                                     properties = mapOf(
                                         "entry_id" to diaryId,
                                         "bookmark_action" to if (isMarked) "add" else "remove",

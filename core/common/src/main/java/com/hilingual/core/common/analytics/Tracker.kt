@@ -16,17 +16,9 @@
 package com.hilingual.core.common.analytics
 
 interface Tracker {
-    // 이벤트명을 그대로 사용하는 액션 비종속 이벤트
-    // 예: bookmark_action, toast_action
-    fun logEvent(
-        eventName: String,
-        properties: Map<String, Any> = emptyMap(),
-        currentPage: Page? = null,
-    )
-
     // 페이지 비종속 액션 (공통 컴포넌트)
-    // 포맷: {트리거유형}_{이벤트명}
-    // 예: click_dropdown
+    // 포맷: {트리거유형}_{이벤트명}, TriggerType.NONE이면 {이벤트명}
+    // 예: click_dropdown, bookmark_action
     fun logGlobalAction(
         trigger: TriggerType,
         action: String,

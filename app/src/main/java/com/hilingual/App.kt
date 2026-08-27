@@ -23,6 +23,7 @@ import coil3.SingletonImageLoader
 import com.angrypodo.wisp.runtime.Wisp
 import com.hilingual.core.ads.initializer.AdsInitializer
 import com.hilingual.core.common.analytics.Tracker
+import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.util.HilingualReleaseTree
 import com.hilingual.core.common.widget.WidgetUpdater
 import com.hilingual.core.notification.HilingualNotificationManager
@@ -104,8 +105,9 @@ class App : Application(), SingletonImageLoader.Factory {
 
     private fun syncWidgetCount() {
         val count = widgetUpdater.getInstalledWidgetCount()
-        tracker.logEvent(
-            eventName = "widget_count",
+        tracker.logGlobalAction(
+            trigger = TriggerType.NONE,
+            action = "widget_count",
             properties = mapOf(
                 "widget_count_diary_topic" to count.diaryTopic,
                 "widget_count_streak" to count.streak,
