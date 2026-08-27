@@ -2,6 +2,7 @@ package com.hilingual.presentation.widget.topic
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
@@ -33,6 +34,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.hilingual.core.common.util.toKoreanShortWeekdayDate
 import com.hilingual.core.common.widget.WidgetType
+import com.hilingual.presentation.widget.common.SmallWidgetPreviewSize
 import com.hilingual.presentation.widget.common.WidgetEntryPoint
 import com.hilingual.presentation.widget.common.WidgetPreviewTheme
 import com.hilingual.presentation.widget.common.WidgetPreviews
@@ -45,9 +47,11 @@ import com.hilingual.core.designsystem.R as DesignSystemR
 
 private val WideTopicWidth = 250.dp
 
-class RecommendedTopicWidget : GlanceAppWidget() {
+class RecommendedTopicWidget(
+    private val previewSize: DpSize = SmallWidgetPreviewSize,
+) : GlanceAppWidget() {
     override val sizeMode: SizeMode = SizeMode.Exact
-    override val previewSizeMode = SizeMode.Single
+    override val previewSizeMode = SizeMode.Responsive(setOf(previewSize))
 
     override suspend fun provideGlance(
         context: Context,
@@ -70,7 +74,10 @@ class RecommendedTopicWidget : GlanceAppWidget() {
         val state = loadState(context)
 
         provideContent {
-            RecommendedTopicWidgetContent(state = state)
+            RecommendedTopicWidgetContent(
+                state = state,
+                isWide = previewSize.width >= WideTopicWidth,
+            )
         }
     }
 

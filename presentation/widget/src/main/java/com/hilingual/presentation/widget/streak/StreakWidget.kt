@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.ColorFilter
@@ -39,6 +40,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.hilingual.core.common.widget.WidgetType
 import com.hilingual.presentation.widget.R
+import com.hilingual.presentation.widget.common.SmallWidgetPreviewSize
 import com.hilingual.presentation.widget.common.WidgetEntryPoint
 import com.hilingual.presentation.widget.common.WidgetPreviewTheme
 import com.hilingual.presentation.widget.common.WidgetPreviews
@@ -59,9 +61,11 @@ private val MinimumRecentDaySize = 24.dp
 private val RecentDaySpacing = 6.dp
 private const val MAX_RECENT_DAY_COUNT = 5
 
-class StreakWidget : GlanceAppWidget() {
+class StreakWidget(
+    private val previewSize: DpSize = SmallWidgetPreviewSize,
+) : GlanceAppWidget() {
     override val sizeMode: SizeMode = SizeMode.Exact
-    override val previewSizeMode = SizeMode.Single
+    override val previewSizeMode = SizeMode.Responsive(setOf(previewSize))
 
     override suspend fun provideGlance(
         context: Context,
@@ -84,7 +88,10 @@ class StreakWidget : GlanceAppWidget() {
         val state = loadState(context)
 
         provideContent {
-            StreakWidgetContent(state = state)
+            StreakWidgetContent(
+                state = state,
+                isWide = previewSize.width >= WideStreakWidth,
+            )
         }
     }
 
