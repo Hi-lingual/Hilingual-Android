@@ -34,6 +34,7 @@ datastorePreferences = "1.2.1"
 material = "1.14.0"
 desugarJdkLibs = "2.1.5"
 browser="1.10.0"
+glance = "1.2.0-rc01"
 
 # Room
 room = "2.8.4"
@@ -128,6 +129,10 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser"}
+androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
+androidx-glance-material = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
+androidx-glance-preview = { group = "androidx.glance", name = "glance-preview", version.ref = "glance" }
+androidx-glance-appwidget-preview = { group = "androidx.glance", name = "glance-appwidget-preview", version.ref = "glance" }
 
 # Coroutines
 coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutine" }

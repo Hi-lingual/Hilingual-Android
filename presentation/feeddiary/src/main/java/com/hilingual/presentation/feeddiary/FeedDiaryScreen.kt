@@ -42,8 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.analytics.FakeTracker
-import com.hilingual.core.common.analytics.Page
-import com.hilingual.core.common.analytics.Page.FEED
+import com.hilingual.core.common.analytics.Page.POSTED_DIARY
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.constant.UrlConstant
@@ -129,13 +128,14 @@ internal fun FeedDiaryRoute(
                         message = it.message,
                         actionLabelText = it.actionLabel,
                         onAction = {
-                            tracker.logEvent(
-                                eventName = "toast_action",
+                            tracker.logGlobalAction(
+                                trigger = TriggerType.NONE,
+                                action = "toast_action",
                                 properties = mapOf(
                                     "toast_action" to "goto_voca",
                                     "entry_id" to viewModel.diaryId,
-                                    "page" to FEED.pageName,
                                 ),
+                                currentPage = POSTED_DIARY,
                             )
                             navigateToVoca()
                         },
@@ -183,7 +183,7 @@ internal fun FeedDiaryRoute(
                             "entry_id" to viewModel.diaryId,
                             "empathy_action" to if (isLiked) "add" else "remove",
                         ),
-                        currentPage = Page.POSTED_DIARY,
+                        currentPage = POSTED_DIARY,
                     )
                     viewModel.toggleIsLiked(isLiked)
                 },
@@ -209,7 +209,7 @@ internal fun FeedDiaryRoute(
                     )
                 },
                 modifier = Modifier.padding(paddingValues),
-                page = Page.POSTED_DIARY,
+                page = POSTED_DIARY,
             )
         }
 
@@ -265,7 +265,7 @@ private fun FeedDiaryScreen(
                 "entry_id" to diaryId,
                 "tab_name" to if (pagerState.currentPage == 0) "grammar_spelling" else "recommend_expression",
             ),
-            currentPage = Page.POSTED_DIARY,
+            currentPage = POSTED_DIARY,
         )
     }
 
@@ -340,7 +340,7 @@ private fun FeedDiaryScreen(
                                 toggleClickCount++
                                 tracker.logPageAction(
                                     trigger = TriggerType.CLICK,
-                                    page = Page.POSTED_DIARY,
+                                    page = POSTED_DIARY,
                                     action = "toggle",
                                     properties = mapOf(
                                         "entry_id" to diaryId,
@@ -349,7 +349,7 @@ private fun FeedDiaryScreen(
                                     ),
                                 )
                             },
-                            page = Page.POSTED_DIARY,
+                            page = POSTED_DIARY,
                         )
 
                         1 -> RecommendExpressionTab(
@@ -358,14 +358,13 @@ private fun FeedDiaryScreen(
                             recommendExpressionList = recommendExpressionList,
                             onBookmarkClick = { phraseId, isMarked ->
                                 tracker.logGlobalAction(
-                                    trigger = TriggerType.CLICK,
+                                    trigger = TriggerType.NONE,
                                     action = "bookmark_action",
                                     properties = mapOf(
                                         "entry_id" to diaryId,
                                         "bookmark_action" to if (isMarked) "add" else "remove",
-                                        "tab_name" to "recommend_expression",
                                     ),
-                                    currentPage = Page.POSTED_DIARY,
+                                    currentPage = POSTED_DIARY,
                                 )
                                 onToggleBookmark(phraseId, isMarked)
                             },

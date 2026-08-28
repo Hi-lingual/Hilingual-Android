@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="recommended_topic_widget_name">오늘의 추천 주제</string>
+    <string name="recommended_topic_widget_description">오늘의 영어 일기 주제를 확인해요</string>
+    <string name="streak_widget_name">연속 작성일 확인</string>
+    <string name="streak_widget_description">나의 연속 작성 일수를 확인할 수 있어요</string>
+</resources>

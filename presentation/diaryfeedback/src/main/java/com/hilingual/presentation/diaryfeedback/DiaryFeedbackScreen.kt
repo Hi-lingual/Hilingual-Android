@@ -48,7 +48,6 @@ import com.hilingual.core.ads.interstitial.showInterstitialAd
 import com.hilingual.core.common.analytics.FakeTracker
 import com.hilingual.core.common.analytics.Page.FEEDBACK
 import com.hilingual.core.common.analytics.Page.FEEDBACK_LOADING
-import com.hilingual.core.common.analytics.Page.VOCABULARY
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.constant.UrlConstant
@@ -153,13 +152,14 @@ internal fun DiaryFeedbackRoute(
                         message = it.message,
                         actionLabelText = it.actionLabel,
                         onAction = {
-                            tracker.logEvent(
-                                eventName = "toast_action",
+                            tracker.logGlobalAction(
+                                trigger = TriggerType.NONE,
+                                action = "toast_action",
                                 properties = mapOf(
-                                    "toast_action" to "goto_voca",
+                                    "toast_action" to "goto_feed",
                                     "entry_id" to viewModel.diaryId,
-                                    "page" to FEEDBACK.pageName,
                                 ),
+                                currentPage = FEEDBACK,
                             )
                             navigateToFeed()
                         },
@@ -184,10 +184,13 @@ internal fun DiaryFeedbackRoute(
                         actionLabelText = it.actionLabel,
                         onAction = {
                             tracker.logGlobalAction(
-                                trigger = TriggerType.CLICK,
+                                trigger = TriggerType.NONE,
                                 action = "toast_action",
-                                properties = mapOf("toast_action" to "goto_voca"),
-                                currentPage = VOCABULARY,
+                                properties = mapOf(
+                                    "toast_action" to "goto_voca",
+                                    "entry_id" to viewModel.diaryId,
+                                ),
+                                currentPage = FEEDBACK,
                             )
                             navigateToVoca()
                         },
@@ -388,12 +391,11 @@ private fun DiaryFeedbackScreen(
                                 recommendExpressionList = data.recommendExpressionList,
                                 onBookmarkClick = { phraseId, isMarked ->
                                     tracker.logGlobalAction(
-                                        trigger = TriggerType.CLICK,
+                                        trigger = TriggerType.NONE,
                                         action = "bookmark_action",
                                         properties = mapOf(
                                             "entry_id" to diaryId,
                                             "bookmark_action" to if (isMarked) "add" else "remove",
-                                            "tab_name" to "recommend_expression",
                                         ),
                                         currentPage = FEEDBACK,
                                     )

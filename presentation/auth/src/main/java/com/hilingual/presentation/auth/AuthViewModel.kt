@@ -20,6 +20,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.analytics.UserIdentityTracker
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.util.suspendRunCatching
+import com.hilingual.core.common.widget.WidgetUpdater
 import com.hilingual.data.auth.repository.AuthRepository
 import com.hilingual.data.onboarding.repository.OnboardingRepository
 import com.hilingual.data.user.repository.UserRepository
@@ -40,6 +42,7 @@ class AuthViewModel @Inject constructor(
     private val onboardingRepository: OnboardingRepository,
     private val userRepository: UserRepository,
     private val userIdentityTracker: UserIdentityTracker,
+    private val widgetUpdater: WidgetUpdater,
 ) : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -89,6 +92,7 @@ class AuthViewModel @Inject constructor(
             putDeviceInfo()
             setUserIdentity(userId)
             syncFcmToken()
+            updateWidget()
             _navigationEvent.tryEmit(AuthSideEffect.NavigateToHome)
         } else {
             _navigationEvent.tryEmit(AuthSideEffect.NavigateToSignUp)
@@ -133,6 +137,13 @@ class AuthViewModel @Inject constructor(
 
     private fun setUserIdentity(userId: Long) {
         userIdentityTracker.setUserId(userId)
+    }
+
+    private suspend fun updateWidget() {
+        suspendRunCatching {
+            widgetUpdater.clearCache()
+            widgetUpdater.updateAll()
+        }.onLogFailure { }
     }
 }
 
