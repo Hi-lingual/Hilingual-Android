@@ -12,8 +12,8 @@ spotless = "8.10.0"
 wisp = "0.2.0"
 
 # App version
-versionCode = "2070100"
-versionName = "2.7.1"
+versionCode = "2070200"
+versionName = "2.7.2"
 
 # Kotlin
 kotlin = "2.4.10"
