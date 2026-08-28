@@ -34,7 +34,7 @@ class AmplitudeTracker @Inject constructor(
 ) : Tracker, UserIdentityTracker {
 
     private val amplitude: Amplitude? = run {
-//        if (BuildConfig.DEBUG) return@run null
+        if (BuildConfig.DEBUG) return@run null
 
         Amplitude(
             Configuration(
@@ -58,10 +58,10 @@ class AmplitudeTracker @Inject constructor(
             allProperties["page"] = currentPage.pageName
         }
 
-//        if (BuildConfig.DEBUG) {
-//            Timber.tag("AmplitudeTracker").d("Tracking global action: $eventName, properties: $allProperties")
-//            return
-//        }
+        if (BuildConfig.DEBUG) {
+            Timber.tag("AmplitudeTracker").d("Tracking global action: $eventName, properties: $allProperties")
+            return
+        }
 
         amplitude?.track(eventName, allProperties)
     }
@@ -74,10 +74,10 @@ class AmplitudeTracker @Inject constructor(
     ) {
         val eventName = "${trigger.value}_${page.pageName}.$action"
 
-//        if (BuildConfig.DEBUG) {
-//            Timber.tag("AmplitudeTracker").d("Tracking page action: $eventName, properties: $properties")
-//            return
-//        }
+        if (BuildConfig.DEBUG) {
+            Timber.tag("AmplitudeTracker").d("Tracking page action: $eventName, properties: $properties")
+            return
+        }
 
         amplitude?.track(eventName, properties.toMutableMap())
     }
