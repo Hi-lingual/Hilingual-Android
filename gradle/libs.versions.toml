@@ -67,7 +67,7 @@ gmaAds = "1.0.1"
 metaAdsAdapter = "6.21.0.3"
 
 # Firebase
-firebaseBom = "34.17.0"
+firebaseBom = "34.18.0"
 firebaseCrashlyticsPlugin = "3.0.7"
 
 # ML Kit
