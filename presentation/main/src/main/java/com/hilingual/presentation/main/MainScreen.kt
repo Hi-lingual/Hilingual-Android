@@ -71,6 +71,7 @@ import com.hilingual.core.common.model.MessageDuration
 import com.hilingual.core.common.provider.LocalAppRestarter
 import com.hilingual.core.common.provider.LocalIsOffline
 import com.hilingual.core.common.provider.LocalTracker
+import com.hilingual.core.common.trigger.DialogReconnectPolicy
 import com.hilingual.core.common.trigger.DialogType
 import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
@@ -140,10 +141,11 @@ internal fun MainScreen(
     var isNetworkErrorOverlayVisible by remember { mutableStateOf(false) }
     var pendingDialogRequest by remember { mutableStateOf<PendingDialogRequest?>(null) }
     val dialogTrigger = rememberDialogTrigger(
-        show = { type, onClick ->
+        show = { type, reconnectPolicy, onClick ->
             val request = PendingDialogRequest(
                 backStackEntry = currentBackStackEntry,
                 type = type,
+                reconnectPolicy = reconnectPolicy,
                 onClick = onClick,
             )
             if (isNetworkErrorOverlayVisible) {
@@ -469,6 +471,7 @@ internal fun MainScreen(
 private data class PendingDialogRequest(
     val backStackEntry: NavBackStackEntry?,
     val type: DialogType,
+    val reconnectPolicy: DialogReconnectPolicy,
     val onClick: () -> Unit,
 )
 

@@ -26,6 +26,11 @@ enum class DialogType {
     NOT_FOUND,
 }
 
+enum class DialogReconnectPolicy {
+    RESTORE,
+    REPLACED_BY_RETRY,
+}
+
 @Immutable
 data class DialogState(
     val isVisible: Boolean = false,
@@ -35,25 +40,26 @@ data class DialogState(
 
 @Stable
 class DialogTrigger(
-    private val onShow: (DialogType, () -> Unit) -> Unit,
+    private val onShow: (DialogType, DialogReconnectPolicy, () -> Unit) -> Unit,
 ) {
     fun show(
         type: DialogType = DialogType.ERROR,
+        reconnectPolicy: DialogReconnectPolicy = DialogReconnectPolicy.RESTORE,
         onClick: () -> Unit,
     ) {
-        onShow(type, onClick)
+        onShow(type, reconnectPolicy, onClick)
     }
 }
 
 @Composable
 fun rememberDialogTrigger(
-    show: (DialogType, () -> Unit) -> Unit,
+    show: (DialogType, DialogReconnectPolicy, () -> Unit) -> Unit,
 ): DialogTrigger {
     val currentShow = rememberUpdatedState(show)
 
     return remember {
-        DialogTrigger { type, onClick ->
-            currentShow.value(type, onClick)
+        DialogTrigger { type, reconnectPolicy, onClick ->
+            currentShow.value(type, reconnectPolicy, onClick)
         }
     }
 }
