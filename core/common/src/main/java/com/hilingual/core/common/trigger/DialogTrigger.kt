@@ -26,9 +26,11 @@ enum class DialogType {
     NOT_FOUND,
 }
 
-enum class DialogReconnectPolicy {
-    RESTORE,
-    REPLACED_BY_RETRY,
+enum class DialogReconnectPolicy(
+    val shouldRestoreAfterReconnect: Boolean,
+) {
+    RESTORE(shouldRestoreAfterReconnect = true),
+    REPLACED_BY_RETRY(shouldRestoreAfterReconnect = false),
 }
 
 @Immutable

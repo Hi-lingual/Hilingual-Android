@@ -211,8 +211,7 @@ internal fun MainScreen(
         } else {
             pendingDialogRequest?.let { request ->
                 pendingDialogRequest = null
-                // Retryable errors are replaced by the reconnect request; terminal errors still need user action.
-                if (request.type == DialogType.NOT_FOUND) {
+                if (request.reconnectPolicy.shouldRestoreAfterReconnect) {
                     appState.dialogStateHolder.showDialog(request.type, request.onClick)
                 }
             }
