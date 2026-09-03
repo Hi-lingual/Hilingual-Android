@@ -29,6 +29,7 @@ import androidx.navigation.navOptions
 import com.hilingual.core.navigation.Route
 import com.hilingual.presentation.notification.detail.NotificationDetailRoute
 import com.hilingual.presentation.notification.main.NotificationRoute
+import com.hilingual.presentation.notification.setting.NotificationReminderSettingRoute
 import com.hilingual.presentation.notification.setting.NotificationSettingRoute
 import kotlinx.serialization.Serializable
 
@@ -46,6 +47,9 @@ internal data class NotificationDetail(val noticeId: Long) : Route
 @Serializable
 internal data object NotificationSetting : Route
 
+@Serializable
+internal data object NotificationReminderSetting : Route
+
 fun NavController.navigateToNotification(navOptions: NavOptions? = null) =
     navigate(NotificationGraph, navOptions)
 
@@ -56,6 +60,9 @@ private fun NavController.navigateToNoticeDetail(
     noticeId: Long,
     navOptions: NavOptions? = null,
 ) = navigate(NotificationDetail(noticeId), navOptions)
+
+fun NavController.navigateToNotificationReminderSetting(navOptions: NavOptions? = null) =
+    navigate(NotificationReminderSetting, navOptions)
 
 fun NavGraphBuilder.notificationNavGraph(
     paddingValues: PaddingValues,
@@ -110,6 +117,23 @@ fun NavGraphBuilder.notificationNavGraph(
             popExitTransition = popExitTransition,
         ) {
             NotificationSettingRoute(
+                paddingValues = paddingValues,
+                navigateUp = navigateUp,
+                navigateToReminderSetting = {
+                    navController.navigateToNotificationReminderSetting(
+                        navOptions = navOptions { launchSingleTop = true },
+                    )
+                },
+            )
+        }
+
+        composable<NotificationReminderSetting>(
+            enterTransition = enterTransition,
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = popExitTransition,
+        ) {
+            NotificationReminderSettingRoute(
                 paddingValues = paddingValues,
                 navigateUp = navigateUp,
             )
