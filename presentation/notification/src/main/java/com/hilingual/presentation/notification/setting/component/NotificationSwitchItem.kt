@@ -40,6 +40,7 @@ internal fun NotificationSwitchItem(
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    description: String? = null,
 ) {
     Row(
         modifier = modifier
@@ -49,11 +50,24 @@ internal fun NotificationSwitchItem(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = text,
-            style = HilingualTheme.typography.bodyR16,
-            color = HilingualTheme.colors.black,
-        )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = text,
+                style = HilingualTheme.typography.bodyM16,
+                color = HilingualTheme.colors.black,
+            )
+
+            if (description != null) {
+                Text(
+                    text = description,
+                    style = HilingualTheme.typography.captionR12,
+                    color = HilingualTheme.colors.gray400
+                )
+            }
+        }
+
         HilingualBasicToggleSwitch(
             isChecked = isChecked,
             onCheckedChange = onCheckedChange,
@@ -74,6 +88,12 @@ private fun NotificationSwitchItemPreview() {
             )
             NotificationSwitchItem(
                 text = "피드 알림",
+                isChecked = isChecked,
+                onCheckedChange = { isChecked = it },
+            )
+            NotificationSwitchItem(
+                text = "일기 작성 리마인드 알림",
+                description = "설정한 시간에 리마인드 알림을 보내드려요.",
                 isChecked = isChecked,
                 onCheckedChange = { isChecked = it },
             )
