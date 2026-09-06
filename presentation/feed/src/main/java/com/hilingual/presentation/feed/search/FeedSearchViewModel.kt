@@ -27,8 +27,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -40,6 +43,9 @@ internal class FeedSearchViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(FeedSearchUiState())
     val uiState: StateFlow<FeedSearchUiState> = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<FeedSearchSideEffect>()
+    val sideEffect: SharedFlow<FeedSearchSideEffect> = _sideEffect.asSharedFlow()
 
     fun updateSearchWord(searchWord: String) {
         _uiState.update { it.copy(searchWord = searchWord) }
@@ -96,7 +102,17 @@ internal class FeedSearchViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(searchResultUserList = UiState.Success(updatedList))
                 }
-            }.onLogFailure { }
+            }.onLogFailure {
+                _sideEffect.emit(
+                    FeedSearchSideEffect.ShowErrorDialog {
+                        updateFollowingState(userId, currentIsFollowing)
+                    },
+                )
+            }
         }
     }
+}
+
+sealed interface FeedSearchSideEffect {
+    data class ShowErrorDialog(val onRetry: () -> Unit) : FeedSearchSideEffect
 }

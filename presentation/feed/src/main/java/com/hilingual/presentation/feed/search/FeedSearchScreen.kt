@@ -34,7 +34,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.subScreenPadding
+import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -54,6 +56,13 @@ internal fun FeedSearchRoute(
     viewModel: FeedSearchViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val dialogTrigger = LocalDialogTrigger.current
+
+    viewModel.sideEffect.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is FeedSearchSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = sideEffect.onRetry)
+        }
+    }
 
     LaunchedEffect(Unit) {
         if (uiState.searchWord.isNotBlank()) {
