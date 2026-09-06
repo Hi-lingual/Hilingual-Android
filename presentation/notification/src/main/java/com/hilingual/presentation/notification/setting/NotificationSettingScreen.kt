@@ -80,8 +80,8 @@ internal fun NotificationSettingRoute(
                 isNotificationSettingDialogVisible = true
             }
 
-            is NotificationSettingSideEffect.ShowErrorDialog -> {
-                dialogTrigger.show(onClick = sideEffect.onRetry)
+            NotificationSettingSideEffect.ShowErrorDialog -> {
+                dialogTrigger.show(onClick = {})
             }
         }
     }
