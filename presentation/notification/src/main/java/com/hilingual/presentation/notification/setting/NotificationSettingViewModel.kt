@@ -139,6 +139,11 @@ internal class NotificationSettingViewModel @Inject constructor(
                 }
                 .onLogFailure {
                     _uiState.update { UiState.Success(serverState.value) }
+                    _sideEffect.emit(
+                        NotificationSettingSideEffect.ShowErrorDialog {
+                            updateNotificationSetting(notiType)
+                        },
+                    )
                 }
         }
     }
@@ -151,4 +156,5 @@ private enum class NotiType {
 
 internal sealed interface NotificationSettingSideEffect {
     data object ShowPermissionDialog : NotificationSettingSideEffect
+    data class ShowErrorDialog(val onRetry: () -> Unit) : NotificationSettingSideEffect
 }
