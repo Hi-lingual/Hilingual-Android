@@ -204,7 +204,7 @@ internal class FeedViewModel @Inject constructor(
                     }
                     if (isLiked) showLikeSnackbar()
                 }.onLogFailure {
-                    emitErrorDialogSideEffect { toggleIsLiked(diaryId, isLiked) }
+                    emitErrorDialogSideEffect { }
                 }
         }
     }
@@ -225,7 +225,7 @@ internal class FeedViewModel @Inject constructor(
                         )
                     }
                 }.onLogFailure {
-                    emitErrorDialogSideEffect { diaryUnpublish(diaryId) }
+                    emitErrorDialogSideEffect { }
                 }
         }
     }

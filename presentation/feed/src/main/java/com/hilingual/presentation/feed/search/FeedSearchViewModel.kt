@@ -103,16 +103,12 @@ internal class FeedSearchViewModel @Inject constructor(
                     it.copy(searchResultUserList = UiState.Success(updatedList))
                 }
             }.onLogFailure {
-                _sideEffect.emit(
-                    FeedSearchSideEffect.ShowErrorDialog {
-                        updateFollowingState(userId, currentIsFollowing)
-                    },
-                )
+                _sideEffect.emit(FeedSearchSideEffect.ShowErrorDialog)
             }
         }
     }
 }
 
 sealed interface FeedSearchSideEffect {
-    data class ShowErrorDialog(val onRetry: () -> Unit) : FeedSearchSideEffect
+    data object ShowErrorDialog : FeedSearchSideEffect
 }

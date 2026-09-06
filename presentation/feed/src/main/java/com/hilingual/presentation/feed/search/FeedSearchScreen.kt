@@ -60,7 +60,7 @@ internal fun FeedSearchRoute(
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is FeedSearchSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = sideEffect.onRetry)
+            FeedSearchSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = {})
         }
     }
 
