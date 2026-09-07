@@ -16,6 +16,7 @@
 package com.hilingual.core.common.analytics
 
 enum class TriggerType(val value: String) {
+    NONE(""),
     CLICK("click"),
     VIEW("view"),
 }

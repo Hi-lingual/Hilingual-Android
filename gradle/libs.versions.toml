@@ -7,13 +7,13 @@ googleServices = "4.5.0"
 minSdk = "30"
 targetSdk = "36"
 jvmTarget = "17"
-androidGradlePlugin = "9.3.1"
+androidGradlePlugin = "9.3.2"
 spotless = "8.10.0"
 wisp = "0.2.0"
 
 # App version
-versionCode = "2070100"
-versionName = "2.7.1"
+versionCode = "2070200"
+versionName = "2.7.2"
 
 # Kotlin
 kotlin = "2.4.10"
@@ -28,12 +28,13 @@ lifecycleRuntimeKtx = "2.11.0"
 lifecycleRuntimeComposeAndroid = "2.11.0"
 activityCompose = "1.13.0"
 composeBom = "2026.08.00"
-composeNavigation = "2.9.8"
+composeNavigation = "2.10.0"
 security = "1.1.0"
 datastorePreferences = "1.2.1"
 material = "1.14.0"
 desugarJdkLibs = "2.1.5"
 browser="1.10.0"
+glance = "1.2.0-rc01"
 
 # Room
 room = "2.8.4"
@@ -61,13 +62,13 @@ coroutine = "1.11.0"
 ktlint = "14.2.0"
 pebble = "0.1.0"
 balloonCompose = "1.7.6"
-richeditorCompose = "1.0.0"
+richeditorCompose = "1.2.0"
 gmaAds = "1.0.1"
 metaAdsAdapter = "6.21.0.3"
 
 # Firebase
-firebaseBom = "34.17.0"
-firebaseCrashlyticsPlugin = "3.0.7"
+firebaseBom = "34.18.0"
+firebaseCrashlyticsPlugin = "3.0.8"
 
 # ML Kit
 mlkitTextRecognition = "16.0.1"
@@ -75,12 +76,12 @@ coroutinesPlayServices = "1.11.0"
 
 uiautomator = "2.4.0"
 benchmarkMacroJunit4 = "1.4.1"
-baselineprofile = "1.5.0-rc01"
+baselineprofile = "1.5.0-rc02"
 profileinstaller = "1.4.1"
 runner = "1.7.0"
 
 # AboutLibraries
-aboutLibraries = "15.0.4"
+aboutLibraries = "15.2.0"
 amplitude = "1.30.1"
 
 [libraries]
@@ -128,6 +129,10 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser"}
+androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
+androidx-glance-material = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
+androidx-glance-preview = { group = "androidx.glance", name = "glance-preview", version.ref = "glance" }
+androidx-glance-appwidget-preview = { group = "androidx.glance", name = "glance-appwidget-preview", version.ref = "glance" }
 
 # Coroutines
 coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutine" }

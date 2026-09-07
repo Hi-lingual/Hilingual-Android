@@ -47,6 +47,7 @@ include(":data:presigned")
 include(":data:config")
 include(":data:onboarding")
 include(":data:notification")
+include(":data:widget")
 
 //presentation
 include(":presentation:auth")
@@ -63,6 +64,7 @@ include(":presentation:notification")
 include(":presentation:feeddiary")
 include(":presentation:signup")
 include(":presentation:onboarding")
+include(":presentation:widget")
 
 // Benchmarks
 include(":baselineprofile")

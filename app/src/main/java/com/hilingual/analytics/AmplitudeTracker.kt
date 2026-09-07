@@ -45,31 +45,13 @@ class AmplitudeTracker @Inject constructor(
         )
     }
 
-    override fun setUserId(userId: Long) {
-        if (BuildConfig.DEBUG) {
-            Timber.tag("AmplitudeTracker").d("Set userId: $userId")
-            return
-        }
-
-        amplitude?.setUserId(userId.toString())
-    }
-
-    override fun clearUserId() {
-        if (BuildConfig.DEBUG) {
-            Timber.tag("AmplitudeTracker").d("Clear userId")
-            return
-        }
-
-        amplitude?.setUserId(null)
-    }
-
     override fun logGlobalAction(
         trigger: TriggerType,
         action: String,
         properties: Map<String, Any>,
         currentPage: Page?,
     ) {
-        val eventName = "${trigger.value}_$action"
+        val eventName = if (trigger == TriggerType.NONE) action else "${trigger.value}_$action"
         val allProperties = properties.toMutableMap()
 
         if (currentPage != null) {
@@ -98,5 +80,23 @@ class AmplitudeTracker @Inject constructor(
         }
 
         amplitude?.track(eventName, properties.toMutableMap())
+    }
+
+    override fun setUserId(userId: Long) {
+        if (BuildConfig.DEBUG) {
+            Timber.tag("AmplitudeTracker").d("Set userId: $userId")
+            return
+        }
+
+        amplitude?.setUserId(userId.toString())
+    }
+
+    override fun clearUserId() {
+        if (BuildConfig.DEBUG) {
+            Timber.tag("AmplitudeTracker").d("Clear userId")
+            return
+        }
+
+        amplitude?.setUserId(null)
     }
 }
