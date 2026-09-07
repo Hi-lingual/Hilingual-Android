@@ -133,7 +133,6 @@ internal class NotificationSettingViewModel @Inject constructor(
         viewModelScope.launch { feedToggleFlow.emit(isChecked) }
     }
 
-    /** 리마인드 토글을 켤 때는 화면 이동만 하고, 실제 활성화는 시간 설정 화면의 저장 시점에 일어난다. */
     fun disableReminder() {
         val currentUiState = _uiState.value
         if (currentUiState !is UiState.Success) return
@@ -152,7 +151,6 @@ internal class NotificationSettingViewModel @Inject constructor(
         }
     }
 
-    /** 다른 화면(시간 설정)에서 저장하고 돌아왔을 때 최신 상태를 다시 읽어온다. */
     fun refreshReminderState() {
         val currentUiState = _uiState.value
         if (currentUiState !is UiState.Success) return

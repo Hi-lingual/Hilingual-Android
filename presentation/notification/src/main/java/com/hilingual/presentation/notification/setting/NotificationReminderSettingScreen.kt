@@ -143,7 +143,9 @@ private fun NotificationReminderSettingScreen(
                     style = HilingualTheme.typography.bodyR14,
                     color = HilingualTheme.colors.gray500,
                 )
+
                 Spacer(modifier = Modifier.width(4.dp))
+
                 HilingualBasicToggleSwitch(
                     isChecked = uiState.isDailyRepeat,
                     onCheckedChange = onDailyRepeatChange,
@@ -154,7 +156,9 @@ private fun NotificationReminderSettingScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             DayOfWeek.entries.forEach { day ->
@@ -171,7 +175,9 @@ private fun NotificationReminderSettingScreen(
         HilingualButton(
             text = "저장하기",
             onClick = onSaveClick,
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
         )
     }
 }
