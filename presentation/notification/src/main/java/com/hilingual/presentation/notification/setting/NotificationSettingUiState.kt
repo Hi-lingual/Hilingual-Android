@@ -21,5 +21,5 @@ import androidx.compose.runtime.Immutable
 internal data class NotificationSettingUiState(
     val isMarketingChecked: Boolean = false,
     val isFeedChecked: Boolean = false,
-    val isReminderChecked : Boolean = false,
+    val isReminderChecked: Boolean = false,
 )

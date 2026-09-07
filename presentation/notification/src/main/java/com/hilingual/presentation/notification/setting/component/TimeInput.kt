@@ -3,8 +3,10 @@ package com.hilingual.presentation.notification.setting.component
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerDefaults
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -14,10 +16,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.hilingual.core.designsystem.theme.HilingualTheme
-import androidx.compose.material3.rememberTimePickerState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.designsystem.theme.HilingualTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,7 +50,7 @@ internal fun HilingualTimeInput(
 
     MaterialTheme(
         colorScheme = MaterialTheme.colorScheme.copy(
-            onSurfaceVariant = HilingualTheme.colors.gray500
+            onSurfaceVariant = HilingualTheme.colors.gray500,
         ),
     ) {
         TimeInput(

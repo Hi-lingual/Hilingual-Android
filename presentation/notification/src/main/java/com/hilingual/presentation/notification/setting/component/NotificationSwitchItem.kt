@@ -51,7 +51,7 @@ internal fun NotificationSwitchItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
                 text = text,
@@ -63,7 +63,7 @@ internal fun NotificationSwitchItem(
                 Text(
                     text = description,
                     style = HilingualTheme.typography.captionR12,
-                    color = HilingualTheme.colors.gray400
+                    color = HilingualTheme.colors.gray400,
                 )
             }
         }

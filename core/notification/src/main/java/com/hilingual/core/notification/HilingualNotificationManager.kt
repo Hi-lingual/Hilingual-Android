@@ -209,7 +209,7 @@ class HilingualNotificationManager @Inject constructor(
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID_DAILY)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle("일기 쓸 시간이에요.")
+            .setContentTitle("일기 쓸 시간이에요 ⏰")
             .setContentText("지금 떠오르는 생각을 영어로 기록해 보세요.")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)

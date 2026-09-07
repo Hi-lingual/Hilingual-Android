@@ -6,9 +6,9 @@ import androidx.datastore.preferences.core.edit
 import com.hilingual.core.localstorage.constant.ReminderDataStoreKey
 import com.hilingual.core.localstorage.di.qualifier.ReminderDataStore
 import com.hilingual.core.localstorage.model.ReminderPreference
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 class ReminderPreferenceDataSource @Inject constructor(
     @ReminderDataStore private val dataStore: DataStore<Preferences>,

@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 class BootCompletedReceiver : BroadcastReceiver() {
 
     @Inject lateinit var reminderPreferenceDataSource: ReminderPreferenceDataSource
+
     @Inject lateinit var reminderScheduler: ReminderScheduler
 
     override fun onReceive(context: Context, intent: Intent) {

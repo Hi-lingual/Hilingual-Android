@@ -17,7 +17,9 @@ import kotlinx.coroutines.launch
 class ReminderAlarmReceiver : BroadcastReceiver() {
 
     @Inject lateinit var reminderPreferenceDataSource: ReminderPreferenceDataSource
+
     @Inject lateinit var reminderScheduler: ReminderScheduler
+
     @Inject lateinit var notificationManager: HilingualNotificationManager
 
     override fun onReceive(context: Context, intent: Intent) {

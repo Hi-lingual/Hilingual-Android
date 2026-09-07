@@ -68,6 +68,11 @@ internal class SplashViewModel @Inject constructor(
     private fun checkAppVersion() {
         val currentVersion = AppVersion(deviceInfoProvider.getAppVersion())
 
+        if (BuildConfig.DEBUG) {
+            checkIsSplashOnboardingCompleted()
+            return
+        }
+
         viewModelScope.launch {
             configRepository.getAppVersionInfo()
                 .onSuccess { info ->

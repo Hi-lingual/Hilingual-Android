@@ -207,7 +207,7 @@ private fun NotificationSettingScreen(
             modifier = Modifier.noRippleClickable(
                 enabled = isReminderChecked,
                 onClick = onReminderSectionClick,
-            )
+            ),
 
         )
     }
