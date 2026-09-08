@@ -37,6 +37,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
@@ -60,6 +61,7 @@ internal fun NotificationSettingRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isNotificationGranted by viewModel.isNotificationGranted.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val dialogTrigger = LocalDialogTrigger.current
 
     var isNotificationSettingDialogVisible by remember { mutableStateOf(false) }
 
@@ -76,6 +78,10 @@ internal fun NotificationSettingRoute(
         when (sideEffect) {
             NotificationSettingSideEffect.ShowPermissionDialog -> {
                 isNotificationSettingDialogVisible = true
+            }
+
+            NotificationSettingSideEffect.ShowErrorDialog -> {
+                dialogTrigger.show(onClick = {})
             }
         }
     }
