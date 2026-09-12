@@ -186,6 +186,43 @@ class HilingualNotificationManager @Inject constructor(
         else -> "social"
     }
 
+    fun showDiaryReminderNotification() {
+        if (notificationManager?.areNotificationsEnabled() != true) {
+            Timber.e("Notifications are disabled for this app.")
+            return
+        }
+
+        val pendingIntent = context.packageManager
+            .getLaunchIntentForPackage(context.packageName)
+            ?.apply {
+                addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                putExtra(EXTRA_NOTIFICATION_TYPE, "reminder_custom")
+            }
+            ?.let {
+                PendingIntent.getActivity(
+                    context,
+                    NOTIFICATION_ID_CUSTOM_REMINDER,
+                    it,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                )
+            }
+
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID_DAILY)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle("일기 쓸 시간이에요 ⏰")
+            .setContentText("지금 떠오르는 생각을 영어로 기록해 보세요.")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+
+        if (pendingIntent != null) {
+            builder.setContentIntent(pendingIntent)
+        } else {
+            Timber.e("PendingIntent is null.")
+        }
+
+        notificationManager.notify(NOTIFICATION_ID_CUSTOM_REMINDER, builder.build())
+    }
+
     companion object {
         private const val CHANNEL_ID_DAILY = "channel_daily_notification"
         private const val CHANNEL_ID_WEEKLY = "channel_weekly_notification"
@@ -196,6 +233,7 @@ class HilingualNotificationManager @Inject constructor(
         private const val NOTIFICATION_ID_DAILY = 1001
         private const val NOTIFICATION_ID_WEEKLY = 1002
         private const val NOTIFICATION_ID_SOCIAL_SUMMARY = 1003
+        private const val NOTIFICATION_ID_CUSTOM_REMINDER = 1004
 
         private const val GROUP_KEY_SOCIAL = "group_social_notification"
 

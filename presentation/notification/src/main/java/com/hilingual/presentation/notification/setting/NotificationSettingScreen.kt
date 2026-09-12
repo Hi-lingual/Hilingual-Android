@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +38,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
@@ -44,6 +46,7 @@ import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
+import com.hilingual.presentation.notification.setting.component.NotificationReminderDialog
 import com.hilingual.presentation.notification.setting.component.NotificationSettingBanner
 import com.hilingual.presentation.notification.setting.component.NotificationSettingDialog
 import com.hilingual.presentation.notification.setting.component.NotificationSwitchItem
@@ -55,6 +58,7 @@ private const val ENABLE_PUSH_NOTIFICATION = true
 internal fun NotificationSettingRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
+    navigateToReminderSetting: () -> Unit,
     viewModel: NotificationSettingViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -70,6 +74,7 @@ internal fun NotificationSettingRoute(
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         checkNotificationPermission()
+        viewModel.refreshReminderState()
     }
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
@@ -105,6 +110,15 @@ internal fun NotificationSettingRoute(
                     onMarketingCheckedChange = viewModel::updateMarketingChecked,
                     isFeedChecked = state.data.isFeedChecked,
                     onFeedCheckedChange = viewModel::updateFeedChecked,
+                    isReminderChecked = state.data.isReminderChecked,
+                    onReminderCheckedChange = { isChecked ->
+                        if (isChecked) {
+                            navigateToReminderSetting()
+                        } else {
+                            viewModel.disableReminder()
+                        }
+                    },
+                    onReminderSectionClick = navigateToReminderSetting,
                     isNotificationGranted = granted,
                     onBannerClick = navigateToSettings,
                     isPermissionDialogVisible = isNotificationSettingDialogVisible,
@@ -139,6 +153,9 @@ private fun NotificationSettingScreen(
     onMarketingCheckedChange: (Boolean) -> Unit,
     isFeedChecked: Boolean,
     onFeedCheckedChange: (Boolean) -> Unit,
+    isReminderChecked: Boolean,
+    onReminderCheckedChange: (Boolean) -> Unit,
+    onReminderSectionClick: () -> Unit,
     isNotificationGranted: Boolean,
     onBannerClick: () -> Unit,
     isPermissionDialogVisible: Boolean,
@@ -176,9 +193,32 @@ private fun NotificationSettingScreen(
             isChecked = isFeedChecked,
             onCheckedChange = onFeedCheckedChange,
         )
+
+        HorizontalDivider(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            color = HilingualTheme.colors.gray200,
+        )
+
+        NotificationSwitchItem(
+            text = "일기 작성 리마인드 알림",
+            description = "설정한 시간에 리마인드 알림을 보내드려요.",
+            isChecked = isReminderChecked,
+            onCheckedChange = onReminderCheckedChange,
+            modifier = Modifier.noRippleClickable(
+                enabled = isReminderChecked,
+                onClick = onReminderSectionClick,
+            ),
+
+        )
     }
 
     NotificationSettingDialog(
+        isVisible = ENABLE_PUSH_NOTIFICATION && isPermissionDialogVisible,
+        onDismiss = onPermissionDialogDismiss,
+        onConfirmClick = onPermissionDialogConfirm,
+    )
+
+    NotificationReminderDialog(
         isVisible = ENABLE_PUSH_NOTIFICATION && isPermissionDialogVisible,
         onDismiss = onPermissionDialogDismiss,
         onConfirmClick = onPermissionDialogConfirm,
@@ -190,6 +230,7 @@ private fun NotificationSettingScreen(
 private fun NotificationSettingScreenPreview() {
     var isMarketingChecked by remember { mutableStateOf(true) }
     var isFeedChecked by remember { mutableStateOf(false) }
+    var isReminderChecked by remember { mutableStateOf(false) }
 
     HilingualTheme {
         NotificationSettingScreen(
@@ -197,6 +238,9 @@ private fun NotificationSettingScreenPreview() {
             onMarketingCheckedChange = { isMarketingChecked = it },
             isFeedChecked = isFeedChecked,
             onFeedCheckedChange = { isFeedChecked = it },
+            isReminderChecked = isReminderChecked,
+            onReminderCheckedChange = { isReminderChecked = it },
+            onReminderSectionClick = {},
             isNotificationGranted = false,
             onBannerClick = {},
             paddingValues = PaddingValues(0.dp),
