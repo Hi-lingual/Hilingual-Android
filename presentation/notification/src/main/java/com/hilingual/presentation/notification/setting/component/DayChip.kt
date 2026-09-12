@@ -27,26 +27,32 @@ internal fun DayChip(
             .size(37.dp)
             .clip(CircleShape)
             .background(
-                if (isSelected) HilingualTheme.colors.hilingualOrange else HilingualTheme.colors.gray200
+                if (isSelected) HilingualTheme.colors.hilingualOrange else HilingualTheme.colors.gray200,
             )
             .noRippleClickable(onClick = onClick),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = label,
             style = HilingualTheme.typography.bodyM15,
-            color = if (isSelected) HilingualTheme.colors.white else HilingualTheme.colors.gray500
+            color = if (isSelected) HilingualTheme.colors.white else HilingualTheme.colors.gray500,
         )
     }
 }
 
 internal enum class DayOfWeek(val label: String) {
-    SUN("일"), MON("월"), TUE("화"), WED("수"), THU("목"), FRI("금"), SAT("토")
+    SUN("일"),
+    MON("월"),
+    TUE("화"),
+    WED("수"),
+    THU("목"),
+    FRI("금"),
+    SAT("토"),
 }
 
 @Preview
 @Composable
-private fun DayChipPreview(){
+private fun DayChipPreview() {
     HilingualTheme {
         Column {
             DayChip(label = "월", isSelected = true, onClick = {})

@@ -74,8 +74,11 @@ internal fun NotificationReminderSettingRoute(
                 },
             )
         }
+
         is UiState.Loading -> {}
+
         is UiState.Failure -> {}
+
         else -> {}
     }
 }
