@@ -29,6 +29,8 @@ jobs:
 
             - name: Set up Android SDK
               uses: android-actions/setup-android@v4
+              with:
+                  packages: platform-tools
 
             - name: Create local.properties from secret
               env:
@@ -61,6 +63,8 @@ jobs:
 
             - name: Set up Android SDK
               uses: android-actions/setup-android@v4
+              with:
+                  packages: platform-tools
 
             - name: Create local.properties from secret
               env:
@@ -110,6 +114,8 @@ jobs:
 
             - name: Set up Android SDK
               uses: android-actions/setup-android@v4
+              with:
+                  packages: platform-tools
 
             - name: Create required files from secrets
               env:
