@@ -29,6 +29,8 @@ import androidx.compose.runtime.setValue
 import androidx.core.net.toUri
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.app.AppRestarter
+import com.hilingual.core.common.widget.EXTRA_WIDGET_TYPE
+import com.hilingual.core.common.widget.WidgetType
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.network.monitor.NetworkMonitor
 import com.hilingual.core.notification.HilingualNotificationManager
@@ -52,6 +54,9 @@ class MainActivity : ComponentActivity() {
     /** 푸시 알림으로 진입한 경우에만 채워진다. */
     private var pendingNotificationType by mutableStateOf<String?>(null)
 
+    /** 위젯으로 진입한 경우에만 채워진다. */
+    private var pendingWidgetType by mutableStateOf<WidgetType?>(null)
+
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,11 +65,13 @@ class MainActivity : ComponentActivity() {
 
         if (savedInstanceState == null) {
             pendingNotificationType = consumeNotificationType(intent)
+            pendingWidgetType = consumeWidgetType(intent)
             pendingDeepLinkUri = consumeDeepLinkUri(intent)
         }
 
         addOnNewIntentListener { newIntent ->
             consumeNotificationType(newIntent)?.let { pendingNotificationType = it }
+            consumeWidgetType(newIntent)?.let { pendingWidgetType = it }
             consumeDeepLinkUri(newIntent)?.let { pendingDeepLinkUri = it }
         }
 
@@ -77,9 +84,11 @@ class MainActivity : ComponentActivity() {
                     appRestarter = appRestarter,
                     deepLinkUri = pendingDeepLinkUri,
                     notificationType = pendingNotificationType,
+                    widgetType = pendingWidgetType,
                     onDeepLinkConsumed = {
                         pendingDeepLinkUri = null
                         pendingNotificationType = null
+                        pendingWidgetType = null
                     },
                 )
             }
@@ -101,6 +110,12 @@ class MainActivity : ComponentActivity() {
     private fun consumeNotificationType(intent: Intent?): String? {
         val type = intent?.getStringExtra(HilingualNotificationManager.EXTRA_NOTIFICATION_TYPE)
         intent?.removeExtra(HilingualNotificationManager.EXTRA_NOTIFICATION_TYPE)
+        return type
+    }
+
+    private fun consumeWidgetType(intent: Intent?): WidgetType? {
+        val type = WidgetType.from(intent?.getStringExtra(EXTRA_WIDGET_TYPE))
+        intent?.removeExtra(EXTRA_WIDGET_TYPE)
         return type
     }
 }

@@ -76,6 +76,7 @@ import com.hilingual.core.common.trigger.LocalDialogTrigger
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.trigger.LocalReconnectEvents
 import com.hilingual.core.common.trigger.rememberDialogTrigger
+import com.hilingual.core.common.widget.WidgetType
 import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
 import com.hilingual.core.designsystem.component.snackbar.HilingualActionSnackbar
 import com.hilingual.core.designsystem.component.toast.TextToast
@@ -124,6 +125,7 @@ internal fun MainScreen(
     appRestarter: AppRestarter,
     deepLinkUri: Uri? = null,
     notificationType: String? = null,
+    widgetType: WidgetType? = null,
     onDeepLinkConsumed: () -> Unit,
 ) {
     val isOffline by appState.isOffline.collectAsStateWithLifecycle()
@@ -352,8 +354,8 @@ internal fun MainScreen(
                     )
                 }
 
-                LaunchedEffect(appState.navController, deepLinkUri, notificationType) {
-                    if (deepLinkUri == null && notificationType == null) return@LaunchedEffect
+                LaunchedEffect(appState.navController, deepLinkUri, notificationType, widgetType) {
+                    if (deepLinkUri == null && notificationType == null && widgetType == null) return@LaunchedEffect
 
                     val entry = appState.navController.currentBackStackEntryFlow
                         .first { !it.destination.hasRoute(Splash::class) }
@@ -367,6 +369,12 @@ internal fun MainScreen(
                         if (result is WispResult.Failure) {
                             Timber.e(result.error, "Failed to navigate to deep link: $deepLinkUri")
                             onShowMessage(Toast("연결할 수 없는 링크예요."))
+                        } else if (widgetType != null) {
+                            tracker.logGlobalAction(
+                                trigger = TriggerType.CLICK,
+                                action = "widget",
+                                properties = mapOf("widget_type" to widgetType.value),
+                            )
                         }
                     }
 
