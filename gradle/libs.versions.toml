@@ -2,7 +2,7 @@
 # Build Configuration
 compileSdk = "37"
 credentials = "1.6.0"
-googleid = "1.2.0"
+googleid = "1.2.1"
 googleServices = "4.5.0"
 minSdk = "30"
 targetSdk = "36"
