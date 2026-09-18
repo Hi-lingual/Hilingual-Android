@@ -150,7 +150,9 @@ private fun NotificationReminderSettingScreen(
                     style = HilingualTheme.typography.bodyR14,
                     color = HilingualTheme.colors.gray500,
                 )
+
                 Spacer(modifier = Modifier.width(4.dp))
+
                 HilingualBasicToggleSwitch(
                     isChecked = uiState.isDailyRepeat,
                     onCheckedChange = onDailyRepeatChange,
@@ -180,7 +182,9 @@ private fun NotificationReminderSettingScreen(
         HilingualButton(
             text = "저장하기",
             onClick = onSaveClick,
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
         )
     }
 }
