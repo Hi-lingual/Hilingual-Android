@@ -7,6 +7,6 @@ import com.hilingual.presentation.notification.setting.component.DayOfWeek
 internal data class NotificationReminderSettingUiState(
     val hour: Int = 0,
     val minute: Int = 0,
-    val isDailyRepeat: Boolean = false,
+    val isDailyRepeat: Boolean = true,
     val selectedDays: Set<DayOfWeek> = DayOfWeek.entries.toSet(),
 )

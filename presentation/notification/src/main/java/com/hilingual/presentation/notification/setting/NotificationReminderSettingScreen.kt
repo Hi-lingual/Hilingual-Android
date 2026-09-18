@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.component.toggle.HilingualBasicToggleSwitch
@@ -42,12 +44,17 @@ internal fun NotificationReminderSettingRoute(
     viewModel: NotificationReminderSettingViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val messageController = LocalMessageController.current
     var isExitDialogVisible by remember { mutableStateOf(false) }
 
     viewModel.sideEffect.collectSideEffect { effect ->
         when (effect) {
             NotificationReminderSettingSideEffect.NavigateUp -> navigateUp()
+
             NotificationReminderSettingSideEffect.ShowExitDialog -> isExitDialogVisible = true
+
+            is NotificationReminderSettingSideEffect.ShowToast ->
+                messageController(HilingualMessage.Toast(effect.text))
         }
     }
 
@@ -143,9 +150,7 @@ private fun NotificationReminderSettingScreen(
                     style = HilingualTheme.typography.bodyR14,
                     color = HilingualTheme.colors.gray500,
                 )
-
                 Spacer(modifier = Modifier.width(4.dp))
-
                 HilingualBasicToggleSwitch(
                     isChecked = uiState.isDailyRepeat,
                     onCheckedChange = onDailyRepeatChange,
@@ -165,7 +170,7 @@ private fun NotificationReminderSettingScreen(
                 DayChip(
                     label = day.label,
                     isSelected = day in uiState.selectedDays,
-                    onClick = { if (!uiState.isDailyRepeat) onDayClick(day) },
+                    onClick = { onDayClick(day) },
                 )
             }
         }

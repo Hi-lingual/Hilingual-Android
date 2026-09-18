@@ -56,18 +56,18 @@ internal class NotificationReminderSettingViewModel @Inject constructor(
         _uiState.updateSuccess {
             it.copy(
                 isDailyRepeat = isChecked,
-                selectedDays = if (isChecked) DayOfWeek.entries.toSet() else emptySet(),
+                selectedDays = if (isChecked) DayOfWeek.entries.toSet() else it.selectedDays,
             )
         }
     }
 
     fun toggleDay(day: DayOfWeek) {
-        val current = (_uiState.value as? UiState.Success)?.data ?: return
-        if (current.isDailyRepeat) return
-
         _uiState.updateSuccess {
             val newDays = if (day in it.selectedDays) it.selectedDays - day else it.selectedDays + day
-            it.copy(selectedDays = newDays)
+            it.copy(
+                selectedDays = newDays,
+                isDailyRepeat = newDays.size == DayOfWeek.entries.size,
+            )
         }
     }
 
@@ -88,6 +88,12 @@ internal class NotificationReminderSettingViewModel @Inject constructor(
 
     fun save() {
         val current = (_uiState.value as? UiState.Success)?.data ?: return
+        if (current.selectedDays.isEmpty()) {
+            viewModelScope.launch {
+                _sideEffect.emit(NotificationReminderSettingSideEffect.ShowToast("반복할 요일을 하나 이상 선택해주세요."))
+            }
+            return
+        }
         viewModelScope.launch {
             val pref = ReminderPreference(
                 isEnabled = true,
@@ -107,4 +113,5 @@ internal class NotificationReminderSettingViewModel @Inject constructor(
 internal sealed interface NotificationReminderSettingSideEffect {
     data object NavigateUp : NotificationReminderSettingSideEffect
     data object ShowExitDialog : NotificationReminderSettingSideEffect
+    data class ShowToast(val text: String) : NotificationReminderSettingSideEffect
 }
