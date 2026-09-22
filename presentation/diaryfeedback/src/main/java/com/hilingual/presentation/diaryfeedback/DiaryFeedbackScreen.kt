@@ -144,7 +144,7 @@ internal fun DiaryFeedbackRoute(
             }
 
             is DiaryFeedbackSideEffect.ShowErrorDialog ->
-                dialogTrigger.show(onClick = navigateUp)
+                dialogTrigger.show(onClick = {})
 
             is DiaryFeedbackSideEffect.ShowDiaryPublishSnackbar -> {
                 messageController(
