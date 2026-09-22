@@ -24,6 +24,15 @@ android {
 }
 
 dependencies {
-    implementation(libs.richeditor.compose)
+    implementation(projects.core.localstorage)
+    implementation(projects.core.work)
+    implementation(libs.richeditor.compose) {
+        exclude(group = "org.jetbrains.compose.foundation")
+        exclude(group = "org.jetbrains.compose.material")
+        exclude(group = "org.jetbrains.compose.material3")
+        exclude(group = "org.jetbrains.compose.animation")
+        exclude(group = "org.jetbrains.compose.runtime")
+        exclude(group = "org.jetbrains.compose.ui")
+    }
     implementation(projects.data.user)
 }
