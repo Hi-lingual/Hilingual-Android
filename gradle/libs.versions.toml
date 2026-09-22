@@ -37,7 +37,7 @@ browser="1.10.0"
 glance = "1.2.0"
 
 # Room
-room = "2.8.4"
+room = "2.8.5"
 
 # WorkManager
 work = "2.11.2"
