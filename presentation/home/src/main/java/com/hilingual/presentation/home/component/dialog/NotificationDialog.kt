@@ -38,12 +38,12 @@ internal fun NotificationDialog(
     if (state.isVisible) {
         TwoButtonDialog(
             cancelText = "나중에 보기",
-            confirmText = "알림 키러가기",
-            title = "중요한 소식을 놓치지 마세요.",
+            confirmText = "알림 설정 변경하기",
+            title = "알림이 꺼져있어요!",
             onNegative = onDismiss,
             onPositive = onConfirm,
             onDismiss = onDismiss,
-            description = "알림을 키고 누가 당신의 일기에 반응했는지\n바로 확인해 보세요.",
+            description = "알림을 켜면 리마인드 알림을 받고\n누가 당신의 일기에 반응했는지 바로 알 수 있어요.",
             properties = DialogProperties(
                 dismissOnBackPress = true,
                 dismissOnClickOutside = true,
@@ -55,7 +55,7 @@ internal fun NotificationDialog(
                 Image(
                     painter = painterResource(id = R.drawable.img_notification_dialog),
                     contentDescription = null,
-                    modifier = Modifier.size(279.dp, 125.dp),
+                    modifier = Modifier.size(279.dp, 143.dp),
                 )
             },
         )
