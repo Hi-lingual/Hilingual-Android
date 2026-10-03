@@ -33,9 +33,9 @@ import com.hilingual.core.designsystem.component.toggle.HilingualBasicToggleSwit
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.presentation.notification.setting.component.DayChip
-import com.hilingual.presentation.notification.setting.component.DayOfWeek
 import com.hilingual.presentation.notification.setting.component.HilingualTimeInput
 import com.hilingual.presentation.notification.setting.component.NotificationReminderSaveDialog
+import com.hilingual.presentation.notification.setting.model.ReminderDay
 
 @Composable
 internal fun NotificationReminderSettingRoute(
@@ -97,7 +97,7 @@ private fun NotificationReminderSettingScreen(
     onBackClick: () -> Unit,
     onTimeChange: (hour: Int, minute: Int) -> Unit,
     onDailyRepeatChange: (Boolean) -> Unit,
-    onDayClick: (DayOfWeek) -> Unit,
+    onDayClick: (ReminderDay) -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -168,7 +168,7 @@ private fun NotificationReminderSettingScreen(
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            DayOfWeek.entries.forEach { day ->
+            ReminderDay.entries.forEach { day ->
                 DayChip(
                     label = day.label,
                     isSelected = day in uiState.selectedDays,
@@ -199,7 +199,7 @@ private fun NotificationReminderSettingScreenPreview() {
                 hour = 9,
                 minute = 30,
                 isDailyRepeat = false,
-                selectedDays = setOf(DayOfWeek.MON, DayOfWeek.WED, DayOfWeek.FRI),
+                selectedDays = setOf(ReminderDay.MON, ReminderDay.WED, ReminderDay.FRI),
             ),
             onBackClick = {},
             onTimeChange = { _, _ -> },
