@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
-import com.hilingual.presentation.notification.setting.component.DayOfWeek
+import com.hilingual.presentation.notification.setting.model.ReminderDay
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -34,17 +34,17 @@ internal class NotificationReminderSettingViewModel @Inject constructor() : View
         _uiState.updateSuccess {
             it.copy(
                 isDailyRepeat = isChecked,
-                selectedDays = if (isChecked) DayOfWeek.entries.toSet() else it.selectedDays,
+                selectedDays = if (isChecked) ReminderDay.entries.toSet() else emptySet(),
             )
         }
     }
 
-    fun toggleDay(day: DayOfWeek) {
+    fun toggleDay(day: ReminderDay) {
         _uiState.updateSuccess {
             val newDays = if (day in it.selectedDays) it.selectedDays - day else it.selectedDays + day
             it.copy(
                 selectedDays = newDays,
-                isDailyRepeat = newDays.size == DayOfWeek.entries.size,
+                isDailyRepeat = newDays.size == ReminderDay.entries.size,
             )
         }
     }
