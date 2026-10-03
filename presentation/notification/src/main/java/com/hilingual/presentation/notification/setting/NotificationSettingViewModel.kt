@@ -203,6 +203,14 @@ internal class NotificationSettingViewModel @Inject constructor(
         )
     }
 
+    fun onReminderSectionClick(): Boolean {
+        if (_isNotificationGranted.value == false) {
+            viewModelScope.launch { _sideEffect.emit(NotificationSettingSideEffect.ShowPermissionDialog) }
+            return false
+        }
+        return true
+    }
+
     private fun Set<String>.toReminderDaySet(): Set<ReminderDay> =
         mapNotNull { name -> runCatching { ReminderDay.valueOf(name) }.getOrNull() }.toSet()
 }

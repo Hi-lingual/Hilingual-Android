@@ -111,19 +111,21 @@ internal fun NotificationSettingRoute(
                     onMarketingCheckedChange = viewModel::updateMarketingChecked,
                     isFeedChecked = state.data.isFeedChecked,
                     onFeedCheckedChange = viewModel::updateFeedChecked,
-                    isReminderChecked = state.data.isReminderChecked,
+                    isReminderChecked = granted && state.data.isReminderChecked,
                     reminderHour = state.data.reminderHour,
                     reminderMinute = state.data.reminderMinute,
                     isDailyRepeat = state.data.isDailyRepeat,
                     selectedDays = state.data.selectedDays,
                     onReminderCheckedChange = { isChecked ->
                         if (isChecked) {
-                            navigateToReminderSetting()
+                            if (viewModel.onReminderSectionClick()) navigateToReminderSetting()
                         } else {
                             viewModel.disableReminder()
                         }
                     },
-                    onReminderSectionClick = navigateToReminderSetting,
+                    onReminderSectionClick = {
+                        if (viewModel.onReminderSectionClick()) navigateToReminderSetting()
+                    },
                     isNotificationGranted = granted,
                     onBannerClick = navigateToSettings,
                     isPermissionDialogVisible = isNotificationSettingDialogVisible,
