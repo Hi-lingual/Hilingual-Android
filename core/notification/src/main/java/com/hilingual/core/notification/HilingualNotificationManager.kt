@@ -185,6 +185,7 @@ class HilingualNotificationManager @Inject constructor(
             .getLaunchIntentForPackage(context.packageName)
             ?.apply {
                 addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                putExtra("link", "hilingual://app/home")
                 putExtra(EXTRA_NOTIFICATION_TYPE, NOTIFICATION_TYPE_REMINDER_CUSTOM)
             }
             ?.let {

@@ -7,7 +7,7 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.core.localstorage.datasource.ReminderPreferenceDataSource
 import com.hilingual.core.localstorage.model.ReminderPreference
 import com.hilingual.core.work.scheduler.ReminderScheduler
-import com.hilingual.presentation.notification.setting.component.DayOfWeek
+import com.hilingual.presentation.notification.setting.model.ReminderDay
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -40,8 +40,8 @@ internal class NotificationReminderSettingViewModel @Inject constructor(
                 minute = pref.minute,
                 isDailyRepeat = pref.isDailyRepeat,
                 selectedDays = pref.selectedDays.mapNotNull { name ->
-                    runCatching { DayOfWeek.valueOf(name) }.getOrNull()
-                }.toSet().ifEmpty { DayOfWeek.entries.toSet() },
+                    runCatching { ReminderDay.valueOf(name) }.getOrNull()
+                }.toSet().ifEmpty { ReminderDay.entries.toSet() },
             )
             savedState = initial
             _uiState.update { UiState.Success(initial) }
@@ -56,17 +56,17 @@ internal class NotificationReminderSettingViewModel @Inject constructor(
         _uiState.updateSuccess {
             it.copy(
                 isDailyRepeat = isChecked,
-                selectedDays = if (isChecked) DayOfWeek.entries.toSet() else it.selectedDays,
+                selectedDays = if (isChecked) ReminderDay.entries.toSet() else emptySet(),
             )
         }
     }
 
-    fun toggleDay(day: DayOfWeek) {
+    fun toggleDay(day: ReminderDay) {
         _uiState.updateSuccess {
             val newDays = if (day in it.selectedDays) it.selectedDays - day else it.selectedDays + day
             it.copy(
                 selectedDays = newDays,
-                isDailyRepeat = newDays.size == DayOfWeek.entries.size,
+                isDailyRepeat = newDays.size == ReminderDay.entries.size,
             )
         }
     }
