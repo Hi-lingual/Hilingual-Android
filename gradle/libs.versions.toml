@@ -2,12 +2,12 @@
 # Build Configuration
 compileSdk = "37"
 credentials = "1.6.0"
-googleid = "1.2.0"
+googleid = "1.2.1"
 googleServices = "4.5.0"
 minSdk = "30"
 targetSdk = "36"
 jvmTarget = "17"
-androidGradlePlugin = "9.4.0"
+androidGradlePlugin = "9.4.1"
 spotless = "8.10.2"
 wisp = "0.2.0"
 
@@ -16,9 +16,9 @@ versionCode = "2070200"
 versionName = "2.7.2"
 
 # Kotlin
-kotlin = "2.4.10"
+kotlin = "2.4.20"
 kotlinxImmutable = "0.5.2"
-ksp = "2.3.11"
+ksp = "2.3.12"
 
 # AndroidX
 coreKtx = "1.19.0"
@@ -28,16 +28,16 @@ lifecycleRuntimeKtx = "2.11.0"
 lifecycleRuntimeComposeAndroid = "2.11.0"
 activityCompose = "1.13.0"
 composeBom = "2026.08.00"
-composeNavigation = "2.10.0"
+composeNavigation = "2.10.1"
 security = "1.1.0"
 datastorePreferences = "1.2.1"
 material = "1.14.0"
 desugarJdkLibs = "2.1.5"
 browser="1.10.0"
-glance = "1.2.0-rc01"
+glance = "1.2.0"
 
 # Room
-room = "2.8.4"
+room = "2.8.5"
 
 # WorkManager
 work = "2.11.2"
@@ -55,7 +55,7 @@ kotlinxSerializationJson = "1.11.0"
 daggerHilt = "2.60.1"
 hiltNavigationCompose = "1.4.0"
 hiltWork = "1.4.0"
-coil = "3.5.0"
+coil = "3.6.3"
 timber = "5.0.1"
 lottieCompose = "6.7.1"
 coroutine = "1.11.0"
@@ -75,8 +75,8 @@ mlkitTextRecognition = "16.0.1"
 coroutinesPlayServices = "1.11.0"
 
 uiautomator = "2.4.0"
-benchmarkMacroJunit4 = "1.4.1"
-baselineprofile = "1.5.0-rc02"
+benchmarkMacroJunit4 = "1.5.0"
+baselineprofile = "1.5.0"
 profileinstaller = "1.4.1"
 runner = "1.7.0"
 
