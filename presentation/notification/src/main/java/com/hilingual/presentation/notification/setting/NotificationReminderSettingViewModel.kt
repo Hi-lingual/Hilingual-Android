@@ -7,7 +7,7 @@ import com.hilingual.core.common.util.UiState
 import com.hilingual.core.localstorage.datasource.ReminderPreferenceDataSource
 import com.hilingual.core.localstorage.model.ReminderPreference
 import com.hilingual.core.work.scheduler.ReminderScheduler
-import com.hilingual.presentation.notification.setting.component.DayOfWeek
+import com.hilingual.presentation.notification.setting.model.ReminderDay
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -40,8 +40,8 @@ internal class NotificationReminderSettingViewModel @Inject constructor(
                 minute = pref.minute,
                 isDailyRepeat = pref.isDailyRepeat,
                 selectedDays = pref.selectedDays.mapNotNull { name ->
-                    runCatching { DayOfWeek.valueOf(name) }.getOrNull()
-                }.toSet().ifEmpty { DayOfWeek.entries.toSet() },
+                    runCatching { ReminderDay.valueOf(name) }.getOrNull()
+                }.toSet().ifEmpty { ReminderDay.entries.toSet() },
             )
             savedState = initial
             _uiState.update { UiState.Success(initial) }
@@ -56,18 +56,18 @@ internal class NotificationReminderSettingViewModel @Inject constructor(
         _uiState.updateSuccess {
             it.copy(
                 isDailyRepeat = isChecked,
-                selectedDays = if (isChecked) DayOfWeek.entries.toSet() else emptySet(),
+                selectedDays = if (isChecked) ReminderDay.entries.toSet() else emptySet(),
             )
         }
     }
 
-    fun toggleDay(day: DayOfWeek) {
-        val current = (_uiState.value as? UiState.Success)?.data ?: return
-        if (current.isDailyRepeat) return
-
+    fun toggleDay(day: ReminderDay) {
         _uiState.updateSuccess {
             val newDays = if (day in it.selectedDays) it.selectedDays - day else it.selectedDays + day
-            it.copy(selectedDays = newDays)
+            it.copy(
+                selectedDays = newDays,
+                isDailyRepeat = newDays.size == ReminderDay.entries.size,
+            )
         }
     }
 
@@ -88,6 +88,12 @@ internal class NotificationReminderSettingViewModel @Inject constructor(
 
     fun save() {
         val current = (_uiState.value as? UiState.Success)?.data ?: return
+        if (current.selectedDays.isEmpty()) {
+            viewModelScope.launch {
+                _sideEffect.emit(NotificationReminderSettingSideEffect.ShowToast("반복할 요일을 하나 이상 선택해주세요."))
+            }
+            return
+        }
         viewModelScope.launch {
             val pref = ReminderPreference(
                 isEnabled = true,
@@ -107,4 +113,5 @@ internal class NotificationReminderSettingViewModel @Inject constructor(
 internal sealed interface NotificationReminderSettingSideEffect {
     data object NavigateUp : NotificationReminderSettingSideEffect
     data object ShowExitDialog : NotificationReminderSettingSideEffect
+    data class ShowToast(val text: String) : NotificationReminderSettingSideEffect
 }
