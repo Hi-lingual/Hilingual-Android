@@ -20,6 +20,8 @@ import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.localstorage.datasource.ReminderPreferenceDataSource
+import com.hilingual.core.work.scheduler.ReminderScheduler
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -30,6 +32,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -39,6 +42,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 internal class NotificationSettingViewModel @Inject constructor(
     private val userRepository: UserRepository,
+    private val reminderPreferenceDataSource: ReminderPreferenceDataSource,
+    private val reminderScheduler: ReminderScheduler,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<NotificationSettingUiState>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
@@ -65,9 +70,11 @@ internal class NotificationSettingViewModel @Inject constructor(
             _uiState.update { UiState.Loading }
             userRepository.getNotificationSettings()
                 .onSuccess { settings ->
+                    val reminderPref = reminderPreferenceDataSource.reminderFlow.first()
                     val newUiState = NotificationSettingUiState(
                         isMarketingChecked = settings.isMarketingEnabled,
                         isFeedChecked = settings.isFeedEnabled,
+                        isReminderChecked = reminderPref.isEnabled,
                     )
                     _uiState.update { UiState.Success(newUiState) }
                     serverState.update { newUiState }
@@ -126,13 +133,46 @@ internal class NotificationSettingViewModel @Inject constructor(
         viewModelScope.launch { feedToggleFlow.emit(isChecked) }
     }
 
+    fun disableReminder() {
+        val currentUiState = _uiState.value
+        if (currentUiState !is UiState.Success) return
+
+        if (_isNotificationGranted.value == false) {
+            viewModelScope.launch { _sideEffect.emit(NotificationSettingSideEffect.ShowPermissionDialog) }
+            return
+        }
+
+        viewModelScope.launch {
+            reminderPreferenceDataSource.setEnabled(false)
+            reminderScheduler.cancel()
+            _uiState.update {
+                UiState.Success(currentUiState.data.copy(isReminderChecked = false))
+            }
+        }
+    }
+
+    fun refreshReminderState() {
+        val currentUiState = _uiState.value
+        if (currentUiState !is UiState.Success) return
+
+        viewModelScope.launch {
+            val reminderPref = reminderPreferenceDataSource.reminderFlow.first()
+            _uiState.update {
+                UiState.Success(currentUiState.data.copy(isReminderChecked = reminderPref.isEnabled))
+            }
+        }
+    }
+
     private fun updateNotificationSetting(notiType: NotiType) {
         viewModelScope.launch {
             userRepository.updateNotificationSetting(notiType.name)
                 .onSuccess { settings ->
+                    val currentReminderChecked = (_uiState.value as? UiState.Success)?.data?.isReminderChecked
+                        ?: serverState.value.isReminderChecked
                     val newUiState = NotificationSettingUiState(
                         isMarketingChecked = settings.isMarketingEnabled,
                         isFeedChecked = settings.isFeedEnabled,
+                        isReminderChecked = currentReminderChecked,
                     )
                     _uiState.update { UiState.Success(newUiState) }
                     serverState.update { newUiState }

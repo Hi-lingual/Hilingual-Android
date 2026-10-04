@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
+import com.hilingual.core.localstorage.datasource.ReminderPreferenceDataSource
+import com.hilingual.core.localstorage.model.ReminderPreference
+import com.hilingual.core.work.scheduler.ReminderScheduler
 import com.hilingual.presentation.notification.setting.model.ReminderDay
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -11,20 +14,39 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-internal class NotificationReminderSettingViewModel @Inject constructor() : ViewModel() {
+internal class NotificationReminderSettingViewModel @Inject constructor(
+    private val reminderPreferenceDataSource: ReminderPreferenceDataSource,
+    private val reminderScheduler: ReminderScheduler,
+) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<UiState<NotificationReminderSettingUiState>>(
-        UiState.Success(NotificationReminderSettingUiState()),
-    )
+    private val _uiState = MutableStateFlow<UiState<NotificationReminderSettingUiState>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<NotificationReminderSettingSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
 
-    // TODO: 로직 PR에서 ReminderPreferenceDataSource로부터 초기값 로드
+    private var savedState: NotificationReminderSettingUiState? = null
+
+    init {
+        viewModelScope.launch {
+            val pref = reminderPreferenceDataSource.reminderFlow.first()
+            val initial = NotificationReminderSettingUiState(
+                hour = pref.hour,
+                minute = pref.minute,
+                isDailyRepeat = pref.isDailyRepeat,
+                selectedDays = pref.selectedDays.mapNotNull { name ->
+                    runCatching { ReminderDay.valueOf(name) }.getOrNull()
+                }.toSet().ifEmpty { ReminderDay.entries.toSet() },
+            )
+            savedState = initial
+            _uiState.update { UiState.Success(initial) }
+        }
+    }
 
     fun updateTime(hour: Int, minute: Int) {
         _uiState.updateSuccess { it.copy(hour = hour, minute = minute) }
@@ -50,8 +72,14 @@ internal class NotificationReminderSettingViewModel @Inject constructor() : View
     }
 
     fun onBackClick() {
-        // TODO: dirty 체크 후 ShowExitDialog / NavigateUp 분기
-        viewModelScope.launch { _sideEffect.emit(NotificationReminderSettingSideEffect.NavigateUp) }
+        val current = (_uiState.value as? UiState.Success)?.data
+        viewModelScope.launch {
+            if (current != null && current != savedState) {
+                _sideEffect.emit(NotificationReminderSettingSideEffect.ShowExitDialog)
+            } else {
+                _sideEffect.emit(NotificationReminderSettingSideEffect.NavigateUp)
+            }
+        }
     }
 
     fun onExitConfirm() {
@@ -66,8 +94,19 @@ internal class NotificationReminderSettingViewModel @Inject constructor() : View
             }
             return
         }
-        // TODO: ReminderPreferenceDataSource.save + ReminderScheduler.schedule 연동
-        viewModelScope.launch { _sideEffect.emit(NotificationReminderSettingSideEffect.NavigateUp) }
+        viewModelScope.launch {
+            val pref = ReminderPreference(
+                isEnabled = true,
+                hour = current.hour,
+                minute = current.minute,
+                isDailyRepeat = current.isDailyRepeat,
+                selectedDays = current.selectedDays.map { it.name }.toSet(),
+            )
+            reminderPreferenceDataSource.save(pref)
+            reminderScheduler.schedule(pref)
+            savedState = current
+            _sideEffect.emit(NotificationReminderSettingSideEffect.NavigateUp)
+        }
     }
 }
 

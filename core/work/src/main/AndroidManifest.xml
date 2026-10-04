@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application>
         <!--
         HiltWorkerFactory를 사용한 수동 초기화를 위해
@@ -12,6 +16,18 @@
             android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
             tools:node="remove" />
+
+        <receiver
+            android:name=".receiver.ReminderAlarmReceiver"
+            android:exported="false" />
+
+        <receiver
+            android:name=".receiver.BootCompletedReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

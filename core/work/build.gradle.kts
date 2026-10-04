@@ -31,4 +31,5 @@ dependencies {
     implementation(libs.hilt.work)
     ksp(libs.hilt.compiler.androidx)
     implementation(libs.timber)
+    implementation(projects.core.localstorage)
 }
