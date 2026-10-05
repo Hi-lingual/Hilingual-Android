@@ -21,7 +21,7 @@ kotlinxImmutable = "0.5.2"
 ksp = "2.3.12"
 
 # AndroidX
-coreKtx = "1.19.0"
+coreKtx = "1.19.1"
 coreSplachscreen = "1.2.0"
 androidxAppCompat = "1.8.0"
 lifecycleRuntimeKtx = "2.11.0"
