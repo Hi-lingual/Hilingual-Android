@@ -82,7 +82,7 @@ internal fun VocaReviewRoute(
 
     viewModel.sideEffect.collectSideEffect {
         when (it) {
-            VocaReviewSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = viewModel::saveResults)
+            VocaReviewSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = {})
         }
     }
 
