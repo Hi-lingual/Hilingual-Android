@@ -25,6 +25,7 @@ import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.common.util.suspendRunCatching
+import com.hilingual.core.common.util.toDiaryCardDate
 import com.hilingual.core.common.util.toKoreanFullDate
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.model.BookmarkResult
@@ -104,6 +105,7 @@ internal class FeedDiaryViewModel @Inject constructor(
                         isMine = profileInfo.isMine,
                         profileContent = profileInfo.toState(),
                         writtenDate = writtenDate.toKoreanFullDate(),
+                        exportDate = writtenDate.toDiaryCardDate(),
                         topics = topicResult.toState(),
                         diaryContent = contentResult.toState(),
                         feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),

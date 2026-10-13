@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -67,7 +68,9 @@ internal fun DiaryCard(
     isShowCorrectedDiary: Boolean,
     diaryContent: String,
     onImageClick: () -> Unit,
+    onExportClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isExportAvailable: Boolean = true,
     diffRanges: ImmutableList<Pair<Int, Int>> = persistentListOf(),
     imageUrl: String? = null,
     page: Page? = null,
@@ -103,6 +106,10 @@ internal fun DiaryCard(
             .fillMaxWidth()
             .padding(12.dp),
     ) {
+        if (isShowCorrectedDiary && isExportAvailable) {
+            DiaryCardExportButton(onClick = onExportClick)
+        }
+
         if (imageUrl != null) {
             NetworkImage(
                 imageUrl = imageUrl,
@@ -166,6 +173,32 @@ internal fun DiaryCard(
                 modifier = Modifier.fillMaxWidth(),
             )
         }
+    }
+}
+
+@Composable
+private fun DiaryCardExportButton(onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(HilingualTheme.colors.hilingualOrange50)
+            .noRippleClickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "일기 카드로 내보내기",
+            style = HilingualTheme.typography.bodyM14,
+            color = HilingualTheme.colors.hilingualOrange,
+        )
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_upload_24),
+            contentDescription = null,
+            tint = HilingualTheme.colors.hilingualOrange,
+            modifier = Modifier.size(20.dp),
+        )
     }
 }
 
@@ -288,6 +321,7 @@ private fun DiaryCardPreview(
             imageUrl = state.imageUrl,
             diffRanges = state.diffRanges,
             onImageClick = {},
+            onExportClick = {},
         )
     }
 }

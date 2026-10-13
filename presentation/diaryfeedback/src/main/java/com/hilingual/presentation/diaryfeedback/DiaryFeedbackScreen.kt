@@ -363,6 +363,7 @@ private fun DiaryFeedbackScreen(
                             0 -> GrammarSpellingTab(
                                 listState = grammarListState,
                                 writtenDate = data.writtenDate,
+                                exportDate = data.exportDate,
                                 topics = data.topics,
                                 diaryContent = data.diaryContent,
                                 feedbackList = data.feedbackList,

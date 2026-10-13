@@ -31,6 +31,7 @@ import kotlinx.collections.immutable.toImmutableList
 @Immutable
 internal data class DiaryFeedbackUiState(
     val writtenDate: String = "",
+    val exportDate: String = "",
     val isPublished: Boolean = false,
     val isAdWatched: Boolean = false,
     val topics: Topics = Topics(),
@@ -41,6 +42,7 @@ internal data class DiaryFeedbackUiState(
     companion object {
         val Fake = DiaryFeedbackUiState(
             writtenDate = "8월 28일 목요일",
+            exportDate = "2026.08.28 FRI",
             topics = Topics(
                 enTopic = "영어 주제",
                 koTopic = "한국어 주제",

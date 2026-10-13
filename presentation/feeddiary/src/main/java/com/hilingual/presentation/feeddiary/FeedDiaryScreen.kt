@@ -329,12 +329,14 @@ private fun FeedDiaryScreen(
                         0 -> GrammarSpellingTab(
                             listState = grammarListState,
                             writtenDate = writtenDate,
+                            exportDate = exportDate,
                             diaryContent = diaryContent,
                             feedbackList = feedbackList,
                             topics = topics,
                             isShowCorrectedDiary = isShowCorrectedDiary,
                             onImageClick = onChangeImageDetailVisible,
                             isAdVisible = true,
+                            isExportAvailable = isMine,
                             onToggleDiaryViewMode = {
                                 isShowCorrectedDiary = it
                                 toggleClickCount++
