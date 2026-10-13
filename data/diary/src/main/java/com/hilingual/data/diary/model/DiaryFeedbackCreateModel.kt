@@ -19,8 +19,10 @@ import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResponseDto
 
 data class DiaryFeedbackCreateModel(
     val diaryId: Long,
+    val totalDiaries: Int,
 )
 
 internal fun DiaryFeedbackCreateResponseDto.toModel() = DiaryFeedbackCreateModel(
     diaryId = this.diaryId,
+    totalDiaries = this.totalDiaries,
 )

@@ -21,16 +21,19 @@ import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.hilingual.data.diary.datasource.DiaryLocalDataSource
 import com.hilingual.data.diary.datasourceimpl.util.InternalImageStorage
 import com.hilingual.data.diary.di.qualifier.DiaryTempDataStore
+import com.hilingual.data.diary.di.qualifier.MilestoneDataStore
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 
 class DiaryLocalDataSourceImpl @Inject constructor(
     @DiaryTempDataStore private val dataStore: DataStore<Preferences>,
+    @MilestoneDataStore private val milestoneDataStore: DataStore<Preferences>,
     private val imageStorage: InternalImageStorage,
 ) : DiaryLocalDataSource {
 
@@ -88,6 +91,23 @@ class DiaryLocalDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun registerPendingMilestone(milestone: Int) {
+        milestoneDataStore.edit { preferences ->
+            if (milestone <= (preferences[KEY_LAST_MILESTONE] ?: 0)) return@edit
+            preferences[KEY_LAST_MILESTONE] = milestone
+            preferences[KEY_PENDING_MILESTONE] = milestone
+        }
+    }
+
+    override suspend fun consumePendingMilestone(): Int? {
+        var pendingMilestone: Int? = null
+        milestoneDataStore.edit { preferences ->
+            pendingMilestone = preferences[KEY_PENDING_MILESTONE]
+            preferences.remove(KEY_PENDING_MILESTONE)
+        }
+        return pendingMilestone
+    }
+
     private suspend fun handleImageUpdate(
         preferences: MutablePreferences,
         date: LocalDate,
@@ -109,5 +129,10 @@ class DiaryLocalDataSourceImpl @Inject constructor(
                 imageStorage.deleteImageFromInternal(oldImageUriString)
             }
         }
+    }
+
+    companion object {
+        private val KEY_LAST_MILESTONE = intPreferencesKey("last_milestone")
+        private val KEY_PENDING_MILESTONE = intPreferencesKey("pending_milestone")
     }
 }
