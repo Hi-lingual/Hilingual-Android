@@ -53,14 +53,4 @@ class DiaryLocalRepositoryImpl @Inject constructor(
         suspendRunCatching {
             diaryLocalDataSource.clearDiaryTemp(selectedDate)
         }
-
-    override suspend fun registerPendingMilestone(milestone: Int): Result<Unit> =
-        suspendRunCatching {
-            diaryLocalDataSource.registerPendingMilestone(milestone)
-        }
-
-    override suspend fun consumePendingMilestone(): Result<Int?> =
-        suspendRunCatching {
-            diaryLocalDataSource.consumePendingMilestone()
-        }
 }

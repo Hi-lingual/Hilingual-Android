@@ -23,8 +23,10 @@ import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.calendar.model.CalendarStatus
 import com.hilingual.data.calendar.repository.CalendarRepository
+import com.hilingual.data.diary.model.Milestone
 import com.hilingual.data.diary.repository.DiaryLocalRepository
 import com.hilingual.data.diary.repository.DiaryRepository
+import com.hilingual.data.diary.repository.MilestoneRepository
 import com.hilingual.data.notification.repository.NotificationRepository
 import com.hilingual.data.onboarding.repository.OnboardingRepository
 import com.hilingual.data.user.repository.UserRepository
@@ -57,6 +59,7 @@ class HomeViewModel @Inject constructor(
     private val calendarRepository: CalendarRepository,
     private val diaryRepository: DiaryRepository,
     private val diaryLocalRepository: DiaryLocalRepository,
+    private val milestoneRepository: MilestoneRepository,
     private val onboardingRepository: OnboardingRepository,
     private val notificationRepository: NotificationRepository,
 ) : ViewModel() {
@@ -81,8 +84,8 @@ class HomeViewModel @Inject constructor(
 
     private val recoveryReminderResult = MutableStateFlow<Boolean?>(null)
 
-    private val _milestone = MutableStateFlow<Int?>(null)
-    val milestone: StateFlow<Int?> = _milestone.asStateFlow()
+    private val _milestone = MutableStateFlow<Milestone?>(null)
+    val milestone: StateFlow<Milestone?> = _milestone.asStateFlow()
 
     init {
         checkOnboardingCompleted()
@@ -147,10 +150,10 @@ class HomeViewModel @Inject constructor(
         _milestone.update { null }
     }
 
-    private suspend fun fetchPendingMilestone() {
-        diaryLocalRepository.consumePendingMilestone()
-            .onSuccess { milestone -> _milestone.update { milestone } }
-            .onLogFailure { }
+    private fun fetchPendingMilestone() {
+        milestoneRepository.consumePendingMilestone()?.let { milestone ->
+            _milestone.update { milestone }
+        }
     }
 
     fun handleNotificationPermission(

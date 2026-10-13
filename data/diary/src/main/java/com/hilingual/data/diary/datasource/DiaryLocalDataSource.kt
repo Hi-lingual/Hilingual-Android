@@ -24,6 +24,4 @@ interface DiaryLocalDataSource {
     suspend fun getDiaryText(selectedDate: LocalDate): String?
     suspend fun getDiaryImageUri(selectedDate: LocalDate): String?
     suspend fun clearDiaryTemp(selectedDate: LocalDate)
-    suspend fun registerPendingMilestone(milestone: Int)
-    suspend fun consumePendingMilestone(): Int?
 }

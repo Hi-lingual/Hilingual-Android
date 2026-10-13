@@ -213,7 +213,8 @@ internal fun DiaryFeedbackRoute(
     val isFeedbackVisible = (state as? UiState.Success)?.data?.isAdWatched == true
     milestone?.takeIf { isFeedbackVisible }?.let {
         MilestoneCardDialog(
-            milestone = it,
+            milestone = it.count,
+            isHundredUnit = it.isHundredUnit,
             onDismiss = viewModel::dismissMilestoneCard,
             onSaveSuccess = {
                 viewModel.dismissMilestoneCard()

@@ -30,6 +30,7 @@ import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.repository.DiaryLocalRepository
 import com.hilingual.data.diary.repository.DiaryRepository
+import com.hilingual.data.diary.repository.MilestoneRepository
 import com.hilingual.data.diary.repository.TextRecognitionRepository
 import com.hilingual.presentation.diarywrite.navigation.DiaryWrite
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -52,6 +53,7 @@ internal class DiaryWriteViewModel @Inject constructor(
     private val calendarRepository: CalendarRepository,
     private val diaryRepository: DiaryRepository,
     private val diaryLocalRepository: DiaryLocalRepository,
+    private val milestoneRepository: MilestoneRepository,
     private val textRecognitionRepository: TextRecognitionRepository,
     private val widgetUpdater: WidgetUpdater,
 ) : ViewModel() {
@@ -130,10 +132,7 @@ internal class DiaryWriteViewModel @Inject constructor(
             result
                 .onSuccess { response ->
                     diaryLocalRepository.clearDiaryTemp(state.selectedDate)
-                    if (MilestonePolicy.isMilestone(response.totalDiaries)) {
-                        diaryLocalRepository.registerPendingMilestone(response.totalDiaries)
-                            .onLogFailure { }
-                    }
+                    milestoneRepository.registerPendingMilestone(response.totalDiaries)
                     _feedbackUiState.update { UiState.Success(response.diaryId) }
                     suspendRunCatching { widgetUpdater.updateAll() }
                         .onLogFailure { }

@@ -28,9 +28,10 @@ import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.common.util.toKoreanFullDate
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.model.BookmarkResult
+import com.hilingual.data.diary.model.Milestone
 import com.hilingual.data.diary.model.PhraseBookmarkModel
-import com.hilingual.data.diary.repository.DiaryLocalRepository
 import com.hilingual.data.diary.repository.DiaryRepository
+import com.hilingual.data.diary.repository.MilestoneRepository
 import com.hilingual.presentation.diaryfeedback.navigation.DiaryFeedback
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -50,7 +51,7 @@ import kotlinx.coroutines.launch
 internal class DiaryFeedbackViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val diaryRepository: DiaryRepository,
-    private val diaryLocalRepository: DiaryLocalRepository,
+    private val milestoneRepository: MilestoneRepository,
     private val calendarRepository: CalendarRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<DiaryFeedbackUiState>>(UiState.Loading)
@@ -58,8 +59,8 @@ internal class DiaryFeedbackViewModel @Inject constructor(
 
     val diaryId = savedStateHandle.toRoute<DiaryFeedback>().diaryId
 
-    private val _milestone = MutableStateFlow<Int?>(null)
-    val milestone: StateFlow<Int?> = _milestone.asStateFlow()
+    private val _milestone = MutableStateFlow<Milestone?>(null)
+    val milestone: StateFlow<Milestone?> = _milestone.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<DiaryFeedbackSideEffect>()
     val sideEffect: SharedFlow<DiaryFeedbackSideEffect> = _sideEffect.asSharedFlow()
@@ -89,10 +90,10 @@ internal class DiaryFeedbackViewModel @Inject constructor(
         _milestone.update { null }
     }
 
-    private suspend fun fetchPendingMilestone() {
-        diaryLocalRepository.consumePendingMilestone()
-            .onSuccess { milestone -> _milestone.update { milestone } }
-            .onLogFailure { }
+    private fun fetchPendingMilestone() {
+        milestoneRepository.consumePendingMilestone()?.let { milestone ->
+            _milestone.update { milestone }
+        }
     }
 
     private suspend fun requestDiaryFeedbackData(): DiaryFeedbackUiState =

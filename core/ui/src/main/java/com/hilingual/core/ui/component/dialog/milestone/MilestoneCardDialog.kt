@@ -1,6 +1,5 @@
 package com.hilingual.core.ui.component.dialog.milestone
 
-import android.graphics.Bitmap
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,19 +17,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
@@ -42,37 +32,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.hilingual.core.common.extension.noRippleClickable
-import com.hilingual.core.common.extension.onLogFailure
-import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.ui.util.saveImageToGallery
-import com.hilingual.core.ui.util.shareImage
-import kotlinx.coroutines.launch
+import com.hilingual.core.ui.util.recordForExport
+import com.hilingual.core.ui.util.rememberImageExporter
 
 @Composable
 fun MilestoneCardDialog(
     milestone: Int,
+    isHundredUnit: Boolean,
     onDismiss: () -> Unit,
     onSaveSuccess: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-    val cardImageLayer = rememberGraphicsLayer()
-    var isExporting by remember { mutableStateOf(false) }
+    val imageExporter = rememberImageExporter()
     val fileName = "hilingual_milestone_$milestone"
-
-    fun exportCardImage(export: suspend (Bitmap) -> Unit) {
-        if (isExporting) return
-        isExporting = true
-        coroutineScope.launch {
-            suspendRunCatching {
-                export(cardImageLayer.toImageBitmap().asAndroidBitmap())
-            }.onLogFailure { }
-            isExporting = false
-        }
-    }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -88,26 +62,18 @@ fun MilestoneCardDialog(
                 .background(HilingualTheme.colors.dim2),
             contentAlignment = Alignment.Center,
         ) {
-            // 저장·공유용 이미지는 화면에 그리지 않고 레이어에만 기록한다.
             MilestoneCardImage(
                 milestone = milestone,
-                modifier = Modifier.drawWithContent {
-                    cardImageLayer.record { this@drawWithContent.drawContent() }
-                },
+                isHundredUnit = isHundredUnit,
+                modifier = Modifier.recordForExport(imageExporter),
             )
 
             MilestoneCardPopup(
                 milestone = milestone,
+                isHundredUnit = isHundredUnit,
                 onCloseClick = onDismiss,
-                onShareClick = {
-                    exportCardImage { context.shareImage(it, fileName) }
-                },
-                onSaveClick = {
-                    exportCardImage {
-                        context.saveImageToGallery(it, fileName)
-                        onSaveSuccess()
-                    }
-                },
+                onShareClick = { imageExporter.share(fileName) },
+                onSaveClick = { imageExporter.saveToGallery(fileName, onSuccess = onSaveSuccess) },
             )
         }
     }
@@ -116,6 +82,7 @@ fun MilestoneCardDialog(
 @Composable
 private fun MilestoneCardPopup(
     milestone: Int,
+    isHundredUnit: Boolean,
     onCloseClick: () -> Unit,
     onShareClick: () -> Unit,
     onSaveClick: () -> Unit,
@@ -136,7 +103,10 @@ private fun MilestoneCardPopup(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            MilestoneCardContent(milestone = milestone)
+            MilestoneCardContent(
+                milestone = milestone,
+                isHundredUnit = isHundredUnit,
+            )
 
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                 MilestoneActionButton(
@@ -167,6 +137,7 @@ private fun MilestoneCardPopup(
 @Composable
 private fun MilestoneCardImage(
     milestone: Int,
+    isHundredUnit: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -177,6 +148,7 @@ private fun MilestoneCardImage(
     ) {
         MilestoneCardContent(
             milestone = milestone,
+            isHundredUnit = isHundredUnit,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth()
@@ -192,9 +164,9 @@ private fun MilestoneCardImage(
 @Composable
 private fun MilestoneCardContent(
     milestone: Int,
+    isHundredUnit: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val isHundredUnit = milestone % 100 == 0
     val pointColor = if (isHundredUnit) HilingualTheme.colors.hilingualOrange else HilingualTheme.colors.hilingualBlue
 
     Column(
@@ -288,6 +260,7 @@ private fun MilestoneCardPopupPreview() {
     HilingualTheme {
         MilestoneCardPopup(
             milestone = 30,
+            isHundredUnit = false,
             onCloseClick = {},
             onShareClick = {},
             onSaveClick = {},
@@ -299,6 +272,9 @@ private fun MilestoneCardPopupPreview() {
 @Composable
 private fun MilestoneCardImagePreview() {
     HilingualTheme {
-        MilestoneCardImage(milestone = 100)
+        MilestoneCardImage(
+            milestone = 100,
+            isHundredUnit = true,
+        )
     }
 }

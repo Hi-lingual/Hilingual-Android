@@ -20,7 +20,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.hilingual.core.localstorage.builder.DataStoreBuilder
 import com.hilingual.data.diary.di.qualifier.DiaryTempDataStore
-import com.hilingual.data.diary.di.qualifier.MilestoneDataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,7 +32,6 @@ import javax.inject.Singleton
 object DiaryDataStoreModule {
 
     private const val HILINGUAL_DIARY_TEMP_PREFS = "hilingual_diary_temp_prefs"
-    private const val HILINGUAL_MILESTONE_PREFS = "hilingual_milestone_prefs"
 
     @Provides
     @Singleton
@@ -43,15 +41,5 @@ object DiaryDataStoreModule {
     ): DataStore<Preferences> = DataStoreBuilder.createPreferencesDataStore(
         context = context,
         name = HILINGUAL_DIARY_TEMP_PREFS,
-    )
-
-    @Provides
-    @Singleton
-    @MilestoneDataStore
-    fun provideMilestoneDataStore(
-        @ApplicationContext context: Context,
-    ): DataStore<Preferences> = DataStoreBuilder.createPreferencesDataStore(
-        context = context,
-        name = HILINGUAL_MILESTONE_PREFS,
     )
 }

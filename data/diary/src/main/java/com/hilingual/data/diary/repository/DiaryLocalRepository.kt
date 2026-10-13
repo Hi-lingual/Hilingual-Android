@@ -28,8 +28,4 @@ interface DiaryLocalRepository {
     suspend fun getDiaryImageUri(selectedDate: LocalDate): Result<String?>
 
     suspend fun clearDiaryTemp(selectedDate: LocalDate): Result<Unit>
-
-    suspend fun registerPendingMilestone(milestone: Int): Result<Unit>
-
-    suspend fun consumePendingMilestone(): Result<Int?>
 }
