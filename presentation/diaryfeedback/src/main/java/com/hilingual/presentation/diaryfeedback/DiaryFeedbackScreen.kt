@@ -70,6 +70,7 @@ import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.dialog.diary.DiaryPublishDialog
 import com.hilingual.core.ui.component.dialog.diary.DiaryUnpublishDialog
+import com.hilingual.core.ui.component.dialog.milestone.MilestoneCardDialog
 import com.hilingual.core.ui.component.item.diary.image.ModalImage
 import com.hilingual.core.ui.component.item.diary.tab.GrammarSpellingTab
 import com.hilingual.core.ui.component.item.diary.tab.RecommendExpressionTab
@@ -92,6 +93,7 @@ internal fun DiaryFeedbackRoute(
     val activity = LocalActivity.current
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val milestone by viewModel.milestone.collectAsStateWithLifecycle()
     var isImageDetailVisible by remember { mutableStateOf(false) }
 
     val dialogTrigger = LocalDialogTrigger.current
@@ -206,6 +208,18 @@ internal fun DiaryFeedbackRoute(
 
     LaunchedEffect(Unit) {
         tracker.logGlobalAction(trigger = TriggerType.VIEW, action = "page", currentPage = FEEDBACK)
+    }
+
+    val isFeedbackVisible = (state as? UiState.Success)?.data?.isAdWatched == true
+    milestone?.takeIf { isFeedbackVisible }?.let {
+        MilestoneCardDialog(
+            milestone = it,
+            onDismiss = viewModel::dismissMilestoneCard,
+            onSaveSuccess = {
+                viewModel.dismissMilestoneCard()
+                messageController(HilingualMessage.Toast("카드가 이미지로 저장되었어요."))
+            },
+        )
     }
 
     when (val currentState = state) {

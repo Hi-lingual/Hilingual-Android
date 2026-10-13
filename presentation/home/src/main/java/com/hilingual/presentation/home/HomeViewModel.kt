@@ -81,6 +81,9 @@ class HomeViewModel @Inject constructor(
 
     private val recoveryReminderResult = MutableStateFlow<Boolean?>(null)
 
+    private val _milestone = MutableStateFlow<Int?>(null)
+    val milestone: StateFlow<Int?> = _milestone.asStateFlow()
+
     init {
         checkOnboardingCompleted()
     }
@@ -133,11 +136,22 @@ class HomeViewModel @Inject constructor(
                 )
             }
 
+            fetchPendingMilestone()
             checkRecoveryModals(userInfo.recoveryTickets, initialDates)
         }
     }
 
     fun retryLoad() = loadInitialData()
+
+    fun dismissMilestoneCard() {
+        _milestone.update { null }
+    }
+
+    private suspend fun fetchPendingMilestone() {
+        diaryLocalRepository.consumePendingMilestone()
+            .onSuccess { milestone -> _milestone.update { milestone } }
+            .onLogFailure { }
+    }
 
     fun handleNotificationPermission(
         isGranted: Boolean,

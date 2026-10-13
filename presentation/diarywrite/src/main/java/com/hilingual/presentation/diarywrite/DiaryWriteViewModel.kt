@@ -130,6 +130,10 @@ internal class DiaryWriteViewModel @Inject constructor(
             result
                 .onSuccess { response ->
                     diaryLocalRepository.clearDiaryTemp(state.selectedDate)
+                    if (MilestonePolicy.isMilestone(response.totalDiaries)) {
+                        diaryLocalRepository.registerPendingMilestone(response.totalDiaries)
+                            .onLogFailure { }
+                    }
                     _feedbackUiState.update { UiState.Success(response.diaryId) }
                     suspendRunCatching { widgetUpdater.updateAll() }
                         .onLogFailure { }

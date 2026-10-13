@@ -76,6 +76,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.hilingualBlack
 import com.hilingual.core.designsystem.theme.white
 import com.hilingual.core.navigation.DiaryWriteMode
+import com.hilingual.core.ui.component.dialog.milestone.MilestoneCardDialog
 import com.hilingual.data.calendar.model.CalendarStatus
 import com.hilingual.presentation.home.component.HomeHeader
 import com.hilingual.presentation.home.component.calendar.HilingualCalendar
@@ -111,6 +112,7 @@ internal fun HomeRoute(
     homeState: HomeState = rememberHomeState(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val milestone by viewModel.milestone.collectAsStateWithLifecycle()
     val dialogTrigger = LocalDialogTrigger.current
     val messageController = LocalMessageController.current
     val isOffline = LocalIsOffline.current
@@ -260,6 +262,17 @@ internal fun HomeRoute(
             viewModel.onRecoveryReminderClosed()
         },
     )
+
+    milestone?.let {
+        MilestoneCardDialog(
+            milestone = it,
+            onDismiss = viewModel::dismissMilestoneCard,
+            onSaveSuccess = {
+                viewModel.dismissMilestoneCard()
+                messageController(HilingualMessage.Toast("카드가 이미지로 저장되었어요."))
+            },
+        )
+    }
 
     when (val state = uiState) {
         is UiState.Loading -> HilingualLoadingIndicator()
