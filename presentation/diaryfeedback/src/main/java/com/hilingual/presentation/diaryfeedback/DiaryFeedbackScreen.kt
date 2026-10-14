@@ -210,19 +210,6 @@ internal fun DiaryFeedbackRoute(
         tracker.logGlobalAction(trigger = TriggerType.VIEW, action = "page", currentPage = FEEDBACK)
     }
 
-    val isFeedbackVisible = (state as? UiState.Success)?.data?.isAdWatched == true
-    milestone?.takeIf { isFeedbackVisible }?.let {
-        MilestoneCardDialog(
-            milestone = it.count,
-            isHundredUnit = it.isHundredUnit,
-            onDismiss = viewModel::dismissMilestoneCard,
-            onSaveSuccess = {
-                viewModel.dismissMilestoneCard()
-                messageController(HilingualMessage.Toast("카드가 이미지로 저장되었어요."))
-            },
-        )
-    }
-
     when (val currentState = state) {
         is UiState.Success -> {
             if (!currentState.data.isAdWatched) {
@@ -262,6 +249,18 @@ internal fun DiaryFeedbackRoute(
                     onDeleteDiary = { /* viewModel::deleteDiary 수정기능 도입까지 삭제 기능 지원중단 */ },
                     tracker = tracker,
                 )
+
+                milestone?.let {
+                    MilestoneCardDialog(
+                        milestone = it.count,
+                        isHundredUnit = it.isHundredUnit,
+                        onDismiss = viewModel::dismissMilestoneCard,
+                        onSaveSuccess = {
+                            viewModel.dismissMilestoneCard()
+                            messageController(HilingualMessage.Toast("카드가 이미지로 저장되었어요."))
+                        },
+                    )
+                }
             }
         }
 

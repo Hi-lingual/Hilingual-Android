@@ -8,7 +8,6 @@ import android.graphics.Bitmap
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -29,7 +28,6 @@ import kotlinx.coroutines.withContext
 private const val GALLERY_DIRECTORY = "Hilingual"
 private const val SHARE_DIRECTORY = "shared_images"
 
-@Stable
 class ImageExporter internal constructor(
     private val context: Context,
     internal val graphicsLayer: GraphicsLayer,
