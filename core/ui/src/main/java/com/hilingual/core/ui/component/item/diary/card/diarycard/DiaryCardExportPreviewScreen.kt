@@ -221,10 +221,9 @@ private fun DiaryCardExportPreviewContent(
         )
 
         Column(modifier = Modifier.fillMaxSize()) {
-
             ExportTopAppBar(
                 onBackClick = onDismiss,
-                onExportClick = onExportClick
+                onExportClick = onExportClick,
             )
 
             Row(
@@ -267,7 +266,7 @@ private fun DiaryCardExportPreviewContent(
 private fun ExportTopAppBar(
     onBackClick: () -> Unit,
     onExportClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     HilingualBasicTopAppBar(
         modifier = modifier.fillMaxWidth(),
@@ -350,7 +349,7 @@ private fun DiaryExportCard(
                 )
             }
             Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Text(
                     text = writtenDate,
@@ -438,7 +437,7 @@ private class DiaryExportCardPreviewProvider : PreviewParameterProvider<DiaryExp
     )
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFF5F5F5, widthDp = 360)
+@Preview(showBackground = false, backgroundColor = 0xFFF5F5F5, widthDp = 360)
 @Composable
 private fun DiaryExportCardPreview(
     @PreviewParameter(DiaryExportCardPreviewProvider::class) state: DiaryExportCardPreviewState,

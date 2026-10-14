@@ -163,7 +163,6 @@ fun GrammarSpellingTab(
             }
         }
     }
-
 }
 
 @Composable
