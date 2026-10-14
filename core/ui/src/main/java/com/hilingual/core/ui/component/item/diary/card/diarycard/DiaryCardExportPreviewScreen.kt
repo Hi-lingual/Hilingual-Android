@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -203,48 +204,59 @@ private fun DiaryCardExportPreviewContent(
     modifier: Modifier = Modifier,
     cardModifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(HilingualTheme.colors.gray100),
-    ) {
-
-        ExportTopAppBar(
-            onBackClick = onDismiss,
-            onExportClick = onExportClick
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(HilingualTheme.colors.white)
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = "주제 포함하기",
-                style = HilingualTheme.typography.bodyR16,
-                color = HilingualTheme.colors.black,
-            )
-            HilingualBasicToggleSwitch(
-                isChecked = includeTopic,
-                onCheckedChange = onIncludeTopicChange,
-            )
-        }
-
+    Box(modifier = modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 24.dp),
-        ) {
-            DiaryExportCard(
-                writtenDate = writtenDate,
-                topics = topics,
-                diaryContent = diaryContent,
-                isShowTopic = includeTopic,
-                modifier = cardModifier,
+                .matchParentSize()
+                .background(HilingualTheme.colors.gray100)
+                .pointerInput(Unit) {
+                    awaitPointerEventScope {
+                        while (true) {
+                            awaitPointerEvent().changes.forEach { it.consume() }
+                        }
+                    }
+                },
+        )
+
+        Column(modifier = Modifier.fillMaxSize()) {
+
+            ExportTopAppBar(
+                onBackClick = onDismiss,
+                onExportClick = onExportClick
             )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(HilingualTheme.colors.white)
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "주제 포함하기",
+                    style = HilingualTheme.typography.bodyR16,
+                    color = HilingualTheme.colors.black,
+                )
+                HilingualBasicToggleSwitch(
+                    isChecked = includeTopic,
+                    onCheckedChange = onIncludeTopicChange,
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 24.dp),
+            ) {
+                DiaryExportCard(
+                    writtenDate = writtenDate,
+                    topics = topics,
+                    diaryContent = diaryContent,
+                    isShowTopic = includeTopic,
+                    modifier = cardModifier,
+                )
+            }
         }
     }
 }
