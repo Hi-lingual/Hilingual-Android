@@ -194,7 +194,7 @@ private fun DiaryCardExportButton(onClick: () -> Unit) {
             color = HilingualTheme.colors.hilingualOrange,
         )
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_upload_24),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_download_20),
             contentDescription = null,
             tint = HilingualTheme.colors.hilingualOrange,
             modifier = Modifier.size(20.dp),

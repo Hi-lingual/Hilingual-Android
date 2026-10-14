@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asAndroidBitmap
@@ -280,7 +281,7 @@ private fun DiaryExportCard(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.ic_quote_left_16),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_quote_16),
                         contentDescription = null,
                         modifier = Modifier.size(16.dp),
                     )
@@ -292,9 +293,11 @@ private fun DiaryExportCard(
                         overflow = TextOverflow.Ellipsis,
                     )
                     Image(
-                        painter = painterResource(R.drawable.ic_quote_right_16),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_quote_16),
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier
+                            .size(16.dp)
+                            .rotate(180f),
                     )
                 }
                 Spacer(
@@ -343,7 +346,7 @@ private fun DiaryExportCard(
             Image(
                 painter = painterResource(R.drawable.img_logo),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(colors.hilingualOrange),
+                colorFilter = ColorFilter.tint(colors.gray200),
                 modifier = Modifier
                     .size(width = 80.dp, height = 20.dp)
                     .align(Alignment.CenterHorizontally),
