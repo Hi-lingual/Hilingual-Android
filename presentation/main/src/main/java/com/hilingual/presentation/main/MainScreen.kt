@@ -540,7 +540,7 @@ private fun BottomSection(
     onTabSelected: (MainTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier.navigationBarsPadding()) {
         AnimatedVisibility(
             visible = isVisible,
             enter = fadeIn() + slideIn { IntOffset(0, it.height) },
@@ -554,7 +554,6 @@ private fun BottomSection(
         }
         AnimatedVisibility(
             visible = isVisible,
-            modifier = Modifier.navigationBarsPadding(),
             enter = EnterTransition.None,
             exit = ExitTransition.None,
         ) {
