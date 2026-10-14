@@ -30,10 +30,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
@@ -52,7 +48,6 @@ import com.hilingual.core.ui.component.dropdown.Topics
 import com.hilingual.core.ui.component.item.diary.card.FeedbackCard
 import com.hilingual.core.ui.component.item.diary.card.FeedbackEmptyCard
 import com.hilingual.core.ui.component.item.diary.card.diarycard.DiaryCard
-import com.hilingual.core.ui.component.item.diary.card.diarycard.DiaryCardExportPreviewScreen
 import com.hilingual.core.ui.component.item.diary.toggle.DiaryViewModeToggle
 import com.hilingual.core.ui.model.diary.DiaryContent
 import com.hilingual.core.ui.model.diary.FeedbackContent
@@ -63,12 +58,12 @@ import kotlinx.collections.immutable.persistentListOf
 fun GrammarSpellingTab(
     listState: LazyListState,
     writtenDate: String,
-    exportDate: String,
     topics: Topics,
     diaryContent: DiaryContent,
     feedbackList: ImmutableList<FeedbackContent>,
     isShowCorrectedDiary: Boolean,
     onImageClick: () -> Unit,
+    onExportClick: () -> Unit,
     onToggleDiaryViewMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     isAdVisible: Boolean = false,
@@ -76,7 +71,6 @@ fun GrammarSpellingTab(
     page: Page? = null,
 ) {
     val adHolder = if (isAdVisible) rememberBannerAdView(INLINE_BANNER) else null
-    var isExportPreviewVisible by remember { mutableStateOf(false) }
 
     LazyColumn(
         state = listState,
@@ -122,7 +116,7 @@ fun GrammarSpellingTab(
                     diffRanges = diffRanges,
                     imageUrl = imageUrl,
                     onImageClick = onImageClick,
-                    onExportClick = { isExportPreviewVisible = true },
+                    onExportClick = onExportClick,
                     isExportAvailable = isExportAvailable,
                     modifier = Modifier.padding(horizontal = 16.dp),
                     page = page,
@@ -170,14 +164,6 @@ fun GrammarSpellingTab(
         }
     }
 
-    if (isExportPreviewVisible) {
-        DiaryCardExportPreviewScreen(
-            writtenDate = exportDate,
-            topics = topics,
-            diaryContent = diaryContent,
-            onDismiss = { isExportPreviewVisible = false },
-        )
-    }
 }
 
 @Composable
@@ -215,12 +201,12 @@ private fun GrammarSpellingTabPreview() {
         GrammarSpellingTab(
             listState = rememberLazyListState(),
             writtenDate = "7월 11일 금요일",
-            exportDate = "2026.07.11 SAT",
             diaryContent = DiaryContent(),
             topics = Topics(),
             feedbackList = persistentListOf(),
             isShowCorrectedDiary = true,
             onImageClick = {},
+            onExportClick = {},
             onToggleDiaryViewMode = {},
         )
     }

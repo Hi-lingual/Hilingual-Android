@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.provider.MediaStore
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -51,8 +52,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.hilingual.core.common.extension.noRippleClickable
@@ -64,6 +63,7 @@ import com.hilingual.core.designsystem.component.bottomsheet.HilingualMenuBottom
 import com.hilingual.core.designsystem.component.image.ErrorImageSize
 import com.hilingual.core.designsystem.component.image.NetworkImage
 import com.hilingual.core.designsystem.component.toggle.HilingualBasicToggleSwitch
+import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppBar
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.designsystem.theme.PretendardMedium
 import com.hilingual.core.ui.component.dropdown.Topics
@@ -77,12 +77,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-internal fun DiaryCardExportPreviewScreen(
+fun DiaryCardExportPreviewScreen(
     writtenDate: String,
     topics: Topics,
     diaryContent: DiaryContent,
     onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
+    BackHandler(onBack = onDismiss)
+
     val context = LocalContext.current
     val messageController = LocalMessageController.current
     val scope = rememberCoroutineScope()
@@ -107,24 +110,20 @@ internal fun DiaryCardExportPreviewScreen(
         onDispose { context.unregisterReceiver(receiver) }
     }
 
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false),
-    ) {
-        DiaryCardExportPreviewContent(
-            writtenDate = writtenDate,
-            topics = topics,
-            diaryContent = diaryContent,
-            includeTopic = includeTopic,
-            onIncludeTopicChange = { includeTopic = it },
-            onDismiss = onDismiss,
-            onExportClick = { isExportMenuVisible = true },
-            cardModifier = Modifier.drawWithContent {
-                cardLayer.record { this@drawWithContent.drawContent() }
-                drawLayer(cardLayer)
-            },
-        )
-    }
+    DiaryCardExportPreviewContent(
+        writtenDate = writtenDate,
+        topics = topics,
+        diaryContent = diaryContent,
+        includeTopic = includeTopic,
+        onIncludeTopicChange = { includeTopic = it },
+        onDismiss = onDismiss,
+        onExportClick = { isExportMenuVisible = true },
+        modifier = modifier,
+        cardModifier = Modifier.drawWithContent {
+            cardLayer.record { this@drawWithContent.drawContent() }
+            drawLayer(cardLayer)
+        },
+    )
 
     HilingualMenuBottomSheet(
         isVisible = isExportMenuVisible,
@@ -201,47 +200,19 @@ private fun DiaryCardExportPreviewContent(
     onIncludeTopicChange: (Boolean) -> Unit,
     onDismiss: () -> Unit,
     onExportClick: () -> Unit,
+    modifier: Modifier = Modifier,
     cardModifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(HilingualTheme.colors.gray100),
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(HilingualTheme.colors.white)
-                .height(52.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .noRippleClickable(onClick = onDismiss),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_close_24),
-                    contentDescription = "닫기",
-                    modifier = Modifier.size(24.dp),
-                )
-            }
-            Text(
-                text = "일기 카드 미리보기",
-                style = HilingualTheme.typography.headSB18,
-                color = HilingualTheme.colors.hilingualBlack,
-            )
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_export_44),
-                contentDescription = "내보내기",
-                tint = Color.Unspecified,
-                modifier = Modifier
-                    .size(44.dp)
-                    .noRippleClickable { onExportClick() },
-            )
-        }
+
+        ExportTopAppBar(
+            onBackClick = onDismiss,
+            onExportClick = onExportClick
+        )
 
         Row(
             modifier = Modifier
@@ -271,7 +242,7 @@ private fun DiaryCardExportPreviewContent(
                 writtenDate = writtenDate,
                 topics = topics,
                 diaryContent = diaryContent,
-                includeTopic = includeTopic,
+                isShowTopic = includeTopic,
                 modifier = cardModifier,
             )
         }
@@ -279,11 +250,43 @@ private fun DiaryCardExportPreviewContent(
 }
 
 @Composable
+private fun ExportTopAppBar(
+    onBackClick: () -> Unit,
+    onExportClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    HilingualBasicTopAppBar(
+        modifier = modifier.fillMaxWidth(),
+        title = "일기 카드 미리보기",
+        navigationIcon = {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_close_24),
+                contentDescription = null,
+                tint = HilingualTheme.colors.black,
+                modifier = Modifier
+                    .size(24.dp)
+                    .noRippleClickable(onClick = onBackClick),
+            )
+        },
+        actions = {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_export_44),
+                contentDescription = null,
+                tint = Color.Unspecified,
+                modifier = Modifier
+                    .size(44.dp)
+                    .noRippleClickable(onClick = onExportClick),
+            )
+        },
+    )
+}
+
+@Composable
 private fun DiaryExportCard(
     writtenDate: String,
     topics: Topics,
     diaryContent: DiaryContent,
-    includeTopic: Boolean,
+    isShowTopic: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val colors = HilingualTheme.colors
@@ -299,7 +302,7 @@ private fun DiaryExportCard(
                 .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            if (includeTopic && topics.enTopic.isNotBlank()) {
+            if (isShowTopic && topics.enTopic.isNotBlank()) {
                 Row(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -332,42 +335,46 @@ private fun DiaryExportCard(
                         .background(colors.gray100),
                 )
             }
-            Text(
-                text = writtenDate,
-                style = HilingualTheme.typography.bodyM12,
-                color = colors.gray500,
-            )
-            diaryContent.imageUrl?.let { imageUrl ->
-                NetworkImage(
-                    imageUrl = imageUrl,
-                    shape = RoundedCornerShape(8.dp),
-                    errorImageSize = ErrorImageSize.LARGE,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(178.dp),
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = writtenDate,
+                    style = HilingualTheme.typography.bodyM12,
+                    color = colors.gray500,
                 )
-            }
-            val correctedText = diaryContent.correctedText
-            val annotatedText = buildAnnotatedString {
-                append(correctedText)
-                diaryContent.diffRanges.forEach { (start, end) ->
-                    if (start >= 0 && start < end && end <= correctedText.length) {
-                        addStyle(
-                            SpanStyle(color = colors.hilingualOrange, fontFamily = PretendardMedium),
-                            start,
-                            end,
-                        )
+                diaryContent.imageUrl?.let { imageUrl ->
+                    NetworkImage(
+                        imageUrl = imageUrl,
+                        shape = RoundedCornerShape(8.dp),
+                        errorImageSize = ErrorImageSize.LARGE,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(178.dp),
+                    )
+                }
+                val correctedText = diaryContent.correctedText
+                val annotatedText = buildAnnotatedString {
+                    append(correctedText)
+                    diaryContent.diffRanges.forEach { (start, end) ->
+                        if (start in 0..<end && end <= correctedText.length) {
+                            addStyle(
+                                SpanStyle(color = colors.hilingualOrange, fontFamily = PretendardMedium),
+                                start,
+                                end,
+                            )
+                        }
                     }
                 }
+                Text(
+                    text = annotatedText,
+                    style = HilingualTheme.typography.bodyR15,
+                    color = colors.black,
+                    maxLines = if (diaryContent.imageUrl == null) 19 else 11,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.heightIn(max = 340.dp),
+                )
             }
-            Text(
-                text = annotatedText,
-                style = HilingualTheme.typography.bodyR15,
-                color = colors.black,
-                maxLines = if (diaryContent.imageUrl == null) 19 else 11,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.heightIn(max = 340.dp),
-            )
             Image(
                 painter = painterResource(R.drawable.img_logo),
                 contentDescription = null,
