@@ -52,6 +52,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -409,6 +411,46 @@ private fun DiaryExportCard(
                     modifier = Modifier.size(width = 48.dp, height = 22.dp),
                 )
             }
+        }
+    }
+}
+
+private data class DiaryExportCardPreviewState(
+    val isShowTopic: Boolean,
+    val diaryContent: DiaryContent,
+)
+
+private class DiaryExportCardPreviewProvider : PreviewParameterProvider<DiaryExportCardPreviewState> {
+    private val text = "Today I went to the cafe Conhas in Yeonnam to meet my teammates. " +
+        "I was planning to arrive around 1:30 p.m., but I got there at 2:20 because I overslept. " +
+        "I wore rain boots and brought my favorite umbrella, but it wasn't really raining outside."
+    private val correctedRangeStart = text.indexOf("arrive around")
+    private val content = DiaryContent(
+        correctedText = text,
+        diffRanges = persistentListOf(correctedRangeStart to correctedRangeStart + "arrive around 1:30 p.m.".length),
+    )
+
+    override val values = sequenceOf(
+        DiaryExportCardPreviewState(isShowTopic = true, diaryContent = content),
+        DiaryExportCardPreviewState(isShowTopic = true, diaryContent = content.copy(imageUrl = "preview-image")),
+        DiaryExportCardPreviewState(isShowTopic = false, diaryContent = content),
+        DiaryExportCardPreviewState(isShowTopic = false, diaryContent = content.copy(imageUrl = "preview-image")),
+    )
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFF5F5F5, widthDp = 360)
+@Composable
+private fun DiaryExportCardPreview(
+    @PreviewParameter(DiaryExportCardPreviewProvider::class) state: DiaryExportCardPreviewState,
+) {
+    HilingualTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            DiaryExportCard(
+                writtenDate = "2026.09.28 MON",
+                topics = Topics(enTopic = "What surprised you today?"),
+                diaryContent = state.diaryContent,
+                isShowTopic = state.isShowTopic,
+            )
         }
     }
 }
