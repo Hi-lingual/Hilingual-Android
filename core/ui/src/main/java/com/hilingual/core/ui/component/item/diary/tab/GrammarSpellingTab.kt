@@ -52,7 +52,7 @@ import com.hilingual.core.ui.component.dropdown.Topics
 import com.hilingual.core.ui.component.item.diary.card.FeedbackCard
 import com.hilingual.core.ui.component.item.diary.card.FeedbackEmptyCard
 import com.hilingual.core.ui.component.item.diary.card.diarycard.DiaryCard
-import com.hilingual.core.ui.component.item.diary.card.diarycard.DiaryCardExportPreview
+import com.hilingual.core.ui.component.item.diary.card.diarycard.DiaryCardExportPreviewScreen
 import com.hilingual.core.ui.component.item.diary.toggle.DiaryViewModeToggle
 import com.hilingual.core.ui.model.diary.DiaryContent
 import com.hilingual.core.ui.model.diary.FeedbackContent
@@ -171,7 +171,7 @@ fun GrammarSpellingTab(
     }
 
     if (isExportPreviewVisible) {
-        DiaryCardExportPreview(
+        DiaryCardExportPreviewScreen(
             writtenDate = exportDate,
             topics = topics,
             diaryContent = diaryContent,

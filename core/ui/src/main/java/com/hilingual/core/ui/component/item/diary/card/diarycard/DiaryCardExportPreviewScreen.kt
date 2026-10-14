@@ -49,6 +49,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -70,12 +71,13 @@ import com.hilingual.core.ui.model.diary.DiaryContent
 import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-internal fun DiaryCardExportPreview(
+internal fun DiaryCardExportPreviewScreen(
     writtenDate: String,
     topics: Topics,
     diaryContent: DiaryContent,
@@ -109,82 +111,19 @@ internal fun DiaryCardExportPreview(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(HilingualTheme.colors.gray100),
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(HilingualTheme.colors.white)
-                    .height(52.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(44.dp)
-                        .noRippleClickable(onClick = onDismiss),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_close_24),
-                        contentDescription = "닫기",
-                        modifier = Modifier.size(24.dp),
-                    )
-                }
-                Text(
-                    text = "일기 카드 미리보기",
-                    style = HilingualTheme.typography.headSB18,
-                    color = HilingualTheme.colors.hilingualBlack,
-                )
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_export_44),
-                    contentDescription = "내보내기",
-                    tint = Color.Unspecified,
-                    modifier = Modifier
-                        .size(44.dp)
-                        .noRippleClickable { isExportMenuVisible = true },
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(HilingualTheme.colors.white)
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "주제 포함하기",
-                    style = HilingualTheme.typography.bodyR16,
-                    color = HilingualTheme.colors.black,
-                )
-                HilingualBasicToggleSwitch(
-                    isChecked = includeTopic,
-                    onCheckedChange = { includeTopic = it },
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 24.dp),
-            ) {
-                DiaryExportCard(
-                    writtenDate = writtenDate,
-                    topics = topics,
-                    diaryContent = diaryContent,
-                    includeTopic = includeTopic,
-                    modifier = Modifier.drawWithContent {
-                        cardLayer.record { this@drawWithContent.drawContent() }
-                        drawLayer(cardLayer)
-                    },
-                )
-            }
-        }
+        DiaryCardExportPreviewContent(
+            writtenDate = writtenDate,
+            topics = topics,
+            diaryContent = diaryContent,
+            includeTopic = includeTopic,
+            onIncludeTopicChange = { includeTopic = it },
+            onDismiss = onDismiss,
+            onExportClick = { isExportMenuVisible = true },
+            cardModifier = Modifier.drawWithContent {
+                cardLayer.record { this@drawWithContent.drawContent() }
+                drawLayer(cardLayer)
+            },
+        )
     }
 
     HilingualMenuBottomSheet(
@@ -250,6 +189,92 @@ internal fun DiaryCardExportPreview(
                 }
             },
         )
+    }
+}
+
+@Composable
+private fun DiaryCardExportPreviewContent(
+    writtenDate: String,
+    topics: Topics,
+    diaryContent: DiaryContent,
+    includeTopic: Boolean,
+    onIncludeTopicChange: (Boolean) -> Unit,
+    onDismiss: () -> Unit,
+    onExportClick: () -> Unit,
+    cardModifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(HilingualTheme.colors.gray100),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(HilingualTheme.colors.white)
+                .height(52.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(44.dp)
+                    .noRippleClickable(onClick = onDismiss),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_close_24),
+                    contentDescription = "닫기",
+                    modifier = Modifier.size(24.dp),
+                )
+            }
+            Text(
+                text = "일기 카드 미리보기",
+                style = HilingualTheme.typography.headSB18,
+                color = HilingualTheme.colors.hilingualBlack,
+            )
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_export_44),
+                contentDescription = "내보내기",
+                tint = Color.Unspecified,
+                modifier = Modifier
+                    .size(44.dp)
+                    .noRippleClickable { onExportClick() },
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(HilingualTheme.colors.white)
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "주제 포함하기",
+                style = HilingualTheme.typography.bodyR16,
+                color = HilingualTheme.colors.black,
+            )
+            HilingualBasicToggleSwitch(
+                isChecked = includeTopic,
+                onCheckedChange = onIncludeTopicChange,
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 24.dp),
+        ) {
+            DiaryExportCard(
+                writtenDate = writtenDate,
+                topics = topics,
+                diaryContent = diaryContent,
+                includeTopic = includeTopic,
+                modifier = cardModifier,
+            )
+        }
     }
 }
 
@@ -366,5 +391,43 @@ private fun DiaryExportCard(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun DiaryCardExportPreview() {
+    HilingualTheme {
+        DiaryCardExportPreviewContent(
+            writtenDate = "2026.09.28 MON",
+            topics = Topics(enTopic = "What surprised you today?"),
+            diaryContent = DiaryContent(
+                correctedText = "Today I went to the cafe Conhas in Yeonnam to meet my teammates.\n " +
+                    "I was planning to arrive around 1:30 p.m., but I got there at 2:20 " +
+                    "because I overslept, as always.\n " +
+                    "I wore rain boots and brought my favorite umbrella " +
+                    "because the weather forecast said it would rain all day, " +
+                    "but it wasn’t really raining much outside.\n " +
+                    "I got kind of disappointed. But yes, no rain is better than rain, I guess.\n" +
+                    "After arriving, I had a jambon arugula sandwich with a vanilla latte.\n " +
+                    "Honestly, I should be more careful when I'm drinking milk " +
+                    "because I get stomachaches easily, " +
+                    "but I always order lattes.\nMy life feels like a disaster, a mess that I call myself.\n " +
+                    "But they tasted really good, so I felt more motivated to work.\n " +
+                    "I really liked this café because it's spacious, chill, " +
+                    "and has a great atmosphere for focusing.\n " +
+                    "I’ll definitely come back again soon!",
+                diffRanges = persistentListOf(
+                    Pair(84, 164),
+                    Pair(278, 316),
+                    Pair(508, 583),
+                    Pair(740, 802),
+                ),
+            ),
+            includeTopic = true,
+            onIncludeTopicChange = {},
+            onDismiss = {},
+            onExportClick = {},
+        )
     }
 }
