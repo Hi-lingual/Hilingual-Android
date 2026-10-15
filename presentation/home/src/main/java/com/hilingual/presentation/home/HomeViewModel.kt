@@ -20,10 +20,10 @@ import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.model.LoadErrorHandleAction
+import com.hilingual.core.common.model.Milestone
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.calendar.model.CalendarStatus
 import com.hilingual.data.calendar.repository.CalendarRepository
-import com.hilingual.data.diary.model.Milestone
 import com.hilingual.data.diary.repository.DiaryLocalRepository
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.diary.repository.MilestoneRepository

@@ -265,8 +265,7 @@ internal fun HomeRoute(
 
     milestone?.let {
         MilestoneCardDialog(
-            milestone = it.count,
-            isHundredUnit = it.isHundredUnit,
+            milestone = it,
             onDismiss = viewModel::dismissMilestoneCard,
             onSaveSuccess = {
                 viewModel.dismissMilestoneCard()

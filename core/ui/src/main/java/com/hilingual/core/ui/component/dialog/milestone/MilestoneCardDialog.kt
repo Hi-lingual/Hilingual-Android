@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.common.model.Milestone
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.util.recordForExport
@@ -39,14 +40,13 @@ import com.hilingual.core.ui.util.rememberImageExporter
 
 @Composable
 fun MilestoneCardDialog(
-    milestone: Int,
-    isHundredUnit: Boolean,
+    milestone: Milestone,
     onDismiss: () -> Unit,
     onSaveSuccess: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val imageExporter = rememberImageExporter()
-    val fileName = "hilingual_milestone_$milestone"
+    val fileName = "hilingual_milestone_${milestone.count}"
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -64,13 +64,11 @@ fun MilestoneCardDialog(
         ) {
             MilestoneCardImage(
                 milestone = milestone,
-                isHundredUnit = isHundredUnit,
                 modifier = Modifier.recordForExport(imageExporter),
             )
 
             MilestoneCardPopup(
                 milestone = milestone,
-                isHundredUnit = isHundredUnit,
                 onCloseClick = onDismiss,
                 onShareClick = { imageExporter.share(fileName) },
                 onSaveClick = { imageExporter.saveToGallery(fileName, onSuccess = onSaveSuccess) },
@@ -81,8 +79,7 @@ fun MilestoneCardDialog(
 
 @Composable
 private fun MilestoneCardPopup(
-    milestone: Int,
-    isHundredUnit: Boolean,
+    milestone: Milestone,
     onCloseClick: () -> Unit,
     onShareClick: () -> Unit,
     onSaveClick: () -> Unit,
@@ -105,7 +102,6 @@ private fun MilestoneCardPopup(
         ) {
             MilestoneCardContent(
                 milestone = milestone,
-                isHundredUnit = isHundredUnit,
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
@@ -115,7 +111,7 @@ private fun MilestoneCardPopup(
                     onClick = onShareClick,
                 )
                 MilestoneActionButton(
-                    iconRes = R.drawable.ic_save_24,
+                    iconRes = R.drawable.ic_download_24,
                     label = "저장",
                     onClick = onSaveClick,
                 )
@@ -136,8 +132,7 @@ private fun MilestoneCardPopup(
 
 @Composable
 private fun MilestoneCardImage(
-    milestone: Int,
-    isHundredUnit: Boolean,
+    milestone: Milestone,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -148,7 +143,6 @@ private fun MilestoneCardImage(
     ) {
         MilestoneCardContent(
             milestone = milestone,
-            isHundredUnit = isHundredUnit,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth()
@@ -163,11 +157,14 @@ private fun MilestoneCardImage(
 
 @Composable
 private fun MilestoneCardContent(
-    milestone: Int,
-    isHundredUnit: Boolean,
+    milestone: Milestone,
     modifier: Modifier = Modifier,
 ) {
-    val pointColor = if (isHundredUnit) HilingualTheme.colors.hilingualOrange else HilingualTheme.colors.hilingualBlue
+    val (pointColor, illustrationRes) = if (milestone.isHundredUnit) {
+        HilingualTheme.colors.hilingualOrange to R.drawable.img_milestone_orange
+    } else {
+        HilingualTheme.colors.hilingualBlue to R.drawable.img_milestone_blue
+    }
 
     Column(
         modifier = modifier,
@@ -181,7 +178,7 @@ private fun MilestoneCardContent(
                 color = HilingualTheme.colors.black,
             )
             Text(
-                text = "$milestone",
+                text = "${milestone.count}",
                 style = HilingualTheme.typography.headEB90,
                 color = pointColor,
             )
@@ -191,9 +188,7 @@ private fun MilestoneCardContent(
                 color = HilingualTheme.colors.black,
             )
             Image(
-                painter = painterResource(
-                    if (isHundredUnit) R.drawable.img_milestone_orange else R.drawable.img_milestone_blue,
-                ),
+                painter = painterResource(illustrationRes),
                 contentDescription = null,
                 modifier = Modifier.size(width = 280.dp, height = 152.dp),
             )
@@ -201,13 +196,13 @@ private fun MilestoneCardContent(
 
         Text(
             text = buildAnnotatedString {
-                if (isHundredUnit) {
+                if (milestone.isHundredUnit) {
                     append("WOW! You've written ")
-                    withStyle(SpanStyle(color = pointColor)) { append("$milestone stories") }
+                    withStyle(SpanStyle(color = pointColor)) { append("${milestone.count} stories") }
                     append(" so far.\nKeep up the great work with Hilingual!")
                 } else {
                     append("Way to go! You've written ")
-                    withStyle(SpanStyle(color = pointColor)) { append("$milestone entries") }
+                    withStyle(SpanStyle(color = pointColor)) { append("${milestone.count} entries") }
                     append(" so far.\nBuild your own English diary with Hilingual.")
                 }
             },
@@ -259,8 +254,7 @@ private fun MilestoneActionButton(
 private fun MilestoneCardPopupPreview() {
     HilingualTheme {
         MilestoneCardPopup(
-            milestone = 30,
-            isHundredUnit = false,
+            milestone = requireNotNull(Milestone.from(30)),
             onCloseClick = {},
             onShareClick = {},
             onSaveClick = {},
@@ -273,8 +267,7 @@ private fun MilestoneCardPopupPreview() {
 private fun MilestoneCardImagePreview() {
     HilingualTheme {
         MilestoneCardImage(
-            milestone = 100,
-            isHundredUnit = true,
+            milestone = requireNotNull(Milestone.from(100)),
         )
     }
 }

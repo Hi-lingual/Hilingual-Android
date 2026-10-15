@@ -1,4 +1,4 @@
-package com.hilingual.data.diary.model
+package com.hilingual.core.common.model
 
 @JvmInline
 value class Milestone private constructor(val count: Int) {
