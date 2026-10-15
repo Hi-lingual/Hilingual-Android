@@ -267,10 +267,7 @@ internal fun HomeRoute(
         MilestoneCardDialog(
             milestone = it,
             onDismiss = viewModel::dismissMilestoneCard,
-            onSaveSuccess = {
-                viewModel.dismissMilestoneCard()
-                messageController(HilingualMessage.Toast("카드가 이미지로 저장되었어요."))
-            },
+            onSaveSuccess = viewModel::dismissMilestoneCard,
         )
     }
 

@@ -76,7 +76,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                 if (!newUiState.isAdWatched) {
                     _sideEffect.emit(DiaryFeedbackSideEffect.ShowInterstitialAd)
                 }
-                fetchPendingMilestone()
+                showPendingMilestoneCard()
             }.onLogFailure { throwable ->
                 _uiState.update {
                     UiState.Failure(throwable.toLoadErrorHandleAction(LoadErrorHandleAction.Retry))
@@ -91,7 +91,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
         _milestone.update { null }
     }
 
-    private fun fetchPendingMilestone() {
+    private fun showPendingMilestoneCard() {
         milestoneRepository.consumePendingMilestone()?.let { milestone ->
             _milestone.update { milestone }
         }

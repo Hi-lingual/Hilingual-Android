@@ -139,7 +139,7 @@ class HomeViewModel @Inject constructor(
                 )
             }
 
-            fetchPendingMilestone()
+            showPendingMilestoneCard()
             checkRecoveryModals(userInfo.recoveryTickets, initialDates)
         }
     }
@@ -150,7 +150,11 @@ class HomeViewModel @Inject constructor(
         _milestone.update { null }
     }
 
-    private fun fetchPendingMilestone() {
+    private suspend fun awaitMilestoneCardDismissed() {
+        _milestone.first { it == null }
+    }
+
+    private fun showPendingMilestoneCard() {
         milestoneRepository.consumePendingMilestone()?.let { milestone ->
             _milestone.update { milestone }
         }
@@ -343,7 +347,7 @@ class HomeViewModel @Inject constructor(
     ) {
         onboardingCheckCompleted.first()
         isOnboardingVisible.first { !it }
-        _milestone.first { it == null }
+        awaitMilestoneCardDismissed()
 
         val lastShownMonth = onboardingRepository.getRecoveryReminderLastShownMonth().getOrDefault("")
         val shouldShow = RecoveryReminderPolicy.shouldShowReminder(

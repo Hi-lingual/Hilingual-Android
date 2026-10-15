@@ -25,20 +25,58 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.model.Milestone
+import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.util.rememberImageExporter
+
+private val EXPORT_IMAGE_SIZE = DpSize(width = 360.dp, height = 640.dp)
+
+private enum class MilestoneCardStyle(
+    @DrawableRes val illustrationRes: Int,
+    val messagePrefix: String,
+    val countUnit: String,
+    val messageSuffix: String,
+) {
+    REGULAR(
+        illustrationRes = R.drawable.img_milestone_blue,
+        messagePrefix = "Way to go! You've written ",
+        countUnit = "entries",
+        messageSuffix = " so far.\nBuild your own English diary with Hilingual.",
+    ),
+    HUNDRED_UNIT(
+        illustrationRes = R.drawable.img_milestone_orange,
+        messagePrefix = "WOW! You've written ",
+        countUnit = "stories",
+        messageSuffix = " so far.\nKeep up the great work with Hilingual!",
+    ),
+    ;
+
+    val pointColor: Color
+        @Composable get() = when (this) {
+            REGULAR -> HilingualTheme.colors.hilingualBlue
+            HUNDRED_UNIT -> HilingualTheme.colors.hilingualOrange
+        }
+
+    companion object {
+        fun of(milestone: Milestone): MilestoneCardStyle =
+            if (milestone.isHundredUnit) HUNDRED_UNIT else REGULAR
+    }
+}
 
 @Composable
 fun MilestoneCardDialog(
@@ -48,6 +86,7 @@ fun MilestoneCardDialog(
     modifier: Modifier = Modifier,
 ) {
     val imageExporter = rememberImageExporter()
+    val messageController = LocalMessageController.current
     val fileName = "hilingual_milestone_${milestone.count}"
 
     Dialog(
@@ -64,7 +103,7 @@ fun MilestoneCardDialog(
                 .background(HilingualTheme.colors.dim2),
             contentAlignment = Alignment.Center,
         ) {
-            MilestoneCardImage(
+            MilestoneCardExportLayout(
                 milestone = milestone,
                 modifier = imageExporter.recordModifier,
             )
@@ -73,7 +112,15 @@ fun MilestoneCardDialog(
                 milestone = milestone,
                 onCloseClick = onDismiss,
                 onShareClick = { imageExporter.share(fileName) },
-                onSaveClick = { imageExporter.saveToGallery(fileName, onSuccess = onSaveSuccess) },
+                onSaveClick = {
+                    imageExporter.saveToGallery(
+                        fileName = fileName,
+                        onSuccess = {
+                            messageController(HilingualMessage.Toast("카드가 이미지로 저장되었어요."))
+                            onSaveSuccess()
+                        },
+                    )
+                },
             )
         }
     }
@@ -102,9 +149,7 @@ private fun MilestoneCardPopup(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            MilestoneCardContent(
-                milestone = milestone,
-            )
+            MilestoneCardContent(milestone = milestone)
 
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                 MilestoneActionButton(
@@ -133,7 +178,7 @@ private fun MilestoneCardPopup(
 }
 
 @Composable
-private fun MilestoneCardImage(
+private fun MilestoneCardExportLayout(
     milestone: Milestone,
     modifier: Modifier = Modifier,
 ) {
@@ -141,7 +186,7 @@ private fun MilestoneCardImage(
     CompositionLocalProvider(LocalDensity provides Density(density = density.density, fontScale = 1f)) {
         Box(
             modifier = modifier
-                .requiredSize(width = 360.dp, height = 640.dp)
+                .requiredSize(EXPORT_IMAGE_SIZE)
                 .background(HilingualTheme.colors.gray100),
             contentAlignment = Alignment.Center,
         ) {
@@ -165,11 +210,8 @@ private fun MilestoneCardContent(
     milestone: Milestone,
     modifier: Modifier = Modifier,
 ) {
-    val (pointColor, illustrationRes) = if (milestone.isHundredUnit) {
-        HilingualTheme.colors.hilingualOrange to R.drawable.img_milestone_orange
-    } else {
-        HilingualTheme.colors.hilingualBlue to R.drawable.img_milestone_blue
-    }
+    val style = MilestoneCardStyle.of(milestone)
+    val pointColor = style.pointColor
 
     Column(
         modifier = modifier,
@@ -193,24 +235,14 @@ private fun MilestoneCardContent(
                 color = HilingualTheme.colors.black,
             )
             Image(
-                painter = painterResource(illustrationRes),
+                painter = painterResource(style.illustrationRes),
                 contentDescription = null,
                 modifier = Modifier.size(width = 280.dp, height = 152.dp),
             )
         }
 
         Text(
-            text = buildAnnotatedString {
-                if (milestone.isHundredUnit) {
-                    append("WOW! You've written ")
-                    withStyle(SpanStyle(color = pointColor)) { append("${milestone.count} stories") }
-                    append(" so far.\nKeep up the great work with Hilingual!")
-                } else {
-                    append("Way to go! You've written ")
-                    withStyle(SpanStyle(color = pointColor)) { append("${milestone.count} entries") }
-                    append(" so far.\nBuild your own English diary with Hilingual.")
-                }
-            },
+            text = style.message(count = milestone.count, pointColor = pointColor),
             style = HilingualTheme.typography.bodyM14,
             color = HilingualTheme.colors.black,
             textAlign = TextAlign.Center,
@@ -221,6 +253,12 @@ private fun MilestoneCardContent(
             contentDescription = null,
         )
     }
+}
+
+private fun MilestoneCardStyle.message(count: Int, pointColor: Color): AnnotatedString = buildAnnotatedString {
+    append(messagePrefix)
+    withStyle(SpanStyle(color = pointColor)) { append("$count $countUnit") }
+    append(messageSuffix)
 }
 
 @Composable
@@ -269,9 +307,9 @@ private fun MilestoneCardPopupPreview() {
 
 @Preview(widthDp = 360, heightDp = 640)
 @Composable
-private fun MilestoneCardImagePreview() {
+private fun MilestoneCardExportLayoutPreview() {
     HilingualTheme {
-        MilestoneCardImage(
+        MilestoneCardExportLayout(
             milestone = requireNotNull(Milestone.fromOrNull(100)),
         )
     }

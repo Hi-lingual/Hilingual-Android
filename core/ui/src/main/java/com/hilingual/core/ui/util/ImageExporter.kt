@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.compose.runtime.Composable
@@ -148,18 +149,23 @@ private suspend fun Context.saveImageToGallery(bitmap: Bitmap, fileName: String)
 }
 
 private suspend fun Context.shareImage(bitmap: Bitmap, fileName: String, targetChosenAction: String?) {
-    val uri = withContext(Dispatchers.IO) {
-        val directory = File(cacheDir, SHARE_DIRECTORY).apply {
-            deleteRecursively()
-            mkdirs()
-        }
-        val file = File(directory, "$fileName.png")
-        file.outputStream().use {
-            check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)) { "Failed to compress image" }
-        }
-        FileProvider.getUriForFile(this@shareImage, "$packageName.fileprovider", file)
-    }
+    val uri = writeShareFile(bitmap, fileName)
+    startActivity(createShareChooser(uri, targetChosenAction))
+}
 
+private suspend fun Context.writeShareFile(bitmap: Bitmap, fileName: String): Uri = withContext(Dispatchers.IO) {
+    val directory = File(cacheDir, SHARE_DIRECTORY).apply {
+        deleteRecursively()
+        mkdirs()
+    }
+    val file = File(directory, "$fileName.png")
+    file.outputStream().use {
+        check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)) { "Failed to compress image" }
+    }
+    FileProvider.getUriForFile(this@writeShareFile, "$packageName.fileprovider", file)
+}
+
+private fun Context.createShareChooser(uri: Uri, targetChosenAction: String?): Intent {
     val sendIntent = Intent(Intent.ACTION_SEND).apply {
         type = "image/png"
         putExtra(Intent.EXTRA_STREAM, uri)
@@ -174,5 +180,5 @@ private suspend fun Context.shareImage(bitmap: Bitmap, fileName: String, targetC
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         ).intentSender
     }
-    startActivity(Intent.createChooser(sendIntent, null, targetChosenSender))
+    return Intent.createChooser(sendIntent, null, targetChosenSender)
 }
