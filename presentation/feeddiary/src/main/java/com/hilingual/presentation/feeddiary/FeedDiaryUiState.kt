@@ -33,6 +33,7 @@ import kotlinx.collections.immutable.toImmutableList
 @Immutable
 internal data class FeedDiaryUiState(
     val writtenDate: String = "",
+    val exportDate: String = "",
     val isMine: Boolean = false,
     val topics: Topics = Topics(),
     val profileContent: ProfileContentUiModel = ProfileContentUiModel(),
@@ -44,6 +45,7 @@ internal data class FeedDiaryUiState(
         val Fake = FeedDiaryUiState(
             isMine = true,
             writtenDate = "8월 28일 목요일",
+            exportDate = "2026.08.28 FRI",
             topics = Topics(
                 enTopic = "영어 주제",
                 koTopic = "한국어 주제",

@@ -63,9 +63,11 @@ fun GrammarSpellingTab(
     feedbackList: ImmutableList<FeedbackContent>,
     isShowCorrectedDiary: Boolean,
     onImageClick: () -> Unit,
+    onExportClick: () -> Unit,
     onToggleDiaryViewMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     isAdVisible: Boolean = false,
+    isExportAvailable: Boolean = true,
     page: Page? = null,
 ) {
     val adHolder = if (isAdVisible) rememberBannerAdView(INLINE_BANNER) else null
@@ -114,6 +116,8 @@ fun GrammarSpellingTab(
                     diffRanges = diffRanges,
                     imageUrl = imageUrl,
                     onImageClick = onImageClick,
+                    onExportClick = onExportClick,
+                    isExportAvailable = isExportAvailable,
                     modifier = Modifier.padding(horizontal = 16.dp),
                     page = page,
                 )
@@ -201,6 +205,7 @@ private fun GrammarSpellingTabPreview() {
             feedbackList = persistentListOf(),
             isShowCorrectedDiary = true,
             onImageClick = {},
+            onExportClick = {},
             onToggleDiaryViewMode = {},
         )
     }
