@@ -22,6 +22,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.model.LoadErrorHandleAction
+import com.hilingual.core.common.model.Milestone
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.common.util.toLocalDateOrNull
@@ -132,7 +133,7 @@ internal class DiaryWriteViewModel @Inject constructor(
             result
                 .onSuccess { response ->
                     diaryLocalRepository.clearDiaryTemp(state.selectedDate)
-                    milestoneRepository.registerPendingMilestone(response.totalDiaries)
+                    Milestone.fromOrNull(response.totalDiaries)?.let(milestoneRepository::registerPendingMilestone)
                     _feedbackUiState.update { UiState.Success(response.diaryId) }
                     suspendRunCatching { widgetUpdater.updateAll() }
                         .onLogFailure { }

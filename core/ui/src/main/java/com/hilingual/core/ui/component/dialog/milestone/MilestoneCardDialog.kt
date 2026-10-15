@@ -17,10 +17,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
@@ -28,6 +30,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -35,7 +38,6 @@ import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.model.Milestone
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
-import com.hilingual.core.ui.util.recordForExport
 import com.hilingual.core.ui.util.rememberImageExporter
 
 @Composable
@@ -64,7 +66,7 @@ fun MilestoneCardDialog(
         ) {
             MilestoneCardImage(
                 milestone = milestone,
-                modifier = Modifier.recordForExport(imageExporter),
+                modifier = imageExporter.recordModifier,
             )
 
             MilestoneCardPopup(
@@ -135,23 +137,26 @@ private fun MilestoneCardImage(
     milestone: Milestone,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier
-            .requiredSize(width = 360.dp, height = 640.dp)
-            .background(HilingualTheme.colors.gray100),
-        contentAlignment = Alignment.Center,
-    ) {
-        MilestoneCardContent(
-            milestone = milestone,
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth()
-                .background(
-                    color = HilingualTheme.colors.white,
-                    shape = RoundedCornerShape(12.dp),
-                )
-                .padding(horizontal = 24.dp, vertical = 32.dp),
-        )
+    val density = LocalDensity.current
+    CompositionLocalProvider(LocalDensity provides Density(density = density.density, fontScale = 1f)) {
+        Box(
+            modifier = modifier
+                .requiredSize(width = 360.dp, height = 640.dp)
+                .background(HilingualTheme.colors.gray100),
+            contentAlignment = Alignment.Center,
+        ) {
+            MilestoneCardContent(
+                milestone = milestone,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
+                    .background(
+                        color = HilingualTheme.colors.white,
+                        shape = RoundedCornerShape(12.dp),
+                    )
+                    .padding(horizontal = 24.dp, vertical = 32.dp),
+            )
+        }
     }
 }
 
@@ -254,7 +259,7 @@ private fun MilestoneActionButton(
 private fun MilestoneCardPopupPreview() {
     HilingualTheme {
         MilestoneCardPopup(
-            milestone = requireNotNull(Milestone.from(30)),
+            milestone = requireNotNull(Milestone.fromOrNull(30)),
             onCloseClick = {},
             onShareClick = {},
             onSaveClick = {},
@@ -267,7 +272,7 @@ private fun MilestoneCardPopupPreview() {
 private fun MilestoneCardImagePreview() {
     HilingualTheme {
         MilestoneCardImage(
-            milestone = requireNotNull(Milestone.from(100)),
+            milestone = requireNotNull(Milestone.fromOrNull(100)),
         )
     }
 }

@@ -343,6 +343,7 @@ class HomeViewModel @Inject constructor(
     ) {
         onboardingCheckCompleted.first()
         isOnboardingVisible.first { !it }
+        _milestone.first { it == null }
 
         val lastShownMonth = onboardingRepository.getRecoveryReminderLastShownMonth().getOrDefault("")
         val shouldShow = RecoveryReminderPolicy.shouldShowReminder(

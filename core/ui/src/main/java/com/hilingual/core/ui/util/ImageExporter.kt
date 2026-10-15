@@ -36,20 +36,28 @@ private const val SHARE_DIRECTORY = "shared_images"
 
 class ImageExporter internal constructor(
     private val context: Context,
-    internal val graphicsLayer: GraphicsLayer,
+    private val graphicsLayer: GraphicsLayer,
     private val coroutineScope: CoroutineScope,
-    private val shareTargetChosenAction: String,
 ) {
     private var isExporting = false
-    private var onShareTargetChosen: (() -> Unit)? = null
+    private var shareTargetReceiver: BroadcastReceiver? = null
+
+    val recordModifier: Modifier = Modifier.drawWithContent {
+        graphicsLayer.record { this@drawWithContent.drawContent() }
+    }
 
     fun share(
         fileName: String,
-        onTargetChosen: () -> Unit = {},
+        onTargetChosen: (() -> Unit)? = null,
         onFailure: () -> Unit = {},
-    ) = export(onFailure) { bitmap ->
-        onShareTargetChosen = onTargetChosen
-        context.shareImage(bitmap, fileName, shareTargetChosenAction)
+    ) = export(
+        onFailure = {
+            unregisterShareTargetReceiver()
+            onFailure()
+        },
+    ) { bitmap ->
+        val targetChosenAction = onTargetChosen?.let(::registerShareTargetReceiver)
+        context.shareImage(bitmap, fileName, targetChosenAction)
     }
 
     fun saveToGallery(
@@ -61,10 +69,7 @@ class ImageExporter internal constructor(
         onSuccess()
     }
 
-    internal fun notifyShareTargetChosen() {
-        onShareTargetChosen?.invoke()
-        onShareTargetChosen = null
-    }
+    internal fun release() = unregisterShareTargetReceiver()
 
     private fun export(onFailure: () -> Unit, block: suspend (Bitmap) -> Unit) {
         if (isExporting) return
@@ -76,10 +81,30 @@ class ImageExporter internal constructor(
             isExporting = false
         }
     }
-}
 
-fun Modifier.recordForExport(exporter: ImageExporter): Modifier = drawWithContent {
-    exporter.graphicsLayer.record { this@drawWithContent.drawContent() }
+    private fun registerShareTargetReceiver(onTargetChosen: () -> Unit): String {
+        unregisterShareTargetReceiver()
+        val action = "${context.packageName}.IMAGE_SHARE_TARGET_CHOSEN.${UUID.randomUUID()}"
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                unregisterShareTargetReceiver()
+                onTargetChosen()
+            }
+        }
+        ContextCompat.registerReceiver(
+            context,
+            receiver,
+            IntentFilter(action),
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
+        shareTargetReceiver = receiver
+        return action
+    }
+
+    private fun unregisterShareTargetReceiver() {
+        shareTargetReceiver?.let(context::unregisterReceiver)
+        shareTargetReceiver = null
+    }
 }
 
 @Composable
@@ -87,26 +112,12 @@ fun rememberImageExporter(): ImageExporter {
     val context = LocalContext.current
     val graphicsLayer = rememberGraphicsLayer()
     val coroutineScope = rememberCoroutineScope()
-    val shareTargetChosenAction = remember(context) {
-        "${context.packageName}.IMAGE_SHARE_TARGET_CHOSEN.${UUID.randomUUID()}"
-    }
-    val exporter = remember(context, graphicsLayer, coroutineScope, shareTargetChosenAction) {
-        ImageExporter(context, graphicsLayer, coroutineScope, shareTargetChosenAction)
+    val exporter = remember(context, graphicsLayer, coroutineScope) {
+        ImageExporter(context, graphicsLayer, coroutineScope)
     }
 
-    DisposableEffect(context, exporter, shareTargetChosenAction) {
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                exporter.notifyShareTargetChosen()
-            }
-        }
-        ContextCompat.registerReceiver(
-            context,
-            receiver,
-            IntentFilter(shareTargetChosenAction),
-            ContextCompat.RECEIVER_NOT_EXPORTED,
-        )
-        onDispose { context.unregisterReceiver(receiver) }
+    DisposableEffect(exporter) {
+        onDispose { exporter.release() }
     }
 
     return exporter
@@ -136,7 +147,7 @@ private suspend fun Context.saveImageToGallery(bitmap: Bitmap, fileName: String)
     }
 }
 
-private suspend fun Context.shareImage(bitmap: Bitmap, fileName: String, targetChosenAction: String) {
+private suspend fun Context.shareImage(bitmap: Bitmap, fileName: String, targetChosenAction: String?) {
     val uri = withContext(Dispatchers.IO) {
         val directory = File(cacheDir, SHARE_DIRECTORY).apply {
             deleteRecursively()
@@ -155,11 +166,13 @@ private suspend fun Context.shareImage(bitmap: Bitmap, fileName: String, targetC
         clipData = ClipData.newRawUri(null, uri)
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
-    val targetChosenCallback = PendingIntent.getBroadcast(
-        this,
-        0,
-        Intent(targetChosenAction).setPackage(packageName),
-        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-    )
-    startActivity(Intent.createChooser(sendIntent, null, targetChosenCallback.intentSender))
+    val targetChosenSender = targetChosenAction?.let {
+        PendingIntent.getBroadcast(
+            this,
+            0,
+            Intent(it).setPackage(packageName),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        ).intentSender
+    }
+    startActivity(Intent.createChooser(sendIntent, null, targetChosenSender))
 }

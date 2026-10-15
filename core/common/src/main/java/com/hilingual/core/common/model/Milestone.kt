@@ -11,7 +11,7 @@ value class Milestone private constructor(val count: Int) {
         private const val REGULAR_INTERVAL = 50
         private const val HUNDRED_UNIT = 100
 
-        fun from(totalDiaries: Int): Milestone? {
+        fun fromOrNull(totalDiaries: Int): Milestone? {
             val isMilestone = totalDiaries in EARLY_COUNTS ||
                 (totalDiaries >= REGULAR_START && totalDiaries % REGULAR_INTERVAL == 0)
             return if (isMilestone) Milestone(totalDiaries) else null

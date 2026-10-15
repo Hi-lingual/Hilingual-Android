@@ -8,8 +8,8 @@ import javax.inject.Inject
 class MilestoneRepositoryImpl @Inject constructor() : MilestoneRepository {
     private val pendingMilestone = AtomicReference<Milestone?>(null)
 
-    override fun registerPendingMilestone(totalDiaries: Int) {
-        Milestone.from(totalDiaries)?.let(pendingMilestone::set)
+    override fun registerPendingMilestone(milestone: Milestone) {
+        pendingMilestone.set(milestone)
     }
 
     override fun consumePendingMilestone(): Milestone? = pendingMilestone.getAndSet(null)
