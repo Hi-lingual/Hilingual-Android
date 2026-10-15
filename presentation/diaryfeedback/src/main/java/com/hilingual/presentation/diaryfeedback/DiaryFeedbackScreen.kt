@@ -70,6 +70,7 @@ import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.dialog.diary.DiaryPublishDialog
 import com.hilingual.core.ui.component.dialog.diary.DiaryUnpublishDialog
+import com.hilingual.core.ui.component.dialog.milestone.MilestoneCardDialog
 import com.hilingual.core.ui.component.item.diary.card.diarycard.DiaryCardExportPreviewScreen
 import com.hilingual.core.ui.component.item.diary.image.ModalImage
 import com.hilingual.core.ui.component.item.diary.tab.GrammarSpellingTab
@@ -93,6 +94,7 @@ internal fun DiaryFeedbackRoute(
     val activity = LocalActivity.current
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val milestone by viewModel.milestone.collectAsStateWithLifecycle()
     var isImageDetailVisible by remember { mutableStateOf(false) }
 
     val dialogTrigger = LocalDialogTrigger.current
@@ -248,6 +250,14 @@ internal fun DiaryFeedbackRoute(
                     onDeleteDiary = { /* viewModel::deleteDiary 수정기능 도입까지 삭제 기능 지원중단 */ },
                     tracker = tracker,
                 )
+
+                milestone?.let {
+                    MilestoneCardDialog(
+                        milestone = it,
+                        onDismiss = viewModel::dismissMilestoneCard,
+                        onSaveSuccess = viewModel::dismissMilestoneCard,
+                    )
+                }
             }
         }
 
