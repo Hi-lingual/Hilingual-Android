@@ -97,6 +97,7 @@ fun DiaryCardExportPreviewScreen(
     val cardLayer = rememberGraphicsLayer()
     val shareAction = remember { "${context.packageName}.DIARY_CARD_SHARED.${UUID.randomUUID()}" }
     val currentOnDismiss by rememberUpdatedState(onDismiss)
+    var isSharing by remember { mutableStateOf(false) }
     var includeTopic by remember { mutableStateOf(true) }
     var isExportMenuVisible by remember { mutableStateOf(false) }
 
@@ -140,29 +141,48 @@ fun DiaryCardExportPreviewScreen(
             onClick = {
                 isExportMenuVisible = false
                 scope.launch {
-                    val bitmap = cardLayer.toImageBitmap().asAndroidBitmap()
-                    val uri = withContext(Dispatchers.IO) {
-                        val file = File(context.cacheDir, "diary-card-${UUID.randomUUID()}.png")
-                        FileOutputStream(file).use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
-                        FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+                    if (isSharing) return@launch
+                    isSharing = true
+                    try {
+                        suspendRunCatching {
+                            val bitmap = cardLayer.toImageBitmap().asAndroidBitmap()
+                            val uri = withContext(Dispatchers.IO) {
+                                val directory = File(context.cacheDir, "diary_card_shares")
+                                check(!directory.exists() || directory.deleteRecursively()) {
+                                    "Failed to clear share cache"
+                                }
+                                check(directory.mkdirs()) { "Failed to create share cache" }
+                                val file = File(directory, "diary-card-${UUID.randomUUID()}.png")
+                                FileOutputStream(file).use {
+                                    check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)) {
+                                        "Failed to compress diary card"
+                                    }
+                                }
+                                FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+                            }
+                            val chosenTarget = PendingIntent.getBroadcast(
+                                context,
+                                0,
+                                Intent(shareAction).setPackage(context.packageName),
+                                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                            )
+                            context.startActivity(
+                                Intent.createChooser(
+                                    Intent(Intent.ACTION_SEND).apply {
+                                        type = "image/png"
+                                        putExtra(Intent.EXTRA_STREAM, uri)
+                                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                    },
+                                    null,
+                                    chosenTarget.intentSender,
+                                ),
+                            )
+                        }.onLogFailure {
+                            messageController(HilingualMessage.Toast("이미지 공유에 실패했어요. 다시 시도해 주세요."))
+                        }
+                    } finally {
+                        isSharing = false
                     }
-                    val chosenTarget = PendingIntent.getBroadcast(
-                        context,
-                        0,
-                        Intent(shareAction).setPackage(context.packageName),
-                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-                    )
-                    context.startActivity(
-                        Intent.createChooser(
-                            Intent(Intent.ACTION_SEND).apply {
-                                type = "image/png"
-                                putExtra(Intent.EXTRA_STREAM, uri)
-                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            },
-                            null,
-                            chosenTarget.intentSender,
-                        ),
-                    )
                 }
             },
         )
