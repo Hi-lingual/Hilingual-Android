@@ -58,8 +58,10 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualMenuBottomSheet
 import com.hilingual.core.designsystem.component.bottomsheet.HilingualMenuBottomSheetItem
@@ -170,27 +172,45 @@ fun DiaryCardExportPreviewScreen(
             onClick = {
                 isExportMenuVisible = false
                 scope.launch {
-                    val bitmap = cardLayer.toImageBitmap().asAndroidBitmap()
-                    val saved = withContext(Dispatchers.IO) {
-                        val values = ContentValues().apply {
-                            put(MediaStore.Images.Media.DISPLAY_NAME, "diary-card-${UUID.randomUUID()}.png")
-                            put(MediaStore.Images.Media.MIME_TYPE, "image/png")
-                            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Hilingual")
-                        }
-                        context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-                            ?.let { uri ->
-                                context.contentResolver.openOutputStream(uri)?.use {
-                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
-                                } ?: false
-                            } ?: false
-                    }
-                    if (saved) {
+                    suspendRunCatching {
+                        val bitmap = cardLayer.toImageBitmap().asAndroidBitmap()
+                        saveDiaryCardToGallery(context, bitmap)
+                    }.onSuccess {
                         messageController(HilingualMessage.Toast("일기가 이미지로 저장되었어요."))
                         onDismiss()
+                    }.onLogFailure {
+                        messageController(HilingualMessage.Toast("이미지 저장에 실패했어요. 다시 시도해 주세요."))
                     }
                 }
             },
         )
+    }
+}
+
+private suspend fun saveDiaryCardToGallery(context: Context, bitmap: Bitmap) = withContext(Dispatchers.IO) {
+    val resolver = context.contentResolver
+    val values = ContentValues().apply {
+        put(MediaStore.Images.Media.DISPLAY_NAME, "diary-card-${UUID.randomUUID()}.png")
+        put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+        put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Hilingual")
+        put(MediaStore.Images.Media.IS_PENDING, 1)
+    }
+    val uri = checkNotNull(resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)) {
+        "Failed to create MediaStore entry"
+    }
+    var saved = false
+    try {
+        checkNotNull(resolver.openOutputStream(uri)) { "Failed to open $uri" }.use {
+            check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)) { "Failed to compress diary card" }
+        }
+        values.clear()
+        values.put(MediaStore.Images.Media.IS_PENDING, 0)
+        check(resolver.update(uri, values, null, null) > 0) { "Failed to publish diary card" }
+        saved = true
+    } finally {
+        if (!saved) {
+            runCatching { resolver.delete(uri, null, null) }
+        }
     }
 }
 
