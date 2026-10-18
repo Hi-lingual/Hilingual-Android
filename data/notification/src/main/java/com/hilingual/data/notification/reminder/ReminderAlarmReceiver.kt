@@ -1,24 +1,20 @@
-package com.hilingual.core.work.receiver
+package com.hilingual.data.notification.reminder
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.hilingual.core.localstorage.datasource.ReminderPreferenceDataSource
 import com.hilingual.core.notification.HilingualNotificationManager
-import com.hilingual.core.work.scheduler.ReminderScheduler
+import com.hilingual.data.notification.repository.ReminderRepository
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ReminderAlarmReceiver : BroadcastReceiver() {
 
-    @Inject lateinit var reminderPreferenceDataSource: ReminderPreferenceDataSource
-
-    @Inject lateinit var reminderScheduler: ReminderScheduler
+    @Inject lateinit var reminderRepository: ReminderRepository
 
     @Inject lateinit var notificationManager: HilingualNotificationManager
 
@@ -27,11 +23,7 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 notificationManager.showDiaryReminderNotification()
-
-                val preference = reminderPreferenceDataSource.reminderFlow.first()
-                if (preference.isEnabled) {
-                    reminderScheduler.schedule(preference)
-                }
+                reminderRepository.rescheduleIfEnabled()
             } finally {
                 pendingResult.finish()
             }

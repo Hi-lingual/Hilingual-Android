@@ -1,4 +1,4 @@
-package com.hilingual.core.work.scheduler
+package com.hilingual.data.notification.reminder
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -6,10 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.content.getSystemService
-import com.hilingual.core.localstorage.model.ReminderPreference
-import com.hilingual.core.work.receiver.ReminderAlarmReceiver
+import com.hilingual.data.notification.model.ReminderPreference
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.util.Calendar
+import java.time.DayOfWeek
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -55,37 +56,24 @@ class ReminderScheduler @Inject constructor(
     }
 
     private fun nextTriggerMillis(preference: ReminderPreference): Long? {
-        val days = if (preference.isDailyRepeat) ALL_DAYS else preference.selectedDays
+        val days = if (preference.isDailyRepeat) DayOfWeek.entries.toSet() else preference.selectedDays
         if (days.isEmpty()) return null
 
-        val now = Calendar.getInstance()
-        for (offset in 0..7) {
-            val candidate = (now.clone() as Calendar).apply {
-                add(Calendar.DAY_OF_YEAR, offset)
-                set(Calendar.HOUR_OF_DAY, preference.hour)
-                set(Calendar.MINUTE, preference.minute)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }
-            if (candidate.toDayName() in days && candidate.timeInMillis > now.timeInMillis) {
-                return candidate.timeInMillis
+        val zone = ZoneId.systemDefault()
+        val now = ZonedDateTime.now(zone)
+        for (offset in 0L..7L) {
+            val candidate = now.toLocalDate()
+                .plusDays(offset)
+                .atTime(preference.hour, preference.minute)
+                .atZone(zone)
+            if (candidate.dayOfWeek in days && candidate.isAfter(now)) {
+                return candidate.toInstant().toEpochMilli()
             }
         }
         return null
     }
 
-    private fun Calendar.toDayName(): String = when (get(Calendar.DAY_OF_WEEK)) {
-        Calendar.SUNDAY -> "SUN"
-        Calendar.MONDAY -> "MON"
-        Calendar.TUESDAY -> "TUE"
-        Calendar.WEDNESDAY -> "WED"
-        Calendar.THURSDAY -> "THU"
-        Calendar.FRIDAY -> "FRI"
-        else -> "SAT"
-    }
-
     companion object {
         private const val REQUEST_CODE = 5001
-        private val ALL_DAYS = setOf("SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT")
     }
 }
