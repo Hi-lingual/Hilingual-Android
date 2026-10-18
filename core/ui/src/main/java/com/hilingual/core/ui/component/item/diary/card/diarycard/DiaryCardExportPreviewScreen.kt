@@ -1,11 +1,8 @@
 package com.hilingual.core.ui.component.item.diary.card.diarycard
 
-import android.app.PendingIntent
-import android.content.BroadcastReceiver
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.provider.MediaStore
 import androidx.activity.compose.BackHandler
@@ -19,19 +16,18 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +42,7 @@ import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
@@ -54,8 +51,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.onLogFailure
@@ -81,6 +79,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+private val EXPORT_IMAGE_SIZE = DpSize(width = 360.dp, height = 640.dp)
+
 @Composable
 fun DiaryCardExportPreviewScreen(
     writtenDate: String,
@@ -95,41 +95,34 @@ fun DiaryCardExportPreviewScreen(
     val messageController = LocalMessageController.current
     val scope = rememberCoroutineScope()
     val cardLayer = rememberGraphicsLayer()
-    val shareAction = remember { "${context.packageName}.DIARY_CARD_SHARED.${UUID.randomUUID()}" }
-    val currentOnDismiss by rememberUpdatedState(onDismiss)
     var isSharing by remember { mutableStateOf(false) }
     var includeTopic by remember { mutableStateOf(true) }
     var isExportMenuVisible by remember { mutableStateOf(false) }
 
-    DisposableEffect(context, shareAction) {
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                currentOnDismiss()
-            }
-        }
-        ContextCompat.registerReceiver(
-            context,
-            receiver,
-            IntentFilter(shareAction),
-            ContextCompat.RECEIVER_NOT_EXPORTED,
+    Box(modifier = modifier.fillMaxSize()) {
+        DiaryCardExportLayout(
+            writtenDate = writtenDate,
+            topics = topics,
+            diaryContent = diaryContent,
+            isShowTopic = includeTopic,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .drawWithContent {
+                    cardLayer.record { this@drawWithContent.drawContent() }
+                    drawLayer(cardLayer)
+                },
         )
-        onDispose { context.unregisterReceiver(receiver) }
-    }
 
-    DiaryCardExportPreviewContent(
-        writtenDate = writtenDate,
-        topics = topics,
-        diaryContent = diaryContent,
-        includeTopic = includeTopic,
-        onIncludeTopicChange = { includeTopic = it },
-        onDismiss = onDismiss,
-        onExportClick = { isExportMenuVisible = true },
-        modifier = modifier,
-        cardModifier = Modifier.drawWithContent {
-            cardLayer.record { this@drawWithContent.drawContent() }
-            drawLayer(cardLayer)
-        },
-    )
+        DiaryCardExportPreviewContent(
+            writtenDate = writtenDate,
+            topics = topics,
+            diaryContent = diaryContent,
+            includeTopic = includeTopic,
+            onIncludeTopicChange = { includeTopic = it },
+            onDismiss = onDismiss,
+            onExportClick = { isExportMenuVisible = true },
+        )
+    }
 
     HilingualMenuBottomSheet(
         isVisible = isExportMenuVisible,
@@ -160,12 +153,6 @@ fun DiaryCardExportPreviewScreen(
                                 }
                                 FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
                             }
-                            val chosenTarget = PendingIntent.getBroadcast(
-                                context,
-                                0,
-                                Intent(shareAction).setPackage(context.packageName),
-                                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-                            )
                             context.startActivity(
                                 Intent.createChooser(
                                     Intent(Intent.ACTION_SEND).apply {
@@ -174,7 +161,6 @@ fun DiaryCardExportPreviewScreen(
                                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                     },
                                     null,
-                                    chosenTarget.intentSender,
                                 ),
                             )
                         }.onLogFailure {
@@ -197,7 +183,6 @@ fun DiaryCardExportPreviewScreen(
                         saveDiaryCardToGallery(context, bitmap)
                     }.onSuccess {
                         messageController(HilingualMessage.Toast("일기가 이미지로 저장되었어요."))
-                        onDismiss()
                     }.onLogFailure {
                         messageController(HilingualMessage.Toast("이미지 저장에 실패했어요. 다시 시도해 주세요."))
                     }
@@ -244,7 +229,6 @@ private fun DiaryCardExportPreviewContent(
     onDismiss: () -> Unit,
     onExportClick: () -> Unit,
     modifier: Modifier = Modifier,
-    cardModifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         Box(
@@ -295,9 +279,35 @@ private fun DiaryCardExportPreviewContent(
                     topics = topics,
                     diaryContent = diaryContent,
                     isShowTopic = includeTopic,
-                    modifier = cardModifier,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun DiaryCardExportLayout(
+    writtenDate: String,
+    topics: Topics,
+    diaryContent: DiaryContent,
+    isShowTopic: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val density = LocalDensity.current
+    CompositionLocalProvider(LocalDensity provides Density(density = density.density, fontScale = 1f)) {
+        Box(
+            modifier = modifier
+                .requiredSize(EXPORT_IMAGE_SIZE)
+                .background(HilingualTheme.colors.gray100)
+                .padding(horizontal = 16.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            DiaryExportCard(
+                writtenDate = writtenDate,
+                topics = topics,
+                diaryContent = diaryContent,
+                isShowTopic = isShowTopic,
+            )
         }
     }
 }
@@ -425,7 +435,6 @@ private fun DiaryExportCard(
                     color = colors.black,
                     maxLines = if (diaryContent.imageUrl == null) 19 else 11,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.heightIn(max = 340.dp),
                 )
             }
             Image(

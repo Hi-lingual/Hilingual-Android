@@ -255,7 +255,6 @@ internal fun DiaryFeedbackRoute(
                     MilestoneCardDialog(
                         milestone = it,
                         onDismiss = viewModel::dismissMilestoneCard,
-                        onSaveSuccess = viewModel::dismissMilestoneCard,
                     )
                 }
             }

@@ -55,7 +55,7 @@ private enum class MilestoneCardStyle(
     REGULAR(
         illustrationRes = R.drawable.img_milestone_blue,
         messagePrefix = "Way to go! You've written ",
-        countUnit = "entries",
+        countUnit = "stories",
         messageSuffix = " so far.\nBuild your own English diary with Hilingual.",
     ),
     HUNDRED_UNIT(
@@ -82,7 +82,6 @@ private enum class MilestoneCardStyle(
 fun MilestoneCardDialog(
     milestone: Milestone,
     onDismiss: () -> Unit,
-    onSaveSuccess: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val imageExporter = rememberImageExporter()
@@ -117,7 +116,6 @@ fun MilestoneCardDialog(
                         fileName = fileName,
                         onSuccess = {
                             messageController(HilingualMessage.Toast("카드가 이미지로 저장되었어요."))
-                            onSaveSuccess()
                         },
                     )
                 },
