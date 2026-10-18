@@ -22,3 +22,8 @@ plugins {
 android {
     setNamespace("data.notification")
 }
+
+dependencies {
+    implementation(projects.core.localstorage)
+    implementation(projects.core.notification)
+}
