@@ -16,6 +16,8 @@
 package com.hilingual.data.notification.di
 
 import com.hilingual.data.notification.datasource.NotificationLocalDataSource
+import com.hilingual.data.notification.datasource.ReminderLocalDataSource
+import com.hilingual.data.notification.datasource.ReminderLocalDataSourceImpl
 import com.hilingual.data.notification.datasourceimpl.NotificationLocalDataSourceImpl
 import dagger.Binds
 import dagger.Module
@@ -32,4 +34,10 @@ internal abstract class DataSourceModule {
     abstract fun bindsNotificationLocalDataSource(
         notificationLocalDataSourceImpl: NotificationLocalDataSourceImpl,
     ): NotificationLocalDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindsReminderLocalDataSource(
+        reminderLocalDataSourceImpl: ReminderLocalDataSourceImpl,
+    ): ReminderLocalDataSource
 }

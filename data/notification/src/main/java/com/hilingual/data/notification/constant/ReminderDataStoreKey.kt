@@ -1,4 +1,4 @@
-package com.hilingual.core.localstorage.constant
+package com.hilingual.data.notification.constant
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey

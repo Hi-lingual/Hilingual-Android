@@ -1,10 +1,9 @@
-package com.hilingual.core.localstorage.di
+package com.hilingual.data.notification.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.hilingual.core.localstorage.builder.DataStoreBuilder
-import com.hilingual.core.localstorage.di.qualifier.ReminderDataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
