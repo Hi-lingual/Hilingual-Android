@@ -1,11 +1,16 @@
 package com.hilingual.presentation.notification.setting.model
 
-internal enum class ReminderDay(val label: String) {
-    SUN("일"),
-    MON("월"),
-    TUE("화"),
-    WED("수"),
-    THU("목"),
-    FRI("금"),
-    SAT("토"),
+import java.time.DayOfWeek
+
+internal enum class ReminderDay(val dayOfWeek: DayOfWeek, val label: String) {
+    SUN(DayOfWeek.SUNDAY, "일"),
+    MON(DayOfWeek.MONDAY, "월"),
+    TUE(DayOfWeek.TUESDAY, "화"),
+    WED(DayOfWeek.WEDNESDAY, "수"),
+    THU(DayOfWeek.THURSDAY, "목"),
+    FRI(DayOfWeek.FRIDAY, "금"),
+    SAT(DayOfWeek.SATURDAY, "토"),
 }
+
+internal fun DayOfWeek.toReminderDay(): ReminderDay =
+    ReminderDay.entries.first { it.dayOfWeek == this }

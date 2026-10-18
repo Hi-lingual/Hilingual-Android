@@ -4,24 +4,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.util.UiState
-import com.hilingual.core.localstorage.datasource.ReminderPreferenceDataSource
-import com.hilingual.core.localstorage.model.ReminderPreference
-import com.hilingual.core.work.scheduler.ReminderScheduler
+import com.hilingual.data.notification.model.ReminderPreference
+import com.hilingual.data.notification.repository.ReminderRepository
 import com.hilingual.presentation.notification.setting.model.ReminderDay
+import com.hilingual.presentation.notification.setting.model.toReminderDay
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 internal class NotificationReminderSettingViewModel @Inject constructor(
-    private val reminderPreferenceDataSource: ReminderPreferenceDataSource,
-    private val reminderScheduler: ReminderScheduler,
+    private val reminderRepository: ReminderRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<NotificationReminderSettingUiState>>(UiState.Loading)
@@ -34,14 +32,12 @@ internal class NotificationReminderSettingViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val pref = reminderPreferenceDataSource.reminderFlow.first()
+            val pref = reminderRepository.getReminder()
             val initial = NotificationReminderSettingUiState(
                 hour = pref.hour,
                 minute = pref.minute,
                 isDailyRepeat = pref.isDailyRepeat,
-                selectedDays = pref.selectedDays.mapNotNull { name ->
-                    runCatching { ReminderDay.valueOf(name) }.getOrNull()
-                }.toSet().ifEmpty { ReminderDay.entries.toSet() },
+                selectedDays = pref.selectedDays.map { it.toReminderDay() }.toSet(),
             )
             savedState = initial
             _uiState.update { UiState.Success(initial) }
@@ -95,15 +91,15 @@ internal class NotificationReminderSettingViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
-            val pref = ReminderPreference(
-                isEnabled = true,
-                hour = current.hour,
-                minute = current.minute,
-                isDailyRepeat = current.isDailyRepeat,
-                selectedDays = current.selectedDays.map { it.name }.toSet(),
+            reminderRepository.saveReminder(
+                ReminderPreference(
+                    isEnabled = true,
+                    hour = current.hour,
+                    minute = current.minute,
+                    isDailyRepeat = current.isDailyRepeat,
+                    selectedDays = current.selectedDays.map { it.dayOfWeek }.toSet(),
+                ),
             )
-            reminderPreferenceDataSource.save(pref)
-            reminderScheduler.schedule(pref)
             savedState = current
             _sideEffect.emit(NotificationReminderSettingSideEffect.NavigateUp)
         }
