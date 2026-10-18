@@ -18,11 +18,13 @@ package com.hilingual.presentation.notification.setting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
-import com.hilingual.core.localstorage.datasource.ReminderPreferenceDataSource
-import com.hilingual.core.work.scheduler.ReminderScheduler
+import com.hilingual.data.notification.model.ReminderPreference
+import com.hilingual.data.notification.repository.ReminderRepository
 import com.hilingual.data.user.repository.UserRepository
+import com.hilingual.presentation.notification.setting.model.toReminderDay
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
@@ -32,7 +34,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -42,8 +43,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 internal class NotificationSettingViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val reminderPreferenceDataSource: ReminderPreferenceDataSource,
-    private val reminderScheduler: ReminderScheduler,
+    private val reminderRepository: ReminderRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<NotificationSettingUiState>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
@@ -54,7 +54,7 @@ internal class NotificationSettingViewModel @Inject constructor(
     private val _isNotificationGranted = MutableStateFlow<Boolean?>(null)
     val isNotificationGranted = _isNotificationGranted.asStateFlow()
 
-    private val serverState = MutableStateFlow(NotificationSettingUiState())
+    private val serverState = MutableStateFlow(ServerSettings())
 
     private val marketingToggleFlow = MutableSharedFlow<Boolean>(replay = 1)
     private val feedToggleFlow = MutableSharedFlow<Boolean>(replay = 1)
@@ -70,14 +70,18 @@ internal class NotificationSettingViewModel @Inject constructor(
             _uiState.update { UiState.Loading }
             userRepository.getNotificationSettings()
                 .onSuccess { settings ->
-                    val reminderPref = reminderPreferenceDataSource.reminderFlow.first()
-                    val newUiState = NotificationSettingUiState(
+                    val server = ServerSettings(
                         isMarketingChecked = settings.isMarketingEnabled,
                         isFeedChecked = settings.isFeedEnabled,
-                        isReminderChecked = reminderPref.isEnabled,
                     )
+                    serverState.update { server }
+
+                    val reminder = reminderRepository.getReminder()
+                    val newUiState = NotificationSettingUiState(
+                        isMarketingChecked = server.isMarketingChecked,
+                        isFeedChecked = server.isFeedChecked,
+                    ).withReminder(reminder)
                     _uiState.update { UiState.Success(newUiState) }
-                    serverState.update { newUiState }
                 }
                 .onLogFailure {
                     _uiState.update { UiState.Failure(LoadErrorHandleAction.Retry) }
@@ -133,33 +137,40 @@ internal class NotificationSettingViewModel @Inject constructor(
         viewModelScope.launch { feedToggleFlow.emit(isChecked) }
     }
 
-    fun disableReminder() {
-        val currentUiState = _uiState.value
-        if (currentUiState !is UiState.Success) return
+    fun onReminderCheckedChange(isChecked: Boolean) {
+        if (!isReminderAccessible()) return
 
-        if (_isNotificationGranted.value == false) {
-            viewModelScope.launch { _sideEffect.emit(NotificationSettingSideEffect.ShowPermissionDialog) }
-            return
+        if (isChecked) {
+            viewModelScope.launch { _sideEffect.emit(NotificationSettingSideEffect.NavigateToReminderSetting) }
+        } else {
+            disableReminder()
         }
+    }
 
+    fun onReminderSectionClick() {
+        if (!isReminderAccessible()) return
+        viewModelScope.launch { _sideEffect.emit(NotificationSettingSideEffect.NavigateToReminderSetting) }
+    }
+
+    private fun isReminderAccessible(): Boolean {
+        if (_isNotificationGranted.value == false) {
+            viewModelScope.launch { _sideEffect.emit(NotificationSettingSideEffect.ShowReminderPermissionDialog) }
+            return false
+        }
+        return true
+    }
+
+    private fun disableReminder() {
         viewModelScope.launch {
-            reminderPreferenceDataSource.setEnabled(false)
-            reminderScheduler.cancel()
-            _uiState.update {
-                UiState.Success(currentUiState.data.copy(isReminderChecked = false))
-            }
+            reminderRepository.disableReminder()
+            _uiState.updateSuccess { it.copy(isReminderChecked = false) }
         }
     }
 
     fun refreshReminderState() {
-        val currentUiState = _uiState.value
-        if (currentUiState !is UiState.Success) return
-
         viewModelScope.launch {
-            val reminderPref = reminderPreferenceDataSource.reminderFlow.first()
-            _uiState.update {
-                UiState.Success(currentUiState.data.copy(isReminderChecked = reminderPref.isEnabled))
-            }
+            val reminder = reminderRepository.getReminder()
+            _uiState.updateSuccess { it.withReminder(reminder) }
         }
     }
 
@@ -167,22 +178,43 @@ internal class NotificationSettingViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.updateNotificationSetting(notiType.name)
                 .onSuccess { settings ->
-                    val currentReminderChecked = (_uiState.value as? UiState.Success)?.data?.isReminderChecked
-                        ?: serverState.value.isReminderChecked
-                    val newUiState = NotificationSettingUiState(
+                    val server = ServerSettings(
                         isMarketingChecked = settings.isMarketingEnabled,
                         isFeedChecked = settings.isFeedEnabled,
-                        isReminderChecked = currentReminderChecked,
                     )
-                    _uiState.update { UiState.Success(newUiState) }
-                    serverState.update { newUiState }
+                    serverState.update { server }
+                    _uiState.updateSuccess {
+                        it.copy(
+                            isMarketingChecked = server.isMarketingChecked,
+                            isFeedChecked = server.isFeedChecked,
+                        )
+                    }
                 }
                 .onLogFailure {
-                    _uiState.update { UiState.Success(serverState.value) }
+                    val server = serverState.value
+                    _uiState.updateSuccess {
+                        it.copy(
+                            isMarketingChecked = server.isMarketingChecked,
+                            isFeedChecked = server.isFeedChecked,
+                        )
+                    }
                 }
         }
     }
+
+    private fun NotificationSettingUiState.withReminder(reminder: ReminderPreference) = copy(
+        isReminderChecked = reminder.isEnabled,
+        reminderHour = reminder.hour,
+        reminderMinute = reminder.minute,
+        isDailyRepeat = reminder.isDailyRepeat,
+        selectedDays = reminder.selectedDays.map { it.toReminderDay() }.toSet(),
+    )
 }
+
+private data class ServerSettings(
+    val isMarketingChecked: Boolean = false,
+    val isFeedChecked: Boolean = false,
+)
 
 private enum class NotiType {
     FEED,
@@ -191,4 +223,6 @@ private enum class NotiType {
 
 internal sealed interface NotificationSettingSideEffect {
     data object ShowPermissionDialog : NotificationSettingSideEffect
+    data object ShowReminderPermissionDialog : NotificationSettingSideEffect
+    data object NavigateToReminderSetting : NotificationSettingSideEffect
 }

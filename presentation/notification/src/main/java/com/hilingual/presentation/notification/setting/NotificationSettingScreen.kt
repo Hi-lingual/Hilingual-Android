@@ -50,6 +50,7 @@ import com.hilingual.presentation.notification.setting.component.NotificationRem
 import com.hilingual.presentation.notification.setting.component.NotificationSettingBanner
 import com.hilingual.presentation.notification.setting.component.NotificationSettingDialog
 import com.hilingual.presentation.notification.setting.component.NotificationSwitchItem
+import com.hilingual.presentation.notification.setting.model.ReminderDay
 
 // #807 푸시 알림 플로우: 미배포 기능, 당분간 봉인. 재개 시 true로 전환.
 private const val ENABLE_PUSH_NOTIFICATION = true
@@ -66,6 +67,7 @@ internal fun NotificationSettingRoute(
     val context = LocalContext.current
 
     var isNotificationSettingDialogVisible by remember { mutableStateOf(false) }
+    var isReminderPermissionDialogVisible by remember { mutableStateOf(false) }
 
     fun checkNotificationPermission() {
         val isGranted = NotificationManagerCompat.from(context).areNotificationsEnabled()
@@ -82,6 +84,12 @@ internal fun NotificationSettingRoute(
             NotificationSettingSideEffect.ShowPermissionDialog -> {
                 isNotificationSettingDialogVisible = true
             }
+
+            NotificationSettingSideEffect.ShowReminderPermissionDialog -> {
+                isReminderPermissionDialogVisible = true
+            }
+
+            NotificationSettingSideEffect.NavigateToReminderSetting -> navigateToReminderSetting()
         }
     }
 
@@ -110,21 +118,25 @@ internal fun NotificationSettingRoute(
                     onMarketingCheckedChange = viewModel::updateMarketingChecked,
                     isFeedChecked = state.data.isFeedChecked,
                     onFeedCheckedChange = viewModel::updateFeedChecked,
-                    isReminderChecked = state.data.isReminderChecked,
-                    onReminderCheckedChange = { isChecked ->
-                        if (isChecked) {
-                            navigateToReminderSetting()
-                        } else {
-                            viewModel.disableReminder()
-                        }
-                    },
-                    onReminderSectionClick = navigateToReminderSetting,
+                    isReminderChecked = granted && state.data.isReminderChecked,
+                    reminderHour = state.data.reminderHour,
+                    reminderMinute = state.data.reminderMinute,
+                    isDailyRepeat = state.data.isDailyRepeat,
+                    selectedDays = state.data.selectedDays,
+                    onReminderCheckedChange = viewModel::onReminderCheckedChange,
+                    onReminderSectionClick = viewModel::onReminderSectionClick,
                     isNotificationGranted = granted,
                     onBannerClick = navigateToSettings,
                     isPermissionDialogVisible = isNotificationSettingDialogVisible,
                     onPermissionDialogDismiss = { isNotificationSettingDialogVisible = false },
                     onPermissionDialogConfirm = {
                         isNotificationSettingDialogVisible = false
+                        navigateToSettings()
+                    },
+                    isReminderPermissionDialogVisible = isReminderPermissionDialogVisible,
+                    onReminderPermissionDialogDismiss = { isReminderPermissionDialogVisible = false },
+                    onReminderPermissionDialogConfirm = {
+                        isReminderPermissionDialogVisible = false
                         navigateToSettings()
                     },
                     paddingValues = paddingValues,
@@ -154,6 +166,10 @@ private fun NotificationSettingScreen(
     isFeedChecked: Boolean,
     onFeedCheckedChange: (Boolean) -> Unit,
     isReminderChecked: Boolean,
+    reminderHour: Int,
+    reminderMinute: Int,
+    isDailyRepeat: Boolean,
+    selectedDays: Set<ReminderDay>,
     onReminderCheckedChange: (Boolean) -> Unit,
     onReminderSectionClick: () -> Unit,
     isNotificationGranted: Boolean,
@@ -161,6 +177,9 @@ private fun NotificationSettingScreen(
     isPermissionDialogVisible: Boolean,
     onPermissionDialogDismiss: () -> Unit,
     onPermissionDialogConfirm: () -> Unit,
+    isReminderPermissionDialogVisible: Boolean,
+    onReminderPermissionDialogDismiss: () -> Unit,
+    onReminderPermissionDialogConfirm: () -> Unit,
     paddingValues: PaddingValues,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -201,7 +220,16 @@ private fun NotificationSettingScreen(
 
         NotificationSwitchItem(
             text = "일기 작성 리마인드 알림",
-            description = "설정한 시간에 리마인드 알림을 보내드려요.",
+            description = if (isReminderChecked) {
+                formatReminderSchedule(
+                    isDailyRepeat = isDailyRepeat,
+                    selectedDays = selectedDays,
+                    hour = reminderHour,
+                    minute = reminderMinute,
+                )
+            } else {
+                "설정한 시간에 리마인드 알림을 보내드려요."
+            },
             isChecked = isReminderChecked,
             onCheckedChange = onReminderCheckedChange,
             modifier = Modifier.noRippleClickable(
@@ -219,10 +247,32 @@ private fun NotificationSettingScreen(
     )
 
     NotificationReminderDialog(
-        isVisible = ENABLE_PUSH_NOTIFICATION && isPermissionDialogVisible,
-        onDismiss = onPermissionDialogDismiss,
-        onConfirmClick = onPermissionDialogConfirm,
+        isVisible = ENABLE_PUSH_NOTIFICATION && isReminderPermissionDialogVisible,
+        onDismiss = onReminderPermissionDialogDismiss,
+        onConfirmClick = onReminderPermissionDialogConfirm,
     )
+}
+
+private fun formatReminderSchedule(
+    isDailyRepeat: Boolean,
+    selectedDays: Set<ReminderDay>,
+    hour: Int,
+    minute: Int,
+): String {
+    val dayText = if (isDailyRepeat) {
+        "매일"
+    } else {
+        selectedDays.sortedBy { it.ordinal }.joinToString(", ") { it.label }
+    }
+
+    val period = if (hour < 12) "오전" else "오후"
+    val displayHour = when {
+        hour == 0 -> 12
+        hour > 12 -> hour - 12
+        else -> hour
+    }
+
+    return "$dayText · $period $displayHour:${minute.toString().padStart(2, '0')}"
 }
 
 @Preview(showBackground = true)
@@ -230,7 +280,7 @@ private fun NotificationSettingScreen(
 private fun NotificationSettingScreenPreview() {
     var isMarketingChecked by remember { mutableStateOf(true) }
     var isFeedChecked by remember { mutableStateOf(false) }
-    var isReminderChecked by remember { mutableStateOf(false) }
+    var isReminderChecked by remember { mutableStateOf(true) }
 
     HilingualTheme {
         NotificationSettingScreen(
@@ -239,6 +289,10 @@ private fun NotificationSettingScreenPreview() {
             isFeedChecked = isFeedChecked,
             onFeedCheckedChange = { isFeedChecked = it },
             isReminderChecked = isReminderChecked,
+            reminderHour = 21,
+            reminderMinute = 13,
+            isDailyRepeat = true,
+            selectedDays = ReminderDay.entries.toSet(),
             onReminderCheckedChange = { isReminderChecked = it },
             onReminderSectionClick = {},
             isNotificationGranted = false,
@@ -248,6 +302,9 @@ private fun NotificationSettingScreenPreview() {
             isPermissionDialogVisible = false,
             onPermissionDialogDismiss = {},
             onPermissionDialogConfirm = {},
+            isReminderPermissionDialogVisible = false,
+            onReminderPermissionDialogDismiss = {},
+            onReminderPermissionDialogConfirm = {},
         )
     }
 }
