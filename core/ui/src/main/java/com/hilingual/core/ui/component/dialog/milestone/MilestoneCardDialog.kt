@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
@@ -18,6 +19,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,10 +45,11 @@ import androidx.compose.ui.window.DialogProperties
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.model.Milestone
-import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.designsystem.R
+import com.hilingual.core.designsystem.component.toast.TextToast
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.util.rememberImageExporter
+import kotlinx.coroutines.delay
 
 private val EXPORT_IMAGE_SIZE = DpSize(width = 360.dp, height = 640.dp)
 
@@ -85,8 +92,8 @@ fun MilestoneCardDialog(
     modifier: Modifier = Modifier,
 ) {
     val imageExporter = rememberImageExporter()
-    val messageController = LocalMessageController.current
     val fileName = "hilingual_milestone_${milestone.count}"
+    var saveToast by remember { mutableStateOf<HilingualMessage.Toast?>(null) }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -115,11 +122,25 @@ fun MilestoneCardDialog(
                     imageExporter.saveToGallery(
                         fileName = fileName,
                         onSuccess = {
-                            messageController(HilingualMessage.Toast("카드가 이미지로 저장되었어요."))
+                            saveToast = HilingualMessage.Toast("카드가 이미지로 저장되었어요.")
                         },
                     )
                 },
             )
+
+            saveToast?.let { toast ->
+                LaunchedEffect(toast.id) {
+                    delay(toast.messageDuration.millis)
+                    saveToast = null
+                }
+                TextToast(
+                    text = toast.message,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .navigationBarsPadding()
+                        .padding(bottom = 24.dp),
+                )
+            }
         }
     }
 }
