@@ -55,9 +55,12 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import com.hilingual.core.common.analytics.Page
+import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.designsystem.R
@@ -94,6 +97,7 @@ fun DiaryCardExportPreviewScreen(
     val context = LocalContext.current
     val messageController = LocalMessageController.current
     val scope = rememberCoroutineScope()
+    val tracker = LocalTracker.current
     val cardLayer = rememberGraphicsLayer()
     var isSharing by remember { mutableStateOf(false) }
     var includeTopic by remember { mutableStateOf(true) }
@@ -120,7 +124,14 @@ fun DiaryCardExportPreviewScreen(
             includeTopic = includeTopic,
             onIncludeTopicChange = { includeTopic = it },
             onDismiss = onDismiss,
-            onExportClick = { isExportMenuVisible = true },
+            onExportClick = {
+                tracker.logPageAction(
+                    trigger = TriggerType.CLICK,
+                    page = Page.CARDSHARE,
+                    action = "image_export",
+                )
+                isExportMenuVisible = true
+            },
         )
     }
 
@@ -132,6 +143,11 @@ fun DiaryCardExportPreviewScreen(
             text = "이미지 공유하기",
             iconResId = R.drawable.ic_upload_24,
             onClick = {
+                tracker.logPageAction(
+                    trigger = TriggerType.CLICK,
+                    page = Page.CARDSHARE,
+                    action = "image_share",
+                )
                 isExportMenuVisible = false
                 scope.launch {
                     if (isSharing) return@launch
@@ -176,6 +192,11 @@ fun DiaryCardExportPreviewScreen(
             text = "이미지 저장하기",
             iconResId = R.drawable.ic_download_24,
             onClick = {
+                tracker.logPageAction(
+                    trigger = TriggerType.CLICK,
+                    page = Page.CARDSHARE,
+                    action = "image_download",
+                )
                 isExportMenuVisible = false
                 scope.launch {
                     suspendRunCatching {

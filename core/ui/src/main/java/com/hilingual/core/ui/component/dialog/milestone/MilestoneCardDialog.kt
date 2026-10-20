@@ -38,9 +38,12 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.hilingual.core.common.analytics.Page
+import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.model.Milestone
+import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
@@ -89,6 +92,7 @@ fun MilestoneCardDialog(
     modifier: Modifier = Modifier,
 ) {
     val imageExporter = rememberImageExporter()
+    val tracker = LocalTracker.current
     val fileName = "hilingual_milestone_${milestone.count}"
 
     Dialog(
@@ -118,8 +122,20 @@ fun MilestoneCardDialog(
                 MilestoneCardPopup(
                     milestone = milestone,
                     onCloseClick = onDismiss,
-                    onShareClick = { imageExporter.share(fileName) },
+                    onShareClick = {
+                        tracker.logPageAction(
+                            trigger = TriggerType.CLICK,
+                            page = Page.MILESTONE,
+                            action = "image_share",
+                        )
+                        imageExporter.share(fileName)
+                    },
                     onSaveClick = {
+                        tracker.logPageAction(
+                            trigger = TriggerType.CLICK,
+                            page = Page.MILESTONE,
+                            action = "image_download",
+                        )
                         imageExporter.saveToGallery(
                             fileName = fileName,
                             onSuccess = {

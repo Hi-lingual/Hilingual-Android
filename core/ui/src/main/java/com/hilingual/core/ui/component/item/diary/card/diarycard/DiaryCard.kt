@@ -109,7 +109,16 @@ internal fun DiaryCard(
             .padding(12.dp),
     ) {
         if (isShowCorrectedDiary && isExportAvailable) {
-            DiaryCardExportButton(onClick = onExportClick)
+            DiaryCardExportButton(
+                onClick = {
+                    tracker.logPageAction(
+                        trigger = TriggerType.CLICK,
+                        page = Page.CARDSHARE,
+                        action = "image_preview",
+                    )
+                    onExportClick()
+                },
+            )
         }
 
         if (imageUrl != null) {
