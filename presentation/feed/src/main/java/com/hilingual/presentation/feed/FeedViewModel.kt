@@ -203,7 +203,9 @@ internal class FeedViewModel @Inject constructor(
                         )
                     }
                     if (isLiked) showLikeSnackbar()
-                }.onLogFailure { }
+                }.onLogFailure {
+                    emitErrorDialogSideEffect { }
+                }
         }
     }
 
@@ -222,7 +224,9 @@ internal class FeedViewModel @Inject constructor(
                             },
                         )
                     }
-                }.onLogFailure { }
+                }.onLogFailure {
+                    emitErrorDialogSideEffect { }
+                }
         }
     }
 

@@ -159,7 +159,7 @@ internal fun FeedDiaryRoute(
             }
 
             is FeedDiarySideEffect.ShowErrorDialog -> {
-                dialogTrigger.show(onClick = navigateUp)
+                dialogTrigger.show(onClick = {})
             }
         }
     }

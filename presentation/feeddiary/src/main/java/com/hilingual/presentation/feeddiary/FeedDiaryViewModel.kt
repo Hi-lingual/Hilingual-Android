@@ -140,7 +140,9 @@ internal class FeedDiaryViewModel @Inject constructor(
                     }
                     if (isLiked) showLikeSnackbar()
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(FeedDiarySideEffect.ShowErrorDialog)
+                }
         }
     }
 
@@ -149,7 +151,9 @@ internal class FeedDiaryViewModel @Inject constructor(
             userRepository.putBlockUser(userId)
                 .onSuccess {
                     _sideEffect.emit(FeedDiarySideEffect.NavigateToFeedProfile(userId))
-                }.onLogFailure { }
+                }.onLogFailure {
+                    _sideEffect.emit(FeedDiarySideEffect.ShowErrorDialog)
+                }
         }
     }
 
@@ -198,7 +202,9 @@ internal class FeedDiaryViewModel @Inject constructor(
                         else -> {} // 성공, 실패 외 기타 처리
                     }
                 }
-                .onLogFailure { }
+                .onLogFailure {
+                    _sideEffect.emit(FeedDiarySideEffect.ShowErrorDialog)
+                }
         }
     }
 
@@ -208,7 +214,9 @@ internal class FeedDiaryViewModel @Inject constructor(
                 .onSuccess {
                     _sideEffect.emit(FeedDiarySideEffect.ShowToast(message = "일기가 비공개 되었어요."))
                     _sideEffect.emit(FeedDiarySideEffect.NavigateToUp)
-                }.onLogFailure { }
+                }.onLogFailure {
+                    _sideEffect.emit(FeedDiarySideEffect.ShowErrorDialog)
+                }
         }
     }
 

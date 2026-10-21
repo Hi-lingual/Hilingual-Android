@@ -65,7 +65,7 @@ internal fun FollowListRoute(
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is FollowListSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = navigateUp)
+            is FollowListSideEffect.ShowErrorDialog -> dialogTrigger.show(onClick = {})
         }
     }
 
