@@ -255,7 +255,7 @@ private fun MilestoneCardContent(
                 color = pointColor,
             )
             Text(
-                text = "STORIES",
+                text = "ENTRIES",
                 style = HilingualTheme.typography.headB36,
                 color = HilingualTheme.colors.black,
             )
