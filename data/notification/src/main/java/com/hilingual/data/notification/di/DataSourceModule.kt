@@ -17,8 +17,8 @@ package com.hilingual.data.notification.di
 
 import com.hilingual.data.notification.datasource.NotificationLocalDataSource
 import com.hilingual.data.notification.datasource.ReminderLocalDataSource
-import com.hilingual.data.notification.datasource.ReminderLocalDataSourceImpl
 import com.hilingual.data.notification.datasourceimpl.NotificationLocalDataSourceImpl
+import com.hilingual.data.notification.datasourceimpl.ReminderLocalDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
