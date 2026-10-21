@@ -1,4 +1,4 @@
-package com.hilingual.data.notification.di
+package com.hilingual.data.notification.di.qualifier
 
 import javax.inject.Qualifier
 

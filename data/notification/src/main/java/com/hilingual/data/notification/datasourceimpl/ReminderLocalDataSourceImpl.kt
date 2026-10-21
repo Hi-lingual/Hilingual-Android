@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import com.hilingual.data.notification.constant.ReminderDataStoreKey
 import com.hilingual.data.notification.datasource.ReminderLocalDataSource
-import com.hilingual.data.notification.di.ReminderDataStore
+import com.hilingual.data.notification.di.qualifier.ReminderDataStore
 import com.hilingual.data.notification.model.ReminderPreference
 import java.time.DayOfWeek
 import javax.inject.Inject
