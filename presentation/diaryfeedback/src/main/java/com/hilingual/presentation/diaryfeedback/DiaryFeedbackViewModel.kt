@@ -23,13 +23,16 @@ import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.toLoadErrorHandleAction
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.model.LoadErrorHandleAction
+import com.hilingual.core.common.model.Milestone
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.common.util.suspendRunCatching
+import com.hilingual.core.common.util.toDiaryCardDate
 import com.hilingual.core.common.util.toKoreanFullDate
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.PhraseBookmarkModel
 import com.hilingual.data.diary.repository.DiaryRepository
+import com.hilingual.data.diary.repository.MilestoneRepository
 import com.hilingual.presentation.diaryfeedback.navigation.DiaryFeedback
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -49,12 +52,16 @@ import kotlinx.coroutines.launch
 internal class DiaryFeedbackViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val diaryRepository: DiaryRepository,
+    private val milestoneRepository: MilestoneRepository,
     private val calendarRepository: CalendarRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<DiaryFeedbackUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<DiaryFeedbackUiState>> = _uiState.asStateFlow()
 
     val diaryId = savedStateHandle.toRoute<DiaryFeedback>().diaryId
+
+    private val _milestone = MutableStateFlow<Milestone?>(null)
+    val milestone: StateFlow<Milestone?> = _milestone.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<DiaryFeedbackSideEffect>()
     val sideEffect: SharedFlow<DiaryFeedbackSideEffect> = _sideEffect.asSharedFlow()
@@ -69,6 +76,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                 if (!newUiState.isAdWatched) {
                     _sideEffect.emit(DiaryFeedbackSideEffect.ShowInterstitialAd)
                 }
+                showPendingMilestoneCard()
             }.onLogFailure { throwable ->
                 _uiState.update {
                     UiState.Failure(throwable.toLoadErrorHandleAction(LoadErrorHandleAction.Retry))
@@ -78,6 +86,16 @@ internal class DiaryFeedbackViewModel @Inject constructor(
     }
 
     fun retryLoad() = loadInitialData()
+
+    fun dismissMilestoneCard() {
+        _milestone.update { null }
+    }
+
+    private fun showPendingMilestoneCard() {
+        milestoneRepository.consumePendingMilestone()?.let { milestone ->
+            _milestone.update { milestone }
+        }
+    }
 
     private suspend fun requestDiaryFeedbackData(): DiaryFeedbackUiState =
         coroutineScope {
@@ -99,6 +117,7 @@ internal class DiaryFeedbackViewModel @Inject constructor(
                 isPublished = diaryResult.isPublished,
                 isAdWatched = diaryResult.isAdWatched,
                 writtenDate = writtenDate.toKoreanFullDate(),
+                exportDate = writtenDate.toDiaryCardDate(),
                 topics = topicResult.toState(),
                 diaryContent = diaryResult.toState(),
                 feedbackList = feedbacksResult.map { it.toState() }.toImmutableList(),

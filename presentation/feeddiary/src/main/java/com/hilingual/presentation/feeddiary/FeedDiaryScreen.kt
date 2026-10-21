@@ -64,6 +64,7 @@ import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.bottomsheet.BlockBottomSheet
 import com.hilingual.core.ui.component.dialog.diary.DiaryUnpublishDialog
 import com.hilingual.core.ui.component.dialog.report.ReportPostDialog
+import com.hilingual.core.ui.component.item.diary.card.diarycard.DiaryCardExportPreviewScreen
 import com.hilingual.core.ui.component.item.diary.image.ModalImage
 import com.hilingual.core.ui.component.item.diary.tab.GrammarSpellingTab
 import com.hilingual.core.ui.component.item.diary.tab.RecommendExpressionTab
@@ -242,6 +243,7 @@ private fun FeedDiaryScreen(
     var isBlockConfirmBottomSheetVisible by remember { mutableStateOf(false) }
     var toggleClickCount by remember { mutableIntStateOf(0) }
     var isShowCorrectedDiary by remember { mutableStateOf(true) }
+    var isExportPreviewVisible by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -334,7 +336,9 @@ private fun FeedDiaryScreen(
                             topics = topics,
                             isShowCorrectedDiary = isShowCorrectedDiary,
                             onImageClick = onChangeImageDetailVisible,
+                            onExportClick = { isExportPreviewVisible = true },
                             isAdVisible = true,
+                            isExportAvailable = isMine,
                             onToggleDiaryViewMode = {
                                 isShowCorrectedDiary = it
                                 toggleClickCount++
@@ -395,6 +399,16 @@ private fun FeedDiaryScreen(
         ModalImage(
             imageUrl = uiState.diaryContent.imageUrl ?: "",
             onBackClick = onChangeImageDetailVisible,
+            modifier = Modifier.padding(paddingValues),
+        )
+    }
+
+    if (isExportPreviewVisible) {
+        DiaryCardExportPreviewScreen(
+            writtenDate = uiState.exportDate,
+            topics = uiState.topics,
+            diaryContent = uiState.diaryContent,
+            onDismiss = { isExportPreviewVisible = false },
             modifier = Modifier.padding(paddingValues),
         )
     }

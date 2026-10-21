@@ -20,11 +20,13 @@ import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.model.LoadErrorHandleAction
+import com.hilingual.core.common.model.Milestone
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.calendar.model.CalendarStatus
 import com.hilingual.data.calendar.repository.CalendarRepository
 import com.hilingual.data.diary.repository.DiaryLocalRepository
 import com.hilingual.data.diary.repository.DiaryRepository
+import com.hilingual.data.diary.repository.MilestoneRepository
 import com.hilingual.data.notification.repository.NotificationRepository
 import com.hilingual.data.onboarding.repository.OnboardingRepository
 import com.hilingual.data.user.repository.UserRepository
@@ -57,6 +59,7 @@ class HomeViewModel @Inject constructor(
     private val calendarRepository: CalendarRepository,
     private val diaryRepository: DiaryRepository,
     private val diaryLocalRepository: DiaryLocalRepository,
+    private val milestoneRepository: MilestoneRepository,
     private val onboardingRepository: OnboardingRepository,
     private val notificationRepository: NotificationRepository,
 ) : ViewModel() {
@@ -80,6 +83,9 @@ class HomeViewModel @Inject constructor(
     private val calendarCache = mutableMapOf<YearMonth, ImmutableList<DateUiModel>>()
 
     private val recoveryReminderResult = MutableStateFlow<Boolean?>(null)
+
+    private val _milestone = MutableStateFlow<Milestone?>(null)
+    val milestone: StateFlow<Milestone?> = _milestone.asStateFlow()
 
     init {
         checkOnboardingCompleted()
@@ -133,11 +139,26 @@ class HomeViewModel @Inject constructor(
                 )
             }
 
+            showPendingMilestoneCard()
             checkRecoveryModals(userInfo.recoveryTickets, initialDates)
         }
     }
 
     fun retryLoad() = loadInitialData()
+
+    fun dismissMilestoneCard() {
+        _milestone.update { null }
+    }
+
+    private suspend fun awaitMilestoneCardDismissed() {
+        _milestone.first { it == null }
+    }
+
+    private fun showPendingMilestoneCard() {
+        milestoneRepository.consumePendingMilestone()?.let { milestone ->
+            _milestone.update { milestone }
+        }
+    }
 
     fun handleNotificationPermission(
         isGranted: Boolean,
@@ -326,6 +347,7 @@ class HomeViewModel @Inject constructor(
     ) {
         onboardingCheckCompleted.first()
         isOnboardingVisible.first { !it }
+        awaitMilestoneCardDismissed()
 
         val lastShownMonth = onboardingRepository.getRecoveryReminderLastShownMonth().getOrDefault("")
         val shouldShow = RecoveryReminderPolicy.shouldShowReminder(
