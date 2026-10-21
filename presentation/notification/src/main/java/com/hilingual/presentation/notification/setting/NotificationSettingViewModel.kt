@@ -138,7 +138,7 @@ internal class NotificationSettingViewModel @Inject constructor(
     }
 
     fun onReminderCheckedChange(isChecked: Boolean) {
-        if (!isReminderAccessible()) return
+        if (!checkReminderPermissionOrShowDialog()) return
 
         if (isChecked) {
             viewModelScope.launch { _sideEffect.emit(NotificationSettingSideEffect.NavigateToReminderSetting) }
@@ -148,11 +148,11 @@ internal class NotificationSettingViewModel @Inject constructor(
     }
 
     fun onReminderSectionClick() {
-        if (!isReminderAccessible()) return
+        if (!checkReminderPermissionOrShowDialog()) return
         viewModelScope.launch { _sideEffect.emit(NotificationSettingSideEffect.NavigateToReminderSetting) }
     }
 
-    private fun isReminderAccessible(): Boolean {
+    private fun checkReminderPermissionOrShowDialog(): Boolean {
         if (_isNotificationGranted.value == false) {
             viewModelScope.launch { _sideEffect.emit(NotificationSettingSideEffect.ShowReminderPermissionDialog) }
             return false
