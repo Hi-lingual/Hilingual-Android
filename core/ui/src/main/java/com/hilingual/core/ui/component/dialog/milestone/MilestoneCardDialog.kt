@@ -15,9 +15,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,12 +38,17 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.hilingual.core.common.analytics.Page
+import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.model.Milestone
+import com.hilingual.core.common.provider.LocalTracker
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.designsystem.R
 import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.ui.component.message.HilingualMessageHost
+import com.hilingual.core.ui.component.message.rememberMessageController
 import com.hilingual.core.ui.util.rememberImageExporter
 
 private val EXPORT_IMAGE_SIZE = DpSize(width = 360.dp, height = 640.dp)
@@ -55,7 +62,7 @@ private enum class MilestoneCardStyle(
     REGULAR(
         illustrationRes = R.drawable.img_milestone_blue,
         messagePrefix = "Way to go! You've written ",
-        countUnit = "entries",
+        countUnit = "stories",
         messageSuffix = " so far.\nBuild your own English diary with Hilingual.",
     ),
     HUNDRED_UNIT(
@@ -82,11 +89,10 @@ private enum class MilestoneCardStyle(
 fun MilestoneCardDialog(
     milestone: Milestone,
     onDismiss: () -> Unit,
-    onSaveSuccess: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val imageExporter = rememberImageExporter()
-    val messageController = LocalMessageController.current
+    val tracker = LocalTracker.current
     val fileName = "hilingual_milestone_${milestone.count}"
 
     Dialog(
@@ -97,31 +103,50 @@ fun MilestoneCardDialog(
             dismissOnClickOutside = false,
         ),
     ) {
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .background(HilingualTheme.colors.dim2),
-            contentAlignment = Alignment.Center,
-        ) {
-            MilestoneCardExportLayout(
-                milestone = milestone,
-                modifier = imageExporter.recordModifier,
-            )
+        val messageHostState = remember { SnackbarHostState() }
 
-            MilestoneCardPopup(
-                milestone = milestone,
-                onCloseClick = onDismiss,
-                onShareClick = { imageExporter.share(fileName) },
-                onSaveClick = {
-                    imageExporter.saveToGallery(
-                        fileName = fileName,
-                        onSuccess = {
-                            messageController(HilingualMessage.Toast("카드가 이미지로 저장되었어요."))
-                            onSaveSuccess()
-                        },
-                    )
-                },
-            )
+        CompositionLocalProvider(LocalMessageController provides rememberMessageController(messageHostState)) {
+            val messageController = LocalMessageController.current
+
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(HilingualTheme.colors.dim2),
+                contentAlignment = Alignment.Center,
+            ) {
+                MilestoneCardExportLayout(
+                    milestone = milestone,
+                    modifier = imageExporter.recordModifier,
+                )
+
+                MilestoneCardPopup(
+                    milestone = milestone,
+                    onCloseClick = onDismiss,
+                    onShareClick = {
+                        tracker.logPageAction(
+                            trigger = TriggerType.CLICK,
+                            page = Page.MILESTONE,
+                            action = "image_share",
+                        )
+                        imageExporter.share(fileName)
+                    },
+                    onSaveClick = {
+                        tracker.logPageAction(
+                            trigger = TriggerType.CLICK,
+                            page = Page.MILESTONE,
+                            action = "image_download",
+                        )
+                        imageExporter.saveToGallery(
+                            fileName = fileName,
+                            onSuccess = {
+                                messageController(HilingualMessage.Toast("카드가 이미지로 저장되었어요."))
+                            },
+                        )
+                    },
+                )
+
+                HilingualMessageHost(hostState = messageHostState)
+            }
         }
     }
 }
@@ -230,7 +255,7 @@ private fun MilestoneCardContent(
                 color = pointColor,
             )
             Text(
-                text = "STORIES",
+                text = "ENTRIES",
                 style = HilingualTheme.typography.headB36,
                 color = HilingualTheme.colors.black,
             )

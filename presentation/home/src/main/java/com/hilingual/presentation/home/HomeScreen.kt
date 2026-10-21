@@ -267,7 +267,6 @@ internal fun HomeRoute(
         MilestoneCardDialog(
             milestone = it,
             onDismiss = viewModel::dismissMilestoneCard,
-            onSaveSuccess = viewModel::dismissMilestoneCard,
         )
     }
 

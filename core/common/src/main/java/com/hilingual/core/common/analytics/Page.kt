@@ -44,4 +44,10 @@ enum class Page(val pageName: String) {
 
     // 온보딩
     ONBOARDING("onboarding"),
+
+    // 일기 카드 공유
+    CARDSHARE("cardshare"),
+
+    // 마일스톤 카드
+    MILESTONE("milestone"),
 }
