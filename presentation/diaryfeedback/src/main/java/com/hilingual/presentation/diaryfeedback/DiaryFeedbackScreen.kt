@@ -70,6 +70,8 @@ import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.dialog.diary.DiaryPublishDialog
 import com.hilingual.core.ui.component.dialog.diary.DiaryUnpublishDialog
+import com.hilingual.core.ui.component.dialog.milestone.MilestoneCardDialog
+import com.hilingual.core.ui.component.item.diary.card.diarycard.DiaryCardExportPreviewScreen
 import com.hilingual.core.ui.component.item.diary.image.ModalImage
 import com.hilingual.core.ui.component.item.diary.tab.GrammarSpellingTab
 import com.hilingual.core.ui.component.item.diary.tab.RecommendExpressionTab
@@ -92,6 +94,7 @@ internal fun DiaryFeedbackRoute(
     val activity = LocalActivity.current
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val milestone by viewModel.milestone.collectAsStateWithLifecycle()
     var isImageDetailVisible by remember { mutableStateOf(false) }
 
     val dialogTrigger = LocalDialogTrigger.current
@@ -247,6 +250,13 @@ internal fun DiaryFeedbackRoute(
                     onDeleteDiary = { /* viewModel::deleteDiary 수정기능 도입까지 삭제 기능 지원중단 */ },
                     tracker = tracker,
                 )
+
+                milestone?.let {
+                    MilestoneCardDialog(
+                        milestone = it,
+                        onDismiss = viewModel::dismissMilestoneCard,
+                    )
+                }
             }
         }
 
@@ -296,6 +306,7 @@ private fun DiaryFeedbackScreen(
 
     var toggleClickCount by remember { mutableIntStateOf(0) }
     var isShowCorrectedDiary by remember { mutableStateOf(true) }
+    var isExportPreviewVisible by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -368,6 +379,7 @@ private fun DiaryFeedbackScreen(
                                 feedbackList = data.feedbackList,
                                 isShowCorrectedDiary = isShowCorrectedDiary,
                                 onImageClick = onChangeImageDetailVisible,
+                                onExportClick = { isExportPreviewVisible = true },
                                 onToggleDiaryViewMode = {
                                     isShowCorrectedDiary = it
                                     toggleClickCount++
@@ -439,6 +451,16 @@ private fun DiaryFeedbackScreen(
         ModalImage(
             imageUrl = successData.diaryContent.imageUrl ?: "",
             onBackClick = onChangeImageDetailVisible,
+            modifier = modifier.padding(paddingValues),
+        )
+    }
+
+    if (isExportPreviewVisible && successData != null) {
+        DiaryCardExportPreviewScreen(
+            writtenDate = successData.exportDate,
+            topics = successData.topics,
+            diaryContent = successData.diaryContent,
+            onDismiss = { isExportPreviewVisible = false },
             modifier = modifier.padding(paddingValues),
         )
     }

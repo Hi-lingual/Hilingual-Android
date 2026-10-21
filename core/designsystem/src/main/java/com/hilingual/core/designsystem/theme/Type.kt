@@ -32,12 +32,16 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.hilingual.core.designsystem.R
 
+val PretendardExtraBold = FontFamily(Font(R.font.pretendard_extrabold, FontWeight.ExtraBold))
+val PretendardBold = FontFamily(Font(R.font.pretendard_bold, FontWeight.Bold))
 val PretendardSemiBold = FontFamily(Font(R.font.pretendard_semibold, FontWeight.SemiBold))
 val PretendardMedium = FontFamily(Font(R.font.pretendard_medium, FontWeight.Medium))
 val PretendardRegular = FontFamily(Font(R.font.pretendard_regular, FontWeight.Normal))
 
 @Stable
 class HilingualTypography(
+    headEB90: TextStyle,
+    headB36: TextStyle,
     headSB20: TextStyle,
     headM20: TextStyle,
     headR20: TextStyle,
@@ -56,6 +60,10 @@ class HilingualTypography(
     bodyM12: TextStyle,
     captionR12: TextStyle,
 ) {
+    var headEB90 by mutableStateOf(headEB90)
+        private set
+    var headB36 by mutableStateOf(headB36)
+        private set
     var headSB20 by mutableStateOf(headSB20)
         private set
     var headM20 by mutableStateOf(headM20)
@@ -92,6 +100,8 @@ class HilingualTypography(
         private set
 
     fun copy(
+        headEB90: TextStyle = this.headEB90,
+        headB36: TextStyle = this.headB36,
         headSB20: TextStyle = this.headSB20,
         headM20: TextStyle = this.headM20,
         headR20: TextStyle = this.headR20,
@@ -110,6 +120,8 @@ class HilingualTypography(
         bodyM12: TextStyle = this.bodyM12,
         captionR12: TextStyle = this.captionR12,
     ) = HilingualTypography(
+        headEB90,
+        headB36,
         headSB20,
         headM20,
         headR20,
@@ -130,6 +142,8 @@ class HilingualTypography(
     )
 
     fun update(other: HilingualTypography) {
+        headEB90 = other.headEB90
+        headB36 = other.headB36
         headSB20 = other.headSB20
         headM20 = other.headM20
         headR20 = other.headR20
@@ -154,6 +168,14 @@ class HilingualTypography(
 
 @Composable
 fun HilingualTypography(): HilingualTypography = HilingualTypography(
+    headEB90 = TextStyle(
+        fontFamily = PretendardExtraBold,
+        fontSize = 90.sp,
+    ),
+    headB36 = TextStyle(
+        fontFamily = PretendardBold,
+        fontSize = 36.sp,
+    ),
     headSB20 = TextStyle(
         fontFamily = PretendardSemiBold,
         fontSize = 20.sp,
@@ -252,6 +274,14 @@ fun HilingualTypography(): HilingualTypography = HilingualTypography(
 private fun HilingualTypographyPreview() {
     HilingualTheme {
         Column {
+            Text(
+                text = "head_eb_90",
+                style = HilingualTheme.typography.headEB90,
+            )
+            Text(
+                text = "head_b_36",
+                style = HilingualTheme.typography.headB36,
+            )
             Text(
                 text = "head_sb_20",
                 style = HilingualTheme.typography.headSB20,
