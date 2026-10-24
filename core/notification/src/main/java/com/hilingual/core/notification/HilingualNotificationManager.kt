@@ -60,8 +60,16 @@ class HilingualNotificationManager @Inject constructor(
             description = "팔로우, 좋아요 등 소셜 활동 알림"
         }
 
+        val reminderChannel = NotificationChannel(
+            CHANNEL_ID_REMINDER,
+            "리마인드 알림",
+            NotificationManager.IMPORTANCE_HIGH,
+        ).apply {
+            description = "설정한 시간에 보내드리는 일기 작성 리마인드 알림"
+        }
+
         notificationManager?.createNotificationChannels(
-            listOf(dailyChannel, weeklyChannel, socialChannel),
+            listOf(dailyChannel, weeklyChannel, socialChannel, reminderChannel),
         )
     }
 
@@ -207,7 +215,7 @@ class HilingualNotificationManager @Inject constructor(
                 )
             }
 
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID_DAILY)
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID_REMINDER)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle("일기 쓸 시간이에요 ⏰")
             .setContentText("지금 떠오르는 생각을 영어로 기록해 보세요.")
@@ -227,6 +235,7 @@ class HilingualNotificationManager @Inject constructor(
         private const val CHANNEL_ID_DAILY = "channel_daily_notification"
         private const val CHANNEL_ID_WEEKLY = "channel_weekly_notification"
         private const val CHANNEL_ID_SOCIAL = "channel_social_notification"
+        private const val CHANNEL_ID_REMINDER = "channel_reminder_notification"
 
         private val KNOWN_CHANNEL_IDS = setOf(CHANNEL_ID_DAILY, CHANNEL_ID_WEEKLY, CHANNEL_ID_SOCIAL)
 
