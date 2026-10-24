@@ -5,14 +5,14 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import com.hilingual.data.notification.constant.ReminderDataStoreKey
 import com.hilingual.data.notification.datasource.ReminderLocalDataSource
-import com.hilingual.data.notification.di.qualifier.ReminderDataStore
+import com.hilingual.data.notification.di.qualifier.NotificationDataStore
 import com.hilingual.data.notification.model.ReminderPreference
 import java.time.DayOfWeek
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 
 class ReminderLocalDataSourceImpl @Inject constructor(
-    @ReminderDataStore private val dataStore: DataStore<Preferences>,
+    @NotificationDataStore private val dataStore: DataStore<Preferences>,
 ) : ReminderLocalDataSource {
 
     override suspend fun getReminder(): ReminderPreference {
