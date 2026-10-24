@@ -16,7 +16,7 @@ class BootCompletedReceiver : BroadcastReceiver() {
     @Inject lateinit var reminderRepository: ReminderRepository
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action != Intent.ACTION_BOOT_COMPLETED) return
+        if (intent.action !in RESCHEDULE_ACTIONS) return
 
         val pendingResult = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
@@ -26,5 +26,14 @@ class BootCompletedReceiver : BroadcastReceiver() {
                 pendingResult.finish()
             }
         }
+    }
+
+    private companion object {
+        val RESCHEDULE_ACTIONS = setOf(
+            Intent.ACTION_BOOT_COMPLETED,
+            Intent.ACTION_TIME_CHANGED,
+            Intent.ACTION_TIMEZONE_CHANGED,
+            "android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED",
+        )
     }
 }
