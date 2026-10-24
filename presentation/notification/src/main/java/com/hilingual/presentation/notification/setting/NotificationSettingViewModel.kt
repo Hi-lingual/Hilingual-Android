@@ -76,12 +76,17 @@ internal class NotificationSettingViewModel @Inject constructor(
                     )
                     serverState.update { server }
 
-                    val reminder = reminderRepository.getReminder()
-                    val newUiState = NotificationSettingUiState(
-                        isMarketingChecked = server.isMarketingChecked,
-                        isFeedChecked = server.isFeedChecked,
-                    ).withReminder(reminder)
-                    _uiState.update { UiState.Success(newUiState) }
+                    reminderRepository.getReminder()
+                        .onSuccess { reminder ->
+                            val newUiState = NotificationSettingUiState(
+                                isMarketingChecked = server.isMarketingChecked,
+                                isFeedChecked = server.isFeedChecked,
+                            ).withReminder(reminder)
+                            _uiState.update { UiState.Success(newUiState) }
+                        }
+                        .onLogFailure {
+                            _uiState.update { UiState.Failure(LoadErrorHandleAction.Retry) }
+                        }
                 }
                 .onLogFailure {
                     _uiState.update { UiState.Failure(LoadErrorHandleAction.Retry) }
@@ -163,14 +168,16 @@ internal class NotificationSettingViewModel @Inject constructor(
     private fun disableReminder() {
         viewModelScope.launch {
             reminderRepository.disableReminder()
-            _uiState.updateSuccess { it.copy(isReminderChecked = false) }
+                .onSuccess { _uiState.updateSuccess { it.copy(isReminderChecked = false) } }
+                .onLogFailure { _sideEffect.emit(NotificationSettingSideEffect.ShowToast("리마인드 알림을 해제하지 못했어요.")) }
         }
     }
 
     fun refreshReminderState() {
         viewModelScope.launch {
-            val reminder = reminderRepository.getReminder()
-            _uiState.updateSuccess { it.withReminder(reminder) }
+            reminderRepository.getReminder()
+                .onSuccess { reminder -> _uiState.updateSuccess { it.withReminder(reminder) } }
+                .onLogFailure { }
         }
     }
 
@@ -225,4 +232,5 @@ internal sealed interface NotificationSettingSideEffect {
     data object ShowPermissionDialog : NotificationSettingSideEffect
     data object ShowReminderPermissionDialog : NotificationSettingSideEffect
     data object NavigateToReminderSetting : NotificationSettingSideEffect
+    data class ShowToast(val text: String) : NotificationSettingSideEffect
 }

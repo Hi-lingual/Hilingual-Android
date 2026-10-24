@@ -39,6 +39,8 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
 import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
@@ -69,6 +71,8 @@ internal fun NotificationSettingRoute(
     var isNotificationSettingDialogVisible by remember { mutableStateOf(false) }
     var isReminderPermissionDialogVisible by remember { mutableStateOf(false) }
 
+    val messageController = LocalMessageController.current
+
     fun checkNotificationPermission() {
         val isGranted = NotificationManagerCompat.from(context).areNotificationsEnabled()
         viewModel.checkNotificationPermission(isGranted)
@@ -90,6 +94,9 @@ internal fun NotificationSettingRoute(
             }
 
             NotificationSettingSideEffect.NavigateToReminderSetting -> navigateToReminderSetting()
+
+            is NotificationSettingSideEffect.ShowToast ->
+                messageController(HilingualMessage.Toast(sideEffect.text))
         }
     }
 

@@ -1,5 +1,6 @@
 package com.hilingual.data.notification.repositoryimpl
 
+import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.data.notification.datasource.ReminderLocalDataSource
 import com.hilingual.data.notification.model.ReminderPreference
 import com.hilingual.data.notification.reminder.ReminderScheduler
@@ -11,21 +12,24 @@ class ReminderRepositoryImpl @Inject constructor(
     private val reminderScheduler: ReminderScheduler,
 ) : ReminderRepository {
 
-    override suspend fun getReminder(): ReminderPreference =
-        localDataSource.getReminder()
+    override suspend fun getReminder(): Result<ReminderPreference> =
+        suspendRunCatching { localDataSource.getReminder() }
 
-    override suspend fun saveReminder(preference: ReminderPreference) {
-        localDataSource.saveReminder(preference)
-        reminderScheduler.schedule(preference)
-    }
+    override suspend fun saveReminder(preference: ReminderPreference): Result<Unit> =
+        suspendRunCatching {
+            localDataSource.saveReminder(preference)
+            reminderScheduler.schedule(preference)
+        }
 
-    override suspend fun disableReminder() {
-        localDataSource.updateReminderEnabled(false)
-        reminderScheduler.cancel()
-    }
+    override suspend fun disableReminder(): Result<Unit> =
+        suspendRunCatching {
+            localDataSource.updateReminderEnabled(false)
+            reminderScheduler.cancel()
+        }
 
-    override suspend fun rescheduleIfEnabled() {
-        val preference = getReminder()
-        if (preference.isEnabled) reminderScheduler.schedule(preference)
-    }
+    override suspend fun rescheduleIfEnabled(): Result<Unit> =
+        suspendRunCatching {
+            val preference = localDataSource.getReminder()
+            if (preference.isEnabled) reminderScheduler.schedule(preference)
+        }
 }
