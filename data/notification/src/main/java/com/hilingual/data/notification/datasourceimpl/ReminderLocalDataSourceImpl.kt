@@ -40,6 +40,16 @@ class ReminderLocalDataSourceImpl @Inject constructor(
     override suspend fun updateReminderEnabled(isEnabled: Boolean) {
         dataStore.edit { prefs -> prefs[ReminderDataStoreKey.IS_ENABLED] = isEnabled }
     }
+
+    override suspend fun clearReminder() {
+        dataStore.edit { prefs ->
+            prefs.remove(ReminderDataStoreKey.IS_ENABLED)
+            prefs.remove(ReminderDataStoreKey.HOUR)
+            prefs.remove(ReminderDataStoreKey.MINUTE)
+            prefs.remove(ReminderDataStoreKey.IS_DAILY_REPEAT)
+            prefs.remove(ReminderDataStoreKey.SELECTED_DAYS)
+        }
+    }
 }
 
 private fun Set<String>.toDayOfWeekSet(): Set<DayOfWeek> =

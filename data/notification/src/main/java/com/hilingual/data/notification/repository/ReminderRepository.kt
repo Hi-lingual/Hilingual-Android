@@ -7,4 +7,5 @@ interface ReminderRepository {
     suspend fun saveReminder(preference: ReminderPreference): Result<Unit>
     suspend fun disableReminder(): Result<Unit>
     suspend fun rescheduleIfEnabled(): Result<Unit>
+    suspend fun clearReminder(): Result<Unit>
 }

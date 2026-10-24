@@ -30,6 +30,7 @@ import com.hilingual.core.ui.model.user.NicknameLocalValidationReason
 import com.hilingual.core.ui.model.user.NicknameValidationStatus
 import com.hilingual.core.ui.util.NicknameValidator
 import com.hilingual.data.auth.repository.AuthRepository
+import com.hilingual.data.notification.repository.ReminderRepository
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -51,6 +52,7 @@ internal class MyPageViewModel @Inject constructor(
     private val deviceInfoProvider: DeviceInfoProvider,
     private val userIdentityTracker: UserIdentityTracker,
     private val widgetUpdater: WidgetUpdater,
+    private val reminderRepository: ReminderRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<MyPageUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<MyPageUiState>> = _uiState.asStateFlow()
@@ -110,6 +112,7 @@ internal class MyPageViewModel @Inject constructor(
                 .onSuccess {
                     userIdentityTracker.clearUserId()
                     clearWidgetCache()
+                    clearReminder()
                     _sideEffect.emit(MyPageSideEffect.RestartApp)
                 }
                 .onLogFailure {
@@ -124,6 +127,7 @@ internal class MyPageViewModel @Inject constructor(
                 .onSuccess {
                     userIdentityTracker.clearUserId()
                     clearWidgetCache()
+                    clearReminder()
                     _sideEffect.emit(MyPageSideEffect.RestartApp)
                 }
                 .onLogFailure {
@@ -248,6 +252,11 @@ internal class MyPageViewModel @Inject constructor(
                 it
             }
         }
+    }
+
+    private suspend fun clearReminder() {
+        reminderRepository.clearReminder()
+            .onLogFailure { }
     }
 }
 

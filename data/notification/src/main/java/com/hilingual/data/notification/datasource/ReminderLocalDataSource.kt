@@ -6,4 +6,5 @@ interface ReminderLocalDataSource {
     suspend fun getReminder(): ReminderPreference
     suspend fun saveReminder(preference: ReminderPreference)
     suspend fun updateReminderEnabled(isEnabled: Boolean)
+    suspend fun clearReminder()
 }

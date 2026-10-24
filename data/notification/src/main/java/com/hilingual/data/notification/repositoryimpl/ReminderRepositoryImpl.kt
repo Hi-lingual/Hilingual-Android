@@ -32,4 +32,10 @@ class ReminderRepositoryImpl @Inject constructor(
             val preference = localDataSource.getReminder()
             if (preference.isEnabled) reminderScheduler.schedule(preference)
         }
+
+    override suspend fun clearReminder(): Result<Unit> =
+        suspendRunCatching {
+            reminderScheduler.cancel()
+            localDataSource.clearReminder()
+        }
 }
