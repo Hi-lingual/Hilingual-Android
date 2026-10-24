@@ -25,5 +25,6 @@ android {
 
 dependencies {
     implementation(libs.richeditor.compose)
+    implementation(projects.data.notification)
     implementation(projects.data.user)
 }
