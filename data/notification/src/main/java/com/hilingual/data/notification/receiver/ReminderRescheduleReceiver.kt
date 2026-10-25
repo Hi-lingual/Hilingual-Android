@@ -7,9 +7,7 @@ import android.content.Intent
 import com.hilingual.data.notification.repository.ReminderRepository
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @AndroidEntryPoint
 class ReminderRescheduleReceiver : BroadcastReceiver() {
@@ -19,13 +17,8 @@ class ReminderRescheduleReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action !in RESCHEDULE_ACTIONS) return
 
-        val pendingResult = goAsync()
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                reminderRepository.rescheduleIfEnabled()
-            } finally {
-                pendingResult.finish()
-            }
+        launchAsync {
+            reminderRepository.rescheduleIfEnabled().onFailure(Timber::e)
         }
     }
 
