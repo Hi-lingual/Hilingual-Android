@@ -60,8 +60,8 @@ class HilingualNotificationManager @Inject constructor(
             description = "팔로우, 좋아요 등 소셜 활동 알림"
         }
 
-        val reminderChannel = NotificationChannel(
-            CHANNEL_ID_REMINDER,
+        val customReminderChannel = NotificationChannel(
+            CHANNEL_ID_CUSTOM_REMINDER,
             "리마인드 알림",
             NotificationManager.IMPORTANCE_HIGH,
         ).apply {
@@ -69,7 +69,7 @@ class HilingualNotificationManager @Inject constructor(
         }
 
         notificationManager?.createNotificationChannels(
-            listOf(dailyChannel, weeklyChannel, socialChannel, reminderChannel),
+            listOf(dailyChannel, weeklyChannel, socialChannel, customReminderChannel),
         )
     }
 
@@ -194,7 +194,7 @@ class HilingualNotificationManager @Inject constructor(
         else -> "social"
     }
 
-    fun showDiaryReminderNotification() {
+    fun showCustomReminderNotification() {
         if (notificationManager?.areNotificationsEnabled() != true) {
             Timber.e("Notifications are disabled for this app.")
             return
@@ -204,7 +204,7 @@ class HilingualNotificationManager @Inject constructor(
             .getLaunchIntentForPackage(context.packageName)
             ?.apply {
                 addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                putExtra(EXTRA_NOTIFICATION_TYPE, "reminder_custom")
+                putExtra(EXTRA_NOTIFICATION_TYPE, NOTIFICATION_TYPE_CUSTOM_REMINDER)
             }
             ?.let {
                 PendingIntent.getActivity(
@@ -215,7 +215,7 @@ class HilingualNotificationManager @Inject constructor(
                 )
             }
 
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID_REMINDER)
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID_CUSTOM_REMINDER)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle("일기 쓸 시간이에요 ⏰")
             .setContentText("지금 떠오르는 생각을 영어로 기록해 보세요.")
@@ -235,7 +235,7 @@ class HilingualNotificationManager @Inject constructor(
         private const val CHANNEL_ID_DAILY = "channel_daily_notification"
         private const val CHANNEL_ID_WEEKLY = "channel_weekly_notification"
         private const val CHANNEL_ID_SOCIAL = "channel_social_notification"
-        private const val CHANNEL_ID_REMINDER = "channel_reminder_notification"
+        private const val CHANNEL_ID_CUSTOM_REMINDER = "channel_custom_reminder_notification"
 
         private val KNOWN_CHANNEL_IDS = setOf(CHANNEL_ID_DAILY, CHANNEL_ID_WEEKLY, CHANNEL_ID_SOCIAL)
 
@@ -245,6 +245,8 @@ class HilingualNotificationManager @Inject constructor(
         private const val NOTIFICATION_ID_CUSTOM_REMINDER = 1004
 
         private const val GROUP_KEY_SOCIAL = "group_social_notification"
+
+        private const val NOTIFICATION_TYPE_CUSTOM_REMINDER = "reminder_custom"
 
         /** 푸시 알림 클릭 이벤트의 notification_type 프로퍼티로 전달된다. */
         const val EXTRA_NOTIFICATION_TYPE = "notification_type"

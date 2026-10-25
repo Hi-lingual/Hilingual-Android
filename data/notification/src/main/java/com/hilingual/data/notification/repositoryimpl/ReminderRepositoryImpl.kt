@@ -3,11 +3,11 @@ package com.hilingual.data.notification.repositoryimpl
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.data.notification.datasource.ReminderLocalDataSource
 import com.hilingual.data.notification.model.ReminderPreference
-import com.hilingual.data.notification.reminder.ReminderScheduler
+import com.hilingual.data.notification.scheduler.ReminderScheduler
 import com.hilingual.data.notification.repository.ReminderRepository
 import javax.inject.Inject
 
-class ReminderRepositoryImpl @Inject constructor(
+internal class ReminderRepositoryImpl @Inject constructor(
     private val localDataSource: ReminderLocalDataSource,
     private val reminderScheduler: ReminderScheduler,
 ) : ReminderRepository {

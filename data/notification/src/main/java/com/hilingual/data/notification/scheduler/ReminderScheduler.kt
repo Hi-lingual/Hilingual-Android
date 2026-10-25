@@ -1,4 +1,4 @@
-package com.hilingual.data.notification.reminder
+package com.hilingual.data.notification.scheduler
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.content.getSystemService
 import com.hilingual.data.notification.model.ReminderPreference
+import com.hilingual.data.notification.receiver.ReminderAlarmReceiver
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.DayOfWeek
 import java.time.ZoneId
@@ -15,7 +16,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ReminderScheduler @Inject constructor(
+internal class ReminderScheduler @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
     private val alarmManager: AlarmManager? = context.getSystemService()

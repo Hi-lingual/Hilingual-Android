@@ -6,11 +6,11 @@
 
     <application>
         <receiver
-            android:name=".reminder.ReminderAlarmReceiver"
+            android:name=".receiver.ReminderAlarmReceiver"
             android:exported="false" />
 
         <receiver
-            android:name=".reminder.BootCompletedReceiver"
+            android:name=".receiver.ReminderRescheduleReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

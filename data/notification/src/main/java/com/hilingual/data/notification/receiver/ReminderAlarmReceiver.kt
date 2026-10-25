@@ -1,4 +1,4 @@
-package com.hilingual.data.notification.reminder
+package com.hilingual.data.notification.receiver
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -22,7 +22,7 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
         val pendingResult = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                notificationManager.showDiaryReminderNotification()
+                notificationManager.showCustomReminderNotification()
                 reminderRepository.rescheduleIfEnabled()
             } finally {
                 pendingResult.finish()
