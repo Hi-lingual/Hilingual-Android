@@ -19,25 +19,16 @@ internal class ReminderScheduler @Inject constructor(
 ) {
     private val alarmManager: AlarmManager? = context.getSystemService()
 
+    fun canScheduleExactAlarms(): Boolean =
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager?.canScheduleExactAlarms() == true
+
     fun schedule(preference: ReminderPreference) {
         cancel()
         if (!preference.isEnabled) return
+        check(canScheduleExactAlarms()) { "Exact alarm permission is not granted." }
 
         val triggerAtMillis = preference.nextTriggerAt(ZonedDateTime.now())?.toInstant()?.toEpochMilli() ?: return
-        val pendingIntent = buildPendingIntent()
-        val manager = alarmManager ?: return
-
-        val canScheduleExact = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            manager.canScheduleExactAlarms()
-        } else {
-            true
-        }
-
-        if (canScheduleExact) {
-            manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
-        } else {
-            manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
-        }
+        alarmManager?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, buildPendingIntent())
     }
 
     fun cancel() {
