@@ -9,8 +9,6 @@ import androidx.core.content.getSystemService
 import com.hilingual.data.notification.model.ReminderPreference
 import com.hilingual.data.notification.receiver.ReminderAlarmReceiver
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.time.DayOfWeek
-import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -25,7 +23,7 @@ internal class ReminderScheduler @Inject constructor(
         cancel()
         if (!preference.isEnabled) return
 
-        val triggerAtMillis = nextTriggerMillis(preference) ?: return
+        val triggerAtMillis = preference.nextTriggerAt(ZonedDateTime.now())?.toInstant()?.toEpochMilli() ?: return
         val pendingIntent = buildPendingIntent()
         val manager = alarmManager ?: return
 
@@ -54,24 +52,6 @@ internal class ReminderScheduler @Inject constructor(
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
-    }
-
-    private fun nextTriggerMillis(preference: ReminderPreference): Long? {
-        val days = if (preference.isDailyRepeat) DayOfWeek.entries.toSet() else preference.selectedDays
-        if (days.isEmpty()) return null
-
-        val zone = ZoneId.systemDefault()
-        val now = ZonedDateTime.now(zone)
-        for (offset in 0L..7L) {
-            val candidate = now.toLocalDate()
-                .plusDays(offset)
-                .atTime(preference.hour, preference.minute)
-                .atZone(zone)
-            if (candidate.dayOfWeek in days && candidate.isAfter(now)) {
-                return candidate.toInstant().toEpochMilli()
-            }
-        }
-        return null
     }
 
     companion object {
