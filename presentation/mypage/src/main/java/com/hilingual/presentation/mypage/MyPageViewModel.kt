@@ -18,19 +18,16 @@ package com.hilingual.presentation.mypage
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hilingual.core.common.analytics.UserIdentityTracker
 import com.hilingual.core.common.app.DeviceInfoProvider
+import com.hilingual.core.common.app.SessionCleaner
 import com.hilingual.core.common.extension.onLogFailure
 import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
-import com.hilingual.core.common.util.suspendRunCatching
-import com.hilingual.core.common.widget.WidgetUpdater
 import com.hilingual.core.ui.model.user.NicknameLocalValidation
 import com.hilingual.core.ui.model.user.NicknameLocalValidationReason
 import com.hilingual.core.ui.model.user.NicknameValidationStatus
 import com.hilingual.core.ui.util.NicknameValidator
 import com.hilingual.data.auth.repository.AuthRepository
-import com.hilingual.data.notification.repository.ReminderRepository
 import com.hilingual.data.user.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -50,9 +47,7 @@ internal class MyPageViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
     private val deviceInfoProvider: DeviceInfoProvider,
-    private val userIdentityTracker: UserIdentityTracker,
-    private val widgetUpdater: WidgetUpdater,
-    private val reminderRepository: ReminderRepository,
+    private val sessionCleaner: SessionCleaner,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<MyPageUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<MyPageUiState>> = _uiState.asStateFlow()
@@ -110,9 +105,7 @@ internal class MyPageViewModel @Inject constructor(
         viewModelScope.launch {
             authRepository.logout()
                 .onSuccess {
-                    userIdentityTracker.clearUserId()
-                    clearWidgetCache()
-                    clearReminder()
+                    sessionCleaner.clear()
                     _sideEffect.emit(MyPageSideEffect.RestartApp)
                 }
                 .onLogFailure {
@@ -125,9 +118,7 @@ internal class MyPageViewModel @Inject constructor(
         viewModelScope.launch {
             authRepository.withdraw()
                 .onSuccess {
-                    userIdentityTracker.clearUserId()
-                    clearWidgetCache()
-                    clearReminder()
+                    sessionCleaner.clear()
                     _sideEffect.emit(MyPageSideEffect.RestartApp)
                 }
                 .onLogFailure {
@@ -193,11 +184,6 @@ internal class MyPageViewModel @Inject constructor(
         nicknameValidationJob?.cancel()
     }
 
-    private suspend fun clearWidgetCache() {
-        suspendRunCatching { widgetUpdater.clearCache() }
-            .onLogFailure { }
-    }
-
     private suspend fun validateNickname(nickname: String) {
         val currentNickname = (_uiState.value as? UiState.Success)?.data?.profileNickname
         if (nickname == currentNickname) {
@@ -252,11 +238,6 @@ internal class MyPageViewModel @Inject constructor(
                 it
             }
         }
-    }
-
-    private suspend fun clearReminder() {
-        reminderRepository.clearReminder()
-            .onLogFailure { }
     }
 }
 

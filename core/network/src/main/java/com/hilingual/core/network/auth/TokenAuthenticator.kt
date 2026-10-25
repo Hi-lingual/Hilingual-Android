@@ -16,8 +16,10 @@
 package com.hilingual.core.network.auth
 
 import com.hilingual.core.common.app.AppRestarter
+import com.hilingual.core.common.app.SessionCleaner
 import com.hilingual.core.network.constant.AUTHORIZATION
 import com.hilingual.core.network.constant.BEARER
+import dagger.Lazy
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.runBlocking
@@ -34,6 +36,7 @@ class TokenAuthenticator @Inject constructor(
     private val tokenProvider: TokenProvider,
     private val tokenRefreshService: TokenRefreshService,
     private val appRestarter: AppRestarter,
+    private val sessionCleaner: Lazy<SessionCleaner>,
 ) : Authenticator {
 
     private val mutex = Mutex()
@@ -60,6 +63,7 @@ class TokenAuthenticator @Inject constructor(
         val refreshToken = tokenProvider.getRefreshToken() ?: run {
             Timber.d("리프레시 토큰 없음. 토큰 삭제 및 앱 재시작.")
             tokenProvider.clearTokens()
+            sessionCleaner.get().clear()
             appRestarter.restartApp()
             return@withLock null
         }
@@ -76,6 +80,7 @@ class TokenAuthenticator @Inject constructor(
         } else {
             Timber.d(result.exceptionOrNull(), "토큰 재발급 실패. 토큰 삭제 및 앱 재시작.")
             tokenProvider.clearTokens()
+            sessionCleaner.get().clear()
             appRestarter.restartApp()
             null
         }
