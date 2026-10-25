@@ -59,7 +59,7 @@ import com.hilingual.presentation.notification.setting.component.NotificationRem
 import com.hilingual.presentation.notification.setting.component.NotificationSettingBanner
 import com.hilingual.presentation.notification.setting.component.NotificationSettingDialog
 import com.hilingual.presentation.notification.setting.component.NotificationSwitchItem
-import com.hilingual.presentation.notification.setting.model.ReminderDay
+import com.hilingual.presentation.notification.setting.model.ReminderUiModel
 
 // #807 푸시 알림 플로우: 미배포 기능, 당분간 봉인. 재개 시 true로 전환.
 private const val ENABLE_PUSH_NOTIFICATION = true
@@ -161,10 +161,8 @@ internal fun NotificationSettingRoute(
                     onMarketingCheckedChange = viewModel::updateMarketingChecked,
                     isFeedChecked = state.data.isFeedChecked,
                     onFeedCheckedChange = viewModel::updateFeedChecked,
-                    isReminderChecked = granted && isExactAlarmGranted && state.data.isReminderChecked,
-                    reminderHour = state.data.reminderHour,
-                    reminderMinute = state.data.reminderMinute,
-                    selectedDays = state.data.selectedDays,
+                    isReminderChecked = granted && isExactAlarmGranted && state.data.reminder.isEnabled,
+                    reminderScheduleText = state.data.reminder.scheduleText,
                     onReminderCheckedChange = viewModel::onReminderCheckedChange,
                     onReminderSectionClick = viewModel::onReminderSectionClick,
                     isNotificationGranted = granted,
@@ -214,9 +212,7 @@ private fun NotificationSettingScreen(
     isFeedChecked: Boolean,
     onFeedCheckedChange: (Boolean) -> Unit,
     isReminderChecked: Boolean,
-    reminderHour: Int,
-    reminderMinute: Int,
-    selectedDays: Set<ReminderDay>,
+    reminderScheduleText: String,
     onReminderCheckedChange: (Boolean) -> Unit,
     onReminderSectionClick: () -> Unit,
     isNotificationGranted: Boolean,
@@ -271,11 +267,7 @@ private fun NotificationSettingScreen(
         NotificationSwitchItem(
             text = "일기 작성 리마인드 알림",
             description = if (isReminderChecked) {
-                formatReminderSchedule(
-                    selectedDays = selectedDays,
-                    hour = reminderHour,
-                    minute = reminderMinute,
-                )
+                reminderScheduleText
             } else {
                 "설정한 시간에 리마인드 알림을 보내드려요."
             },
@@ -308,27 +300,6 @@ private fun NotificationSettingScreen(
     )
 }
 
-private fun formatReminderSchedule(
-    selectedDays: Set<ReminderDay>,
-    hour: Int,
-    minute: Int,
-): String {
-    val dayText = if (selectedDays.size == ReminderDay.entries.size) {
-        "매일"
-    } else {
-        selectedDays.sortedBy { it.ordinal }.joinToString(", ") { it.label }
-    }
-
-    val period = if (hour < 12) "오전" else "오후"
-    val displayHour = when {
-        hour == 0 -> 12
-        hour > 12 -> hour - 12
-        else -> hour
-    }
-
-    return "$dayText · $period $displayHour:${minute.toString().padStart(2, '0')}"
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun NotificationSettingScreenPreview() {
@@ -343,9 +314,7 @@ private fun NotificationSettingScreenPreview() {
             isFeedChecked = isFeedChecked,
             onFeedCheckedChange = { isFeedChecked = it },
             isReminderChecked = isReminderChecked,
-            reminderHour = 21,
-            reminderMinute = 13,
-            selectedDays = ReminderDay.entries.toSet(),
+            reminderScheduleText = ReminderUiModel(isEnabled = true, hour = 21, minute = 13).scheduleText,
             onReminderCheckedChange = { isReminderChecked = it },
             onReminderSectionClick = {},
             isNotificationGranted = false,

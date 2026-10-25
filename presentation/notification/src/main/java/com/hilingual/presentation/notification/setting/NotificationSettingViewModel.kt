@@ -27,7 +27,7 @@ import com.hilingual.data.notification.repository.NotificationRepository
 import com.hilingual.data.notification.repository.ReminderRepository
 import com.hilingual.data.user.repository.UserRepository
 import com.hilingual.presentation.notification.setting.model.ReminderActivationStep
-import com.hilingual.presentation.notification.setting.model.toReminderDay
+import com.hilingual.presentation.notification.setting.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
@@ -217,7 +217,7 @@ internal class NotificationSettingViewModel @Inject constructor(
     private fun disableReminder() {
         viewModelScope.launch {
             reminderRepository.disableReminder()
-                .onSuccess { _uiState.updateSuccess { it.copy(isReminderChecked = false) } }
+                .onSuccess { _uiState.updateSuccess { it.copy(reminder = it.reminder.copy(isEnabled = false)) } }
                 .onLogFailure { _sideEffect.emit(NotificationSettingSideEffect.ShowToast("리마인드 알림을 해제하지 못했어요.")) }
         }
     }
@@ -258,12 +258,8 @@ internal class NotificationSettingViewModel @Inject constructor(
         }
     }
 
-    private fun NotificationSettingUiState.withReminder(reminder: ReminderPreference) = copy(
-        isReminderChecked = reminder.isEnabled,
-        reminderHour = reminder.hour,
-        reminderMinute = reminder.minute,
-        selectedDays = reminder.selectedDays.map { it.toReminderDay() }.toSet(),
-    )
+    private fun NotificationSettingUiState.withReminder(reminder: ReminderPreference) =
+        copy(reminder = reminder.toUiModel())
 }
 
 private data class ServerSettings(
