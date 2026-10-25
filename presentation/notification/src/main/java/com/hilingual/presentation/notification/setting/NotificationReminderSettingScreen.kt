@@ -211,7 +211,6 @@ private fun NotificationReminderSettingScreenPreview() {
             uiState = NotificationReminderSettingUiState(
                 hour = 9,
                 minute = 30,
-                isDailyRepeat = false,
                 selectedDays = setOf(ReminderDay.MON, ReminderDay.WED, ReminderDay.FRI),
             ),
             onBackClick = {},

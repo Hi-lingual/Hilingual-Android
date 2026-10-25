@@ -7,6 +7,8 @@ import com.hilingual.presentation.notification.setting.model.ReminderDay
 internal data class NotificationReminderSettingUiState(
     val hour: Int = 0,
     val minute: Int = 0,
-    val isDailyRepeat: Boolean = true,
     val selectedDays: Set<ReminderDay> = ReminderDay.entries.toSet(),
-)
+) {
+    val isDailyRepeat: Boolean
+        get() = selectedDays.size == ReminderDay.entries.size
+}

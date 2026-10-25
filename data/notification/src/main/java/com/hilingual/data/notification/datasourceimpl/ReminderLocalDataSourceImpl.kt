@@ -22,7 +22,6 @@ class ReminderLocalDataSourceImpl @Inject constructor(
             isEnabled = prefs[ReminderDataStoreKey.IS_ENABLED] ?: default.isEnabled,
             hour = prefs[ReminderDataStoreKey.HOUR] ?: default.hour,
             minute = prefs[ReminderDataStoreKey.MINUTE] ?: default.minute,
-            isDailyRepeat = prefs[ReminderDataStoreKey.IS_DAILY_REPEAT] ?: default.isDailyRepeat,
             selectedDays = prefs[ReminderDataStoreKey.SELECTED_DAYS]?.toDayOfWeekSet() ?: default.selectedDays,
         )
     }
@@ -32,7 +31,6 @@ class ReminderLocalDataSourceImpl @Inject constructor(
             prefs[ReminderDataStoreKey.IS_ENABLED] = preference.isEnabled
             prefs[ReminderDataStoreKey.HOUR] = preference.hour
             prefs[ReminderDataStoreKey.MINUTE] = preference.minute
-            prefs[ReminderDataStoreKey.IS_DAILY_REPEAT] = preference.isDailyRepeat
             prefs[ReminderDataStoreKey.SELECTED_DAYS] = preference.selectedDays.map { it.name }.toSet()
         }
     }
@@ -46,7 +44,6 @@ class ReminderLocalDataSourceImpl @Inject constructor(
             prefs.remove(ReminderDataStoreKey.IS_ENABLED)
             prefs.remove(ReminderDataStoreKey.HOUR)
             prefs.remove(ReminderDataStoreKey.MINUTE)
-            prefs.remove(ReminderDataStoreKey.IS_DAILY_REPEAT)
             prefs.remove(ReminderDataStoreKey.SELECTED_DAYS)
         }
     }

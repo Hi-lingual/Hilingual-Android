@@ -49,7 +49,6 @@ internal class NotificationReminderSettingViewModel @Inject constructor(
                     val initial = NotificationReminderSettingUiState(
                         hour = pref.hour,
                         minute = pref.minute,
-                        isDailyRepeat = pref.isDailyRepeat,
                         selectedDays = pref.selectedDays.map { it.toReminderDay() }.toSet(),
                     )
                     savedState = initial
@@ -67,20 +66,13 @@ internal class NotificationReminderSettingViewModel @Inject constructor(
 
     fun updateDailyRepeat(isChecked: Boolean) {
         _uiState.updateSuccess {
-            it.copy(
-                isDailyRepeat = isChecked,
-                selectedDays = if (isChecked) ReminderDay.entries.toSet() else emptySet(),
-            )
+            it.copy(selectedDays = if (isChecked) ReminderDay.entries.toSet() else emptySet())
         }
     }
 
     fun toggleDay(day: ReminderDay) {
         _uiState.updateSuccess {
-            val newDays = if (day in it.selectedDays) it.selectedDays - day else it.selectedDays + day
-            it.copy(
-                selectedDays = newDays,
-                isDailyRepeat = newDays.size == ReminderDay.entries.size,
-            )
+            it.copy(selectedDays = if (day in it.selectedDays) it.selectedDays - day else it.selectedDays + day)
         }
     }
 
@@ -109,7 +101,6 @@ internal class NotificationReminderSettingViewModel @Inject constructor(
                     isEnabled = true,
                     hour = current.hour,
                     minute = current.minute,
-                    isDailyRepeat = current.isDailyRepeat,
                     selectedDays = current.selectedDays.map { it.dayOfWeek }.toSet(),
                 ),
             )

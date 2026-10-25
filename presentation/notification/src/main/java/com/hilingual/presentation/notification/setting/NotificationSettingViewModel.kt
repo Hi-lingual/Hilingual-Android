@@ -213,7 +213,6 @@ internal class NotificationSettingViewModel @Inject constructor(
         isReminderChecked = reminder.isEnabled,
         reminderHour = reminder.hour,
         reminderMinute = reminder.minute,
-        isDailyRepeat = reminder.isDailyRepeat,
         selectedDays = reminder.selectedDays.map { it.toReminderDay() }.toSet(),
     )
 }

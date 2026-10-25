@@ -128,7 +128,6 @@ internal fun NotificationSettingRoute(
                     isReminderChecked = granted && state.data.isReminderChecked,
                     reminderHour = state.data.reminderHour,
                     reminderMinute = state.data.reminderMinute,
-                    isDailyRepeat = state.data.isDailyRepeat,
                     selectedDays = state.data.selectedDays,
                     onReminderCheckedChange = viewModel::onReminderCheckedChange,
                     onReminderSectionClick = viewModel::onReminderSectionClick,
@@ -175,7 +174,6 @@ private fun NotificationSettingScreen(
     isReminderChecked: Boolean,
     reminderHour: Int,
     reminderMinute: Int,
-    isDailyRepeat: Boolean,
     selectedDays: Set<ReminderDay>,
     onReminderCheckedChange: (Boolean) -> Unit,
     onReminderSectionClick: () -> Unit,
@@ -229,7 +227,6 @@ private fun NotificationSettingScreen(
             text = "일기 작성 리마인드 알림",
             description = if (isReminderChecked) {
                 formatReminderSchedule(
-                    isDailyRepeat = isDailyRepeat,
                     selectedDays = selectedDays,
                     hour = reminderHour,
                     minute = reminderMinute,
@@ -261,12 +258,11 @@ private fun NotificationSettingScreen(
 }
 
 private fun formatReminderSchedule(
-    isDailyRepeat: Boolean,
     selectedDays: Set<ReminderDay>,
     hour: Int,
     minute: Int,
 ): String {
-    val dayText = if (isDailyRepeat) {
+    val dayText = if (selectedDays.size == ReminderDay.entries.size) {
         "매일"
     } else {
         selectedDays.sortedBy { it.ordinal }.joinToString(", ") { it.label }
@@ -298,7 +294,6 @@ private fun NotificationSettingScreenPreview() {
             isReminderChecked = isReminderChecked,
             reminderHour = 21,
             reminderMinute = 13,
-            isDailyRepeat = true,
             selectedDays = ReminderDay.entries.toSet(),
             onReminderCheckedChange = { isReminderChecked = it },
             onReminderSectionClick = {},

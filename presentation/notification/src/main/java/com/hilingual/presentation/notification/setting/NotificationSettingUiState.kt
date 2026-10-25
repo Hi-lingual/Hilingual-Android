@@ -25,6 +25,5 @@ internal data class NotificationSettingUiState(
     val isReminderChecked: Boolean = false,
     val reminderHour: Int = 0,
     val reminderMinute: Int = 0,
-    val isDailyRepeat: Boolean = true,
     val selectedDays: Set<ReminderDay> = ReminderDay.entries.toSet(),
 )
