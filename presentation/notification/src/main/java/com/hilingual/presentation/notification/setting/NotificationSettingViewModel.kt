@@ -15,6 +15,7 @@
  */
 package com.hilingual.presentation.notification.setting
 
+import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hilingual.core.common.extension.onLogFailure
@@ -22,8 +23,10 @@ import com.hilingual.core.common.extension.updateSuccess
 import com.hilingual.core.common.model.LoadErrorHandleAction
 import com.hilingual.core.common.util.UiState
 import com.hilingual.data.notification.model.ReminderPreference
+import com.hilingual.data.notification.repository.NotificationRepository
 import com.hilingual.data.notification.repository.ReminderRepository
 import com.hilingual.data.user.repository.UserRepository
+import com.hilingual.presentation.notification.setting.model.ReminderActivationStep
 import com.hilingual.presentation.notification.setting.model.toReminderDay
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -44,6 +47,7 @@ import kotlinx.coroutines.launch
 internal class NotificationSettingViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val reminderRepository: ReminderRepository,
+    private val notificationRepository: NotificationRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<NotificationSettingUiState>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
@@ -53,6 +57,11 @@ internal class NotificationSettingViewModel @Inject constructor(
 
     private val _isNotificationGranted = MutableStateFlow<Boolean?>(null)
     val isNotificationGranted = _isNotificationGranted.asStateFlow()
+
+    private val _isExactAlarmGranted = MutableStateFlow(false)
+    val isExactAlarmGranted = _isExactAlarmGranted.asStateFlow()
+
+    private var isAwaitingExactAlarmPermission = false
 
     private val serverState = MutableStateFlow(ServerSettings())
 
@@ -96,8 +105,14 @@ internal class NotificationSettingViewModel @Inject constructor(
 
     fun retryLoad() = getNotificationSettings()
 
-    fun checkNotificationPermission(isGranted: Boolean) {
-        _isNotificationGranted.update { isGranted }
+    fun updatePermissionState(isNotificationGranted: Boolean) {
+        _isNotificationGranted.update { isNotificationGranted }
+        _isExactAlarmGranted.update { reminderRepository.isExactAlarmAllowed() }
+
+        if (isAwaitingExactAlarmPermission) {
+            isAwaitingExactAlarmPermission = false
+            if (_isExactAlarmGranted.value) startReminderActivation()
+        }
     }
 
     private fun observeMarketingToggle() {
@@ -143,26 +158,60 @@ internal class NotificationSettingViewModel @Inject constructor(
     }
 
     fun onReminderCheckedChange(isChecked: Boolean) {
-        if (!checkReminderPermissionOrShowDialog()) return
+        if (isChecked) startReminderActivation() else disableReminder()
+    }
 
-        if (isChecked) {
-            viewModelScope.launch { _sideEffect.emit(NotificationSettingSideEffect.NavigateToReminderSetting) }
-        } else {
-            disableReminder()
+    fun onReminderSectionClick() = startReminderActivation()
+
+    private fun startReminderActivation() {
+        val step = ReminderActivationStep.resolve(
+            isNotificationGranted = _isNotificationGranted.value == true,
+            isExactAlarmGranted = _isExactAlarmGranted.value,
+        )
+        val sideEffect = when (step) {
+            ReminderActivationStep.REQUIRE_NOTIFICATION_PERMISSION ->
+                NotificationSettingSideEffect.ShowReminderPermissionDialog
+
+            ReminderActivationStep.REQUIRE_EXACT_ALARM_PERMISSION ->
+                NotificationSettingSideEffect.ShowExactAlarmPermissionDialog
+
+            ReminderActivationStep.READY -> NotificationSettingSideEffect.NavigateToReminderSetting
+        }
+        viewModelScope.launch { _sideEffect.emit(sideEffect) }
+    }
+
+    fun onReminderPermissionDialogConfirm() {
+        viewModelScope.launch {
+            val isPermanentlyDenied = notificationRepository.getIsNotificationPermissionPermanentlyDenied()
+                .getOrDefault(false)
+            val canRequestPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !isPermanentlyDenied
+            _sideEffect.emit(
+                if (canRequestPermission) {
+                    NotificationSettingSideEffect.RequestNotificationPermission
+                } else {
+                    NotificationSettingSideEffect.OpenNotificationSettings
+                },
+            )
         }
     }
 
-    fun onReminderSectionClick() {
-        if (!checkReminderPermissionOrShowDialog()) return
-        viewModelScope.launch { _sideEffect.emit(NotificationSettingSideEffect.NavigateToReminderSetting) }
+    fun onNotificationPermissionResult(isGranted: Boolean, shouldShowRationale: Boolean) {
+        if (isGranted) {
+            _isNotificationGranted.update { true }
+            startReminderActivation()
+            return
+        }
+        if (!shouldShowRationale) {
+            viewModelScope.launch {
+                notificationRepository.updateIsNotificationPermissionPermanentlyDenied(true)
+                    .onLogFailure { }
+            }
+        }
     }
 
-    private fun checkReminderPermissionOrShowDialog(): Boolean {
-        if (_isNotificationGranted.value == false) {
-            viewModelScope.launch { _sideEffect.emit(NotificationSettingSideEffect.ShowReminderPermissionDialog) }
-            return false
-        }
-        return true
+    fun onExactAlarmPermissionDialogConfirm() {
+        isAwaitingExactAlarmPermission = true
+        viewModelScope.launch { _sideEffect.emit(NotificationSettingSideEffect.OpenExactAlarmSettings) }
     }
 
     private fun disableReminder() {
@@ -230,6 +279,10 @@ private enum class NotiType {
 internal sealed interface NotificationSettingSideEffect {
     data object ShowPermissionDialog : NotificationSettingSideEffect
     data object ShowReminderPermissionDialog : NotificationSettingSideEffect
+    data object RequestNotificationPermission : NotificationSettingSideEffect
+    data object OpenNotificationSettings : NotificationSettingSideEffect
+    data object ShowExactAlarmPermissionDialog : NotificationSettingSideEffect
+    data object OpenExactAlarmSettings : NotificationSettingSideEffect
     data object NavigateToReminderSetting : NotificationSettingSideEffect
     data class ShowToast(val text: String) : NotificationSettingSideEffect
 }

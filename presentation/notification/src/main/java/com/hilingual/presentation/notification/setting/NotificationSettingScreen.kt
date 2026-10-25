@@ -15,8 +15,13 @@
  */
 package com.hilingual.presentation.notification.setting
 
+import android.Manifest
 import android.content.Intent
+import android.net.Uri
 import android.provider.Settings
+import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -48,6 +54,7 @@ import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
+import com.hilingual.presentation.notification.setting.component.ExactAlarmPermissionDialog
 import com.hilingual.presentation.notification.setting.component.NotificationReminderDialog
 import com.hilingual.presentation.notification.setting.component.NotificationSettingBanner
 import com.hilingual.presentation.notification.setting.component.NotificationSettingDialog
@@ -66,21 +73,40 @@ internal fun NotificationSettingRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isNotificationGranted by viewModel.isNotificationGranted.collectAsStateWithLifecycle()
+    val isExactAlarmGranted by viewModel.isExactAlarmGranted.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val activity = LocalActivity.current
 
     var isNotificationSettingDialogVisible by remember { mutableStateOf(false) }
     var isReminderPermissionDialogVisible by remember { mutableStateOf(false) }
+    var isExactAlarmPermissionDialogVisible by remember { mutableStateOf(false) }
 
     val messageController = LocalMessageController.current
 
     fun checkNotificationPermission() {
         val isGranted = NotificationManagerCompat.from(context).areNotificationsEnabled()
-        viewModel.checkNotificationPermission(isGranted)
+        viewModel.updatePermissionState(isGranted)
+    }
+
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+    ) { isGranted ->
+        val shouldShowRationale = activity?.let {
+            ActivityCompat.shouldShowRequestPermissionRationale(it, Manifest.permission.POST_NOTIFICATIONS)
+        } ?: false
+        viewModel.onNotificationPermissionResult(isGranted, shouldShowRationale)
     }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         checkNotificationPermission()
         viewModel.refreshReminderState()
+    }
+
+    val navigateToSettings = {
+        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+        }
+        context.startActivity(intent)
     }
 
     viewModel.sideEffect.collectSideEffect { sideEffect ->
@@ -93,18 +119,28 @@ internal fun NotificationSettingRoute(
                 isReminderPermissionDialogVisible = true
             }
 
+            NotificationSettingSideEffect.RequestNotificationPermission ->
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+
+            NotificationSettingSideEffect.OpenNotificationSettings -> navigateToSettings()
+
+            NotificationSettingSideEffect.ShowExactAlarmPermissionDialog -> {
+                isExactAlarmPermissionDialogVisible = true
+            }
+
+            NotificationSettingSideEffect.OpenExactAlarmSettings -> {
+                val intent = Intent(
+                    Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                    Uri.fromParts("package", context.packageName, null),
+                )
+                context.startActivity(intent)
+            }
+
             NotificationSettingSideEffect.NavigateToReminderSetting -> navigateToReminderSetting()
 
             is NotificationSettingSideEffect.ShowToast ->
                 messageController(HilingualMessage.Toast(sideEffect.text))
         }
-    }
-
-    val navigateToSettings = {
-        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-        }
-        context.startActivity(intent)
     }
 
     RetryOnReconnect(
@@ -125,7 +161,7 @@ internal fun NotificationSettingRoute(
                     onMarketingCheckedChange = viewModel::updateMarketingChecked,
                     isFeedChecked = state.data.isFeedChecked,
                     onFeedCheckedChange = viewModel::updateFeedChecked,
-                    isReminderChecked = granted && state.data.isReminderChecked,
+                    isReminderChecked = granted && isExactAlarmGranted && state.data.isReminderChecked,
                     reminderHour = state.data.reminderHour,
                     reminderMinute = state.data.reminderMinute,
                     selectedDays = state.data.selectedDays,
@@ -143,7 +179,13 @@ internal fun NotificationSettingRoute(
                     onReminderPermissionDialogDismiss = { isReminderPermissionDialogVisible = false },
                     onReminderPermissionDialogConfirm = {
                         isReminderPermissionDialogVisible = false
-                        navigateToSettings()
+                        viewModel.onReminderPermissionDialogConfirm()
+                    },
+                    isExactAlarmPermissionDialogVisible = isExactAlarmPermissionDialogVisible,
+                    onExactAlarmPermissionDialogDismiss = { isExactAlarmPermissionDialogVisible = false },
+                    onExactAlarmPermissionDialogConfirm = {
+                        isExactAlarmPermissionDialogVisible = false
+                        viewModel.onExactAlarmPermissionDialogConfirm()
                     },
                     paddingValues = paddingValues,
                     onBackClick = navigateUp,
@@ -185,6 +227,9 @@ private fun NotificationSettingScreen(
     isReminderPermissionDialogVisible: Boolean,
     onReminderPermissionDialogDismiss: () -> Unit,
     onReminderPermissionDialogConfirm: () -> Unit,
+    isExactAlarmPermissionDialogVisible: Boolean,
+    onExactAlarmPermissionDialogDismiss: () -> Unit,
+    onExactAlarmPermissionDialogConfirm: () -> Unit,
     paddingValues: PaddingValues,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -255,6 +300,12 @@ private fun NotificationSettingScreen(
         onDismiss = onReminderPermissionDialogDismiss,
         onConfirmClick = onReminderPermissionDialogConfirm,
     )
+
+    ExactAlarmPermissionDialog(
+        isVisible = isExactAlarmPermissionDialogVisible,
+        onDismiss = onExactAlarmPermissionDialogDismiss,
+        onConfirmClick = onExactAlarmPermissionDialogConfirm,
+    )
 }
 
 private fun formatReminderSchedule(
@@ -307,6 +358,9 @@ private fun NotificationSettingScreenPreview() {
             isReminderPermissionDialogVisible = false,
             onReminderPermissionDialogDismiss = {},
             onReminderPermissionDialogConfirm = {},
+            isExactAlarmPermissionDialogVisible = false,
+            onExactAlarmPermissionDialogDismiss = {},
+            onExactAlarmPermissionDialogConfirm = {},
         )
     }
 }

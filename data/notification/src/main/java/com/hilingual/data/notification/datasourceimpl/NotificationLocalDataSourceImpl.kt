@@ -29,6 +29,8 @@ class NotificationLocalDataSourceImpl @Inject constructor(
 ) : NotificationLocalDataSource {
     private object PreferencesKeys {
         val IS_NOTIFICATION_DIALOG_SHOWN = booleanPreferencesKey("is_notification_dialog_shown")
+        val IS_NOTIFICATION_PERMISSION_PERMANENTLY_DENIED =
+            booleanPreferencesKey("is_notification_permission_permanently_denied")
     }
 
     override suspend fun getIsNotificationDialogShown(): Boolean =
@@ -37,6 +39,15 @@ class NotificationLocalDataSourceImpl @Inject constructor(
     override suspend fun updateIsNotificationDialogShown(isShown: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.IS_NOTIFICATION_DIALOG_SHOWN] = isShown
+        }
+    }
+
+    override suspend fun getIsNotificationPermissionPermanentlyDenied(): Boolean =
+        dataStore.data.first()[PreferencesKeys.IS_NOTIFICATION_PERMISSION_PERMANENTLY_DENIED] ?: false
+
+    override suspend fun updateIsNotificationPermissionPermanentlyDenied(isDenied: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.IS_NOTIFICATION_PERMISSION_PERMANENTLY_DENIED] = isDenied
         }
     }
 }
