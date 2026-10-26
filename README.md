@@ -1,6 +1,6 @@
 # Hi-lingual
 
-![Kotlin](https://img.shields.io/badge/Kotlin-2.3.21-7F52FF?style=flat&logo=kotlin&logoColor=white)
+![Kotlin](https://img.shields.io/badge/Kotlin-2.4.20-7F52FF?style=flat&logo=kotlin&logoColor=white)
 ![Android](https://img.shields.io/badge/Android-34A853?style=flat&logo=android&logoColor=white)
 ![MinSDK](https://img.shields.io/badge/minSdk-30-3DDC84?style=flat&logo=android&logoColor=white)
 
@@ -34,6 +34,13 @@
 | **UI** | Jetpack Compose |
 | **DI** | Dagger-Hilt |
 | **Asynchronous** | Kotlin Coroutine, Flow |
+| **Network** | Retrofit, OkHttp, Kotlinx Serialization |
+| **Local Storage** | Room, DataStore |
+| **Background** | WorkManager |
+| **Widget** | Jetpack Glance |
+| **Image** | Coil |
+| **Analytics / Monitoring** | Firebase Crashlytics, Amplitude |
+| **Performance** | Baseline Profile |
 | **Modularization** | Android App Modularization |
 | **Build Configuration** | Gradle Version Catalog, Custom Convention Plugins |
 
@@ -54,7 +61,7 @@ graph TD
 
 ### Presentation Layer Dependencies
 
-> **presentation:main** 모듈은 아래 그래프의 모든 Presentation 모듈을 포함하며,  
+> **presentation:main** 모듈은 아래 그래프에서 **widget**을 제외한 모든 Presentation 모듈을 포함하며, **widget**은 **app** 모듈이 직접 의존합니다.  
 > 모든 Presentation 모듈은 공통적으로 **core:ui**와 **core:navigation** 모듈에 의존합니다.
 
 ```mermaid
@@ -73,6 +80,7 @@ graph TD
         signup["signup"]
         splash["splash"]
         voca["voca"]
+        widget["widget"]
     end
 
     subgraph Data Layer
@@ -85,6 +93,7 @@ graph TD
         data_onboarding["data:onboarding"]
         data_user["data:user"]
         data_voca["data:voca"]
+        data_widget["data:widget"]
     end
 
     auth --> data_auth
@@ -120,6 +129,7 @@ graph TD
     splash --> data_user
     voca --> data_diary
     voca --> data_voca
+    widget --> data_widget
 ```
 
 ### Data Layer Dependencies
@@ -137,6 +147,7 @@ graph TD
         presigned["presigned"]
         user["user"]
         voca["voca"]
+        widget["widget"]
     end
 
     subgraph Core Layer
@@ -186,6 +197,10 @@ graph TD
     voca --> core_network
     voca --> core_localstorage
     voca --> core_common
+
+    widget --> core_network
+    widget --> core_localstorage
+    widget --> core_common
 ```
 
 ### Core Layer Dependencies

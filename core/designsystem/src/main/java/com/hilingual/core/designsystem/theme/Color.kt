@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 val hilingualBlack = Color(0xFF212121)
 val hilingualOrange = Color(0xFFFF6937)
+val hilingualOrange50 = Color(0xFFFFF3EF)
 val hilingualBlue = Color(0xFF487AFF)
 val hilingualBlue50 = Color(0xFFE0E9FF)
 
@@ -60,6 +61,7 @@ val infoBlue = Color(0xFF007AFF)
 class HilingualColors(
     hilingualBlack: Color,
     hilingualOrange: Color,
+    hilingualOrange50: Color,
     hilingualBlue: Color,
     hilingualBlue50: Color,
     nounBg: Color,
@@ -89,6 +91,8 @@ class HilingualColors(
     var hilingualBlack by mutableStateOf(hilingualBlack)
         private set
     var hilingualOrange by mutableStateOf(hilingualOrange)
+        private set
+    var hilingualOrange50 by mutableStateOf(hilingualOrange50)
         private set
     var hilingualBlue by mutableStateOf(hilingualBlue)
         private set
@@ -142,6 +146,7 @@ class HilingualColors(
     fun copy(): HilingualColors = HilingualColors(
         hilingualBlack,
         hilingualOrange,
+        hilingualOrange50,
         hilingualBlue,
         hilingualBlue50,
         nounBg,
@@ -171,6 +176,7 @@ class HilingualColors(
     fun update(other: HilingualColors) {
         hilingualBlack = other.hilingualBlack
         hilingualOrange = other.hilingualOrange
+        hilingualOrange50 = other.hilingualOrange50
         hilingualBlue = other.hilingualBlue
         hilingualBlue50 = other.hilingualBlue50
         nounBg = other.nounBg
@@ -201,6 +207,7 @@ class HilingualColors(
 fun defaultHilingualColors(
     HilingualBlack: Color = hilingualBlack,
     HilingualOrange: Color = hilingualOrange,
+    HilingualOrange50: Color = hilingualOrange50,
     HilingualBlue: Color = hilingualBlue,
     HilingualBlue50: Color = hilingualBlue50,
     NounBg: Color = nounBg,
@@ -228,6 +235,7 @@ fun defaultHilingualColors(
 ) = HilingualColors(
     HilingualBlack,
     HilingualOrange,
+    HilingualOrange50,
     HilingualBlue,
     HilingualBlue50,
     NounBg,

@@ -32,4 +32,14 @@ class NotificationRepositoryImpl @Inject constructor(
         suspendRunCatching {
             notificationLocalDataSource.updateIsNotificationDialogShown(isShown = isShown)
         }
+
+    override suspend fun getIsNotificationPermissionPermanentlyDenied(): Result<Boolean> =
+        suspendRunCatching {
+            notificationLocalDataSource.getIsNotificationPermissionPermanentlyDenied()
+        }
+
+    override suspend fun updateIsNotificationPermissionPermanentlyDenied(isDenied: Boolean): Result<Unit> =
+        suspendRunCatching {
+            notificationLocalDataSource.updateIsNotificationPermissionPermanentlyDenied(isDenied = isDenied)
+        }
 }

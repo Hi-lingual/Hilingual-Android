@@ -1,0 +1,563 @@
+package com.hilingual.core.ui.component.item.diary.card.diarycard
+
+import android.content.ContentValues
+import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.provider.MediaStore
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.layer.drawLayer
+import androidx.compose.ui.graphics.rememberGraphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
+import com.hilingual.core.common.analytics.Page
+import com.hilingual.core.common.analytics.TriggerType
+import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.common.extension.onLogFailure
+import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.provider.LocalTracker
+import com.hilingual.core.common.trigger.LocalMessageController
+import com.hilingual.core.common.util.suspendRunCatching
+import com.hilingual.core.designsystem.R
+import com.hilingual.core.designsystem.component.bottomsheet.HilingualMenuBottomSheet
+import com.hilingual.core.designsystem.component.bottomsheet.HilingualMenuBottomSheetItem
+import com.hilingual.core.designsystem.component.image.ErrorImageSize
+import com.hilingual.core.designsystem.component.image.NetworkImage
+import com.hilingual.core.designsystem.component.toggle.HilingualBasicToggleSwitch
+import com.hilingual.core.designsystem.component.topappbar.HilingualBasicTopAppBar
+import com.hilingual.core.designsystem.theme.HilingualTheme
+import com.hilingual.core.designsystem.theme.PretendardMedium
+import com.hilingual.core.ui.component.dropdown.Topics
+import com.hilingual.core.ui.model.diary.DiaryContent
+import java.io.File
+import java.io.FileOutputStream
+import java.util.UUID
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+private val EXPORT_IMAGE_SIZE = DpSize(width = 360.dp, height = 640.dp)
+
+@Composable
+fun DiaryCardExportPreviewScreen(
+    writtenDate: String,
+    topics: Topics,
+    diaryContent: DiaryContent,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    BackHandler(onBack = onDismiss)
+
+    val context = LocalContext.current
+    val messageController = LocalMessageController.current
+    val scope = rememberCoroutineScope()
+    val tracker = LocalTracker.current
+    val cardLayer = rememberGraphicsLayer()
+    var isSharing by remember { mutableStateOf(false) }
+    var includeTopic by remember { mutableStateOf(true) }
+    var isExportMenuVisible by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier.fillMaxSize()) {
+        DiaryCardExportLayout(
+            writtenDate = writtenDate,
+            topics = topics,
+            diaryContent = diaryContent,
+            isShowTopic = includeTopic,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .drawWithContent {
+                    cardLayer.record { this@drawWithContent.drawContent() }
+                    drawLayer(cardLayer)
+                },
+        )
+
+        DiaryCardExportPreviewContent(
+            writtenDate = writtenDate,
+            topics = topics,
+            diaryContent = diaryContent,
+            includeTopic = includeTopic,
+            onIncludeTopicChange = { includeTopic = it },
+            onDismiss = onDismiss,
+            onExportClick = {
+                tracker.logPageAction(
+                    trigger = TriggerType.CLICK,
+                    page = Page.CARDSHARE,
+                    action = "image_export",
+                )
+                isExportMenuVisible = true
+            },
+        )
+    }
+
+    HilingualMenuBottomSheet(
+        isVisible = isExportMenuVisible,
+        onDismiss = { isExportMenuVisible = false },
+    ) {
+        HilingualMenuBottomSheetItem(
+            text = "이미지 공유하기",
+            iconResId = R.drawable.ic_upload_24,
+            onClick = {
+                tracker.logPageAction(
+                    trigger = TriggerType.CLICK,
+                    page = Page.CARDSHARE,
+                    action = "image_share",
+                )
+                isExportMenuVisible = false
+                scope.launch {
+                    if (isSharing) return@launch
+                    isSharing = true
+                    try {
+                        suspendRunCatching {
+                            val bitmap = cardLayer.toImageBitmap().asAndroidBitmap()
+                            val uri = withContext(Dispatchers.IO) {
+                                val directory = File(context.cacheDir, "diary_card_shares")
+                                check(!directory.exists() || directory.deleteRecursively()) {
+                                    "Failed to clear share cache"
+                                }
+                                check(directory.mkdirs()) { "Failed to create share cache" }
+                                val file = File(directory, "diary-card-${UUID.randomUUID()}.png")
+                                FileOutputStream(file).use {
+                                    check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)) {
+                                        "Failed to compress diary card"
+                                    }
+                                }
+                                FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+                            }
+                            context.startActivity(
+                                Intent.createChooser(
+                                    Intent(Intent.ACTION_SEND).apply {
+                                        type = "image/png"
+                                        putExtra(Intent.EXTRA_STREAM, uri)
+                                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                    },
+                                    null,
+                                ),
+                            )
+                        }.onLogFailure {
+                            messageController(HilingualMessage.Toast("이미지 공유에 실패했어요. 다시 시도해 주세요."))
+                        }
+                    } finally {
+                        isSharing = false
+                    }
+                }
+            },
+        )
+        HilingualMenuBottomSheetItem(
+            text = "이미지 저장하기",
+            iconResId = R.drawable.ic_download_24,
+            onClick = {
+                tracker.logPageAction(
+                    trigger = TriggerType.CLICK,
+                    page = Page.CARDSHARE,
+                    action = "image_download",
+                )
+                isExportMenuVisible = false
+                scope.launch {
+                    suspendRunCatching {
+                        val bitmap = cardLayer.toImageBitmap().asAndroidBitmap()
+                        saveDiaryCardToGallery(context, bitmap)
+                    }.onSuccess {
+                        messageController(HilingualMessage.Toast("일기가 이미지로 저장되었어요."))
+                    }.onLogFailure {
+                        messageController(HilingualMessage.Toast("이미지 저장에 실패했어요. 다시 시도해 주세요."))
+                    }
+                }
+            },
+        )
+    }
+}
+
+private suspend fun saveDiaryCardToGallery(context: Context, bitmap: Bitmap) = withContext(Dispatchers.IO) {
+    val resolver = context.contentResolver
+    val values = ContentValues().apply {
+        put(MediaStore.Images.Media.DISPLAY_NAME, "diary-card-${UUID.randomUUID()}.png")
+        put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+        put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Hilingual")
+        put(MediaStore.Images.Media.IS_PENDING, 1)
+    }
+    val uri = checkNotNull(resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)) {
+        "Failed to create MediaStore entry"
+    }
+    var saved = false
+    try {
+        checkNotNull(resolver.openOutputStream(uri)) { "Failed to open $uri" }.use {
+            check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)) { "Failed to compress diary card" }
+        }
+        values.clear()
+        values.put(MediaStore.Images.Media.IS_PENDING, 0)
+        check(resolver.update(uri, values, null, null) > 0) { "Failed to publish diary card" }
+        saved = true
+    } finally {
+        if (!saved) {
+            runCatching { resolver.delete(uri, null, null) }
+        }
+    }
+}
+
+@Composable
+private fun DiaryCardExportPreviewContent(
+    writtenDate: String,
+    topics: Topics,
+    diaryContent: DiaryContent,
+    includeTopic: Boolean,
+    onIncludeTopicChange: (Boolean) -> Unit,
+    onDismiss: () -> Unit,
+    onExportClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .background(HilingualTheme.colors.gray100)
+                .pointerInput(Unit) {
+                    awaitPointerEventScope {
+                        while (true) {
+                            awaitPointerEvent().changes.forEach { it.consume() }
+                        }
+                    }
+                },
+        )
+
+        Column(modifier = Modifier.fillMaxSize()) {
+            ExportTopAppBar(
+                onBackClick = onDismiss,
+                onExportClick = onExportClick,
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(HilingualTheme.colors.white)
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "주제 포함하기",
+                    style = HilingualTheme.typography.bodyR16,
+                    color = HilingualTheme.colors.black,
+                )
+                HilingualBasicToggleSwitch(
+                    isChecked = includeTopic,
+                    onCheckedChange = onIncludeTopicChange,
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 24.dp),
+            ) {
+                DiaryExportCard(
+                    writtenDate = writtenDate,
+                    topics = topics,
+                    diaryContent = diaryContent,
+                    isShowTopic = includeTopic,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DiaryCardExportLayout(
+    writtenDate: String,
+    topics: Topics,
+    diaryContent: DiaryContent,
+    isShowTopic: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val density = LocalDensity.current
+    CompositionLocalProvider(LocalDensity provides Density(density = density.density, fontScale = 1f)) {
+        Box(
+            modifier = modifier
+                .requiredSize(EXPORT_IMAGE_SIZE)
+                .background(HilingualTheme.colors.gray100)
+                .padding(horizontal = 16.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            DiaryExportCard(
+                writtenDate = writtenDate,
+                topics = topics,
+                diaryContent = diaryContent,
+                isShowTopic = isShowTopic,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ExportTopAppBar(
+    onBackClick: () -> Unit,
+    onExportClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    HilingualBasicTopAppBar(
+        modifier = modifier.fillMaxWidth(),
+        title = "일기 카드 미리보기",
+        navigationIcon = {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_close_24),
+                contentDescription = null,
+                tint = HilingualTheme.colors.black,
+                modifier = Modifier
+                    .size(24.dp)
+                    .noRippleClickable(onClick = onBackClick),
+            )
+        },
+        actions = {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_export_44),
+                contentDescription = null,
+                tint = Color.Unspecified,
+                modifier = Modifier
+                    .size(44.dp)
+                    .noRippleClickable(onClick = onExportClick),
+            )
+        },
+    )
+}
+
+@Composable
+private fun DiaryExportCard(
+    writtenDate: String,
+    topics: Topics,
+    diaryContent: DiaryContent,
+    isShowTopic: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val colors = HilingualTheme.colors
+    Box(
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(colors.white)
+                .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            if (isShowTopic && topics.enTopic.isNotBlank()) {
+                Row(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Image(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_quote_16),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                    )
+                    Text(
+                        text = topics.enTopic,
+                        style = HilingualTheme.typography.bodyM15,
+                        color = colors.gray700,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Image(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_quote_16),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(16.dp)
+                            .rotate(180f),
+                    )
+                }
+                Spacer(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(colors.gray100),
+                )
+            }
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Text(
+                    text = writtenDate,
+                    style = HilingualTheme.typography.bodyM12,
+                    color = colors.gray500,
+                )
+                diaryContent.imageUrl?.let { imageUrl ->
+                    NetworkImage(
+                        imageUrl = imageUrl,
+                        shape = RoundedCornerShape(8.dp),
+                        errorImageSize = ErrorImageSize.LARGE,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(178.dp),
+                    )
+                }
+                val correctedText = diaryContent.correctedText
+                val annotatedText = buildAnnotatedString {
+                    append(correctedText)
+                    diaryContent.diffRanges.forEach { (start, end) ->
+                        if (start in 0..<end && end <= correctedText.length) {
+                            addStyle(
+                                SpanStyle(color = colors.hilingualOrange, fontFamily = PretendardMedium),
+                                start,
+                                end,
+                            )
+                        }
+                    }
+                }
+                Text(
+                    text = annotatedText,
+                    style = HilingualTheme.typography.bodyR15,
+                    color = colors.black,
+                    maxLines = if (diaryContent.imageUrl == null) 19 else 11,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+            Image(
+                painter = painterResource(R.drawable.img_logo),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(colors.gray200),
+                modifier = Modifier
+                    .size(width = 80.dp, height = 20.dp)
+                    .align(Alignment.CenterHorizontally),
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            repeat(2) {
+                Image(
+                    painter = painterResource(R.drawable.img_diary_card_binding),
+                    contentDescription = null,
+                    modifier = Modifier.size(width = 48.dp, height = 22.dp),
+                )
+            }
+        }
+    }
+}
+
+private data class DiaryExportCardPreviewState(
+    val isShowTopic: Boolean,
+    val diaryContent: DiaryContent,
+)
+
+private class DiaryExportCardPreviewProvider : PreviewParameterProvider<DiaryExportCardPreviewState> {
+    private val text = "Today I went to the cafe Conhas in Yeonnam to meet my teammates. " +
+        "I was planning to arrive around 1:30 p.m., but I got there at 2:20 because I overslept. " +
+        "I wore rain boots and brought my favorite umbrella, but it wasn't really raining outside."
+    private val correctedRangeStart = text.indexOf("arrive around")
+    private val content = DiaryContent(
+        correctedText = text,
+        diffRanges = persistentListOf(correctedRangeStart to correctedRangeStart + "arrive around 1:30 p.m.".length),
+    )
+
+    override val values = sequenceOf(
+        DiaryExportCardPreviewState(isShowTopic = true, diaryContent = content),
+        DiaryExportCardPreviewState(isShowTopic = true, diaryContent = content.copy(imageUrl = "preview-image")),
+        DiaryExportCardPreviewState(isShowTopic = false, diaryContent = content),
+        DiaryExportCardPreviewState(isShowTopic = false, diaryContent = content.copy(imageUrl = "preview-image")),
+    )
+}
+
+@Preview(showBackground = false, backgroundColor = 0xFFF5F5F5, widthDp = 360)
+@Composable
+private fun DiaryExportCardPreview(
+    @PreviewParameter(DiaryExportCardPreviewProvider::class) state: DiaryExportCardPreviewState,
+) {
+    HilingualTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            DiaryExportCard(
+                writtenDate = "2026.09.28 MON",
+                topics = Topics(enTopic = "What surprised you today?"),
+                diaryContent = state.diaryContent,
+                isShowTopic = state.isShowTopic,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun DiaryCardExportPreview() {
+    HilingualTheme {
+        DiaryCardExportPreviewContent(
+            writtenDate = "2026.09.28 MON",
+            topics = Topics(enTopic = "What surprised you today?"),
+            diaryContent = DiaryContent(
+                correctedText = "Today I went to the cafe Conhas in Yeonnam to meet my teammates.\n " +
+                    "I was planning to arrive around 1:30 p.m., but I got there at 2:20 " +
+                    "because I overslept, as always.\n " +
+                    "I wore rain boots and brought my favorite umbrella " +
+                    "because the weather forecast said it would rain all day, " +
+                    "but it wasn’t really raining much outside.\n " +
+                    "I got kind of disappointed. But yes, no rain is better than rain, I guess.\n" +
+                    "After arriving, I had a jambon arugula sandwich with a vanilla latte.\n " +
+                    "Honestly, I should be more careful when I'm drinking milk " +
+                    "because I get stomachaches easily, " +
+                    "but I always order lattes.\nMy life feels like a disaster, a mess that I call myself.\n " +
+                    "But they tasted really good, so I felt more motivated to work.\n " +
+                    "I really liked this café because it's spacious, chill, " +
+                    "and has a great atmosphere for focusing.\n " +
+                    "I’ll definitely come back again soon!",
+                diffRanges = persistentListOf(
+                    Pair(84, 164),
+                    Pair(278, 316),
+                    Pair(508, 583),
+                    Pair(740, 802),
+                ),
+            ),
+            includeTopic = true,
+            onIncludeTopicChange = {},
+            onDismiss = {},
+            onExportClick = {},
+        )
+    }
+}

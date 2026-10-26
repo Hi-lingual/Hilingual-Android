@@ -1,3 +1,18 @@
+/*
+ * Copyright 2025 The Hilingual Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.hilingual.core.notification
 
 import android.app.NotificationChannel
@@ -45,38 +60,37 @@ class HilingualNotificationManager @Inject constructor(
             description = "팔로우, 좋아요 등 소셜 활동 알림"
         }
 
+        val customReminderChannel = NotificationChannel(
+            CHANNEL_ID_CUSTOM_REMINDER,
+            "리마인드 알림",
+            NotificationManager.IMPORTANCE_HIGH,
+        ).apply {
+            description = "설정한 시간에 보내드리는 일기 작성 리마인드 알림"
+        }
+
         notificationManager?.createNotificationChannels(
-            listOf(dailyChannel, weeklyChannel, socialChannel),
+            listOf(dailyChannel, weeklyChannel, socialChannel, customReminderChannel),
         )
     }
 
     fun sendReminderNotification(
-        notificationType: String?,
+        channelId: String?,
         title: String,
         message: String,
         deepLink: String? = null,
     ) {
-        val channelId = resolveChannelId(notificationType)
-        if (notificationType == null || notificationType !in KNOWN_NOTIFICATION_TYPES) {
-            Timber.e("Unknown notification_type from server: $notificationType")
+        val targetChannelId = channelId?.takeIf { it in KNOWN_CHANNEL_IDS } ?: CHANNEL_ID_SOCIAL
+        if (channelId != null && channelId !in KNOWN_CHANNEL_IDS) {
+            Timber.e("Unknown channelId from server: $channelId")
         }
 
         showReminderNotification(
-            channelId = channelId,
-            notificationId = resolveNotificationId(channelId),
+            channelId = targetChannelId,
+            notificationId = resolveNotificationId(targetChannelId),
             title = title,
             message = message,
             deepLink = deepLink,
-            notificationType = notificationType ?: NOTIFICATION_TYPE_SOCIAL,
         )
-    }
-
-    private fun resolveChannelId(notificationType: String?): String = when (notificationType) {
-        NOTIFICATION_TYPE_REMINDER_STREAK -> CHANNEL_ID_DAILY
-        NOTIFICATION_TYPE_REMINDER_WINBACK -> CHANNEL_ID_WEEKLY
-        NOTIFICATION_TYPE_REMINDER_CUSTOM -> CHANNEL_ID_DAILY
-        NOTIFICATION_TYPE_FRIEND_FOLLOW, NOTIFICATION_TYPE_DIARY_EMPATHY -> CHANNEL_ID_SOCIAL
-        else -> CHANNEL_ID_SOCIAL
     }
 
     private fun resolveNotificationId(channelId: String): Int = when (channelId) {
@@ -91,14 +105,13 @@ class HilingualNotificationManager @Inject constructor(
         title: String,
         message: String,
         deepLink: String? = null,
-        notificationType: String,
     ) {
         val pendingIntent = context.packageManager
             .getLaunchIntentForPackage(context.packageName)
             ?.apply {
                 addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 deepLink?.takeIf { it.isNotBlank() }?.let { putExtra("link", it) }
-                putExtra(EXTRA_NOTIFICATION_TYPE, notificationType)
+                putExtra(EXTRA_NOTIFICATION_TYPE, channelId.toNotificationType())
             }
             ?.let {
                 PendingIntent.getActivity(
@@ -175,7 +188,13 @@ class HilingualNotificationManager @Inject constructor(
         notificationManager?.notify(NOTIFICATION_ID_SOCIAL_SUMMARY, summary)
     }
 
-    fun showDiaryReminderNotification() {
+    private fun String.toNotificationType(): String = when (this) {
+        CHANNEL_ID_DAILY -> "daily"
+        CHANNEL_ID_WEEKLY -> "weekly"
+        else -> "social"
+    }
+
+    fun showCustomReminderNotification() {
         if (notificationManager?.areNotificationsEnabled() != true) {
             Timber.e("Notifications are disabled for this app.")
             return
@@ -185,7 +204,7 @@ class HilingualNotificationManager @Inject constructor(
             .getLaunchIntentForPackage(context.packageName)
             ?.apply {
                 addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                putExtra(EXTRA_NOTIFICATION_TYPE, NOTIFICATION_TYPE_REMINDER_CUSTOM)
+                putExtra(EXTRA_NOTIFICATION_TYPE, NOTIFICATION_TYPE_CUSTOM_REMINDER)
             }
             ?.let {
                 PendingIntent.getActivity(
@@ -196,7 +215,7 @@ class HilingualNotificationManager @Inject constructor(
                 )
             }
 
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID_DAILY)
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID_CUSTOM_REMINDER)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle("일기 쓸 시간이에요 ⏰")
             .setContentText("지금 떠오르는 생각을 영어로 기록해 보세요.")
@@ -216,6 +235,9 @@ class HilingualNotificationManager @Inject constructor(
         private const val CHANNEL_ID_DAILY = "channel_daily_notification"
         private const val CHANNEL_ID_WEEKLY = "channel_weekly_notification"
         private const val CHANNEL_ID_SOCIAL = "channel_social_notification"
+        private const val CHANNEL_ID_CUSTOM_REMINDER = "channel_custom_reminder_notification"
+
+        private val KNOWN_CHANNEL_IDS = setOf(CHANNEL_ID_DAILY, CHANNEL_ID_WEEKLY, CHANNEL_ID_SOCIAL)
 
         private const val NOTIFICATION_ID_DAILY = 1001
         private const val NOTIFICATION_ID_WEEKLY = 1002
@@ -224,20 +246,7 @@ class HilingualNotificationManager @Inject constructor(
 
         private const val GROUP_KEY_SOCIAL = "group_social_notification"
 
-        const val NOTIFICATION_TYPE_REMINDER_STREAK = "reminder_streak"
-        const val NOTIFICATION_TYPE_REMINDER_WINBACK = "reminder_winback"
-        const val NOTIFICATION_TYPE_REMINDER_CUSTOM = "reminder_custom"
-        const val NOTIFICATION_TYPE_FRIEND_FOLLOW = "friend_follow"
-        const val NOTIFICATION_TYPE_DIARY_EMPATHY = "diary_empathy"
-        private const val NOTIFICATION_TYPE_SOCIAL = "social"
-
-        private val KNOWN_NOTIFICATION_TYPES = setOf(
-            NOTIFICATION_TYPE_REMINDER_STREAK,
-            NOTIFICATION_TYPE_REMINDER_WINBACK,
-            NOTIFICATION_TYPE_REMINDER_CUSTOM,
-            NOTIFICATION_TYPE_FRIEND_FOLLOW,
-            NOTIFICATION_TYPE_DIARY_EMPATHY,
-        )
+        private const val NOTIFICATION_TYPE_CUSTOM_REMINDER = "reminder_custom"
 
         /** 푸시 알림 클릭 이벤트의 notification_type 프로퍼티로 전달된다. */
         const val EXTRA_NOTIFICATION_TYPE = "notification_type"

@@ -16,10 +16,11 @@
 package com.hilingual.presentation.notification.setting
 
 import androidx.compose.runtime.Immutable
+import com.hilingual.presentation.notification.setting.model.ReminderUiModel
 
 @Immutable
 internal data class NotificationSettingUiState(
     val isMarketingChecked: Boolean = false,
     val isFeedChecked: Boolean = false,
-    val isReminderChecked: Boolean = false,
+    val reminder: ReminderUiModel = ReminderUiModel(),
 )

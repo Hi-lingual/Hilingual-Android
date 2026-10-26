@@ -4,6 +4,10 @@
         name="camera_images"
         path="." />
 
+    <cache-path
+        name="shared_images"
+        path="shared_images/" />
+
     <files-path
         name="diary_images"
         path="diary_images/" />

@@ -16,7 +16,9 @@
 package com.hilingual.data.notification.di
 
 import com.hilingual.data.notification.repository.NotificationRepository
+import com.hilingual.data.notification.repository.ReminderRepository
 import com.hilingual.data.notification.repositoryimpl.NotificationRepositoryImpl
+import com.hilingual.data.notification.repositoryimpl.ReminderRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -30,4 +32,8 @@ internal abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindNotificationRepository(impl: NotificationRepositoryImpl): NotificationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindReminderRepository(impl: ReminderRepositoryImpl): ReminderRepository
 }

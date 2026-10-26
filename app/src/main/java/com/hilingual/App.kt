@@ -28,6 +28,7 @@ import com.hilingual.core.common.util.HilingualReleaseTree
 import com.hilingual.core.common.widget.WidgetUpdater
 import com.hilingual.core.notification.HilingualNotificationManager
 import com.hilingual.core.work.scheduler.HilingualWorkManagerConfigurator
+import com.hilingual.data.notification.repository.ReminderRepository
 import dagger.Lazy
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -59,6 +60,9 @@ class App : Application(), SingletonImageLoader.Factory {
     @Inject
     lateinit var tracker: Tracker
 
+    @Inject
+    lateinit var reminderRepository: ReminderRepository
+
     override fun onCreate() {
         super.onCreate()
         SingletonImageLoader.setSafe { imageLoader.get() }
@@ -71,6 +75,7 @@ class App : Application(), SingletonImageLoader.Factory {
         syncWidgetCount()
         updateWidgets()
         Wisp.initialize()
+        restoreReminderAlarm()
     }
 
     override fun newImageLoader(context: Context): ImageLoader = imageLoader.get()
@@ -114,5 +119,11 @@ class App : Application(), SingletonImageLoader.Factory {
                 "widget_count_total" to count.total,
             ),
         )
+    }
+
+    private fun restoreReminderAlarm() {
+        applicationScope.launch {
+            reminderRepository.rescheduleIfEnabled().onFailure(Timber::e)
+        }
     }
 }

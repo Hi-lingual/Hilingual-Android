@@ -25,15 +25,20 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
+import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.toggle.HilingualBasicToggleSwitch
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.presentation.notification.setting.component.DayChip
-import com.hilingual.presentation.notification.setting.component.DayOfWeek
 import com.hilingual.presentation.notification.setting.component.HilingualTimeInput
 import com.hilingual.presentation.notification.setting.component.NotificationReminderSaveDialog
+import com.hilingual.presentation.notification.setting.model.ReminderDay
 
 @Composable
 internal fun NotificationReminderSettingRoute(
@@ -42,18 +47,27 @@ internal fun NotificationReminderSettingRoute(
     viewModel: NotificationReminderSettingViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val messageController = LocalMessageController.current
     var isExitDialogVisible by remember { mutableStateOf(false) }
 
     viewModel.sideEffect.collectSideEffect { effect ->
         when (effect) {
             NotificationReminderSettingSideEffect.NavigateUp -> navigateUp()
+
             NotificationReminderSettingSideEffect.ShowExitDialog -> isExitDialogVisible = true
+
+            is NotificationReminderSettingSideEffect.ShowToast ->
+                messageController(HilingualMessage.Toast(effect.text))
         }
     }
 
     BackHandler(onBack = viewModel::onBackClick)
 
     when (val state = uiState) {
+        is UiState.Loading -> {
+            HilingualLoadingIndicator()
+        }
+
         is UiState.Success -> {
             NotificationReminderSettingScreen(
                 paddingValues = paddingValues,
@@ -75,9 +89,15 @@ internal fun NotificationReminderSettingRoute(
             )
         }
 
-        is UiState.Loading -> {}
-
-        is UiState.Failure -> {}
+        is UiState.Failure -> {
+            HilingualLoadErrorView(
+                action = LoadErrorViewAction.Retry(
+                    onRetryClick = viewModel::retryLoad,
+                    onBackClick = navigateUp,
+                ),
+                modifier = Modifier.padding(paddingValues),
+            )
+        }
 
         else -> {}
     }
@@ -90,7 +110,7 @@ private fun NotificationReminderSettingScreen(
     onBackClick: () -> Unit,
     onTimeChange: (hour: Int, minute: Int) -> Unit,
     onDailyRepeatChange: (Boolean) -> Unit,
-    onDayClick: (DayOfWeek) -> Unit,
+    onDayClick: (ReminderDay) -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -161,11 +181,11 @@ private fun NotificationReminderSettingScreen(
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            DayOfWeek.entries.forEach { day ->
+            ReminderDay.entries.forEach { day ->
                 DayChip(
                     label = day.label,
                     isSelected = day in uiState.selectedDays,
-                    onClick = { if (!uiState.isDailyRepeat) onDayClick(day) },
+                    onClick = { onDayClick(day) },
                 )
             }
         }
@@ -191,8 +211,7 @@ private fun NotificationReminderSettingScreenPreview() {
             uiState = NotificationReminderSettingUiState(
                 hour = 9,
                 minute = 30,
-                isDailyRepeat = false,
-                selectedDays = setOf(DayOfWeek.MON, DayOfWeek.WED, DayOfWeek.FRI),
+                selectedDays = setOf(ReminderDay.MON, ReminderDay.WED, ReminderDay.FRI),
             ),
             onBackClick = {},
             onTimeChange = { _, _ -> },

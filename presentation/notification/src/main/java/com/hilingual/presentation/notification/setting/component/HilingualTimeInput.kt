@@ -41,11 +41,7 @@ internal fun HilingualTimeInput(
 
     LaunchedEffect(timePickerState) {
         snapshotFlow { timePickerState.hour to timePickerState.minute }
-            .collect { (newHour, newMinute) ->
-                if (newHour != hour || newMinute != minute) {
-                    onTimeChange(newHour, newMinute)
-                }
-            }
+            .collect { (newHour, newMinute) -> onTimeChange(newHour, newMinute) }
     }
 
     MaterialTheme(

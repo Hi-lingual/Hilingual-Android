@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -42,10 +41,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
@@ -64,8 +61,6 @@ import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.analytics.TriggerType
 import com.hilingual.core.common.app.AppRestarter
 import com.hilingual.core.common.extension.noRippleClickable
-import com.hilingual.core.common.model.HilingualMessage
-import com.hilingual.core.common.model.HilingualMessage.Snackbar
 import com.hilingual.core.common.model.HilingualMessage.Toast
 import com.hilingual.core.common.model.MessageDuration
 import com.hilingual.core.common.provider.LocalAppRestarter
@@ -78,9 +73,9 @@ import com.hilingual.core.common.trigger.LocalReconnectEvents
 import com.hilingual.core.common.trigger.rememberDialogTrigger
 import com.hilingual.core.common.widget.WidgetType
 import com.hilingual.core.designsystem.component.dialog.HilingualErrorDialog
-import com.hilingual.core.designsystem.component.snackbar.HilingualActionSnackbar
-import com.hilingual.core.designsystem.component.toast.TextToast
 import com.hilingual.core.designsystem.component.view.HilingualNetworkErrorView
+import com.hilingual.core.ui.component.message.HilingualMessageHost
+import com.hilingual.core.ui.component.message.rememberMessageController
 import com.hilingual.presentation.auth.navigation.Auth
 import com.hilingual.presentation.auth.navigation.authNavGraph
 import com.hilingual.presentation.diaryfeedback.navigation.DiaryFeedback
@@ -109,7 +104,6 @@ import com.hilingual.presentation.splash.navigation.splashNavGraph
 import com.hilingual.presentation.voca.navigation.Voca
 import com.hilingual.presentation.voca.navigation.vocaNavGraph
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
@@ -164,22 +158,7 @@ internal fun MainScreen(
         }
     }
 
-    val onShowMessage: (HilingualMessage) -> Unit =
-        remember(
-            key1 = coroutineScope,
-            key2 = snackBarHostState,
-        ) {
-            { message ->
-                coroutineScope.launch {
-                    snackBarHostState.currentSnackbarData?.dismiss()
-                    val job = launch {
-                        snackBarHostState.showSnackbar(visuals = message)
-                    }
-                    delay(message.messageDuration.millis)
-                    job.cancel()
-                }
-            }
-        }
+    val onShowMessage = rememberMessageController(snackBarHostState)
 
     LaunchedEffect(currentBackStackEntry) {
         isNetworkErrorOverlayVisible = isOffline && canShowNetworkError
@@ -434,33 +413,7 @@ internal fun MainScreen(
                     )
                 }
 
-                Box(
-                    contentAlignment = Alignment.BottomCenter,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .navigationBarsPadding()
-                        .padding(bottom = 106.dp),
-                ) {
-                    SnackbarHost(hostState = snackBarHostState) { data ->
-                        when (val visuals = data.visuals) {
-                            is Snackbar -> {
-                                HilingualActionSnackbar(
-                                    message = visuals,
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                    onDismiss = { data.dismiss() },
-                                )
-                            }
-
-                            is Toast -> {
-                                TextToast(text = visuals.message)
-                            }
-
-                            else -> {
-                                TextToast(text = visuals.message)
-                            }
-                        }
-                    }
-                }
+                HilingualMessageHost(hostState = snackBarHostState)
             }
         }
     }
@@ -540,7 +493,7 @@ private fun BottomSection(
     onTabSelected: (MainTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier.navigationBarsPadding()) {
         AnimatedVisibility(
             visible = isVisible,
             enter = fadeIn() + slideIn { IntOffset(0, it.height) },
@@ -554,7 +507,6 @@ private fun BottomSection(
         }
         AnimatedVisibility(
             visible = isVisible,
-            modifier = Modifier.navigationBarsPadding(),
             enter = EnterTransition.None,
             exit = ExitTransition.None,
         ) {

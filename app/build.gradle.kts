@@ -98,6 +98,7 @@ dependencies {
     implementation(projects.data.user)
     implementation(projects.data.voca)
     implementation(projects.data.feed)
+    implementation(projects.data.notification)
 
     // other dependencies
     implementation(libs.timber)
