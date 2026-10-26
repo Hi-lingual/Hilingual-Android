@@ -60,8 +60,16 @@ class HilingualNotificationManager @Inject constructor(
             description = "팔로우, 좋아요 등 소셜 활동 알림"
         }
 
+        val customReminderChannel = NotificationChannel(
+            CHANNEL_ID_CUSTOM_REMINDER,
+            "리마인드 알림",
+            NotificationManager.IMPORTANCE_HIGH,
+        ).apply {
+            description = "설정한 시간에 보내드리는 일기 작성 리마인드 알림"
+        }
+
         notificationManager?.createNotificationChannels(
-            listOf(dailyChannel, weeklyChannel, socialChannel),
+            listOf(dailyChannel, weeklyChannel, socialChannel, customReminderChannel),
         )
     }
 
@@ -186,18 +194,59 @@ class HilingualNotificationManager @Inject constructor(
         else -> "social"
     }
 
+    fun showCustomReminderNotification() {
+        if (notificationManager?.areNotificationsEnabled() != true) {
+            Timber.e("Notifications are disabled for this app.")
+            return
+        }
+
+        val pendingIntent = context.packageManager
+            .getLaunchIntentForPackage(context.packageName)
+            ?.apply {
+                addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                putExtra(EXTRA_NOTIFICATION_TYPE, NOTIFICATION_TYPE_CUSTOM_REMINDER)
+            }
+            ?.let {
+                PendingIntent.getActivity(
+                    context,
+                    NOTIFICATION_ID_CUSTOM_REMINDER,
+                    it,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                )
+            }
+
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID_CUSTOM_REMINDER)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle("일기 쓸 시간이에요 ⏰")
+            .setContentText("지금 떠오르는 생각을 영어로 기록해 보세요.")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+
+        if (pendingIntent != null) {
+            builder.setContentIntent(pendingIntent)
+        } else {
+            Timber.e("PendingIntent is null.")
+        }
+
+        notificationManager.notify(NOTIFICATION_ID_CUSTOM_REMINDER, builder.build())
+    }
+
     companion object {
         private const val CHANNEL_ID_DAILY = "channel_daily_notification"
         private const val CHANNEL_ID_WEEKLY = "channel_weekly_notification"
         private const val CHANNEL_ID_SOCIAL = "channel_social_notification"
+        private const val CHANNEL_ID_CUSTOM_REMINDER = "channel_custom_reminder_notification"
 
         private val KNOWN_CHANNEL_IDS = setOf(CHANNEL_ID_DAILY, CHANNEL_ID_WEEKLY, CHANNEL_ID_SOCIAL)
 
         private const val NOTIFICATION_ID_DAILY = 1001
         private const val NOTIFICATION_ID_WEEKLY = 1002
         private const val NOTIFICATION_ID_SOCIAL_SUMMARY = 1003
+        private const val NOTIFICATION_ID_CUSTOM_REMINDER = 1004
 
         private const val GROUP_KEY_SOCIAL = "group_social_notification"
+
+        private const val NOTIFICATION_TYPE_CUSTOM_REMINDER = "reminder_custom"
 
         /** 푸시 알림 클릭 이벤트의 notification_type 프로퍼티로 전달된다. */
         const val EXTRA_NOTIFICATION_TYPE = "notification_type"

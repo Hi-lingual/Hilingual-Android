@@ -29,7 +29,10 @@ import com.hilingual.core.common.model.HilingualMessage
 import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.button.HilingualButton
+import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
 import com.hilingual.core.designsystem.component.toggle.HilingualBasicToggleSwitch
+import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
+import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
 import com.hilingual.presentation.notification.setting.component.DayChip
@@ -61,6 +64,10 @@ internal fun NotificationReminderSettingRoute(
     BackHandler(onBack = viewModel::onBackClick)
 
     when (val state = uiState) {
+        is UiState.Loading -> {
+            HilingualLoadingIndicator()
+        }
+
         is UiState.Success -> {
             NotificationReminderSettingScreen(
                 paddingValues = paddingValues,
@@ -82,9 +89,15 @@ internal fun NotificationReminderSettingRoute(
             )
         }
 
-        is UiState.Loading -> {}
-
-        is UiState.Failure -> {}
+        is UiState.Failure -> {
+            HilingualLoadErrorView(
+                action = LoadErrorViewAction.Retry(
+                    onRetryClick = viewModel::retryLoad,
+                    onBackClick = navigateUp,
+                ),
+                modifier = Modifier.padding(paddingValues),
+            )
+        }
 
         else -> {}
     }
@@ -198,7 +211,6 @@ private fun NotificationReminderSettingScreenPreview() {
             uiState = NotificationReminderSettingUiState(
                 hour = 9,
                 minute = 30,
-                isDailyRepeat = false,
                 selectedDays = setOf(ReminderDay.MON, ReminderDay.WED, ReminderDay.FRI),
             ),
             onBackClick = {},

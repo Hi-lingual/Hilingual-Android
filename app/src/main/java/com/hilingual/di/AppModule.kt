@@ -16,7 +16,9 @@
 package com.hilingual.di
 
 import com.hilingual.app.AppRestarterImpl
+import com.hilingual.app.SessionCleanerImpl
 import com.hilingual.core.common.app.AppRestarter
+import com.hilingual.core.common.app.SessionCleaner
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -30,4 +32,8 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindAppRestarter(impl: AppRestarterImpl): AppRestarter
+
+    @Binds
+    @Singleton
+    abstract fun bindSessionCleaner(impl: SessionCleanerImpl): SessionCleaner
 }

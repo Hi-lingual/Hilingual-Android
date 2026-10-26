@@ -15,13 +15,19 @@
  */
 package com.hilingual.presentation.notification.setting
 
+import android.Manifest
 import android.content.Intent
+import android.net.Uri
 import android.provider.Settings
+import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,12 +37,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.extension.noRippleClickable
+import com.hilingual.core.common.model.HilingualMessage
+import com.hilingual.core.common.trigger.LocalMessageController
 import com.hilingual.core.common.util.RetryOnReconnect
 import com.hilingual.core.common.util.UiState
 import com.hilingual.core.designsystem.component.indicator.HilingualLoadingIndicator
@@ -44,9 +54,12 @@ import com.hilingual.core.designsystem.component.view.HilingualLoadErrorView
 import com.hilingual.core.designsystem.component.view.LoadErrorViewAction
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
+import com.hilingual.presentation.notification.setting.component.ExactAlarmPermissionDialog
+import com.hilingual.presentation.notification.setting.component.NotificationReminderDialog
 import com.hilingual.presentation.notification.setting.component.NotificationSettingBanner
 import com.hilingual.presentation.notification.setting.component.NotificationSettingDialog
 import com.hilingual.presentation.notification.setting.component.NotificationSwitchItem
+import com.hilingual.presentation.notification.setting.model.ReminderUiModel
 
 // #807 푸시 알림 플로우: 미배포 기능, 당분간 봉인. 재개 시 true로 전환.
 private const val ENABLE_PUSH_NOTIFICATION = true
@@ -55,29 +68,38 @@ private const val ENABLE_PUSH_NOTIFICATION = true
 internal fun NotificationSettingRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
+    navigateToReminderSetting: () -> Unit,
     viewModel: NotificationSettingViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isNotificationGranted by viewModel.isNotificationGranted.collectAsStateWithLifecycle()
+    val isExactAlarmGranted by viewModel.isExactAlarmGranted.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val activity = LocalActivity.current
 
     var isNotificationSettingDialogVisible by remember { mutableStateOf(false) }
+    var isReminderPermissionDialogVisible by remember { mutableStateOf(false) }
+    var isExactAlarmPermissionDialogVisible by remember { mutableStateOf(false) }
+
+    val messageController = LocalMessageController.current
 
     fun checkNotificationPermission() {
         val isGranted = NotificationManagerCompat.from(context).areNotificationsEnabled()
-        viewModel.checkNotificationPermission(isGranted)
+        viewModel.updatePermissionState(isGranted)
+    }
+
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+    ) { isGranted ->
+        val shouldShowRationale = activity?.let {
+            ActivityCompat.shouldShowRequestPermissionRationale(it, Manifest.permission.POST_NOTIFICATIONS)
+        } ?: false
+        viewModel.onNotificationPermissionResult(isGranted, shouldShowRationale)
     }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         checkNotificationPermission()
-    }
-
-    viewModel.sideEffect.collectSideEffect { sideEffect ->
-        when (sideEffect) {
-            NotificationSettingSideEffect.ShowPermissionDialog -> {
-                isNotificationSettingDialogVisible = true
-            }
-        }
+        viewModel.refreshReminderState()
     }
 
     val navigateToSettings = {
@@ -85,6 +107,40 @@ internal fun NotificationSettingRoute(
             putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
         }
         context.startActivity(intent)
+    }
+
+    viewModel.sideEffect.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            NotificationSettingSideEffect.ShowPermissionDialog -> {
+                isNotificationSettingDialogVisible = true
+            }
+
+            NotificationSettingSideEffect.ShowReminderPermissionDialog -> {
+                isReminderPermissionDialogVisible = true
+            }
+
+            NotificationSettingSideEffect.RequestNotificationPermission ->
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+
+            NotificationSettingSideEffect.OpenNotificationSettings -> navigateToSettings()
+
+            NotificationSettingSideEffect.ShowExactAlarmPermissionDialog -> {
+                isExactAlarmPermissionDialogVisible = true
+            }
+
+            NotificationSettingSideEffect.OpenExactAlarmSettings -> {
+                val intent = Intent(
+                    Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                    Uri.fromParts("package", context.packageName, null),
+                )
+                context.startActivity(intent)
+            }
+
+            NotificationSettingSideEffect.NavigateToReminderSetting -> navigateToReminderSetting()
+
+            is NotificationSettingSideEffect.ShowToast ->
+                messageController(HilingualMessage.Toast(sideEffect.text))
+        }
     }
 
     RetryOnReconnect(
@@ -105,6 +161,10 @@ internal fun NotificationSettingRoute(
                     onMarketingCheckedChange = viewModel::updateMarketingChecked,
                     isFeedChecked = state.data.isFeedChecked,
                     onFeedCheckedChange = viewModel::updateFeedChecked,
+                    isReminderChecked = granted && isExactAlarmGranted && state.data.reminder.isEnabled,
+                    reminderScheduleText = state.data.reminder.scheduleText,
+                    onReminderCheckedChange = viewModel::onReminderCheckedChange,
+                    onReminderSectionClick = viewModel::onReminderSectionClick,
                     isNotificationGranted = granted,
                     onBannerClick = navigateToSettings,
                     isPermissionDialogVisible = isNotificationSettingDialogVisible,
@@ -112,6 +172,18 @@ internal fun NotificationSettingRoute(
                     onPermissionDialogConfirm = {
                         isNotificationSettingDialogVisible = false
                         navigateToSettings()
+                    },
+                    isReminderPermissionDialogVisible = isReminderPermissionDialogVisible,
+                    onReminderPermissionDialogDismiss = { isReminderPermissionDialogVisible = false },
+                    onReminderPermissionDialogConfirm = {
+                        isReminderPermissionDialogVisible = false
+                        viewModel.onReminderPermissionDialogConfirm()
+                    },
+                    isExactAlarmPermissionDialogVisible = isExactAlarmPermissionDialogVisible,
+                    onExactAlarmPermissionDialogDismiss = { isExactAlarmPermissionDialogVisible = false },
+                    onExactAlarmPermissionDialogConfirm = {
+                        isExactAlarmPermissionDialogVisible = false
+                        viewModel.onExactAlarmPermissionDialogConfirm()
                     },
                     paddingValues = paddingValues,
                     onBackClick = navigateUp,
@@ -139,11 +211,21 @@ private fun NotificationSettingScreen(
     onMarketingCheckedChange: (Boolean) -> Unit,
     isFeedChecked: Boolean,
     onFeedCheckedChange: (Boolean) -> Unit,
+    isReminderChecked: Boolean,
+    reminderScheduleText: String,
+    onReminderCheckedChange: (Boolean) -> Unit,
+    onReminderSectionClick: () -> Unit,
     isNotificationGranted: Boolean,
     onBannerClick: () -> Unit,
     isPermissionDialogVisible: Boolean,
     onPermissionDialogDismiss: () -> Unit,
     onPermissionDialogConfirm: () -> Unit,
+    isReminderPermissionDialogVisible: Boolean,
+    onReminderPermissionDialogDismiss: () -> Unit,
+    onReminderPermissionDialogConfirm: () -> Unit,
+    isExactAlarmPermissionDialogVisible: Boolean,
+    onExactAlarmPermissionDialogDismiss: () -> Unit,
+    onExactAlarmPermissionDialogConfirm: () -> Unit,
     paddingValues: PaddingValues,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -176,12 +258,45 @@ private fun NotificationSettingScreen(
             isChecked = isFeedChecked,
             onCheckedChange = onFeedCheckedChange,
         )
+
+        HorizontalDivider(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            color = HilingualTheme.colors.gray200,
+        )
+
+        NotificationSwitchItem(
+            text = "일기 작성 리마인드 알림",
+            description = if (isReminderChecked) {
+                reminderScheduleText
+            } else {
+                "설정한 시간에 리마인드 알림을 보내드려요."
+            },
+            isChecked = isReminderChecked,
+            onCheckedChange = onReminderCheckedChange,
+            modifier = Modifier.noRippleClickable(
+                enabled = isReminderChecked,
+                onClick = onReminderSectionClick,
+            ),
+
+        )
     }
 
     NotificationSettingDialog(
         isVisible = ENABLE_PUSH_NOTIFICATION && isPermissionDialogVisible,
         onDismiss = onPermissionDialogDismiss,
         onConfirmClick = onPermissionDialogConfirm,
+    )
+
+    NotificationReminderDialog(
+        isVisible = ENABLE_PUSH_NOTIFICATION && isReminderPermissionDialogVisible,
+        onDismiss = onReminderPermissionDialogDismiss,
+        onConfirmClick = onReminderPermissionDialogConfirm,
+    )
+
+    ExactAlarmPermissionDialog(
+        isVisible = isExactAlarmPermissionDialogVisible,
+        onDismiss = onExactAlarmPermissionDialogDismiss,
+        onConfirmClick = onExactAlarmPermissionDialogConfirm,
     )
 }
 
@@ -190,6 +305,7 @@ private fun NotificationSettingScreen(
 private fun NotificationSettingScreenPreview() {
     var isMarketingChecked by remember { mutableStateOf(true) }
     var isFeedChecked by remember { mutableStateOf(false) }
+    var isReminderChecked by remember { mutableStateOf(true) }
 
     HilingualTheme {
         NotificationSettingScreen(
@@ -197,6 +313,10 @@ private fun NotificationSettingScreenPreview() {
             onMarketingCheckedChange = { isMarketingChecked = it },
             isFeedChecked = isFeedChecked,
             onFeedCheckedChange = { isFeedChecked = it },
+            isReminderChecked = isReminderChecked,
+            reminderScheduleText = ReminderUiModel(isEnabled = true, hour = 21, minute = 13).scheduleText,
+            onReminderCheckedChange = { isReminderChecked = it },
+            onReminderSectionClick = {},
             isNotificationGranted = false,
             onBannerClick = {},
             paddingValues = PaddingValues(0.dp),
@@ -204,6 +324,12 @@ private fun NotificationSettingScreenPreview() {
             isPermissionDialogVisible = false,
             onPermissionDialogDismiss = {},
             onPermissionDialogConfirm = {},
+            isReminderPermissionDialogVisible = false,
+            onReminderPermissionDialogDismiss = {},
+            onReminderPermissionDialogConfirm = {},
+            isExactAlarmPermissionDialogVisible = false,
+            onExactAlarmPermissionDialogDismiss = {},
+            onExactAlarmPermissionDialogConfirm = {},
         )
     }
 }
