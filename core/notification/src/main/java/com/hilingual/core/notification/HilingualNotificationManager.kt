@@ -95,7 +95,6 @@ class HilingualNotificationManager @Inject constructor(
     private fun resolveNotificationId(channelId: String): Int = when (channelId) {
         CHANNEL_ID_DAILY -> NOTIFICATION_ID_DAILY
         CHANNEL_ID_WEEKLY -> NOTIFICATION_ID_WEEKLY
-        CHANNEL_ID_CUSTOM_REMINDER -> NOTIFICATION_ID_CUSTOM_REMINDER
         else -> System.currentTimeMillis().toInt()
     }
 
@@ -249,7 +248,6 @@ class HilingualNotificationManager @Inject constructor(
         private val CHANNEL_ID_BY_NOTIFICATION_TYPE = mapOf(
             NOTIFICATION_TYPE_STREAK_REMINDER to CHANNEL_ID_DAILY,
             NOTIFICATION_TYPE_WINBACK_REMINDER to CHANNEL_ID_WEEKLY,
-            NOTIFICATION_TYPE_CUSTOM_REMINDER to CHANNEL_ID_CUSTOM_REMINDER,
             NOTIFICATION_TYPE_FRIEND_FOLLOW to CHANNEL_ID_SOCIAL,
             NOTIFICATION_TYPE_DIARY_EMPATHY to CHANNEL_ID_SOCIAL,
         )
