@@ -73,20 +73,19 @@ class HilingualNotificationManager @Inject constructor(
         )
     }
 
-    fun sendReminderNotification(
-        channelId: String?,
+    fun sendPushNotification(
+        notificationType: String?,
         title: String,
         message: String,
         deepLink: String? = null,
     ) {
-        val targetChannelId = channelId?.takeIf { it in KNOWN_CHANNEL_IDS } ?: CHANNEL_ID_SOCIAL
-        if (channelId != null && channelId !in KNOWN_CHANNEL_IDS) {
-            Timber.e("Unknown channelId from server: $channelId")
-        }
+        val channelId = CHANNEL_ID_BY_NOTIFICATION_TYPE[notificationType]
+            ?: CHANNEL_ID_SOCIAL.also { Timber.e("Unknown notification_type from server: $notificationType") }
 
-        showReminderNotification(
-            channelId = targetChannelId,
-            notificationId = resolveNotificationId(targetChannelId),
+        showPushNotification(
+            channelId = channelId,
+            notificationId = resolveNotificationId(channelId),
+            notificationType = notificationType ?: NOTIFICATION_TYPE_SOCIAL,
             title = title,
             message = message,
             deepLink = deepLink,
@@ -99,9 +98,10 @@ class HilingualNotificationManager @Inject constructor(
         else -> System.currentTimeMillis().toInt()
     }
 
-    private fun showReminderNotification(
+    private fun showPushNotification(
         channelId: String,
         notificationId: Int,
+        notificationType: String,
         title: String,
         message: String,
         deepLink: String? = null,
@@ -111,7 +111,7 @@ class HilingualNotificationManager @Inject constructor(
             ?.apply {
                 addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 deepLink?.takeIf { it.isNotBlank() }?.let { putExtra("link", it) }
-                putExtra(EXTRA_NOTIFICATION_TYPE, channelId.toNotificationType())
+                putExtra(EXTRA_NOTIFICATION_TYPE, notificationType)
             }
             ?.let {
                 PendingIntent.getActivity(
@@ -188,12 +188,6 @@ class HilingualNotificationManager @Inject constructor(
         notificationManager?.notify(NOTIFICATION_ID_SOCIAL_SUMMARY, summary)
     }
 
-    private fun String.toNotificationType(): String = when (this) {
-        CHANNEL_ID_DAILY -> "daily"
-        CHANNEL_ID_WEEKLY -> "weekly"
-        else -> "social"
-    }
-
     fun showCustomReminderNotification() {
         if (notificationManager?.areNotificationsEnabled() != true) {
             Timber.e("Notifications are disabled for this app.")
@@ -237,8 +231,6 @@ class HilingualNotificationManager @Inject constructor(
         private const val CHANNEL_ID_SOCIAL = "channel_social_notification"
         private const val CHANNEL_ID_CUSTOM_REMINDER = "channel_custom_reminder_notification"
 
-        private val KNOWN_CHANNEL_IDS = setOf(CHANNEL_ID_DAILY, CHANNEL_ID_WEEKLY, CHANNEL_ID_SOCIAL)
-
         private const val NOTIFICATION_ID_DAILY = 1001
         private const val NOTIFICATION_ID_WEEKLY = 1002
         private const val NOTIFICATION_ID_SOCIAL_SUMMARY = 1003
@@ -246,7 +238,19 @@ class HilingualNotificationManager @Inject constructor(
 
         private const val GROUP_KEY_SOCIAL = "group_social_notification"
 
+        private const val NOTIFICATION_TYPE_STREAK_REMINDER = "reminder_streak"
+        private const val NOTIFICATION_TYPE_WINBACK_REMINDER = "reminder_winback"
         private const val NOTIFICATION_TYPE_CUSTOM_REMINDER = "reminder_custom"
+        private const val NOTIFICATION_TYPE_FRIEND_FOLLOW = "friend_follow"
+        private const val NOTIFICATION_TYPE_DIARY_EMPATHY = "diary_empathy"
+        private const val NOTIFICATION_TYPE_SOCIAL = "social"
+
+        private val CHANNEL_ID_BY_NOTIFICATION_TYPE = mapOf(
+            NOTIFICATION_TYPE_STREAK_REMINDER to CHANNEL_ID_DAILY,
+            NOTIFICATION_TYPE_WINBACK_REMINDER to CHANNEL_ID_WEEKLY,
+            NOTIFICATION_TYPE_FRIEND_FOLLOW to CHANNEL_ID_SOCIAL,
+            NOTIFICATION_TYPE_DIARY_EMPATHY to CHANNEL_ID_SOCIAL,
+        )
 
         /** 푸시 알림 클릭 이벤트의 notification_type 프로퍼티로 전달된다. */
         const val EXTRA_NOTIFICATION_TYPE = "notification_type"
