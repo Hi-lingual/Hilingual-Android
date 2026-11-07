@@ -41,7 +41,7 @@ class HilingualNotificationManager @Inject constructor(
             "일간 알림",
             NotificationManager.IMPORTANCE_HIGH,
         ).apply {
-            description = "하루를 정리하는 알림"
+            description = "스트릭이 끊기기 전에 알려드리는 알림"
         }
 
         val weeklyChannel = NotificationChannel(
@@ -49,7 +49,7 @@ class HilingualNotificationManager @Inject constructor(
             "주간 알림",
             NotificationManager.IMPORTANCE_HIGH,
         ).apply {
-            description = "한 주를 정리하는 알림"
+            description = "한 주를 다시 시작하도록 알려드리는 알림"
         }
 
         val socialChannel = NotificationChannel(
