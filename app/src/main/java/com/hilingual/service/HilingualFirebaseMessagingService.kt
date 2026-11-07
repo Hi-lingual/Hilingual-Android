@@ -38,11 +38,11 @@ class HilingualFirebaseMessagingService : FirebaseMessagingService() {
         remoteMessage.notification?.let { notification ->
             val title = notification.title ?: return@let
             val body = notification.body ?: return@let
-            val channelId = remoteMessage.data["channelId"]
+            val notificationType = remoteMessage.data["notification_type"]
             val deepLink = remoteMessage.data["link"]
 
-            notificationManager.sendReminderNotification(
-                channelId = channelId,
+            notificationManager.sendPushNotification(
+                notificationType = notificationType,
                 title = title,
                 message = body,
                 deepLink = deepLink,
