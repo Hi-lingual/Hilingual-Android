@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -89,11 +90,11 @@ internal fun ReviewResultContent(
                 Image(
                     painter = painterResource(id = imageRes),
                     contentDescription = null,
-                    modifier = imageModifier,
+                    modifier = imageModifier.offset(x = (-11).dp),
                 )
                 Text(
                     text = message,
-                    style = HilingualTheme.typography.headSB18,
+                    style = HilingualTheme.typography.headSB20,
                     color = HilingualTheme.colors.hilingualBlack,
                     textAlign = TextAlign.Center,
                 )
