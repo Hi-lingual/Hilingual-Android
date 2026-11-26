@@ -31,8 +31,8 @@ import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
 import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResponseDto
 import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.DiaryContentModel
-import com.hilingual.data.diary.model.DiaryFeedbackCreateModel
-import com.hilingual.data.diary.model.DiaryFeedbackException
+import com.hilingual.data.diary.model.DiaryFeedbackCreateResult
+import com.hilingual.data.diary.model.DiaryFeedbackCreateStatus
 import com.hilingual.data.diary.model.DiaryFeedbackModel
 import com.hilingual.data.diary.model.DiaryRecommendExpressionModel
 import com.hilingual.data.diary.model.PhraseBookmarkModel
@@ -45,8 +45,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import org.json.JSONObject
-import retrofit2.HttpException
 import timber.log.Timber
 
 internal class DiaryRepositoryImpl @Inject constructor(
@@ -86,7 +84,7 @@ internal class DiaryRepositoryImpl @Inject constructor(
         originalText: String,
         date: LocalDate,
         imageFileUri: Uri?,
-    ): Result<DiaryFeedbackCreateModel> = suspendRunCatching {
+    ): Result<DiaryFeedbackCreateResult> = suspendRunCatching {
         val fileKey = if (imageFileUri != null) {
             fileUploaderRepository.uploadFile(
                 uri = imageFileUri,
@@ -96,20 +94,19 @@ internal class DiaryRepositoryImpl @Inject constructor(
             null
         }
 
-        requestFeedback {
-            diaryRemoteDataSource.postDiaryFeedbackCreate(
-                originalText = originalText,
-                date = date.toIsoDate(),
-                fileKey = fileKey,
-            )
-        }
+        val response = diaryRemoteDataSource.postDiaryFeedbackCreate(
+            originalText = originalText,
+            date = date.toIsoDate(),
+            fileKey = fileKey,
+        )
+        response.toFeedbackCreateResult()
     }
 
     override suspend fun postDiaryRecoveryCreate(
         originalText: String,
         date: LocalDate,
         imageFileUri: Uri?,
-    ): Result<DiaryFeedbackCreateModel> = suspendRunCatching {
+    ): Result<DiaryFeedbackCreateResult> = suspendRunCatching {
         val fileKey = if (imageFileUri != null) {
             fileUploaderRepository.uploadFile(
                 uri = imageFileUri,
@@ -119,28 +116,22 @@ internal class DiaryRepositoryImpl @Inject constructor(
             null
         }
 
-        requestFeedback {
-            diaryRemoteDataSource.postDiaryRecoveryCreate(
-                originalText = originalText,
-                date = date.toIsoDate(),
-                fileKey = fileKey,
-            )
-        }
+        val response = diaryRemoteDataSource.postDiaryRecoveryCreate(
+            originalText = originalText,
+            date = date.toIsoDate(),
+            fileKey = fileKey,
+        )
+        response.toFeedbackCreateResult()
     }
 
-    private suspend fun requestFeedback(
-        request: suspend () -> BaseResponse<DiaryFeedbackCreateResponseDto>,
-    ): DiaryFeedbackCreateModel {
-        val response = try {
-            request()
-        } catch (exception: HttpException) {
-            // TODO: 서버 오류 응답 명세 확정 후 code 필드 파싱을 공통 오류 DTO로 대체한다.
-            val code = runCatching {
-                exception.response()?.errorBody()?.string()?.let { JSONObject(it).getInt("code") }
-            }.getOrNull()
-            throw DiaryFeedbackException.fromCode(code).apply { initCause(exception) }
+    private fun BaseResponse<DiaryFeedbackCreateResponseDto>.toFeedbackCreateResult(): DiaryFeedbackCreateResult {
+        val result = DiaryFeedbackCreateStatus.getOrError(code)
+        return if (result == DiaryFeedbackCreateStatus.SUCCESS) {
+            data?.let { DiaryFeedbackCreateResult.Success(it.toModel()) }
+                ?: DiaryFeedbackCreateResult.Failure(DiaryFeedbackCreateStatus.UNKNOWN)
+        } else {
+            DiaryFeedbackCreateResult.Failure(result)
         }
-        return response.data?.toModel() ?: throw DiaryFeedbackException.fromCode(response.code)
     }
 
     override suspend fun patchDiaryPublish(diaryId: Long): Result<Unit> =

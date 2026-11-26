@@ -29,7 +29,8 @@ import com.hilingual.core.common.util.toLocalDateOrNull
 import com.hilingual.core.common.widget.WidgetUpdater
 import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.data.calendar.repository.CalendarRepository
-import com.hilingual.data.diary.model.DiaryFeedbackException
+import com.hilingual.data.diary.model.DiaryFeedbackCreateResult
+import com.hilingual.data.diary.model.DiaryFeedbackCreateStatus
 import com.hilingual.data.diary.repository.DiaryLocalRepository
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.diary.repository.MilestoneRepository
@@ -132,25 +133,42 @@ internal class DiaryWriteViewModel @Inject constructor(
             }
 
             result
-                .onSuccess { response ->
-                    diaryLocalRepository.clearDiaryTemp(state.selectedDate)
-                    Milestone.fromOrNull(response.totalDiaries)?.let(milestoneRepository::registerPendingMilestone)
-                    _feedbackUiState.update { UiState.Success(response.diaryId) }
-                    suspendRunCatching { widgetUpdater.updateAll() }
-                        .onLogFailure { }
-                }
-                .onLogFailure { throwable ->
-                    val failureType = when ((throwable as? DiaryFeedbackException)?.reason) {
-                        DiaryFeedbackException.Reason.TEXT_TOO_LONG -> DiaryFeedbackFailureType.TEXT_TOO_LONG
-                        DiaryFeedbackException.Reason.SPECIAL_CHARACTER -> DiaryFeedbackFailureType.SPECIAL_CHARACTER
-                        else -> DiaryFeedbackFailureType.UNKNOWN
+                .onSuccess { result ->
+                    when (result) {
+                        is DiaryFeedbackCreateResult.Success -> {
+                            val response = result.data
+                            diaryLocalRepository.clearDiaryTemp(state.selectedDate)
+                            Milestone.fromOrNull(response.totalDiaries)
+                                ?.let(milestoneRepository::registerPendingMilestone)
+                            _feedbackUiState.update { UiState.Success(response.diaryId) }
+                            suspendRunCatching { widgetUpdater.updateAll() }
+                                .onLogFailure { }
+                        }
+
+                        is DiaryFeedbackCreateResult.Failure -> {
+                            val failureType = when (result.status) {
+                                DiaryFeedbackCreateStatus.TEXT_TOO_LONG -> DiaryFeedbackFailureType.TEXT_TOO_LONG
+
+                                DiaryFeedbackCreateStatus.SPECIAL_CHARACTER ->
+                                    DiaryFeedbackFailureType.SPECIAL_CHARACTER
+
+                                else -> DiaryFeedbackFailureType.UNKNOWN
+                            }
+                            showFeedbackFailure(failureType)
+                        }
                     }
-                    _uiState.update { it.copy(feedbackFailureType = failureType) }
-                    _feedbackUiState.update { UiState.Failure(LoadErrorHandleAction.Retry) }
+                }
+                .onLogFailure {
+                    showFeedbackFailure(DiaryFeedbackFailureType.UNKNOWN)
                 }
         }
 
         return true
+    }
+
+    private fun showFeedbackFailure(failureType: DiaryFeedbackFailureType) {
+        _uiState.update { it.copy(feedbackFailureType = failureType) }
+        _feedbackUiState.update { UiState.Failure(LoadErrorHandleAction.Retry) }
     }
 
     fun returnToWriting() {
