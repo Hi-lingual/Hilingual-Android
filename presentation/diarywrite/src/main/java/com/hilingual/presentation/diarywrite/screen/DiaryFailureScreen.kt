@@ -25,24 +25,34 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.designsystem.component.button.HilingualButton
 import com.hilingual.core.designsystem.theme.HilingualTheme
 import com.hilingual.core.ui.component.topappbar.BackTopAppBar
+import com.hilingual.presentation.diarywrite.DiaryFeedbackFailureType
 import com.hilingual.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun DiaryFailureScreen(
     paddingValues: PaddingValues,
+    failureType: DiaryFeedbackFailureType,
     onBackClick: () -> Unit,
+    onEditDiaryClick: () -> Unit,
     onRequestAgainButtonClick: () -> Unit,
+    onCustomerCenterClick: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -55,6 +65,7 @@ internal fun DiaryFailureScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             BackTopAppBar(
+                modifier = Modifier.height(51.dp),
                 onBackClicked = onBackClick,
                 title = null,
             )
@@ -62,6 +73,10 @@ internal fun DiaryFailureScreen(
             Spacer(modifier = Modifier.weight(120f))
 
             Column(
+                modifier = Modifier
+                    .weight(309f, fill = false)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Image(
@@ -84,34 +99,61 @@ internal fun DiaryFailureScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "잠시 후 다시 시도해주세요.",
+                    text = failureType.description,
                     color = HilingualTheme.colors.gray400,
                     style = HilingualTheme.typography.headR18,
                     textAlign = TextAlign.Center,
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "고객센터 문의",
+                    modifier = Modifier.noRippleClickable(onClick = onCustomerCenterClick),
+                    color = HilingualTheme.colors.gray500,
+                    style = HilingualTheme.typography.headR18,
+                    textDecoration = TextDecoration.Underline,
+                )
             }
 
-            Spacer(modifier = Modifier.weight(193f))
+            Spacer(modifier = Modifier.weight(156f))
 
             HilingualButton(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 14.dp),
-                text = "피드백 다시 요청하기",
-                onClick = onRequestAgainButtonClick,
+                text = if (failureType == DiaryFeedbackFailureType.UNKNOWN) {
+                    "피드백 다시 요청하기"
+                } else {
+                    "일기 수정하러 가기"
+                },
+                onClick = if (failureType == DiaryFeedbackFailureType.UNKNOWN) {
+                    onRequestAgainButtonClick
+                } else {
+                    onEditDiaryClick
+                },
             )
         }
     }
 }
 
-@Preview
+private class DiaryFailurePreviewProvider : PreviewParameterProvider<DiaryFeedbackFailureType> {
+    override val values = DiaryFeedbackFailureType.entries.asSequence()
+}
+
+@Preview(widthDp = 360, heightDp = 708)
 @Composable
-private fun DiaryFailureScreenPreview() {
+private fun DiaryFailureScreenPreview(
+    @PreviewParameter(DiaryFailurePreviewProvider::class) failureType: DiaryFeedbackFailureType,
+) {
     HilingualTheme {
         DiaryFailureScreen(
             paddingValues = PaddingValues(0.dp),
+            failureType = failureType,
             onBackClick = {},
+            onEditDiaryClick = {},
             onRequestAgainButtonClick = {},
+            onCustomerCenterClick = {},
         )
     }
 }

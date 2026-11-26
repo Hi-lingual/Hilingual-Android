@@ -44,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,9 +55,11 @@ import com.hilingual.core.common.analytics.Page.FEEDBACK_LOADING
 import com.hilingual.core.common.analytics.Page.WRITE_DIARY
 import com.hilingual.core.common.analytics.Tracker
 import com.hilingual.core.common.analytics.TriggerType
+import com.hilingual.core.common.constant.UrlConstant
 import com.hilingual.core.common.extension.addFocusCleaner
 import com.hilingual.core.common.extension.advancedImePadding
 import com.hilingual.core.common.extension.collectSideEffect
+import com.hilingual.core.common.extension.launchCustomTabs
 import com.hilingual.core.common.extension.noRippleClickable
 import com.hilingual.core.common.extension.statusBarColor
 import com.hilingual.core.common.extension.subScreenPadding
@@ -102,6 +105,7 @@ internal fun DiaryWriteRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val feedbackUiState by viewModel.feedbackUiState.collectAsStateWithLifecycle()
 
+    val context = LocalContext.current
     val dialogTrigger = LocalDialogTrigger.current
     val messageController = LocalMessageController.current
     val tracker = LocalTracker.current
@@ -172,6 +176,16 @@ internal fun DiaryWriteRoute(
 
             DiaryFailureScreen(
                 paddingValues = paddingValues,
+                failureType = uiState.feedbackFailureType,
+                onCustomerCenterClick = { context.launchCustomTabs(UrlConstant.KAKAOTALK_CHANNEL) },
+                onEditDiaryClick = {
+                    tracker.logGlobalAction(
+                        trigger = TriggerType.CLICK,
+                        action = "ai_feedback.feedback_reason.retry",
+                        currentPage = FEEDBACK_LOADING,
+                    )
+                    viewModel.returnToWriting()
+                },
                 onBackClick = viewModel::returnToWriting,
                 onRequestAgainButtonClick = {
                     if (viewModel.requestDiaryFeedback()) {
