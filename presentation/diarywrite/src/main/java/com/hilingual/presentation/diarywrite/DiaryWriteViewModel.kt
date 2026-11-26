@@ -29,6 +29,7 @@ import com.hilingual.core.common.util.toLocalDateOrNull
 import com.hilingual.core.common.widget.WidgetUpdater
 import com.hilingual.core.navigation.DiaryWriteMode
 import com.hilingual.data.calendar.repository.CalendarRepository
+import com.hilingual.data.diary.model.DiaryFeedbackException
 import com.hilingual.data.diary.repository.DiaryLocalRepository
 import com.hilingual.data.diary.repository.DiaryRepository
 import com.hilingual.data.diary.repository.MilestoneRepository
@@ -138,7 +139,13 @@ internal class DiaryWriteViewModel @Inject constructor(
                     suspendRunCatching { widgetUpdater.updateAll() }
                         .onLogFailure { }
                 }
-                .onLogFailure {
+                .onLogFailure { throwable ->
+                    val failureType = when ((throwable as? DiaryFeedbackException)?.reason) {
+                        DiaryFeedbackException.Reason.TEXT_TOO_LONG -> DiaryFeedbackFailureType.TEXT_TOO_LONG
+                        DiaryFeedbackException.Reason.SPECIAL_CHARACTER -> DiaryFeedbackFailureType.SPECIAL_CHARACTER
+                        else -> DiaryFeedbackFailureType.UNKNOWN
+                    }
+                    _uiState.update { it.copy(feedbackFailureType = failureType) }
                     _feedbackUiState.update { UiState.Failure(LoadErrorHandleAction.Retry) }
                 }
         }

@@ -26,10 +26,13 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.hilingual.core.common.util.suspendRunCatching
 import com.hilingual.core.common.util.toIsoDate
+import com.hilingual.core.network.model.BaseResponse
 import com.hilingual.data.diary.datasource.DiaryRemoteDataSource
+import com.hilingual.data.diary.dto.response.DiaryFeedbackCreateResponseDto
 import com.hilingual.data.diary.model.BookmarkResult
 import com.hilingual.data.diary.model.DiaryContentModel
 import com.hilingual.data.diary.model.DiaryFeedbackCreateModel
+import com.hilingual.data.diary.model.DiaryFeedbackException
 import com.hilingual.data.diary.model.DiaryFeedbackModel
 import com.hilingual.data.diary.model.DiaryRecommendExpressionModel
 import com.hilingual.data.diary.model.PhraseBookmarkModel
@@ -42,6 +45,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import org.json.JSONObject
+import retrofit2.HttpException
 import timber.log.Timber
 
 internal class DiaryRepositoryImpl @Inject constructor(
@@ -91,11 +96,13 @@ internal class DiaryRepositoryImpl @Inject constructor(
             null
         }
 
-        diaryRemoteDataSource.postDiaryFeedbackCreate(
-            originalText = originalText,
-            date = date.toIsoDate(),
-            fileKey = fileKey,
-        ).data!!.toModel()
+        requestFeedback {
+            diaryRemoteDataSource.postDiaryFeedbackCreate(
+                originalText = originalText,
+                date = date.toIsoDate(),
+                fileKey = fileKey,
+            )
+        }
     }
 
     override suspend fun postDiaryRecoveryCreate(
@@ -112,11 +119,28 @@ internal class DiaryRepositoryImpl @Inject constructor(
             null
         }
 
-        diaryRemoteDataSource.postDiaryRecoveryCreate(
-            originalText = originalText,
-            date = date.toIsoDate(),
-            fileKey = fileKey,
-        ).data!!.toModel()
+        requestFeedback {
+            diaryRemoteDataSource.postDiaryRecoveryCreate(
+                originalText = originalText,
+                date = date.toIsoDate(),
+                fileKey = fileKey,
+            )
+        }
+    }
+
+    private suspend fun requestFeedback(
+        request: suspend () -> BaseResponse<DiaryFeedbackCreateResponseDto>,
+    ): DiaryFeedbackCreateModel {
+        val response = try {
+            request()
+        } catch (exception: HttpException) {
+            // TODO: 서버 오류 응답 명세 확정 후 code 필드 파싱을 공통 오류 DTO로 대체한다.
+            val code = runCatching {
+                exception.response()?.errorBody()?.string()?.let { JSONObject(it).getInt("code") }
+            }.getOrNull()
+            throw DiaryFeedbackException.fromCode(code).apply { initCause(exception) }
+        }
+        return response.data?.toModel() ?: throw DiaryFeedbackException.fromCode(response.code)
     }
 
     override suspend fun patchDiaryPublish(diaryId: Long): Result<Unit> =
